@@ -14,103 +14,99 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2018-03-20 05:18+0000\n"
-"X-Generator: Launchpad (build 18571)\n"
+"X-Launchpad-Export-Date: 2018-03-31 05:21+0000\n"
+"X-Generator: Launchpad (build 18599)\n"
 "Language: th\n"
 
+#: ../gtk/apport-gtk.ui.h:1 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
 #: ../kde/apport-kde.py:469 ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
 #: ../debian/tmp/usr/share/apport/apport-kde.py:469
 #: ../debian/tmp/usr/share/apport/apport-kde.py:504
 #: ../debian/tmp/usr/share/apport/apport-kde.py:524
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
 msgstr "Apport"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2 ../gtk/apport-gtk.ui.h:2
+#: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
+#: ../gtk/apport-gtk.ui.h:3 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3
 msgid "OK"
 msgstr "ตกลง"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4 ../gtk/apport-gtk.ui.h:4
+#: ../gtk/apport-gtk.ui.h:4 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 msgid "Crash report"
 msgstr "รายงานความผิดพลาด"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
+#: ../gtk/apport-gtk.ui.h:5 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>ขออภัย เกิดข้อผิดพลาดภายใน</b></big>"
 
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:303 ../gtk/apport-gtk.py:303
+#: ../gtk/apport-gtk.ui.h:6 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:241 ../debian/tmp/usr/share/apport/apport-kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:303 ../gtk/apport-gtk.ui.h:6
-#: ../gtk/apport-gtk.py:303
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "ถ้าคุณประสบปัญหาเพิ่มเติม ให้ลองเริ่มการทำงานของคอมพิวเตอร์ใหม่อีกครั้ง"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7 ../gtk/apport-gtk.ui.h:7
+#: ../gtk/apport-gtk.ui.h:7 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
 msgstr "ส่งรายงานความผิดพลาดเพื่อช่วยแก้ปัญหานี้"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8 ../gtk/apport-gtk.ui.h:8
+#: ../gtk/apport-gtk.ui.h:8 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8
 msgid "Ignore future problems of this program version"
 msgstr "เพิกเฉยต่อปัญหาในภายหลังที่เกิดขึ้นบนโปรแกรมรุ่นนี้"
 
-#: ../kde/apport-kde.py:292 ../debian/tmp/usr/share/apport/apport-kde.py:292
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:207
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:576 ../gtk/apport-gtk.ui.h:9
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:576
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:576 ../gtk/apport-gtk.py:207
+#: ../gtk/apport-gtk.py:576 ../gtk/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../kde/apport-kde.py:292
+#: ../debian/tmp/usr/share/apport/apport-kde.py:292
 msgid "Show Details"
 msgstr "แสดงรายละเอียด"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10 ../gtk/apport-gtk.ui.h:10
+#: ../gtk/apport-gtk.ui.h:10 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
 msgid "_Examine locally"
 msgstr "_ตรวจสอบในเครื่อง"
 
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:290 ../gtk/apport-gtk.py:290
+#: ../gtk/apport-gtk.ui.h:11 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:234 ../debian/tmp/usr/share/apport/apport-kde.py:234
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:290 ../gtk/apport-gtk.ui.h:11
-#: ../gtk/apport-gtk.py:290
 msgid "Leave Closed"
 msgstr "ปล่อยให้ปิดไป"
 
-#: ../kde/apport-kde.py:231 ../kde/apport-kde.py:244
-#: ../debian/tmp/usr/share/apport/apport-kde.py:231
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:219
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:287
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:306 ../gtk/apport-gtk.ui.h:12
-#: ../gtk/apport-gtk.py:219 ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:306 ../gtk/apport-gtk.py:219
+#: ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306 ../gtk/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../kde/apport-kde.py:231
+#: ../kde/apport-kde.py:244 ../debian/tmp/usr/share/apport/apport-kde.py:231
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244
 msgid "Continue"
 msgstr "ทำต่อไป"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../gtk/apport-gtk.ui.h:13
+#: ../gtk/apport-gtk.ui.h:13 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>กำลังรวบรวมข้อมูลของปัญหา</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14 ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:14 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr "กำลังรวบรวมข้อมูลซึ่งช่วยให้นักพัฒนาแก้ไขปัญหาที่คุณรายงานไป"
 
-#: ../bin/apport-cli.py:267 ../kde/apport-kde.py:435
-#: ../debian/tmp/usr/bin/apport-cli.py:267
-#: ../debian/tmp/usr/share/apport/apport-kde.py:435
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../gtk/apport-gtk.ui.h:15
+#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/bin/apport-cli.py:267
+#: ../bin/apport-cli.py:267 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../kde/apport-kde.py:435 ../debian/tmp/usr/share/apport/apport-kde.py:435
 msgid "Uploading problem information"
 msgstr "กำลังอัปโหลดข้อมูลปัญหา"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16 ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:16 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>กำลังอัพโหลดข้อมูลของปัญหา</b></big>"
 
+#: ../gtk/apport-gtk.ui.h:17 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
 #: ../kde/apport-kde.py:436 ../debian/tmp/usr/share/apport/apport-kde.py:436
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17 ../gtk/apport-gtk.ui.h:17
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -122,10 +118,9 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "แฟ้มความล้มเหลว Apport"
 
-#: ../bin/apport-cli.py:166 ../kde/apport-kde.py:363
-#: ../debian/tmp/usr/bin/apport-cli.py:166
-#: ../debian/tmp/usr/share/apport/apport-kde.py:363
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:145 ../gtk/apport-gtk.py:145
+#: ../debian/tmp/usr/bin/apport-cli.py:166 ../bin/apport-cli.py:166
+#: ../kde/apport-kde.py:363 ../debian/tmp/usr/share/apport/apport-kde.py:363
 msgid "(binary data)"
 msgstr "(binary data)"
 
@@ -139,23 +134,22 @@ msgstr "ขออภัย โปรแกรม %s หยุดทำงาน�
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "ขออภัย %s ปิดลงอย่างกะทันหัน"
 
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:168 ../gtk/apport-gtk.py:168
 #: ../kde/apport-kde.py:200 ../kde/apport-kde.py:238
 #: ../debian/tmp/usr/share/apport/apport-kde.py:200
 #: ../debian/tmp/usr/share/apport/apport-kde.py:238
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:168 ../gtk/apport-gtk.py:168
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "ขออภัย %s ประสบปัญหาภายใน"
 
-#: ../bin/apport-cli.py:194 ../kde/apport-kde.py:186
-#: ../debian/tmp/usr/bin/apport-cli.py:194
-#: ../debian/tmp/usr/share/apport/apport-kde.py:186
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:180 ../gtk/apport-gtk.py:180
+#: ../debian/tmp/usr/bin/apport-cli.py:194 ../bin/apport-cli.py:194
+#: ../kde/apport-kde.py:186 ../debian/tmp/usr/share/apport/apport-kde.py:186
 msgid "Send problem report to the developers?"
 msgstr "ส่งรายงานปัญหาไปยังผู้พัฒนา?"
 
-#: ../kde/apport-kde.py:194 ../debian/tmp/usr/share/apport/apport-kde.py:194
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:189 ../gtk/apport-gtk.py:189
+#: ../kde/apport-kde.py:194 ../debian/tmp/usr/share/apport/apport-kde.py:194
 msgid "Send"
 msgstr "ส่ง"
 
@@ -163,12 +157,11 @@ msgstr "ส่ง"
 msgid "Force Closed"
 msgstr "บังคับให้ปิดไป"
 
-#: ../kde/apport-kde.py:235 ../kde/apport-kde.py:381
-#: ../debian/tmp/usr/share/apport/apport-kde.py:235
-#: ../debian/tmp/usr/share/apport/apport-kde.py:381
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:232
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:291 ../gtk/apport-gtk.py:232
-#: ../gtk/apport-gtk.py:291
+#: ../gtk/apport-gtk.py:291 ../kde/apport-kde.py:235 ../kde/apport-kde.py:381
+#: ../debian/tmp/usr/share/apport/apport-kde.py:235
+#: ../debian/tmp/usr/share/apport/apport-kde.py:381
 msgid "Relaunch"
 msgstr "เรียกใหม่"
 
@@ -182,47 +175,47 @@ msgstr "โปรแกรม %s หยุดตอบสนองแล้ว"
 msgid "The program \"%s\" has stopped responding."
 msgstr "โปรแกรม \"%s\" หยุดตอบสนองแล้ว"
 
-#: ../kde/apport-kde.py:208 ../debian/tmp/usr/share/apport/apport-kde.py:208
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:260 ../gtk/apport-gtk.py:260
+#: ../kde/apport-kde.py:208 ../debian/tmp/usr/share/apport/apport-kde.py:208
 #, python-format
 msgid "Package: %s"
 msgstr "แพกเกจ: %s"
 
-#: ../kde/apport-kde.py:214 ../debian/tmp/usr/share/apport/apport-kde.py:214
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:267 ../gtk/apport-gtk.py:267
+#: ../kde/apport-kde.py:214 ../debian/tmp/usr/share/apport/apport-kde.py:214
 msgid "Sorry, a problem occurred while installing software."
 msgstr "ขออภัย เกิดปัญหาขณะติดตั้งซอฟต์แวร์"
 
-#: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-kde.py:220
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:276
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:295 ../gtk/apport-gtk.py:276
-#: ../gtk/apport-gtk.py:295
+#: ../gtk/apport-gtk.py:295 ../kde/apport-kde.py:220
+#: ../debian/tmp/usr/share/apport/apport-kde.py:220
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "โปรแกรม %s ประสบปัญหาภายใน"
 
-#: ../kde/apport-kde.py:223 ../debian/tmp/usr/share/apport/apport-kde.py:223
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:279 ../gtk/apport-gtk.py:279
+#: ../kde/apport-kde.py:223 ../debian/tmp/usr/share/apport/apport-kde.py:223
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "โปรแกรม %s ปิดลงอย่างกะทันหัน"
 
-#: ../kde/apport-kde.py:245 ../debian/tmp/usr/share/apport/apport-kde.py:245
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:307 ../gtk/apport-gtk.py:307
+#: ../kde/apport-kde.py:245 ../debian/tmp/usr/share/apport/apport-kde.py:245
 msgid "Ignore future problems of this type"
 msgstr "เพิกเฉยต่อปัญหาครั้งหน้าของประเภทนี้"
 
-#: ../kde/apport-kde.py:289 ../debian/tmp/usr/share/apport/apport-kde.py:289
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:580 ../gtk/apport-gtk.py:580
+#: ../kde/apport-kde.py:289 ../debian/tmp/usr/share/apport/apport-kde.py:289
 msgid "Hide Details"
 msgstr "ซ่อนรายละเอียด"
 
-#: ../bin/apport-unpack.py:22 ../debian/tmp/usr/bin/apport-unpack.py:22
+#: ../debian/tmp/usr/bin/apport-unpack.py:22 ../bin/apport-unpack.py:22
 #, python-format
 msgid "Usage: %s <report> <target directory>"
 msgstr ""
 
-#: ../bin/apport-unpack.py:47 ../debian/tmp/usr/bin/apport-unpack.py:47
+#: ../debian/tmp/usr/bin/apport-unpack.py:47 ../bin/apport-unpack.py:47
 msgid "Destination directory exists and is not empty."
 msgstr "ไดเรกทอรีปลายทางมีอยู่และไม่ว่างเปล่า"
 
@@ -238,9 +231,8 @@ msgstr "รหัสผ่าน:"
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../bin/apport-cli.py:254 ../kde/apport-kde.py:407
-#: ../debian/tmp/usr/bin/apport-cli.py:254
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407
+#: ../debian/tmp/usr/bin/apport-cli.py:254 ../bin/apport-cli.py:254
+#: ../kde/apport-kde.py:407 ../debian/tmp/usr/share/apport/apport-kde.py:407
 msgid "Collecting problem information"
 msgstr "กำลังรวบรวมข้อมูลของปัญหา"
 
@@ -275,13 +267,13 @@ msgid ""
 "Please enter your password to access problem reports of system programs"
 msgstr "โปรดป้อนรหัสผ่านเพื่อเข้าถึงรายงานปัญหาของโปรแกรมระบบ"
 
-#: ../kde/apport-kde.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "รายงานปัญหา"
 
-#: ../kde/apport-kde.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr ""
 
@@ -331,8 +323,9 @@ msgstr ""
 "แฟ้มปฏิบัติการที่ทำงานภายใต้เครื่องมือตรวจสอบหน่วยความจำของ valgrind "
 "สำหรับตรวจหาการรั่วไหลของหน่วยความจำ"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
-#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../bin/apport-retrace.py:65 ../bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-retrace.py:65
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "ติดตั้งแพกเกจพิเศษไปที่ Sandbox (สามารถระบุได้หลายครั้ง)"
@@ -342,15 +335,15 @@ msgstr "ติดตั้งแพกเกจพิเศษไปที่ Sa
 msgid "Error: %s is not an executable. Stopping."
 msgstr "ผิดพลาด: %s ไม่ใช่แฟ้มปฏิบัติการ กำลังหยุดทำงาน"
 
-#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
+#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr "ระบบของคุณอาจไม่เสถียรแล้วในขณะนี้ และต้องเริ่มการทำงานของระบบใหม่"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
+#: ../bin/apport-retrace.py:34 ../debian/tmp/usr/bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr "ไม่ต้องเพิ่มการติดตามใหม่ลงในรายงาน แต่ให้เขียนไปที่ stdout"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
+#: ../bin/apport-retrace.py:36 ../debian/tmp/usr/bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -358,33 +351,33 @@ msgstr ""
 "เริ่มวาระ gdb แบบโต้ตอบพร้อมบันทึกหลักของรายงาน (ละเว้น -o; "
 "ไม่ต้องเขียนรายงานใหม่)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
+#: ../bin/apport-retrace.py:38 ../debian/tmp/usr/bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "เขียนรายงานที่ปรับเปลี่ยนไปที่แฟ้มที่ระบุแทนที่จะเปลี่ยนรายงานดั้งเดิม"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
+#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr "เอาบันทึกหลักออกจากรายงานหลังจากที่สร้างการติดตามสแตกใหม่แล้ว"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
+#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
 msgstr "แทนที่ CoreFile ของรายงาน"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "แทนที่ ExecutablePath ของรายงาน"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
+#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
 msgstr "แทนที่ ProcMaps ของรายงาน"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
+#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
 msgstr ""
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -402,26 +395,26 @@ msgstr ""
 "แต่จะสามารถทำได้เพียงติดตามความล้มเหลวที่เกิดขึ้นเมื่อใช้รุ่นที่กำลังใช้งานอย"
 "ู่ในขณะนี้เท่านั้น"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
+#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "รายงานความคืบหน้าในการดาวน์โหลด/ติดตั้งระหว่างติดตั้งแพกเกจไปที่ Sandbox"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
+#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr "ขึ้นต้นการประทับเวลาในข้อความปูม สำหรับดำเนินการชุดงาน"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
+#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-retrace.py:59
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr "สร้างและใช้ที่เก็บจากบุคคลที่สามจากแหล่งข้อมูลที่ระบุไว้ในรายงาน"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
+#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr "ไดเรกทอรีแคชสำหรับแพกเกจที่ดาวน์โหลดใน Sandbox"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
+#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-retrace.py:63
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -430,7 +423,7 @@ msgstr ""
 "การเรียกใช้งานครั้งต่อไปก็จะถือว่าแพกเกจที่ดาวน์โหลดไว้ถูกแยกไปที่ Sandbox "
 "แล้ว"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
+#: ../bin/apport-retrace.py:67 ../debian/tmp/usr/bin/apport-retrace.py:67
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -441,7 +434,7 @@ msgstr ""
 "ความล้มเหลวเพื่ออัปโหลดการติดตามสแตกที่มีการติดตามใหม่ (เฉพาะเมื่อไม่ได้ระบุ "
 "-g, -o, หรือ -s)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
+#: ../bin/apport-retrace.py:69 ../debian/tmp/usr/bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -449,18 +442,18 @@ msgstr ""
 "แสดงการติดตามสแตกที่ติดตามใหม่และร้องขอการยืนยันก่อนที่จะส่งไปที่ฐานข้อมูลควา"
 "มล้มเหลว"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:71 ../bin/apport-retrace.py:71
+#: ../bin/apport-retrace.py:71 ../debian/tmp/usr/bin/apport-retrace.py:71
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "เส้นทางที่ไปยังฐานข้อมูล sqlite ที่ทำซ้ำ (ค่าปริยาย: ไม่มีการตรวจสอบการทำซ้ำ)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:80 ../bin/apport-retrace.py:80
+#: ../bin/apport-retrace.py:82 ../debian/tmp/usr/bin/apport-retrace.py:82
 msgid "You cannot use -C without -S. Stopping."
 msgstr "คุณไม่สามารถใช้ -C โดยไม่ใช้ -S ได้ กำลังหยุดทำงาน"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../debian/tmp/usr/bin/apport-retrace.py:113 ../bin/apport-retrace.py:113
+#: ../bin/apport-retrace.py:115 ../debian/tmp/usr/bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
 msgstr "ต้องการส่งเป็นสิ่งที่แนบมาหรือไม่? [y/n]"
 
@@ -937,25 +930,25 @@ msgstr ""
 "การดำเนินการที่กำลังจะดำเนินการต่อไปนั้นหยุดทำงานชั่วคราวเมื่อใกล้จะจบแล้ว "
 "และจะเสร็จสมบูรณ์โดยปกติ"
 
-#: ../bin/apport-cli.py:80 ../debian/tmp/usr/bin/apport-cli.py:80
+#: ../debian/tmp/usr/bin/apport-cli.py:80 ../bin/apport-cli.py:80
 msgid "Press any key to continue..."
 msgstr ""
 
-#: ../bin/apport-cli.py:87 ../debian/tmp/usr/bin/apport-cli.py:87
+#: ../debian/tmp/usr/bin/apport-cli.py:87 ../bin/apport-cli.py:87
 msgid "What would you like to do? Your options are:"
 msgstr ""
 
-#: ../bin/apport-cli.py:100 ../debian/tmp/usr/bin/apport-cli.py:100
+#: ../debian/tmp/usr/bin/apport-cli.py:100 ../bin/apport-cli.py:100
 #, python-format
 msgid "Please choose (%s):"
 msgstr "โปรดเลือก (%s):"
 
-#: ../bin/apport-cli.py:164 ../debian/tmp/usr/bin/apport-cli.py:164
+#: ../debian/tmp/usr/bin/apport-cli.py:164 ../bin/apport-cli.py:164
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i ไบต์)"
 
-#: ../bin/apport-cli.py:195 ../debian/tmp/usr/bin/apport-cli.py:195
+#: ../debian/tmp/usr/bin/apport-cli.py:195 ../bin/apport-cli.py:195
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -963,51 +956,51 @@ msgstr ""
 "หลังจากที่รายงานปัญหาถูกส่งไปแล้ว โปรดกรอกข้อมูลลงในแบบฟอร์ม\n"
 "ในโปรแกรมท่องเว็บที่เปิดขึ้นมาโดยอัตโนมัติ"
 
-#: ../bin/apport-cli.py:198 ../debian/tmp/usr/bin/apport-cli.py:198
+#: ../debian/tmp/usr/bin/apport-cli.py:198 ../bin/apport-cli.py:198
 #, python-format
 msgid "&Send report (%s)"
 msgstr ""
 
-#: ../bin/apport-cli.py:202 ../debian/tmp/usr/bin/apport-cli.py:202
+#: ../debian/tmp/usr/bin/apport-cli.py:202 ../bin/apport-cli.py:202
 msgid "&Examine locally"
 msgstr "&ตรวจในเครื่อง"
 
-#: ../bin/apport-cli.py:206 ../debian/tmp/usr/bin/apport-cli.py:206
+#: ../debian/tmp/usr/bin/apport-cli.py:206 ../bin/apport-cli.py:206
 msgid "&View report"
 msgstr ""
 
-#: ../bin/apport-cli.py:207 ../debian/tmp/usr/bin/apport-cli.py:207
+#: ../debian/tmp/usr/bin/apport-cli.py:207 ../bin/apport-cli.py:207
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "&เก็บแฟ้มรายงานไว้ส่งทีหลังหรือคัดลอกไปไว้ในที่อื่น ๆ"
 
-#: ../bin/apport-cli.py:208 ../debian/tmp/usr/bin/apport-cli.py:208
+#: ../debian/tmp/usr/bin/apport-cli.py:208 ../bin/apport-cli.py:208
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "ยกเลิกและเพิกเ&ฉยต่อการขัดข้องครั้งหน้าของโปรแกรมรุ่นนี้"
 
-#: ../bin/apport-cli.py:210 ../bin/apport-cli.py:287 ../bin/apport-cli.py:319
-#: ../bin/apport-cli.py:340 ../debian/tmp/usr/bin/apport-cli.py:210
+#: ../debian/tmp/usr/bin/apport-cli.py:210
 #: ../debian/tmp/usr/bin/apport-cli.py:287
 #: ../debian/tmp/usr/bin/apport-cli.py:319
-#: ../debian/tmp/usr/bin/apport-cli.py:340
+#: ../debian/tmp/usr/bin/apport-cli.py:340 ../bin/apport-cli.py:210
+#: ../bin/apport-cli.py:287 ../bin/apport-cli.py:319 ../bin/apport-cli.py:340
 msgid "&Cancel"
 msgstr "&ยกเลิก"
 
-#: ../bin/apport-cli.py:238 ../debian/tmp/usr/bin/apport-cli.py:238
+#: ../debian/tmp/usr/bin/apport-cli.py:238 ../bin/apport-cli.py:238
 msgid "Problem report file:"
 msgstr ""
 
-#: ../bin/apport-cli.py:244 ../bin/apport-cli.py:249
 #: ../debian/tmp/usr/bin/apport-cli.py:244
-#: ../debian/tmp/usr/bin/apport-cli.py:249
+#: ../debian/tmp/usr/bin/apport-cli.py:249 ../bin/apport-cli.py:244
+#: ../bin/apport-cli.py:249
 msgid "&Confirm"
 msgstr ""
 
-#: ../bin/apport-cli.py:248 ../debian/tmp/usr/bin/apport-cli.py:248
+#: ../debian/tmp/usr/bin/apport-cli.py:248 ../bin/apport-cli.py:248
 #, python-format
 msgid "Error: %s"
 msgstr ""
 
-#: ../bin/apport-cli.py:255 ../debian/tmp/usr/bin/apport-cli.py:255
+#: ../debian/tmp/usr/bin/apport-cli.py:255 ../bin/apport-cli.py:255
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -1015,7 +1008,7 @@ msgstr ""
 "ข้อมูลที่รวบรวมมาสามารถส่งไปให้นักพัฒนาเพื่อให้ทำการปรับปรุงโปรแกรมได้\n"
 "การดำเนินการนี้จะใช้เวลาเพียงไม่กี่นาที"
 
-#: ../bin/apport-cli.py:268 ../debian/tmp/usr/bin/apport-cli.py:268
+#: ../debian/tmp/usr/bin/apport-cli.py:268 ../bin/apport-cli.py:268
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1023,40 +1016,40 @@ msgstr ""
 "ข้อมูลที่รวบรวมมากำลังจะถูกส่งไปยังระบบติด\n"
 "ตามบั๊ก การดำเนินการนี้จะใช้เวลาเพียงไม่กี่นาที"
 
-#: ../bin/apport-cli.py:318 ../debian/tmp/usr/bin/apport-cli.py:318
+#: ../debian/tmp/usr/bin/apport-cli.py:318 ../bin/apport-cli.py:318
 msgid "&Done"
 msgstr ""
 
-#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:324
+#: ../debian/tmp/usr/bin/apport-cli.py:324 ../bin/apport-cli.py:324
 msgid "none"
 msgstr ""
 
-#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
+#: ../debian/tmp/usr/bin/apport-cli.py:325 ../bin/apport-cli.py:325
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "เลือกแล้ว: %s. หลายตัวเลือก:"
 
-#: ../bin/apport-cli.py:341 ../debian/tmp/usr/bin/apport-cli.py:341
+#: ../debian/tmp/usr/bin/apport-cli.py:341 ../bin/apport-cli.py:341
 msgid "Choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
+#: ../debian/tmp/usr/bin/apport-cli.py:355 ../bin/apport-cli.py:355
 msgid "Path to file (Enter to cancel):"
 msgstr "เส้นทางมายังแฟ้ม (กด Enter เพื่อยกเลิก):"
 
-#: ../bin/apport-cli.py:361 ../debian/tmp/usr/bin/apport-cli.py:361
+#: ../debian/tmp/usr/bin/apport-cli.py:361 ../bin/apport-cli.py:361
 msgid "File does not exist."
 msgstr ""
 
-#: ../bin/apport-cli.py:363 ../debian/tmp/usr/bin/apport-cli.py:363
+#: ../debian/tmp/usr/bin/apport-cli.py:363 ../bin/apport-cli.py:363
 msgid "This is a directory."
 msgstr ""
 
-#: ../bin/apport-cli.py:369 ../debian/tmp/usr/bin/apport-cli.py:369
+#: ../debian/tmp/usr/bin/apport-cli.py:369 ../bin/apport-cli.py:369
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 
-#: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
+#: ../debian/tmp/usr/bin/apport-cli.py:371 ../bin/apport-cli.py:371
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -1064,11 +1057,11 @@ msgstr ""
 "คุณสามารถเปิดโปรแกรมท่องเว็บได้แล้วตอนนี้ หรือคัดลอก URL "
 "นี้ไปยังโปรแกรมท่องเว็บบนคอมพิวเตอร์เครื่องอื่น"
 
-#: ../bin/apport-cli.py:373 ../debian/tmp/usr/bin/apport-cli.py:373
+#: ../debian/tmp/usr/bin/apport-cli.py:373 ../bin/apport-cli.py:373
 msgid "Launch a browser now"
 msgstr ""
 
-#: ../bin/apport-cli.py:388 ../debian/tmp/usr/bin/apport-cli.py:388
+#: ../debian/tmp/usr/bin/apport-cli.py:388 ../bin/apport-cli.py:388
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "ไม่มีรายงานปัญหาที่รออยู่ ลองเรียกคำสั่ง --help เพื่อดูข้อมูลเพิ่มเติม"
