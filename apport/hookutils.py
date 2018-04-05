@@ -626,6 +626,9 @@ def attach_gsettings_schema(report, schema):
             continue  # invalid line
 
         if value != defaults.get(schema_name, {}).get(key, ''):
+            if schema_name == b'org.gnome.shell' and \
+                    key in [b'command-history', b'favorite-apps']:
+                value = 'redacted by apport'
             cur_value += '%s %s %s\n' % (schema_name, key, value)
 
     report['GsettingsChanges'] = cur_value
