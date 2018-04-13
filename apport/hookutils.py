@@ -217,8 +217,7 @@ def attach_dmi(report):
                 continue
 
             try:
-                with open(p) as fd:
-                    value = fd.read().strip()
+                value = read_file(p)
             except (OSError, IOError):
                 continue
             if value:
