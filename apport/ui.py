@@ -559,7 +559,6 @@ class UserInterface:
         self.add_extra_tags()
 
         # delete the uninteresting keys
-        del self.report['ProblemType']
         del self.report['Date']
         try:
             del self.report['SourcePackage']

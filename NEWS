@@ -9,6 +9,8 @@ detailed list of changes, please see ChangeLog.
     we'll wait for gdb to return information as gdb can hang with some core
     files.
   * data/apport: Fix PEP8 issues
+  * apport/ui.py: Include ProblemType in reports which are updated as package
+    hooks may expect the report to have a ProblemType. (LP: #1766794)
 
 2.20.9 (2018-02-14)
 -------------------
