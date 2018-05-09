@@ -1045,7 +1045,7 @@ Debug::NoLocking "true";
         requested_pkgs = dict(packages)
         for p in real_pkgs.copy():
             if p in requested_pkgs:
-                if requested_pkgs[p] == None:
+                if requested_pkgs[p] is None:
                     # We already have the latest version of this package
                     if pkg_versions.get(p) == cache[p].candidate.version:
                         # print('Removing %s which is already the right version' % p)
