@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
+import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys, imp
 import subprocess, errno, glob
 
 try:
@@ -15,6 +15,11 @@ import apport.report
 import problem_report
 import apport.crashdb_impl.memory
 import stat
+
+if os.environ.get('APPORT_TEST_LOCAL'):
+    impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
+else:
+    from apport.packaging_impl import impl
 
 logind_session = apport.Report.get_logind_session(os.getpid())
 
@@ -1259,8 +1264,14 @@ bOgUs=
     def test_run_crash_kernel(self):
         '''run_crash() for a kernel error'''
 
+        sys_arch = impl.get_system_architecture()
+        if sys_arch in ['amd64', 'ppc64el']:
+            src_pkg = 'linux-signed'
+        else:
+            src_pkg = 'linux'
+
         # set up hook
-        f = open(os.path.join(self.hookdir, 'source_linux.py'), 'w')
+        f = open(os.path.join(self.hookdir, 'source_%s.py' % src_pkg), 'w')
         f.write('''def add_info(report, ui):
     report['KernelDebug'] = 'LotsMoreInfo'
 ''')
@@ -1269,7 +1280,7 @@ bOgUs=
         # generate crash report
         r = apport.Report('KernelCrash')
         r['Package'] = apport.packaging.get_kernel_package()
-        r['SourcePackage'] = 'linux'
+        r['SourcePackage'] = src_pkg
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -1302,7 +1313,8 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) +
                          ' ' + str(self.ui.msg_text))
         self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
+        self.assertEqual(self.ui.opened_url, 'http://%s.bugs.example.com/%i' %
+                         (src_pkg, self.ui.crashdb.latest_id()))
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue('SourcePackage' in self.ui.report.keys())

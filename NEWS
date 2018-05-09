@@ -11,6 +11,9 @@ detailed list of changes, please see ChangeLog.
   * data/apport: Fix PEP8 issues
   * apport/ui.py: Include ProblemType in reports which are updated as package
     hooks may expect the report to have a ProblemType. (LP: #1766794)
+  * test/test_ui.py: modify run_crash_kernel test to account for the fact that
+    linux-image-$kvers-$flavor is now built from the linux-signed source
+    package on amd64 and ppc64el. (LP: #1766740)
 
 2.20.9 (2018-02-14)
 -------------------
