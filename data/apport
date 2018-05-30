@@ -427,19 +427,20 @@ if len(sys.argv) == 6:
             sys.exit(0)
 
         sys.exit(0)
-    elif not is_same_ns(host_pid, "pid") and is_same_ns(host_pid, "mnt"):
+    elif not is_same_ns(host_pid, "mnt"):
+        error_log('host pid %s crashed in a separate mount namespace, ignoring' % host_pid)
+        sys.exit(0)
+    else:
         # If it doesn't look like the crash originated from within a
-        # full container, then take the global pid and replace the local
-        # pid with it, then move on to normal handling.
+        # full container or if the is_same_ns() function fails open (returning
+        # True), then take the global pid and replace the local pid with it,
+        # then move on to normal handling.
 
         # This bit is needed because some software like the chrome
         # sandbox will use container namespaces as a security measure but are
         # still otherwise host processes. When that's the case, we need to keep
         # handling those crashes locally using the global pid.
         sys.argv[1] = str(host_pid)
-    elif not is_same_ns(host_pid, "mnt"):
-        error_log('host pid %s crashed in a separate mount namespace, ignoring' % host_pid)
-        sys.exit(0)
 
 check_lock()
 
