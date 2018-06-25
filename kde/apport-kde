@@ -369,7 +369,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         response = self.dialog.exec_()
 
-        return_value = {'report': False, 'blacklist': False,
+        return_value = {'report': False, 'blacklist': False, 'remember': False,
                         'restart': False, 'examine': False}
         if response == QDialog.Rejected:
             return return_value
