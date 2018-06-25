@@ -75,6 +75,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.md = None
 
         self.desktop_info = None
+        self.allowed_to_report = True
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -180,15 +181,11 @@ class GTKUserInterface(apport.ui.UserInterface):
                                         _('Send problem report to the developers?'))
         self.w('title_label').show()
         self.w('subtitle_label').hide()
-        self.w('closed_button').hide()
         self.w('ignore_future_problems').hide()
         self.w('show_details').clicked()
         self.w('show_details').hide()
-        self.w('cancel_button').show()
-        self.w('cancel_button').connect('clicked', Gtk.main_quit)
+        self.w('dont_send_button').show()
         self.w('continue_button').set_label(_('Send'))
-        self.w('send_error_report').set_active(True)
-        self.w('send_error_report').hide()
 
     def set_modal_for(self, xid):
         gdk_window = self.w('dialog_crash_new')
@@ -207,18 +204,20 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('show_details').set_label(_('Show Details'))
         self.tree_model.clear()
 
-        if allowed_to_report:
-            self.w('send_error_report').set_active(True)
-            self.w('send_error_report').show()
+        self.allowed_to_report = allowed_to_report
+        if self.allowed_to_report:
+            self.w('remember_send_report_choice').show()
+            self.w('send_problem_notice_label').set_label(
+                '<b>%s</b>' % self.w('send_problem_notice_label').get_label())
+            self.w('send_problem_notice_label').show()
+            self.w('dont_send_button').grab_focus()
         else:
-            self.w('send_error_report').set_active(False)
-            self.w('send_error_report').hide()
+            self.w('dont_send_button').hide()
+            self.w('continue_button').set_label(_('Continue'))
+            self.w('continue_button').grab_focus()
 
         self.w('examine').set_visible(self.can_examine_locally())
 
-        self.w('continue_button').set_label(_('Continue'))
-
-        self.w('cancel_button').hide()
         if modal_for is not None and 'DISPLAY' in os.environ:
             xid = find_xid_for_pid(modal_for)
             if xid:
@@ -227,9 +226,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         if report_type == 'Hang' and self.offer_restart:
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
-            self.w('closed_button').show()
-            self.w('closed_button').set_label(_('Force Closed'))
-            self.w('continue_button').set_label(_('Relaunch'))
+            self.w('relaunch_app').set_active(True)
+            self.w('relaunch_app').show()
             self.w('subtitle_label').show()
             self.w('subtitle_label').set_label(
                 'You can wait to see if it wakes up, or close or relaunch it.')
@@ -245,13 +243,14 @@ class GTKUserInterface(apport.ui.UserInterface):
                 title = _('The program "%s" has stopped responding.') % name
             self.w('title_label').set_label('<big><b>%s</b></big>' % title)
         elif not self.report_file or report_type == 'Bug':
+            self.w('remember_send_report_choice').hide()
+            self.w('send_problem_notice_label').hide()
             self.setup_bug_report()
         elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label('<big><b>%s</b></big>' %
                                             self.get_system_application_title())
-            self.w('closed_button').hide()
             self.w('subtitle_label').hide()
             icon = 'distributor-logo'
         elif report_type == 'Package':
@@ -261,7 +260,6 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('subtitle_label').show()
             else:
                 self.w('subtitle_label').hide()
-            self.w('closed_button').hide()
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label(
                 _('Sorry, a problem occurred while installing software.'))
@@ -282,13 +280,9 @@ class GTKUserInterface(apport.ui.UserInterface):
 
                 pid = apport.ui.get_pid(self.report)
                 still_running = pid and apport.ui.still_running(pid)
-                if 'ProcCmdline' not in self.report or still_running or not self.offer_restart:
-                    self.w('closed_button').hide()
-                    self.w('continue_button').set_label(_('Continue'))
-                else:
-                    self.w('closed_button').show()
-                    self.w('closed_button').set_label(_('Leave Closed'))
-                    self.w('continue_button').set_label(_('Relaunch'))
+                if 'ProcCmdline' in self.report and not still_running and self.offer_restart:
+                    self.w('relaunch_app').set_active(True)
+                    self.w('relaunch_app').show()
             else:
                 icon = 'distributor-logo'
                 if report_type == 'RecoverableProblem':
@@ -302,8 +296,6 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('subtitle_label').set_label(
                     _('If you notice further problems, '
                       'try restarting the computer.'))
-                self.w('closed_button').hide()
-                self.w('continue_button').set_label(_('Continue'))
                 self.w('ignore_future_problems').set_label(_('Ignore future problems of this type'))
             if self.report.get('CrashCounter'):
                 self.w('ignore_future_problems').show()
@@ -353,7 +345,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         if len(sys.argv) == 1:
             d.set_focus_on_map(False)
 
-        return_value = {'report': False, 'blacklist': False,
+        return_value = {'report': False, 'blacklist': False, 'remember': False,
                         'restart': False, 'examine': False}
 
         def dialog_crash_dismissed(widget):
@@ -366,17 +358,24 @@ class GTKUserInterface(apport.ui.UserInterface):
                 Gtk.main_quit()
                 return
 
-            if self.w('send_error_report').get_active():
-                return_value['report'] = True
+            # Force close or leave close app are the default actions with no specifier
+            # in case of hangs or crash
+            if self.w('relaunch_app').get_active() and self.desktop_info and self.offer_restart:
+                return_value['restart'] = True
+
             if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
-            if widget == self.w('continue_button') and self.desktop_info and self.offer_restart:
-                return_value['restart'] = True
+
+            return_value['remember'] = self.w('remember_send_report_choice').get_active()
+
+            if widget == self.w('continue_button'):
+                return_value['report'] = self.allowed_to_report
+
             Gtk.main_quit()
 
         self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
         self.w('continue_button').connect('clicked', dialog_crash_dismissed)
-        self.w('closed_button').connect('clicked', dialog_crash_dismissed)
+        self.w('dont_send_button').connect('clicked', dialog_crash_dismissed)
         self.w('examine').connect('clicked', dialog_crash_dismissed)
         Gtk.main()
         return return_value

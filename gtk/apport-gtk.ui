@@ -162,6 +162,21 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkLabel" id="send_problem_notice_label">
+                    <property name="visible">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Send problem report to the developers?</property>
+                    <property name="use_markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkLabel" id="subtitle_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -172,7 +187,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -199,7 +214,7 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -209,13 +224,13 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
                     <child>
-                      <object class="GtkCheckButton" id="send_error_report">
-                        <property name="label" translatable="yes">Send an error report to help fix this problem</property>
-                        <property name="visible">True</property>
+                      <object class="GtkCheckButton" id="remember_send_report_choice">
+                        <property name="label" translatable="yes">Remember this in future</property>
+                        <property name="visible">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="active">True</property>
+                        <property name="active">False</property>
                         <property name="draw_indicator">True</property>
                       </object>
                       <packing>
@@ -239,11 +254,26 @@
                         <property name="position">1</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkCheckButton" id="relaunch_app">
+                        <property name="label" translatable="yes">Relaunch this application</property>
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
@@ -304,19 +334,6 @@
                         <property name="position">1</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkButton" id="cancel_button">
-                        <property name="label" translatable="yes">Cancel</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -332,8 +349,8 @@
                 <property name="can_focus">False</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkButton" id="closed_button">
-                    <property name="label" translatable="yes">Leave Closed</property>
+                  <object class="GtkButton" id="dont_send_button">
+                    <property name="label" translatable="yes">Don't send</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -347,7 +364,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="continue_button">
-                    <property name="label" translatable="yes">Continue</property>
+                    <property name="label" translatable="yes">Send</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
