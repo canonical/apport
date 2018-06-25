@@ -25,14 +25,15 @@ from apport.packaging_impl import impl as packaging
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 _config_file = '~/.config/apport/settings'
-_whoopsie_config_file = '/etc/default/whoopsie'
 
 
 def allowed_to_report():
     '''Check whether crash reporting is enabled.'''
 
-    return get_config('General', 'report_crashes', default=True,
-                      path=_whoopsie_config_file, bool=True)
+    try:
+        return subprocess.call(["/bin/systemctl", "-q", "is-enabled", "whoopsie.service"]) == 0
+    except OSError:
+        return False
 
 
 def find_package_desktopfile(package):
