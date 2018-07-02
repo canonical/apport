@@ -30,6 +30,9 @@ _config_file = '~/.config/apport/settings'
 def allowed_to_report():
     '''Check whether crash reporting is enabled.'''
 
+    if not os.access("/usr/bin/whoopsie", os.X_OK):
+        return True
+
     try:
         return subprocess.call(["/bin/systemctl", "-q", "is-enabled", "whoopsie.service"]) == 0
     except OSError:
