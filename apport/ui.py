@@ -305,6 +305,8 @@ class UserInterface:
                 self.restart()
             if response['blacklist']:
                 self.report.mark_ignore()
+            if response['remember']:
+                self.remember_send_report(response['report'])
             if not response['report']:
                 return
 
@@ -915,6 +917,26 @@ class UserInterface:
         }
 
         self.ui_run_terminal(cmds[response[0]])
+
+    def remember_send_report(self, send_report):
+        '''Put whoopsie in auto or never mode'''
+        if send_report:
+            send_report = "true"
+        else:
+            send_report = "false"
+        try:
+            subprocess.check_output(['/usr/bin/gdbus', 'call', '-y',
+                                     '-d', 'com.ubuntu.WhoopsiePreferences',
+                                     '-o', '/com/ubuntu/WhoopsiePreferences',
+                                     '-m', 'com.ubuntu.WhoopsiePreferences.SetReportCrashes', send_report])
+            subprocess.check_output(['/usr/bin/gdbus', 'call', '-y',
+                                     '-d', 'com.ubuntu.WhoopsiePreferences',
+                                     '-o', '/com/ubuntu/WhoopsiePreferences',
+                                     '-m', 'com.ubuntu.WhoopsiePreferences.SetAutomaticallyReportCrashes', 'true'])
+        except (OSError, subprocess.CalledProcessError) as e:
+            self.ui_error_message(_("Can't remember send report status settings"), '%s\n\n%s' % (
+                                  _("Saving crash reporting state failed. Can't set auto or never reporting mode."),
+                                  excstr(e)))
 
     def check_report_crashdb(self):
         '''Process reports' CrashDB field, if present'''

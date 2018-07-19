@@ -212,7 +212,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         while True:
             response = dialog.run()
 
-            return_value = {'restart': False, 'blacklist': False,
+            return_value = {'restart': False, 'blacklist': False, 'remember': False,
                             'report': False, 'examine': False}
             if response == examine:
                 return_value['examine'] = True

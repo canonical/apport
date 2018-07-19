@@ -89,7 +89,6 @@ class T(unittest.TestCase):
 
         def c(*args):
             self.app.w('dialog_crash_new').destroy()
-        self.app.w('send_error_report').set_active(True)
         GLib.idle_add(c)
         result = self.app.ui_present_report_details(True)
         self.assertFalse(result['report'])
@@ -98,10 +97,11 @@ class T(unittest.TestCase):
         '''
         +-----------------------------------------------------------------+
         | [ logo] YourDistro has experienced an internal error.           |
+        |            Send problem report to the developers?               |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Remember this in future                          |
         |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'KernelCrash'
@@ -110,14 +110,15 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('Sorry, %s has experienced an internal error.') % self.distro)
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
         self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
 
@@ -125,11 +126,12 @@ class T(unittest.TestCase):
         '''
         +-----------------------------------------------------------------+
         | [ error  ] Sorry, a problem occurred while installing software. |
+        |            Send problem report to the developers?               |
         |            Package: apport 1.2.3~0ubuntu1                       |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Remember this in future                          |
         |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Package'
@@ -139,36 +141,50 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('Sorry, a problem occurred while installing software.'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('Package: apport 1.2.3~0ubuntu1'))
 
     def test_regular_crash_thread_layout(self):
         '''A thread of execution has failed, but the application persists.'''
+        '''
+        +-----------------------------------------------------------------+
+        | [ logo] YourDistro has experienced an internal error.           |
+        |            Send problem report to the developers?               |
+        |            If you notice further problems, try restarting the   |
+        |            computer.                                            |
+        |                                                                 |
+        |            [ ] Remember this in future                          |
+        |                                                                 |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
+        +-----------------------------------------------------------------+
+        '''
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['ProcStatus'] = 'Name:\tupstart\nPid:\t1'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), _('Continue'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), _('Send'))
 
     def test_regular_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
+        |            Send problem report to the developers?               |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
-        |            [ ] Ignore future problems of this program version.  |
+        |            [ ] Remember this in future                          |
+        |            [ ] Ignore future problems of this program version   |
         |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
@@ -186,15 +202,16 @@ Type=Application''')
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('The application Apport has closed unexpectedly.'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         # no ProcCmdline, cannot restart
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_label().endswith(
@@ -204,11 +221,13 @@ Type=Application''')
         '''
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
+        |            Send problem report to the developers?               |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
-        |            [ ] Ignore future problems of this program version.  |
+        |            [ ] Remember this in future                          |
+        |            [ ] Ignore future problems of this program version   |
+        |            [X] Relaunch this application                        |
         |                                                                 |
-        | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         # pretend we got called through run_crashes() which sets offer_restart
@@ -229,28 +248,32 @@ Type=Application''')
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('The application Apport has closed unexpectedly.'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Relaunch'))
-        self.assertTrue(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_label().endswith(
             'of this program version'))
+        self.assertTrue(self.app.w('relaunch_app').get_property('visible'))
+        self.assertTrue(self.app.w('relaunch_app').get_active())
 
     def test_regular_crash_layout_norestart(self):
         '''
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
+        |            Send problem report to the developers?               |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Remember this in future                          |
         |            [ ] Ignore future problems of this program version.  |
         |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         # pretend we did not get called through run_crashes(), thus no offer_restart
@@ -270,19 +293,28 @@ Type=Application''')
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('The application Apport has closed unexpectedly.'))
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
 
     def test_hang_layout(self):
         '''
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has stopped responding.       |
+        |            Send problem report to the developers?               |
+        |            You can wait to see if it wakes up, or close, or     |
+        |            relaunch it.                                         |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Remember this in future                          |
+        |            [X] Relaunch this application                        |
         |                                                                 |
-        | [ Show Details ]                 [ Force Closed ]  [ Relaunch ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         # pretend we got called through run_crashes() which sets offer_restart
@@ -305,16 +337,15 @@ Type=Application''')
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('You can wait to see if it wakes up, or close or '
                            'relaunch it.'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Relaunch'))
-        self.assertTrue(self.app.w('closed_button').get_property('visible'))
-        self.assertEqual(self.app.w('closed_button').get_label(),
-                         _('Force Closed'))
+                         _('Send'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
 
@@ -322,13 +353,14 @@ Type=Application''')
         '''
         +---------------------------------------------------------------+
         | [ logo ] Sorry, YourDistro has experienced an internal error. |
+        |          Send problem report to the developers?               |
         |          If you notice further problems, try restarting the   |
         |          computer                                             |
         |                                                               |
-        |            [x] Send an error report to help fix this problem. |
+        |            [ ] Remember this in future                        |
         |            [ ] Ignore future problems of this type.           |
         |                                                               |
-        | [ Show Details ]                                 [ Continue ] |
+        | [ Show Details ]                    [ Don't send ]   [ Send ] |
         +---------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
@@ -342,14 +374,15 @@ Type=Application''')
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
         self.assertTrue(self.app.w('ignore_future_problems').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_label().endswith(
             'of this type'))
@@ -358,12 +391,13 @@ Type=Application''')
         '''
         +-------------------------------------------------------------------+
         | [ ubuntu ] Sorry, the application apport has closed unexpectedly. |
+        |            Send problem report to the developers?                 |
         |            If you notice further problems, try restarting the     |
         |            computer                                               |
         |                                                                   |
-        |            [x] Send an error report to help fix this problem.     |
+        |            [ ] Remember this in future                            |
         |                                                                   |
-        | [ Show Details ]                                     [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ]   |
         +-------------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
@@ -382,14 +416,15 @@ Type=Application''')
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
 
         del self.app.report['ExecutablePath']
         GLib.idle_add(Gtk.main_quit)
@@ -405,10 +440,11 @@ Type=Application''')
         '''
         +---------------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.          |
+        |            Send problem report to the developers?                   |
         |                                                                     |
-        |            [x] Send an error report to help fix this problem.       |
+        |            [ ] Remember this in future                              |
         |                                                                     |
-        | [ Show Details ] [ Examine locally ]  [ Leave Closed ] [ Relaunch ] |
+        | [ Show Details ] [ Examine locally ]      [ Don't send ]   [ Send ] |
         +---------------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
@@ -435,7 +471,7 @@ Type=Application''')
         |            | ...                                                | |
         |            +----------------------------------------------------+ |
         |                                                                   |
-        | [ Cancel ]                                               [ Send ] |
+        |                                         [ Don't send ]   [ Send ] |
         +-------------------------------------------------------------------+
         '''
         self.app.report_file = None
@@ -444,15 +480,15 @@ Type=Application''')
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('Send problem report to the developers?'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertFalse(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertFalse(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertFalse(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertFalse(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Send'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
-        self.assertTrue(self.app.w('cancel_button').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('details_scrolledwindow').get_property('visible'))
         self.assertTrue(self.app.w('dialog_crash_new').get_resizable())
 
@@ -469,15 +505,15 @@ Type=Application''')
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('Send problem report to the developers?'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertFalse(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertFalse(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertFalse(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertFalse(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Send'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
-        self.assertTrue(self.app.w('cancel_button').get_property('visible'))
+        self.assertTrue(self.app.w('dont_send_button').get_property('visible'))
         self.assertTrue(self.app.w('details_scrolledwindow').get_property('visible'))
         self.assertTrue(self.app.w('dialog_crash_new').get_resizable())
 
@@ -485,11 +521,12 @@ Type=Application''')
         '''
         +-----------------------------------------------------------------+
         | [ logo ] The application Foo has experienced an internal error. |
+        |            Send problem report to the developers?               |
         |          Developer-specified error text.                        |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Remember this in future                          |
         |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'RecoverableProblem'
@@ -511,21 +548,22 @@ Type=Application''')
         msg = 'Some developer-specified error text.'
         self.assertEqual(self.app.w('subtitle_label').get_text(), msg)
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
-        send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
-        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertTrue(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(),
-                         _('Continue'))
-        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+                         _('Send'))
 
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(False)
-        send_error_report = self.app.w('send_error_report')
-        self.assertFalse(send_error_report.get_property('visible'))
-        self.assertFalse(send_error_report.get_active())
+        self.assertFalse(self.app.w('send_problem_notice_label').get_property('visible'))
+        remember_send_error_report = self.app.w('remember_send_report_choice')
+        self.assertFalse(remember_send_error_report.get_property('visible'))
+        self.assertFalse(remember_send_error_report.get_active())
 
     @patch.object(GTKUserInterface, 'open_url')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
@@ -759,9 +797,9 @@ Type=Application''')
         '''Bug report for installed package'''
 
         def c(*args):
-            if not self.app.w('cancel_button').get_visible():
+            if not self.app.w('dont_send_button').get_visible():
                 return True
-            self.app.w('cancel_button').clicked()
+            self.app.w('dont_send_button').clicked()
             return False
 
         self.app.report_file = None
@@ -778,9 +816,9 @@ Type=Application''')
         '''Bug report for uninstalled package'''
 
         def c(*args):
-            if not self.app.w('cancel_button').get_visible():
+            if not self.app.w('dont_send_button').get_visible():
                 return True
-            self.app.w('cancel_button').clicked()
+            self.app.w('dont_send_button').clicked()
             return False
 
         pkg = apport.packaging.get_uninstalled_package()
