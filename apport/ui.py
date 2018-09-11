@@ -305,8 +305,13 @@ class UserInterface:
                 self.restart()
             if response['blacklist']:
                 self.report.mark_ignore()
-            if response['remember']:
-                self.remember_send_report(response['report'])
+            try:
+                if response['remember']:
+                    self.remember_send_report(response['report'])
+            # use try/expect for python2 support. Old reports (generated pre-apport 2.20.10-0ubuntu4)
+            # may not have the remember key and can be loaded afterwards (or after dist-upgrade)
+            except KeyError:
+                pass
             if not response['report']:
                 return
 
