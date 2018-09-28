@@ -958,14 +958,16 @@ Debug::NoLocking "true";
                                 pkg, ver, dbg.candidate.version)
                     real_pkgs.add(dbg_pkg)
                 except KeyError:
-                    # install all -dbg from the source package; lookup() just
-                    # works from the current list pointer, we always need to
-                    # start from the beginning
+                    # install only the matching -dbg from the source package
+                    # so we fall back to installing the -dbgsym package;
+                    # lookup() just works from the current list pointer, we
+                    # always need to start from the beginning
                     src_records.restart()
                     if src_records.lookup(candidate.source_name):
                         # ignore transitional packages
                         dbgs = [p for p in src_records.binaries
-                                if p.endswith('-dbg') and p in cache and
+                                if p.endswith('-dbg') and p.startswith(pkg) and
+                                p in cache and
                                 'transitional' not in cache[p].candidate.description]
                     else:
                         dbgs = []
