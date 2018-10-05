@@ -6,6 +6,9 @@ detailed list of changes, please see ChangeLog.
   * SECURITY UPDATE: Ensure that we propely handle crashes that originate from
     a PID namespace. Thanks to Sander Bos for discovering this issue.
     (CVE-2018-6552, LP: #1746668)
+  * backends/packaging-apt-dpkg.py: switch to using python3-launchpadlib to
+    communicate with Launchpad thereby gaining retry capabilities and using its
+    cache.
 
 2.20.10 (2018-05-09)
 --------------------

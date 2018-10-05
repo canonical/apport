@@ -51,7 +51,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._mirror = None
         self._virtual_mapping_obj = None
         self._launchpad_base = 'https://api.launchpad.net/devel'
-        self._archive_url = self._launchpad_base + '/%s/main_archive'
         self._ppa_archive_url = self._launchpad_base + '/~%(user)s/+archive/%(distro)s/%(ppaname)s'
 
     def __del__(self):
@@ -226,40 +225,36 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
-    def get_lp_binary_package(self, distro_id, package, version, arch):
-        package = quote(package)
-        version = quote(version)
-        ma = self.json_request(self._archive_url % distro_id)
-        if not ma:
+    def get_lp_binary_package(self, distro_id, release, package, version, arch):
+        from launchpadlib.launchpad import Launchpad
+        launchpad = Launchpad.login_anonymously('apport-retrace', 'production',
+                                                version='devel')
+        ubuntu = launchpad.distributions['ubuntu']
+        series = ubuntu.getSeries(name_or_version=release.split()[-1])
+        das = series.getDistroArchSeries(archtag=arch)
+        primary = ubuntu.getArchive(name='primary')
+        bpph = primary.getPublishedBinaries(binary_name=package, version=version,
+                                            distro_arch_series=das,
+                                            ordered=False,
+                                            exact_match=True)
+        if not bpph:
             return (None, None)
-        ma_link = ma['self_link']
-        pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
-                            (package, version))
-        bpub_url = ''
-        try:
-            pbs = self.json_request(pb_url, entries=True)
-            if not pbs:
-                return (None, None)
-            for pb in pbs:
-                if pb['architecture_specific'] == 'false':
-                    bpub_url = pb['self_link']
-                    break
-                else:
-                    if pb['distro_arch_series_link'].endswith(arch):
-                        bpub_url = pb['self_link']
-                        break
-        except IndexError:
+        for bp in bpph:
+            if bp.status == 'Deleted':
+                continue
+            if not bp.architecture_specific:
+                # include_meta is required to get the sha1
+                bf_urls = bp.binaryFileUrls(include_meta=True)
+                break
+            elif bp.distro_arch_series_link.endswith(arch):
+                bf_urls = bp.binaryFileUrls(include_meta=True)
+                break
+        if not bf_urls:
             return (None, None)
-        if not bpub_url:
-            return (None, None)
-        bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
-        bfs = self.json_request(bf_urls)
-        if not bfs:
-            return (None, None)
-        for bf in bfs:
+        for bf in bf_urls:
             # return the first binary file url since there being more than one
             # is theoretical
-            return (unquote(bf['url']), bf['sha1'])
+            return(bf['url'], bf['sha1'])
 
     def json_request(self, url, entries=False):
         '''Open, read and parse the json of a url
@@ -288,33 +283,26 @@ class __AptDpkgPackageInfo(PackageInfo):
             return json.loads(content)
 
     def get_lp_source_package(self, distro_id, package, version):
-        package = quote(package)
-        version = quote(version)
-        ma = self.json_request(self._archive_url % distro_id)
-        if not ma:
+        from launchpadlib.launchpad import Launchpad
+        launchpad = Launchpad.login_anonymously('apport-retrace', 'production',
+                                                version='devel')
+        ubuntu = launchpad.distributions['ubuntu']
+        primary = ubuntu.getArchive(name='primary')
+        pss = primary.getPublishedSources(source_name=package, version=version,
+                                          exact_match=True)
+        if not pss:
             return None
-        ma_link = ma['self_link']
-        ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
-                            (package, version))
-        # use the first entry as they are sorted chronologically
-        try:
-            ps = self.json_request(ps_url, entries=True)[0]['self_link']
-        except IndexError:
-            return None
-        if not ps:
-            return None
-        sf_urls = ps + '?ws.op=sourceFileUrls'
-        sfus = self.json_request(sf_urls)
+        for ps in pss:
+            if ps.status == 'Deleted':
+                continue
+            sfus = ps.sourceFileUrls()
+            # use the first entry as they are sorted chronologically
+            break
         if not sfus:
             return None
-
         source_files = []
         for sfu in sfus:
-            if sys.version_info.major == 2 and isinstance(sfu, unicode):
-                    sfu = sfu.encode('utf-8')
-            sfu = unquote(sfu)
             source_files.append(sfu)
-
         return source_files
 
     def get_architecture(self, package):
@@ -858,6 +846,7 @@ Debug::NoLocking "true";
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                               release,
                                                                pkg, ver, architecture)
                 if lp_url:
                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
@@ -942,6 +931,7 @@ Debug::NoLocking "true";
                             pkg_found = True
                         except KeyError:
                             (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                           release,
                                                                            dbg_pkg, ver, architecture)
                             if lp_url:
                                 acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
@@ -985,6 +975,7 @@ Debug::NoLocking "true";
                                     pkg_found = True
                                 except KeyError:
                                     (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   release,
                                                                                    p, ver, architecture)
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
@@ -1014,6 +1005,7 @@ Debug::NoLocking "true";
                                     pkg_found = True
                                 except KeyError:
                                     (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   release,
                                                                                    dbgsym_pkg, ver, architecture)
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
@@ -1031,6 +1023,7 @@ Debug::NoLocking "true";
                         except KeyError:
                             if ver:
                                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                               release,
                                                                                dbgsym_pkg, ver, architecture)
                                 if lp_url:
                                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
