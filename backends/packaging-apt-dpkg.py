@@ -50,9 +50,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
+        self._contents_mapping_obj = None
         self._launchpad_base = 'https://api.launchpad.net/devel'
         self._archive_url = self._launchpad_base + '/%s/main_archive'
         self._ppa_archive_url = self._launchpad_base + '/~%(user)s/+archive/%(distro)s/%(ppaname)s'
+        self._contents_update = False
 
     def __del__(self):
         try:
@@ -79,6 +81,25 @@ class __AptDpkgPackageInfo(PackageInfo):
         if self._virtual_mapping_obj is not None:
             with open(mapping_file, 'wb') as fp:
                 pickle.dump(self._virtual_mapping_obj, fp)
+
+    def _contents_mapping(self, configdir, arch):
+        if self._contents_mapping_obj is not None:
+            return self._contents_mapping_obj
+
+        mapping_file = os.path.join(configdir, 'contents_mapping-%s.pickle' % arch)
+        if os.path.exists(mapping_file):
+            with open(mapping_file, 'rb') as fp:
+                self._contents_mapping_obj = pickle.load(fp)
+        else:
+            self._contents_mapping_obj = {}
+
+        return self._contents_mapping_obj
+
+    def _save_contents_mapping(self, configdir, arch):
+        mapping_file = os.path.join(configdir, 'contents_mapping-%s.pickle' % arch)
+        if self._contents_mapping_obj is not None:
+            with open(mapping_file, 'wb') as fp:
+                pickle.dump(self._contents_mapping_obj, fp)
 
     def _cache(self):
         '''Return apt.Cache() (initialized lazily).'''
@@ -1231,12 +1252,14 @@ Debug::NoLocking "true";
             release = self.get_distro_codename()
         else:
             release = self._distro_release_to_codename(release)
-        # search -proposed last since file may be provided by a new package
-        for pocket in ['-updates', '-security', '', '-proposed']:
-            map = os.path.join(dir, '%s%s-Contents-%s.gz' % (release, pocket, arch))
-
-            # check if map exists and is younger than a day; if not, we need to
-            # refresh it
+        # this is ordered by likelihood of installation with the most common
+        # last
+        for pocket in ['-proposed', '', '-security', '-updates']:
+            map = os.path.join(dir, '%s%s-Contents-%s.gz' % \
+                                    (release, pocket, arch))
+            # check if map exists and is younger than a day; if not, we need
+            # to refresh it
+            update = False
             try:
                 st = os.stat(map)
                 age = int(time.time() - st.st_mtime)
@@ -1270,6 +1293,7 @@ Debug::NoLocking "true";
                 else:
                     update = True
                 if update:
+                    self._contents_update = True
                     try:
                         src = urlopen(url)
                     except IOError:
@@ -1289,32 +1313,54 @@ Debug::NoLocking "true";
                     src.close()
                     assert os.path.exists(map)
 
-            if file.startswith('/'):
-                file = file[1:]
-
-            # zgrep is magnitudes faster than a 'gzip.open/split() loop'
-            package = None
-            try:
-                zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
-                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                out = zgrep.communicate()[0].decode('UTF-8')
-            except OSError as e:
-                if e.errno != errno.ENOMEM:
-                    raise
-                file_b = file.encode()
+            contents_mapping = self._contents_mapping(dir, arch)
+            # if the mapping is empty build it
+            if not contents_mapping:
+                self._contents_update = True
+            # if any of the Contents files were updated we need to update the
+            # map because the ordering in which is created is important
+            if self._contents_update:
                 import gzip
                 with gzip.open('%s' % map, 'rb') as contents:
-                    out = ''
+                    line_num = 0
                     for line in contents:
-                        if line.startswith(file_b):
-                            out = line
-                            break
-            # we do not check the return code, since zgrep -m1 often errors out
-            # with 'stdout: broken pipe'
-            if out:
-                package = out.split()[1].split(',')[0].split('/')[-1]
-            if package:
-                return package
+                        line_num += 1
+                        # the first 32 lines are descriptive only for these
+                        # releases
+                        if pocket == '' and release in ['trusty', 'xenial'] \
+                                and line_num < 33:
+                            continue
+                        path = line.split()[0]
+                        if path.split(b'/')[0] == b'usr' and \
+                                path.split(b'/')[1] in (b'lib', b'bin', b'sbin'):
+                            package = line.split()[-1].split(b',')[0].split(b'/')[-1]
+                        elif path.split(b'/')[0] in (b'lib', b'bin', b'sbin'):
+                            package = line.split()[-1].split(b',')[0].split(b'/')[-1]
+                        else:
+                            continue
+                        if path in contents_mapping:
+                            if package == contents_mapping[path]:
+                                continue
+                            else:
+                                # if the package was updated use the update
+                                # b/c everyone should have packages from
+                                # -updates and -security installed
+                                contents_mapping[path] = package
+                        else:
+                            contents_mapping[path] = package
+        # the file only needs to be saved after an update
+        if self._contents_update:
+            self._save_contents_mapping(dir, arch)
+            # the update of the mapping only needs to be done once
+            self._contents_update = False
+        if file.startswith('/'):
+            file = file[1:]
+        file = file.encode()
+        try:
+            pkg = contents_mapping[file].decode()
+            return pkg
+        except KeyError:
+            pass
         return None
 
     @classmethod
