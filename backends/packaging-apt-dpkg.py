@@ -1303,9 +1303,10 @@ Debug::NoLocking "true";
                             out = line
                             break
             # we do not check the return code, since zgrep -m1 often errors out
-            # with 'stdout: broken pipe'
+            # with 'stdout: broken pipe'. The contents file can contain files
+            # with spaces in the name so use the part after the last space.
             if out:
-                package = out.split()[1].split(',')[0].split('/')[-1]
+                package = out.split()[-1].split(',')[0].split('/')[-1]
             if package:
                 return package
         return None
