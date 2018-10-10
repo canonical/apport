@@ -493,7 +493,7 @@ deb http://secondary.mirror tuxy extra
         v_coreutils = '8.25-2ubuntu2'
         v_libc = '2.23-0ubuntu3'
         obsolete = impl.install_packages(self.rootdir, self.configdir,
-                                         'Foonux 1.2',
+                                         'Foonux 16.04',
                                          [('coreutils', v_coreutils),  # should not come from updates
                                           ('libc6', v_libc),
                                           ('tzdata', None),  # should come from -updates, > 2014b-1
@@ -534,14 +534,14 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(len(pkglist), 5, str(pkglist))
 
         # does not clobber config dir
-        self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
+        self.assertEqual(os.listdir(self.configdir), ['Foonux 16.04'])
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 16.04'))),
                          ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
-        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))),
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 16.04', 'armhf'))),
                          ['sources.list', 'trusted.gpg.d'])
 
         # caches packages, and their versions are as expected
-        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 16.04', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         cache_versions = {}
         for p in cache:
@@ -560,7 +560,7 @@ deb http://secondary.mirror tuxy extra
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         obsolete = impl.install_packages(self.rootdir, self.configdir,
-                                         'Foonux 1.2',
+                                         'Foonux 16.04',
                                          [('coreutils', v_coreutils),
                                          ], False, self.cachedir)
         self.assertEqual(obsolete, '')
@@ -569,7 +569,7 @@ deb http://secondary.mirror tuxy extra
 
         # complains about obsolete packages
         result = impl.install_packages(self.rootdir, self.configdir,
-                                       'Foonux 1.2', [('aspell-doc', '1.1')])
+                                       'Foonux 16.04', [('aspell-doc', '1.1')])
         self.assertIn(result, 'aspell-doc version 1.1 required, but 0.60.7~20110707-3build1 is available\n')
         # ... but installs the current version anyway
         self.assertTrue(os.path.exists(
@@ -578,7 +578,7 @@ deb http://secondary.mirror tuxy extra
 
         # does not crash on nonexisting packages
         result = impl.install_packages(self.rootdir, self.configdir,
-                                       'Foonux 1.2', [('buggerbogger', None)])
+                                       'Foonux 16.04', [('buggerbogger', None)])
         self.assertEqual(len(result.splitlines()), 1)
         self.assertIn('buggerbogger', result)
         self.assertIn('not exist', result)
@@ -595,7 +595,7 @@ deb http://secondary.mirror tuxy extra
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         os.unlink(os.path.join(self.rootdir, 'packages.txt'))
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 16.04',
                               [('coreutils', v_coreutils),
                                ('dpkg', None),
                               ], False, self.cachedir)
@@ -610,7 +610,7 @@ deb http://secondary.mirror tuxy extra
 
         self._setup_foonux_config(release='xenial')
         obsolete = impl.install_packages(self.rootdir, self.configdir,
-                                         'Foonux 1.2',
+                                         'Foonux 16.04',
                                          [('coreutils', None),
                                           ('tzdata', None),
                                          ], False, None)
@@ -626,10 +626,10 @@ deb http://secondary.mirror tuxy extra
                                                     'usr/share/zoneinfo/zone.tab')))
 
         # does not clobber config dir
-        self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
+        self.assertEqual(os.listdir(self.configdir), ['Foonux 16.04'])
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 16.04'))),
                          ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
-        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))),
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 16.04', 'armhf'))),
                          ['sources.list', 'trusted.gpg.d'])
 
         # no cache
@@ -650,7 +650,7 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config(release='xenial')
         # coreutils should always depend on libc6
         result = impl.install_packages(self.rootdir, self.configdir,
-                                       'Foonux 1.2',
+                                       'Foonux 16.04',
                                        [('coreutils', None)],
                                        False, None, install_deps=True)
 
@@ -672,8 +672,11 @@ deb http://secondary.mirror tuxy extra
         # reset properly
         impl.get_version('dash')
 
-        self._setup_foonux_config()
-        result = impl.install_packages(self.rootdir, None, None,
+        self._setup_foonux_config(impl.get_distro_codename())
+        lsb_release = subprocess.Popen(['lsb_release', '-sr'],
+                                       stdout=subprocess.PIPE)
+        system_version = lsb_release.communicate()[0].decode('UTF-8').strip()
+        result = impl.install_packages(self.rootdir, None, system_version,
                                        [('coreutils', impl.get_version('coreutils')),
                                         ('tzdata', '1.1'),
                                        ], False, self.cachedir)
@@ -715,11 +718,11 @@ deb http://secondary.mirror tuxy extra
 
         # sources.list with invalid format
         self._setup_foonux_config()
-        with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+        with open(os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'), 'w') as f:
             f.write('bogus format')
 
         try:
-            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                   [('tzdata', None)], False, self.cachedir)
             self.fail('install_packages() unexpectedly succeeded with broken sources.list')
         except SystemError as e:
@@ -727,11 +730,11 @@ deb http://secondary.mirror tuxy extra
             self.assertNotIn('Exception', str(e))
 
         # sources.list with wrong server
-        with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+        with open(os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'), 'w') as f:
             f.write('deb http://archive.ubuntu.com/nosuchdistro/ trusty main\n')
 
         try:
-            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                   [('tzdata', None)], False, self.cachedir)
             self.fail('install_packages() unexpectedly succeeded with broken server URL')
         except SystemError as e:
@@ -748,7 +751,7 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         zonetab = os.path.join(self.rootdir, 'usr/share/zoneinfo/zone.tab')
 
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('tzdata', None)], False, self.cachedir, permanent_rootdir=True)
 
         # This will now be using a Cache with our rootdir.
@@ -759,7 +762,7 @@ deb http://secondary.mirror tuxy extra
         tzdata_written = os.path.getctime(tzdata[0])
         zonetab_written = os.path.getctime(zonetab)
 
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('coreutils', None), ('tzdata', None)], False, self.cachedir,
                               permanent_rootdir=True)
 
@@ -784,24 +787,24 @@ deb http://secondary.mirror tuxy extra
             orig_no_proxy = None
 
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
-                          self.configdir, 'Foonux 1.2', [('libc6', None)], False,
+                          self.configdir, 'Foonux 14.04', [('libc6', None)], False,
                           self.cachedir, permanent_rootdir=True)
 
         # These packages exist, so attempting to install them should not fail.
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('coreutils', None), ('tzdata', None)], False, self.cachedir,
                               permanent_rootdir=True)
         # even without cached debs, trying to install the same versions should
         # be a no-op and succeed
-        for f in glob.glob('%s/Foonux 1.2/apt/var/cache/apt/archives/coreutils*' % self.cachedir):
+        for f in glob.glob('%s/Foonux 14.04/apt/var/cache/apt/archives/coreutils*' % self.cachedir):
             os.unlink(f)
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('coreutils', None)], False, self.cachedir,
                               permanent_rootdir=True)
 
         # trying to install another package should fail, though
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
-                          self.configdir, 'Foonux 1.2', [('aspell-doc', None)], False,
+                          self.configdir, 'Foonux 14.04', [('aspell-doc', None)], False,
                           self.cachedir, permanent_rootdir=True)
 
         # restore original proxy settings
@@ -817,17 +820,17 @@ deb http://secondary.mirror tuxy extra
     def test_install_packages_permanent_sandbox_repack(self):
         self._setup_foonux_config()
         include_path = os.path.join(self.rootdir, 'usr/include/krb5.h')
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('libkrb5-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
         self.assertIn('mit-krb5/', os.readlink(include_path))
 
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('heimdal-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
         self.assertIn('heimdal/', os.readlink(include_path))
 
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                               [('libkrb5-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
         self.assertIn('mit-krb5/', os.readlink(include_path))
@@ -838,7 +841,7 @@ deb http://secondary.mirror tuxy extra
         '''install_packages() for foreign architecture armhf'''
 
         self._setup_foonux_config(release='xenial')
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 16.04',
                                          [('coreutils', None),
                                           ('libc6', '2.23-0ubuntu0'),
                                          ], False, self.cachedir,
@@ -852,7 +855,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/share/doc/libc6/copyright')))
         # caches packages
-        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'armhf', 'apt',
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 16.04', 'armhf', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         self.assertIn('coreutils_8.25-2ubuntu2_armhf.deb', cache)
         self.assertIn('libc6_2.23-0ubuntu3_armhf.deb', cache)
@@ -862,7 +865,7 @@ deb http://secondary.mirror tuxy extra
         '''install_packages() using packages only available on Launchpad'''
 
         self._setup_foonux_config()
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                          [('oxideqt-codecs',
                                            '1.6.6-0ubuntu0.14.04.1'),
                                           ('distro-info-data',
@@ -910,7 +913,7 @@ deb http://secondary.mirror tuxy extra
                       pkglist)
 
         # caches packages, and their versions are as expected
-        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 14.04', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
 
         # archive and launchpad versions of packages exist in the cache, so use a list
@@ -931,7 +934,7 @@ deb http://secondary.mirror tuxy extra
         '''sandbox will install older package versions from launchpad'''
 
         self._setup_foonux_config()
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                          [('oxideqt-codecs',
                                            '1.7.8-0ubuntu0.14.04.1'),
                                          ], False, self.cachedir)
@@ -952,7 +955,7 @@ deb http://secondary.mirror tuxy extra
             pkglist = f.read().splitlines()
         self.assertIn('oxideqt-codecs 1.7.8-0ubuntu0.14.04.1', pkglist)
 
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                          [('oxideqt-codecs',
                                            '1.6.6-0ubuntu0.14.04.1'),
                                          ], False, self.cachedir)
@@ -973,7 +976,7 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
                                 'ubuntu', 'trusty', origins=None)
         res = impl.get_source_tree('base-files', out_dir, sandbox=self.rootdir,
                                    apt_update=True)
@@ -988,7 +991,7 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
                                 'ubuntu', 'trusty', origins=None)
         res = impl.get_source_tree('debian-installer', out_dir, version='20101020ubuntu318.16',
                                    sandbox=self.rootdir, apt_update=True)
@@ -1003,7 +1006,7 @@ deb http://secondary.mirror tuxy extra
         '''Add sources.list entries for a named PPA.'''
         ppa = 'LP-PPA-daisy-pluckers-daisy-seeds'
         self._setup_foonux_config()
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
                                 'ubuntu', 'trusty', origins=[ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
@@ -1024,7 +1027,7 @@ deb http://secondary.mirror tuxy extra
         '''Add sources.list entries for an unnamed PPA.'''
         ppa = 'LP-PPA-brian-murray'
         self._setup_foonux_config()
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
                                 'ubuntu', 'trusty', origins=[ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
@@ -1044,7 +1047,7 @@ deb http://secondary.mirror tuxy extra
         '''Use a sources.list.d file for a PPA.'''
         ppa = 'fooser-bar-ppa'
         self._setup_foonux_config(ppa=True)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
                                 'ubuntu', 'trusty', origins=['LP-PPA-%s' % ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
@@ -1056,7 +1059,7 @@ deb http://secondary.mirror tuxy extra
         '''Install a package from a PPA.'''
         ppa = 'LP-PPA-brian-murray'
         self._setup_foonux_config()
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
                                          [('apport',
                                            '2.14.1-0ubuntu3.7~ppa4')
                                          ], False, self.cachedir, origins=[ppa])
@@ -1078,15 +1081,19 @@ deb http://secondary.mirror tuxy extra
            in sources.list.d used to test copying of a sources.list file to a
            sandbox.
         '''
-
+        versions = {'trusty': '14.04',
+                    'xenial': '16.04',
+                    'boinic': '18.04',
+                    'cosmic': '18.10'}
+        vers = versions[release]
         self.cachedir = os.path.join(self.workdir, 'cache')
         self.rootdir = os.path.join(self.workdir, 'root')
         self.configdir = os.path.join(self.workdir, 'config')
         os.mkdir(self.cachedir)
         os.mkdir(self.rootdir)
         os.mkdir(self.configdir)
-        os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
-        with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+        os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers))
+        with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list'), 'w') as f:
             f.write('deb http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
             f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
             f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
@@ -1095,12 +1102,12 @@ deb http://secondary.mirror tuxy extra
                 f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s-updates main\n' % release)
                 f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
         if ppa:
-            os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list.d'))
-            with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list.d', 'fooser-bar-ppa.list'), 'w') as f:
+            os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list.d'))
+            with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list.d', 'fooser-bar-ppa.list'), 'w') as f:
                 f.write('deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu %s main main/debug\n' % release)
                 f.write('deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu %s main\n' % release)
-        os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
-        with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
+        os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf'))
+        with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf', 'sources.list'), 'w') as f:
             f.write('deb http://ports.ubuntu.com/ %s main\n' % release)
             f.write('deb-src http://ports.ubuntu.com/ %s main\n' % release)
             f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
@@ -1108,11 +1115,11 @@ deb http://secondary.mirror tuxy extra
                 f.write('deb http://ports.ubuntu.com/ %s-updates main\n' % release)
                 f.write('deb-src http://ports.ubuntu.com/ %s-updates main\n' % release)
                 f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
-        with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
+        with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'codename'), 'w') as f:
             f.write('%s' % release)
 
         # install GPG key for ddebs
-        keyring_dir = os.path.join(self.configdir, 'Foonux 1.2', 'trusted.gpg.d')
+        keyring_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'trusted.gpg.d')
         os.makedirs(keyring_dir, exist_ok=True)
         shutil.copy('/usr/share/keyrings/ubuntu-archive-keyring.gpg', keyring_dir)
         subprocess.check_call(['apt-key', '--keyring', os.path.join(keyring_dir, 'ddebs.ubuntu.com.gpg'),
@@ -1122,7 +1129,7 @@ deb http://secondary.mirror tuxy extra
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
-        keyring_arch_dir = os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'trusted.gpg.d')
+        keyring_arch_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf', 'trusted.gpg.d')
         os.symlink("../trusted.gpg.d", keyring_arch_dir)
 
     def assert_elf_arch(self, path, expected):
