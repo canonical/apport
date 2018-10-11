@@ -9,6 +9,10 @@ detailed list of changes, please see ChangeLog.
   * backends/packaging-apt-dpkg.py: switch to using python3-launchpadlib to
     communicate with Launchpad thereby gaining retry capabilities and using its
     cache.
+  * backends/packaging-apt-dpkg.py: utilize a global mapping of files to
+    packages instead of searching a Contents.gz file multiple times,
+    additionally write this mapping to disk so subsequent lookups and retraces
+    are quicker. (LP: #1370230)
 
 2.20.10 (2018-05-09)
 --------------------
