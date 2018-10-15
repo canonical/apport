@@ -260,6 +260,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                             exact_match=True)
         if not bpph:
             return (None, None)
+        bf_urls = ''
         for bp in bpph:
             if bp.status == 'Deleted':
                 continue
@@ -313,6 +314,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                           exact_match=True)
         if not pss:
             return None
+        sfus = ''
         for ps in pss:
             if ps.status == 'Deleted':
                 continue
