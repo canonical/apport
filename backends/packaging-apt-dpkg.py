@@ -963,6 +963,10 @@ Debug::NoLocking "true";
                                                                              destdir=archivedir))
                                 lp_cache[dbg_pkg] = ver
                                 pkg_found = True
+                            # if it can't be found in Launchpad failover to a
+                            # code path that'll use -dbgsym packages
+                            else:
+                                raise KeyError
                     if not pkg_found:
                         try:
                             dbg.candidate = dbg.versions[candidate.version]
@@ -982,6 +986,12 @@ Debug::NoLocking "true";
                                 if p.endswith('-dbg') and p.startswith(pkg) and
                                 p in cache and
                                 'transitional' not in cache[p].candidate.description]
+                        # if a specific version of a package was requested
+                        # only install dbg pkgs whose version matches
+                        if ver:
+                            for dbg in dbgs:
+                                if cache[dbg].candidate.version != ver:
+                                    dbgs.remove(dbg)
                     else:
                         dbgs = []
                     if dbgs:
