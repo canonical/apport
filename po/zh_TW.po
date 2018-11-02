@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2018-10-18 05:31+0000\n"
-"X-Generator: Launchpad (build 18790)\n"
+"X-Launchpad-Export-Date: 2018-11-02 04:33+0000\n"
+"X-Generator: Launchpad (build 18810)\n"
 "Language: \n"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
@@ -174,7 +174,7 @@ msgstr "程式「%s」已停止回應。"
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:259 ../kde/apport-kde.py:208
 #, python-format
 msgid "Package: %s"
-msgstr "套件：%s"
+msgstr "軟體包：%s"
 
 #: ../gtk/apport-gtk.py:265 ../debian/tmp/usr/share/apport/apport-kde.py:214
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:265 ../kde/apport-kde.py:214
@@ -300,7 +300,7 @@ msgstr ""
 #: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
 msgid ""
 "report download/install progress when installing packages into sandbox"
-msgstr ""
+msgstr "當軟體包安裝至沙箱時回報下載/安裝進度"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
 msgid ""
@@ -313,7 +313,7 @@ msgstr "可執行的文件下運作記憶體洩漏檢測工具"
 #: ../bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "安裝額外軟體包至沙箱內 (可以指定多次)"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
 #, python-format
@@ -357,7 +357,7 @@ msgstr "覆蓋報告的行程對映（ProcMaps）"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
-msgstr "重建報告的套件資訊"
+msgstr "重建報告的軟體包資訊"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
@@ -368,11 +368,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"建立暫時沙箱，並下載/安裝需要的軟體包與除錯符於該沙箱中；若不採用此選項，將假定需要的軟體包與除錯符都已經安裝在系統之內。引數指向打包系統組態的基礎目錄；"
+"如果您有指定「system」(系統) 的話，它會使用系統組態檔，但是接著只能回追發生於目前執行中發行版的當掉情形。"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid ""
 "Report download/install progress when installing packages into sandbox"
-msgstr ""
+msgstr "當軟體包安裝至沙箱時回報下載/安裝進度"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -385,13 +387,13 @@ msgstr "製作並使用指定的第三方軟體庫來源置於報告中"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "為下載於沙箱內的軟體包製作目錄快取"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
-msgstr "解包套件的目錄。未來執行時將假定任何已下載的套件也都抽出於此沙盒中。"
+msgstr "解開軟體包的目錄。未來執行時將假定任何已下載的軟體包也都抽出於此沙盒中。"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
 msgid ""
@@ -424,7 +426,7 @@ msgstr "允許傳送這些附件？"
 #: ../apport/ui.py:144
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:144
 msgid "This package does not seem to be installed correctly"
-msgstr "這個套件似乎尚未正確安裝"
+msgstr "這個軟體包似乎尚未正確安裝"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:149
 #: ../apport/ui.py:149
@@ -433,7 +435,7 @@ msgstr "這個套件似乎尚未正確安裝"
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr "這不是官方的 %s 套件。請移除任何第三方套件並重試。"
+msgstr "這不是官方的 %s 軟體包。請移除任何第三方軟體包並重試。"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:166
 #: ../apport/ui.py:166
@@ -445,7 +447,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"您安裝了某些已過時的套件。請升級以下套件以及檢查問題是否繼續產生：\n"
+"您安裝了某些已過時的軟體包。請升級以下軟體包以及檢查問題是否繼續產生：\n"
 "\n"
 "%s"
 
@@ -523,7 +525,7 @@ msgstr "沒有足夠的磁碟空間以處理此份報告。"
 #: ../apport/ui.py:444
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:444
 msgid "No package specified"
-msgstr "未指定套件"
+msgstr "未指定軟體包"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:445
 #: ../apport/ui.py:445
@@ -563,14 +565,14 @@ msgstr "指定的程序 ID 並不屬於一個程式。"
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:491
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr "徵狀判斷指令稿 %s 無法判斷出受影響的套件"
+msgstr "徵狀判斷指令稿 %s 無法判斷出受影響的軟體包"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:494
 #: ../apport/ui.py:494
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:494
 #, python-format
 msgid "Package %s does not exist"
-msgstr "套件 %s 不存在"
+msgstr "%s 軟體包不存在"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:518
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:705
@@ -669,7 +671,7 @@ msgstr ""
 #: ../apport/ui.py:727
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:727
 msgid "Specify package name."
-msgstr ""
+msgstr "指定軟體包名稱。"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:729
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:780
@@ -836,7 +838,7 @@ msgstr "試圖處理問題回報時遭遇錯誤："
 #: ../apport/ui.py:1195
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1195
 msgid "Could not determine the package or source package name."
-msgstr "無法決定套件或原始碼套件名稱。"
+msgstr "無法決定軟體包或原始碼軟體包名稱。"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1213
 #: ../apport/ui.py:1213
