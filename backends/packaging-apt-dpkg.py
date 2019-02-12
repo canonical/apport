@@ -13,7 +13,6 @@ This is used on Debian and derivatives such as Ubuntu.
 # the full text of the license.
 
 import subprocess, os, glob, stat, sys, tempfile, shutil, time
-import errno
 import hashlib
 import json
 
@@ -975,16 +974,14 @@ Debug::NoLocking "true";
                                 pkg, ver, dbg.candidate.version)
                     real_pkgs.add(dbg_pkg)
                 except KeyError:
-                    # install only the matching -dbg from the source package
-                    # so we fall back to installing the -dbgsym package;
-                    # lookup() just works from the current list pointer, we
-                    # always need to start from the beginning
+                    # install all -dbg from the source package; lookup() just
+                    # works from the current list pointer, we always need to
+                    # start from the beginning
                     src_records.restart()
                     if src_records.lookup(candidate.source_name):
                         # ignore transitional packages
                         dbgs = [p for p in src_records.binaries
-                                if p.endswith('-dbg') and p.startswith(pkg) and
-                                p in cache and
+                                if p.endswith('-dbg') and p in cache and
                                 'transitional' not in cache[p].candidate.description]
                         # if a specific version of a package was requested
                         # only install dbg pkgs whose version matches
@@ -1260,7 +1257,7 @@ Debug::NoLocking "true";
         # this is ordered by likelihood of installation with the most common
         # last
         for pocket in ['-proposed', '', '-security', '-updates']:
-            map = os.path.join(dir, '%s%s-Contents-%s.gz' % \
+            map = os.path.join(dir, '%s%s-Contents-%s.gz' %
                                     (release, pocket, arch))
             # check if map exists and is younger than a day; if not, we need
             # to refresh it
