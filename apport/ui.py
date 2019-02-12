@@ -241,6 +241,9 @@ class UserInterface:
             # and the session started before the report's "Date".
             if logind_session and '_LogindSession' in self.report and \
                'Date' in self.report:
+                # report.get_timestamp() can return None
+                if not self.report.get_timestamp():
+                    continue
                 if logind_session[0] != self.report['_LogindSession'] or \
                    logind_session[1] > self.report.get_timestamp():
                     continue
