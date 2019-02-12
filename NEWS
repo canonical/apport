@@ -13,6 +13,8 @@ detailed list of changes, please see ChangeLog.
     packages instead of searching a Contents.gz file multiple times,
     additionally write this mapping to disk so subsequent lookups and retraces
     are quicker. (LP: #1370230)
+  * apport/ui.py: Handle old reports generated pre-apport with "remember"
+    option. If the option isn't there, consider as false. (LP: #1791324)
 
 2.20.10 (2018-05-09)
 --------------------
