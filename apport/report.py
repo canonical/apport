@@ -727,6 +727,9 @@ class Report(problem_report.ProblemReport):
         for name, cmd in gdb_reports.items():
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
+        # End with our separator, ensures gdb's return code is as expected
+        value_keys.append('separator')
+        gdb_cmd += ['--ex', 'p -99']
 
         out = _command_output(gdb_cmd, env=environ).decode('UTF-8', errors='replace')
 

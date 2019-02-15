@@ -15,6 +15,8 @@ detailed list of changes, please see ChangeLog.
     are quicker. (LP: #1370230)
   * apport/ui.py: Handle old reports generated pre-apport with "remember"
     option. If the option isn't there, consider as false. (LP: #1791324)
+  * apport/report.py: End our gdb batch script with a separator, to accomodate
+    new exit codes from gdb 8.2.50. Thanks Steve Langasek!
 
 2.20.10 (2018-05-09)
 --------------------
