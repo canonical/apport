@@ -15,7 +15,7 @@
 
 import sys, os, os.path, subprocess, time, traceback, pwd, io
 import signal, inspect, grp, fcntl, socket, atexit, array, struct
-import errno
+import errno, argparse
 
 import apport, apport.fileutils
 
@@ -326,29 +326,37 @@ def is_same_ns(pid, ns):
 
 
 def parse_arguments():
-    # Normal startup
-    if len(sys.argv) not in (5, 6):
+    parser = argparse.ArgumentParser(epilog="""
+    Alternatively, the following command line is understood for legacy hosts:
+        <pid> <signal number> <core file ulimit> <dump mode> [global pid]
+    """)
+
+    # TODO: Use type=int
+    parser.add_argument("-p", "--pid", help="process id (%%p)")
+    parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
+    parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
+    parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
+    parser.add_argument("-P", "--global-pid", nargs='?', help="pid in root namespace (%%P)")
+
+    options, rest = parser.parse_known_args()
+
+    if options.pid is not None:
+        for arg in rest:
+            error_log("Unknown argument: %s", arg)
+
+    elif len(rest) in (4,5):
+        # Translate legacy command line
+        options.pid = rest[0]
+        options.signal_number = rest[1]
+        options.core_ulimit = rest[2]
+        options.dump_mode = rest[3]
         try:
-            print('Usage: %s <pid> <signal number> <core file ulimit> <dump mode> [global pid]' % sys.argv[0])
-            print('The core dump is read from stdin.')
-        except IOError:
-            # sys.stderr might not actually exist, expecially not when being called
-            # from the kernel
-            pass
+            options.global_pid = rest[4]
+        except IndexError:
+            options.global_pid = None
+    else:
+        parser.print_usage()
         sys.exit(1)
-
-    class Options:
-        """Empty options class"""
-
-    options = Options()
-    options.pid = int(sys.argv[1])
-    options.signal_number = int(sys.argv[2])
-    options.core_ulimit = int(sys.argv[3])
-    options.dump_mode = int(sys.argv[4])
-    try:
-        options.global_pid = int(sys.argv[5])
-    except IndexError:
-        options.global_pid = None
 
     return options
 

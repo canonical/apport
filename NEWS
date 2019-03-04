@@ -17,6 +17,8 @@ detailed list of changes, please see ChangeLog.
     option. If the option isn't there, consider as false. (LP: #1791324)
   * apport/report.py: End our gdb batch script with a separator, to accomodate
     new exit codes from gdb 8.2.50. Thanks Steve Langasek!
+  * data/apport: Introduce support for non-positional arguments so we
+    can easily extend core_pattern in the future (LP: #1732962)
 
 2.20.10 (2018-05-09)
 --------------------
