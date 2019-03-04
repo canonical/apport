@@ -15,7 +15,7 @@
 
 import sys, os, os.path, subprocess, time, traceback, pwd, io
 import signal, inspect, grp, fcntl, socket, atexit, array, struct
-import errno
+import errno, argparse
 
 import apport, apport.fileutils
 
@@ -325,6 +325,42 @@ def is_same_ns(pid, ns):
     return False
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(epilog="""
+    Alternatively, the following command line is understood for legacy hosts:
+        <pid> <signal number> <core file ulimit> <dump mode> [global pid]
+    """)
+
+    # TODO: Use type=int
+    parser.add_argument("-p", "--pid", help="process id (%%p)")
+    parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
+    parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
+    parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
+    parser.add_argument("-P", "--global-pid", nargs='?', help="pid in root namespace (%%P)")
+
+    options, rest = parser.parse_known_args()
+
+    if options.pid is not None:
+        for arg in rest:
+            error_log("Unknown argument: %s", arg)
+
+    elif len(rest) in (4,5):
+        # Translate legacy command line
+        options.pid = rest[0]
+        options.signal_number = rest[1]
+        options.core_ulimit = rest[2]
+        options.dump_mode = rest[3]
+        try:
+            options.global_pid = rest[4]
+        except IndexError:
+            options.global_pid = None
+    else:
+        parser.print_usage()
+        sys.exit(1)
+
+    return options
+
+
 #################################################################
 #
 # main
@@ -373,16 +409,8 @@ if 'LISTEN_FDS' in os.environ:
         error_log('Received a bad number of arguments from forwarder, received %d, expected 5, aborting.' % len(sys.argv))
         sys.exit(1)
 
-# Normal startup
-if len(sys.argv) not in (5, 6):
-    try:
-        print('Usage: %s <pid> <signal number> <core file ulimit> <dump mode> [global pid]' % sys.argv[0])
-        print('The core dump is read from stdin.')
-    except IOError:
-        # sys.stderr might not actually exist, expecially not when being called
-        # from the kernel
-        pass
-    sys.exit(1)
+
+options = parse_arguments()
 
 init_error_log()
 
@@ -390,8 +418,8 @@ init_error_log()
 # then compare it with the local PID. If they don't match, it's an
 # indication that the crash originated from another PID namespace.
 # Simply log an entry in the host error log and exit 0.
-if len(sys.argv) == 6:
-    host_pid = int(sys.argv[5])
+if options.global_pid is not None:
+    host_pid = int(options.global_pid)
 
     if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
         # If the crash came from a container, don't attempt to handle
@@ -401,7 +429,7 @@ if len(sys.argv) == 6:
         # forward the process information there.
         if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
             error_log('host pid %s crashed in a container without apport support' %
-                      sys.argv[5])
+                      options.global_pid)
             sys.exit(0)
 
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -409,7 +437,7 @@ if len(sys.argv) == 6:
             sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
         except Exception as e:
             error_log('host pid %s crashed in a container with a broken apport' %
-                      sys.argv[5])
+                      options.global_pid)
             sys.exit(0)
 
         # Send all arguments except for the first (exec path) and last (global pid)
@@ -440,14 +468,17 @@ if len(sys.argv) == 6:
         # sandbox will use container namespaces as a security measure but are
         # still otherwise host processes. When that's the case, we need to keep
         # handling those crashes locally using the global pid.
-        sys.argv[1] = str(host_pid)
+        options.pid = str(host_pid)
 
 check_lock()
 
 try:
     setup_signals()
 
-    (pid, signum, core_ulimit, dump_mode) = sys.argv[1:5]
+    pid = options.pid
+    signum = options.signal_number
+    core_ulimit = options.core_ulimit
+    dump_mode = options.dump_mode
 
     get_pid_info(pid)
 
