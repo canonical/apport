@@ -325,6 +325,34 @@ def is_same_ns(pid, ns):
     return False
 
 
+def parse_arguments():
+    # Normal startup
+    if len(sys.argv) not in (5, 6):
+        try:
+            print('Usage: %s <pid> <signal number> <core file ulimit> <dump mode> [global pid]' % sys.argv[0])
+            print('The core dump is read from stdin.')
+        except IOError:
+            # sys.stderr might not actually exist, expecially not when being called
+            # from the kernel
+            pass
+        sys.exit(1)
+
+    class Options:
+        """Empty options class"""
+
+    options = Options()
+    options.pid = int(sys.argv[1])
+    options.signal_number = int(sys.argv[2])
+    options.core_ulimit = int(sys.argv[3])
+    options.dump_mode = int(sys.argv[4])
+    try:
+        options.global_pid = int(sys.argv[5])
+    except IndexError:
+        options.global_pid = None
+
+    return options
+
+
 #################################################################
 #
 # main
@@ -373,16 +401,8 @@ if 'LISTEN_FDS' in os.environ:
         error_log('Received a bad number of arguments from forwarder, received %d, expected 5, aborting.' % len(sys.argv))
         sys.exit(1)
 
-# Normal startup
-if len(sys.argv) not in (5, 6):
-    try:
-        print('Usage: %s <pid> <signal number> <core file ulimit> <dump mode> [global pid]' % sys.argv[0])
-        print('The core dump is read from stdin.')
-    except IOError:
-        # sys.stderr might not actually exist, expecially not when being called
-        # from the kernel
-        pass
-    sys.exit(1)
+
+options = parse_arguments()
 
 init_error_log()
 
@@ -390,8 +410,8 @@ init_error_log()
 # then compare it with the local PID. If they don't match, it's an
 # indication that the crash originated from another PID namespace.
 # Simply log an entry in the host error log and exit 0.
-if len(sys.argv) == 6:
-    host_pid = int(sys.argv[5])
+if options.global_pid is not None:
+    host_pid = int(options.global_pid)
 
     if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
         # If the crash came from a container, don't attempt to handle
@@ -401,7 +421,7 @@ if len(sys.argv) == 6:
         # forward the process information there.
         if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
             error_log('host pid %s crashed in a container without apport support' %
-                      sys.argv[5])
+                      options.global_pid)
             sys.exit(0)
 
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -409,7 +429,7 @@ if len(sys.argv) == 6:
             sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
         except Exception as e:
             error_log('host pid %s crashed in a container with a broken apport' %
-                      sys.argv[5])
+                      options.global_pid)
             sys.exit(0)
 
         # Send all arguments except for the first (exec path) and last (global pid)
@@ -440,14 +460,17 @@ if len(sys.argv) == 6:
         # sandbox will use container namespaces as a security measure but are
         # still otherwise host processes. When that's the case, we need to keep
         # handling those crashes locally using the global pid.
-        sys.argv[1] = str(host_pid)
+        options.pid = str(host_pid)
 
 check_lock()
 
 try:
     setup_signals()
 
-    (pid, signum, core_ulimit, dump_mode) = sys.argv[1:5]
+    pid = options.pid
+    signum = options.signal_number
+    core_ulimit = options.core_ulimit
+    dump_mode = options.dump_mode
 
     get_pid_info(pid)
 
