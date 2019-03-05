@@ -344,7 +344,7 @@ def parse_arguments():
         for arg in rest:
             error_log("Unknown argument: %s", arg)
 
-    elif len(rest) in (4,5):
+    elif len(rest) in (4, 5):
         # Translate legacy command line
         options.pid = rest[0]
         options.signal_number = rest[1]
