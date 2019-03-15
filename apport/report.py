@@ -1569,8 +1569,8 @@ class Report(problem_report.ProblemReport):
                         '--ex', 'add-auto-load-safe-path ' + sandbox,
                         # needed to fix /lib64/ld-linux-x86-64.so.2 broken
                         # symlink
-                        '--ex', 'set solib-search-path %s/lib/%s' % \
-                        (sandbox, native_multiarch)]
+                        '--ex', 'set solib-search-path %s/lib/%s:%s/usr/lib/%s' % \
+                        (sandbox, native_multiarch, sandbox, native_multiarch)]
             if gdb_sandbox:
                 ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
                     (gdb_sandbox, gdb_sandbox, native_multiarch,
