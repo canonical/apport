@@ -705,7 +705,8 @@ class Report(problem_report.ProblemReport):
         files there.
 
         Raises a IOError if the core dump is invalid/truncated, or OSError if
-        calling gdb fails.
+        calling gdb fails, or FileNotFoundError if gdb or the crashing
+        executable cannot be found.
         '''
         if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
@@ -719,7 +720,8 @@ class Report(problem_report.ProblemReport):
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
         gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
         if not gdb_cmd:
-            raise OSError("gdb executable not found.")
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    'gdb not found in retracing env')
 
         # limit maximum backtrace depth (to avoid looped stacks)
         gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
@@ -745,7 +747,8 @@ class Report(problem_report.ProblemReport):
             self['UnreportableReason'] = reason
             raise IOError(reason)
         elif out.split('\n')[0].endswith('No such file or directory.'):
-            raise OSError("Crash's executable not found.")
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    'executable file for coredump not found')
 
         # split the output into the various fields
         part_re = re.compile(r'^\$\d+\s*=\s*-99$', re.MULTILINE)

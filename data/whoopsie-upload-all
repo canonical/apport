@@ -19,6 +19,7 @@ import time
 import subprocess
 import argparse
 import fcntl
+import errno
 
 import apport.fileutils
 import apport
@@ -80,8 +81,7 @@ def process_report(report):
         except (IOError, EOFError, OSError) as e:
             # the crash file won't have a Stacktrace etc but apport-retrace
             # could still process it
-            if str(e) not in ("Crash's executable not found.",
-                              "gdb executable not found."):
+            if e.errno != errno.ENOENT:
                 sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
                 if os.path.exists(report):
                     os.unlink(report)

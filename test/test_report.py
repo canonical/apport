@@ -644,6 +644,15 @@ int main() {
         self.assertNotIn('StacktraceTop', pr)
         self.assertIn('core is truncated', pr['UnreportableReason'])
 
+    def test_add_gdb_info_exe_missing(self):
+        '''add_gdb_info() with missing executable'''
+
+        pr = self._generate_sigsegv_report()
+        # change it to something that doesn't exist
+        pr['ExecutablePath'] = pr['ExecutablePath'].replace('crash', 'gone')
+
+        self.assertRaises(FileNotFoundError, pr.add_gdb_info)
+
     def test_add_zz_parse_segv_details(self):
         '''parse-segv produces sensible results'''
         rep = tempfile.NamedTemporaryFile()
