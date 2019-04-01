@@ -393,8 +393,11 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
 def _root_command_prefix():
     if os.getuid() == 0:
         return []
-    else:
+    elif os.path.exists('/usr/bin/pkexec'):
         return ['pkexec']
+    # the package hook won't have everything it wanted but that's okay
+    else:
+        return []
 
 
 def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_utf8=True):
