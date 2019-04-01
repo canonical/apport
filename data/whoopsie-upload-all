@@ -19,6 +19,7 @@ import time
 import subprocess
 import argparse
 import fcntl
+import errno
 
 import apport.fileutils
 import apport
@@ -78,10 +79,13 @@ def process_report(report):
         try:
             r.add_gdb_info()
         except (IOError, EOFError, OSError) as e:
-            sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
-            if os.path.exists(report):
-                os.unlink(report)
-            return None
+            # the crash file won't have a Stacktrace etc but apport-retrace
+            # could still process it
+            if e.errno != errno.ENOENT:
+                sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
+                if os.path.exists(report):
+                    os.unlink(report)
+                return None
 
         # write updated report
         with open(report, 'ab') as f:

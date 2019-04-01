@@ -705,7 +705,8 @@ class Report(problem_report.ProblemReport):
         files there.
 
         Raises a IOError if the core dump is invalid/truncated, or OSError if
-        calling gdb fails.
+        calling gdb fails, or FileNotFoundError if gdb or the crashing
+        executable cannot be found.
         '''
         if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
@@ -718,6 +719,9 @@ class Report(problem_report.ProblemReport):
                        'GLibAssertionMessage': 'print __glib_assert_msg',
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
         gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
+        if not gdb_cmd:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    'gdb not found in retracing env')
 
         # limit maximum backtrace depth (to avoid looped stacks)
         gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
@@ -742,6 +746,9 @@ class Report(problem_report.ProblemReport):
             reason = 'Invalid core dump: ' + warnings.strip()
             self['UnreportableReason'] = reason
             raise IOError(reason)
+        elif out.split('\n')[0].endswith('No such file or directory.'):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    'executable file for coredump not found')
 
         # split the output into the various fields
         part_re = re.compile(r'^\$\d+\s*=\s*-99$', re.MULTILINE)
@@ -1544,8 +1551,7 @@ class Report(problem_report.ProblemReport):
                            if gdb_sandbox else None)
         gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
         if not gdb_path:
-            apport.fatal('gdb does not exist in the %ssandbox nor on the host'
-                         % ('gdb ' if not same_arch else ''))
+            return '', ''
         command = [gdb_path]
         environ = None
 
@@ -1587,7 +1593,6 @@ class Report(problem_report.ProblemReport):
                             gdb_sandbox]
             executable = sandbox + '/' + executable
 
-        assert os.path.exists(executable)
         command += ['--ex', 'file "%s"' % executable]
 
         if 'CoreDump' in self:
