@@ -108,7 +108,7 @@ class RPMPackageInfo:
         md5s = hdr['filemd5s']
 
         modified = []
-        for i in xrange(len(files)):
+        for i in range(len(files)):
             # Skip files we're not tracking md5s for
             if not md5s[i]:
                 continue

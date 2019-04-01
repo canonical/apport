@@ -48,12 +48,12 @@ if [ -d test -a -e setup.py ]; then
         echo "Skipping PEP 8 tests, neither pycodestyle nor pep8 are installed"
     fi
 
-    # pyflakes, if available
-    if type pyflakes >/dev/null 2>&1; then
-        echo "Running pyflakes..."
-        pyflakes `find -name '*.py'` `find bin data gtk -type f -executable ! -name is-enabled ! -name apport-bug ! -name root_info_wrapper ! -name apport-collect`
+    # pyflakes3, if available
+    if type pyflakes3 >/dev/null 2>&1; then
+        echo "Running pyflakes3..."
+        pyflakes3 `find -name '*.py'` `find bin data gtk -type f -executable ! -name is-enabled ! -name apport-bug ! -name root_info_wrapper ! -name apport-collect`
     else
-        echo "Skipping pyflakes tests, pyflakes is not installed"
+        echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
     fi
 
     # assert that there are no hardcoded "Ubuntu" names

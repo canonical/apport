@@ -22,11 +22,6 @@ def help():
     print(_('Usage: %s <report> <target directory>') % sys.argv[0])
 
 
-if sys.version[0] < '3':
-    t_str = unicode
-else:
-    t_str = str
-
 gettext.textdomain('apport')
 
 if len(sys.argv) >= 2 and sys.argv[1] == '--help':
@@ -65,7 +60,7 @@ for k in pr:
         bin_keys.append(k)
         continue
     with open(os.path.join(dir, k), 'wb') as f:
-        if type(pr[k]) == t_str:
+        if type(pr[k]) == str:
             f.write(pr[k].encode('UTF-8'))
         else:
             f.write(pr[k])

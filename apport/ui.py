@@ -99,7 +99,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             report['Symptom'] = os.path.splitext(os.path.basename(symptom_script))[0]
         except StopIteration:
             sys.exit(0)
-        except Exception as e:
+        except Exception:
             apport.error('symptom script %s crashed:', symptom_script)
             traceback.print_exc()
             sys.exit(0)
@@ -1209,7 +1209,7 @@ class UserInterface:
         try:
             try:
                 subprocess.call(sudo_prefix + ['xdg-open', url])
-            except OSError as e:
+            except OSError:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
                 sys.exit(0)

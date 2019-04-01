@@ -9,13 +9,13 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
-import imp
 import unittest
 import tempfile
 import sys
 import os
 import shutil
 
+from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
 try:
     from PyQt5.QtCore import QTimer, QCoreApplication
@@ -33,7 +33,7 @@ if os.environ.get('APPORT_TEST_LOCAL'):
     apport_kde_path = 'kde/apport-kde'
 else:
     apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-kde')
-MainUserInterface = imp.load_source('', apport_kde_path).MainUserInterface
+MainUserInterface = SourceFileLoader('', apport_kde_path).load_module().MainUserInterface
 
 # Work around MainUserInterface using basename to find the KDE UI file.
 sys.argv[0] = apport_kde_path
