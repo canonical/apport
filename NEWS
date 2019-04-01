@@ -21,7 +21,9 @@ detailed list of changes, please see ChangeLog.
     can easily extend core_pattern in the future (LP: #1732962)
   * apport/report.py: Have add_gdb_info return a FileNotFoundError if gdb or
     the crashing executable are not found and modify whoopsie-upload-all to
-    upload crashes in that situation.
+    upload crashes in that situation. (LP: #1820132)
+  * apport/report.py, apport/ui.py: raise ValueError if the pid is not
+    accessible, display an error message for that or an invalid pid. (LP: #1396160)
 
 2.20.10 (2018-05-09)
 --------------------

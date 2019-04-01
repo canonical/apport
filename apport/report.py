@@ -551,7 +551,9 @@ class Report(problem_report.ProblemReport):
         self['ProcMaps'] = _read_maps(int(pid))
         try:
             self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
-        except OSError as e:
+        except (PermissionError, OSError, FileNotFoundError) as e:
+            if e.errno in (errno.EPERM, errno.EACCES):
+                raise ValueError('not accessible')
             if e.errno == errno.ENOENT:
                 raise ValueError('invalid process')
             else:
