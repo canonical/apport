@@ -380,11 +380,11 @@ class UserInterface:
         except ValueError as e:
             if str(e) == 'invalid process':
                 self.ui_error_message(_('Invalid PID'),
-                                     _('The specified process ID does not exist.'))
+                                      _('The specified process ID does not exist.'))
                 sys.exit(1)
             elif str(e) == 'not accessible':
                 self.ui_error_message(_('Not your PID'),
-                                     _('The specified process ID does not belong to you.'))
+                                      _('The specified process ID does not belong to you.'))
                 sys.exit(1)
         self.report.add_package_info()
         path = self.report.get('ExecutablePath', '')
