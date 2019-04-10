@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
+import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys, gzip, mock
 
 try:
     from cStringIO import StringIO
@@ -643,6 +643,48 @@ int main() {
         self.assertNotIn('Stacktrace', pr)
         self.assertNotIn('StacktraceTop', pr)
         self.assertIn('core is truncated', pr['UnreportableReason'])
+
+    def test_add_gdb_info_short_core_file(self):
+        '''add_gdb_info() with damaged core dump in gzip file'''
+
+        pr = self._generate_sigsegv_report()
+        del pr['Stacktrace']
+        del pr['StacktraceTop']
+        del pr['ThreadStacktrace']
+        del pr['Disassembly']
+
+        core = pr['CoreDump'][0]
+        os.truncate(core, 10000)
+        with open(core, 'rb') as f:
+            pr['CoreDump'] = problem_report.CompressedValue(f.read())
+
+        self.assertRaises(OSError, pr.add_gdb_info)
+
+        self.assertNotIn('Stacktrace', pr)
+        self.assertNotIn('StacktraceTop', pr)
+        self.assertTrue(pr['UnreportableReason'].startswith(
+                        'Invalid core dump'))
+
+    @mock.patch("gzip.GzipFile.read")
+    def test_add_gdb_info_damaged_gz_core(self, mock_gzread):
+        '''add_gdb_info() with damaged gzip file of core dump'''
+
+        pr = self._generate_sigsegv_report()
+        del pr['Stacktrace']
+        del pr['StacktraceTop']
+        del pr['ThreadStacktrace']
+        del pr['Disassembly']
+
+        core = pr['CoreDump'][0]
+        with open(core, 'rb') as f:
+            pr['CoreDump'] = problem_report.CompressedValue(f.read())
+        mock_gzread.side_effect = EOFError("Compressed file ended before the "
+                                           "end-of-stream marker was reached")
+        self.assertRaises(EOFError, pr.add_gdb_info)
+        self.assertTrue(mock_gzread.called)
+
+        self.assertNotIn('Stacktrace', pr)
+        self.assertNotIn('StacktraceTop', pr)
 
     def test_add_gdb_info_exe_missing(self):
         '''add_gdb_info() with missing executable'''
