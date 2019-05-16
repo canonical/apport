@@ -139,7 +139,8 @@ void makeleak(void){
         sandbox = os.path.join(self.workdir, 'test-sandbox')
         cache = os.path.join(self.workdir, 'test-cache')
 
-        cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache, 'true']
+        cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache,
+               '/bin/true']
         subprocess.check_call(cmd)
 
         self.assertTrue(os.path.exists(sandbox),

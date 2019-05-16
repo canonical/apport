@@ -417,7 +417,7 @@ class Report(problem_report.ProblemReport):
             return
 
         cmdargs = self['ProcCmdline'].split('\0')
-        bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
+        bindirs = ['/usr/bin/', '/usr/sbin/', '/bin/', '/sbin/']
 
         # filter out interpreter options
         while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):

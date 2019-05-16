@@ -24,6 +24,27 @@ detailed list of changes, please see ChangeLog.
     upload crashes in that situation. (LP: #1820132)
   * apport/report.py, apport/ui.py: raise ValueError if the pid is not
     accessible, display an error message for that or an invalid pid. (LP: #1396160)
+  * switch from pyflakes to pyflakes3, drop some python2 code
+  * backends/packaging-apt-dpkg.py: strip /usr from binary names so the .list
+    file will match.
+  * test/*: switch from using deprecated imp to importlib, modify binary
+    locations for merged-usr changes.
+  * apport/report.py: reorder directories check for binaries so /usr is
+    checked first.
+  * data/whoopsie-upload-all: confirm the exception has an errno before using
+    it in a comparison. (LP: #1824152)
+  * test/test_report.py: update test_add_proc_info for function raising a
+    ValueError.
+  * apport/REThread.py, apport/ui.py: Avoid deprecation warnings by switching
+    from isAlive() to is_alive().
+  * apport/ui.py: if report.get_timestamp() returns None don't try and use it
+    in a comparison. (LP: #1658188)
+  * test/test_apport_valgrind.py: specify the location for true.
+  * apport/ui.py: when using ubuntu-bug properly handle executables which
+    start with /snap/bin. (LP: #1760220)
+  * Fix PEP8 605 warnings and ignore 503,504 ones.
+  * tests/test_ui_gtk.py: Increase the timeout so that when the autopkgtest
+    infrastructure is busy the tests should not fail. (LP: #1780767)
 
 2.20.10 (2018-05-09)
 --------------------

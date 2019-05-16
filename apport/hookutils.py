@@ -383,8 +383,8 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
     if sp.returncode == 0:
         res = out.strip()
     else:
-        res = (b'Error: command ' + str(command).encode() + b' failed with exit code ' +
-               str(sp.returncode).encode() + b': ' + out)
+        res = (b'Error: command ' + str(command).encode() + b' failed with exit code '
+               + str(sp.returncode).encode() + b': ' + out)
 
     if decode_utf8:
         res = res.decode('UTF-8', errors='replace')

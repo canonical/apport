@@ -14,7 +14,6 @@ import unittest
 import tempfile
 import sys
 import os
-import imp
 import apport
 import shutil
 import subprocess
@@ -23,6 +22,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import GLib, Gtk
+from importlib.machinery import SourceFileLoader
 from apport import unicode_gettext as _
 from unittest.mock import patch
 
@@ -36,7 +36,7 @@ if os.environ.get('APPORT_TEST_LOCAL'):
 else:
     apport_gtk_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-gtk')
     kernel_oops_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'kernel_oops')
-GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
+GTKUserInterface = SourceFileLoader('', apport_gtk_path).load_module().GTKUserInterface
 
 
 class T(unittest.TestCase):
@@ -585,7 +585,7 @@ Type=Application''')
                 'window_information_collection').get_property('visible')
             return False
 
-        GLib.timeout_add_seconds(1, cont)
+        GLib.timeout_add_seconds(60, cont)
         self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
@@ -741,7 +741,7 @@ Type=Application''')
                 'window_information_collection').get_property('visible')
             return False
 
-        GLib.timeout_add_seconds(1, cont)
+        GLib.timeout_add_seconds(60, cont)
         self.app.crashdb.options['problem_types'] = ['bug']
         self.app.run_crash(self.app.report_file)
 
@@ -776,7 +776,7 @@ Type=Application''')
         kernel_oops.communicate(b'Plasma conduit phase misalignment')
         self.assertEqual(kernel_oops.returncode, 0)
 
-        GLib.timeout_add_seconds(1, cont)
+        GLib.timeout_add_seconds(60, cont)
         self.app.run_crashes()
 
         # we should have reported one crash
@@ -804,7 +804,7 @@ Type=Application''')
 
         self.app.report_file = None
         self.app.options.package = 'bash'
-        GLib.timeout_add_seconds(1, c)
+        GLib.timeout_add_seconds(60, c)
         self.app.run_report_bug()
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')
@@ -824,7 +824,7 @@ Type=Application''')
         pkg = apport.packaging.get_uninstalled_package()
         self.app.report_file = None
         self.app.options.package = pkg
-        GLib.timeout_add_seconds(1, c)
+        GLib.timeout_add_seconds(60, c)
         self.app.run_report_bug()
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')

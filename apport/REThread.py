@@ -39,9 +39,9 @@ class REThread(threading.Thread):
         '''Return value from target function.
 
         This can only be called after the thread has finished, i. e. when
-        isAlive() is False and did not terminate with an exception.
+        is_alive() is False and did not terminate with an exception.
         '''
-        assert not self.isAlive()
+        assert not self.is_alive()
         assert not self._exception
         return self._retval
 

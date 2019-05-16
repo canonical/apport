@@ -1,6 +1,7 @@
-import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
+import unittest, gzip, subprocess, tempfile, shutil, os, os.path, time
 import glob, sys
 from apt import apt_pkg
+from importlib.machinery import SourceFileLoader
 
 try:
     from urllib import urlopen
@@ -12,7 +13,7 @@ except ImportError:
     from urllib.error import URLError
 
 if os.environ.get('APPORT_TEST_LOCAL'):
-    impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
+    impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
 else:
     from apport.packaging_impl import impl
 

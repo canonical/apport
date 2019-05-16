@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys, imp
+import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
 import subprocess, errno, glob
 
 try:
@@ -8,6 +8,7 @@ try:
 except ImportError:
     from io import StringIO
 from io import BytesIO
+from importlib.machinery import SourceFileLoader
 
 import apport.ui
 from apport.ui import _
@@ -17,7 +18,7 @@ import apport.crashdb_impl.memory
 import stat
 
 if os.environ.get('APPORT_TEST_LOCAL'):
-    impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
+    impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
 else:
     from apport.packaging_impl import impl
 

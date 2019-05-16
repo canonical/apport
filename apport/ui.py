@@ -822,10 +822,21 @@ class UserInterface:
 
         # executable?
         elif '/' in self.args[0]:
-            pkg = apport.packaging.get_file_package(self.args[0])
-            if not pkg:
-                optparser.error('%s does not belong to a package.' % self.args[0])
+            if self.args[0].startswith('/snap/bin'):
+                # see if the snap has the same name as the executable
+                snap = find_snap(self.args[0].split('/')[-1])
+                if not snap:
+                    optparser.error('%s is provided by a snap. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.' % self.args[0])
+                elif snap.get("contact", ""):
+                    optparser.error('%s is provided by a snap published by %s. Contact them via %s for help.' % (self.args[0], snap["developer"], snap["contact"]))
+                else:
+                    optparser.error('%s is provided by a snap published by %s. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.' % (self.args[0], snap["developer"]))
                 sys.exit(1)
+            else:
+                pkg = apport.packaging.get_file_package(self.args[0])
+                if not pkg:
+                    optparser.error('%s does not belong to a package.' % self.args[0])
+                    sys.exit(1)
             self.args = []
             self.options.filebug = True
             self.options.package = pkg
@@ -1062,7 +1073,7 @@ class UserInterface:
                                                     args=(self.report, self.report_file, self.cur_package,
                                                           hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
-                while icthread.isAlive():
+                while icthread.is_alive():
                     self.ui_pulse_info_collection_progress()
                     if hookui:
                         try:
@@ -1101,7 +1112,7 @@ class UserInterface:
                 bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
                                                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
-                while bpthread.isAlive():
+                while bpthread.is_alive():
                     self.ui_pulse_info_collection_progress()
                     try:
                         bpthread.join(0.1)
@@ -1122,7 +1133,7 @@ class UserInterface:
                 known_thread = apport.REThread.REThread(target=self.crashdb.known,
                                                         args=(self.report,))
                 known_thread.start()
-                while known_thread.isAlive():
+                while known_thread.is_alive():
                     self.ui_pulse_info_collection_progress()
                     try:
                         known_thread.join(0.1)
@@ -1140,7 +1151,7 @@ class UserInterface:
             # might damage the stack trace
             anonymize_thread = apport.REThread.REThread(target=self.report.anonymize)
             anonymize_thread.start()
-            while anonymize_thread.isAlive():
+            while anonymize_thread.is_alive():
                 self.ui_pulse_info_collection_progress()
                 try:
                     anonymize_thread.join(0.1)
@@ -1267,7 +1278,7 @@ class UserInterface:
         upthread = apport.REThread.REThread(target=self.crashdb.upload,
                                             args=(self.report, progress_callback))
         upthread.start()
-        while upthread.isAlive():
+        while upthread.is_alive():
             self.ui_set_upload_progress(__upload_progress)
             try:
                 upthread.join(0.1)

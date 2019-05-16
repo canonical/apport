@@ -496,6 +496,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         match = self.__fgrep_files(file, likely_lists)
         if not match:
             match = self.__fgrep_files(file, all_lists)
+        # with usrmerge some binaries appear in usr but their .list file
+        # doesn't reflect that so strip the /usr from the path
+        if not match and file.startswith('/usr'):
+            file = file[4:]
+            match = self.__fgrep_files('%s' % file, likely_lists)
+            if not match:
+                match = self.__fgrep_files('%s' % file, all_lists)
 
         if match:
             return os.path.splitext(os.path.basename(match))[0].split(':')[0]

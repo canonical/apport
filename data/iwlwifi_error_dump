@@ -30,7 +30,7 @@ pr.add_os_info()
 
 # Get iwl firmware version and error code from dmesg
 dmesg = command_output(['dmesg'])
-regex = re.compile(r'^.*iwlwifi [0-9a-fA-F:]{10}\.[0-9a-fA-F]: Loaded firmware version: ([0-9\.]+).*\\n.*iwlwifi [0-9a-fA-F:]{10}\.[0-9a-fA-F]: (0x[0-9A-F]{8} \| [A-Z_]+)', re.MULTILINE)
+regex = re.compile('^.*iwlwifi [0-9a-fA-F:]{10}\\.[0-9a-fA-F]: Loaded firmware version: ([0-9\\.]+).*\\n.*iwlwifi [0-9a-fA-F:]{10}\\.[0-9a-fA-F]: (0x[0-9A-F]{8} \\| [A-Z_]+)', re.MULTILINE)
 m = regex.findall(dmesg)
 if m:
     v = m[len(m) - 1]

@@ -109,7 +109,7 @@ class T(unittest.TestCase):
             os.setresuid(8, 8, -1)
             restore_root = True
         pr = apport.report.Report()
-        self.assertRaises(OSError, pr.add_proc_info, 1)  # EPERM for init process
+        self.assertRaises(ValueError, pr.add_proc_info, 1)  # EPERM for init process
         if restore_root:
             os.setresuid(0, 0, -1)
 
@@ -134,7 +134,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr.pid, p.pid)
         p.communicate(b'\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\\ bar \\\\h \\\\\\ \\\\ -')
-        self.assertEqual(pr['ExecutablePath'], '/bin/cat')
+        self.assertEqual(pr['ExecutablePath'], '/usr/bin/cat')
         self.assertNotIn('InterpreterPath', pr)
         self.assertIn('/bin/cat', pr['ProcMaps'])
         self.assertIn('[stack]', pr['ProcMaps'])
@@ -316,7 +316,7 @@ sys.stdin.readline()
             pr['ProcStatus'] = 'Name:\tzgrep'
             pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
             pr._check_interpreted()
-            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/zgrep')
             self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
             # standard sh script when being called explicitly with interpreter
@@ -325,7 +325,7 @@ sys.stdin.readline()
             pr['ProcStatus'] = 'Name:\tdash'
             pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
             pr._check_interpreted()
-            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/zgrep')
             self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
             # special case mono scheme: beagled-helper (use zgrep to make the test
@@ -335,7 +335,7 @@ sys.stdin.readline()
             pr['ProcStatus'] = 'Name:\tzgrep'
             pr['ProcCmdline'] = 'zgrep\0--debug\0/bin/zgrep'
             pr._check_interpreted()
-            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/zgrep')
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
             # special case mono scheme: banshee (use zgrep to make the test
@@ -345,7 +345,7 @@ sys.stdin.readline()
             pr['ProcStatus'] = 'Name:\tzgrep'
             pr['ProcCmdline'] = 'zgrep\0/bin/zgrep'
             pr._check_interpreted()
-            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/zgrep')
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
             # fail on files we shouldn't have access to when name!=argv[0]
@@ -379,10 +379,10 @@ sys.stdin.readline()
             pr = apport.report.Report()
             pr['ExecutablePath'] = '/usr/bin/python'
             pr['ProcStatus'] = 'Name:\tpasswd'
-            pr['ProcCmdline'] = '../etc/passwd'
+            pr['ProcCmdline'] = '../../etc/passwd'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-            self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/../../etc/passwd')
 
             # interactive python process
             pr = apport.report.Report()
@@ -400,7 +400,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0/bin/bash'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/bash')
 
             # python script with options (abuse /bin/bash since it must exist)
             pr = apport.report.Report()
@@ -409,7 +409,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/bash')
 
             # python script with a versioned interpreter
             pr = apport.report.Report()
@@ -418,7 +418,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = '/usr/bin/python\0/bin/bash'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
-            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/bash')
 
             # python script through -m
             pr = apport.report.Report()
@@ -2317,7 +2317,7 @@ No symbol table info available.
         tmp_true = apport.report._which_extrapath('true', '/tmp')
         os.unlink('/tmp/true')
         self.assertEqual(tmp_true, '/tmp/true')
-        self.assertEqual(bin_true, '/bin/true')
+        self.assertEqual(bin_true, '/usr/bin/true')
 
 
 if __name__ == '__main__':
