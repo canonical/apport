@@ -407,7 +407,7 @@ class ProblemReport(UserDict):
             file.write(b'\n ')
             crc = zlib.crc32(b'')
 
-            bc = zlib.compressobj(9, zlib.DEFLATED, -zlib.MAX_WBITS,
+            bc = zlib.compressobj(6, zlib.DEFLATED, -zlib.MAX_WBITS,
                                   zlib.DEF_MEM_LEVEL, 0)
             # direct value
             if hasattr(v, 'find'):

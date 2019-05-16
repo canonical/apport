@@ -45,6 +45,10 @@ detailed list of changes, please see ChangeLog.
   * Fix PEP8 605 warnings and ignore 503,504 ones.
   * tests/test_ui_gtk.py: Increase the timeout so that when the autopkgtest
     infrastructure is busy the tests should not fail. (LP: #1780767)
+  * problem_report.py: Decrease zlib compression level from 9 to 6.  After
+    a crash, this reduces the time Apport spends compressing the core dump
+    by an order of magnitude. Thanks to Anders Kaseorg for the analysis and
+    initial patch. (LP: #1537635)
 
 2.20.10 (2018-05-09)
 --------------------
