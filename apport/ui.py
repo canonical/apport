@@ -66,6 +66,19 @@ def still_running(pid):
     return True
 
 
+def find_snap(package):
+    import requests_unixsocket
+
+    session = requests_unixsocket.Session()
+    try:
+        r = session.get('http+unix://%2Frun%2Fsnapd.socket/v2/snaps/{}'.format(package))
+        if r.status_code == 200:
+            j = r.json()
+            return j["result"]
+    except Exception:
+        return None
+
+
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
                         ignore_uninstalled=False):
     '''Collect information about report.
@@ -190,6 +203,7 @@ class UserInterface:
         self.report_file = None
         self.cur_package = None
         self.offer_restart = False
+        self.specified_a_pkg = False
 
         try:
             self.crashdb = apport.crashdb.get_crashdb(None)
@@ -318,7 +332,12 @@ class UserInterface:
             if not response['report']:
                 return
 
-            apport.fileutils.mark_report_upload(report_file)
+            # We don't want to send crashes to the crash database for binaries
+            # that changed since the crash happened. See LP: #1039220 for
+            # details.
+            if '_MarkForUpload' in self.report and \
+                    self.report['_MarkForUpload'] != 'False':
+                apport.fileutils.mark_report_upload(report_file)
             # We check for duplicates and unreportable crashes here, rather
             # than before we show the dialog, as we want to submit these to the
             # crash database, but not Launchpad.
@@ -844,6 +863,7 @@ class UserInterface:
         # otherwise: package name
         else:
             self.options.filebug = True
+            self.specified_a_pkg = True
             self.options.package = self.args[0]
             self.args = []
 
@@ -1010,6 +1030,8 @@ class UserInterface:
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         '''
+        self.report['_MarkForUpload'] = 'True'
+
         # check if we already ran (we might load a processed report), skip if so
         if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
 
@@ -1044,6 +1066,7 @@ class UserInterface:
             cur_time = int(os.stat(self.report['ExecutablePath']).st_mtime)
 
             if orig_time != cur_time:
+                self.report['_MarkForUpload'] = 'False'
                 self.report['UnreportableReason'] = (
                     _('The problem happened with the program %s which changed '
                       'since the crash occurred.') % self.report['ExecutablePath'])
@@ -1094,12 +1117,38 @@ class UserInterface:
                     self.report['UnreportableReason'] = '%s\n\n%s' % (
                         _('This problem report is damaged and cannot be processed.'),
                         repr(e))
+                    self.report['_MarkForUpload'] = 'False'
                 except ValueError:  # package does not exist
-                    self.report['UnreportableReason'] = _('The report belongs to a package that is not installed.')
+                    snap = find_snap(self.cur_package)
+                    if not snap:
+                        pass
+                    elif snap.get("contact", ""):
+                        self.report['UnreportableReason'] = _('This report is about a snap published by %s. Contact them via %s for help.') % (snap["developer"], snap["contact"])
+                        self.report['_MarkForUpload'] = 'False'
+                    else:
+                        self.report['UnreportableReason'] = _('This report is about a snap published by %s. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.') % snap["developer"]
+                        self.report['_MarkForUpload'] = 'False'
+
+                    if 'UnreportableReason' not in self.report:
+                        self.report['UnreportableReason'] = _('This report is about a package that is not installed.')
+                        self.report['_MarkForUpload'] = 'False'
                 except Exception as e:
                     apport.error(repr(e))
                     self.report['UnreportableReason'] = _('An error occurred while attempting to '
                                                           'process this problem report:') + '\n\n' + str(e)
+                    self.report['_MarkForUpload'] = 'False'
+
+            snap = find_snap(self.cur_package)
+            if snap and 'UnreportableReason' not in self.report and self.specified_a_pkg:
+                if snap.get("contact", ""):
+                    msg = _('You are about to report a bug against the deb package, but you also a have snap published by %s installed. You can contact them via %s for help. Do you want to continue with the bug report against the deb?') % (snap["developer"], snap["contact"])
+                else:
+                    msg = _('You are about to report a bug against the deb package, but you also a have snap published by %s installed. For the snap, no contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help. Do you want to continue with the bug report against the deb?') % snap["developer"]
+
+                if not self.ui_question_yesno(msg):
+                    self.ui_stop_info_collection_progress()
+                    sys.exit(0)
+                    return
 
             if 'UnreportableReason' in self.report or not self.check_report_crashdb():
                 self.ui_stop_info_collection_progress()
