@@ -192,10 +192,7 @@ class T(unittest.TestCase):
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
                                         impl.get_system_architecture()), 'w') as f:
-                f.write(b'''
-foo header
-FILE                                                    LOCATION
-usr/bin/frobnicate                                      foo/frob
+                f.write(b'''usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
 bin/true                                                admin/superutils
@@ -206,10 +203,7 @@ bin/true                                                admin/superutils
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
                                         impl.get_system_architecture()), 'w') as f:
-                f.write(b'''
-foo header
-FILE                                                    LOCATION
-lib/libnew.so.5                                         universe/libs/libnew5
+                f.write(b'''lib/libnew.so.5                                         universe/libs/libnew5
 ''')
 
             # use this as a mirror
@@ -233,13 +227,13 @@ lib/libnew.so.5                                         universe/libs/libnew5
             os.mkdir(cache_dir)
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
             cache_dir_files = os.listdir(cache_dir)
-            self.assertEqual(len(cache_dir_files), 2)
-            self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+            self.assertEqual(len(cache_dir_files), 3)
+            self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), None)
 
             # valid cache, should not need to access the mirror
             impl.set_mirror('file:///foo/nonexisting')
             self.assertEqual(impl.get_file_package('/bin/true', True, cache_dir), 'superutils')
-            self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+            self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), None)
             self.assertEqual(impl.get_file_package('/lib/libnew.so.5', True, cache_dir), 'libnew5')
 
             # outdated cache, must refresh the cache and hit the invalid
@@ -268,27 +262,18 @@ lib/libnew.so.5                                         universe/libs/libnew5
             mapdir = os.path.join(basedir, 'dists', impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-even.gz'), 'w') as f:
-                f.write(b'''
-foo header
-FILE                                                    LOCATION
-usr/lib/even/libfrob.so.1                               foo/libfrob1
+                f.write(b'''usr/lib/even/libfrob.so.1                               foo/libfrob1
 usr/bin/frob                                            foo/frob-utils
 ''')
             with gzip.open(os.path.join(mapdir, 'Contents-odd.gz'), 'w') as f:
-                f.write(b'''
-foo header
-FILE                                                    LOCATION
-usr/lib/odd/libfrob.so.1                                foo/libfrob1
+                f.write(b'''usr/lib/odd/libfrob.so.1                                foo/libfrob1
 usr/bin/frob                                            foo/frob-utils
 ''')
 
             # and another one for fantasy release
             os.mkdir(os.path.join(basedir, 'dists', 'mocky'))
             with gzip.open(os.path.join(basedir, 'dists', 'mocky', 'Contents-even.gz'), 'w') as f:
-                f.write(b'''
-foo header
-FILE                                                    LOCATION
-usr/lib/even/libfrob.so.0                               foo/libfrob0
+                f.write(b'''usr/lib/even/libfrob.so.0                               foo/libfrob0
 usr/bin/frob                                            foo/frob
 ''')
 
@@ -334,13 +319,13 @@ usr/bin/frob                                            foo/frob
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1',
                                                    True, cache_dir, arch='even'),
                              'libfrob1')
-            self.assertEqual(len(os.listdir(cache_dir)), 1)
+            self.assertEqual(len(os.listdir(cache_dir)), 2)
             cache_file = os.listdir(cache_dir)[0]
 
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
                                                    True, cache_dir, release='Foonux 3.14', arch='even'),
                              'libfrob0')
-            self.assertEqual(len(os.listdir(cache_dir)), 2)
+            self.assertEqual(len(os.listdir(cache_dir)), 4)
 
             # valid cache, should not need to access the mirror
             impl.set_mirror('file:///foo/nonexisting')

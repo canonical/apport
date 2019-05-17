@@ -80,21 +80,25 @@ class __AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, 'wb') as fp:
                 pickle.dump(self._virtual_mapping_obj, fp)
 
-    def _contents_mapping(self, configdir, arch):
-        if self._contents_mapping_obj is not None:
+    def _contents_mapping(self, configdir, release, arch):
+        if self._contents_mapping_obj and \
+                self._contents_mapping_obj['release'] == release and \
+                self._contents_mapping_obj['arch'] == arch:
             return self._contents_mapping_obj
 
-        mapping_file = os.path.join(configdir, 'contents_mapping-%s.pickle' % arch)
+        mapping_file = os.path.join(configdir, 'contents_mapping-%s-%s.pickle' %
+                                    (release, arch))
         if os.path.exists(mapping_file):
             with open(mapping_file, 'rb') as fp:
                 self._contents_mapping_obj = pickle.load(fp)
         else:
-            self._contents_mapping_obj = {}
+            self._contents_mapping_obj = {'release': release, 'arch': arch}
 
         return self._contents_mapping_obj
 
-    def _save_contents_mapping(self, configdir, arch):
-        mapping_file = os.path.join(configdir, 'contents_mapping-%s.pickle' % arch)
+    def _save_contents_mapping(self, configdir, release, arch):
+        mapping_file = os.path.join(configdir, 'contents_mapping-%s-%s.pickle' %
+                                    (release, arch))
         if self._contents_mapping_obj is not None:
             with open(mapping_file, 'wb') as fp:
                 pickle.dump(self._contents_mapping_obj, fp)
@@ -1322,9 +1326,9 @@ Debug::NoLocking "true";
                     src.close()
                     assert os.path.exists(map)
 
-            contents_mapping = self._contents_mapping(dir, arch)
+            contents_mapping = self._contents_mapping(dir, release, arch)
             # if the mapping is empty build it
-            if not contents_mapping:
+            if not contents_mapping or len(contents_mapping) == 2:
                 self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
@@ -1363,7 +1367,7 @@ Debug::NoLocking "true";
                             contents_mapping[path] = package
         # the file only needs to be saved after an update
         if self._contents_update:
-            self._save_contents_mapping(dir, arch)
+            self._save_contents_mapping(dir, release, arch)
             # the update of the mapping only needs to be done once
             self._contents_update = False
         if file.startswith('/'):

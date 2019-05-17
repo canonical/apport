@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys, gzip, mock
+import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys, mock
 
 try:
     from cStringIO import StringIO
