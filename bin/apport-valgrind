@@ -60,7 +60,7 @@ def parse_options():
     parser.add_argument(
         'exe', metavar='EXECUTABLE',
         help=_('the executable that is run under valgrind\'s memcheck tool '
-               ' for memory leak detection'))
+               'for memory leak detection'))
     parser.add_argument(
         '-p', '--extra-package', metavar='PKG', action='append', default=[],
         help=_('Install an extra package into the sandbox (can be specified '
