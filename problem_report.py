@@ -24,6 +24,7 @@ if sys.version[0] < '3':
     _python2 = True
 else:
     from collections import UserDict
+    unicode = str  # pyflakes3
     _python2 = False
 
 
