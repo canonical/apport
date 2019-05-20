@@ -10,6 +10,8 @@ detailed list of changes, please see ChangeLog.
   * test/test_report.py: remove unused import of gzip.
   * apport/ui.py: Write an UnreportableReason for snaps and provide information
     on how to contact a snap developer. (LP: #1729491)
+  * problem_report.py, bin/apport-unpack: restore some python2 code because the
+    Error Tracker retracers need it.
 
 2.20.11 (2019-05-16)
 --------------------

@@ -280,10 +280,25 @@ class ProblemReport(UserDict):
     def _is_binary(klass, string):
         '''Check if the given strings contains binary data.'''
 
+        if _python2:
+            return klass._is_binary_py2(string)
+
         if type(string) == bytes:
             for c in string:
                 if c < 32 and not chr(c).isspace():
                     return True
+        return False
+
+    @classmethod
+    def _is_binary_py2(klass, string):
+        '''Check if the given strings contains binary data. (Python 2)'''
+
+        if type(string) == unicode:
+            return False
+
+        for c in string:
+            if c < ' ' and not c.isspace():
+                return True
         return False
 
     @classmethod
@@ -371,9 +386,14 @@ class ProblemReport(UserDict):
                     del self.data[k]
                     continue
 
-            if isinstance(v, str):
-                # unicode → str
-                v = v.encode('UTF-8')
+            if _python2:
+                if isinstance(v, unicode):
+                    # unicode → str
+                    v = v.encode('UTF-8')
+            else:
+                if isinstance(v, str):
+                    # unicode → str
+                    v = v.encode('UTF-8')
 
             file.write(k.encode('ASCII'))
             if b'\n' in v:
@@ -585,7 +605,10 @@ class ProblemReport(UserDict):
                 if type(v) == bytes:
                     v = v.decode('UTF-8', 'replace')
                 # convert unicode to UTF-8 str
-                assert isinstance(v, str)
+                if _python2:
+                    assert isinstance(v, unicode)
+                else:
+                    assert isinstance(v, str)
 
                 lines = len(v.splitlines())
                 if size <= 1000 and lines == 1:
