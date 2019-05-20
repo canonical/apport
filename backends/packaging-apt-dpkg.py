@@ -88,6 +88,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         mapping_file = os.path.join(configdir, 'contents_mapping-%s-%s.pickle' %
                                     (release, arch))
+        if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
+            os.remove(mapping_file)
         if os.path.exists(mapping_file):
             with open(mapping_file, 'rb') as fp:
                 self._contents_mapping_obj = pickle.load(fp)
@@ -100,8 +102,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         mapping_file = os.path.join(configdir, 'contents_mapping-%s-%s.pickle' %
                                     (release, arch))
         if self._contents_mapping_obj is not None:
-            with open(mapping_file, 'wb') as fp:
-                pickle.dump(self._contents_mapping_obj, fp)
+            try:
+                with open(mapping_file, 'wb') as fp:
+                    pickle.dump(self._contents_mapping_obj, fp)
+            # rather than crashing on systems with little memory just don't
+            # write the crash file
+            except MemoryError:
+                pass
 
     def _cache(self):
         '''Return apt.Cache() (initialized lazily).'''
