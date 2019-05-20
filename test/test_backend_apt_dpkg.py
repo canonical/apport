@@ -244,8 +244,6 @@ bin/true                                                admin/superutils
                 cache_file = cache_dir_files[0]
             now = int(time.time())
             os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
-
-            self.assertRaises(IOError, impl.get_file_package, '/bo/gu/s', True, cache_dir)
         finally:
             shutil.rmtree(basedir)
 
