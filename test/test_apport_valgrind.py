@@ -17,6 +17,15 @@ import os.path
 p = subprocess.Popen(['which', 'valgrind'], stdout=subprocess.PIPE)
 p.communicate()
 have_valgrind = (p.returncode == 0)
+with open('/proc/meminfo') as f:
+    for line in f.readlines():
+        if line.startswith('MemTotal'):
+            memtotal = int(line.split()[1])
+            break
+    if memtotal < 2000000:
+        low_memory = True
+    else:
+        low_memory = False
 
 
 @unittest.skipUnless(have_valgrind, 'valgrind not installed')
@@ -133,6 +142,7 @@ void makeleak(void){
             log = f.read()
             self.assertTrue(exepath in log, log)
 
+    @unittest.skipIf(low_memory, 'not enough memory')
     def test_sandbox_cache_options(self):
         '''apport-valgrind creates a user specified sandbox and cache'''
 
