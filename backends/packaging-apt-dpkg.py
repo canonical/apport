@@ -1352,7 +1352,7 @@ Debug::NoLocking "true";
                             continue
                         path = line.split()[0]
                         if path.split(b'/')[0] == b'usr':
-                            if path.split(b'/')[1] not in (b'lib', b'bin', b'sbin', b'share'):
+                            if path.split(b'/')[1] not in (b'lib', b'libexec', b'bin', b'sbin', b'share', b'games'):
                                 continue
                             if path.split(b'/')[1] == b'share' and \
                                     path.split(b'/')[2] in (b'doc', b'icons', b'man', b'texlive', b'gocode', b'locale', b'help'):

@@ -12,6 +12,8 @@ detailed list of changes, please see ChangeLog.
     on how to contact a snap developer. (LP: #1729491)
   * problem_report.py, bin/apport-unpack: restore some python2 code because the
     Error Tracker retracers need it.
+  * backends/packaging-apt-dpkg.py: add in /usr/games and /usr/libexec as paths
+    for executables in the contents mapping.
 
 2.20.11 (2019-05-16)
 --------------------
