@@ -318,7 +318,6 @@ usr/bin/frob                                            foo/frob
                                                    True, cache_dir, arch='even'),
                              'libfrob1')
             self.assertEqual(len(os.listdir(cache_dir)), 2)
-            cache_file = os.listdir(cache_dir)[0]
 
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
                                                    True, cache_dir, release='Foonux 3.14', arch='even'),
@@ -340,7 +339,8 @@ usr/bin/frob                                            foo/frob
             # outdated cache, must refresh the cache and hit the invalid
             # mirror
             now = int(time.time())
-            os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
+            for cache_file in os.listdir(cache_dir):
+                os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
 
             self.assertRaises(IOError, impl.get_file_package, 'usr/bin/frob',
                               True, cache_dir, arch='even')
