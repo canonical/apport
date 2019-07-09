@@ -3,6 +3,14 @@ detailed list of changes, please see ChangeLog.
 
 2.20.12 (UNRELEASED)
 --------------------
+  * SECURITY UPDATE: TOCTOU issue allows local user to read arbitrary
+    files (LP: #1830858)
+    - apport/report.py: Avoid TOCTOU issue on users ignore file by
+      dropping privileges and then opening the file both test for access and
+      open the file in a single operation, instead of using access() before
+      reading the file which could be abused by a symlink to cause Apport to
+      read and embed an arbitrary file in the resulting crash dump.
+    - CVE-2019-7307
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

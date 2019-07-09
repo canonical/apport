@@ -978,15 +978,26 @@ class Report(problem_report.ProblemReport):
         ifpath = os.path.expanduser(_ignore_file)
         if orig_home is not None:
             os.environ['HOME'] = orig_home
-        if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
+        euid = os.geteuid()
+        try:
+            # drop permissions temporarily to try open users ignore file
+            os.seteuid(os.getuid())
+            fp = open(ifpath, 'r')
+        except (IOError, OSError):
+            fp = None
+        finally:
+            os.seteuid(euid)
+        if fp is None or os.fstat(fp.fileno()).st_size == 0:
             # create a document from scratch
             dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
         else:
             try:
-                dom = xml.dom.minidom.parse(ifpath)
+                dom = xml.dom.minidom.parse(fp)
             except ExpatError as e:
                 raise ValueError('%s has invalid format: %s' % (_ignore_file, str(e)))
 
+        if fp is not None:
+            fp.close()
         # remove whitespace so that writing back the XML does not accumulate
         # whitespace
         dom.documentElement.normalize()
