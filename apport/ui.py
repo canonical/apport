@@ -14,7 +14,7 @@ implementation (like GTK, Qt, or CLI).
 # the full text of the license.
 
 import glob, sys, os.path, optparse, traceback, locale, gettext, re
-import errno, zlib
+import errno, zlib, gzip
 import subprocess, threading, webbrowser
 import signal
 import time
@@ -525,8 +525,13 @@ class UserInterface:
 
         if self.options.save:
             try:
-                with open(os.path.expanduser(self.options.save), 'wb') as f:
-                    self.report.write(f)
+                savefile = os.path.expanduser(self.options.save)
+                if savefile.endswith(".gz"):
+                    with gzip.open(savefile, 'wb') as f:
+                        self.report.write(f)
+                else:
+                    with open(os.path.expanduser(self.options.save), 'wb') as f:
+                        self.report.write(f)
             except (IOError, OSError) as e:
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:

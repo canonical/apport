@@ -22,6 +22,9 @@ detailed list of changes, please see ChangeLog.
     Error Tracker retracers need it.
   * backends/packaging-apt-dpkg.py: add in /usr/games and /usr/libexec as paths
     for executables in the contents mapping.
+  * apport/ui.py: When saving a report for later processing if the filename
+    to save it to ends with .gz then gzip the report file. Thanks to Yuan-Chen
+    Cheng for the patch. (LP: #1837174)
 
 2.20.11 (2019-05-16)
 --------------------
