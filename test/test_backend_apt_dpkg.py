@@ -554,7 +554,7 @@ deb http://secondary.mirror tuxy extra
         # complains about obsolete packages
         result = impl.install_packages(self.rootdir, self.configdir,
                                        'Foonux 16.04', [('aspell-doc', '1.1')])
-        self.assertIn(result, 'aspell-doc version 1.1 required, but 0.60.7~20110707-3build1 is available\n')
+        self.assertIn('aspell-doc version 1.1 required, but 0.60.7~20110707-3', result)
         # ... but installs the current version anyway
         self.assertTrue(os.path.exists(
             os.path.join(self.rootdir, 'usr/share/info/aspell.info.gz')))
