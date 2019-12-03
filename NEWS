@@ -11,6 +11,31 @@ detailed list of changes, please see ChangeLog.
       reading the file which could be abused by a symlink to cause Apport to
       read and embed an arbitrary file in the resulting crash dump.
     - CVE-2019-7307
+  * SECURITY UPDATE: apport reads arbitrary files if ~/.config/apport/settings
+    is a symlink (LP: #1830862)
+    - apport/fileutils.py: drop permissions before reading user settings file.
+    - CVE-2019-11481
+  * SECURITY UPDATE: TOCTTOU race conditions and following symbolic
+    links when creating a core file (LP: #1839413)
+    - data/apport: use file descriptor to reference to cwd instead
+      of strings.
+    - CVE-2019-11482
+  * SECURITY UPDATE: fully user controllable lock file due to lock file
+    being located in world-writable directory (LP: #1839415)
+    - data/apport: create and use lock file from /var/lock/apport.
+    - CVE-2019-11485
+  * SECURITY UPDATE: per-process user controllable Apport socket file
+    (LP: #1839420)
+    - data/apport: forward crashes only under a valid uid and gid,
+      thanks Stéphane Graber for the patch.
+    - CVE-2019-11483
+  * SECURITY UPDATE: PID recycling enables an unprivileged user to
+    generate and read a crash report for a privileged process (LP: #1839795)
+    - data/apport: drop permissions before adding proc info (special thanks
+      to Kevin Backhouse for the patch)
+    - data/apport, apport/report.py, apport/ui.py: only access or open
+      /proc/[pid] through a file descriptor for that directory.
+    - CVE-2019-15790
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

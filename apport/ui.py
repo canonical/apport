@@ -243,7 +243,8 @@ class UserInterface:
             logind_session = None
         else:
             reports = apport.fileutils.get_new_reports()
-            logind_session = apport.Report.get_logind_session(os.getpid())
+            proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            logind_session = apport.Report.get_logind_session(proc_pid_fd)
 
         for f in reports:
             if not self.load_report(f):
@@ -463,14 +464,15 @@ class UserInterface:
         # if PID is given, add info
         if self.options.pid:
             try:
-                with open('/proc/%s/stat' % self.options.pid) as f:
+                proc_pid_fd = os.open('/proc/%s' % self.options.pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+                with open('stat', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as f:
                     stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
                     # this PID is a kernel thread
                     self.options.package = 'linux'
                 else:
-                    self.report.add_proc_info(self.options.pid)
+                    self.report.add_proc_info(proc_pid_fd=proc_pid_fd)
             except (ValueError, IOError, OSError) as e:
                 if hasattr(e, 'errno'):
                     # silently ignore nonexisting PIDs; the user must not close the

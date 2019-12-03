@@ -64,19 +64,19 @@ def _transitive_dependencies(package, depends_set):
             _transitive_dependencies(d, depends_set)
 
 
-def _read_file(path):
+def _read_file(path, dir_fd=None):
     '''Read file content.
 
     Return its content, or return a textual error if it failed.
     '''
     try:
-        with open(path, 'rb') as fd:
+        with open(path, 'rb', opener=lambda path, mode: os.open(path, mode, dir_fd=dir_fd)) as fd:
             return fd.read().strip().decode('UTF-8', errors='replace')
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
 
 
-def _read_maps(pid):
+def _read_maps(proc_pid_fd):
     '''Read /proc/pid/maps.
 
     Since /proc/$pid/maps may become unreadable unless we are ptracing the
@@ -84,7 +84,7 @@ def _read_maps(pid):
     '''
     maps = 'Error: unable to read /proc maps file'
     try:
-        with open('/proc/%d/maps' % pid) as fd:
+        with open('maps', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as fd:
             maps = fd.read().strip()
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
@@ -511,7 +511,7 @@ class Report(problem_report.ProblemReport):
             path = path[:-1]
         return path
 
-    def add_proc_info(self, pid=None, extraenv=[]):
+    def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=[]):
         '''Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -535,22 +535,24 @@ class Report(problem_report.ProblemReport):
         - _LogindSession: logind cgroup path, if present (Used for filtering
           out crashes that happened in a session that is not running any more)
         '''
-        if not pid:
-            pid = self.pid or os.getpid()
-        if not self.pid:
-            self.pid = int(pid)
-        pid = str(pid)
+        if not proc_pid_fd:
+            if not pid:
+                pid = self.pid or os.getpid()
+            if not self.pid:
+                self.pid = int(pid)
+            pid = str(pid)
+            proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
         try:
-            self['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
+            self['ProcCwd'] = os.readlink('cwd', dir_fd=proc_pid_fd)
         except OSError:
             pass
-        self.add_proc_environ(pid, extraenv)
-        self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
-        self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
-        self['ProcMaps'] = _read_maps(int(pid))
+        self.add_proc_environ(proc_pid_fd=proc_pid_fd, extraenv=extraenv)
+        self['ProcStatus'] = _read_file('status', dir_fd=proc_pid_fd)
+        self['ProcCmdline'] = _read_file('cmdline', dir_fd=proc_pid_fd).rstrip('\0')
+        self['ProcMaps'] = _read_maps(proc_pid_fd)
         try:
-            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+            self['ExecutablePath'] = os.readlink('exe', dir_fd=proc_pid_fd)
         except (PermissionError, OSError, FileNotFoundError) as e:
             if e.errno in (errno.EPERM, errno.EACCES):
                 raise ValueError('not accessible')
@@ -579,18 +581,18 @@ class Report(problem_report.ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                with open('/proc/' + pid + '/attr/current') as fd:
+                with open('attr/current', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as fd:
                     val = fd.read().strip()
                 if val != 'unconfined':
                     self['ProcAttrCurrent'] = val
         except (IOError, OSError):
             pass
 
-        ret = self.get_logind_session(pid)
+        ret = self.get_logind_session(proc_pid_fd)
         if ret:
             self['_LogindSession'] = ret[0]
 
-    def add_proc_environ(self, pid=None, extraenv=[]):
+    def add_proc_environ(self, pid=None, extraenv=[], proc_pid_fd=None):
         '''Add environment information.
 
         If pid is not given, it defaults to the process' current pid.
@@ -607,12 +609,14 @@ class Report(problem_report.ProblemReport):
                      'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION',
                      'LOCPATH'] + extraenv
 
-        if not pid:
-            pid = os.getpid()
-        pid = str(pid)
+        if not proc_pid_fd:
+            if not pid:
+                pid = os.getpid()
+            pid = str(pid)
+            proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
         self['ProcEnviron'] = ''
-        env = _read_file('/proc/' + pid + '/environ').replace('\n', '\\n')
+        env = _read_file('environ', dir_fd=proc_pid_fd).replace('\n', '\\n')
         if env.startswith('Error:'):
             self['ProcEnviron'] = env
         else:
@@ -1690,15 +1694,15 @@ class Report(problem_report.ProblemReport):
                                           int(m.group(2), 16), m.group(3)))
 
     @classmethod
-    def get_logind_session(klass, pid):
+    def get_logind_session(klass, proc_pid_fd):
         '''Get logind session path and start time.
 
-        Return (session_id, session_start_timestamp) if pid is in a logind
+        Return (session_id, session_start_timestamp) if process is in a logind
         session, or None otherwise.
         '''
         # determine cgroup
         try:
-            with open('/proc/%s/cgroup' % pid) as f:
+            with open('cgroup', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as f:
                 for line in f:
                     line = line.strip()
                     if 'name=systemd:' in line and line.endswith('.scope') and '/session-' in line:

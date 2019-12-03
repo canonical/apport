@@ -329,10 +329,19 @@ def get_config(section, setting, default=None, path=None, bool=False):
     '''
     if not get_config.config:
         get_config.config = ConfigParser()
-        if path:
-            get_config.config.read(path)
-        else:
-            get_config.config.read(os.path.expanduser(_config_file))
+        euid = os.geteuid()
+        egid = os.getegid()
+        try:
+            # drop permissions temporarily to try open users config file
+            os.seteuid(os.getuid())
+            os.setegid(os.getgid())
+            if path:
+                get_config.config.read(path)
+            else:
+                get_config.config.read(os.path.expanduser(_config_file))
+        finally:
+            os.seteuid(euid)
+            os.setegid(egid)
 
     try:
         if bool:

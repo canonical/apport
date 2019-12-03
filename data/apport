@@ -32,10 +32,15 @@ def check_lock():
     This avoids bringing down the system to its knees if there is a series of
     crashes.'''
 
-    # create a lock file
-    lockfile = os.path.join(apport.fileutils.report_dir, '.lock')
+    # create lock file directory
     try:
-        fd = os.open(lockfile, os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW)
+        os.mkdir("/var/lock/apport", mode=0o744)
+    except FileExistsError:
+        pass
+
+    # create a lock file
+    try:
+        fd = os.open("/var/lock/apport/lock", os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW)
     except OSError as e:
         error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))
         sys.exit(1)
@@ -55,22 +60,28 @@ def check_lock():
         signal.signal(signal.SIGALRM, original_handler)
 
 
-(pidstat, real_uid, real_gid, cwd) = (None, None, None, None)
+(pidstat, real_uid, real_gid, cwd, proc_pid_fd) = (None, None, None, None, None)
+
+
+def proc_pid_opener(path, flags):
+    return os.open(path, flags, dir_fd=proc_pid_fd)
 
 
 def get_pid_info(pid):
     '''Read /proc information about pid'''
 
-    global pidstat, real_uid, real_gid, cwd
+    global pidstat, real_uid, real_gid, cwd, proc_pid_fd
+
+    proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
     # unhandled exceptions on missing or invalidly formatted files are okay
     # here -- we want to know in the log file
-    pidstat = os.stat('/proc/%s/stat' % pid)
+    pidstat = os.stat('stat', dir_fd=proc_pid_fd)
 
     # determine real UID of the target process; do *not* use the owner of
     # /proc/pid/stat, as that will be root for setuid or unreadable programs!
     # (this matters when suid_dumpable is enabled)
-    with open('/proc/%s/status' % pid) as f:
+    with open('status', opener=proc_pid_opener) as f:
         for line in f:
             if line.startswith('Uid:'):
                 real_uid = int(line.split()[1])
@@ -80,7 +91,7 @@ def get_pid_info(pid):
     assert real_uid is not None, 'failed to parse Uid'
     assert real_gid is not None, 'failed to parse Gid'
 
-    cwd = os.readlink('/proc/' + pid + '/cwd')
+    cwd = os.open('cwd', os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd)
 
 
 def drop_privileges(real_only=False):
@@ -178,12 +189,13 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
         error_log('disabling core dump for suid/sgid/unreadable executable')
         return
 
-    core_path = os.path.join(cwd, 'core')
     try:
         with open('/proc/sys/kernel/core_uses_pid') as f:
-            if f.read().strip() != '0':
-                core_path += '.' + str(pid)
-        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            if f.read().strip() == '0':
+                core_path = 'core'
+            else:
+                core_path = 'core.%s' % (str(pid))
+        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o600, dir_fd=cwd)
     except (OSError, IOError):
         return
 
@@ -244,13 +256,13 @@ def usable_ram():
     return (memfree + cached - writeback) * 1024
 
 
-def is_closing_session(pid, uid):
+def is_closing_session(uid):
     '''Check if pid is in a closing user session.
 
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     '''
-    with open('/proc/%s/environ' % pid, 'rb') as e:
+    with open('environ', 'rb', opener=proc_pid_opener) as e:
         env = e.read().split(b'\0')
     for e in env:
         if e.startswith(b'DBUS_SESSION_BUS_ADDRESS='):
@@ -282,14 +294,14 @@ def is_closing_session(pid, uid):
     return False
 
 
-def is_systemd_watchdog_restart(signum, pid):
+def is_systemd_watchdog_restart(signum):
     '''Check if this is a restart by systemd's watchdog'''
 
     if signum != str(signal.SIGABRT) or not os.path.isdir('/run/systemd/system'):
         return False
 
     try:
-        with open('/proc/%s/cgroup' % pid) as f:
+        with open('cgroup', opener=proc_pid_opener) as f:
             for line in f:
                 if 'name=systemd:' in line:
                     unit = line.split('/')[-1].strip()
@@ -432,9 +444,68 @@ if options.global_pid is not None:
                       options.global_pid)
             sys.exit(0)
 
+        proc_host_pid_fd = os.open('/proc/%d' % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+
+        def proc_host_pid_opener(path, flags):
+            return os.open(path, flags, dir_fd=proc_host_pid_fd)
+
+        # Validate that the crashed binary is owned by the user namespace of the process
+        task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
+        try:
+            with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                for line in fd:
+                    fields = line.split()
+                    if len(fields) != 3:
+                        continue
+
+                    host_start = int(fields[1])
+                    host_end = host_start + int(fields[2])
+
+                    if task_uid >= host_start and task_uid <= host_end:
+                        break
+
+                else:
+                    error_log("host pid %s crashed in a container with no access to the binary"
+                              % options.global_pid)
+                    sys.exit(0)
+        except FileNotFoundError:
+            pass
+
+        task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
+        try:
+            with open("gid_map", "r", opener=proc_host_pid_opener) as fd:
+                for line in fd:
+                    fields = line.split()
+                    if len(fields) != 3:
+                        continue
+
+                    host_start = int(fields[1])
+                    host_end = host_start + int(fields[2])
+
+                    if task_gid >= host_start and task_gid <= host_end:
+                        break
+
+                else:
+                    error_log("host pid %s crashed in a container with no access to the binary"
+                              % options.global_pid)
+                    sys.exit(0)
+        except FileNotFoundError:
+            pass
+
+        # Chdir and chroot to the task
+        # WARNING: After this point, all "import" calls are security issues
+        __builtins__.__dict__['__import__'] = None
+
+        host_cwd = os.open('cwd', os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_host_pid_fd)
+
+        os.chdir(host_cwd)
+        # WARNING: we really should be using a file descriptor here,
+        #          but os.chroot won't take it
+        os.chroot(os.readlink('root', dir_fd=proc_host_pid_fd))
+
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
-            sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
+            sock.connect('/run/apport.socket')
         except Exception:
             error_log('host pid %s crashed in a container with a broken apport' %
                       options.global_pid)
@@ -452,7 +523,6 @@ if options.global_pid is not None:
             sock.shutdown(socket.SHUT_RDWR)
         except socket.timeout:
             error_log('Container apport failed to process crash within 30s')
-            sys.exit(0)
 
         sys.exit(0)
     elif not is_same_ns(host_pid, "mnt"):
@@ -511,9 +581,9 @@ try:
 
     # check if the executable was modified after the process started (e. g.
     # package got upgraded in between)
-    exe_mtime = os.stat('/proc/%s/exe' % pid).st_mtime
-    process_start = os.lstat('/proc/%s/cmdline' % pid).st_mtime
-    if not os.path.exists(os.readlink('/proc/%s/exe' % pid)) or exe_mtime > process_start:
+    exe_mtime = os.stat('exe', dir_fd=proc_pid_fd).st_mtime
+    process_start = os.lstat('cmdline', dir_fd=proc_pid_fd).st_mtime
+    if not os.path.exists(os.readlink('exe', dir_fd=proc_pid_fd)) or exe_mtime > process_start:
         error_log('executable was modified after program start, ignoring')
         sys.exit(0)
 
@@ -528,7 +598,19 @@ try:
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
-    info.add_proc_info(pid)
+
+    euid = os.geteuid()
+    egid = os.getegid()
+    try:
+        # Drop permissions temporarily to make sure that we don't
+        # include information in the crash report that the user should
+        # not be allowed to access.
+        os.seteuid(os.getuid())
+        os.setegid(os.getgid())
+        info.add_proc_info(proc_pid_fd=proc_pid_fd)
+    finally:
+        os.seteuid(euid)
+        os.setegid(egid)
 
     if 'ExecutablePath' not in info:
         error_log('could not determine ExecutablePath, aborting')
@@ -573,13 +655,13 @@ try:
         error_log('executable version is blacklisted, ignoring')
         sys.exit(0)
 
-    if is_closing_session(pid, pidstat.st_uid):
+    if is_closing_session(pidstat.st_uid):
         error_log('happens for shutting down session, ignoring')
         sys.exit(0)
 
     # ignore systemd watchdog kills; most often they don't tell us the actual
     # reason (kernel hang, etc.), LP #1433320
-    if is_systemd_watchdog_restart(signum, pid):
+    if is_systemd_watchdog_restart(signum):
         error_log('Ignoring systemd watchdog restart')
         sys.exit(0)
 
