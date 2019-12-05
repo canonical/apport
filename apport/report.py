@@ -551,15 +551,16 @@ class Report(problem_report.ProblemReport):
         self['ProcStatus'] = _read_file('status', dir_fd=proc_pid_fd)
         self['ProcCmdline'] = _read_file('cmdline', dir_fd=proc_pid_fd).rstrip('\0')
         self['ProcMaps'] = _read_maps(proc_pid_fd)
-        try:
-            self['ExecutablePath'] = os.readlink('exe', dir_fd=proc_pid_fd)
-        except (PermissionError, OSError, FileNotFoundError) as e:
-            if e.errno in (errno.EPERM, errno.EACCES):
-                raise ValueError('not accessible')
-            if e.errno == errno.ENOENT:
-                raise ValueError('invalid process')
-            else:
-                raise
+        if 'ExecutablePath' not in self:
+            try:
+                self['ExecutablePath'] = os.readlink('exe', dir_fd=proc_pid_fd)
+            except (PermissionError, OSError, FileNotFoundError) as e:
+                if e.errno in (errno.EPERM, errno.EACCES):
+                    raise ValueError('not accessible')
+                if e.errno == errno.ENOENT:
+                    raise ValueError('invalid process')
+                else:
+                    raise
         for p in ('rofs', 'rwfs', 'squashmnt', 'persistmnt'):
             if self['ExecutablePath'].startswith('/%s/' % p):
                 self['ExecutablePath'] = self['ExecutablePath'][len('/%s' % p):]

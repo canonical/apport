@@ -339,7 +339,7 @@ def is_same_ns(pid, ns):
 def parse_arguments():
     parser = argparse.ArgumentParser(epilog="""
     Alternatively, the following command line is understood for legacy hosts:
-        <pid> <signal number> <core file ulimit> <dump mode> [global pid]
+        <pid> <signal number> <core file ulimit> <dump mode> [global pid] [exe path]
     """)
 
     # TODO: Use type=int
@@ -348,6 +348,7 @@ def parse_arguments():
     parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
     parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
     parser.add_argument("-P", "--global-pid", nargs='?', help="pid in root namespace (%%P)")
+    parser.add_argument("-E", "--executable-path", nargs='?', help="path of executable (%%E)")
 
     options, rest = parser.parse_known_args()
 
@@ -355,7 +356,7 @@ def parse_arguments():
         for arg in rest:
             error_log("Unknown argument: %s", arg)
 
-    elif len(rest) in (4, 5):
+    elif len(rest) in (4, 5, 6):
         # Translate legacy command line
         options.pid = rest[0]
         options.signal_number = rest[1]
@@ -365,6 +366,10 @@ def parse_arguments():
             options.global_pid = rest[4]
         except IndexError:
             options.global_pid = None
+        try:
+            options.exe_path = rest[5].replace('!', '/')
+        except IndexError:
+            options.exe_path = None
     else:
         parser.print_usage()
         sys.exit(1)
@@ -597,6 +602,9 @@ try:
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
+
+    if options.exe_path is not None and os.path.exists(options.exe_path):
+        info['ExecutablePath'] = options.exe_path
 
     euid = os.geteuid()
     egid = os.getegid()

@@ -52,9 +52,9 @@ do_start()
 
 	# Old compatibility mode, switch later to second one
 	if true; then
-		echo "|$AGENT %p %s %c %d %P" > /proc/sys/kernel/core_pattern
+		echo "|$AGENT %p %s %c %d %P %E" > /proc/sys/kernel/core_pattern
 	else
-		echo "|$AGENT -p%p -s%s -c%c -d%d -P%P" > /proc/sys/kernel/core_pattern
+		echo "|$AGENT -p%p -s%s -c%c -d%d -P%P -E%E" > /proc/sys/kernel/core_pattern
 	fi
 	echo 2 > /proc/sys/fs/suid_dumpable
 }
