@@ -211,7 +211,7 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
         if limit > 0 and core_size > limit:
             error_log('aborting core dump writing, size %i exceeds current limit' % core_size)
             os.close(core_file)
-            os.unlink(core_path)
+            os.unlink(core_path, dir_fd=cwd)
             return
         error_log('writing core dump %s of size %i' % (core_path, core_size))
         os.write(core_file, r['CoreDump'])
@@ -227,17 +227,16 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
             if limit > 0 and written > limit:
                 error_log('aborting core dump writing, size exceeds current limit %i' % limit)
                 os.close(core_file)
-                os.unlink(core_path)
+                os.unlink(core_path, dir_fd=cwd)
                 return
             if os.write(core_file, block) != size:
                 error_log('aborting core dump writing, could not write')
                 os.close(core_file)
-                os.unlink(core_path)
+                os.unlink(core_path, dir_fd=cwd)
                 return
             block = os.read(0, 1048576)
 
     os.close(core_file)
-    return core_path
 
 
 def usable_ram():
