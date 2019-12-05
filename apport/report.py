@@ -541,7 +541,15 @@ class Report(problem_report.ProblemReport):
             if not self.pid:
                 self.pid = int(pid)
             pid = str(pid)
-            proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            try:
+                proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            except (PermissionError, OSError, FileNotFoundError) as e:
+                if e.errno in (errno.EPERM, errno.EACCES):
+                    raise ValueError('not accessible')
+                if e.errno == errno.ENOENT:
+                    raise ValueError('invalid process')
+                else:
+                    raise
 
         try:
             self['ProcCwd'] = os.readlink('cwd', dir_fd=proc_pid_fd)
