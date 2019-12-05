@@ -192,34 +192,6 @@ class T(unittest.TestCase):
             os.kill(test_proc2, 9)
             os.waitpid(test_proc2, 0)
 
-    def test_lock_symlink(self):
-        '''existing .lock file as dangling symlink does not create the file
-
-        This would be a vulnerability, as users could overwrite system files.
-        '''
-        # prepare a symlink trap
-        lockpath = os.path.join(self.report_dir, '.lock')
-        trappath = os.path.join(self.report_dir, '0wned')
-        os.symlink(trappath, lockpath)
-
-        # now call apport
-        test_proc = self.create_test_process()
-
-        try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
-                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-            app.stdin.write(b'boo')
-            app.stdin.close()
-
-            self.assertNotEqual(app.wait(), 0, app.stderr.read())
-            app.stderr.close()
-        finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
-
-        self.assertEqual(self.get_temp_all_reports(), [])
-        self.assertFalse(os.path.exists(trappath))
-
     def test_unpackaged_binary(self):
         '''unpackaged binaries do not create a report'''
 
