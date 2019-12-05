@@ -2274,7 +2274,9 @@ No symbol table info available.
         self.assertEqual(expected, pr.crash_signature())
 
     def test_get_logind_session(self):
-        ret = apport.Report.get_logind_session(os.getpid())
+        proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+        self.addCleanup(os.close, proc_pid_fd)
+        ret = apport.Report.get_logind_session(proc_pid_fd)
         if ret is None:
             # ensure that we don't run under logind, and thus the None is
             # justified
