@@ -234,6 +234,8 @@ def attach_hardware(report):
     - /proc/modules
     - lspci -vvnn
     - lsusb
+    - lsusb -v
+    - lsusb -t
     - devices from udev
     - DMI information from /sys
     - prtconf (sparc)
@@ -248,6 +250,8 @@ def attach_hardware(report):
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci', '-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
+    report['Lsusb-v'] = command_output(['lsusb', '-v'])
+    report['Lsusb-t'] = command_output(['lsusb', '-t'])
     report['ProcModules'] = command_output(['sort', '/proc/modules'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
