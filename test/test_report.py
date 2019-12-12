@@ -642,7 +642,8 @@ int main() {
 
         self.assertNotIn('Stacktrace', pr)
         self.assertNotIn('StacktraceTop', pr)
-        self.assertIn('core is truncated', pr['UnreportableReason'])
+        self.assertIn('not a core dump: file truncated',
+                      pr['UnreportableReason'])
 
     def test_add_gdb_info_short_core_file(self):
         '''add_gdb_info() with damaged core dump in gzip file'''

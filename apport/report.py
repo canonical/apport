@@ -753,11 +753,14 @@ class Report(problem_report.ProblemReport):
         out = _command_output(gdb_cmd, env=environ).decode('UTF-8', errors='replace')
 
         # check for truncated stack trace
-        if 'is truncated: expected core file size' in out:
+        if 'is truncated: expected core file size' in out or \
+                'is not a core dump: file truncated' in out:
             if 'warning:' in out:
                 warnings = '\n'.join([l for l in out.splitlines() if 'warning:' in l])
             elif 'Warning:' in out:
                 warnings = '\n'.join([l for l in out.splitlines() if 'Warning:' in l])
+            else:
+                warnings = out.splitlines()[0]
             reason = 'Invalid core dump: ' + warnings.strip()
             self['UnreportableReason'] = reason
             raise IOError(reason)
