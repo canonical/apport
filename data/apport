@@ -516,7 +516,7 @@ if options.global_pid is not None:
             sys.exit(0)
 
         # Send all arguments except for the first (exec path) and last (global pid)
-        args = ' '.join(sys.argv[1:-1])
+        args = ' '.join(sys.argv[1:5])
         try:
             sock.sendmsg([args.encode()], [
                 # Send a ucred containing the global pid

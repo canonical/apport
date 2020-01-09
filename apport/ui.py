@@ -13,7 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import glob, sys, os.path, optparse, traceback, locale, gettext, re
+import glob, sys, os.path, optparse, traceback, locale, gettext, re, io
 import errno, zlib, gzip
 import subprocess, threading, webbrowser
 import signal
@@ -243,8 +243,11 @@ class UserInterface:
             logind_session = None
         else:
             reports = apport.fileutils.get_new_reports()
-            proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-            logind_session = apport.Report.get_logind_session(proc_pid_fd)
+            if not PY3:
+                logind_session = apport.Report.get_logind_session(os.getpid())
+            else:
+                proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+                logind_session = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
 
         for f in reports:
             if not self.load_report(f):
@@ -464,15 +467,20 @@ class UserInterface:
         # if PID is given, add info
         if self.options.pid:
             try:
-                proc_pid_fd = os.open('/proc/%s' % self.options.pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-                with open('stat', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as f:
+                proc_pid_fd = None
+                if PY3:
+                    proc_pid_fd = os.open('/proc/%s' % self.options.pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+                    stat_file = os.open('stat', os.O_RDONLY, dir_fd=proc_pid_fd)
+                else:
+                    stat_file = '/proc/%s/stat' % self.options.pid
+                with io.open(stat_file) as f:
                     stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
                     # this PID is a kernel thread
                     self.options.package = 'linux'
                 else:
-                    self.report.add_proc_info(proc_pid_fd=proc_pid_fd)
+                    self.report.add_proc_info(pid=self.options.pid, proc_pid_fd=proc_pid_fd)
             except (ValueError, IOError, OSError) as e:
                 if hasattr(e, 'errno'):
                     # silently ignore nonexisting PIDs; the user must not close the

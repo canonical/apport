@@ -36,6 +36,12 @@ detailed list of changes, please see ChangeLog.
     - data/apport, apport/report.py, apport/ui.py: only access or open
       /proc/[pid] through a file descriptor for that directory.
     - CVE-2019-15790
+  * SECURITY REGRESSION: 'module' object has no attribute 'O_PATH'
+    (LP: #1851806)
+    - apport/report.py, apport/ui.py: use file descriptors for /proc/pid
+      directory access only when running under python 3; prevent reading /proc
+      maps under python 2 as it does not provide a secure way to do so; use
+      io.open for better compatibility between python 2 and 3.
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, re, pwd, grp, os, time
+import subprocess, tempfile, os.path, re, pwd, grp, os, time, io
 import fnmatch, glob, traceback, errno, sys, atexit, locale, imp
 
 import xml.dom, xml.dom.minidom
@@ -64,13 +64,29 @@ def _transitive_dependencies(package, depends_set):
             _transitive_dependencies(d, depends_set)
 
 
-def _read_file(path, dir_fd=None):
+def _read_proc_link(path, pid=None, dir_fd=None):
+    '''Use readlink() to resolve link.
+
+    Return a string representing the path to which the symbolic link points.
+    '''
+    if not _python2 and dir_fd is not None:
+        return os.readlink(path, dir_fd=dir_fd)
+
+    return os.readlink("/proc/%s/%s" % (pid, path))
+
+
+def _read_proc_file(path, pid=None, dir_fd=None):
     '''Read file content.
 
     Return its content, or return a textual error if it failed.
     '''
     try:
-        with open(path, 'rb', opener=lambda path, mode: os.open(path, mode, dir_fd=dir_fd)) as fd:
+        if not _python2 and dir_fd is not None:
+            proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
+        else:
+            proc_file = "/proc/%s/%s" % (pid, path)
+
+        with io.open(proc_file, 'rb') as fd:
             return fd.read().strip().decode('UTF-8', errors='replace')
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
@@ -83,6 +99,10 @@ def _read_maps(proc_pid_fd):
     process, detect this, and attempt to attach/detach.
     '''
     maps = 'Error: unable to read /proc maps file'
+
+    if _python2:
+        return 'Error: python2 does not provide a secure way to read /proc maps file'
+
     try:
         with open('maps', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as fd:
             maps = fd.read().strip()
@@ -541,28 +561,29 @@ class Report(problem_report.ProblemReport):
             if not self.pid:
                 self.pid = int(pid)
             pid = str(pid)
-            try:
-                proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-            except (PermissionError, OSError, FileNotFoundError) as e:
-                if e.errno in (errno.EPERM, errno.EACCES):
-                    raise ValueError('not accessible')
-                if e.errno == errno.ENOENT:
-                    raise ValueError('invalid process')
-                else:
-                    raise
+            if not _python2:
+                try:
+                    proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+                except OSError as e:
+                    if e.errno in (errno.EPERM, errno.EACCES):
+                        raise ValueError('not accessible')
+                    if e.errno == errno.ENOENT:
+                        raise ValueError('invalid process')
+                    else:
+                        raise
 
         try:
-            self['ProcCwd'] = os.readlink('cwd', dir_fd=proc_pid_fd)
+            self['ProcCwd'] = _read_proc_link('cwd', pid, proc_pid_fd)
         except OSError:
             pass
-        self.add_proc_environ(proc_pid_fd=proc_pid_fd, extraenv=extraenv)
-        self['ProcStatus'] = _read_file('status', dir_fd=proc_pid_fd)
-        self['ProcCmdline'] = _read_file('cmdline', dir_fd=proc_pid_fd).rstrip('\0')
+        self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
+        self['ProcStatus'] = _read_proc_file('status', pid, proc_pid_fd)
+        self['ProcCmdline'] = _read_proc_file('cmdline', pid, proc_pid_fd).rstrip('\0')
         self['ProcMaps'] = _read_maps(proc_pid_fd)
         if 'ExecutablePath' not in self:
             try:
-                self['ExecutablePath'] = os.readlink('exe', dir_fd=proc_pid_fd)
-            except (PermissionError, OSError, FileNotFoundError) as e:
+                self['ExecutablePath'] = _read_proc_link('exe', pid, proc_pid_fd)
+            except OSError as e:
                 if e.errno in (errno.EPERM, errno.EACCES):
                     raise ValueError('not accessible')
                 if e.errno == errno.ENOENT:
@@ -590,14 +611,13 @@ class Report(problem_report.ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                with open('attr/current', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as fd:
-                    val = fd.read().strip()
+                val = _read_proc_file('attr/current', pid, proc_pid_fd)
                 if val != 'unconfined':
                     self['ProcAttrCurrent'] = val
         except (IOError, OSError):
             pass
 
-        ret = self.get_logind_session(proc_pid_fd)
+        ret = self.get_logind_session(pid, proc_pid_fd)
         if ret:
             self['_LogindSession'] = ret[0]
 
@@ -622,10 +642,11 @@ class Report(problem_report.ProblemReport):
             if not pid:
                 pid = os.getpid()
             pid = str(pid)
-            proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            if not _python2:
+                proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
         self['ProcEnviron'] = ''
-        env = _read_file('environ', dir_fd=proc_pid_fd).replace('\n', '\\n')
+        env = _read_proc_file('environ', pid, proc_pid_fd).replace('\n', '\\n')
         if env.startswith('Error:'):
             self['ProcEnviron'] = env
         else:
@@ -1706,15 +1727,20 @@ class Report(problem_report.ProblemReport):
                                           int(m.group(2), 16), m.group(3)))
 
     @classmethod
-    def get_logind_session(klass, proc_pid_fd):
+    def get_logind_session(klass, pid=None, proc_pid_fd=None):
         '''Get logind session path and start time.
 
         Return (session_id, session_start_timestamp) if process is in a logind
         session, or None otherwise.
         '''
+        if not _python2 and proc_pid_fd is not None:
+            cgroup_file = os.open('cgroup', os.O_RDONLY, dir_fd=proc_pid_fd)
+        else:
+            cgroup_file = "/proc/%s/cgroup" % pid
+
         # determine cgroup
         try:
-            with open('cgroup', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as f:
+            with io.open(cgroup_file) as f:
                 for line in f:
                     line = line.strip()
                     if 'name=systemd:' in line and line.endswith('.scope') and '/session-' in line:

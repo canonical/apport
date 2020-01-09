@@ -2275,9 +2275,7 @@ No symbol table info available.
         self.assertEqual(expected, pr.crash_signature())
 
     def test_get_logind_session(self):
-        proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-        self.addCleanup(os.close, proc_pid_fd)
-        ret = apport.Report.get_logind_session(proc_pid_fd)
+        ret = apport.Report.get_logind_session(os.getpid())
         if ret is None:
             # ensure that we don't run under logind, and thus the None is
             # justified
@@ -2290,7 +2288,28 @@ No symbol table info available.
 
         (session, timestamp) = ret
         self.assertNotEqual(session, '')
-        # session start must be >= 2014-01-01 and "now"
+        # session start must be >= 2014-01-01 and <= "now"
+        self.assertLess(timestamp, time.time())
+        self.assertGreater(timestamp,
+                           time.mktime(time.strptime('2014-01-01', '%Y-%m-%d')))
+
+    def test_get_logind_session_fd(self):
+        proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+        self.addCleanup(os.close, proc_pid_fd)
+        ret = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
+        if ret is None:
+            # ensure that we don't run under logind, and thus the None is
+            # justified
+            with open('/proc/self/cgroup') as f:
+                contents = f.read()
+            sys.stdout.write('[not running under logind] ')
+            sys.stdout.flush()
+            self.assertNotIn('name=systemd:/user', contents)
+            return
+
+        (session, timestamp) = ret
+        self.assertNotEqual(session, '')
+        # session start must be >= 2014-01-01 and <= "now"
         self.assertLess(timestamp, time.time())
         self.assertGreater(timestamp,
                            time.mktime(time.strptime('2014-01-01', '%Y-%m-%d')))
