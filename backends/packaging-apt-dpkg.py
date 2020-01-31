@@ -791,6 +791,8 @@ Debug::NoLocking "true";
         # directly connect to Launchpad when downloading deb files
         apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'DIRECT')
         apt.apt_pkg.config.set('Acquire::http::Proxy::launchpad.net', 'DIRECT')
+        # allow unauthenticated downloads
+        apt.apt_pkg.config.set('APT::Get::AllowUnauthenticated', 'True')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
