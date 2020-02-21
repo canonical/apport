@@ -222,7 +222,7 @@ func(42)
         try:
             for d in ('/tmp', '/usr/local', '/usr'):
                 os.chdir(d)
-                p = subprocess.Popen(['python'], stdin=subprocess.PIPE,
+                p = subprocess.Popen(['python3'], stdin=subprocess.PIPE,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 (out, err) = p.communicate(b'raise ValueError')
                 out = out.decode()
