@@ -89,8 +89,10 @@ def process_report(report):
                         os.unlink(report)
                     return None
 
-        # write updated report
-        with open(report, 'ab') as f:
+        # write updated report, we use os.open and os.fdopen as
+        # /proc/sys/fs/protected_regular is set to 1 (LP: #1848064)
+        fd = os.open(report, os.O_WRONLY | os.O_APPEND)
+        with os.fdopen(fd, 'wb') as f:
             os.chmod(report, 0)
             r.write(f, only_new=True)
             os.chmod(report, 0o640)
