@@ -1495,6 +1495,8 @@ class Report(problem_report.ProblemReport):
         '''
         if 'ProcMaps' not in self or 'Stacktrace' not in self or 'Signal' not in self:
             return None
+        if 'Errno 13' in self['ProcMaps']:
+            return None
 
         stack = []
         failed = 0
