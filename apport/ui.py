@@ -546,7 +546,7 @@ class UserInterface:
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
-            allowed_to_report = apport.fileutils.allowed_to_report()
+            allowed_to_report = True
             response = self.ui_present_report_details(allowed_to_report)
             if response['report']:
                 self.file_report()
@@ -625,7 +625,7 @@ class UserInterface:
             return False
 
         # show what's being sent
-        allowed_to_report = apport.fileutils.allowed_to_report()
+        allowed_to_report = True
         response = self.ui_present_report_details(allowed_to_report)
         if response['report']:
             self.crashdb.update(self.options.update_report, self.report,
