@@ -836,7 +836,7 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertIn("** buffer overflow detected ***: %s.bin terminated" % (script),
+        self.assertIn("** buffer overflow detected ***: terminated",
                       pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
         self.assertNotIn('= 0x', pr['AssertionMessage'])
