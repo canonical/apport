@@ -257,6 +257,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         return False
 
     def get_lp_binary_package(self, distro_id, release, package, version, arch):
+        # allow unauthenticated downloads
+        apt.apt_pkg.config.set('APT::Get::AllowUnauthenticated', 'True')
         from launchpadlib.launchpad import Launchpad
         launchpad = Launchpad.login_anonymously('apport-retrace', 'production',
                                                 version='devel')
@@ -791,8 +793,6 @@ Debug::NoLocking "true";
         # directly connect to Launchpad when downloading deb files
         apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'DIRECT')
         apt.apt_pkg.config.set('Acquire::http::Proxy::launchpad.net', 'DIRECT')
-        # allow unauthenticated downloads
-        apt.apt_pkg.config.set('APT::Get::AllowUnauthenticated', 'True')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
