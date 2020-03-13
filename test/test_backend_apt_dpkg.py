@@ -33,7 +33,7 @@ def _has_internet():
                 f = urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
             else:
                 f = urlopen('https://api.launchpad.net/devel/ubuntu/')
-            if f.readline().startswith(b'{"all_specifications'):
+            if b"web_link" in f.readline():
                 _has_internet.cache = True
         except URLError:
             pass
@@ -1042,10 +1042,10 @@ deb http://secondary.mirror tuxy extra
     def test_install_package_from_a_ppa(self):
         '''Install a package from a PPA.'''
         ppa = 'LP-PPA-brian-murray'
-        self._setup_foonux_config()
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 14.04',
+        self._setup_foonux_config(release='xenial')
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 16.04',
                                          [('apport',
-                                           '2.14.1-0ubuntu3.7~ppa4')
+                                           '2.20.1-0ubuntu2.22~ppa1')
                                          ], False, self.cachedir, origins=[ppa])
 
         self.assertEqual(obsolete, '')
@@ -1056,7 +1056,7 @@ deb http://secondary.mirror tuxy extra
                 return f.readline().decode().split()[1][1:-1]
 
         self.assertEqual(sandbox_ver('apport'),
-                         '2.14.1-0ubuntu3.7~ppa4')
+                         '2.20.1-0ubuntu2.22~ppa1')
 
     def _setup_foonux_config(self, updates=False, release='trusty', ppa=False):
         '''Set up directories and configuration for install_packages()
