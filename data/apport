@@ -32,15 +32,10 @@ def check_lock():
     This avoids bringing down the system to its knees if there is a series of
     crashes.'''
 
-    # create lock file directory
-    try:
-        os.mkdir("/var/lock/apport", mode=0o744)
-    except FileExistsError:
-        pass
-
     # create a lock file
     try:
-        fd = os.open("/var/lock/apport/lock", os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW)
+        fd = os.open("/var/run/apport.lock",
+                     os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, mode=0o600)
     except OSError as e:
         error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))
         sys.exit(1)
@@ -704,15 +699,16 @@ try:
             mode = 0o640
         else:
             mode = 0
-        reportfile = os.fdopen(os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, mode), 'w+b')
+        fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, mode)
+        reportfile = os.fdopen(fd, 'w+b')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report
         try:
             gid = pwd.getpwnam('whoopsie').pw_gid
-            os.chown(report, pidstat.st_uid, gid)
+            os.fchown(fd, pidstat.st_uid, gid)
         except (OSError, KeyError):
-            os.chown(report, pidstat.st_uid, pidstat.st_gid)
+            os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError) as e:
         error_log('Could not create report file: %s' % str(e))
         sys.exit(1)

@@ -42,6 +42,19 @@ detailed list of changes, please see ChangeLog.
       directory access only when running under python 3; prevent reading /proc
       maps under python 2 as it does not provide a secure way to do so; use
       io.open for better compatibility between python 2 and 3.
+  * SECURITY UPDATE: World writable root owned lock file created in user
+    controllable location (LP: #1862348)
+    - data/apport: Change location of lock file to be directly under
+      /var/run so that regular users can not directly access it or perform
+      symlink attacks.
+    - CVE-2020-8831
+  * SECURITY UPDATE: Race condition between report creation and ownership
+    (LP: #1862933)
+    - data/apport: When setting owner of report file use a file-descriptor
+      to the report file instead of its path name to ensure that users can
+      not cause Apport to change the ownership of other files via a
+      symlink attack.
+    - CVE-2020-8833
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents
