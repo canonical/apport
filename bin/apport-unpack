@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, gettext
+import sys, os, os.path, gettext, gzip
 from apport import unicode_gettext as _, fatal
 
 import problem_report
@@ -57,8 +57,12 @@ if report == '-':
     pr.load(sys.stdin, binary=False)
 else:
     try:
-        with open(report, 'rb') as f:
-            pr.load(f, binary=False)
+        if report.endswith('.gz'):
+            with gzip.open(report, 'rb') as f:
+                pr.load(f, binary=False)
+        else:
+            with open(report, 'rb') as f:
+                pr.load(f, binary=False)
     except IOError as e:
         fatal(str(e))
 for k in pr:
@@ -71,7 +75,11 @@ for k in pr:
         else:
             f.write(pr[k])
 try:
-    with open(report, 'rb') as f:
-        pr.extract_keys(f, bin_keys, dir)
+    if report.endswith('.gz'):
+        with gzip.open(report, 'rb') as f:
+            pr.extract_keys(f, bin_keys, dir)
+    else:
+        with open(report, 'rb') as f:
+            pr.extract_keys(f, bin_keys, dir)
 except IOError as e:
     fatal(str(e))
