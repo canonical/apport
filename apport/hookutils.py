@@ -233,6 +233,7 @@ def attach_hardware(report):
     - /proc/cmdline
     - /proc/modules
     - lspci -vvnn
+    - lscpi -vt
     - lsusb
     - lsusb -v
     - lsusb -t
@@ -249,6 +250,7 @@ def attach_hardware(report):
 
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci', '-vvnn'])
+        report['Lspci-vt'] = command_output(['lspci', '-vt'])
     report['Lsusb'] = command_output(['lsusb'])
     report['Lsusb-v'] = command_output(['lsusb', '-v'])
     report['Lsusb-t'] = command_output(['lsusb', '-t'])
