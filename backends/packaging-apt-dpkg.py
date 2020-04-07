@@ -1381,12 +1381,15 @@ Debug::NoLocking "true";
             self._contents_update = False
         if file.startswith('/'):
             file = file[1:]
-        file = file.encode()
-        try:
-            pkg = contents_mapping[file].decode()
-            return pkg
-        except KeyError:
-            pass
+        files = [file.encode()]
+        if file.startswith('usr/lib/x86_64-linux-gnu/'):
+            files.append(file[4:].encode())
+        for file in files:
+            try:
+                pkg = contents_mapping[file].decode()
+                return pkg
+            except KeyError:
+                pass
         return None
 
     @classmethod
