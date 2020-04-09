@@ -1384,6 +1384,12 @@ Debug::NoLocking "true";
         files = [file.encode()]
         if file.startswith('usr/lib/x86_64-linux-gnu/'):
             files.append(file[4:].encode())
+        elif file.startswith('usr/lib/i386-linux-gnu/'):
+            files.append(file[4:].encode())
+        elif file.startswith('usr/bin/'):
+            files.append(file[4:].encode())
+        elif file.startswith('usr/sbin/'):
+            files.append(file[4:].encode())
         for file in files:
             try:
                 pkg = contents_mapping[file].decode()
