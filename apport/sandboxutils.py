@@ -226,6 +226,14 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             pkg = apport.packaging.get_file_package(report[path], True, pkgmap_cache_dir,
                                                     release=report['DistroRelease'],
                                                     arch=report.get('Architecture'))
+            # Because of UsrMerge the two systemctl's may share the same
+            # location, however since systemd and systemctl conflict we can
+            # assume that if the SourcePackage was set to systemd it is
+            # correct. For an example see LP: #1872211.
+            if pkg == 'systemctl':
+                if report['SourcePackage'] == 'systemd':
+                    report['ExecutablePath'] = '/bin/systemctl'
+                    pkg = 'systemd'
             if pkg:
                 apport.log('Installing extra package %s to get %s' % (pkg, path), log_timestamps)
                 pkgs.append((pkg, pkg_versions.get(pkg)))
