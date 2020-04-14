@@ -1232,7 +1232,8 @@ Debug::NoLocking "true";
                         mirror_idx = 2
                     else:
                         mirror_idx = 1
-                    if fields[mirror_idx].startswith('http://'):
+                    if fields[mirror_idx].startswith('http://') or \
+                            fields[mirror_idx].startswith('https://'):
                         return fields[mirror_idx]
             else:
                 raise SystemError('cannot determine default mirror: %s does not contain a valid deb line'
