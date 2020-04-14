@@ -1354,7 +1354,7 @@ Debug::NoLocking "true";
                             continue
                         path = line.split()[0]
                         if path.split(b'/')[0] == b'usr':
-                            if path.split(b'/')[1] not in (b'lib', b'libexec', b'bin', b'sbin', b'share', b'games'):
+                            if path.split(b'/')[1] not in (b'lib', b'libexec', b'libx32', b'bin', b'sbin', b'share', b'games', b'Brother'):
                                 continue
                             if path.split(b'/')[1] == b'share' and \
                                     path.split(b'/')[2] in (b'doc', b'icons', b'man', b'texlive', b'gocode', b'locale', b'help'):
@@ -1385,6 +1385,10 @@ Debug::NoLocking "true";
         if file.startswith('usr/lib/x86_64-linux-gnu/'):
             files.append(file[4:].encode())
         elif file.startswith('usr/lib/i386-linux-gnu/'):
+            files.append(file[4:].encode())
+        elif file.startswith('usr/lib/systemd/'):
+            files.append(file[4:].encode())
+        elif file.startswith('usr/lib/udev/'):
             files.append(file[4:].encode())
         elif file.startswith('usr/bin/'):
             files.append(file[4:].encode())
