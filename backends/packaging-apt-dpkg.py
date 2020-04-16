@@ -1380,7 +1380,9 @@ Debug::NoLocking "true";
             self._save_contents_mapping(dir, release, arch)
             # the update of the mapping only needs to be done once
             self._contents_update = False
-        if file.startswith('/'):
+        if isinstance(file, bytes):
+            file = file.decode()
+        if file[0] == '/':
             file = file[1:]
         files = [file.encode()]
         if file.startswith('usr/lib/x86_64-linux-gnu/'):
