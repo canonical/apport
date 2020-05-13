@@ -49,6 +49,15 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if exc_type in (KeyboardInterrupt, ):
             return
 
+        # if python apt modules are not built for the python version than it
+        # is not supported. LP: #1774843
+        try:
+            import apt_pkg
+            # make pyflakes happy
+            apt_pkg.DATE
+        except ImportError:
+            return
+
         # do not do anything if apport was disabled
         if not enabled():
             return
