@@ -448,7 +448,7 @@ class MainUserInterface(apport.ui.UserInterface):
         self.progress.hide()
 
     def ui_question_yesno(self, text):
-        response = QMessageBox.question(None, '', 'text',
+        response = QMessageBox.question(None, '', text,
                                         QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
         if response == QMessageBox.Yes:
             return True
