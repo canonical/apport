@@ -145,6 +145,8 @@ class T(unittest.TestCase):
 
         # UserGroups only has system groups
         for g in pr['UserGroups'].split():
+            if g == 'N/A':
+                continue
             self.assertLess(grp.getgrnam(g).gr_gid, 500)
 
         self.assertFalse('root' in pr['UserGroups'],

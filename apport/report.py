@@ -403,7 +403,12 @@ class Report(problem_report.ProblemReport):
         groups = [name for name, p, gid, memb in grp.getgrall()
                   if user in memb and gid < 1000]
         groups.sort()
-        self['UserGroups'] = ' '.join(groups)
+        if groups:
+            self['UserGroups'] = ' '.join(groups)
+        else:
+            # the docs indicate this is optional but a lot of tests expect
+            # UserGroups to exist
+            self['UserGroups'] = 'N/A'
 
     def _check_interpreted(self):
         '''Check if process is a script.

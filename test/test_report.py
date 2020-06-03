@@ -72,6 +72,8 @@ class T(unittest.TestCase):
 
         # double-check that user group names are removed
         for g in pr['UserGroups'].split():
+            if g == 'N/A':
+                continue
             self.assertLess(grp.getgrnam(g).gr_gid, 1000)
         self.assertNotIn(grp.getgrgid(os.getgid()).gr_name, pr['UserGroups'])
 
