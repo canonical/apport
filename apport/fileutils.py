@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time, pwd, sys
+import os, glob, subprocess, os.path, time, pwd, sys, requests_unixsocket
 
 try:
     from configparser import ConfigParser, NoOptionError, NoSectionError
@@ -102,6 +102,21 @@ def find_file_package(file):
         return None
 
     return packaging.get_file_package(file)
+
+
+def find_snap(snap):
+    '''Return the data of the given snap.
+
+    Return None if the snap is not found to be installed.
+    '''
+    session = requests_unixsocket.Session()
+    try:
+        r = session.get('http+unix://%2Frun%2Fsnapd.socket/v2/snaps/{}'.format(snap))
+        if r.status_code == 200:
+            j = r.json()
+            return j["result"]
+    except Exception:
+        return None
 
 
 def seen_report(report):

@@ -235,7 +235,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         hostname = self.get_hostname()
 
-        project = self.options.get('project')
+        if 'SnapSource' in report:
+            project = report['SnapSource']
+        else:
+            project = self.options.get('project')
 
         if not project:
             if 'SourcePackage' in report:

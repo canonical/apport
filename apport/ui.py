@@ -66,19 +66,6 @@ def still_running(pid):
     return True
 
 
-def find_snap(package):
-    import requests_unixsocket
-
-    session = requests_unixsocket.Session()
-    try:
-        r = session.get('http+unix://%2Frun%2Fsnapd.socket/v2/snaps/{}'.format(package))
-        if r.status_code == 200:
-            j = r.json()
-            return j["result"]
-    except Exception:
-        return None
-
-
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
                         ignore_uninstalled=False):
     '''Collect information about report.
@@ -122,12 +109,20 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             package = apport.fileutils.find_file_package(report['ExecutablePath'])
         else:
             raise KeyError('called without a package, and report does not have ExecutablePath')
+
+    # check if the package name relates to an installed snap
+    snap = apport.fileutils.find_snap(package)
+    if snap:
+        report.add_snap_info(snap)
+
     try:
         report.add_package_info(package)
     except ValueError:
         # this happens if we are collecting information on an uninstalled
         # package
-        if not ignore_uninstalled:
+
+        # we found no package, but a snap, so lets continue
+        if not ignore_uninstalled and 'Snap' not in report:
             raise
     except SystemError as e:
         report['UnreportableReason'] = excstr(e)
@@ -140,7 +135,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         # the chance to set a third-party CrashDB.
         try:
             if 'CrashDB' not in report and 'APPORT_DISABLE_DISTRO_CHECK' not in os.environ:
-                if 'Package' not in report:
+                if 'Package' not in report and 'Snap' not in report:
                     report['UnreportableReason'] = _('This package does not seem to be installed correctly')
                 elif not apport.packaging.is_distro_package(report['Package'].split()[0]) and  \
                         not apport.packaging.is_native_origin_package(report['Package'].split()[0]):
@@ -150,7 +145,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         except ValueError:
             # this happens if we are collecting information on an uninstalled
             # package
-            if not ignore_uninstalled:
+
+            # we found no package, but a snap, so lets continue
+            if not ignore_uninstalled and 'Snap' not in report:
                 raise
 
     # add title
@@ -858,7 +855,7 @@ class UserInterface:
         elif '/' in self.args[0]:
             if self.args[0].startswith('/snap/bin'):
                 # see if the snap has the same name as the executable
-                snap = find_snap(self.args[0].split('/')[-1])
+                snap = apport.fileutils.find_snap(self.args[0].split('/')[-1])
                 if not snap:
                     optparser.error('%s is provided by a snap. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.' % self.args[0])
                 elif snap.get("contact", ""):
@@ -1134,16 +1131,6 @@ class UserInterface:
                         repr(e))
                     self.report['_MarkForUpload'] = 'False'
                 except ValueError:  # package does not exist
-                    snap = find_snap(self.cur_package)
-                    if not snap:
-                        pass
-                    elif snap.get("contact", ""):
-                        self.report['UnreportableReason'] = _('This report is about a snap published by %s. Contact them via %s for help.') % (snap["developer"], snap["contact"])
-                        self.report['_MarkForUpload'] = 'False'
-                    else:
-                        self.report['UnreportableReason'] = _('This report is about a snap published by %s. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.') % snap["developer"]
-                        self.report['_MarkForUpload'] = 'False'
-
                     if 'UnreportableReason' not in self.report:
                         self.report['UnreportableReason'] = _('This report is about a package that is not installed.')
                         self.report['_MarkForUpload'] = 'False'
@@ -1153,17 +1140,51 @@ class UserInterface:
                                                           'process this problem report:') + '\n\n' + str(e)
                     self.report['_MarkForUpload'] = 'False'
 
-            snap = find_snap(self.cur_package)
-            if snap and 'UnreportableReason' not in self.report and self.specified_a_pkg:
-                if snap.get("contact", ""):
-                    msg = _('You are about to report a bug against the deb package, but you also a have snap published by %s installed. You can contact them via %s for help. Do you want to continue with the bug report against the deb?') % (snap["developer"], snap["contact"])
+            # ask for target, if snap and deb package are installed
+            if 'Snap' in self.report and 'Package' in self.report:
+                if '(not installed)' in self.report['Package']:
+                    # choose snap automatically, if deb package is not installed
+                    res = [0]
                 else:
-                    msg = _('You are about to report a bug against the deb package, but you also a have snap published by %s installed. For the snap, no contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help. Do you want to continue with the bug report against the deb?') % snap["developer"]
-
-                if not self.ui_question_yesno(msg):
+                    res = self.ui_question_choice(_('You have two versions of this application installed, which one do you want to report a bug against?'), [
+                                                  _('%s snap') % self.report['Snap'],
+                                                  _('%s deb package') % self.report['Package']
+                                                  ], False)
+                # bug report is about the snap, clean deb package info
+                if res == [0]:
+                    del self.report['Package']
+                    if 'PackageArchitecture' in self.report:
+                        del self.report['PackageArchitecture']
+                    if 'SourcePackage' in self.report:
+                        del self.report['SourcePackage']
+                # bug report is about the deb package, clean snap info
+                elif res == [1]:
+                    del self.report['Snap']
+                    if 'SnapSource' in self.report:
+                        del self.report['SnapSource']
+                    if 'SnapTags' in self.report:
+                        del self.report['SnapTags']
+                else:
                     self.ui_stop_info_collection_progress()
                     sys.exit(0)
                     return
+
+            # append snap tags, if this report is about the snap
+            if 'Snap' in self.report and 'SnapTags' in self.report:
+                current_tags = self.report.get('Tags', '')
+                if current_tags:
+                    current_tags += ' '
+                self.report['Tags'] = current_tags + self.report['SnapTags']
+                del self.report['SnapTags']
+
+            # show a hint if we cannot auto report a snap bug via 'SnapSource'
+            if 'Snap' in self.report and 'SnapSource' not in self.report and 'UnreportableReason' not in self.report and self.specified_a_pkg:
+                snap = apport.fileutils.find_snap(self.cur_package)
+                if snap.get("contact", ""):
+                    self.report['UnreportableReason'] = _('%s is provided by a snap published by %s. Contact them via %s for help.') % (snap["name"], snap["developer"], snap["contact"])
+                else:
+                    self.report['UnreportableReason'] = _('%s is provided by a snap published by %s. No contact address has been provided; visit the forum at https://forum.snapcraft.io/ for help.') % (snap["name"], snap["developer"])
+                self.report['_MarkForUpload'] = 'False'
 
             if 'UnreportableReason' in self.report or not self.check_report_crashdb():
                 self.ui_stop_info_collection_progress()
@@ -1227,9 +1248,9 @@ class UserInterface:
 
             # check that we were able to determine package names
             if 'UnreportableReason' not in self.report:
-                if (('SourcePackage' not in self.report and 'Dependencies' not in self.report) or
+                if ((('SourcePackage' not in self.report and 'Dependencies' not in self.report) or
                     (not self.report.get('ProblemType', '').startswith('Kernel') and
-                     'Package' not in self.report)):
+                     'Package' not in self.report)) and ('SnapSource' not in self.report and 'Snap' not in self.report)):
                     self.ui_error_message(_('Invalid problem report'),
                                           _('Could not determine the package or source package name.'))
                     # TODO This is not called consistently, is it really needed?

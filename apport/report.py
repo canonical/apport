@@ -19,10 +19,12 @@ if sys.version > '3':
     _python2 = False
     from urllib.error import URLError
     from urllib.request import urlopen
+    from urllib.parse import unquote
     (urlopen, URLError)  # pyflakes
 else:
     _python2 = True
     from urllib import urlopen
+    from urllib import unquote
     URLError = IOError
 
 import problem_report
@@ -351,7 +353,7 @@ class Report(problem_report.ProblemReport):
             try:
                 self['SourcePackage'] = packaging.get_source(package)
             except ValueError:
-                # might not exist for non-free third-party packages
+                # might not exist for non-free third-party packages or snaps
                 pass
         if not version:
             return
@@ -375,6 +377,26 @@ class Report(problem_report.ProblemReport):
                 self['Dependencies'] += '\n'
             self['Dependencies'] += '%s %s%s' % (
                 dep, v, self._customized_package_suffix(dep))
+
+    def add_snap_info(self, snap):
+        '''Add info about an installed Snap
+
+        This adds a Snap: field, containing name, version and channel.
+        It adds a SnapSource: field, if the snap has a Launchpad contact defined.
+        '''
+        self['Snap'] = '%s %s (%s)' % (snap.get("name"), snap.get("version"),
+                                       snap.get("channel", "unknown"))
+        # Automatically handle snaps which have a Launchpad contact defined
+        if snap.get("contact"):
+            # Parse Launchpad project (e.g. 'subiquity') or source package string
+            # (e.g. 'ubuntu/+source/gnome-calculator') from snap 'contact'
+            # Additionaly, extract any tag/tags defined in the contact URL.
+            p = r'^https?:\/\/.*launchpad\.net\/((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?'
+            m = re.search(p, unquote(snap.get("contact", "")))
+            if m and m.group(1):
+                self['SnapSource'] = m.group(1)
+                if m.group(2):
+                    self['SnapTags'] = m.group(2)
 
     def add_os_info(self):
         '''Add operating system information.
