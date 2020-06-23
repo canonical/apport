@@ -6,7 +6,7 @@ import os, sys, stat
 def dump_acpi_table(filename, tablename, out):
     '''Dump a single ACPI table'''
 
-    out.write('%s @ 0x00000000\n' % tablename)
+    out.write('%s @ 0x0000000000000000\n' % tablename[0:4])
     n = 0
     f = open(filename, 'rb')
     hex_str = ''
@@ -15,10 +15,13 @@ def dump_acpi_table(filename, tablename, out):
         while byte != b'':
             val = ord(byte)
             if (n & 15) == 0:
-                hex_str = '  %4.4x: ' % n
+                if (n > 65535):
+                    hex_str = '   %4.4X: ' % n
+                else:
+                    hex_str = '    %4.4X: ' % n
                 ascii_str = ''
 
-            hex_str = hex_str + '%2.2x ' % val
+            hex_str = hex_str + '%2.2X ' % val
 
             if (val < 32) or (val > 126):
                 ascii_str = ascii_str + '.'
@@ -29,11 +32,12 @@ def dump_acpi_table(filename, tablename, out):
                 out.write('%s %s\n' % (hex_str, ascii_str))
             byte = f.read(1)
     finally:
-        for i in range(n & 15, 16):
-            hex_str = hex_str + '   '
+        if (n % 16) != 0:
+            for i in range(n & 15, 16):
+                hex_str = hex_str + '   '
 
-        if (n & 15) != 15:
             out.write('%s %s\n' % (hex_str, ascii_str))
+
         f.close()
     out.write('\n')
 
