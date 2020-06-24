@@ -616,9 +616,9 @@ def attach_gsettings_schema(report, schema):
     env['XDG_CONFIG_HOME'] = '/nonexisting'
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
                                  env=env, stdout=subprocess.PIPE)
-    for l in gsettings.stdout:
+    for line in gsettings.stdout:
         try:
-            (schema_name, key, value) = l.split(None, 2)
+            (schema_name, key, value) = line.split(None, 2)
             value = value.rstrip()
         except ValueError:
             continue  # invalid line
@@ -626,9 +626,9 @@ def attach_gsettings_schema(report, schema):
 
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
                                  stdout=subprocess.PIPE)
-    for l in gsettings.stdout:
+    for line in gsettings.stdout:
         try:
-            (schema_name, key, value) = l.split(None, 2)
+            (schema_name, key, value) = line.split(None, 2)
             value = value.rstrip()
         except ValueError:
             continue  # invalid line
@@ -812,8 +812,8 @@ def _get_module_license(module):
             return 'invalid'
     except OSError:
         return None
-    for l in out.splitlines():
-        fields = l.split(':', 1)
+    for line in out.splitlines():
+        fields = line.split(':', 1)
         if len(fields) < 2:
             continue
         if fields[0] == 'license':
@@ -827,7 +827,7 @@ def nonfree_kernel_modules(module_list='/proc/modules'):
 
     try:
         with open(module_list) as f:
-            mods = [l.split()[0] for l in f]
+            mods = [line.split()[0] for line in f]
     except IOError:
         return []
 
@@ -923,9 +923,9 @@ def attach_default_grub(report, key=None):
 
     if os.path.exists(path):
         with open(path, 'r') as f:
-            filtered = [l if not l.startswith('password')
+            filtered = [line if not line.startswith('password')
                         else '### PASSWORD LINE REMOVED ###'
-                        for l in f.readlines()]
+                        for line in f.readlines()]
             report[key] = ''.join(filtered)
 
 

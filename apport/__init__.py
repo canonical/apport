@@ -64,9 +64,9 @@ def memdbg(checkpoint):
 
     memstat = {}
     with open('/proc/self/status') as f:
-        for l in f:
-            if l.startswith('Vm'):
-                (field, size, unit) = l.split()
+        for line in f:
+            if line.startswith('Vm'):
+                (field, size, unit) = line.split()
                 memstat[field[:-1]] = int(size) / 1024.
 
     sys.stderr.write('Size: %.1f MB, RSS: %.1f MB, Stk: %.1f MB @ %s\n' %

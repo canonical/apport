@@ -1222,9 +1222,9 @@ Debug::NoLocking "true";
             return []
 
         mismatches = []
-        for l in out.splitlines():
-            if l.endswith('FAILED'):
-                mismatches.append(l.rsplit(':', 1)[0])
+        for line in out.splitlines():
+            if line.endswith('FAILED'):
+                mismatches.append(line.rsplit(':', 1)[0])
 
         return mismatches
 
@@ -1233,8 +1233,8 @@ Debug::NoLocking "true";
         '''Heuristically determine primary mirror from an apt sources.list'''
 
         with open(apt_sources) as f:
-            for l in f:
-                fields = l.split()
+            for line in f:
+                fields = line.split()
                 if len(fields) >= 3 and fields[0] == 'deb':
                     if fields[1].startswith('['):
                         # options given, mirror is in third field

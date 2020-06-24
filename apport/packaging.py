@@ -283,16 +283,16 @@ class PackageInfo:
             name = None
             version = None
             with open('/etc/os-release') as f:
-                for l in f:
-                    if l.startswith('NAME='):
-                        name = l.split('=', 1)[1]
+                for line in f:
+                    if line.startswith('NAME='):
+                        name = line.split('=', 1)[1]
                         if name.startswith('"'):
                             name = name[1:-2].strip()
                         # work around inconsistent "Debian GNU/Linux" in os-release
                         if name.endswith('GNU/Linux'):
                             name = name.split()[0:-1]
-                    elif l.startswith('VERSION_ID='):
-                        version = l.split('=', 1)[1]
+                    elif line.startswith('VERSION_ID='):
+                        version = line.split('=', 1)[1]
                         if version.startswith('"'):
                             version = version[1:-2].strip()
             if name and version:

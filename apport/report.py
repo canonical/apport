@@ -804,9 +804,11 @@ class Report(problem_report.ProblemReport):
         if 'is truncated: expected core file size' in out or \
                 'is not a core dump: file truncated' in out:
             if 'warning:' in out:
-                warnings = '\n'.join([l for l in out.splitlines() if 'warning:' in l])
+                warnings = '\n'.join([line for line in out.splitlines() if
+                                      'warning:' in line])
             elif 'Warning:' in out:
-                warnings = '\n'.join([l for l in out.splitlines() if 'Warning:' in l])
+                warnings = '\n'.join([line for line in out.splitlines() if
+                                      'Warning:' in line])
             else:
                 warnings = out.splitlines()[0]
             reason = 'Invalid core dump: ' + warnings.strip()

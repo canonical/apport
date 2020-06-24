@@ -138,8 +138,8 @@ class T(unittest.TestCase):
                         'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION',
                         'LOCPATH', 'TERM', 'XDG_RUNTIME_DIR', 'LD_PRELOAD']
 
-        for l in pr['ProcEnviron'].splitlines():
-            (k, v) = l.split('=', 1)
+        for line in pr['ProcEnviron'].splitlines():
+            (k, v) = line.split('=', 1)
             self.assertTrue(k in allowed_vars,
                             'report contains sensitive environment variable %s' % k)
 

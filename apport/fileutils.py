@@ -329,9 +329,9 @@ def check_files_md5(sumfile):
         return []
 
     mismatches = []
-    for l in out.splitlines():
-        if l.endswith('FAILED'):
-            mismatches.append(l.rsplit(':', 1)[0])
+    for line in out.splitlines():
+        if line.endswith('FAILED'):
+            mismatches.append(line.rsplit(':', 1)[0])
 
     return mismatches
 

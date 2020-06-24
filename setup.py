@@ -75,8 +75,8 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
                         distutils.log.info('Updating hashbang of %s', f)
                         lines[0] = new_hashbang
                         with open(f, 'w') as fd:
-                            for l in lines:
-                                fd.write(l)
+                            for line in lines:
+                                fd.write(line)
 
 
 #

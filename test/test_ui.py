@@ -1770,7 +1770,7 @@ bOgUs=
     def _run_hook(self, code):
         f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
         f.write('def add_info(report, ui):\n%s\n' %
-                '\n'.join(['    ' + l for l in code.splitlines()]))
+                '\n'.join(['    ' + line for line in code.splitlines()]))
         f.close()
         self.ui.options.package = 'coreutils'
         self.ui.run_report_bug()

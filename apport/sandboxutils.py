@@ -23,13 +23,13 @@ def needed_packages(report):
     pkgs = {}
 
     # first, grab the versions that we captured at crash time
-    for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
-        if not l.strip():
+    for line in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
+        if not line.strip():
             continue
         try:
-            (pkg, version) = l.split()[:2]
+            (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.warning('invalid Package/Dependencies line: %s', l)
+            apport.warning('invalid Package/Dependencies line: %s', line)
             # invalid line, ignore
             continue
         pkgs[pkg] = version
@@ -41,13 +41,13 @@ def report_package_versions(report):
     '''Return package -> version dictionary from report'''
 
     pkg_vers = {}
-    for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
-        if not l.strip():
+    for line in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
+        if not line.strip():
             continue
         try:
-            (pkg, version) = l.split()[:2]
+            (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.warning('invalid Package/Dependencies line: %s', l)
+            apport.warning('invalid Package/Dependencies line: %s', line)
             # invalid line, ignore
             continue
         pkg_vers[pkg] = version
@@ -74,10 +74,10 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
     pkgs = set()
     libs = set()
     if 'ProcMaps' in report:
-        for l in report['ProcMaps'].splitlines():
-            if not l.strip():
+        for line in report['ProcMaps'].splitlines():
+            if not line.strip():
                 continue
-            cols = l.split()
+            cols = line.split()
             if len(cols) in (6, 7) and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
@@ -88,16 +88,18 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
         os.makedirs(pkgmap_cache_dir)
 
     # grab as much as we can
-    for l in libs:
-        pkg = apport.packaging.get_file_package(l, True, pkgmap_cache_dir,
+    for line in libs:
+        pkg = apport.packaging.get_file_package(line, True, pkgmap_cache_dir,
                                                 release=report['DistroRelease'],
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
-                apport.log('dynamically loaded %s needs package %s, queueing' % (l, pkg))
+                apport.log('dynamically loaded %s needs package %s, queueing'
+                           % (line, pkg))
             pkgs.add(pkg)
         else:
-            apport.warning('%s is needed, but cannot be mapped to a package', l)
+            apport.warning('%s is needed, but cannot be mapped to a package',
+                           line)
 
     return [(p, pkg_versions.get(p)) for p in pkgs]
 

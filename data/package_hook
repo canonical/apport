@@ -52,12 +52,12 @@ if options.tags:
     tags = options.tags.replace(',', '')
     pr['Tags'] = tags
 
-for l in (options.logs or []):
-    if os.path.isfile(l):
-        pr[mkattrname(l)] = (l,)
-    elif os.path.isdir(l):
-        for f in os.listdir(l):
-            path = os.path.join(l, f)
+for line in (options.logs or []):
+    if os.path.isfile(line):
+        pr[mkattrname(line)] = (line,)
+    elif os.path.isdir(line):
+        for f in os.listdir(line):
+            path = os.path.join(line, f)
             if os.path.isfile(path):
                 pr[mkattrname(path)] = (path,)
 
