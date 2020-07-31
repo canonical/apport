@@ -55,6 +55,16 @@ detailed list of changes, please see ChangeLog.
       not cause Apport to change the ownership of other files via a
       symlink attack.
     - CVE-2020-8833
+  * SECURITY UPDATE: information disclosure issue (LP: #1885633)
+    - data/apport: also drop gid when checking if user session is closing.
+    - CVE-2020-11936
+  * SECURITY UPDATE: crash via malformed ignore file (LP: #1877023)
+    - apport/report.py: don't crash on malformed mtime values.
+    - CVE-2020-15701
+  * SECURITY UPDATE: TOCTOU in core file location
+    - data/apport: make sure the process hasn't been replaced after Apport
+      has started.
+    - CVE-2020-15702
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

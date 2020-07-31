@@ -2099,10 +2099,10 @@ return 'bash'
         # update existing report
         _chk('apport-collect', '1234',
              {'filebug': False, 'package': None, 'crash_file': None, 'symptom':
-              None, 'update_report': 1234, 'tag': []})
+              None, 'update_report': 1234, 'tag': [], 'hanging': False})
         _chk('apport-update-bug', '1234',
              {'filebug': False, 'package': None, 'crash_file': None, 'symptom':
-              None, 'update_report': 1234, 'tag': []})
+              None, 'update_report': 1234, 'tag': [], 'hanging': False})
 
     def test_parse_argv_apport_bug(self):
         '''parse_args() option inference when invoked as *-bug'''

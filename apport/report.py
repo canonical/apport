@@ -1129,10 +1129,13 @@ class Report(problem_report.ProblemReport):
             return False
 
         # search for existing entry and update it
-        for ignore in dom.getElementsByTagName('ignore'):
-            if ignore.getAttribute('program') == self['ExecutablePath']:
-                if float(ignore.getAttribute('mtime')) >= cur_mtime:
-                    return True
+        try:
+            for ignore in dom.getElementsByTagName('ignore'):
+                if ignore.getAttribute('program') == self['ExecutablePath']:
+                    if float(ignore.getAttribute('mtime')) >= cur_mtime:
+                        return True
+        except (ValueError, KeyError):
+            pass
 
         return False
 

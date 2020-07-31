@@ -395,6 +395,12 @@ class UserInterface:
         mark the report for uploading.
         '''
         self.report = apport.Report('Hang')
+
+        if not self.options.pid:
+            self.ui_error_message(_('No PID specified'),
+                                  _('You need to specify a PID. See --help for more information.'))
+            return False
+
         try:
             self.report.add_proc_info(pid)
         except ValueError as e:
@@ -701,7 +707,7 @@ class UserInterface:
         if self.options.symptom:
             self.run_symptom()
             return True
-        elif hasattr(self.options, 'pid') and self.options.hanging:
+        elif self.options.hanging:
             self.run_hang(self.options.pid)
             return True
         elif self.options.filebug:
@@ -763,6 +769,7 @@ class UserInterface:
         self.options.filebug = False
         self.options.crash_file = None
         self.options.version = None
+        self.options.hanging = False
         self.args = []
 
     def parse_argv(self):
