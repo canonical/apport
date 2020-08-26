@@ -256,6 +256,8 @@ def attach_hardware(report):
     report['Lsusb-t'] = command_output(['lsusb', '-t'])
     report['ProcModules'] = command_output(['sort', '/proc/modules'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
+    report['acpidump'] = \
+        root_command_output(["/usr/share/apport/dump_acpi_tables.py"])
 
     # anonymize partition labels
     labels = report['UdevDb']
