@@ -141,7 +141,10 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
                         not apport.packaging.is_native_origin_package(report['Package'].split()[0]):
                     # TRANS: %s is the name of the operating system
                     report['UnreportableReason'] = _(
-                        'This is not an official %s package. Please remove any third party package and try again.') % report['DistroRelease'].split()[0]
+                        'This does not seem to be an official %s package. \
+Please retry after updating the indexes of available packages, \
+if that does not work then remove related third party packages \
+and try again.') % report['DistroRelease'].split()[0]
         except ValueError:
             # this happens if we are collecting information on an uninstalled
             # package
