@@ -6,6 +6,9 @@ import os, sys, stat
 def dump_acpi_table(filename, tablename, out):
     '''Dump a single ACPI table'''
 
+    if not os.access(filename, os.R_OK):
+        return
+
     out.write('%s @ 0x0000000000000000\n' % tablename[0:4])
     n = 0
     f = open(filename, 'rb')
