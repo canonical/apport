@@ -336,7 +336,9 @@ def attach_alsa_old(report):
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
     '''
-    if os.path.exists('/usr/share/alsa-base/alsa-info.sh'):
+    if os.path.exists('/usr/sbin/alsa-info'):
+        report['AlsaInfo'] = command_output(['/usr/sbin/alsa-info', '--stdout', '--no-upload'])
+    elif os.path.exists('/usr/share/alsa-base/alsa-info.sh'):
         report['AlsaInfo'] = command_output(['/usr/share/alsa-base/alsa-info.sh', '--stdout', '--no-upload'])
     else:
         attach_alsa_old(report)
