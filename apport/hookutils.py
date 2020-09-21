@@ -347,6 +347,9 @@ def attach_alsa(report):
     if os.path.exists('/usr/bin/pacmd'):
         report['PulseList'] = command_output(['pacmd', 'list'])
 
+    if os.path.exists('/usr/bin/pa-info'):
+        report['PaInfo'] = command_output(['/usr/bin/pa-info'])
+
     attach_dmi(report)
     attach_dmesg(report)
 
