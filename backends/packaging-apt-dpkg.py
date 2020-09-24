@@ -1361,7 +1361,7 @@ Debug::NoLocking "true";
                                     path.split(b'/')[2] in (b'doc', b'icons', b'man', b'texlive', b'gocode', b'locale', b'help'):
                                 continue
                             package = line.split()[-1].split(b',')[0].split(b'/')[-1]
-                        elif path.split(b'/')[0] in (b'lib', b'bin', b'sbin'):
+                        elif path.split(b'/')[0] in (b'lib', b'bin', b'sbin', b'etc'):
                             package = line.split()[-1].split(b',')[0].split(b'/')[-1]
                         else:
                             continue
