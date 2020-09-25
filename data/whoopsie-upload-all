@@ -35,6 +35,28 @@ def process_report(report):
     otherwise.
     '''
     upload_stamp = '%s.upload' % report.rsplit('.', 1)[0]
+
+    # whoopsie-upload-all is only called if autoreporting of crashes is set,
+    # so its unlikely that systems with that set are interested in having the
+    # .crash file around. Additionally, having .crash files left over causes
+    # systemd's PathExistsGlob to be constantly triggered. See systemd issue
+    # #16669 and LP: #1891657 for some details.
+    uploaded_stamp = upload_stamp + 'ed'
+    if os.path.exists(uploaded_stamp) and os.path.exists(report):
+        report_st = os.stat(report)
+        uploaded_st = os.stat(uploaded_stamp)
+        if uploaded_st.st_mtime > report_st.st_mtime:
+            os.unlink(report)
+            return None
+        # if the crash file is new delete the uploaded file
+        elif uploaded_st.st_mtime < report_st.st_mtime:
+            os.unlink(uploaded_stamp)
+            if os.path.exists(upload_stamp):
+                upload_st = os.stat(upload_stamp)
+                # also delete the upload file
+                if upload_st.st_mtime < report_st.st_mtime:
+                    os.unlink(upload_stamp)
+
     if os.path.exists(upload_stamp):
         print('%s already marked for upload, skipping' % report)
         return upload_stamp
