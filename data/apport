@@ -378,7 +378,7 @@ def parse_arguments():
         for arg in rest:
             error_log("Unknown argument: %s", arg)
 
-    elif len(rest) in (4, 5, 6):
+    elif len(rest) in (4, 5, 6, 7):
         # Translate legacy command line
         options.pid = rest[0]
         options.signal_number = rest[1]
@@ -392,6 +392,11 @@ def parse_arguments():
             options.exe_path = rest[5].replace('!', '/')
         except IndexError:
             options.exe_path = None
+        try:
+            if rest[6] == '(deleted)':
+                options.exe_path += ' %s' % rest[6]
+        except IndexError:
+            pass
     else:
         parser.print_usage()
         sys.exit(1)
