@@ -308,6 +308,9 @@ if options.gdb_sandbox:
     if system_arch != 'amd64':
         apport.error('gdb sandboxes are only implemented for amd64 hosts')
         sys.exit(0)
+    if os.path.exists('/usr/lib/debug/.dwz'):
+        print("apport is unlikely to produce a quality retrace if it can not symlink the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
+        sys.exit(0)
 
 if options.sandbox:
     if options.sandbox_dir:
@@ -352,6 +355,17 @@ if options.gdb_sandbox:
                                              gdb_sandbox_dir, gdb_packages,
                                              options.verbose, log_timestamps,
                                              options.dynamic_origins)
+    # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path) by
+    # creating a symlink from the host's .dwz directory to the one in the
+    # sandbox.
+    if gdb_sandbox and sandbox:
+        if not os.path.exists('/usr/lib/debug/.dwz/'):
+            try:
+                os.symlink('%s/usr/lib/debug/.dwz' % sandbox,
+                           '/usr/lib/debug/.dwz')
+            except PermissionError:
+                print("apport is unlikely to produce a quality retrace if it can not symlink the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
+                sys.exit(0)
 else:
     gdb_sandbox = None
     gdb_cache = None
@@ -402,6 +416,11 @@ Thank you for your understanding, and sorry for the inconvenience!
     if options.stacktrace_source:
         gen_source_stacktrace(report, apt_root)
     report.add_kernel_crash_info()
+
+# Cleanup the .dwz symlink for LP: #1818918
+if options.gdb_sandbox:
+    if os.path.exists('/usr/lib/debug/.dwz/'):
+        os.unlink('/usr/lib/debug/.dwz')
 
 modified = False
 
