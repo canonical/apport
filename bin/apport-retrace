@@ -373,7 +373,7 @@ if options.gdb_sandbox:
                 except FileExistsError:
                     if os.readlink('/usr/lib/debug/.dwz/%s' % target) == \
                             '%s/usr/lib/debug/.dwz/%s' % (sandbox, target):
-                    pass
+                        pass
         else:
             if not os.path.islink('/usr/lib/debug/.dwz/%s' % target):
                 print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
