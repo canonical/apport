@@ -364,14 +364,12 @@ if options.gdb_sandbox:
         if not os.path.exists('/usr/lib/debug/.dwz/%s' % target):
             # don't create a broken symlink
             if os.path.exists('%s/usr/lib/debug/.dwz/%s' % (sandbox, target)):
-                if not os.readlink('/usr/lib/debug/.dwz/%s' % target) == \
-                        '%s/usr/lib/debug/.dwz/%s' % (sandbox, target):
-                    try:
-                        os.symlink('%s/usr/lib/debug/.dwz/%s' % (sandbox, target),
-                                   '/usr/lib/debug/.dwz/%s' % target)
-                    except PermissionError:
-                        print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
-                        sys.exit(0)
+                try:
+                    os.symlink('%s/usr/lib/debug/.dwz/%s' % (sandbox, target),
+                               '/usr/lib/debug/.dwz/%s' % target)
+                except PermissionError:
+                    print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
+                    sys.exit(0)
         else:
             if not os.path.islink('/usr/lib/debug/.dwz/%s' % target):
                 print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
