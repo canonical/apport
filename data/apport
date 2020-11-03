@@ -355,6 +355,18 @@ def is_same_ns(pid, ns):
         else:
             raise
 
+    # check to see if the process is part of the system.slice (LP: #1870060)
+    if os.path.exists('/proc/%s/cgroup' % pid):
+
+        global proc_pid_fd
+        proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+
+        with open('cgroup', opener=proc_pid_opener) as cgroup:
+            for line in cgroup:
+                fields = line.split(':')
+                if fields[-1].startswith('/system.slice'):
+                    return True
+
     return False
 
 

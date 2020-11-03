@@ -626,6 +626,34 @@ CoreDump: base64
             self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
             self.assertEqual(apport.fileutils.get_all_reports(), [])
 
+    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
+    def test_crash_system_slice(self):
+        '''report generation for a protected process running in the system slice'''
+
+        self.create_test_process(command='/usr/bin/systemd-run',
+                                 args=['-t', '-q', '--slice=system.slice',
+                                       '-p', 'ProtectSystem=true',
+                                       '/usr/bin/yes'])
+        yes_pid = int(subprocess.check_output(['pidof',
+                                               '/usr/bin/yes']).strip())
+        os.kill(yes_pid, signal.SIGSEGV)
+
+        # wait max 10 seconds for apport to finish
+        timeout = 50
+        while timeout >= 0:
+            pidof = subprocess.Popen(['pidof', '-x', 'apport'],
+                                     stdout=subprocess.PIPE)
+            pidof.communicate()
+            if pidof.returncode != 0:
+                break
+            time.sleep(0.2)
+            timeout -= 1
+
+        # check crash report
+        reports = apport.fileutils.get_all_reports()
+        self.assertEqual(len(reports), 1)
+        self.assertEqual(reports[0], '/var/crash/_usr_bin_yes.0.crash')
+
     @unittest.skipUnless(os.path.exists('/bin/ping'), 'this test needs /bin/ping')
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_setuid_drop(self):
