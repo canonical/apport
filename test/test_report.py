@@ -644,7 +644,7 @@ int main() {
 
         self.assertNotIn('Stacktrace', pr)
         self.assertNotIn('StacktraceTop', pr)
-        self.assertIn('not a core dump: file truncated',
+        self.assertIn('not a core dump: file format not recognized',
                       pr['UnreportableReason'])
 
     def test_add_gdb_info_short_core_file(self):

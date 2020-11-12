@@ -568,6 +568,7 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'open_url')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
     @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
+    @patch('apport.report.Report.add_gdb_info')
     def test_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
@@ -600,7 +601,6 @@ Type=Application''')
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
         # upload dialog shown
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
@@ -612,6 +612,7 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'open_url')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
     @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
+    @patch('apport.report.Report.add_gdb_info')
     def test_crash_details(self, *args):
         '''Crash report with showing details'''
 
@@ -654,7 +655,6 @@ Type=Application''')
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
         # upload dialog shown
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
@@ -758,7 +758,6 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
     @patch.object(GTKUserInterface, 'open_url')
     def test_kerneloops_nodetails(self, *args):

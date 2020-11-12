@@ -9,6 +9,7 @@ except ImportError:
     from io import StringIO
 from io import BytesIO
 from importlib.machinery import SourceFileLoader
+from unittest.mock import patch
 
 import apport.ui
 from apport.ui import _
@@ -907,7 +908,8 @@ bOgUs=
         self.assertTrue('decompress' in self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    def test_run_crash_argv_file(self):
+    @patch('apport.report.Report.add_gdb_info')
+    def test_run_crash_argv_file(self, *args):
         '''run_crash() through a file specified on the command line'''
 
         # valid
@@ -952,7 +954,8 @@ bOgUs=
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, 'error')
 
-    def test_run_crash_unreportable(self):
+    @patch('apport.report.Report.add_gdb_info')
+    def test_run_crash_unreportable(self, *args):
         '''run_crash() on a crash with the UnreportableReason field'''
 
         self.report['UnreportableReason'] = 'It stinks.'
@@ -971,7 +974,8 @@ bOgUs=
                         (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_severity, 'info')
 
-    def test_run_crash_malicious_crashdb(self):
+    @patch('apport.report.Report.add_gdb_info')
+    def test_run_crash_malicious_crashdb(self, *args):
         '''run_crash() on a crash with malicious CrashDB'''
 
         self.report['ExecutablePath'] = '/bin/bash'
@@ -989,7 +993,8 @@ bOgUs=
         self.assertFalse(os.path.exists('/tmp/pwned'))
         self.assertIn('invalid crash database definition', self.ui.msg_text)
 
-    def test_run_crash_malicious_package(self):
+    @patch('apport.report.Report.add_gdb_info')
+    def test_run_crash_malicious_package(self, *args):
         '''Package: path traversal'''
 
         bad_hook = tempfile.NamedTemporaryFile(suffix='.py')

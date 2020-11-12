@@ -802,7 +802,7 @@ class Report(problem_report.ProblemReport):
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out or \
-                'is not a core dump: file truncated' in out:
+                'is not a core dump' in out:
             if 'warning:' in out:
                 warnings = '\n'.join([line for line in out.splitlines() if
                                       'warning:' in line])
