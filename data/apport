@@ -121,6 +121,9 @@ def drop_privileges(real_only=False):
     the effective IDs remain.
     '''
     if real_only:
+        # Drop any supplemental groups
+        if os.getuid() == 0:
+            os.setgroups([])
         os.setregid(real_gid, -1)
         os.setreuid(real_uid, -1)
     else:

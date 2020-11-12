@@ -10,7 +10,7 @@
 # the full text of the license.
 
 import subprocess, tempfile, os.path, re, pwd, grp, os, time, io
-import fnmatch, glob, traceback, errno, sys, atexit, locale, imp
+import fnmatch, glob, traceback, errno, sys, atexit, locale, imp, stat
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -1044,26 +1044,40 @@ class Report(problem_report.ProblemReport):
         ifpath = os.path.expanduser(_ignore_file)
         if orig_home is not None:
             os.environ['HOME'] = orig_home
+        contents = ''
+        fd = None
+        f = None
+        egid = os.getegid()
         euid = os.geteuid()
         try:
             # drop permissions temporarily to try open users ignore file
+            os.setegid(os.getgid())
             os.seteuid(os.getuid())
-            fp = open(ifpath, 'r')
+            fd = os.open(ifpath, os.O_NOFOLLOW | os.O_RDONLY)
+            st = os.fstat(fd)
+            if stat.S_ISREG(st.st_mode):
+                f = os.fdopen(fd, 'r')
+                # Limit size to prevent DoS
+                contents = f.read(50000)
         except (IOError, OSError):
-            fp = None
+            pass
         finally:
+            if f is not None:
+                f.close()
+            elif fd is not None:
+                os.close(fd)
             os.seteuid(euid)
-        if fp is None or os.fstat(fp.fileno()).st_size == 0:
+            os.setegid(egid)
+
+        if contents == '':
             # create a document from scratch
             dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
         else:
             try:
-                dom = xml.dom.minidom.parse(fp)
+                dom = xml.dom.minidom.parseString(contents)
             except ExpatError as e:
                 raise ValueError('%s has invalid format: %s' % (_ignore_file, str(e)))
 
-        if fp is not None:
-            fp.close()
         # remove whitespace so that writing back the XML does not accumulate
         # whitespace
         dom.documentElement.normalize()

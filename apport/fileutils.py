@@ -10,13 +10,16 @@
 # the full text of the license.
 
 import os, glob, subprocess, os.path, time, pwd, sys, requests_unixsocket
+import stat
 
 try:
-    from configparser import ConfigParser, NoOptionError, NoSectionError
+    from configparser import (ConfigParser, NoOptionError, NoSectionError,
+                              MissingSectionHeaderError)
     (ConfigParser, NoOptionError, NoSectionError)  # pyflakes
 except ImportError:
     # Python 2
-    from ConfigParser import ConfigParser, NoOptionError, NoSectionError
+    from ConfigParser import (ConfigParser, NoOptionError, NoSectionError,
+                              MissingSectionHeaderError)
 
 from problem_report import ProblemReport
 
@@ -342,21 +345,40 @@ def get_config(section, setting, default=None, path=None, bool=False):
     This is read from ~/.config/apport/settings or path. If bool is True, the
     value is interpreted as a boolean.
     '''
+    if not path:
+        path = os.path.expanduser(_config_file)
+
+    contents = ''
+    fd = None
+    f = None
     if not get_config.config:
         get_config.config = ConfigParser()
-        euid = os.geteuid()
         egid = os.getegid()
+        euid = os.geteuid()
         try:
             # drop permissions temporarily to try open users config file
-            os.seteuid(os.getuid())
             os.setegid(os.getgid())
-            if path:
-                get_config.config.read(path)
-            else:
-                get_config.config.read(os.path.expanduser(_config_file))
+            os.seteuid(os.getuid())
+            fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
+            st = os.fstat(fd)
+            if stat.S_ISREG(st.st_mode):
+                f = os.fdopen(fd, 'r')
+                # Limit size to prevent DoS
+                contents = f.read(500)
+        except (IOError, OSError):
+            pass
         finally:
+            if f is not None:
+                f.close()
+            elif fd is not None:
+                os.close(fd)
             os.seteuid(euid)
             os.setegid(egid)
+
+    try:
+        get_config.config.read_string(contents)
+    except MissingSectionHeaderError:
+        pass
 
     try:
         if bool:
