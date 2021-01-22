@@ -1009,23 +1009,23 @@ deb http://secondary.mirror tuxy extra
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_create_sources_for_an_unnamed_ppa(self):
         '''Add sources.list entries for an unnamed PPA.'''
-        ppa = 'LP-PPA-brian-murray'
-        self._setup_foonux_config()
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 14.04', 'sources.list'),
-                                'ubuntu', 'trusty', origins=[ppa])
+        ppa = 'LP-PPA-apport-hackers-apport-autopkgtests'
+        self._setup_foonux_config(release='focal', ppa=True)
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 20.04', 'sources.list'),
+                                'ubuntu', 'focal', origins=[ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
-        self.assertIn('deb http://ppa.launchpad.net/brian-murray/ppa/ubuntu trusty main', sources)
-        self.assertIn('deb-src http://ppa.launchpad.net/brian-murray/ppa/ubuntu trusty main', sources)
+        self.assertIn('deb http://ppa.launchpad.net/apport-hackers/apport-autopkgtests/ubuntu focal main', sources)
+        self.assertIn('deb-src http://ppa.launchpad.net/apport-hackers/apport-autopkgtests/ubuntu focal main', sources)
 
         d = subprocess.Popen(['gpg', '--no-options', '--no-default-keyring',
                               '--no-auto-check-trustdb', '--trust-model',
                               'always', '--batch', '--list-keys', '--keyring',
-                              os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-brian-murray.gpg')],
+                              os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-apport-hackers.gpg')],
                              stdout=subprocess.PIPE)
         apt_keys = d.communicate()[0].decode()
         assert d.returncode == 0
-        self.assertIn('Launchpad PPA for Brian Murray', apt_keys)
+        self.assertIn('', apt_keys)
 
     def test_use_sources_for_a_ppa(self):
         '''Use a sources.list.d file for a PPA.'''
@@ -1041,11 +1041,11 @@ deb http://secondary.mirror tuxy extra
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_package_from_a_ppa(self):
         '''Install a package from a PPA.'''
-        ppa = 'LP-PPA-brian-murray'
-        self._setup_foonux_config(release='xenial')
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 16.04',
+        ppa = 'LP-PPA-apport-hackers-apport-autopkgtests'
+        self._setup_foonux_config(release='focal')
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 20.04',
                                          [('apport',
-                                           '2.20.1-0ubuntu2.22~ppa1')
+                                           '2.20.11-0ubuntu27.14~ppa1')
                                          ], False, self.cachedir, origins=[ppa])
 
         self.assertEqual(obsolete, '')
@@ -1056,7 +1056,7 @@ deb http://secondary.mirror tuxy extra
                 return f.readline().decode().split()[1][1:-1]
 
         self.assertEqual(sandbox_ver('apport'),
-                         '2.20.1-0ubuntu2.22~ppa1')
+                         '2.20.11-0ubuntu27.14~ppa1')
 
     def _setup_foonux_config(self, updates=False, release='trusty', ppa=False):
         '''Set up directories and configuration for install_packages()
@@ -1068,7 +1068,7 @@ deb http://secondary.mirror tuxy extra
         versions = {'trusty': '14.04',
                     'xenial': '16.04',
                     'boinic': '18.04',
-                    'cosmic': '18.10'}
+                    'focal': '20.04'}
         vers = versions[release]
         self.cachedir = os.path.join(self.workdir, 'cache')
         self.rootdir = os.path.join(self.workdir, 'root')
