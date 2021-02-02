@@ -392,6 +392,34 @@ def get_config(section, setting, default=None, path=None, bool=False):
 get_config.config = None
 
 
+def get_starttime(contents):
+    '''Extracts the starttime from the contents of a stat file'''
+
+    # 22nd field in a stat file is the time the process started after
+    # system boot in clock ticks. In order to prevent filename
+    # manipulations including spaces or extra parentheses, skip all the way
+    # to the very last closing parentheses, then start counting.
+    stripped = contents[contents.rfind(")") + 2:]
+    # We've skipped over the PID and the filename, so index is now 19.
+    return int(stripped.split()[19])
+
+
+def get_uid_and_gid(contents):
+    '''Extracts the uid and gid from the contents of a status file'''
+
+    real_uid = None
+    real_gid = None
+    for line in contents.splitlines():
+        # Iterate through the whole contents to make sure we're getting
+        # the last Uid and Gid lines in the file and not a manipulated
+        # process name with embedded newlines.
+        if line.startswith('Uid:') and len(line.split()) > 1:
+            real_uid = int(line.split()[1])
+        elif line.startswith('Gid:') and len(line.split()) > 1:
+            real_gid = int(line.split()[1])
+    return (real_uid, real_gid)
+
+
 def shared_libraries(path):
     '''Get libraries with which the specified binary is linked.
 

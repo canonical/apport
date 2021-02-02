@@ -65,6 +65,14 @@ detailed list of changes, please see ChangeLog.
     - data/apport: make sure the process hasn't been replaced after Apport
       has started.
     - CVE-2020-15702
+  * SECURITY UPDATE: multiple security issues (LP: #1912326)
+    - CVE-2021-25682: error parsing /proc/pid/status
+    - CVE-2021-25683: error parsing /proc/pid/stat
+    - CVE-2021-25684: stuck reading fifo
+    - data/apport: make sure existing report is a regular file.
+    - apport/fileutils.py: move some logic here to skip over manipulated
+      process names and filenames.
+    - test/test_fileutils.py: added some parsing tests.
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents
