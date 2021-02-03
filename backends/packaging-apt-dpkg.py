@@ -850,6 +850,9 @@ Debug::NoLocking "true";
                     apport.warning(m)
                     continue
                 for dep in cache_pkg.candidate.dependencies:
+                    # the dependency may satisifed by a diffferent package
+                    if dep[0].name not in cache:
+                        dep[0] = cache.get_providing_packages(dep[0].name)[0]
                     # the version in dep is the one from pkg's dependencies,
                     # so use the version from the cache
                     dep_pkg_vers = cache[dep[0].name].candidate.version
