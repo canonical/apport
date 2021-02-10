@@ -257,8 +257,15 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     if 'Package' in report:
         for path in ('InterpreterPath', 'ExecutablePath'):
             if path in report and not os.path.exists(sandbox_dir + report[path]):
-                apport.fatal('%s %s does not exist (report specified package %s)',
-                             path, sandbox_dir + report[path], report['Package'])
+                if report[path].startswith('/usr'):
+                    if os.path.exists(sandbox_dir + report[path][4:]):
+                        report[path] = report[path][4:]
+                    else:
+                        apport.fatal('%s %s does not exist (report specified package %s)',
+                                     path, sandbox_dir + report[path], report['Package'])
+                else:
+                    apport.fatal('%s %s does not exist (report specified package %s)',
+                                 path, sandbox_dir + report[path], report['Package'])
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
