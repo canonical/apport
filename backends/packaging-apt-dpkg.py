@@ -1280,6 +1280,8 @@ Debug::NoLocking "true";
             release = self._distro_release_to_codename(release)
         # this is ordered by likelihood of installation with the most common
         # last
+        # XXX - maybe we shouldn't check -security and -updates if it is the
+        # devel release as they will be old and empty
         for pocket in ['-proposed', '', '-security', '-updates']:
             map = os.path.join(dir, '%s%s-Contents-%s.gz' %
                                     (release, pocket, arch))
@@ -1316,6 +1318,9 @@ Debug::NoLocking "true";
                         update = (modified > datetime.fromtimestamp(st.st_mtime))
                     else:
                         update = True
+                    # don't update the file if it is empty
+                    if res.getheader('content-length', None) == '40':
+                        update = False
                 else:
                     update = True
                 if update:
