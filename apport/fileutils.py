@@ -9,8 +9,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time, pwd, sys, requests_unixsocket
-import stat
+import os, glob, subprocess, os.path, time, pwd, sys, stat, json, socket
+import http.client
+from contextlib import closing
 
 try:
     from configparser import (ConfigParser, NoOptionError, NoSectionError,
@@ -28,6 +29,23 @@ from apport.packaging_impl import impl as packaging
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 _config_file = '~/.config/apport/settings'
+
+SNAPD_SOCKET = '/run/snapd.socket'
+
+
+#  UHTTPConnection is based on code from the UpdateManager package:
+#  Copyright (c) 2017 Canonical
+#  Author: Andrea Azzarone <andrea.azzarone@canonical.com>
+class UHTTPConnection(http.client.HTTPConnection, object):
+
+    def __init__(self, path):
+        http.client.HTTPConnection.__init__(self, 'localhost')
+        self.path = path
+
+    def connect(self):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(self.path)
+        self.sock = sock
 
 
 def allowed_to_report():
@@ -112,12 +130,13 @@ def find_snap(snap):
 
     Return None if the snap is not found to be installed.
     '''
-    session = requests_unixsocket.Session()
     try:
-        r = session.get('http+unix://%2Frun%2Fsnapd.socket/v2/snaps/{}'.format(snap))
-        if r.status_code == 200:
-            j = r.json()
-            return j["result"]
+        with closing(UHTTPConnection(SNAPD_SOCKET)) as c:
+            url = f'/v2/snaps/{snap}'
+            c.request('GET', url)
+            response = c.getresponse()
+            if response.status == 200:
+                return json.loads(response.read())['result']
     except Exception:
         return None
 
