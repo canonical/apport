@@ -505,7 +505,7 @@ class Report(problem_report.ProblemReport):
             pathlist = [path]
 
             if not module and desc[2] == imp.PKG_DIRECTORY:
-                    module = ['__init__']
+                module = ['__init__']
 
         if path and path.endswith('.pyc'):
             path = path[:-1]
@@ -1605,7 +1605,6 @@ class Report(problem_report.ProblemReport):
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' %
                             gdb_sandbox]
             if not os.path.exists(sandbox + executable):
-                from ipdb import set_trace; set_trace()
                 if executable.startswith('/usr'):
                     if os.path.exists(sandbox + executable[3:]):
                         executable = executable[3:]
