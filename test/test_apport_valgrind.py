@@ -94,7 +94,7 @@ void makeleak(void){
 }'''
 
         with open('memleak.c', 'w') as fd:
-                fd.write(code)
+            fd.write(code)
         cmd = ['gcc', '-Wall', '-Werror', '-g', 'memleak.c', '-o', 'memleak']
         self.assertEqual(
             subprocess.call(cmd), 0, 'compiling memleak.c failed.')

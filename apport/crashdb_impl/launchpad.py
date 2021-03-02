@@ -968,7 +968,7 @@ in a dependent package.' % master,
                 hdr['Subscribers'] = 'apport'
                 hdr['Tags'] += ' need-duplicate-check'
         if 'DuplicateSignature' in report and 'need-duplicate-check' not in hdr['Tags']:
-                hdr['Tags'] += ' need-duplicate-check'
+            hdr['Tags'] += ' need-duplicate-check'
 
         # if we have checkbox submission key, link it to the bug; keep text
         # reference until the link is shown in Launchpad's UI

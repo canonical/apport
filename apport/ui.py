@@ -711,23 +711,23 @@ class UserInterface:
                 self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         elif self.options.window:
-                self.ui_info_message('', _('After closing this message '
-                                           'please click on an application window to report a problem about it.'))
-                xprop = subprocess.Popen(['xprop', '_NET_WM_PID'],
-                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                (out, err) = xprop.communicate()
-                if xprop.returncode == 0:
-                    try:
-                        self.options.pid = int(out.split()[-1])
-                    except ValueError:
-                        self.ui_error_message(_('Cannot create report'),
-                                              _('xprop failed to determine process ID of the window'))
-                        return True
-                    return self.run_report_bug()
-                else:
+            self.ui_info_message('', _('After closing this message '
+                                       'please click on an application window to report a problem about it.'))
+            xprop = subprocess.Popen(['xprop', '_NET_WM_PID'],
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            (out, err) = xprop.communicate()
+            if xprop.returncode == 0:
+                try:
+                    self.options.pid = int(out.split()[-1])
+                except ValueError:
                     self.ui_error_message(_('Cannot create report'),
-                                          _('xprop failed to determine process ID of the window') + '\n\n' + err)
+                                          _('xprop failed to determine process ID of the window'))
                     return True
+                return self.run_report_bug()
+            else:
+                self.ui_error_message(_('Cannot create report'),
+                                      _('xprop failed to determine process ID of the window') + '\n\n' + err)
+                return True
         else:
             return self.run_crashes()
 
