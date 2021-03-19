@@ -1401,6 +1401,8 @@ Debug::NoLocking "true";
             files.append(file[4:].encode())
         elif file.startswith('usr/lib/udev/'):
             files.append(file[4:].encode())
+        elif file.startswith('usr/lib/'):
+            files.append(file[4:].encode())
         elif file.startswith('usr/bin/'):
             files.append(file[4:].encode())
         elif file.startswith('usr/sbin/'):
