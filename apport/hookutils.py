@@ -201,7 +201,7 @@ def attach_dmesg(report):
     This will not overwrite already existing information.
     '''
     if not report.get('CurrentDmesg', '').strip():
-        report['CurrentDmesg'] = command_output(['dmesg'])
+        report['CurrentDmesg'] = root_command_output(['dmesg'])
 
 
 def attach_dmi(report):
@@ -729,8 +729,8 @@ def attach_mac_events(report, profiles=None):
     aa_re = re.compile(aa_regex, re.IGNORECASE)
 
     if 'KernLog' not in report:
-        report['KernLog'] = __filter_re_process(
-            mac_re, subprocess.Popen(['dmesg'], stdout=subprocess.PIPE))
+        report['KernLog'] = '\n'.join(re.findall(
+            mac_re, root_command_output(['dmesg'])))
 
     if 'AuditLog' not in report and os.path.exists('/var/run/auditd.pid'):
         attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})
