@@ -1393,19 +1393,7 @@ Debug::NoLocking "true";
         if file[0] == '/':
             file = file[1:]
         files = [file.encode()]
-        if file.startswith('usr/lib/x86_64-linux-gnu/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/lib/i386-linux-gnu/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/lib/systemd/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/lib/udev/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/lib/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/bin/'):
-            files.append(file[4:].encode())
-        elif file.startswith('usr/sbin/'):
+        if file.startswith('usr/'):
             files.append(file[4:].encode())
         for file in files:
             try:
