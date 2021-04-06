@@ -22,6 +22,7 @@ import re
 import stat
 import base64
 import tempfile
+import select
 import shutil
 import locale
 
@@ -31,6 +32,7 @@ import apport
 import apport.fileutils
 
 _invalid_key_chars_re = re.compile(r'[^0-9a-zA-Z_.-]')
+_AGENT = None
 
 
 def path_to_key(path):
@@ -403,10 +405,57 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
     return res
 
 
+def _spawn_pkttyagent():
+    global _AGENT
+
+    if _AGENT is not None:
+        return
+    if os.geteuid() == 0:
+        return
+    if not sys.stdin.isatty():
+        return
+    if not os.path.exists('/usr/bin/pkttyagent'):
+        return
+
+    try:
+        (r, w) = os.pipe2(0)
+    except OSError:
+        return
+
+    _AGENT = subprocess.Popen(['pkttyagent', '--notify-fd', str(w), '--fallback'],
+                              close_fds=False,
+                              stdin=subprocess.PIPE,
+                              stdout=subprocess.PIPE)
+
+    os.close(w)
+
+    with select.epoll() as epoll:
+        while True:
+            epoll.register(r, select.EPOLLIN)
+            events = epoll.poll()
+            for fd, event_type in events:
+                if event_type & select.EPOLLHUP:
+                    os.close(r)
+                    return
+    return
+
+
+def _kill_pkttyagent():
+    global _AGENT
+
+    if _AGENT is None:
+        return
+
+    _AGENT.terminate()
+    _AGENT.wait()
+    _AGENT = None
+
+
 def _root_command_prefix():
     if os.getuid() == 0:
         return []
     elif os.path.exists('/usr/bin/pkexec'):
+        _spawn_pkttyagent()
         return ['pkexec']
     # the package hook won't have everything it wanted but that's okay
     else:
@@ -424,8 +473,10 @@ def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_ut
     otherwise left as bytes.
     '''
     assert isinstance(command, list), 'command must be a list'
-    return command_output(_root_command_prefix() + command, input, stderr,
-                          keep_locale=True, decode_utf8=decode_utf8)
+    output = command_output(_root_command_prefix() + command, input, stderr,
+                            keep_locale=True, decode_utf8=decode_utf8)
+    _kill_pkttyagent()
+    return output
 
 
 def attach_root_command_outputs(report, command_map):
@@ -459,6 +510,7 @@ def attach_root_command_outputs(report, command_map):
         # run script
         sp = subprocess.Popen(_root_command_prefix() + [wrapper_path, script_path])
         sp.wait()
+        _kill_pkttyagent()
 
         # now read back the individual outputs
         for keyname in command_map:
