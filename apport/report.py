@@ -31,6 +31,7 @@ import problem_report
 import apport
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
+from apport.hookutils import kill_pkttyagent
 
 _data_dir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 _hook_dir = '%s/package-hooks/' % (_data_dir)
@@ -930,6 +931,11 @@ class Report(problem_report.ProblemReport):
         return True if the hook requested to stop the report filing process,
         False otherwise.
         '''
+        ret = self._add_hooks_info(ui, package, srcpackage)
+        kill_pkttyagent()
+        return ret
+
+    def _add_hooks_info(self, ui, package, srcpackage):
         # determine package names, unless already given as arguments
         # avoid path traversal
         if not package:

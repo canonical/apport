@@ -440,7 +440,7 @@ def _spawn_pkttyagent():
     return
 
 
-def _kill_pkttyagent():
+def kill_pkttyagent():
     global _AGENT
 
     if _AGENT is None:
@@ -475,7 +475,6 @@ def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_ut
     assert isinstance(command, list), 'command must be a list'
     output = command_output(_root_command_prefix() + command, input, stderr,
                             keep_locale=True, decode_utf8=decode_utf8)
-    _kill_pkttyagent()
     return output
 
 
@@ -510,7 +509,6 @@ def attach_root_command_outputs(report, command_map):
         # run script
         sp = subprocess.Popen(_root_command_prefix() + [wrapper_path, script_path])
         sp.wait()
-        _kill_pkttyagent()
 
         # now read back the individual outputs
         for keyname in command_map:
