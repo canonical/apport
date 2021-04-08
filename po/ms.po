@@ -14,138 +14,138 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-03-20 06:29+0000\n"
-"X-Generator: Launchpad (build 4446feb642ca86be4f6eceb855b408397dad6a50)\n"
+"X-Launchpad-Export-Date: 2021-04-08 06:54+0000\n"
+"X-Generator: Launchpad (build 57f1f603f707b9cfa764cae8dd0f3999026b4763)\n"
 "Language: ms\n"
 
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Lapor satu masalah..."
 
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "Lapor satu kerosakan kepada para pembangun"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:146
-#: ../debian/tmp/usr/share/apport/apport-kde.py:363 ../gtk/apport-gtk.py:146
-#: ../kde/apport-kde.py:363 ../debian/tmp/usr/bin/apport-cli.py:166
-#: ../bin/apport-cli.py:166
+#: ../kde/apport-kde.py:363 ../gtk/apport-gtk.py:146
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:146 ../bin/apport-cli.py:166
+#: ../debian/tmp/usr/share/apport/apport-kde.py:363
+#: ../debian/tmp/usr/bin/apport-cli.py:166
 msgid "(binary data)"
 msgstr "(data binari)"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:161 ../gtk/apport-gtk.py:161
+#: ../gtk/apport-gtk.py:161 ../debian/tmp/usr/share/apport/apport-gtk.py:161
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Maaf, aplikasi %s telah dihentikan tanpa dijangka."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:164 ../gtk/apport-gtk.py:164
+#: ../gtk/apport-gtk.py:164 ../debian/tmp/usr/share/apport/apport-gtk.py:164
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Maaf, %s telah ditutup tanpa dijangka."
 
+#: ../kde/apport-kde.py:200 ../kde/apport-kde.py:238 ../gtk/apport-gtk.py:169
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:169
 #: ../debian/tmp/usr/share/apport/apport-kde.py:200
-#: ../debian/tmp/usr/share/apport/apport-kde.py:238 ../gtk/apport-gtk.py:169
-#: ../kde/apport-kde.py:200 ../kde/apport-kde.py:238
+#: ../debian/tmp/usr/share/apport/apport-kde.py:238
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Maaf, %s telah mengalami ralat dalaman."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:181
+#: ../kde/apport-kde.py:186 ../gtk/apport-gtk.py:181
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:181 ../bin/apport-cli.py:194
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
 #: ../debian/tmp/usr/share/apport/apport-kde.py:186 ../gtk/apport-gtk.ui.h:6
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:186
 #: ../debian/tmp/usr/bin/apport-cli.py:194
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../bin/apport-cli.py:194
 msgid "Send problem report to the developers?"
 msgstr "Hantar laporan masalah kepada para pembangun?"
 
+#: ../kde/apport-kde.py:194 ../gtk/apport-gtk.py:188
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:188
-#: ../debian/tmp/usr/share/apport/apport-kde.py:194 ../gtk/apport-gtk.ui.h:14
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:194
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14
+#: ../debian/tmp/usr/share/apport/apport-kde.py:194 ../gtk/apport-gtk.ui.h:14
 msgid "Send"
 msgstr "Hantar"
 
+#: ../kde/apport-kde.py:292 ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:575
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:204
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:575
-#: ../debian/tmp/usr/share/apport/apport-kde.py:292 ../gtk/apport-gtk.ui.h:11
-#: ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:575 ../kde/apport-kde.py:292
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
+#: ../debian/tmp/usr/share/apport/apport-kde.py:292 ../gtk/apport-gtk.ui.h:11
 msgid "Show Details"
 msgstr "Tunjuk Perincian"
 
+#: ../kde/apport-kde.py:231 ../kde/apport-kde.py:244 ../gtk/apport-gtk.py:216
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:216
 #: ../debian/tmp/usr/share/apport/apport-kde.py:231
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../gtk/apport-gtk.py:216
-#: ../kde/apport-kde.py:231 ../kde/apport-kde.py:244
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244
 msgid "Continue"
 msgstr "Teruskan"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:239 ../gtk/apport-gtk.py:239
+#: ../gtk/apport-gtk.py:239 ../debian/tmp/usr/share/apport/apport-gtk.py:239
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Aplikasi %s telah berhenti membalas."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:243 ../gtk/apport-gtk.py:243
+#: ../gtk/apport-gtk.py:243 ../debian/tmp/usr/share/apport/apport-gtk.py:243
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Program \"%s\" telah berhenti membalas."
 
+#: ../kde/apport-kde.py:208 ../gtk/apport-gtk.py:259
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:259
-#: ../debian/tmp/usr/share/apport/apport-kde.py:208 ../gtk/apport-gtk.py:259
-#: ../kde/apport-kde.py:208
+#: ../debian/tmp/usr/share/apport/apport-kde.py:208
 #, python-format
 msgid "Package: %s"
 msgstr "Pakej: %s"
 
+#: ../kde/apport-kde.py:214 ../gtk/apport-gtk.py:265
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:265
-#: ../debian/tmp/usr/share/apport/apport-kde.py:214 ../gtk/apport-gtk.py:265
-#: ../kde/apport-kde.py:214
+#: ../debian/tmp/usr/share/apport/apport-kde.py:214
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Maaf, masalah berlaku semasa memasang perisian."
 
+#: ../kde/apport-kde.py:220 ../gtk/apport-gtk.py:274 ../gtk/apport-gtk.py:289
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:274
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:289
-#: ../debian/tmp/usr/share/apport/apport-kde.py:220 ../gtk/apport-gtk.py:274
-#: ../gtk/apport-gtk.py:289 ../kde/apport-kde.py:220
+#: ../debian/tmp/usr/share/apport/apport-kde.py:220
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Aplikasi %s telah mengalami ralat dalaman."
 
+#: ../kde/apport-kde.py:223 ../gtk/apport-gtk.py:277
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:277
-#: ../debian/tmp/usr/share/apport/apport-kde.py:223 ../gtk/apport-gtk.py:277
-#: ../kde/apport-kde.py:223
+#: ../debian/tmp/usr/share/apport/apport-kde.py:223
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Aplikasi %s telah ditutup tanpa dijangka."
 
+#: ../kde/apport-kde.py:241 ../gtk/apport-gtk.py:297
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:297
-#: ../debian/tmp/usr/share/apport/apport-kde.py:241 ../gtk/apport-gtk.ui.h:7
-#: ../gtk/apport-gtk.py:297 ../kde/apport-kde.py:241
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-kde.py:241 ../gtk/apport-gtk.ui.h:7
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Jika anda mengalami masalah, cuba mulakan semula komputer."
 
+#: ../kde/apport-kde.py:245 ../gtk/apport-gtk.py:299
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:299
-#: ../debian/tmp/usr/share/apport/apport-kde.py:245 ../gtk/apport-gtk.py:299
-#: ../kde/apport-kde.py:245
+#: ../debian/tmp/usr/share/apport/apport-kde.py:245
 msgid "Ignore future problems of this type"
 msgstr "Abai masalah masa hadapan bagi jenis ini"
 
+#: ../kde/apport-kde.py:289 ../gtk/apport-gtk.py:579
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:579
-#: ../debian/tmp/usr/share/apport/apport-kde.py:289 ../gtk/apport-gtk.py:579
-#: ../kde/apport-kde.py:289
+#: ../debian/tmp/usr/share/apport/apport-kde.py:289
 msgid "Hide Details"
 msgstr "Sembunyi Perincian"
 
-#: ../bin/apport-retrace.py:34 ../debian/tmp/usr/bin/apport-retrace.py:34
+#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
 "Jangan letakkan surihan baru kedalam laporan, tetapi tuliskannya ke stdout."
 
-#: ../bin/apport-retrace.py:36 ../debian/tmp/usr/bin/apport-retrace.py:36
+#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -153,35 +153,35 @@ msgstr ""
 "Mulakan sesi gdb berinteraktif dengan laporan longgokan teras (-o abaikan; "
 "tidak menulis semula laporan)"
 
-#: ../bin/apport-retrace.py:38 ../debian/tmp/usr/bin/apport-retrace.py:38
+#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Tulis laporan yang diubah suai pada fail yang diberikan selain dari mengubah "
 "laporan asal"
 
-#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
+#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
 "Buang longgokan teras dari laporan selepas penjanaan semula surihan tindanan"
 
-#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
+#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
 msgstr "Batalkan laporan CoreFile"
 
-#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
+#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "Batalkan laporan ExecutablePath"
 
-#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
+#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
 msgstr "Batalkan laporan ProcMaps"
 
-#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
+#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
 msgstr "Bina semula laporan maklumat pakej"
 
-#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
+#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -198,7 +198,7 @@ msgstr ""
 "menyurih semula kerosakan yang disebabkan keluaran yang dijalankan semasa "
 "ini."
 
-#: ../bin/apport-retrace.py:53 ../debian/tmp/usr/bin/apport-retrace.py:53
+#: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
 msgid ""
 "Build another temporary sandbox for installing gdb and its dependencies "
 "using the same release as the report rather than whatever version of gdb you "
@@ -208,28 +208,28 @@ msgstr ""
 "menggunakan keluaran yang sama sebagai laporan berbanding apa jua versi gdb "
 "yang anda telah pasangkan."
 
-#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
+#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Lapor kemajuan muat turun/pasang bila memasang pakej ke dalam kotak pasir"
 
-#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
+#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr "Tokok setem masa untuk log mesej, bagi operasi kelompok"
 
-#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-retrace.py:59
+#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
 "Cipta dan guna repositori pihak-ketiga dari asal yang dinyatakan dalam "
 "laporan"
 
-#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
+#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr "Direktori cache untuk pakej yang dimuat turun dalam kotak pasir"
 
-#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-retrace.py:63
+#: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -238,15 +238,15 @@ msgstr ""
 "menganggap mana-mana pakej yang sudah dimuat turun juga di ekstrak ke dalam "
 "kotak pasir ini."
 
-#: ../bin/apport-retrace.py:65 ../debian/tmp/usr/bin/apport-valgrind.py:66
-#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-retrace.py:65
+#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
+#: ../debian/tmp/usr/bin/apport-valgrind.py:66 ../bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
 "Pasang pakej tambahan ke dalam kekotak pasir (boleh ditentukan berbilang "
 "kali)"
 
-#: ../bin/apport-retrace.py:67 ../debian/tmp/usr/bin/apport-retrace.py:67
+#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -256,7 +256,7 @@ msgstr ""
 "digunakan bila menentukan ID kerosakan untuk muat naik jejak tindanan yang "
 "dijejakkan semula (hanya jika tidak -g, -o ataupun -s ditentukan)"
 
-#: ../bin/apport-retrace.py:69 ../debian/tmp/usr/bin/apport-retrace.py:69
+#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -264,22 +264,22 @@ msgstr ""
 "Papar jejak tindanan yang dijejakkan semula dan tanya pengesahan sebelum "
 "menghantarnya ke pangkalan data kerosakan."
 
-#: ../bin/apport-retrace.py:71 ../debian/tmp/usr/bin/apport-retrace.py:71
+#: ../debian/tmp/usr/bin/apport-retrace.py:71 ../bin/apport-retrace.py:71
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Laluan ke pangkalan data sqlite pendua (lalai: tiada pemeriksaan penduaan)"
 
-#: ../bin/apport-retrace.py:73 ../debian/tmp/usr/bin/apport-retrace.py:73
+#: ../debian/tmp/usr/bin/apport-retrace.py:73 ../bin/apport-retrace.py:73
 msgid "Do not add StacktraceSource to the report."
 msgstr "Jangan tambah StacktraceSource ke dalam laporan."
 
-#: ../bin/apport-retrace.py:82 ../debian/tmp/usr/bin/apport-retrace.py:82
+#: ../debian/tmp/usr/bin/apport-retrace.py:82 ../bin/apport-retrace.py:82
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Anda tidak bleh guna -C tanpa -S. Dihentikan."
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:115 ../debian/tmp/usr/bin/apport-retrace.py:115
+#: ../debian/tmp/usr/bin/apport-retrace.py:115 ../bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
 msgstr "OK untuk menghantar lampiran ini? [y/t]"
 
@@ -338,8 +338,8 @@ msgstr ""
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Ralar: %s bukanlah boleh laku. Menghentikan."
 
-#: ../apport/ui.py:139
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:139
+#: ../apport/ui.py:139
 msgid "This package does not seem to be installed correctly"
 msgstr "Pakej ini nampaknya tidak dipasang dengan betul"
 
@@ -353,8 +353,8 @@ msgstr ""
 "Ini bukanlah pakej %s rasmi. Sila buang sebarang pakej pihak ketiga dan cuba "
 "lagi."
 
-#: ../apport/ui.py:166
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:166
+#: ../apport/ui.py:166
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -367,26 +367,26 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:303
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:303
+#: ../apport/ui.py:303
 msgid "unknown program"
 msgstr "program tidak diketahui"
 
-#: ../apport/ui.py:304
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:304
+#: ../apport/ui.py:304
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Maaf, program \"%s\" terpaksa ditutup tanpa dijangka"
 
-#: ../apport/ui.py:306 ../apport/ui.py:1458
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:306
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1458
+#: ../apport/ui.py:306 ../apport/ui.py:1458
 #, python-format
 msgid "Problem in %s"
 msgstr "Masalah pada %s"
 
-#: ../apport/ui.py:307
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:307
+#: ../apport/ui.py:307
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -394,9 +394,6 @@ msgstr ""
 "Komputer anda tidak mempunyai ingatan bebas yang mencukupi untuk "
 "menganalisis masalah dan hantar laporan ke pembangun secara automatik."
 
-#: ../apport/ui.py:362 ../apport/ui.py:370 ../apport/ui.py:519
-#: ../apport/ui.py:522 ../apport/ui.py:727 ../apport/ui.py:1264
-#: ../apport/ui.py:1430 ../apport/ui.py:1434
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:362
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:370
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:519
@@ -405,65 +402,68 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1264
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1430
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1434
+#: ../apport/ui.py:362 ../apport/ui.py:370 ../apport/ui.py:519
+#: ../apport/ui.py:522 ../apport/ui.py:727 ../apport/ui.py:1264
+#: ../apport/ui.py:1430 ../apport/ui.py:1434
 msgid "Invalid problem report"
 msgstr "Laporan masalah tidak sah"
 
-#: ../apport/ui.py:363
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:363
+#: ../apport/ui.py:363
 msgid "You are not allowed to access this problem report."
 msgstr "Anda tidak dibenarkan mencapai laporan masalah ini."
 
-#: ../apport/ui.py:366
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:366
+#: ../apport/ui.py:366
 msgid "Error"
 msgstr "Ralat"
 
-#: ../apport/ui.py:367
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:367
+#: ../apport/ui.py:367
 msgid "There is not enough disk space available to process this report."
 msgstr "Ruang cakera tidak mencukupi untuk memproses laporan ini."
 
-#: ../apport/ui.py:411 ../apport/ui.py:500
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:411
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:500
+#: ../apport/ui.py:411 ../apport/ui.py:500
 msgid "Invalid PID"
 msgstr "PID tidak sah"
 
-#: ../apport/ui.py:412
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:412
+#: ../apport/ui.py:412
 msgid "The specified process ID does not exist."
 msgstr "ID proses yang dinyatakan tidak wujud."
 
-#: ../apport/ui.py:415
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:415
+#: ../apport/ui.py:415
 msgid "Not your PID"
 msgstr "Bukan PID anda"
 
-#: ../apport/ui.py:416
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:416
+#: ../apport/ui.py:416
 msgid "The specified process ID does not belong to you."
 msgstr "ID proses yang dinyatakan bukan milik anda."
 
-#: ../apport/ui.py:467
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:467
+#: ../apport/ui.py:467
 msgid "No package specified"
 msgstr "Tiada pakej dinyatakan"
 
-#: ../apport/ui.py:468
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:468
+#: ../apport/ui.py:468
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Anda perlu menyatakan satu pakej atau satu PID. Sila rujuk --help untuk "
 "maklumat lanjut."
 
-#: ../apport/ui.py:497
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:497
+#: ../apport/ui.py:497
 msgid "Permission denied"
 msgstr "Keizinan dinafikan"
 
-#: ../apport/ui.py:498
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:498
+#: ../apport/ui.py:498
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -471,39 +471,39 @@ msgstr ""
 "Proses tersebut bukan milik anda. Sila jalankan program sebagai pemilik "
 "proses atau root."
 
-#: ../apport/ui.py:501
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:501
+#: ../apport/ui.py:501
 msgid "The specified process ID does not belong to a program."
 msgstr "ID proses yang ditentukan tidak dimiliki oleh program tersebut."
 
-#: ../apport/ui.py:520
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:520
+#: ../apport/ui.py:520
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Skrip simptom %s tidak menentukan pakej yang terjejas"
 
-#: ../apport/ui.py:523
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:523
+#: ../apport/ui.py:523
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Pakej %s tidak wujud"
 
-#: ../apport/ui.py:552 ../apport/ui.py:739 ../apport/ui.py:744
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:552
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:739
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:744
+#: ../apport/ui.py:552 ../apport/ui.py:739 ../apport/ui.py:744
 msgid "Cannot create report"
 msgstr "Tidak dapat mencipta laporan"
 
-#: ../apport/ui.py:567 ../apport/ui.py:613 ../apport/ui.py:629
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:567
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:613
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:629
+#: ../apport/ui.py:567 ../apport/ui.py:613 ../apport/ui.py:629
 msgid "Updating problem report"
 msgstr "Mengemas kini laporan masalah"
 
-#: ../apport/ui.py:568
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:568
+#: ../apport/ui.py:568
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -515,8 +515,8 @@ msgstr ""
 "\n"
 "Sila cipta laporan baru menggunakan \"apport-bug\"."
 
-#: ../apport/ui.py:577
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:577
+#: ../apport/ui.py:577
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -537,30 +537,30 @@ msgstr ""
 "\n"
 "Adakah anda ingin meneruskannya?"
 
-#: ../apport/ui.py:614 ../apport/ui.py:630
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:614
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:630
+#: ../apport/ui.py:614 ../apport/ui.py:630
 msgid "No additional information collected."
 msgstr "Tiada maklumat tambahan dikutip."
 
-#: ../apport/ui.py:681
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:681
+#: ../apport/ui.py:681
 msgid "What kind of problem do you want to report?"
 msgstr "Apakah jenis masalah yang anda ingin laporkan?"
 
-#: ../apport/ui.py:698
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:698
+#: ../apport/ui.py:698
 msgid "Unknown symptom"
 msgstr "Simpton tidak diketahui"
 
-#: ../apport/ui.py:699
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:699
+#: ../apport/ui.py:699
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Simptom \"%s\" tidak diketahui"
 
-#: ../apport/ui.py:730
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:730
+#: ../apport/ui.py:730
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -568,38 +568,38 @@ msgstr ""
 "Selepas menutup mesej ini sila klik pada tetingkap aplikasi untuk melaporkan "
 "masalah tersebut."
 
-#: ../apport/ui.py:740 ../apport/ui.py:745
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:740
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:745
+#: ../apport/ui.py:740 ../apport/ui.py:745
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop gagal memastikan ID proses tetingkap"
 
-#: ../apport/ui.py:759
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:759
+#: ../apport/ui.py:759
 msgid "%prog <report number>"
 msgstr "%prog <report number>"
 
-#: ../apport/ui.py:761
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:761
+#: ../apport/ui.py:761
 msgid "Specify package name."
 msgstr "Nyatakan nama pakej."
 
-#: ../apport/ui.py:763 ../apport/ui.py:815
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:763
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:815
+#: ../apport/ui.py:763 ../apport/ui.py:815
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Tambah satu tag tambahan ke dalam laporan. Boleh dinyatakan beberapa kali."
 
-#: ../apport/ui.py:794
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:794
+#: ../apport/ui.py:794
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:797
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:797
+#: ../apport/ui.py:797
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -609,19 +609,19 @@ msgstr ""
 "hanya --pid. Jika tidak diberikan, papar satu senarai simptom yang "
 "diketahui. (Dilaksanakan jika satu argumen tunggal diberikan.)"
 
-#: ../apport/ui.py:799
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:799
+#: ../apport/ui.py:799
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 "Klik satu tetingkap sebagai  satu sasaran untuk failkan satu laporan masalah"
 
-#: ../apport/ui.py:801
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:801
+#: ../apport/ui.py:801
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "Mula dalam mod kemas kini pepijat. Boleh ambil pilihan --package."
 
-#: ../apport/ui.py:803
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:803
+#: ../apport/ui.py:803
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -629,8 +629,8 @@ msgstr ""
 "Failkan satu laporan pepijat mengenai simptom. (Dilaksanakan jika nama "
 "simptom diberikan sebagai argumen sahaja.)"
 
-#: ../apport/ui.py:805
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:805
+#: ../apport/ui.py:805
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -638,8 +638,8 @@ msgstr ""
 "Nyatakan nama pakej dalam mod --file-bug. Ini merupakan pilihan jika --pid "
 "ditentukan. (Dilaksanakan jika nama pakej diberikan sebagai argumen sahaja.)"
 
-#: ../apport/ui.py:807
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:807
+#: ../apport/ui.py:807
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -648,13 +648,13 @@ msgstr ""
 "Nyatakan nama pakej dalam mod --file-bug. Ini merupakan pilihan jika --pid "
 "ditentukan. (Dilaksanakan jika nama pakej diberikan sebagai argumen sahaja.)"
 
-#: ../apport/ui.py:809
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:809
+#: ../apport/ui.py:809
 msgid "The provided pid is a hanging application."
 msgstr "Pid yang disediakan adalah aplikasi kaku."
 
-#: ../apport/ui.py:811
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:811
+#: ../apport/ui.py:811
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -664,8 +664,8 @@ msgstr ""
 "yang ditangguh pada %s. (Dilaksanakan jika fail hanya diberikan sebagai "
 "argumen.)"
 
-#: ../apport/ui.py:813
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:813
+#: ../apport/ui.py:813
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -675,59 +675,59 @@ msgstr ""
 "selain dari melaporkannya. Fail ini kemudiannya boleh dilaporkan melalui "
 "komputer lain."
 
-#: ../apport/ui.py:817
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:817
+#: ../apport/ui.py:817
 msgid "Print the Apport version number."
 msgstr "Papar nombor versi Apport."
 
-#: ../apport/ui.py:968
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:968
+#: ../apport/ui.py:968
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Tindakan ini akan melancarkan apport-retrace dalam tetingkap terminal untuk "
 "memeriksa kerosakan."
 
-#: ../apport/ui.py:969
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:969
+#: ../apport/ui.py:969
 msgid "Run gdb session"
 msgstr "Jalankan sesi gdb"
 
-#: ../apport/ui.py:970
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:970
+#: ../apport/ui.py:970
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Jalankan sesi gdb tanpa memuat turun simbol nyahpepijat"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:972
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:972
+#: ../apport/ui.py:972
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Kemas kini %s dengan jejak surihan simbolik penuh"
 
-#: ../apport/ui.py:1008
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1008
+#: ../apport/ui.py:1008
 msgid "Can't remember send report status settings"
 msgstr "Tidak mengingati tetapan status laporan dihantar"
 
-#: ../apport/ui.py:1009
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1009
+#: ../apport/ui.py:1009
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 "Menyimpan keadaan pelaporan kerosakan yang gagal. Tidak dapat tetapkan mod "
 "pelaporan auto atau tidak sesekali."
 
-#: ../apport/ui.py:1068 ../apport/ui.py:1078
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1068
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1078
+#: ../apport/ui.py:1068 ../apport/ui.py:1078
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Laporan masalah ini diterap kepada program yang mana ia tidak dipasang lagi."
 
-#: ../apport/ui.py:1093
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1093
+#: ../apport/ui.py:1093
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -736,10 +736,10 @@ msgstr ""
 "Masalah berpunca dari program %s yang mana telah berubah semejak kerosakan "
 "berlaku."
 
-#: ../apport/ui.py:1140 ../apport/ui.py:1221 ../apport/ui.py:1436
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1140
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1221
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1436
+#: ../apport/ui.py:1140 ../apport/ui.py:1221 ../apport/ui.py:1436
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Laporan masalah ini sudah rosak dan tidak boleh diproses."
 
@@ -763,13 +763,13 @@ msgstr ""
 "perhubungan yang telah disediakan; lawati forum di "
 "https://forum.snapcraft.io/ untuk mendapatkan bantuan."
 
-#: ../apport/ui.py:1145
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1145
+#: ../apport/ui.py:1145
 msgid "This report is about a package that is not installed."
 msgstr "Laporan ini berkenaan satu pakej yang tidak dipasang."
 
-#: ../apport/ui.py:1149
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1149
+#: ../apport/ui.py:1149
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Satu ralat berlaku semasa cuba memproses laporan masalah ini:"
 
@@ -801,55 +801,55 @@ msgstr ""
 "di https://forum.snapcraft.io/  untuk dapatkan bantuan. Anda mahu teruskan "
 "pelaporan pepijat berkenaan deb ini?"
 
-#: ../apport/ui.py:1265
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1265
+#: ../apport/ui.py:1265
 msgid "Could not determine the package or source package name."
 msgstr "Tidak dapat mengenal pasti pakej atau nama sumber pakej."
 
-#: ../apport/ui.py:1283
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1283
+#: ../apport/ui.py:1283
 msgid "Unable to start web browser"
 msgstr "Tidak boleh memulakan pelayar sesawang"
 
-#: ../apport/ui.py:1284
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1284
+#: ../apport/ui.py:1284
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Tidak boleh mulakan pelayar sesawang untuk membuka %s."
 
-#: ../apport/ui.py:1384
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1384
+#: ../apport/ui.py:1384
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Sila masukkan maklumat akaun anda untuk sistem penjejakan pepijat %s"
 
-#: ../apport/ui.py:1396
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1396
+#: ../apport/ui.py:1396
 msgid "Network problem"
 msgstr "Masalah rangkaian"
 
-#: ../apport/ui.py:1398
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1398
+#: ../apport/ui.py:1398
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Tidak dapat menyambung ke pangkalan data kerosakan, sila semak sambungan "
 "internet anda."
 
-#: ../apport/ui.py:1425
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1425
+#: ../apport/ui.py:1425
 msgid "Memory exhaustion"
 msgstr "Kehabisan ingatan"
 
-#: ../apport/ui.py:1426
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1426
+#: ../apport/ui.py:1426
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Sistem anda tidak mempunyai ingatan yang mencukupi untuk memproses laporan "
 "kerosakan ini."
 
-#: ../apport/ui.py:1461
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1461
+#: ../apport/ui.py:1461
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -860,14 +860,14 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1517 ../apport/ui.py:1524
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1517
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1524
+#: ../apport/ui.py:1517 ../apport/ui.py:1524
 msgid "Problem already known"
 msgstr "Masalah sudah pun diketahui"
 
-#: ../apport/ui.py:1518
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1518
+#: ../apport/ui.py:1518
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -877,60 +877,60 @@ msgstr ""
 "dalam pelayar sesawang. Sila semak jika anda boleh menambah maklumat "
 "lanjutan lagi yang dikira boleh dianggap berguna untuk para pembangun."
 
-#: ../apport/ui.py:1525
 #: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1525
+#: ../apport/ui.py:1525
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Masalah ini sudah dilaporkan kepada pembangun. Terima kasih!"
 
+#: ../kde/apport-kde.py:469 ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
 #: ../debian/tmp/usr/share/apport/apport-kde.py:469
 #: ../debian/tmp/usr/share/apport/apport-kde.py:504
 #: ../debian/tmp/usr/share/apport/apport-kde.py:524 ../gtk/apport-gtk.ui.h:1
-#: ../kde/apport-kde.py:469 ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
 msgid "Apport"
 msgstr "Apport"
 
-#: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2 ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
 msgstr "Batal"
 
-#: ../gtk/apport-gtk.ui.h:3 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
 msgid "OK"
 msgstr "OK"
 
-#: ../gtk/apport-gtk.ui.h:4 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4 ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
 msgstr "Laporan kerosakan"
 
-#: ../gtk/apport-gtk.ui.h:5 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Maaf, satu ralat dalaman berlaku.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:8 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8 ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
 msgstr "Ingat ini pada masa hadapan"
 
-#: ../gtk/apport-gtk.ui.h:9 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
 msgstr "Abai masalah versi program ini pada masa hadapan"
 
-#: ../gtk/apport-gtk.ui.h:10 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10 ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
 msgstr "Lancar semula aplikasi ini"
 
-#: ../gtk/apport-gtk.ui.h:12 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
 msgstr "_Periksa secara setempat"
 
-#: ../gtk/apport-gtk.ui.h:13 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
 msgstr "Jangan hantar"
 
-#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Mengutip maklumat masalah</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:16 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16 ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -938,18 +938,19 @@ msgstr ""
 "Maklumat yang dikutip mungkin membantu para pembangun membaiki masalah yang "
 "anda laporkan."
 
+#: ../kde/apport-kde.py:435 ../bin/apport-cli.py:267
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
 #: ../debian/tmp/usr/share/apport/apport-kde.py:435 ../gtk/apport-gtk.ui.h:17
-#: ../kde/apport-kde.py:435 ../debian/tmp/usr/bin/apport-cli.py:267
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17 ../bin/apport-cli.py:267
+#: ../debian/tmp/usr/bin/apport-cli.py:267
 msgid "Uploading problem information"
 msgstr "Memuat naik maklumat masalah"
 
-#: ../gtk/apport-gtk.ui.h:18 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:18
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:18 ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Memuat naik maklumat masalah</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:436 ../gtk/apport-gtk.ui.h:19
 #: ../kde/apport-kde.py:436 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:19
+#: ../debian/tmp/usr/share/apport/apport-kde.py:436 ../gtk/apport-gtk.ui.h:19
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -957,7 +958,7 @@ msgstr ""
 "Maklumat yang dikutip akan dihantar ke sistem penjejakan pepijat. Ia mungkin "
 "mengambil masa beberapa minit."
 
-#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
+#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Sistem anda akan menjadi tidak stabil sekarang dan mungkin perlu dimulakan "
@@ -995,25 +996,25 @@ msgstr ""
 "Sila masukkan kata laluan anda untuk mencapai laporan masalah bagi program "
 "sistem"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:80 ../bin/apport-cli.py:80
+#: ../bin/apport-cli.py:80 ../debian/tmp/usr/bin/apport-cli.py:80
 msgid "Press any key to continue..."
 msgstr "Tekan mana-mana kekunci untuk teruskan..."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:87 ../bin/apport-cli.py:87
+#: ../bin/apport-cli.py:87 ../debian/tmp/usr/bin/apport-cli.py:87
 msgid "What would you like to do? Your options are:"
 msgstr "Apakah yang anda ingin lakukan? Pilihan anda adalah:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:100 ../bin/apport-cli.py:100
+#: ../bin/apport-cli.py:100 ../debian/tmp/usr/bin/apport-cli.py:100
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Sila pilih (%s):"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:164 ../bin/apport-cli.py:164
+#: ../bin/apport-cli.py:164 ../debian/tmp/usr/bin/apport-cli.py:164
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bait)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:195 ../bin/apport-cli.py:195
+#: ../bin/apport-cli.py:195 ../debian/tmp/usr/bin/apport-cli.py:195
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -1021,58 +1022,59 @@ msgstr ""
 "Selepas laporan masalah dihantar, sila isikan borang dalam\n"
 "pelayar sesawang yang terbuka secara automatik."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:198 ../bin/apport-cli.py:198
+#: ../bin/apport-cli.py:198 ../debian/tmp/usr/bin/apport-cli.py:198
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Hantar laporan(%s)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:202 ../bin/apport-cli.py:202
+#: ../bin/apport-cli.py:202 ../debian/tmp/usr/bin/apport-cli.py:202
 msgid "&Examine locally"
 msgstr "&Periksa secara setempat"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:206 ../bin/apport-cli.py:206
+#: ../bin/apport-cli.py:206 ../debian/tmp/usr/bin/apport-cli.py:206
 msgid "&View report"
 msgstr "&Lihat laporan"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:207 ../bin/apport-cli.py:207
+#: ../bin/apport-cli.py:207 ../debian/tmp/usr/bin/apport-cli.py:207
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Simpan dahulu fail laporan untuk dihantarkan kemudian atau salin ke tempat "
 "lain terlebih dahulu"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:208 ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:208 ../debian/tmp/usr/bin/apport-cli.py:208
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Batal dan &abaikan kerosakan di masa hadapan untuk versi program ini"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:210
+#: ../bin/apport-cli.py:210 ../bin/apport-cli.py:287 ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:340 ../debian/tmp/usr/bin/apport-cli.py:210
 #: ../debian/tmp/usr/bin/apport-cli.py:287
 #: ../debian/tmp/usr/bin/apport-cli.py:319
-#: ../debian/tmp/usr/bin/apport-cli.py:340 ../bin/apport-cli.py:210
-#: ../bin/apport-cli.py:287 ../bin/apport-cli.py:319 ../bin/apport-cli.py:340
+#: ../debian/tmp/usr/bin/apport-cli.py:340
 msgid "&Cancel"
 msgstr "&Batal"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:238 ../bin/apport-cli.py:238
+#: ../bin/apport-cli.py:238 ../debian/tmp/usr/bin/apport-cli.py:238
 msgid "Problem report file:"
 msgstr "Fail laporan masalah:"
 
+#: ../bin/apport-cli.py:244 ../bin/apport-cli.py:249
 #: ../debian/tmp/usr/bin/apport-cli.py:244
-#: ../debian/tmp/usr/bin/apport-cli.py:249 ../bin/apport-cli.py:244
-#: ../bin/apport-cli.py:249
+#: ../debian/tmp/usr/bin/apport-cli.py:249
 msgid "&Confirm"
 msgstr "&Sahkan"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:248 ../bin/apport-cli.py:248
+#: ../bin/apport-cli.py:248 ../debian/tmp/usr/bin/apport-cli.py:248
 #, python-format
 msgid "Error: %s"
 msgstr "Ralat: %s"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
-#: ../debian/tmp/usr/bin/apport-cli.py:254 ../bin/apport-cli.py:254
+#: ../kde/apport-kde.py:407 ../bin/apport-cli.py:254
+#: ../debian/tmp/usr/share/apport/apport-kde.py:407
+#: ../debian/tmp/usr/bin/apport-cli.py:254
 msgid "Collecting problem information"
 msgstr "Mengutip maklumat masalah"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:255 ../bin/apport-cli.py:255
+#: ../bin/apport-cli.py:255 ../debian/tmp/usr/bin/apport-cli.py:255
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -1081,7 +1083,7 @@ msgstr ""
 "mempertingkatkan\n"
 "kualiti aplikasi. Ia mungkin mengambil masa beberapa minit."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:268 ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:268 ../debian/tmp/usr/bin/apport-cli.py:268
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1089,40 +1091,40 @@ msgstr ""
 "Maklumat yang dikutip telah dihantar ke sistem penjejakan pepijat.\n"
 "Ia mungkin mengambil masa beberapa minit."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:318 ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:318 ../debian/tmp/usr/bin/apport-cli.py:318
 msgid "&Done"
 msgstr "&Selesai"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:324 ../bin/apport-cli.py:324
+#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:324
 msgid "none"
 msgstr "tiada"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:325 ../bin/apport-cli.py:325
+#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Dipilih: %s. Pilihan berbilang:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:341 ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:341 ../debian/tmp/usr/bin/apport-cli.py:341
 msgid "Choices:"
 msgstr "Pilih:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:355 ../bin/apport-cli.py:355
+#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
 msgid "Path to file (Enter to cancel):"
 msgstr "Laluan ke fail (Enter untuk batal):"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:361 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:361 ../debian/tmp/usr/bin/apport-cli.py:361
 msgid "File does not exist."
 msgstr "Fail tidak wujud."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:363 ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:363 ../debian/tmp/usr/bin/apport-cli.py:363
 msgid "This is a directory."
 msgstr "Ini adalah sebuah direktori."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:369 ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:369 ../debian/tmp/usr/bin/apport-cli.py:369
 msgid "To continue, you must visit the following URL:"
 msgstr "Untuk teruskan, anda mesti lawati URL berikut:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:371 ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -1130,11 +1132,11 @@ msgstr ""
 "Anda boleh lancarkan pelayar sekarang, atau salin URL ini kedalam pelayar "
 "pada komputer lain."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:373 ../bin/apport-cli.py:373
+#: ../bin/apport-cli.py:373 ../debian/tmp/usr/bin/apport-cli.py:373
 msgid "Launch a browser now"
 msgstr "Lancarkan sebuah pelayar sekarang"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:388 ../bin/apport-cli.py:388
+#: ../bin/apport-cli.py:388 ../debian/tmp/usr/bin/apport-cli.py:388
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Tiada laporan kerosakan ditangguhkan. Cuba taip --help untuk maklumat lanjut."
@@ -1166,29 +1168,29 @@ msgstr ""
 "Proses pemulihan kaku pada saat-saat akhir dan kelihatan selesai seperti "
 "biasa."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:234 ../kde/apport-kde.py:234
+#: ../kde/apport-kde.py:234 ../debian/tmp/usr/share/apport/apport-kde.py:234
 msgid "Leave Closed"
 msgstr "Biarkan Tertutup"
 
+#: ../kde/apport-kde.py:235 ../kde/apport-kde.py:381
 #: ../debian/tmp/usr/share/apport/apport-kde.py:235
-#: ../debian/tmp/usr/share/apport/apport-kde.py:381 ../kde/apport-kde.py:235
-#: ../kde/apport-kde.py:381
+#: ../debian/tmp/usr/share/apport/apport-kde.py:381
 msgid "Relaunch"
 msgstr "Lancar Semula"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
+#: ../kde/apport-kde.py:315 ../debian/tmp/usr/share/apport/apport-kde.py:315
 msgid "Username:"
 msgstr "Nama Pengguna:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:316 ../kde/apport-kde.py:316
+#: ../kde/apport-kde.py:316 ../debian/tmp/usr/share/apport/apport-kde.py:316
 msgid "Password:"
 msgstr "Kata Laluan:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../kde/apport-kde.py:406
+#: ../kde/apport-kde.py:406 ../debian/tmp/usr/share/apport/apport-kde.py:406
 msgid "Collecting Problem Information"
 msgstr "Mengutip Maklumat Masalah"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../kde/apport-kde.py:408
+#: ../kde/apport-kde.py:408 ../debian/tmp/usr/share/apport/apport-kde.py:408
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1196,7 +1198,7 @@ msgstr ""
 "Maklumat yang dikutip boleh dihantar kepada para pembangun untuk "
 "dipertingkatkan kualiti aplikasi. Ia mungkin mengambil masa beberapa minit."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../kde/apport-kde.py:434
+#: ../kde/apport-kde.py:434 ../debian/tmp/usr/share/apport/apport-kde.py:434
 msgid "Uploading Problem Information"
 msgstr "Memuat Naik Maklumat Masalah"
 
