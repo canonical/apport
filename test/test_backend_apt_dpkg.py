@@ -124,7 +124,7 @@ class T(unittest.TestCase):
             self.assertTrue(impl.get_version(dep))
 
         # Depends: only
-        d = impl.get_dependencies('libc6')
+        d = impl.get_dependencies('libc-bin')
         self.assertGreaterEqual(len(d), 1)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
