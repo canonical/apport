@@ -73,6 +73,22 @@ detailed list of changes, please see ChangeLog.
     - apport/fileutils.py: move some logic here to skip over manipulated
       process names and filenames.
     - test/test_fileutils.py: added some parsing tests.
+  * SECURITY UPDATE: Multiple arbitrary file reads (LP: #1917904)
+    - apport/hookutils.py: don't follow symlinks and make sure the file
+      isn't a FIFO in read_file().
+    - test/test_hookutils.py: added symlink tests.
+    - CVE-2021-32547, CVE-2021-32548, CVE-2021-32549, CVE-2021-32550,
+      CVE-2021-32551, CVE-2021-32552, CVE-2021-32553, CVE-2021-32554,
+      CVE-2021-32555
+  * SECURITY UPDATE: info disclosure via modified config files spoofing
+    (LP: #1917904)
+    - backends/packaging-apt-dpkg.py: properly terminate arguments in
+      get_modified_conffiles.
+    - CVE-2021-32556
+  * SECURITY UPDATE: arbitrary file write (LP: #1917904)
+    - data/whoopsie-upload-all: don't follow symlinks and make sure the
+      file isn't a FIFO in process_report().
+    - CVE-2021-32557
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

@@ -14,6 +14,7 @@
 # the full text of the license.
 
 import os
+import stat
 import sys
 import time
 import subprocess
@@ -113,11 +114,14 @@ def process_report(report):
 
         # write updated report, we use os.open and os.fdopen as
         # /proc/sys/fs/protected_regular is set to 1 (LP: #1848064)
-        fd = os.open(report, os.O_WRONLY | os.O_APPEND)
-        with os.fdopen(fd, 'wb') as f:
-            os.chmod(report, 0)
-            r.write(f, only_new=True)
-            os.chmod(report, 0o640)
+        # make sure the file isn't a FIFO or symlink
+        fd = os.open(report, os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK)
+        st = os.fstat(fd)
+        if stat.S_ISREG(st.st_mode):
+            with os.fdopen(fd, 'wb') as f:
+                os.fchmod(fd, 0)
+                r.write(f, only_new=True)
+                os.fchmod(fd, 0o640)
 
     # now tell whoopsie to upload the report
     print('Marking %s for whoopsie upload' % report)

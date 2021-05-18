@@ -424,7 +424,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         allows filtering.
         '''
         dpkg = subprocess.Popen(['dpkg-query', '-W', '--showformat=${Conffiles}',
-                                 package], stdout=subprocess.PIPE)
+                                 '--', package], stdout=subprocess.PIPE)
 
         out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:

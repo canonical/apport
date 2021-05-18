@@ -78,8 +78,14 @@ def read_file(path, force_unicode=False):
     instead of failing.
     '''
     try:
-        with open(path, 'rb') as f:
-            contents = f.read().strip()
+        # make sure the file isn't a FIFO or symlink
+        fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK)
+        st = os.fstat(fd)
+        if stat.S_ISREG(st.st_mode):
+            with os.fdopen(fd, 'rb') as f:
+                contents = f.read().strip()
+        else:
+            return 'Error: path was not a regular file.'
         if force_unicode:
             return contents.decode('UTF-8', errors='replace')
         try:

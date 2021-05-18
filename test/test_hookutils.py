@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, tempfile, locale, subprocess, re, shutil, os.path, sys
+import unittest, tempfile, locale, subprocess, re, shutil, os, sys
 
 import apport.hookutils
 
@@ -93,6 +93,14 @@ class T(unittest.TestCase):
         self.assertEqual(list(report), ['.nonexisting'])
         self.assertTrue(report['.nonexisting'].startswith('Error: '))
 
+        # symlink
+        link = os.path.join(self.workdir, 'symlink')
+        os.symlink('/etc/passwd', link)
+        report = {}
+        apport.hookutils.attach_file(report, link, 'Symlink')
+        self.assertEqual(list(report), ['Symlink'])
+        self.assertTrue(report['Symlink'].startswith('Error: '))
+
         # existing key
         report = {}
         apport.hookutils.attach_file(report, '/etc/passwd')
@@ -136,6 +144,14 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file_if_exists(report, '/etc/passwd', 'Passwd')
         self.assertEqual(list(report), ['Passwd'])
         self.assertEqual(report['Passwd'], passwd_contents)
+
+        # symlink
+        link = os.path.join(self.workdir, 'symlink')
+        os.symlink('/etc/passwd', link)
+        report = {}
+        apport.hookutils.attach_file_if_exists(report, link, 'Symlink')
+        self.assertEqual(list(report), ['Symlink'])
+        self.assertTrue(report['Symlink'].startswith('Error: '))
 
         # nonexisting file
         report = {}
