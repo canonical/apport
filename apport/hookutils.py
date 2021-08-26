@@ -61,6 +61,11 @@ def attach_file_if_exists(report, path, key=None, overwrite=True, force_unicode=
     If the contents is valid UTF-8, or force_unicode is True, then the value
     will be a string, otherwise it will be bytes.
     '''
+    # Prevent directory traversal. Do it here too so it won't disclose if
+    # a file exists or not.
+    if "../" in path:
+        return
+
     if not key:
         key = path_to_key(path)
 
@@ -78,13 +83,22 @@ def read_file(path, force_unicode=False):
     instead of failing.
     '''
     try:
-        # make sure the file isn't a FIFO or symlink
+        # Prevent directory traversal
+        if "../" in path:
+            return 'Error: invalid path.'
         fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK)
         st = os.fstat(fd)
+        # make sure there are no symlinks in the full path
+        real_path = os.path.realpath(path)
+        if st.st_ino != os.stat(real_path).st_ino or path != real_path:
+            os.close(fd)
+            return 'Error: path contained symlinks.'
+        # make sure the file isn't a FIFO or symlink
         if stat.S_ISREG(st.st_mode):
             with os.fdopen(fd, 'rb') as f:
                 contents = f.read().strip()
         else:
+            os.close(fd)
             return 'Error: path was not a regular file.'
         if force_unicode:
             return contents.decode('UTF-8', errors='replace')
@@ -216,7 +230,7 @@ def attach_dmi(report):
     dmi_dir = '/sys/class/dmi/id'
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
-            p = '%s/%s' % (dmi_dir, f)
+            p = os.path.realpath('%s/%s' % (dmi_dir, f))
             st = os.stat(p)
             # ignore the root-only ones, since they have serial numbers
             if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):

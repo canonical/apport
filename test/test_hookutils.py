@@ -101,6 +101,20 @@ class T(unittest.TestCase):
         self.assertEqual(list(report), ['Symlink'])
         self.assertTrue(report['Symlink'].startswith('Error: '))
 
+        # directory symlink
+        link = os.path.join(self.workdir, 'dirsymlink')
+        os.symlink('/etc', link)
+        report = {}
+        apport.hookutils.attach_file(report, os.path.join(link, 'passwd'), 'DirSymlink')
+        self.assertEqual(list(report), ['DirSymlink'])
+        self.assertTrue(report['DirSymlink'].startswith('Error: '))
+
+        # directory traversal
+        report = {}
+        apport.hookutils.attach_file(report, '/etc/../etc/passwd', 'Traversal')
+        self.assertEqual(list(report), ['Traversal'])
+        self.assertTrue(report['Traversal'].startswith('Error: '))
+
         # existing key
         report = {}
         apport.hookutils.attach_file(report, '/etc/passwd')
@@ -156,6 +170,11 @@ class T(unittest.TestCase):
         # nonexisting file
         report = {}
         apport.hookutils.attach_file_if_exists(report, '/nonexisting')
+        self.assertEqual(list(report), [])
+
+        # directory traversal
+        report = {}
+        apport.hookutils.attach_file_if_exists(report, '/etc/../etc/passwd')
         self.assertEqual(list(report), [])
 
     def test_path_to_key(self):
