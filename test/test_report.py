@@ -1,5 +1,6 @@
 # coding: UTF-8
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys, mock
+import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
+import mock, signal, resource
 
 try:
     from cStringIO import StringIO
@@ -728,32 +729,51 @@ int main() {
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
 
+        # This needs to handle different bash locations across releases
+        # to get the core filename right
+        shell = os.path.realpath('/bin/bash')
+
         (fd, script) = tempfile.mkstemp()
-        coredump = os.path.join(os.path.dirname(script), 'core')
-        assert not os.path.exists(coredump)
         try:
             os.close(fd)
 
             # create a test script which produces a core dump for us
             with open(script, 'w') as fd:
-                fd.write('''#!/bin/bash
+                fd.write('''#!%s
 cd `dirname $0`
 ulimit -c unlimited
 kill -SEGV $$
-''')
+''' % shell)
             os.chmod(script, 0o755)
 
             # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) != 0
-            self._validate_core(coredump)
+            pid = os.fork()
+            if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                sys.stdin.close()
+                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
+                os.execv(script, [script])
+                assert False, 'Could not execute ' + script
+
+            time.sleep(0.5)
+
+            (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                    shell)
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
+
+            self._validate_core(core_path)
 
             pr = apport.report.Report()
             pr['InterpreterPath'] = '/bin/bash'
             pr['ExecutablePath'] = script
-            pr['CoreDump'] = (coredump,)
+            pr['CoreDump'] = (core_path,)
             pr.add_gdb_info()
         finally:
-            os.unlink(coredump)
             os.unlink(script)
 
         self._validate_gdb_fields(pr)
@@ -765,9 +785,11 @@ kill -SEGV $$
         If these come from an assert(), the report should have the assertion
         message. Otherwise it should be marked as not reportable.
         '''
+
         # abort with assert
         (fd, script) = tempfile.mkstemp()
-        assert not os.path.exists('core')
+        script_bin = script + '.bin'
+
         try:
             os.close(fd)
 
@@ -778,23 +800,41 @@ gcc -o $0.bin -x c - <<EOF
 #include <assert.h>
 int main() { assert(1 < 0); }
 EOF
-ulimit -c unlimited
-$0.bin 2>/dev/null
 ''')
             os.chmod(script, 0o755)
 
-            # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) != 0
-            self._validate_core('core')
+            # build the crashing binary
+            subprocess.call([script])
+
+            # call binary and verify that it gives us a proper ELF core dump
+            pid = os.fork()
+            if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                sys.stdin.close()
+                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
+                os.execv(script_bin, [script_bin])
+                assert False, 'Could not execute ' + script_bin
+
+            time.sleep(0.5)
+
+            (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                    script_bin)
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
+
+            self._validate_core(core_path)
 
             pr = apport.report.Report()
-            pr['ExecutablePath'] = script + '.bin'
-            pr['CoreDump'] = ('core',)
+            pr['ExecutablePath'] = script_bin
+            pr['CoreDump'] = (core_path,)
             pr.add_gdb_info()
         finally:
             os.unlink(script)
-            os.unlink(script + '.bin')
-            os.unlink('core')
+            os.unlink(script_bin)
 
         self._validate_gdb_fields(pr)
         self.assertIn("<stdin>:2: main: Assertion `1 < 0' failed.", pr['AssertionMessage'])
@@ -804,7 +844,8 @@ $0.bin 2>/dev/null
 
         # abort with internal error
         (fd, script) = tempfile.mkstemp()
-        assert not os.path.exists('core')
+        script_bin = script + '.bin'
+
         try:
             os.close(fd)
 
@@ -819,23 +860,41 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 EOF
-ulimit -c unlimited
-LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
 ''')
             os.chmod(script, 0o755)
 
-            # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) != 0
-            self._validate_core('core')
+            # build the crashing binary
+            subprocess.call([script])
+
+            # call binary and verify that it gives us a proper ELF core dump
+            pid = os.fork()
+            if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                sys.stdin.close()
+                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
+                os.execv(script_bin, [script_bin, 'aaaaaaaaaaaaaaaa'])
+                assert False, 'Could not execute ' + script_bin
+
+            time.sleep(0.5)
+
+            (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                    script_bin)
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
+
+            self._validate_core(core_path)
 
             pr = apport.report.Report()
-            pr['ExecutablePath'] = script + '.bin'
-            pr['CoreDump'] = ('core',)
+            pr['ExecutablePath'] = script_bin
+            pr['CoreDump'] = (core_path,)
             pr.add_gdb_info()
         finally:
             os.unlink(script)
-            os.unlink(script + '.bin')
-            os.unlink('core')
+            os.unlink(script_bin)
 
         self._validate_gdb_fields(pr)
         self.assertIn("** buffer overflow detected ***: terminated",
@@ -846,7 +905,8 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
 
         # abort without assertion
         (fd, script) = tempfile.mkstemp()
-        assert not os.path.exists('core')
+        script_bin = script + '.bin'
+
         try:
             os.close(fd)
 
@@ -857,23 +917,41 @@ gcc -o $0.bin -x c - <<EOF
 #include <stdlib.h>
 int main() { abort(); }
 EOF
-ulimit -c unlimited
-$0.bin 2>/dev/null
 ''')
             os.chmod(script, 0o755)
 
-            # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) != 0
-            self._validate_core('core')
+            # build the crashing binary
+            subprocess.call([script])
+
+            # call binary and verify that it gives us a proper ELF core dump
+            pid = os.fork()
+            if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                sys.stdin.close()
+                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
+                os.execv(script_bin, [script_bin])
+                assert False, 'Could not execute ' + script_bin
+
+            time.sleep(0.5)
+
+            (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                    script_bin)
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
+
+            self._validate_core(core_path)
 
             pr = apport.report.Report()
-            pr['ExecutablePath'] = script + '.bin'
-            pr['CoreDump'] = ('core',)
+            pr['ExecutablePath'] = script_bin
+            pr['CoreDump'] = (core_path,)
             pr.add_gdb_info()
         finally:
             os.unlink(script)
-            os.unlink(script + '.bin')
-            os.unlink('core')
+            os.unlink(script_bin)
 
         self._validate_gdb_fields(pr)
         self.assertFalse('AssertionMessage' in pr, pr.get('AssertionMessage'))

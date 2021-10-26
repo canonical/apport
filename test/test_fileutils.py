@@ -488,6 +488,109 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             self.assertEqual(uid, 1000)
             self.assertEqual(gid, 2000)
 
+    def test_get_core_path(self):
+        '''get_core_path()'''
+
+        boot_id = apport.fileutils.get_boot_id()
+
+        # Basic test
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123,
+            exe="/usr/bin/test",
+            uid=234,
+            timestamp=222222)
+        expected = "core._usr_bin_test.234." + boot_id + ".123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+
+        # Test dots in exe names
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123,
+            exe="/usr/bin/test.sh",
+            uid=234,
+            timestamp=222222)
+        expected = "core._usr_bin_test_sh.234." + boot_id + ".123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+
+        # Test no exe name
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123,
+            exe=None,
+            uid=234,
+            timestamp=222222)
+        expected = "core.unknown.234." + boot_id + ".123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+
+        # Test no uid
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123,
+            exe="/usr/bin/test",
+            uid=None,
+            timestamp=222222)
+        expected = ("core._usr_bin_test." + str(os.getuid()) + "." +
+                    boot_id + ".123.222222")
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+
+    def test_clean_core_directory(self):
+        '''clean_core_directory()'''
+
+        fake_uid = 5150
+        extra_core_files = 4
+        num_core_files = apport.fileutils.max_corefiles_per_uid + extra_core_files
+
+        # Create some test files
+        for x in range(num_core_files):
+            (core_name, core_path) = apport.fileutils.get_core_path(
+                pid=123 + x,
+                exe="/usr/bin/test",
+                uid=fake_uid,
+                timestamp=222222 + x)
+            with open(core_path, 'w') as fd:
+                fd.write('Some stuff')
+                time.sleep(1)
+
+        # Create a file with a different uid
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=231,
+            exe="/usr/bin/test",
+            uid=fake_uid + 1,
+            timestamp=333333)
+        with open(core_path, 'w') as fd:
+            fd.write('Some stuff')
+
+        # Make sure we have the proper number of test files
+        self.assertEqual(num_core_files,
+                         len(apport.fileutils.find_core_files_by_uid(fake_uid)))
+        self.assertEqual(1,
+                         len(apport.fileutils.find_core_files_by_uid(fake_uid + 1)))
+
+        # Clean out the directory
+        apport.fileutils.clean_core_directory(fake_uid)
+
+        # Make sure we have the proper number of test files. We should
+        # have one less than max_corefiles_per_uid.
+        self.assertEqual(apport.fileutils.max_corefiles_per_uid - 1,
+                         len(apport.fileutils.find_core_files_by_uid(fake_uid)))
+        self.assertEqual(1,
+                         len(apport.fileutils.find_core_files_by_uid(fake_uid + 1)))
+
+        # Make sure we deleted the oldest ones
+        for x in range(apport.fileutils.max_corefiles_per_uid - 1):
+            offset = extra_core_files + x + 1
+            (core_name, core_path) = apport.fileutils.get_core_path(
+                pid=123 + offset,
+                exe="/usr/bin/test",
+                uid=fake_uid,
+                timestamp=222222 + offset)
+            self.assertTrue(os.path.exists(core_path))
+
 
 if __name__ == '__main__':
     unittest.main()

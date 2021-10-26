@@ -55,7 +55,7 @@ def check_lock():
         signal.signal(signal.SIGALRM, original_handler)
 
 
-(pidstat, real_uid, real_gid, cwd, proc_pid_fd) = (None, None, None, None, None)
+(pidstat, crash_uid, crash_gid, cwd, proc_pid_fd) = (None, None, None, None, None)
 
 
 def proc_pid_opener(path, flags):
@@ -65,7 +65,7 @@ def proc_pid_opener(path, flags):
 def get_pid_info(pid):
     '''Read /proc information about pid'''
 
-    global pidstat, real_uid, real_gid, cwd, proc_pid_fd
+    global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
 
     proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
@@ -73,15 +73,15 @@ def get_pid_info(pid):
     # here -- we want to know in the log file
     pidstat = os.stat('stat', dir_fd=proc_pid_fd)
 
-    # determine real UID of the target process; do *not* use the owner of
+    # determine UID and GID of the target process; do *not* use the owner of
     # /proc/pid/stat, as that will be root for setuid or unreadable programs!
     # (this matters when suid_dumpable is enabled)
     with open('status', opener=proc_pid_opener) as status_file:
         contents = status_file.read()
-    (real_uid, real_gid) = apport.fileutils.get_uid_and_gid(contents)
+    (crash_uid, crash_gid) = apport.fileutils.get_uid_and_gid(contents)
 
-    assert real_uid is not None, 'failed to parse Uid'
-    assert real_gid is not None, 'failed to parse Gid'
+    assert crash_uid is not None, 'failed to parse Uid'
+    assert crash_gid is not None, 'failed to parse Gid'
 
     cwd = os.open('cwd', os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd)
 
@@ -102,26 +102,26 @@ def get_apport_starttime():
     return apport.fileutils.get_starttime(contents)
 
 
-def drop_privileges(real_only=False):
-    '''Change user and group to real_[ug]id
-
-    Normally that irrevocably drops privileges to the real user/group of the
-    target process. With real_only=True only the real IDs are changed, but
-    the effective IDs remain.
+def drop_privileges():
+    '''Change effective user and group to crash_[ug]id
     '''
-    if real_only:
-        # Drop any supplemental groups
-        if os.getuid() == 0:
-            os.setgroups([])
-        os.setregid(real_gid, -1)
-        os.setreuid(real_uid, -1)
-    else:
-        os.setgid(real_gid)
-        os.setuid(real_uid)
-        assert os.getegid() == real_gid
-        assert os.geteuid() == real_uid
-    assert os.getgid() == real_gid
-    assert os.getuid() == real_uid
+    # Drop any supplemental groups, or we'll still be in the root group
+    if os.getuid() == 0:
+        os.setgroups([])
+        assert os.getgroups() == []
+    os.setregid(-1, crash_gid)
+    os.setreuid(-1, crash_uid)
+    assert os.getegid() == crash_gid
+    assert os.geteuid() == crash_uid
+
+
+def recover_privileges():
+    '''Change effective user and group back to real uid and gid
+    '''
+    os.setregid(-1, os.getgid())
+    os.setreuid(-1, os.getuid())
+    assert os.getegid() == os.getgid()
+    assert os.geteuid() == os.getuid()
 
 
 def init_error_log():
@@ -179,8 +179,8 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
-def write_user_coredump(pid, cwd, limit, from_report=None):
-    '''Write the core into the current directory if ulimit requests it.'''
+def write_user_coredump(pid, timestamp, limit, from_report=None):
+    '''Write the core into a directory if ulimit requests it.'''
 
     # three cases:
     # limit == 0: do not write anything
@@ -194,23 +194,25 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
     # protected executables, in accordance with core(5)
     # (suid_dumpable==2 and core_pattern restrictions); when this happens,
     # /proc/pid/stat is owned by root (or the user suid'ed to), but we already
-    # changed to the crashed process' real uid
+    # changed to the crashed process' uid
     assert pidstat, 'pidstat not initialized'
-    if pidstat.st_uid != os.getuid() or pidstat.st_gid != os.getgid():
+    if pidstat.st_uid != crash_uid or pidstat.st_gid != crash_gid:
         error_log('disabling core dump for suid/sgid/unreadable executable')
         return
 
+    (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                            options.exe_path,
+                                                            crash_uid,
+                                                            timestamp)
+
     try:
-        with open('/proc/sys/kernel/core_uses_pid') as f:
-            if f.read().strip() == '0':
-                core_path = 'core'
-            else:
-                core_path = 'core.%s' % (str(pid))
-        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o600, dir_fd=cwd)
+        # Limit number of core files to prevent DoS
+        apport.fileutils.clean_core_directory(crash_uid)
+        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o400, dir_fd=cwd)
     except (OSError, IOError):
         return
 
-    error_log('writing core dump to %s (limit: %s)' % (core_path, str(limit)))
+    error_log('writing core dump to %s (limit: %s)' % (core_name, str(limit)))
 
     written = 0
 
@@ -224,7 +226,7 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
             os.close(core_file)
             os.unlink(core_path, dir_fd=cwd)
             return
-        error_log('writing core dump %s of size %i' % (core_path, core_size))
+        error_log('writing core dump %s of size %i' % (core_name, core_size))
         os.write(core_file, r['CoreDump'])
     else:
         # read from stdin
@@ -247,6 +249,8 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
                 return
             block = os.read(0, 1048576)
 
+    # Make sure the user can read it
+    os.fchown(core_file, crash_uid, -1)
     os.close(core_file)
 
 
@@ -266,7 +270,7 @@ def usable_ram():
     return (memfree + cached - writeback) * 1024
 
 
-def is_closing_session(uid):
+def is_closing_session():
     '''Check if pid is in a closing user session.
 
     During that, crashes are common as the session D-BUS and X.org are going
@@ -282,11 +286,18 @@ def is_closing_session(uid):
         error_log('is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment')
         return False
 
-    euid = os.geteuid()
-    egid = os.getegid()
+    # We need to drop both the real and effective uid/gid before calling
+    # gdbus because DBUS_SESSION_BUS_ADDRESS is untrusted and may allow
+    # reading arbitrary files as a noncefile. We can't just drop effective
+    # uid/gid as gdbus has a check to make sure it's not running in a
+    # setuid environment and it does so by comparing the real and effective
+    # ids. We don't need to drop supplemental groups here, as the privilege
+    # dropping code elsewhere has already done so.
+    real_uid = os.getuid()
+    real_gid = os.getgid()
     try:
-        os.setegid(os.getgid())
-        os.seteuid(os.getuid())
+        os.setresgid(crash_gid, crash_gid, real_gid)
+        os.setresuid(crash_uid, crash_uid, real_uid)
         gdbus = subprocess.Popen(['/usr/bin/gdbus', 'call', '-e', '-d',
                                   'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
                                   'org.gnome.SessionManager.IsSessionRunning'], stdout=subprocess.PIPE,
@@ -298,8 +309,9 @@ def is_closing_session(uid):
         error_log('gdbus call failed, cannot determine running session: ' + str(e))
         return False
     finally:
-        os.seteuid(euid)
-        os.setegid(egid)
+        os.setresuid(real_uid, real_uid, -1)
+        os.setresgid(real_gid, real_gid, -1)
+
     error_log('debug: session gdbus call: ' + out.decode('UTF-8'))
     if out.startswith(b'(false,'):
         return True
@@ -597,9 +609,6 @@ try:
         error_log('process was replaced after Apport started, ignoring')
         sys.exit(0)
 
-    # Partially drop privs to gain proper os.access() checks
-    drop_privileges(True)
-
     error_log('called for pid %s, signal %s, core limit %s, dump mode %s' % (pid, signum, core_ulimit, dump_mode))
 
     try:
@@ -620,15 +629,14 @@ try:
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
     if signum == str(int(signal.SIGQUIT)):
-        drop_privileges()
-        write_user_coredump(pid, cwd, core_ulimit)
+        write_user_coredump(pid, process_start, core_ulimit)
         sys.exit(0)
 
     # check if the executable was modified after the process started (e. g.
     # package got upgraded in between)
     exe_mtime = os.stat('exe', dir_fd=proc_pid_fd).st_mtime
-    process_start = os.lstat('cmdline', dir_fd=proc_pid_fd).st_mtime
-    if not os.path.exists(os.readlink('exe', dir_fd=proc_pid_fd)) or exe_mtime > process_start:
+    process_mtime = os.lstat('cmdline', dir_fd=proc_pid_fd).st_mtime
+    if not os.path.exists(os.readlink('exe', dir_fd=proc_pid_fd)) or exe_mtime > process_mtime:
         error_log('executable was modified after program start, ignoring')
         sys.exit(0)
 
@@ -647,18 +655,12 @@ try:
     if options.exe_path is not None and os.path.exists(options.exe_path):
         info['ExecutablePath'] = options.exe_path
 
-    euid = os.geteuid()
-    egid = os.getegid()
-    try:
-        # Drop permissions temporarily to make sure that we don't
-        # include information in the crash report that the user should
-        # not be allowed to access.
-        os.setegid(os.getgid())
-        os.seteuid(os.getuid())
-        info.add_proc_info(proc_pid_fd=proc_pid_fd)
-    finally:
-        os.seteuid(euid)
-        os.setegid(egid)
+    # Drop privileges temporarily to make sure that we don't
+    # include information in the crash report that the user should
+    # not be allowed to access.
+    drop_privileges()
+
+    info.add_proc_info(proc_pid_fd=proc_pid_fd)
 
     if 'ExecutablePath' not in info:
         error_log('could not determine ExecutablePath, aborting')
@@ -686,16 +688,16 @@ try:
         if not apport.fileutils.get_config('main', 'unpackaged', False, bool=True):
             error_log('executable does not belong to a package, ignoring')
             # check if the user wants a core dump
-            drop_privileges()
-            write_user_coredump(pid, cwd, core_ulimit)
+            recover_privileges()
+            write_user_coredump(pid, process_start, core_ulimit)
             sys.exit(0)
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
     if signum in [str(signal.SIGXCPU), str(signal.SIGXFSZ)]:
         error_log('Ignoring signal %s (caused by exceeding soft RLIMIT)' % signum)
-        drop_privileges()
-        write_user_coredump(pid, cwd, core_ulimit)
+        recover_privileges()
+        write_user_coredump(pid, process_start, core_ulimit)
         sys.exit(0)
 
     # ignore blacklisted binaries
@@ -703,7 +705,11 @@ try:
         error_log('executable version is blacklisted, ignoring')
         sys.exit(0)
 
-    if is_closing_session(pidstat.st_uid):
+    # We can now recover privileges to create the crash report file and
+    # write out the user coredumps
+    recover_privileges()
+
+    if is_closing_session():
         error_log('happens for shutting down session, ignoring')
         sys.exit(0)
 
@@ -730,8 +736,7 @@ try:
                         crash_counter = apport.fileutils.get_recent_crashes(f)
                     crash_counter += 1
                     if crash_counter > 1:
-                        drop_privileges()
-                        write_user_coredump(pid, cwd, core_ulimit)
+                        write_user_coredump(pid, process_start, core_ulimit)
                         error_log('this executable already crashed %i times, ignoring' % crash_counter)
                         sys.exit(0)
                 # remove the old file, so that we can create the new one with
@@ -739,17 +744,10 @@ try:
                 os.unlink(report)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
-                drop_privileges()
-                write_user_coredump(pid, cwd, core_ulimit)
+                write_user_coredump(pid, process_start, core_ulimit)
                 sys.exit(0)
-        # we prefer having a file mode of 0 while writing; this doesn't work
-        # for suid binaries as we completely drop privs and thus can't chmod
-        # them later on
-        if pidstat.st_uid != os.getuid():
-            mode = 0o640
-        else:
-            mode = 0
-        fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, mode)
+        # we prefer having a file mode of 0 while writing;
+        fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0)
         reportfile = os.fdopen(fd, 'w+b')
         assert reportfile.fileno() > sys.stderr.fileno()
 
@@ -763,7 +761,7 @@ try:
         error_log('Could not create report file: %s' % str(e))
         sys.exit(1)
 
-    # Totally drop privs before writing out the reportfile.
+    # Drop privileges before writing out the reportfile.
     drop_privileges()
 
     info.add_user_info()
@@ -774,38 +772,27 @@ try:
 
     try:
         info.write(reportfile)
-        if reportfile != sys.stderr:
-            # Ensure that the file gets written to disk in the event of an
-            # Upstart crash.
-            if info.get('ExecutablePath', '') == '/sbin/init':
-                reportfile.flush()
-                os.fsync(reportfile.fileno())
-                parent_directory = os.path.dirname(report)
-                try:
-                    fd = os.open(parent_directory, os.O_RDONLY)
-                    os.fsync(fd)
-                finally:
-                    os.close(fd)
     except IOError:
-        if reportfile != sys.stderr:
-            os.unlink(report)
+        os.unlink(report)
         raise
     if 'CoreDump' not in info:
         error_log('core dump exceeded %i MiB, dropped from %s to avoid memory overflow'
                   % (core_size_limit / 1048576, report))
-    if report and mode == 0:
-        # for non-suid programs, make the report writable now, when it's
-        # completely written
-        os.chmod(report, 0o640)
-    if reportfile != sys.stderr:
-        error_log('wrote report %s' % report)
+
+    # Get privileges back so the core file can be written to root-owned
+    # corefile directory
+    recover_privileges()
+
+    # make the report writable now, when it's completely written
+    os.fchmod(fd, 0o640)
+    error_log('wrote report %s' % report)
 
     # Check if the user wants a core file. We need to create that from the
     # written report, as we can only read stdin once and write_user_coredump()
     # might abort reading from stdin and remove the written core file when
     # core_ulimit is > 0 and smaller than the core size.
     reportfile.seek(0)
-    write_user_coredump(pid, cwd, core_ulimit, from_report=reportfile)
+    write_user_coredump(pid, process_start, core_ulimit, from_report=reportfile)
 
 except (SystemExit, KeyboardInterrupt):
     raise

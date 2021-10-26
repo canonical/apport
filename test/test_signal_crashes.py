@@ -382,6 +382,11 @@ CoreDump: base64
         # crash our test process and let it write a core file
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         pid = self.create_test_process()
+
+        # get the name of the core file
+        (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                test_executable)
+
         os.kill(pid, signal.SIGSEGV)
 
         # replace report with the crafted one above as soon as it exists and
@@ -400,12 +405,10 @@ CoreDump: base64
         os.sync()
 
         # verify that we get the original core, not the injected one
-        with open('core', 'rb') as f:
+        with open(core_path, 'rb') as f:
             core = f.read()
         self.assertNotIn(b'pwned', core)
         self.assertGreater(len(core), 10000)
-
-        os.unlink('core')
 
     def test_limit_size(self):
         '''core dumps are capped on available memory size'''
@@ -894,6 +897,11 @@ CoreDump: base64
         '''
         self.assertFalse(os.path.exists('core'), '%s/core already exists, please clean up first' % os.getcwd())
         pid = self.create_test_process(check_running, command, uid=uid, args=args)
+
+        (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                command,
+                                                                uid)
+
         if sleep > 0:
             time.sleep(sleep)
         if killer_id:
@@ -947,16 +955,15 @@ CoreDump: base64
             self.assertEqual(subprocess.call(['pidof', command]), 1,
                              'no running test executable processes')
 
-        core_path = '%s/' % os.getcwd()
         if core_location:
-            core_path = '%s/' % core_location
-        core_path += 'core'
+            core_path = '%s/core' % core_location
+
         if expect_corefile:
             self.assertTrue(os.path.exists(core_path), 'leaves wanted core file')
             try:
                 # check core file permissions
                 st = os.stat(core_path)
-                self.assertEqual(stat.S_IMODE(st.st_mode), 0o600, 'core file has correct permissions')
+                self.assertEqual(stat.S_IMODE(st.st_mode), 0o400, 'core file has correct permissions')
                 if expect_corefile_owner is not None:
                     self.assertEqual(st.st_uid, expect_corefile_owner, 'core file has correct owner')
 

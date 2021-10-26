@@ -98,6 +98,13 @@ detailed list of changes, please see ChangeLog.
     - apport/hookutils.py, test/test_hookutils.py: detect path traversal
       attacks, and directory symlinks.
     - CVE-2021-3710
+  * SECURITY UPDATE: Privilege escalation via core files
+    - refactor privilege dropping and create core files in a well-known
+      directory in apport/fileutils.py, apport/report.py, data/apport,
+      test/test_fileutils.py, test/test_report.py,
+      test/test_signal_crashes.py, test/test_ui.py.
+    - use systemd-tmpfiles to create and manage the well-known core file
+      directory in setup.py, data/systemd/apport.conf.
   * backends/packaging-apt-dpkg.py: Utilize a release and architecture specific
     contents mapping.
   * test/test_backend_apt_dpkg.py: Update the test as we are using a contents

@@ -422,7 +422,8 @@ class Report(problem_report.ProblemReport):
         This adds:
         - UserGroups: system groups the user is in
         '''
-        user = pwd.getpwuid(os.getuid())[0]
+        # Use effective uid in case privileges were dropped
+        user = pwd.getpwuid(os.geteuid())[0]
         groups = [name for name, p, gid, memb in grp.getgrall()
                   if user in memb and gid < 1000]
         groups.sort()
@@ -1044,21 +1045,15 @@ class Report(problem_report.ProblemReport):
 
         Raises ValueError if the file exists but is invalid XML.
         '''
-        orig_home = os.getenv('HOME')
-        if orig_home is not None:
-            del os.environ['HOME']
-        ifpath = os.path.expanduser(_ignore_file)
-        if orig_home is not None:
-            os.environ['HOME'] = orig_home
+        # Properly handle dropped privileges
+        homedir = pwd.getpwuid(os.geteuid())[5]
+        ifpath = _ignore_file.replace("~", homedir)
+
         contents = ''
         fd = None
         f = None
-        egid = os.getegid()
-        euid = os.geteuid()
+
         try:
-            # drop permissions temporarily to try open users ignore file
-            os.setegid(os.getgid())
-            os.seteuid(os.getuid())
             fd = os.open(ifpath, os.O_NOFOLLOW | os.O_RDONLY)
             st = os.fstat(fd)
             if stat.S_ISREG(st.st_mode):
@@ -1072,8 +1067,6 @@ class Report(problem_report.ProblemReport):
                 f.close()
             elif fd is not None:
                 os.close(fd)
-            os.seteuid(euid)
-            os.setegid(egid)
 
         if contents == '':
             # create a document from scratch
@@ -1103,6 +1096,8 @@ class Report(problem_report.ProblemReport):
 
         This requires the ExecutablePath attribute. Throws a ValueError if the
         file has an invalid format.
+
+        Privileges may need to be dropped before calling this.
         '''
         assert 'ExecutablePath' in self
 
@@ -1168,6 +1163,8 @@ class Report(problem_report.ProblemReport):
 
         Throws a ValueError if the file already exists and has an invalid
         format.
+
+        Privileges may need to be dropped before calling this.
         '''
         assert 'ExecutablePath' in self
 
@@ -1193,14 +1190,10 @@ class Report(problem_report.ProblemReport):
             e.setAttribute('mtime', mtime)
             dom.documentElement.appendChild(e)
 
-        # write back file; temporarily unset $HOME, as this gets the wrong home
-        # dir for e. g. sudo
-        orig_home = os.getenv('HOME')
-        if orig_home is not None:
-            del os.environ['HOME']
-        ignore_file_path = os.path.expanduser(_ignore_file)
-        if orig_home is not None:
-            os.environ['HOME'] = orig_home
+        # Write back file
+        # Properly handle dropped privileges
+        homedir = pwd.getpwuid(os.geteuid())[5]
+        ignore_file_path = _ignore_file.replace("~", homedir)
 
         with open(ignore_file_path, 'w') as fd:
             dom.writexml(fd, addindent='  ', newl='\n')
@@ -1597,9 +1590,10 @@ class Report(problem_report.ProblemReport):
         removes the ProcCwd attribute completely.
         '''
         replacements = []
+        # Do not replace "root"
         if (os.getuid() > 0):
-            # do not replace "root"
-            p = pwd.getpwuid(os.getuid())
+            # Use effective uid in case privileges were dropped
+            p = pwd.getpwuid(os.geteuid())
             if len(p[0]) >= 2:
                 replacements.append((re.compile(r'\b%s\b' % re.escape(p[0])), 'username'))
             replacements.append((re.compile(r'\b%s\b' % re.escape(p[5])), '/home/username'))

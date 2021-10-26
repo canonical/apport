@@ -117,9 +117,13 @@ try:
     systemd_unit_dir = subprocess.check_output(
         ['pkg-config', '--variable=systemdsystemunitdir', 'systemd'],
         universal_newlines=True).strip()
+    systemd_tmpfiles_dir = subprocess.check_output(
+        ['pkg-config', '--variable=tmpfilesdir', 'systemd'],
+        universal_newlines=True).strip()
 except subprocess.CalledProcessError:
     # hardcoded fallback path
     systemd_unit_dir = '/lib/systemd/system'
+    systemd_tmpfiles_dir = '/usr/lib/tmpfiles.d'
 
 DistUtilsExtra.auto.setup(
     name='apport',
@@ -135,7 +139,8 @@ DistUtilsExtra.auto.setup(
                 ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
                 ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
                 ('/lib/udev/rules.d', glob('udev/*.rules')),
-                (systemd_unit_dir, glob('data/systemd/*')),
+                (systemd_unit_dir, glob('data/systemd/*.s*')),
+                (systemd_tmpfiles_dir, glob('data/systemd/*.conf')),
                 ] + optional_data_files,
     cmdclass=cmdclass
 )

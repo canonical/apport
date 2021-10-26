@@ -743,7 +743,7 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
-    def _gen_test_crash(self):
+    def _gen_test_crash(self, uid=None):
         '''Generate a Report with real crash data'''
 
         # create a test executable
@@ -770,13 +770,19 @@ bOgUs=
         r.add_os_info()
 
         # generate a core dump
-        coredump = os.path.join(apport.fileutils.report_dir, 'core')
+
+        if uid is None:
+            uid = os.getuid()
+
+        (core_name, core_path) = apport.fileutils.get_core_path(pid,
+                                                                test_executable,
+                                                                uid)
         os.kill(pid, signal.SIGSEGV)
         os.waitpid(pid, 0)
         # Otherwise the core dump is empty.
         time.sleep(0.5)
-        assert os.path.exists(coredump)
-        r['CoreDump'] = (coredump,)
+        assert os.path.exists(core_path)
+        r['CoreDump'] = (core_path,)
 
         return r
 
@@ -1486,7 +1492,7 @@ bOgUs=
         os.getuid = lambda: 1234
 
         try:
-            r = self._gen_test_crash()
+            r = self._gen_test_crash(orig_getuid())
             r['ProcInfo1'] = 'That was Joe (Hacker and friends'
             r['ProcInfo2'] = 'Call +1 234!'
             r['ProcInfo3'] = '(Hacker should stay'

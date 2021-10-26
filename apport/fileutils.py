@@ -12,6 +12,7 @@
 import os, glob, subprocess, os.path, time, pwd, sys, stat, json, socket
 import http.client
 from contextlib import closing
+from operator import itemgetter
 
 try:
     from configparser import (ConfigParser, NoOptionError, NoSectionError,
@@ -27,6 +28,8 @@ from problem_report import ProblemReport
 from apport.packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
+core_dir = '/var/lib/apport/coredump'
+max_corefiles_per_uid = 5
 
 _config_file = '~/.config/apport/settings'
 
@@ -167,7 +170,7 @@ def mark_hanging_process(report, pid):
     else:
         raise ValueError('report does not have the ExecutablePath attribute')
 
-    uid = os.getuid()
+    uid = os.geteuid()
     base = '%s.%s.%s.hanging' % (subject, str(uid), pid)
     path = os.path.join(report_dir, base)
     with open(path, 'a'):
@@ -310,7 +313,7 @@ def get_recent_crashes(report):
 def make_report_file(report, uid=None):
     '''Construct a canonical pathname for a report and open it for writing
 
-    If uid is not given, it defaults to the uid of the current process.
+    If uid is not given, it defaults to the effective uid of the current process.
     The report file must not exist already, to prevent losing previous reports
     or symlink attacks.
 
@@ -324,7 +327,7 @@ def make_report_file(report, uid=None):
         raise ValueError('report has neither ExecutablePath nor Package attribute')
 
     if not uid:
-        uid = os.getuid()
+        uid = os.geteuid()
 
     path = os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
     if sys.version >= '3':
@@ -363,21 +366,22 @@ def get_config(section, setting, default=None, path=None, bool=False):
 
     This is read from ~/.config/apport/settings or path. If bool is True, the
     value is interpreted as a boolean.
+
+    Privileges may need to be dropped before calling this.
     '''
+
     if not path:
-        path = os.path.expanduser(_config_file)
+        # Properly handle dropped privileges
+        homedir = pwd.getpwuid(os.geteuid())[5]
+        path = _config_file.replace("~", homedir)
 
     contents = ''
     fd = None
     f = None
     if not get_config.config:
         get_config.config = ConfigParser()
-        egid = os.getegid()
-        euid = os.geteuid()
+
         try:
-            # drop permissions temporarily to try open users config file
-            os.setegid(os.getgid())
-            os.seteuid(os.getuid())
             fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
             st = os.fstat(fd)
             if stat.S_ISREG(st.st_mode):
@@ -391,8 +395,6 @@ def get_config(section, setting, default=None, path=None, bool=False):
                 f.close()
             elif fd is not None:
                 os.close(fd)
-            os.seteuid(euid)
-            os.setegid(egid)
 
     try:
         get_config.config.read_string(contents)
@@ -437,6 +439,78 @@ def get_uid_and_gid(contents):
         elif line.startswith('Gid:') and len(line.split()) > 1:
             real_gid = int(line.split()[1])
     return (real_uid, real_gid)
+
+
+def get_boot_id():
+    '''Gets the kernel boot id'''
+
+    with open('/proc/sys/kernel/random/boot_id') as f:
+        boot_id = f.read().strip()
+    return boot_id
+
+
+def get_core_path(pid=None, exe=None, uid=None, timestamp=None):
+    '''Get the path to a core file'''
+
+    if pid is None:
+        pid = 'unknown'
+        timestamp = 'unknown'
+    else:
+        if timestamp is None:
+            with open("/proc/%s/stat" % pid) as stat_file:
+                stat_contents = stat_file.read()
+            timestamp = get_starttime(stat_contents)
+
+    if exe is None:
+        exe = 'unknown'
+    else:
+        exe = exe.replace('/', '_').replace('.', '_')
+
+    if uid is None:
+        uid = os.getuid()
+
+    # This is similar to systemd-coredump, but with the exe name instead
+    # of the command name
+    core_name = ('core.%s.%s.%s.%s.%s' % (exe, uid, get_boot_id(),
+                                          str(pid), str(timestamp)))
+
+    core_path = os.path.join(core_dir, core_name)
+
+    return (core_name, core_path)
+
+
+def find_core_files_by_uid(uid):
+    '''Searches the core file directory for files that belong to a
+       specified uid. Returns a list of lists containing the filename and
+       the file modification time.'''
+    core_files = []
+    uid_files = []
+
+    if os.path.exists(core_dir):
+        core_files = os.listdir(path=core_dir)
+
+    for f in core_files:
+        try:
+            if f.split('.')[2] == str(uid):
+                time = os.path.getmtime(os.path.join(core_dir, f))
+                uid_files.append([f, time])
+        except (IndexError, FileNotFoundError):
+            continue
+    return uid_files
+
+
+def clean_core_directory(uid):
+    '''Removes old files from the core directory if there are more than
+       the maximum allowed per uid'''
+
+    uid_files = find_core_files_by_uid(uid)
+    sorted_files = sorted(uid_files, key=itemgetter(1))
+
+    # Substract a extra one to make room for the new core file
+    if len(uid_files) > max_corefiles_per_uid - 1:
+        for x in range(len(uid_files) - max_corefiles_per_uid + 1):
+            os.remove(os.path.join(core_dir, sorted_files[0][0]))
+            sorted_files.remove(sorted_files[0])
 
 
 def shared_libraries(path):
