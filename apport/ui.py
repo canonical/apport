@@ -1315,7 +1315,8 @@ class UserInterface:
                 for e in env:
                     if e.startswith(b'DBUS_SESSION_BUS_ADDRESS='):
                         sudo_prefix.append('DBUS_SESSION_BUS_ADDRESS=' + e.split(b'=', 1)[1].decode())
-                        break
+                    if e.startswith(b'XDG_DATA_DIRS='):
+                        sudo_prefix.append('XDG_DATA_DIRS=' + e.split(b'=', 1)[1].decode())
             except (subprocess.CalledProcessError, IOError):
                 pass
 
