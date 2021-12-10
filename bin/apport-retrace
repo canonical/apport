@@ -355,29 +355,31 @@ if options.gdb_sandbox:
                                              gdb_sandbox_dir, gdb_packages,
                                              options.verbose, log_timestamps,
                                              options.dynamic_origins)
-    # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path) by
-    # creating a symlink from the host's .dwz directory to the machine specific
-    # one in the sandbox.
-    if gdb_sandbox and sandbox:
-        machine = report['Uname'].split()[-1]
-        target = '%s-linux-gnu' % machine
-        if not os.path.exists('/usr/lib/debug/.dwz/%s' % target):
-            # don't create a broken symlink
-            if os.path.exists('%s/usr/lib/debug/.dwz/%s' % (sandbox, target)):
-                try:
-                    os.symlink('%s/usr/lib/debug/.dwz/%s' % (sandbox, target),
-                               '/usr/lib/debug/.dwz/%s' % target)
-                except PermissionError:
+    # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path), for
+    # releases without a fix, by creating a symlink from the host's .dwz
+    # directory to the machine specific one in the sandbox.
+    target = ''
+    if report['DistroRelease'][-5:] in ('18.04', '20.04'):
+        if gdb_sandbox and sandbox:
+            machine = report['Uname'].split()[-1]
+            target = '%s-linux-gnu' % machine
+            if not os.path.exists('/usr/lib/debug/.dwz/%s' % target):
+                # don't create a broken symlink
+                if os.path.exists('%s/usr/lib/debug/.dwz/%s' % (sandbox, target)):
+                    try:
+                        os.symlink('%s/usr/lib/debug/.dwz/%s' % (sandbox, target),
+                                   '/usr/lib/debug/.dwz/%s' % target)
+                    except PermissionError:
+                        print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
+                        sys.exit(0)
+                    except FileExistsError:
+                        if os.readlink('/usr/lib/debug/.dwz/%s' % target) == \
+                                '%s/usr/lib/debug/.dwz/%s' % (sandbox, target):
+                            pass
+            else:
+                if not os.path.islink('/usr/lib/debug/.dwz/%s' % target):
                     print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
                     sys.exit(0)
-                except FileExistsError:
-                    if os.readlink('/usr/lib/debug/.dwz/%s' % target) == \
-                            '%s/usr/lib/debug/.dwz/%s' % (sandbox, target):
-                        pass
-        else:
-            if not os.path.islink('/usr/lib/debug/.dwz/%s' % target):
-                print("apport is unlikely to produce a quality retrace if it can not create a symlink in the host system's /usr/lib/debug/.dwz directory to the gdb sandbox's. See LP: #1818918 for details.")
-                sys.exit(0)
 else:
     gdb_sandbox = None
     gdb_cache = None
@@ -430,7 +432,7 @@ Thank you for your understanding, and sorry for the inconvenience!
     report.add_kernel_crash_info()
 
 # Cleanup the .dwz machine symlink for LP: #1818918
-if gdb_sandbox and sandbox:
+if gdb_sandbox and sandbox and target:
     if os.path.exists('/usr/lib/debug/.dwz/%s' % target) and \
             os.path.islink('/usr/lib/debug/.dwz/%s' % target):
         os.unlink('/usr/lib/debug/.dwz/%s' % target)
