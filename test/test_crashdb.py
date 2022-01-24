@@ -678,7 +678,7 @@ databases = {
 
             # damage file
             f = open(db, 'r+')
-            f.truncate(os.path.getsize(db) * 2 / 3)
+            f.truncate(int(os.path.getsize(db) * 2 / 3))
             f.close()
 
             self.crashes = CrashDatabase(None, {})
