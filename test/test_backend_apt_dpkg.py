@@ -825,7 +825,15 @@ deb http://secondary.mirror tuxy extra
         '''install_packages() for foreign architecture armhf'''
 
         self._setup_foonux_config(release='xenial')
-        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 16.04',
+        vers = '16.04'
+        # install the GPG key for ports and xenial
+        keyring_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'trusted.gpg.d')
+        os.makedirs(keyring_dir, exist_ok=True)
+        subprocess.check_call(['/usr/lib/apt/apt-helper', 'download-file',
+                               'http://ports.ubuntu.com/project/ubuntu-archive-keyring.gpg',
+                               os.path.join(keyring_dir, 'ports.ubuntu.com.gpg')],
+                              stdout=subprocess.DEVNULL)
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux %s' % vers,
                                          [('coreutils', None),
                                           ('libc6', '2.23-0ubuntu0'),
                                          ], False, self.cachedir,
@@ -1106,10 +1114,10 @@ deb http://secondary.mirror tuxy extra
         keyring_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'trusted.gpg.d')
         os.makedirs(keyring_dir, exist_ok=True)
         shutil.copy('/usr/share/keyrings/ubuntu-archive-keyring.gpg', keyring_dir)
-        subprocess.check_call(['apt-key', '--keyring', os.path.join(keyring_dir, 'ddebs.ubuntu.com.gpg'),
-                               'adv', '--quiet', '--keyserver', 'keyserver.ubuntu.com', '--recv-key', 'C8CAB6595FDFF622'],
+        subprocess.check_call(['/usr/lib/apt/apt-helper', 'download-file',
+                               'http://ddebs.ubuntu.com/dbgsym-release-key.asc',
+                               os.path.join(keyring_dir, 'ddebs.ubuntu.com.asc')],
                               stdout=subprocess.DEVNULL)
-
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
