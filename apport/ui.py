@@ -727,6 +727,19 @@ class UserInterface:
                 self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         elif self.options.window:
+            if os.getenv('XDG_SESSION_TYPE') == 'wayland':
+                self.ui_error_message(_('Cannot create report'),
+                                      _('The window option cannot be used on '
+                                        'Wayland.\n\nPlease find the window\'s '
+                                        'process ID and then run \'ubuntu-bug '
+                                        '<process ID>\'.'
+                                        '\n\nThe process ID can be found '
+                                        'by running the System Monitor application. '
+                                        'In the Processes tab, scroll until you '
+                                        'find the correct application. The process '
+                                        'ID is the number listed in the ID column.'))
+                return True
+
             self.ui_info_message('', _('After closing this message '
                                        'please click on an application window to report a problem about it.'))
             xprop = subprocess.Popen(['xprop', '_NET_WM_PID'],
