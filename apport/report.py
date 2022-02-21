@@ -387,6 +387,29 @@ class Report(problem_report.ProblemReport):
         '''
         self['Snap'] = '%s %s (%s)' % (snap.get("name"), snap.get("version"),
                                        snap.get("channel", "unknown"))
+        snapname = snap.get("name")
+        self['Snap.Changes'] = \
+            _command_output(['snap', 'changes', '--abs-time', snapname])
+        self['Snap.Connections'] = \
+            _command_output(['snap', 'connections', snapname])
+        self['Snap.Info.%s' % snapname] = \
+            _command_output(['snap', 'info', '--abs-time', snapname])
+        import yaml
+        with open('/snap/%s/current/meta/snap.yaml' % snapname) as f:
+            snap_meta = yaml.safe_load(f)
+        if 'base' in snap_meta:
+            base = snap_meta['base']
+            self['Snap.Info.%s' % base] = \
+                _command_output(['snap', 'info', '--abs-time', base])
+        providers = []
+        if 'plugs' in snap_meta:
+            for plug in snap_meta['plugs']:
+                dp = snap_meta['plugs'][plug].get('default-provider')
+                if dp and dp not in providers:
+                    providers.append(dp)
+        for provider in providers:
+            self['Snap.Info.%s' % provider] = \
+                _command_output(['snap', 'info', '--abs-time', provider])
         # Automatically handle snaps which have a Launchpad contact defined
         if snap.get("contact"):
             # Parse Launchpad project (e.g. 'subiquity') or source package string
