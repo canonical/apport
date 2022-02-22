@@ -58,7 +58,7 @@ def allowed_to_report():
         return True
 
     try:
-        return subprocess.call(["/bin/systemctl", "-q", "is-enabled", "whoopsie.service"]) == 0
+        return subprocess.call(["/bin/systemctl", "-q", "is-enabled", "whoopsie.path"]) == 0
     except OSError:
         return False
 
