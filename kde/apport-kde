@@ -125,6 +125,7 @@ class ProgressDialog(Dialog):
             progress.setRange(0, 0)
             progress.setValue(0)
         else:
+            value = int(value)
             progress.setRange(0, 1000)
             progress.setValue(value * 1000)
 
