@@ -397,8 +397,8 @@ class MainUserInterface(apport.ui.UserInterface):
         # show a spinner if we already have the main window
         if self.dialog and self.dialog.isVisible():
             rect = self.dialog.spinner.parent().rect()
-            self.dialog.spinner.setGeometry(rect.width() / 2 - self.dialog.spinner.width() / 2,
-                                            rect.height() / 2 - self.dialog.spinner.height() / 2,
+            self.dialog.spinner.setGeometry(rect.width() // 2 - self.dialog.spinner.width() // 2,
+                                            rect.height() // 2 - self.dialog.spinner.height() // 2,
                                             self.dialog.spinner.width(), self.dialog.spinner.height())
             self.dialog.movie.start()
         elif self.crashdb.accepts(self.report):
