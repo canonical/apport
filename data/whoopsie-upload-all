@@ -115,7 +115,11 @@ def process_report(report):
         # write updated report, we use os.open and os.fdopen as
         # /proc/sys/fs/protected_regular is set to 1 (LP: #1848064)
         # make sure the file isn't a FIFO or symlink
-        fd = os.open(report, os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK)
+        try:
+            fd = os.open(report, os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK)
+        except FileNotFoundError:
+            # The crash report was deleted. Nothing left to do.
+            return None
         st = os.fstat(fd)
         if stat.S_ISREG(st.st_mode):
             with os.fdopen(fd, 'wb') as f:
