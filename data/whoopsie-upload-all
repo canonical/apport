@@ -22,6 +22,7 @@ import argparse
 import fcntl
 import errno
 import logging
+import zlib
 
 import apport.fileutils
 import apport
@@ -99,7 +100,8 @@ def process_report(report):
 
         try:
             r.add_gdb_info()
-        except (IOError, EOFError, OSError) as e:
+        except (IOError, EOFError, OSError, zlib.error) as e:
+            # gzip.GzipFile.read can raise zlib.error. See LP bug #1947800
             if hasattr(e, 'errno'):
                 # calling add_gdb_info raises ENOENT if the crash's executable
                 # is missing or gdb is not available but apport-retrace could
