@@ -1,7 +1,8 @@
 # coding: UTF-8
 import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
-import mock, signal, resource
+import signal, resource
 import io
+import unittest.mock
 
 import apport.report
 import problem_report
@@ -664,7 +665,7 @@ int main() {
         self.assertTrue(pr['UnreportableReason'].startswith(
                         'Invalid core dump'))
 
-    @mock.patch("gzip.GzipFile.read")
+    @unittest.mock.patch("gzip.GzipFile.read")
     def test_add_gdb_info_damaged_gz_core(self, mock_gzread):
         '''add_gdb_info() with damaged gzip file of core dump'''
 
