@@ -1754,9 +1754,6 @@ class Report(problem_report.ProblemReport):
         Return 'path+offset' when found, or None if address is not in any
         mapped range.
         '''
-        if 'Errno 13' in self['ProcMaps']:
-            return None
-
         self._build_proc_maps_cache()
 
         for (start, end, elf) in self._proc_maps_cache:
