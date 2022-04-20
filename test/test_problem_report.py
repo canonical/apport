@@ -1,4 +1,5 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
+import locale
 import unittest, tempfile, os, shutil, email, gzip, time
 
 from io import BytesIO
@@ -28,7 +29,12 @@ class T(unittest.TestCase):
         self.assertEqual(pr['foo'], 'bar')
         self.assertEqual(pr['bar'], ' foo   bar\nbaz\n   blip  ')
         self.assertEqual(pr['ProblemType'], 'Crash')
-        self.assertTrue(time.strptime(pr['Date']))
+        locale_time = locale.getlocale(locale.LC_TIME)
+        locale.setlocale(locale.LC_TIME, "C")
+        try:
+            self.assertTrue(time.strptime(pr['Date']))
+        finally:
+            locale.setlocale(locale.LC_TIME, locale_time)
         self.assertEqual(pr['dash-key'], '1')
         self.assertEqual(pr['dot.key'], '1')
         self.assertEqual(pr['underscore_key'], '1')

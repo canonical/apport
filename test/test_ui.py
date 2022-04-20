@@ -1,4 +1,5 @@
 # coding: UTF-8
+import locale
 import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
 import subprocess, errno, glob
 from io import BytesIO, StringIO
@@ -205,14 +206,19 @@ class T(unittest.TestCase):
     def test_format_filesize(self):
         '''format_filesize()'''
 
-        self.assertEqual(self.ui.format_filesize(0), '0.0 KB')
-        self.assertEqual(self.ui.format_filesize(2048), '2.0 KB')
-        self.assertEqual(self.ui.format_filesize(2560), '2.6 KB')
-        self.assertEqual(self.ui.format_filesize(999999), '1000.0 KB')
-        self.assertEqual(self.ui.format_filesize(1000000), '1.0 MB')
-        self.assertEqual(self.ui.format_filesize(2.7 * 1000000), '2.7 MB')
-        self.assertEqual(self.ui.format_filesize(1024 * 1000000), '1.0 GB')
-        self.assertEqual(self.ui.format_filesize(2560 * 1000000), '2.6 GB')
+        locale_numeric = locale.getlocale(locale.LC_NUMERIC)
+        locale.setlocale(locale.LC_NUMERIC, "C")
+        try:
+            self.assertEqual(self.ui.format_filesize(0), '0.0 KB')
+            self.assertEqual(self.ui.format_filesize(2048), '2.0 KB')
+            self.assertEqual(self.ui.format_filesize(2560), '2.6 KB')
+            self.assertEqual(self.ui.format_filesize(999999), '1000.0 KB')
+            self.assertEqual(self.ui.format_filesize(1000000), '1.0 MB')
+            self.assertEqual(self.ui.format_filesize(2.7 * 1000000), '2.7 MB')
+            self.assertEqual(self.ui.format_filesize(1024 * 1000000), '1.0 GB')
+            self.assertEqual(self.ui.format_filesize(2560 * 1000000), '2.6 GB')
+        finally:
+            locale.setlocale(locale.LC_NUMERIC, locale_numeric)
 
     def test_get_size_loaded(self):
         '''get_complete_size() and get_reduced_size() for loaded Reports'''
