@@ -1,0 +1,83 @@
+#!/usr/bin/perl -w
+
+=head1 NAME
+
+dh_installapport - install apport package hooks
+
+=cut
+
+use strict;
+
+use Debian::Debhelper::Dh_Lib;
+
+=head1 SYNOPSIS
+
+B<dh_apport> [S<B<debhelper options>>]
+
+=head1 DESCRIPTION
+
+dh_apport is a debhelper program that installs apport package hooks into
+package build directories.
+
+=head1 FILES
+
+=over 4
+
+=item debian/I<package>.apport
+
+Installed into /usr/share/apport/package-hooks/I<package>.py in the package
+build directory. This file is used to control apport's bug filing for this
+package.
+
+=item debian/source.apport
+
+Installed into /usr/share/apport/package-hooks/source_I<src>.py (where
+I<src> is the current source package name) in the package build directory of
+the first package dh_apport is told to act on. By default, this is the first
+binary package in debian/control, but if you use -p, -i, or -a flags, it
+will be the first package specified by those flags. This file is used to
+control apport's bug filing for all binary packages built by this source
+package.
+
+=back
+
+=cut
+
+init();
+
+foreach my $package (@{$dh{DOPACKAGES}}) {
+	next if is_udeb($package);
+
+	my $tmp=tmpdir($package);
+	my $hooksdir="$tmp/usr/share/apport/package-hooks";
+	my $file=pkgfile($package,"apport");
+
+	if ($file ne '') {
+		if (! -d $hooksdir) {
+			doit("install","-d",$hooksdir);
+		}
+		doit("install","-p","-m644",$file,"$hooksdir/$package.py");
+	}
+
+	if (-e "debian/source.apport" && $package eq $dh{FIRSTPACKAGE}) {
+		if (! -d $hooksdir) {
+			doit("install","-d",$hooksdir);
+		}
+		my $src=sourcepackage();
+		doit("install","-p","-m644","debian/source.apport","$hooksdir/source_$src.py");
+	}
+}
+
+=head1 SEE ALSO
+
+L<debhelper(1)>
+
+This program is a part of apport.
+
+=head1 AUTHOR
+
+Colin Watson <cjwatson@ubuntu.com>
+
+Copyright (C) 2009 Canonical Ltd., licensed under the GNU GPL v2 or later.
+
+=cut
