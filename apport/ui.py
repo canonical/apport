@@ -885,10 +885,10 @@ class UserInterface:
         '''Format the given integer as humanly readable and i18n'ed file size.'''
 
         if size < 1000000:
-            return locale.format('%.1f', size / 1000.) + ' KB'
+            return locale.format_string('%.1f KB', size / 1000.)
         if size < 1000000000:
-            return locale.format('%.1f', size / 1000000.) + ' MB'
-        return locale.format('%.1f', size / float(1000000000)) + ' GB'
+            return locale.format_string('%.1f MB', size / 1000000.)
+        return locale.format_string('%.1f GB', size / float(1000000000))
 
     def get_complete_size(self):
         '''Return the size of the complete report.'''
