@@ -25,23 +25,9 @@ import apport, apport.fileutils, apport.REThread
 import apport.crashdb
 from apport import unicode_gettext as _
 
-if sys.version_info.major == 2:
-    from ConfigParser import ConfigParser
-    ConfigParser  # pyflakes
-    PY3 = False
-else:
-    from configparser import ConfigParser
-    PY3 = True
+from configparser import ConfigParser
 
 __version__ = '2.20.11'
-
-
-def excstr(exception):
-    '''Return exception message as unicode.'''
-
-    if sys.version_info.major == 2:
-        return str(exception).decode(locale.getpreferredencoding(), 'replace')
-    return str(exception)
 
 
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
@@ -125,7 +111,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         if not ignore_uninstalled and 'Snap' not in report:
             raise
     except SystemError as e:
-        report['UnreportableReason'] = excstr(e)
+        report['UnreportableReason'] = str(e)
 
     if 'UnreportableReason' not in report:
         if report.add_hooks_info(ui):
@@ -243,11 +229,8 @@ class UserInterface:
             logind_session = None
         else:
             reports = apport.fileutils.get_new_reports()
-            if not PY3:
-                logind_session = apport.Report.get_logind_session(os.getpid())
-            else:
-                proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-                logind_session = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
+            proc_pid_fd = os.open('/proc/%s' % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            logind_session = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
 
         for f in reports:
             if not self.load_report(f):
@@ -473,12 +456,8 @@ class UserInterface:
         # if PID is given, add info
         if self.options.pid:
             try:
-                proc_pid_fd = None
-                if PY3:
-                    proc_pid_fd = os.open('/proc/%s' % self.options.pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-                    stat_file = os.open('stat', os.O_RDONLY, dir_fd=proc_pid_fd)
-                else:
-                    stat_file = '/proc/%s/stat' % self.options.pid
+                proc_pid_fd = os.open('/proc/%s' % self.options.pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+                stat_file = os.open('stat', os.O_RDONLY, dir_fd=proc_pid_fd)
                 with io.open(stat_file) as f:
                     stat = f.read().split()
                 flags = int(stat[8])
@@ -549,7 +528,7 @@ class UserInterface:
                     with open(os.path.expanduser(self.options.save), 'wb') as f:
                         self.report.write(f)
             except (IOError, OSError) as e:
-                self.ui_error_message(_('Cannot create report'), excstr(e))
+                self.ui_error_message(_('Cannot create report'), str(e))
         else:
             # show what's being sent
             allowed_to_report = True
@@ -724,7 +703,7 @@ class UserInterface:
             try:
                 self.run_crash(self.options.crash_file, False)
             except OSError as e:
-                self.ui_error_message(_('Invalid problem report'), excstr(e))
+                self.ui_error_message(_('Invalid problem report'), str(e))
             return True
         elif self.options.window:
             if os.getenv('XDG_SESSION_TYPE') == 'wayland':
@@ -1020,7 +999,7 @@ class UserInterface:
         except (OSError, subprocess.CalledProcessError) as e:
             self.ui_error_message(_("Can't remember send report status settings"), '%s\n\n%s' % (
                                   _("Saving crash reporting state failed. Can't set auto or never reporting mode."),
-                                  excstr(e)))
+                                  str(e)))
 
     def check_report_crashdb(self):
         '''Process reports' CrashDB field, if present'''
@@ -1397,7 +1376,7 @@ class UserInterface:
             except apport.crashdb.NeedsCredentials as e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
-                data = self.ui_question_userpass(message % excstr(e))
+                data = self.ui_question_userpass(message % str(e))
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
@@ -1410,7 +1389,7 @@ class UserInterface:
                 self.ui_error_message(_('Network problem'),
                                       '%s\n\n%s' % (
                                           _('Cannot connect to crash database, please check your Internet connection.'),
-                                          excstr(e)))
+                                          str(e)))
                 return
 
         upthread.exc_raise()
@@ -1493,14 +1472,9 @@ class UserInterface:
         if not desktop_file:
             return None
 
-        if PY3:
-            cp = ConfigParser(interpolation=None, strict=False)
-            kwargs = {'encoding': 'UTF-8'}
-        else:
-            cp = ConfigParser()
-            kwargs = {}
+        cp = ConfigParser(interpolation=None, strict=False)
         try:
-            cp.read(desktop_file, **kwargs)
+            cp.read(desktop_file, encoding='UTF-8')
         except Exception as e:
             if 'onfig' in str(e.__class__) and 'arser' in str(e.__class__):
                 sys.stderr.write('Warning! %s is broken: %s\n' % (desktop_file, str(e)))

@@ -983,17 +983,10 @@ Type=Application''')
         # unicode arguments
         GLib.timeout_add(200, close, 0)
         self.app.ui_info_message(b'title \xe2\x99\xaa'.decode('UTF-8'), b'text \xe2\x99\xaa'.decode('UTF-8'))
-        # byte array arguments (in Python 2)
-        if sys.version < '3':
-            GLib.timeout_add(200, close, 0)
-            self.app.ui_info_message(b'title \xe2\x99\xaa', b'text \xe2\x99\xaa')
 
         # with URLs
         GLib.timeout_add(200, close, 0)
         self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa'.decode('UTF-8'))
-        if sys.version < '3':
-            GLib.timeout_add(200, close, 0)
-            self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa')
 
     def test_immediate_close(self):
         '''Close details window immediately'''

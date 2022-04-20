@@ -15,17 +15,9 @@ import tempfile, atexit, os.path, re, gzip, sys, email, time, shutil
 from httplib2 import FailedToDecompressContent
 from io import BytesIO
 
-if sys.version_info.major == 2:
-    from urllib2 import HTTPSHandler, Request, build_opener
-    from httplib import HTTPSConnection
-    from urllib import urlencode, urlopen
-    (HTTPSHandler, Request, build_opener, HTTPSConnection, urlencode, urlopen)  # pyflakes
-    _python2 = True
-else:
-    from urllib.request import HTTPSHandler, Request, build_opener, urlopen
-    from urllib.parse import urlencode
-    from http.client import HTTPSConnection
-    _python2 = False
+from urllib.request import HTTPSHandler, Request, build_opener, urlopen
+from urllib.parse import urlencode
+from http.client import HTTPSConnection
 
 try:
     from launchpadlib.errors import HTTPError
@@ -378,19 +370,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report.write_mime(mime, skip_keys=skip_keys)
         mime.flush()
         mime.seek(0)
-        if _python2:
-            msg = email.message_from_file(mime)
-        else:
-            msg = email.message_from_binary_file(mime)
+        msg = email.message_from_binary_file(mime)
         msg_iter = msg.walk()
 
         # first part is the multipart container
-        part = _python2 and msg_iter.next() or msg_iter.__next__()
+        part = next(msg_iter)
         assert part.is_multipart()
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = _python2 and msg_iter.next() or msg_iter.__next__()
+        part = next(msg_iter)
         assert not part.is_multipart()
         assert part.get_content_type() == 'text/plain'
 
@@ -457,10 +446,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         pass  # LP#249950 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks)
-                if _python2:
-                    task = task.next()
-                else:
-                    task = task.__next__()
+                task = next(task)
                 if task.importance == 'Undecided':
                     task.importance = 'Medium'
                     task.lp_save()
@@ -816,10 +802,7 @@ in a dependent package.' % master,
         if invalid_msg:
             try:
                 task = self._get_distro_tasks(bug.bug_tasks)
-                if _python2:
-                    task = task.next()
-                else:
-                    task = task.__next__()
+                task = next(task)
             except StopIteration:
                 # no distro task, just use the first one
                 task = bug.bug_tasks[0]
@@ -999,10 +982,7 @@ in a dependent package.' % master,
         res = ''
         for ch in tags.lower().encode('ASCII', errors='ignore'):
             if ch in b'abcdefghijklmnopqrstuvwxyz0123456789 ' or (len(res) > 0 and ch in b'+-.'):
-                if _python2:
-                    res += ch
-                else:
-                    res += chr(ch)
+                res += chr(ch)
             else:
                 res += '.'
 
@@ -1090,10 +1070,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
     data.attach(form_blob)
 
     data_flat = BytesIO()
-    if sys.version_info.major == 2:
-        gen = email.generator.Generator(data_flat, mangle_from_=False)
-    else:
-        gen = email.generator.BytesGenerator(data_flat, mangle_from_=False)
+    gen = email.generator.BytesGenerator(data_flat, mangle_from_=False)
     gen.flatten(data)
 
     # do the request; we need to explicitly set the content type here, as it
@@ -1769,20 +1746,17 @@ and more
                 description = 'some description'
 
             mime = self.crashdb._generate_upload_blob(report)
-            if _python2:
-                msg = email.message_from_file(mime)
-            else:
-                msg = email.message_from_binary_file(mime)
+            msg = email.message_from_binary_file(mime)
             mime.close()
             msg_iter = msg.walk()
 
             # first one is the multipart container
-            header = _python2 and msg_iter.next() or msg_iter.__next__()
+            header = next(msg_iter)
             assert header.is_multipart()
 
             # second part should be an inline text/plain attachments with all short
             # fields
-            part = _python2 and msg_iter.next() or msg_iter.__next__()
+            part = next(msg_iter)
             assert not part.is_multipart()
             assert part.get_content_type() == 'text/plain'
             description += '\n\n' + part.get_payload(decode=True).decode('UTF-8', 'replace')

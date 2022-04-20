@@ -1,12 +1,7 @@
 # coding: UTF-8
 import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
 import mock, signal, resource
-
-try:
-    from cStringIO import StringIO
-    StringIO  # pyflakes
-except ImportError:
-    from io import StringIO
+import io
 
 import apport.report
 import problem_report
@@ -1334,7 +1329,7 @@ def add_info(report, ui):
         orig_common_hook_dir = apport.report._common_hook_dir
         apport.report._common_hook_dir = tempfile.mkdtemp()
         orig_stderr = sys.stderr
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
         try:
             with open(os.path.join(apport.report._hook_dir, 'fooprogs.py'), 'w') as fd:
                 fd.write('''def add_info(report, ui):

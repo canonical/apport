@@ -40,12 +40,8 @@ def path_to_key(path):
 
     This will replace invalid punctuation symbols with valid ones.
     '''
-    if sys.version[0] >= '3':
-        if isinstance(path, bytes):
-            path = path.decode('UTF-8')
-    else:
-        if not isinstance(path, bytes):
-            path = path.encode('UTF-8')
+    if isinstance(path, bytes):
+        path = path.decode('UTF-8')
     return _invalid_key_chars_re.sub('.', path.replace(' ', '_'))
 
 
@@ -816,10 +812,8 @@ def attach_mac_events(report, profiles=None):
         try:
             if match[0] == '"':
                 profile = match[1:-1]
-            elif sys.version[0] >= '3':
-                profile = bytes.fromhex(match).decode('UTF-8', errors='replace')
             else:
-                profile = match.decode('hex', errors='replace')
+                profile = bytes.fromhex(match).decode('UTF-8', errors='replace')
         except Exception:
             continue
 

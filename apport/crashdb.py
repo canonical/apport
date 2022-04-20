@@ -11,17 +11,10 @@
 
 import os, os.path, sys, shutil
 
-try:
-    from exceptions import Exception
-    from urllib import quote_plus, urlopen
-    URLError = IOError
-    (quote_plus, urlopen)  # pyflakes
-except ImportError:
-    # python 3
-    from functools import cmp_to_key
-    from urllib.parse import quote_plus
-    from urllib.request import urlopen
-    from urllib.error import URLError
+from functools import cmp_to_key
+from urllib.parse import quote_plus
+from urllib.request import urlopen
+from urllib.error import URLError
 
 import apport
 
@@ -472,10 +465,7 @@ class CrashDatabase:
                 return -1
             return apport.packaging.compare_versions(x, y)
 
-        if sys.version[0] >= '3':
-            existing.sort(key=cmp_to_key(cmp))
-        else:
-            existing.sort(cmp=cmp)
+        existing.sort(key=cmp_to_key(cmp))
 
         return existing
 

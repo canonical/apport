@@ -15,17 +15,9 @@ import fnmatch, glob, traceback, errno, sys, atexit, locale, imp, stat
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
-if sys.version > '3':
-    _python2 = False
-    from urllib.error import URLError
-    from urllib.request import urlopen
-    from urllib.parse import unquote
-    (urlopen, URLError)  # pyflakes
-else:
-    _python2 = True
-    from urllib import urlopen
-    from urllib import unquote
-    URLError = IOError
+from urllib.error import URLError
+from urllib.request import urlopen
+from urllib.parse import unquote
 
 import problem_report
 import apport
@@ -72,7 +64,7 @@ def _read_proc_link(path, pid=None, dir_fd=None):
 
     Return a string representing the path to which the symbolic link points.
     '''
-    if not _python2 and dir_fd is not None:
+    if dir_fd is not None:
         return os.readlink(path, dir_fd=dir_fd)
 
     return os.readlink("/proc/%s/%s" % (pid, path))
@@ -84,7 +76,7 @@ def _read_proc_file(path, pid=None, dir_fd=None):
     Return its content, or return a textual error if it failed.
     '''
     try:
-        if not _python2 and dir_fd is not None:
+        if dir_fd is not None:
             proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
         else:
             proc_file = "/proc/%s/%s" % (pid, path)
@@ -102,9 +94,6 @@ def _read_maps(proc_pid_fd):
     process, detect this, and attempt to attach/detach.
     '''
     maps = 'Error: unable to read /proc maps file'
-
-    if _python2:
-        return 'Error: python2 does not provide a secure way to read /proc maps file'
 
     try:
         with open('maps', opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd)) as fd:
@@ -147,12 +136,8 @@ def _check_bug_pattern(report, pattern):
 
     Return the bug URL on match, otherwise None.
     '''
-    if _python2:
-        if not pattern.attributes.has_key('url'):
-            return None
-    else:
-        if 'url' not in pattern.attributes:
-            return None
+    if 'url' not in pattern.attributes:
+        return None
 
     for c in pattern.childNodes:
         # regular expression condition
@@ -166,16 +151,12 @@ def _check_bug_pattern(report, pattern):
             c.normalize()
             if c.hasChildNodes() and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
                 regexp = c.childNodes[0].nodeValue
-                if _python2:
-                    regexp = regexp.encode('UTF-8')
                 v = report[key]
                 if isinstance(v, problem_report.CompressedValue):
                     v = v.get_value()
-                    if not _python2:
-                        regexp = regexp.encode('UTF-8')
+                    regexp = regexp.encode('UTF-8')
                 elif isinstance(v, bytes):
-                    if not _python2:
-                        regexp = regexp.encode('UTF-8')
+                    regexp = regexp.encode('UTF-8')
                 try:
                     re_c = re.compile(regexp)
                 except Exception:
@@ -183,16 +164,11 @@ def _check_bug_pattern(report, pattern):
                 if not re_c.search(v):
                     return None
 
-    if _python2:
-        return pattern.attributes['url'].nodeValue.encode('UTF-8')
-    else:
-        return pattern.attributes['url'].nodeValue
+    return pattern.attributes['url'].nodeValue
 
 
 def _check_bug_patterns(report, patterns):
     try:
-        if _python2:
-            patterns = patterns.encode('UTF-8')
         dom = xml.dom.minidom.parseString(patterns)
     except (ExpatError, UnicodeEncodeError):
         return None
@@ -613,16 +589,15 @@ class Report(problem_report.ProblemReport):
             if not self.pid:
                 self.pid = int(pid)
             pid = str(pid)
-            if not _python2:
-                try:
-                    proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-                except OSError as e:
-                    if e.errno in (errno.EPERM, errno.EACCES):
-                        raise ValueError('not accessible')
-                    if e.errno == errno.ENOENT:
-                        raise ValueError('invalid process')
-                    else:
-                        raise
+            try:
+                proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            except OSError as e:
+                if e.errno in (errno.EPERM, errno.EACCES):
+                    raise ValueError('not accessible')
+                if e.errno == errno.ENOENT:
+                    raise ValueError('invalid process')
+                else:
+                    raise
 
         try:
             self['ProcCwd'] = _read_proc_link('cwd', pid, proc_pid_fd)
@@ -694,8 +669,7 @@ class Report(problem_report.ProblemReport):
             if not pid:
                 pid = os.getpid()
             pid = str(pid)
-            if not _python2:
-                proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            proc_pid_fd = os.open('/proc/%s' % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
         self['ProcEnviron'] = ''
         env = _read_proc_file('environ', pid, proc_pid_fd).replace('\n', '\\n')
@@ -1801,7 +1775,7 @@ class Report(problem_report.ProblemReport):
         Return (session_id, session_start_timestamp) if process is in a logind
         session, or None otherwise.
         '''
-        if not _python2 and proc_pid_fd is not None:
+        if proc_pid_fd is not None:
             cgroup_file = os.open('cgroup', os.O_RDONLY, dir_fd=proc_pid_fd)
         else:
             cgroup_file = "/proc/%s/cgroup" % pid

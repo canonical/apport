@@ -9,19 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time, pwd, sys, stat, json, socket
+import os, glob, subprocess, os.path, time, pwd, stat, json, socket
 import http.client
 from contextlib import closing
 from operator import itemgetter
 
-try:
-    from configparser import (ConfigParser, NoOptionError, NoSectionError,
-                              MissingSectionHeaderError)
-    (ConfigParser, NoOptionError, NoSectionError)  # pyflakes
-except ImportError:
-    # Python 2
-    from ConfigParser import (ConfigParser, NoOptionError, NoSectionError,
-                              MissingSectionHeaderError)
+from configparser import (ConfigParser, NoOptionError, NoSectionError,
+                          MissingSectionHeaderError)
 
 from problem_report import ProblemReport
 
@@ -39,7 +33,7 @@ SNAPD_SOCKET = '/run/snapd.socket'
 #  UHTTPConnection is based on code from the UpdateManager package:
 #  Copyright (c) 2017 Canonical
 #  Author: Andrea Azzarone <andrea.azzarone@canonical.com>
-class UHTTPConnection(http.client.HTTPConnection, object):
+class UHTTPConnection(http.client.HTTPConnection):
 
     def __init__(self, path):
         http.client.HTTPConnection.__init__(self, 'localhost')
@@ -330,10 +324,7 @@ def make_report_file(report, uid=None):
         uid = os.geteuid()
 
     path = os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
-    if sys.version >= '3':
-        return open(path, 'xb')
-    else:
-        return os.fdopen(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb')
+    return open(path, 'xb')
 
 
 def check_files_md5(sumfile):

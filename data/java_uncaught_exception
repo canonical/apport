@@ -16,11 +16,7 @@ This generates and saves a problem report.
 
 import sys
 
-if sys.version_info.major < 3:
-    from urlparse import urlparse
-    urlparse  # pyflakes
-else:
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 
 
 def make_title(report):

@@ -506,10 +506,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         if options.output is None:
             out = open(options.report, 'wb')
         elif options.output == '-':
-            if sys.version[0] < '3':
-                out = sys.stdout
-            else:
-                out = sys.stdout.detach()
+            out = sys.stdout.detach()
         else:
             out = open(options.output, 'wb')
 

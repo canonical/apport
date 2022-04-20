@@ -15,8 +15,6 @@
 #    w3m, lynx: do not work
 #    elinks: works
 
-from __future__ import unicode_literals
-
 import os.path, os, sys, subprocess, re, errno
 import termios, tempfile
 

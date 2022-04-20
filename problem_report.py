@@ -11,21 +11,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import zlib, base64, time, sys, gzip, struct, os
+import zlib, base64, time, gzip, struct, os
 from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from io import BytesIO
 
-if sys.version[0] < '3':
-    from UserDict import IterableUserDict as UserDict
-    UserDict  # pyflakes
-    _python2 = True
-else:
-    from collections import UserDict
-    unicode = str  # pyflakes3
-    _python2 = False
+from collections import UserDict
 
 
 class CompressedValue:
@@ -190,8 +183,7 @@ class ProblemReport(UserDict):
                         self.data[key] = self._try_unicode(value)
 
                 (key, value) = line.split(b':', 1)
-                if not _python2:
-                    key = key.decode('ASCII')
+                key = key.decode('ASCII')
                 value = value.strip()
                 if value == b'base64':
                     if binary == 'compressed':
@@ -226,8 +218,7 @@ class ProblemReport(UserDict):
             # Identify the bin_keys we're looking for
             while not line.startswith(b' '):
                 (key, value) = line.split(b':', 1)
-                if not _python2:
-                    key = key.decode('ASCII')
+                key = key.decode('ASCII')
                 if key not in missing_keys:
                     break
                 b64_block[key] = False
@@ -281,25 +272,10 @@ class ProblemReport(UserDict):
     def _is_binary(klass, string):
         '''Check if the given strings contains binary data.'''
 
-        if _python2:
-            return klass._is_binary_py2(string)
-
         if type(string) == bytes:
             for c in string:
                 if c < 32 and not chr(c).isspace():
                     return True
-        return False
-
-    @classmethod
-    def _is_binary_py2(klass, string):
-        '''Check if the given strings contains binary data. (Python 2)'''
-
-        if type(string) == unicode:
-            return False
-
-        for c in string:
-            if c < ' ' and not c.isspace():
-                return True
         return False
 
     @classmethod
@@ -387,14 +363,9 @@ class ProblemReport(UserDict):
                     del self.data[k]
                     continue
 
-            if _python2:
-                if isinstance(v, unicode):
-                    # unicode → str
-                    v = v.encode('UTF-8')
-            else:
-                if isinstance(v, str):
-                    # unicode → str
-                    v = v.encode('UTF-8')
+            if isinstance(v, str):
+                # unicode → str
+                v = v.encode('UTF-8')
 
             file.write(k.encode('ASCII'))
             if b'\n' in v:
@@ -606,10 +577,7 @@ class ProblemReport(UserDict):
                 if type(v) == bytes:
                     v = v.decode('UTF-8', 'replace')
                 # convert unicode to UTF-8 str
-                if _python2:
-                    assert isinstance(v, unicode)
-                else:
-                    assert isinstance(v, str)
+                assert isinstance(v, str)
 
                 lines = len(v.splitlines())
                 if size <= 1000 and lines == 1:
@@ -666,9 +634,6 @@ class ProblemReport(UserDict):
     def _strip_gzip_header(klass, line):
         '''Strip gzip header from line and return the rest.'''
 
-        if _python2:
-            return klass._strip_gzip_header_py2(line)
-
         flags = line[3]
         offset = 10
         if flags & 4:  # FLG.FEXTRA
@@ -687,31 +652,7 @@ class ProblemReport(UserDict):
         return line[offset:]
 
     @classmethod
-    def _strip_gzip_header_py2(klass, line):
-        '''Strip gzip header from line and return the rest. (Python 2)'''
-
-        flags = ord(line[3])
-        offset = 10
-        if flags & 4:  # FLG.FEXTRA
-            offset += line[offset] + 1
-        if flags & 8:  # FLG.FNAME
-            while ord(line[offset]) != 0:
-                offset += 1
-            offset += 1
-        if flags & 16:  # FLG.FCOMMENT
-            while ord(line[offset]) != 0:
-                offset += 1
-            offset += 1
-        if flags & 2:  # FLG.FHCRC
-            offset += 2
-
-        return line[offset:]
-
-    @classmethod
     def _assert_bin_mode(klass, file):
         '''Assert that given file object is in binary mode'''
 
-        if _python2:
-            assert (type(file) == BytesIO or 'b' in file.mode), 'file stream must be in binary mode'
-        else:
-            assert not hasattr(file, 'encoding'), 'file stream must be in binary mode'
+        assert not hasattr(file, 'encoding'), 'file stream must be in binary mode'

@@ -21,18 +21,10 @@ from contextlib import closing
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
-try:
-    import cPickle as pickle
-    from urllib import urlopen, quote, unquote
-    (pickle, urlopen, quote, unquote)  # pyflakes
-    URLError = IOError
-    HTTPError = IOError
-except ImportError:
-    # python 3
-    from urllib.error import URLError, HTTPError
-    from urllib.request import urlopen
-    from urllib.parse import quote, unquote
-    import pickle
+from urllib.error import URLError, HTTPError
+from urllib.request import urlopen
+from urllib.parse import quote, unquote
+import pickle
 
 import apport
 from apport.packaging import PackageInfo
@@ -305,8 +297,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         try:
             response = urlopen(url)
-            if response.getcode() >= 400:
-                raise HTTPError('%u' % response.getcode())
         except (URLError, HTTPError):
             apport.warning('cannot connect to: %s' % unquote(url))
             return None
@@ -1303,13 +1293,8 @@ Debug::NoLocking "true";
             if age is None or age >= 86400:
                 url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
                 if age:
-                    try:
-                        from httplib import HTTPConnection
-                        from urlparse import urlparse
-                    except ImportError:
-                        # python 3
-                        from http.client import HTTPConnection
-                        from urllib.parse import urlparse
+                    from http.client import HTTPConnection
+                    from urllib.parse import urlparse
                     from datetime import datetime
                     # HTTPConnection requires server name e.g.
                     # archive.ubuntu.com
@@ -1444,9 +1429,6 @@ Debug::NoLocking "true";
                                          {'user': user, 'distro': distro,
                                           'ppaname': ppa_name})) as response:
                         response.read()
-                        # in Python 2 an error does not raise an exception
-                        if response.getcode() >= 400:
-                            raise HTTPError('%u' % response.getcode())
                 except (URLError, HTTPError):
                     index += 1
                     if index == len(components):
@@ -1466,9 +1448,6 @@ Debug::NoLocking "true";
                 try:
                     with closing(urlopen(debug_url)) as response:
                         response.read()
-                        # in Python 2 an error does not raise an exception
-                        if response.getcode() >= 400:
-                            raise HTTPError('%u' % response.getcode())
                     add_debug = ' main/debug'
                 except (URLError, HTTPError):
                     add_debug = ''

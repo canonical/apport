@@ -1,13 +1,7 @@
 # coding: UTF-8
 import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
 import subprocess, errno, glob
-
-try:
-    from cStringIO import StringIO
-    StringIO  # pyflakes
-except ImportError:
-    from io import StringIO
-from io import BytesIO
+from io import BytesIO, StringIO
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
 
@@ -2304,10 +2298,7 @@ Categories=GNOME;GTK;Utility;TextEditor;
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
-        if sys.version_info.major == 2:
-            exp_genericname = b'\xc3\x9cbersetzer'
-        else:
-            exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
+        exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
 
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
@@ -2334,10 +2325,7 @@ Keywords=baz
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
-        if sys.version_info.major == 2:
-            exp_genericname = b'\xc3\x9cbersetzer'
-        else:
-            exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
+        exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
                                 'name': 'gtranslate',

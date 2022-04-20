@@ -1,14 +1,10 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
-import unittest, tempfile, os, shutil, email, gzip, time, sys
+import unittest, tempfile, os, shutil, email, gzip, time
 
 from io import BytesIO
 import problem_report
 
 bin_data = b'ABABABABAB\0\0\0Z\x01\x02'
-
-if sys.version < '3':
-    # backwards compatibility shim
-    email.message_from_binary_file = email.message_from_file
 
 
 class T(unittest.TestCase):
@@ -103,16 +99,10 @@ class T(unittest.TestCase):
 
         pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
-        if sys.version.startswith('2'):
-            pr['SimpleUTF8'] = '1äö2Φ3'
-            pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
-            pr['TwoLineUnicode'] = 'pi-π\nnu-η'.decode('UTF-8')
-            pr['TwoLineUTF8'] = 'pi-π\nnu-η'
-        else:
-            pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
-            pr['SimpleUnicode'] = '1äö2Φ3'
-            pr['TwoLineUnicode'] = 'pi-π\nnu-η'
-            pr['TwoLineUTF8'] = 'pi-π\nnu-η'.encode('UTF-8')
+        pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
+        pr['SimpleUnicode'] = '1äö2Φ3'
+        pr['TwoLineUnicode'] = 'pi-π\nnu-η'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η'.encode('UTF-8')
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         # Unicode with a non-space low ASCII character \x05 in it
         pr['UnprintableUnicode'] = b'a\xc3\xa4\x05z1\xc3\xa9'.decode('UTF-8')
@@ -137,8 +127,7 @@ WhiteSpace:
  
  afteremptyline
 '''
-        if sys.version > '3':
-            expected = expected.encode('UTF-8')
+        expected = expected.encode('UTF-8')
         self.assertEqual(io.getvalue(), expected)
 
     def test_write_append(self):
@@ -708,16 +697,10 @@ File: base64
 
         pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
-        if sys.version.startswith('2'):
-            pr['SimpleUTF8'] = '1äö2Φ3'
-            pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
-            pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'.decode('UTF-8')
-            pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
-        else:
-            pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
-            pr['SimpleUnicode'] = '1äö2Φ3'
-            pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'
-            pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'.encode('UTF-8')
+        pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
+        pr['SimpleUnicode'] = '1äö2Φ3'
+        pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'.encode('UTF-8')
         pr['SimpleLineEnd'] = 'bar\n'
         pr['TwoLine'] = 'first\nsecond\n'
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
@@ -773,8 +756,7 @@ TwoLineUnicode:
  pi-π
  nu-η
 ''' % pr['Largeline']
-        if sys.version >= '3':
-            expected = expected.encode('UTF-8')
+        expected = expected.encode('UTF-8')
         self.assertEqual(parts[1].get_payload(decode=True), expected)
 
         # third part should be the HugeMultiline: field as attachment
@@ -803,8 +785,7 @@ line4
 line♥5!!
 łıµ€ ⅝
 '''
-        if sys.version >= '3':
-            expected = expected.encode('UTF-8')
+        expected = expected.encode('UTF-8')
         self.assertEqual(parts[4].get_payload(decode=True), expected)
 
     def test_write_mime_binary(self):

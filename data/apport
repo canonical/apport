@@ -142,8 +142,7 @@ def init_error_log():
         os.dup2(f, 1)
         os.dup2(f, 2)
         sys.stderr = os.fdopen(2, 'wb')
-        if sys.version_info.major >= 3:
-            sys.stderr = io.TextIOWrapper(sys.stderr)
+        sys.stderr = io.TextIOWrapper(sys.stderr)
         sys.stdout = sys.stderr
 
 
@@ -643,11 +642,8 @@ try:
     info = apport.Report('Crash')
     info['Signal'] = signum
     core_size_limit = usable_ram() * 3 / 4
-    if sys.version_info.major < 3:
-        info['CoreDump'] = (sys.stdin, True, core_size_limit, True)
-    else:
-        # read binary data from stdio
-        info['CoreDump'] = (sys.stdin.detach(), True, core_size_limit, True)
+    # read binary data from stdio
+    info['CoreDump'] = (sys.stdin.detach(), True, core_size_limit, True)
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).

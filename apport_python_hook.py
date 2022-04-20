@@ -10,6 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import io
 import os
 import sys
 
@@ -62,12 +63,6 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
-        try:
-            from cStringIO import StringIO
-            StringIO  # pyflakes
-        except ImportError:
-            from io import StringIO
-
         import re, traceback
         from apport.fileutils import likely_packaged, get_recent_crashes
 
@@ -112,7 +107,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
-        tb_file = StringIO()
+        tb_file = io.StringIO()
         traceback.print_exception(exc_type, exc_obj, exc_tb, file=tb_file)
         pr['Traceback'] = tb_file.getvalue().strip()
         pr.add_proc_info(extraenv=['PYTHONPATH', 'PYTHONHOME'])
@@ -164,12 +159,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 def dbus_service_unknown_analysis(exc_obj, report):
     from glob import glob
     import subprocess, re
-    try:
-        from configparser import ConfigParser, NoSectionError, NoOptionError
-        (ConfigParser, NoSectionError, NoOptionError)  # pyflakes
-    except ImportError:
-        # Python 2
-        from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+    from configparser import ConfigParser, NoSectionError, NoOptionError
 
     # determine D-BUS name
     m = re.search(r'name\s+(\S+)\s+was not provided by any .service',

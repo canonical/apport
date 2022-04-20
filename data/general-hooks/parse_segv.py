@@ -18,11 +18,8 @@ import sys, re, logging, io
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
         if debug:
-            if sys.version > '3':
-                logging.basicConfig(level=logging.DEBUG,
-                                    stream=io.TextIOWrapper(sys.stderr, encoding='UTF-8'))
-            else:
-                logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
+            logging.basicConfig(level=logging.DEBUG,
+                                stream=io.TextIOWrapper(sys.stderr, encoding='UTF-8'))
 
         self.regs = self.parse_regs(registers)
         self.sp = None

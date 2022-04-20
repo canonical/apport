@@ -283,19 +283,13 @@ CrashCounter: 3''')
 
         pr['Package'] = 'bash 1'
         with apport.fileutils.make_report_file(pr) as f:
-            if sys.version >= '3':
-                path = f.name
-            else:
-                path = os.path.join(apport.fileutils.report_dir, os.listdir(apport.fileutils.report_dir)[0])
+            path = f.name
             self.assertTrue(path.startswith('%s/bash' % apport.fileutils.report_dir), path)
             os.unlink(path)
 
         pr['ExecutablePath'] = '/bin/bash'
         with apport.fileutils.make_report_file(pr) as f:
-            if sys.version >= '3':
-                path = f.name
-            else:
-                path = os.path.join(apport.fileutils.report_dir, os.listdir(apport.fileutils.report_dir)[0])
+            path = f.name
             self.assertTrue(path.startswith('%s/_bin_bash' % apport.fileutils.report_dir), path)
 
         # file exists already, should fail now
