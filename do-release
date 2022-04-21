@@ -1,15 +1,14 @@
-#!/bin/sh -e
+#!/bin/sh
+set -eu
 
 # This script does all the steps necessary for doing a new upstream release. It
 # should solely be used by upstream developers, distributors do not need to
 # worry about it.
 
-[ -z "`bzr status | grep -v shelve`" ] || {
+[ -z "$(git status --porcelain)" ] || {
     echo "Uncommitted changes, aborting" >&2
     exit 1
 }
-
-bzr clean-tree --ignored
 
 version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
 [ -n "$version" ] || {
@@ -19,7 +18,8 @@ version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
 
 sed -i -r "s/__version__ = '[0-9.]*'/__version__ = '${version}'/" apport/ui.py
 sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS
-bzr commit -m "release $version"
-bzr tag "$version"
+git commit -s -m "Release apport $version" apport/ui.py NEWS
+git tag "$version"
 
-bzr export ../apport-${version}.tar.gz
+git archive --format=tar --prefix="apport-${version}/" "$version" | xz -z -9 > "../apport-${version}.tar.xz"
+echo "Release tarball exported to ../apport-${version}.tar.xz"
