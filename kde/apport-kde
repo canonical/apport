@@ -492,7 +492,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
+        response = QFileDialog.getOpenFileName(None, str(text))
         if response.length() == 0:
             return None
         return str(response)
