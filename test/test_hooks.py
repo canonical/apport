@@ -9,14 +9,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
+import unittest, subprocess, tempfile, os, shutil, os.path, sys
 
 from datetime import datetime
 
 import apport, apport.fileutils
-
-# parse command line options
-optparser = optparse.OptionParser('%prog [options]')
 
 datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 
