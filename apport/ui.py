@@ -16,6 +16,7 @@ implementation (like GTK, Qt, or CLI).
 import glob, sys, os.path, optparse, traceback, locale, gettext, re, io
 import errno, zlib, gzip
 import subprocess, threading, webbrowser
+import shutil
 import signal
 import time
 import ast
@@ -930,12 +931,7 @@ class UserInterface:
         if not self.report or 'CoreDump' not in self.report:
             return False
 
-        try:
-            if subprocess.call(['which', 'apport-retrace'],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT) != 0:
-                return False
-        except OSError:
+        if shutil.which('apport-retrace') is None:
             return False
 
         try:

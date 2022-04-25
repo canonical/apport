@@ -17,6 +17,7 @@
 import sys
 import os
 import os.path
+import shutil
 import subprocess
 import argparse
 import gettext
@@ -88,10 +89,7 @@ try:
     gettext.textdomain('apport')
 
     # get and verify path to executable
-    exepath = subprocess.Popen(
-        ['which', options.exe], stdout=subprocess.PIPE).communicate()[0]
-    exepath = bytes.decode(exepath)
-    exepath = exepath.rstrip('\n')
+    exepath = shutil.which(options.exe)
     exepath = os.path.abspath(exepath)
     if not exepath:
         sys.stderr.write(_('Error: %s is not an executable. Stopping.') % options.exe)

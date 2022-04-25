@@ -11,6 +11,7 @@
 
 import subprocess, tempfile, os.path, re, pwd, grp, os, time, io
 import fnmatch, glob, traceback, errno, sys, atexit, locale, imp, stat
+import shutil
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -223,17 +224,11 @@ def _run_hook(report, ui, hook):
 def _which_extrapath(command, extra_path):
     '''Return path of command, preferring extra_path'''
 
+    path = None
     if extra_path:
-        env = os.environ.copy()
-        parts = env.get('PATH', '').split(os.pathsep)
-        parts[0:0] = extra_path.split(os.pathsep)
-        env['PATH'] = os.pathsep.join(parts)
-    else:
-        env = None
-    try:
-        return subprocess.check_output(['which', command], env=env).decode().strip()
-    except subprocess.CalledProcessError:
-        return None
+        path = os.pathsep.join([extra_path, os.environ.get('PATH', '')])
+
+    return shutil.which(command, path=path)
 
 
 #

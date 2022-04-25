@@ -14,9 +14,6 @@ import shutil
 import os
 import os.path
 
-p = subprocess.Popen(['which', 'valgrind'], stdout=subprocess.PIPE)
-p.communicate()
-have_valgrind = (p.returncode == 0)
 with open('/proc/meminfo') as f:
     for line in f.readlines():
         if line.startswith('MemTotal'):
@@ -28,7 +25,7 @@ with open('/proc/meminfo') as f:
         low_memory = False
 
 
-@unittest.skipUnless(have_valgrind, 'valgrind not installed')
+@unittest.skipIf(shutil.which('valgrind') is None, 'valgrind not installed')
 class T(unittest.TestCase):
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
