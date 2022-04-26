@@ -60,7 +60,7 @@ class T(unittest.TestCase):
         multidesktop = None
         nodisplay = None
         found_some = False
-        for d in os.listdir('/usr/share/applications/'):
+        for d in sorted(os.listdir('/usr/share/applications/')):
             if not d.endswith('.desktop'):
                 continue
             path = os.path.join('/usr/share/applications/', d)
