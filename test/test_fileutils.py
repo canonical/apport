@@ -68,16 +68,23 @@ class T(unittest.TestCase):
             if pkg is None:
                 continue
             found_some = True
-            num = len([f for f in apport.packaging.get_files(pkg)
-                       if f.endswith('.desktop')])
-            with open(path, 'rb') as f:
-                if b'NoDisplay=true' in f.read():
-                    if not nodisplay and num == 1:
-                        nodisplay = pkg
+
+            display_num = 0
+            no_display_num = 0
+            for desktop_file in apport.packaging.get_files(pkg):
+                if not desktop_file.endswith('.desktop'):
                     continue
-            if not onedesktop and num == 1:
+                with open(desktop_file, 'rb') as desktop_file:
+                    if b'NoDisplay=true' in desktop_file.read():
+                        no_display_num += 1
+                    else:
+                        display_num += 1
+
+            if not nodisplay and display_num == 0 and no_display_num == 1:
+                nodisplay = pkg
+            elif not onedesktop and display_num == 1:
                 onedesktop = pkg
-            elif not multidesktop and num > 1:
+            elif not multidesktop and display_num > 1:
                 multidesktop = pkg
 
             if onedesktop and multidesktop and nodisplay:
