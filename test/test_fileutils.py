@@ -11,11 +11,15 @@ from unittest.mock import patch
 
 class T(unittest.TestCase):
     def setUp(self):
+        self.orig_core_dir = apport.fileutils.core_dir
+        apport.fileutils.core_dir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         self.orig_config_file = apport.fileutils._config_file
 
     def tearDown(self):
+        shutil.rmtree(apport.fileutils.core_dir)
+        apport.fileutils.core_dir = self.orig_core_dir
         shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
         self.orig_report_dir = None
