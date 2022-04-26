@@ -28,6 +28,8 @@ class T(unittest.TestCase):
         else:
             self.crash_jar_path = os.path.join(mydir, 'crash.jar')
             self.apport_jar_path = os.path.join(datadir, 'apport.jar')
+        if not os.path.exists(self.apport_jar_path):
+            self.skipTest(f"{self.apport_jar_path} missing")
 
     def tearDown(self):
         shutil.rmtree(apport.fileutils.report_dir)
@@ -36,6 +38,9 @@ class T(unittest.TestCase):
     def test_crash_class(self):
         '''Crash in a .class file'''
 
+        crash_class = os.path.dirname(self.crash_jar_path) + '/crash.class'
+        if not os.path.exists(crash_class):
+            self.skipTest(f"{crash_class} missing")
         p = subprocess.Popen(['java', '-classpath',
                               self.apport_jar_path + ':' + os.path.dirname(self.crash_jar_path), 'crash'],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -44,11 +49,13 @@ class T(unittest.TestCase):
         self.assertTrue(b"Can't catch this" in err,
                         'crash handler must print original exception:\n' + err.decode())
 
-        self._check_crash_report(os.path.dirname(self.crash_jar_path) + '/crash.class')
+        self._check_crash_report(crash_class)
 
     def test_crash_jar(self):
         '''Crash in a .jar file'''
 
+        if not os.path.exists(self.crash_jar_path):
+            self.skipTest(f"{self.crash_jar_path} missing")
         p = subprocess.Popen(['java', '-classpath',
                               self.apport_jar_path + ':' + self.crash_jar_path, 'crash'],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
