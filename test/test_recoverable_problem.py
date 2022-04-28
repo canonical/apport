@@ -10,7 +10,6 @@
 # the full text of the license.
 
 import unittest
-import sys
 import os
 import subprocess
 import tempfile
@@ -27,15 +26,16 @@ class T(unittest.TestCase):
         self.datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 
     def wait_for_report(self):
-        base = os.path.abspath(sys.argv[0]).replace('/', '_')
-        path = os.path.join(self.report_dir,
-                            '%s.%d.crash' % (base, os.getuid()))
         seconds = 0
-        while not os.path.exists(path):
-            time.sleep(1)
-            seconds += 1
-            self.assertTrue(seconds < 10, 'timeout while waiting for %s to be created.' % path)
-        return path
+        while seconds < 10:
+            crashes = os.listdir(self.report_dir)
+            if crashes:
+                assert len(crashes) == 1
+                return os.path.join(self.report_dir, crashes[0])
+
+            time.sleep(0.1)
+            seconds += 0.1
+        self.fail(f'timeout while waiting for .crash file to be created in {self.report_dir}.')
 
     def call_recoverable_problem(self, data):
         cmd = ['%s/recoverable_problem' % self.datadir]
