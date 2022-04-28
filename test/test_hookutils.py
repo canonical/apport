@@ -1,5 +1,6 @@
 # coding: UTF-8
 import unittest, tempfile, locale, subprocess, re, shutil, os, sys
+import unittest.mock
 
 import apport.hookutils
 
@@ -50,14 +51,16 @@ class T(unittest.TestCase):
         self.assertFalse(good_ko.name in nonfree)
         self.assertTrue(bad_ko.name in nonfree)
 
-    def test_attach_dmesg(self):
+    @unittest.mock.patch("apport.hookutils.root_command_output")
+    def test_attach_dmesg(self, root_command_output_mock):
         '''attach_dmesg()'''
+        root_command_output_mock.return_value = '[30804.972250] CPU0 is up'
 
         report = {}
-
         apport.hookutils.attach_dmesg(report)
-        self.assertTrue(len(report['CurrentDmesg']) > 500)
-        self.assertTrue(report['CurrentDmesg'].startswith('['))
+        self.assertEqual(report, {'CurrentDmesg': '[30804.972250] CPU0 is up'})
+
+        root_command_output_mock.assert_called_once_with(['dmesg'])
 
     def test_dmesg_overwrite(self):
         '''attach_dmesg() does not overwrite already existing data'''
