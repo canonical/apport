@@ -197,6 +197,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.hookutils.recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
         self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile('.'))), 0)
 
+    @unittest.mock.patch("apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[]))
     def test_attach_mac_events(self):
         '''attach_mac_events()'''
 
@@ -438,6 +439,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             else:
                 os.unsetenv('HOME')
 
+    @unittest.mock.patch("apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[]))
     def test_no_crashes(self):
         '''functions do not crash (very shallow)'''
 
