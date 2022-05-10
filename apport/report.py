@@ -1643,7 +1643,7 @@ class Report(problem_report.ProblemReport):
         if not gdb_path:
             return '', ''
         command = [gdb_path]
-        environ = None
+        environ = {"HOME": "/nonexistent"}
 
         if not same_arch:
             # check if we have gdb-multiarch
@@ -1673,10 +1673,10 @@ class Report(problem_report.ProblemReport):
                      gdb_sandbox, native_multiarch, gdb_sandbox)
                 pyhome = '%s/usr' % gdb_sandbox
                 # env settings need to be modified for gdb in a sandbox
-                environ = {'LD_LIBRARY_PATH': ld_lib_path,
-                           'PYTHONHOME': pyhome,
-                           'GCONV_PATH': '%s/usr/lib/%s/gconv' %
-                           (gdb_sandbox, native_multiarch)}
+                environ |= {'LD_LIBRARY_PATH': ld_lib_path,
+                            'PYTHONHOME': pyhome,
+                            'GCONV_PATH': '%s/usr/lib/%s/gconv' %
+                            (gdb_sandbox, native_multiarch)}
                 command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' %
                                (gdb_sandbox, native_multiarch))
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' %

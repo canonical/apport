@@ -536,7 +536,7 @@ int main() { return f(42); }
 
             # call it through gdb and dump core
             gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'run', '--ex',
-                                    'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+                                    'generate-core-file core', './crash'], env={"HOME": workdir}, stdout=subprocess.PIPE)
             gdb.communicate()
             klass._validate_core('core')
 
