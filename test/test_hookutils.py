@@ -195,7 +195,8 @@ class T(unittest.TestCase):
 
         self.assertEqual(apport.hookutils.recent_syslog(re.compile('.'), path='/nonexisting'), '')
         self.assertEqual(apport.hookutils.recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
-        self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile('.'))), 0)
+        if os.path.exists('/run/systemd/system') or os.access('/var/log/syslog', os.R_OK):
+            self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile('.'))), 0)
 
     @unittest.mock.patch("apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[]))
     def test_attach_mac_events(self):

@@ -577,6 +577,8 @@ def recent_syslog(pattern, path=None):
     elif os.access('/var/log/syslog', os.R_OK):
         p = subprocess.Popen(['tail', '-n', '10000', '/var/log/syslog'],
                              stdout=subprocess.PIPE)
+    else:
+        return ''
     return __filter_re_process(pattern, p)
 
 
