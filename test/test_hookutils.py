@@ -29,13 +29,11 @@ class T(unittest.TestCase):
         bad_ko = _build_ko('BAD')
 
         # test:
-        #  - loaded real module
         #  - unfindable module
         #  - fake GPL module
         #  - fake BAD module
 
         # direct license check
-        self.assertTrue('GPL' in apport.hookutils._get_module_license('isofs'))
         self.assertEqual(apport.hookutils._get_module_license('does-not-exist'), 'invalid')
         self.assertTrue('GPL' in apport.hookutils._get_module_license(good_ko.name))
         self.assertTrue('BAD' in apport.hookutils._get_module_license(bad_ko.name))
@@ -46,10 +44,23 @@ class T(unittest.TestCase):
                 (good_ko.name, bad_ko.name)).encode())
         f.flush()
         nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
-        self.assertFalse('isofs' in nonfree)
         self.assertTrue('does-not-exist' in nonfree)
         self.assertFalse(good_ko.name in nonfree)
         self.assertTrue(bad_ko.name in nonfree)
+
+    def test_real_module_license_evaluation(self):
+        '''module licenses can be validated correctly for real module'''
+        isofs_license = apport.hookutils._get_module_license('isofs')
+        if isofs_license == 'invalid':
+            self.skipTest("kernel module 'isofs' not available")
+
+        self.assertIn("GPL", isofs_license)
+
+        f = tempfile.NamedTemporaryFile()
+        f.write(b'isofs\n')
+        f.flush()
+        nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
+        self.assertNotIn('isofs', nonfree)
 
     @unittest.mock.patch("apport.hookutils.root_command_output")
     def test_attach_dmesg(self, root_command_output_mock):
