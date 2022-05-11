@@ -237,9 +237,9 @@ func(42)
     def test_ignoring(self):
         '''the Python crash hook respects the ignore list.'''
 
-        # put the script into /var/crash, since that isn't ignored in the
+        # put the script into /var/tmp, since that isn't ignored in the
         # hook
-        (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
+        (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         orig_home = os.getenv('HOME')
         if orig_home is not None:
             del os.environ['HOME']
