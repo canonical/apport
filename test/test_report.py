@@ -797,7 +797,7 @@ EOF
             os.chmod(script, 0o755)
 
             # build the crashing binary
-            subprocess.call([script])
+            subprocess.check_call([script])
 
             # call binary and verify that it gives us a proper ELF core dump
             pid = os.fork()
@@ -857,7 +857,7 @@ EOF
             os.chmod(script, 0o755)
 
             # build the crashing binary
-            subprocess.call([script])
+            subprocess.check_call([script])
 
             # call binary and verify that it gives us a proper ELF core dump
             pid = os.fork()
@@ -914,7 +914,7 @@ EOF
             os.chmod(script, 0o755)
 
             # build the crashing binary
-            subprocess.call([script])
+            subprocess.check_call([script])
 
             # call binary and verify that it gives us a proper ELF core dump
             pid = os.fork()

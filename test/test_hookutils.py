@@ -22,7 +22,7 @@ class T(unittest.TestCase):
             asm.flush()
             ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
                                              suffix='.ko')
-            subprocess.call(['/usr/bin/as', asm.name, '-o', ko.name])
+            subprocess.check_call(['/usr/bin/as', asm.name, '-o', ko.name])
             return ko
 
         good_ko = _build_ko('GPL')
