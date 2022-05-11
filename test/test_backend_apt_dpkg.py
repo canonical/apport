@@ -345,13 +345,21 @@ usr/bin/frob                                            foo/frob
     def test_get_file_package_diversion(self):
         '''get_file_package() for a diverted file.'''
 
-        # pick first diversion we have
-        p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
-                             shell=True, stdout=subprocess.PIPE)
-        out = p.communicate()[0].decode('UTF-8')
-        assert p.returncode == 0
-        assert out
-        fields = out.split()
+        output = subprocess.check_output(
+            ["dpkg-divert", "--list"], env={}
+        ).decode()
+
+        for line in output.rstrip().split("\n"):
+            fields = line.split(" ")
+            # Local diversions have 6 fields.
+            if len(fields) == 7:
+                # pick first diversion we have
+                break
+        else:
+            self.fail(
+                f"No non-local diversion found. dpkg-divert output: {output}"
+            )
+
         file = fields[2]
         pkg = fields[-1]
 
