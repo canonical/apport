@@ -1,4 +1,4 @@
-import unittest, tempfile, sys, os.path
+import unittest, sys, os.path
 
 datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 sys.path.insert(0, os.path.join(datadir, 'general-hooks'))
@@ -308,8 +308,8 @@ class T(unittest.TestCase):
 00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]
 00c67000-00c68000 r--p 00000000 00:00 0 '''
 
-        sys.stderr = tempfile.NamedTemporaryFile(prefix='parse_segv-stderr-')
-        segv = parse_segv.ParseSegv(regs, disasm, maps, debug=True)
+        with self.assertLogs(level="DEBUG"):
+            segv = parse_segv.ParseSegv(regs, disasm, maps)
         self.assertTrue(segv is not None, segv)
 
     def test_register_values(self):
