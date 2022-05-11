@@ -40,7 +40,9 @@ class T(unittest.TestCase):
 
         cmd = ['valgrind', '-q', '--extra-debuginfo-path=./', 'ls']
         (ret, out, err) = self._call(cmd)
+        self.assertEqual(err, "")
         self.assertEqual(ret, 0)
+        self.assertIn("test", out)
 
     def _call(self, argv):
         p = subprocess.Popen(
@@ -54,21 +56,25 @@ class T(unittest.TestCase):
 
         cmd = ['apport-valgrind', '-h']
         (ret, out, err) = self._call(cmd)
+        self.assertEqual(err, "")
         self.assertEqual(ret, 0)
+        self.assertIn("--help", out)
 
     def test_invalid_args(self):
         '''return code is not 0 when invalid args are passed'''
 
         cmd = ['apport-valgrind', '-k', 'pwd']
         (ret, out, err) = self._call(cmd)
+        self.assertEqual(out, "")
         self.assertNotEqual(ret, 0)
+        self.assertIn("unrecognized arguments: -k", err)
 
     def test_vlog_created(self):
         '''apport-valgrind creates valgrind.log with expected content'''
 
         cmd = ['apport-valgrind', '--no-sandbox', 'true']
         os.chdir(self.workdir)
-        subprocess.call(cmd)
+        self.assertEqual(self._call(cmd), (0, "", ""))
         self.assertTrue(
             os.path.exists('valgrind.log'),
             msg='Expected valgrind.log file not found.')
@@ -110,13 +116,14 @@ void makeleak(void){
         # run apport-valgrind on the new memleak.o
         cmd = ['apport-valgrind', '--no-sandbox', os.path.join(self.workdir,
                './memleak')]
-        subprocess.call(cmd)
+        self.assertEqual(self._call(cmd), (0, "", ""))
         logpath = os.path.join(self.workdir, './valgrind.log')
 
         # verify the generated valgrind.log contains the known leak
         cmd = ['grep', 'definitely lost:', logpath]
-        res = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-        res = bytes.decode(res)
+        ret, res, err = self._call(cmd)
+        self.assertEqual(err, "")
+        self.assertEqual(ret, 0)
         res = res.rstrip('\n')
 
         found = res.find('128 bytes')
@@ -131,7 +138,8 @@ void makeleak(void){
         shutil.copy('/bin/pwd', exepath)
         logpath = os.path.join(self.workdir, 'unpackaged-exe.log')
 
-        subprocess.check_call(['apport-valgrind', '--no-sandbox', '-l', logpath, exepath])
+        cmd = ['apport-valgrind', '--no-sandbox', '-l', logpath, exepath]
+        self.assertEqual(self._call(cmd), (0, os.getcwd() + "\n", ""))
         self.assertTrue(os.path.exists(logpath),
                         'A log file %s should exist but does not' % logpath)
 
