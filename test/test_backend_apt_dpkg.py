@@ -105,6 +105,9 @@ class T(unittest.TestCase):
         self.assertGreater(len(d), 2)
         self.assertIn('libc6', d)
         for dep in d:
+            if dep == "bash-completion":
+                # bash-completion is only in Recommends (maybe not installed)
+                continue
             self.assertTrue(impl.get_version(dep))
 
         # Pre-Depends: only
