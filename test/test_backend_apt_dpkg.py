@@ -34,6 +34,7 @@ def _has_internet():
 _has_internet.cache = None
 
 
+@unittest.skipIf(shutil.which('dpkg') is None, 'dpkg not available')
 class T(unittest.TestCase):
     def setUp(self):
         # save and restore configuration file
@@ -1155,10 +1156,4 @@ deb http://secondary.mirror tuxy extra
                             path, machine, expected))
 
 
-# only execute if dpkg is available
-try:
-    if subprocess.call(['dpkg', '--help'], stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE) == 0:
-        unittest.main()
-except OSError:
-    pass
+unittest.main()

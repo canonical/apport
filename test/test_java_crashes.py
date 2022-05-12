@@ -12,6 +12,7 @@ import tempfile, unittest, subprocess, sys, os, os.path, shutil
 import apport, apport.fileutils
 
 
+@unittest.skipIf(shutil.which('java') is None, 'Java not available')
 class T(unittest.TestCase):
     def setUp(self):
         mydir = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -89,12 +90,5 @@ class T(unittest.TestCase):
 #
 # main
 #
-
-try:
-    subprocess.check_call(['java', '-version'], stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
-except OSError:
-    apport.warning('Java not available, skipping')
-    sys.exit(0)
 
 unittest.main()

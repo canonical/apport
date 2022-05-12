@@ -21,9 +21,9 @@ try:
     from PyQt5.QtCore import QTimer, QCoreApplication
     from PyQt5.QtWidgets import QApplication, QTreeWidget
     from PyQt5.QtGui import QIcon
-except ImportError as e:
-    sys.stderr.write('SKIP: PyQt/PyKDE not available: %s\n' % str(e))
-    sys.exit(0)
+    PYQT5_IMPORT_ERROR = None
+except ImportError as error:
+    PYQT5_IMPORT_ERROR = error
 
 import apport
 from apport import unicode_gettext as _
@@ -33,9 +33,13 @@ if os.environ.get('APPORT_TEST_LOCAL'):
     apport_kde_path = 'kde/apport-kde'
 else:
     apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-kde')
-MainUserInterface = SourceFileLoader('', apport_kde_path).load_module().MainUserInterface
+if not PYQT5_IMPORT_ERROR:
+    MainUserInterface = SourceFileLoader('', apport_kde_path).load_module().MainUserInterface
+else:
+    MainUserInterface = None
 
 
+@unittest.skipIf(PYQT5_IMPORT_ERROR, f'PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}')
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):

@@ -1,15 +1,18 @@
-import unittest, imp, subprocess, sys, os
+import unittest, imp, os
+import shutil
 
 try:
     if os.environ.get('APPORT_TEST_LOCAL'):
         impl = imp.load_source('', 'backends/packaging_rpm.py').impl
     else:
         from apport.packaging_impl import impl
+    HAS_RPM = True
 except ImportError:
-    print('%s: Skipping, rpm module not available' % sys.argv[0])
-    sys.exit(0)
+    HAS_RPM = False
 
 
+@unittest.skipUnless(HAS_RPM, 'rpm module not available')
+@unittest.skipIf(shutil.which('rpm') is None, 'rpm not available')
 class T(unittest.TestCase):
 
     def test_get_dependencies(self):
@@ -48,10 +51,4 @@ class T(unittest.TestCase):
         self.assertNotEqual(ver, None)
 
 
-# only execute if rpm is available
-try:
-    if subprocess.call(['rpm', '--help'], stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE) == 0:
-        unittest.main()
-except OSError:
-    print('%s: Skipping, rpm not available' % sys.argv[0])
+unittest.main()

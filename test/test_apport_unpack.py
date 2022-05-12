@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, shutil, os, os.path, sys
+import unittest, subprocess, tempfile, shutil, os, os.path
 import problem_report
 
 
@@ -64,8 +64,7 @@ class T(unittest.TestCase):
         if not os.path.exists(apport_unpack):
             apport_unpack = '/usr/bin/apport-unpack'
         if not os.path.exists(apport_unpack):
-            sys.stderr.write('[skip: apport-unpack not found] ')
-            return
+            self.skipTest('apport-unpack not found')
 
         self.assertEqual(self._call([os.getenv('PYTHON', 'python3'),
                                      apport_unpack,
