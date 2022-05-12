@@ -128,6 +128,8 @@ databases = {
 
 
 class T(unittest.TestCase):
+    TEST_EXECUTABLE = '/usr/bin/yes'
+
     def setUp(self):
         # we test a few strings, don't get confused by translations
         for v in ['LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_ALL']:
@@ -191,7 +193,7 @@ class T(unittest.TestCase):
         self.ui = None
         self.report_file.close()
 
-        self.assertEqual(subprocess.call(['pidof', '/usr/bin/yes']), 1, 'no stray test processes')
+        self.assertEqual(subprocess.call(['pidof', self.TEST_EXECUTABLE]), 1, 'no stray test processes')
 
         # clean up apport report from _gen_test_crash()
         for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
@@ -202,6 +204,14 @@ class T(unittest.TestCase):
 
         shutil.rmtree(self.hookdir)
         apport.report._hook_dir = self.orig_hook_dir
+
+    def _run_test_executable(self, exename=None):
+        if not exename:
+            exename = self.TEST_EXECUTABLE
+
+        os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+        os.execv(exename, [exename])
+        assert False, 'Could not execute ' + exename
 
     def test_format_filesize(self):
         '''format_filesize()'''
@@ -568,9 +578,7 @@ bOgUs=
         # fork a test process
         pid = os.fork()
         if pid == 0:
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-            os.execv('/usr/bin/yes', ['yes'])
-            assert False, 'Could not execute /usr/bin/yes'
+            self._run_test_executable()
 
         time.sleep(0.5)
 
@@ -592,7 +600,7 @@ bOgUs=
         self.assertTrue('SourcePackage' in self.ui.report.keys())
         self.assertTrue('Dependencies' in self.ui.report.keys())
         self.assertTrue('ProcMaps' in self.ui.report.keys())
-        self.assertEqual(self.ui.report['ExecutablePath'], '/usr/bin/yes')
+        self.assertEqual(self.ui.report['ExecutablePath'], self.TEST_EXECUTABLE)
         self.assertFalse('ProcCmdline' in self.ui.report)  # privacy!
         self.assertTrue('ProcEnviron' in self.ui.report.keys())
         self.assertEqual(self.ui.report['ProblemType'], 'Bug')
@@ -653,7 +661,7 @@ bOgUs=
 
         # create unpackaged test program
         (fd, exename) = tempfile.mkstemp()
-        with open('/usr/bin/yes', 'rb') as f:
+        with open(self.TEST_EXECUTABLE, 'rb') as f:
             os.write(fd, f.read())
         os.close(fd)
         os.chmod(exename, 0o755)
@@ -661,8 +669,7 @@ bOgUs=
         # unpackaged test process
         pid = os.fork()
         if pid == 0:
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-            os.execv(exename, [exename])
+            self._run_test_executable(exename)
 
         # give the execv() some time to finish
         time.sleep(0.2)
@@ -747,23 +754,20 @@ bOgUs=
         '''Generate a Report with real crash data'''
 
         # create a test executable
-        test_executable = '/usr/bin/yes'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+        assert os.access(self.TEST_EXECUTABLE, os.X_OK), self.TEST_EXECUTABLE + ' is not executable'
         pid = os.fork()
         if pid == 0:
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
             sys.stdin.close()
             os.setsid()
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
             os.chdir(apport.fileutils.report_dir)
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
+            self._run_test_executable()
 
         time.sleep(0.5)
 
         # generate crash report
         r = apport.Report()
-        r['ExecutablePath'] = test_executable
+        r['ExecutablePath'] = self.TEST_EXECUTABLE
         r['Signal'] = '11'
         r.add_proc_info(pid)
         r.add_user_info()
@@ -775,7 +779,7 @@ bOgUs=
             uid = os.getuid()
 
         (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                test_executable,
+                                                                self.TEST_EXECUTABLE,
                                                                 uid)
         os.kill(pid, signal.SIGSEGV)
         os.waitpid(pid, 0)
@@ -835,7 +839,7 @@ bOgUs=
         self.assertFalse('StacktraceAddressSignature' in self.ui.report.keys())
         self.assertEqual(self.ui.report['ProblemType'], 'Crash')
         self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
-        self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'))
+        self.assertTrue(self.ui.report['Title'].startswith(f'{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV'))
 
         # so far we did not blacklist, verify that
         self.assertTrue(not self.ui.report.check_ignored())
@@ -1057,20 +1061,17 @@ bOgUs=
         '''run_crash() for a crash dump without CoreDump'''
 
         # create a test executable
-        test_executable = '/usr/bin/yes'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+        assert os.access(self.TEST_EXECUTABLE, os.X_OK), self.TEST_EXECUTABLE + ' is not executable'
         pid = os.fork()
         if pid == 0:
             os.setsid()
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
+            self._run_test_executable()
 
         try:
             time.sleep(0.5)
             # generate crash report
             r = apport.Report()
-            r['ExecutablePath'] = test_executable
+            r['ExecutablePath'] = self.TEST_EXECUTABLE
             r['Signal'] = '42'
             r.add_proc_info(pid)
             r.add_user_info()
@@ -1468,7 +1469,7 @@ bOgUs=
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
-            self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'),
+            self.assertTrue(self.ui.report['Title'].startswith(f'{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV'),
                             self.ui.report['Title'])
             self.assertEqual(self.ui.report['ProcInfo1'], 'my hostname')
             self.assertEqual(self.ui.report['ProcInfo2'], '"hostname.localnet"')
@@ -2364,9 +2365,7 @@ Exec=gedit %U
         # fork a test process
         pid = os.fork()
         if pid == 0:
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-            os.execv('/usr/bin/yes', ['yes'])
-            assert False, 'Could not execute /usr/bin/yes'
+            self._run_test_executable()
 
         time.sleep(0.5)
         os.kill(pid, signal.SIGKILL)
