@@ -35,13 +35,18 @@ else:
     apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-kde')
 MainUserInterface = SourceFileLoader('', apport_kde_path).load_module().MainUserInterface
 
-# Work around MainUserInterface using basename to find the KDE UI file.
-sys.argv[0] = apport_kde_path
-
 
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
+        # Work around MainUserInterface using basename to find the KDE UI file.
+        sys.argv[0] = apport_kde_path
+
+        klass.app = QApplication(sys.argv)
+        klass.app.applicationName = 'apport-kde'
+        klass.app.applicationDisplayName = _('Apport')
+        klass.app.windowIcon = QIcon.fromTheme('apport')
+
         r = apport.Report()
         r.add_os_info()
         klass.distro = r['DistroRelease']
@@ -628,10 +633,5 @@ Type=Application''')
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
 
-
-app = QApplication(sys.argv)
-app.applicationName = 'apport-kde'
-app.applicationDisplayName = _('Apport')
-app.windowIcon = QIcon.fromTheme('apport')
 
 unittest.main()

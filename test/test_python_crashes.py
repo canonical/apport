@@ -14,15 +14,22 @@ import unittest, tempfile, subprocess, os, stat, shutil, atexit
 import dbus
 import unittest.mock
 
-temp_report_dir = tempfile.mkdtemp()
-os.environ['APPORT_REPORT_DIR'] = temp_report_dir
-atexit.register(shutil.rmtree, temp_report_dir)
-
 import apport.fileutils
 import apport.report
 
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.orig_report_dir = apport.fileutils.report_dir
+        apport.fileutils.report_dir = tempfile.mkdtemp()
+        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+        atexit.register(shutil.rmtree, apport.fileutils.report_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+        apport.fileutils.report_dir = cls.orig_report_dir
+
     def tearDown(self):
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)

@@ -25,25 +25,46 @@ required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
                    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal',
                    'UserGroups']
 
-orig_home = os.getenv('HOME')
-if orig_home is not None:
-    del os.environ['HOME']
-ifpath = os.path.expanduser(apport.report._ignore_file)
-if orig_home is not None:
-    os.environ['HOME'] = orig_home
-
-# did we enable suid_dumpable?
-suid_dumpable = False
-try:
-    with open('/proc/sys/fs/suid_dumpable') as f:
-        if f.read().strip() != '0':
-            suid_dumpable = True
-except IOError:
-    pass
-
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with open('/proc/sys/kernel/core_pattern') as f:
+            core_pattern = f.read().strip()
+        if core_pattern[0] == '|':
+            cls.apport_path = core_pattern[1:].split()[0]
+        else:
+            cls.apport_path = None
+
+        cls.all_reports = apport.fileutils.get_all_reports()
+
+        # ensure we don't inherit an ignored SIGQUIT
+        signal.signal(signal.SIGQUIT, signal.SIG_DFL)
+
+        orig_home = os.getenv('HOME')
+        if orig_home is not None:
+            del os.environ['HOME']
+        cls.ifpath = os.path.expanduser(apport.report._ignore_file)
+        if orig_home is not None:
+            os.environ['HOME'] = orig_home
+
+        # did we enable suid_dumpable?
+        cls.suid_dumpable = False
+        try:
+            with open('/proc/sys/fs/suid_dumpable') as f:
+                if f.read().strip() != '0':
+                    cls.suid_dumpable = True
+        except IOError:
+            pass
+
     def setUp(self):
+        if self.apport_path is None:
+            self.skipTest('kernel crash dump helper is not active; please enable before running this test')
+
+        if self.all_reports:
+            self.skipTest('Please remove all crash reports from /var/crash/ for this test suite:\n  %s\n' %
+                          '\n  '.join(self.all_reports))
+
         # use local report dir
         self.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
@@ -51,8 +72,8 @@ class T(unittest.TestCase):
         self.workdir = tempfile.mkdtemp()
 
         # move aside current ignore file
-        if os.path.exists(ifpath):
-            os.rename(ifpath, ifpath + '.apporttest')
+        if os.path.exists(self.ifpath):
+            os.rename(self.ifpath, self.ifpath + '.apporttest')
 
         # do not write core files by default
         resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
@@ -70,11 +91,11 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
         # clean up our ignore file
-        if os.path.exists(ifpath):
-            os.unlink(ifpath)
-        orig_ignore_file = ifpath + '.apporttest'
+        if os.path.exists(self.ifpath):
+            os.unlink(self.ifpath)
+        orig_ignore_file = self.ifpath + '.apporttest'
         if os.path.exists(orig_ignore_file):
-            os.rename(orig_ignore_file, ifpath)
+            os.rename(orig_ignore_file, self.ifpath)
 
         # permit tests to leave behind test_report, but nothing else
         if os.path.exists(self.test_report):
@@ -89,7 +110,7 @@ class T(unittest.TestCase):
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.close()
             assert app.wait() == 0, app.stderr.read()
@@ -159,12 +180,12 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process(False, '/bin/dd')
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             time.sleep(0.5)  # give it some time to grab the lock
 
-            app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0', '1'],
+            app2 = subprocess.Popen([self.apport_path, str(test_proc2), '42', '0', '1'],
                                     stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # app should wait indefinitely for stdin, while app2 should terminate
@@ -297,7 +318,7 @@ class T(unittest.TestCase):
         os.chdir('/run')
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             self.do_crash(True, command=myexe, expect_corefile=False)
 
             # check crash report
@@ -424,7 +445,7 @@ CoreDump: base64
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             # pipe an entire total memory size worth of spaces into it, which must be
             # bigger than the 'usable' memory size. apport should digest that and the
@@ -506,7 +527,7 @@ CoreDump: base64
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             err = app.communicate(b'foo')[1]
             self.assertEqual(app.returncode, 0, err)
@@ -530,7 +551,7 @@ CoreDump: base64
         try:
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = log
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -567,7 +588,7 @@ CoreDump: base64
         try:
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = '/not/existing/apport.log'
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
+            app = subprocess.Popen([self.apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -611,7 +632,7 @@ CoreDump: base64
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             # if a user can crash a suid root binary, it should not create core files
             self.do_crash(command=myexe, uid=8)
 
@@ -665,7 +686,7 @@ CoreDump: base64
         # run ping as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             # if a user can crash a suid root binary, it should not create core files
             self.do_crash(command='/bin/ping', args=['127.0.0.1'], uid=8)
 
@@ -695,7 +716,7 @@ CoreDump: base64
         # edit crontab as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             user = pwd.getpwuid(8)
             # if a user can crash a suid root binary, it should not create core files
             orig_editor = os.getenv('EDITOR')
@@ -737,7 +758,7 @@ CoreDump: base64
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             # if a user can crash a suid root binary, it should not create core files
             self.do_crash(command=myexe, expect_corefile=False, uid=8)
         else:
@@ -765,7 +786,7 @@ CoreDump: base64
         os.chdir('/run')
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if suid_dumpable:
+        if self.suid_dumpable:
             # we expect a report, but no core file
             self.do_crash(command=myexe, expect_corefile=False, uid=8)
 
@@ -819,7 +840,7 @@ CoreDump: base64
                 conn = server.accept()[0]
                 os.dup2(conn.fileno(), 3)
 
-            app = subprocess.Popen([apport_path], preexec_fn=child_setup,
+            app = subprocess.Popen([self.apport_path], preexec_fn=child_setup,
                                    pass_fds=[3], stderr=subprocess.PIPE)
             log = app.communicate()[1]
             self.assertEqual(app.returncode, 0, log)
@@ -1014,20 +1035,5 @@ CoreDump: base64
 #
 # main
 #
-
-# ensure we don't inherit an ignored SIGQUIT
-signal.signal(signal.SIGQUIT, signal.SIG_DFL)
-
-with open('/proc/sys/kernel/core_pattern') as f:
-    core_pattern = f.read().strip()
-if core_pattern[0] != '|':
-    sys.stderr.write('kernel crash dump helper is not active; please enable before running this test.\n')
-    sys.exit(0)
-apport_path = core_pattern[1:].split()[0]
-
-if apport.fileutils.get_all_reports():
-    sys.stderr.write('Please remove all crash reports from /var/crash/ for this test suite:\n  %s\n' %
-                     '\n  '.join(os.listdir('/var/crash')))
-    sys.exit(1)
 
 unittest.main()
