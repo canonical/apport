@@ -86,4 +86,5 @@ class T(unittest.TestCase):
                           'hello\0\0there')
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

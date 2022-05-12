@@ -113,4 +113,5 @@ class T(unittest.TestCase):
             return f.read()
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

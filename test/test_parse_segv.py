@@ -541,4 +541,5 @@ class T(unittest.TestCase):
         self.assertTrue('Reason could not be automatically determined. (Unhandled exception in kernel code?)' in details, details)
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

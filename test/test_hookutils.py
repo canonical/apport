@@ -507,4 +507,5 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
                 raise SystemError('did not find VmSize: in /proc/self/status')
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

@@ -218,4 +218,5 @@ echo ApportRetraceError >&2''')
         self.assertIn('nonexisting', err)
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

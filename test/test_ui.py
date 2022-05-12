@@ -2374,4 +2374,5 @@ Exec=gedit %U
         self.ui.wait_for_pid(pid)
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

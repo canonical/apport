@@ -638,4 +638,5 @@ Type=Application''')
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

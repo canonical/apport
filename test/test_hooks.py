@@ -375,4 +375,5 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
         self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

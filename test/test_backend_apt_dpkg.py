@@ -1156,4 +1156,5 @@ deb http://secondary.mirror tuxy extra
                             path, machine, expected))
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

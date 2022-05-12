@@ -27,4 +27,5 @@ class T(unittest.TestCase):
         self.assertEqual((n, v), (n2, v2))
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

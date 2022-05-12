@@ -51,4 +51,5 @@ class T(unittest.TestCase):
         self.assertNotEqual(ver, None)
 
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()
