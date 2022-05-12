@@ -659,18 +659,19 @@ deb http://secondary.mirror tuxy extra
         # reset properly
         impl.get_version('dash')
 
-        self._setup_foonux_config(impl.get_distro_codename())
-        lsb_release = subprocess.Popen(['lsb_release', '-sr'],
-                                       stdout=subprocess.PIPE)
-        system_version = lsb_release.communicate()[0].decode('UTF-8').strip()
-        result = impl.install_packages(self.rootdir, None, system_version,
+        lsb_output = subprocess.check_output(["lsb_release", "-sir"]).decode()
+        system_version = lsb_output.replace("\n", " ").strip()
+        cachedir = os.path.join(self.workdir, 'cache')
+        rootdir = os.path.join(self.workdir, 'root')
+
+        result = impl.install_packages(rootdir, None, system_version,
                                        [('coreutils', impl.get_version('coreutils')),
                                         ('tzdata', '1.1'),
-                                       ], False, self.cachedir)
+                                       ], False, cachedir)
 
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+        self.assertTrue(os.path.exists(os.path.join(rootdir,
                                                     'usr/bin/stat')))
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+        self.assertTrue(os.path.exists(os.path.join(rootdir,
                                                     'usr/share/zoneinfo/zone.tab')))
 
         # complains about obsolete packages
@@ -679,7 +680,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('1.1', result)
 
         # caches packages
-        cache = os.listdir(os.path.join(self.cachedir, 'system', 'apt',
+        cache = os.listdir(os.path.join(cachedir, 'system', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         cache_names = [p.split('_')[0] for p in cache]
         self.assertIn('coreutils', cache_names)
@@ -687,8 +688,8 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('tzdata', cache_names)
 
         # works with relative paths and existing cache
-        os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
-        os.unlink(os.path.join(self.rootdir, 'packages.txt'))
+        os.unlink(os.path.join(rootdir, 'usr/bin/stat'))
+        os.unlink(os.path.join(rootdir, 'packages.txt'))
         orig_cwd = os.getcwd()
         try:
             os.chdir(self.workdir)
@@ -696,7 +697,7 @@ deb http://secondary.mirror tuxy extra
                                   [('coreutils', None)], False, 'cache')
         finally:
             os.chdir(orig_cwd)
-            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+            self.assertTrue(os.path.exists(os.path.join(rootdir,
                                                         'usr/bin/stat')))
 
     @unittest.skipUnless(_has_internet(), 'online test')
