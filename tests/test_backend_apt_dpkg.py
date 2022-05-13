@@ -3,35 +3,12 @@ import glob
 from apt import apt_pkg
 from importlib.machinery import SourceFileLoader
 
-from urllib.request import urlopen
-from urllib.error import URLError
+from tests.helper import has_internet
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
 else:
     from apport.packaging_impl import impl
-
-
-def _has_internet():
-    '''Return if there is sufficient network connection for the tests.
-
-    This checks if https://api.launchpad.net/devel/ubuntu/ can be downloaded
-    from, to check if we can run the online tests.
-    '''
-    if os.environ.get('SKIP_ONLINE_TESTS'):
-        return False
-    if _has_internet.cache is None:
-        _has_internet.cache = False
-        try:
-            f = urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
-            if b"web_link" in f.readline():
-                _has_internet.cache = True
-        except URLError:
-            pass
-    return _has_internet.cache
-
-
-_has_internet.cache = None
 
 
 @unittest.skipIf(shutil.which('dpkg') is None, 'dpkg not available')
@@ -472,7 +449,7 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(impl.package_name_glob('bash'), ['bash'])
         self.assertEqual(impl.package_name_glob('xzywef*'), [])
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_versioned(self):
         '''install_packages() with versions and with cache'''
 
@@ -591,7 +568,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/dpkg')))
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_unversioned(self):
         '''install_packages() without versions and no cache'''
 
@@ -630,7 +607,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('tzdata 2016d-0ubuntu0.16.04', pkglist)
         self.assertEqual(len(pkglist), 3, str(pkglist))
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_dependencies(self):
         '''install packages's dependencies'''
 
@@ -650,7 +627,7 @@ deb http://secondary.mirror tuxy extra
         # ensure obsolete packages doesn't include libc6
         self.assertNotIn('libc6', result)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_system(self):
         '''install_packages() with system configuration'''
 
@@ -700,7 +677,7 @@ deb http://secondary.mirror tuxy extra
             self.assertTrue(os.path.exists(os.path.join(rootdir,
                                                         'usr/bin/stat')))
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_error(self):
         '''install_packages() with errors'''
 
@@ -732,7 +709,7 @@ deb http://secondary.mirror tuxy extra
             except AssertionError:
                 self.assertIn('index files failed to download', str(e))
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_permanent_sandbox(self):
         '''install_packages() with a permanent sandbox'''
 
@@ -804,7 +781,7 @@ deb http://secondary.mirror tuxy extra
             os.environ['no_proxy'] = orig_no_proxy
         apt_pkg.config.set('Acquire::http::Proxy', orig_apt_proxy)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_permanent_sandbox_repack(self):
         self._setup_foonux_config()
         include_path = os.path.join(self.rootdir, 'usr/include/krb5.h')
@@ -823,7 +800,7 @@ deb http://secondary.mirror tuxy extra
                               permanent_rootdir=True)
         self.assertIn('mit-krb5/', os.readlink(include_path))
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     @unittest.skipIf(impl.get_system_architecture() == 'armhf', 'native armhf architecture')
     def test_install_packages_armhf(self):
         '''install_packages() for foreign architecture armhf'''
@@ -856,7 +833,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('coreutils_8.25-2ubuntu2_armhf.deb', cache)
         self.assertIn('libc6_2.23-0ubuntu3_armhf.deb', cache)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_packages_from_launchpad(self):
         '''install_packages() using packages only available on Launchpad'''
 
@@ -925,7 +902,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn(('distro-info-data', '0.18ubuntu0.2'), cache_versions)
         self.assertIn(('qemu-utils-dbgsym', '2.0.0+dfsg-2ubuntu1.11'), cache_versions)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_old_packages(self):
         '''sandbox will install older package versions from launchpad'''
 
@@ -967,7 +944,7 @@ deb http://secondary.mirror tuxy extra
             pkglist = f.read().splitlines()
         self.assertIn('oxideqt-codecs 1.6.6-0ubuntu0.14.04.1', pkglist)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
@@ -982,7 +959,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/base-files-7.2ubuntu5'),
                         'unexpected version: ' + res.split('/')[-1])
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_get_source_tree_lp_sandbox(self):
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
@@ -997,7 +974,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/debian-installer-20101020ubuntu318.16'),
                         'unexpected version: ' + res.split('/')[-1])
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_create_sources_for_a_named_ppa(self):
         '''Add sources.list entries for a named PPA.'''
         ppa = 'LP-PPA-daisy-pluckers-daisy-seeds'
@@ -1018,7 +995,7 @@ deb http://secondary.mirror tuxy extra
         assert d.returncode == 0
         self.assertIn('Launchpad PPA for Daisy Pluckers', apt_keys)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_create_sources_for_an_unnamed_ppa(self):
         '''Add sources.list entries for an unnamed PPA.'''
         ppa = 'LP-PPA-apport-hackers-apport-autopkgtests'
@@ -1050,7 +1027,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu trusty main main/debug', sources)
         self.assertIn('deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu trusty main', sources)
 
-    @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipUnless(has_internet(), 'online test')
     def test_install_package_from_a_ppa(self):
         '''Install a package from a PPA.'''
         ppa = 'LP-PPA-apport-hackers-apport-autopkgtests'
