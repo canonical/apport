@@ -1,7 +1,8 @@
 # coding: UTF-8
 import locale
-import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
+import unittest, shutil, signal, tempfile, pwd, time, os, sys
 import errno, glob
+import subprocess
 from io import BytesIO, StringIO
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
@@ -198,13 +199,6 @@ class T(unittest.TestCase):
         self.report_file.close()
 
         self.assertEqual(pidof(self.TEST_EXECUTABLE), set(), 'no stray test processes')
-
-        # clean up apport report from _gen_test_crash()
-        for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
-            try:
-                os.unlink(f)
-            except OSError:
-                pass
 
         apport.report._hook_dir = self.orig_hook_dir
         shutil.rmtree(self.workdir)
@@ -757,17 +751,34 @@ bOgUs=
     def _gen_test_crash(self, uid=None):
         '''Generate a Report with real crash data'''
 
-        # create a test executable
-        assert os.access(self.TEST_EXECUTABLE, os.X_OK), self.TEST_EXECUTABLE + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            sys.stdin.close()
-            os.setsid()
-            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            os.chdir(apport.fileutils.report_dir)
-            self._run_test_executable()
+        core_path = os.path.join(self.workdir, "core")
+        try:
+            gdb = subprocess.Popen(
+                [
+                    "gdb",
+                    "--batch",
+                    "--ex",
+                    "run",
+                    "--ex",
+                    f"generate-core-file {core_path}",
+                    self.TEST_EXECUTABLE,
+                ],
+                env={"HOME": self.workdir},
+                stdout=subprocess.PIPE,
+            )
+        except FileNotFoundError as error:
+            self.skipTest(f"{error.filename} not available")
 
-        time.sleep(0.5)
+        timeout = 10.0
+        while timeout > 0:
+            pids = pidof(self.TEST_EXECUTABLE)
+            if pids:
+                pid = pids.pop()
+                break
+            time.sleep(0.01)
+            timeout -= 0.01
+        else:
+            self.fail(f"{self.TEST_EXECUTABLE} not started within 10 seconds")
 
         # generate crash report
         r = apport.Report()
@@ -778,17 +789,8 @@ bOgUs=
         r.add_os_info()
 
         # generate a core dump
-
-        if uid is None:
-            uid = os.getuid()
-
-        (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                self.TEST_EXECUTABLE,
-                                                                uid)
         os.kill(pid, signal.SIGSEGV)
-        os.waitpid(pid, 0)
-        # Otherwise the core dump is empty.
-        time.sleep(0.5)
+        os.waitpid(gdb.pid, 0)
         assert os.path.exists(core_path)
         r['CoreDump'] = (core_path,)
 
