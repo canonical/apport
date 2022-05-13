@@ -5,9 +5,9 @@
 # the system libraries/programs when run from anywhere else.
 # You can specify test names as arguments to only run a subset of tests.
 #
-# Run all tests: test/run
-# Run tests of one module: test/run crashdb
-# Run one test in one module:  test/run report.test_add_os_info
+# Run all tests: tests/run
+# Run tests of one module: tests/run crashdb
+# Run one test in one module:  tests/run report.test_add_os_info
 
 # Copyright (C) 2007 - 2012 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -25,7 +25,7 @@ mydir=`dirname "$0"`
 export LC_MESSAGES=C
 
 # Run against source tree when we are in the source directory
-if [ -d test -a -e setup.py ]; then
+if [ -d tests -a -e setup.py ]; then
     echo "Testing local source tree."
     export PATH=`pwd`/bin:$PATH
     export PYTHONPATH=`pwd`
@@ -39,7 +39,7 @@ if [ -d test -a -e setup.py ]; then
         # . catches all *.py modules; we explicitly need to specify the programs
         $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect,REThread.py .  `find bin data gtk kde -type f -executable`
         # those tests deliberately have trailing whitespace in test files, ignore
-        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W291,W293 test/test_problem_report.py
+        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W291,W293 tests/test_problem_report.py
         # has_key is minidom API, not the dict operator here
         $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W601 apport/report.py
         # need the bare except to catch the dialog being closed
@@ -57,7 +57,7 @@ if [ -d test -a -e setup.py ]; then
     fi
 
     # assert that there are no hardcoded "Ubuntu" names
-    out=$(grep -rw Ubuntu test/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
+    out=$(grep -rw Ubuntu tests/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
     if [ -n "$out" ]; then
         echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
         exit 1

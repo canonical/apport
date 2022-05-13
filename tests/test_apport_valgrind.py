@@ -42,7 +42,7 @@ class T(unittest.TestCase):
         (ret, out, err) = self._call(cmd)
         self.assertEqual(err, "")
         self.assertEqual(ret, 0)
-        self.assertIn("test", out)
+        self.assertIn("tests", out)
 
     def _call(self, argv):
         p = subprocess.Popen(
