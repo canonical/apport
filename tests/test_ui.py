@@ -140,13 +140,16 @@ class T(unittest.TestCase):
             except KeyError:
                 pass
 
+        self.workdir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
-        apport.fileutils.report_dir = tempfile.mkdtemp()
+        apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
+        os.mkdir(apport.fileutils.report_dir)
         self.orig_symptom_script_dir = apport.ui.symptom_script_dir
-        apport.ui.symptom_script_dir = tempfile.mkdtemp()
+        apport.ui.symptom_script_dir = os.path.join(self.workdir, "symptoms")
+        os.mkdir(apport.ui.symptom_script_dir)
         self.orig_ignore_file = apport.report._ignore_file
-        (fd, apport.report._ignore_file) = tempfile.mkstemp()
-        os.close(fd)
+        apport.report._ignore_file = os.path.join(self.workdir, "apport-ignore.xml")
+        os.mknod(apport.report._ignore_file)
 
         # need to do this to not break ui's ctor
         self.orig_argv = sys.argv
@@ -166,7 +169,8 @@ class T(unittest.TestCase):
         self.update_report_file()
 
         # set up our local hook directory
-        self.hookdir = tempfile.mkdtemp()
+        self.hookdir = os.path.join(self.workdir, "package-hooks")
+        os.mkdir(self.hookdir)
         self.orig_hook_dir = apport.report._hook_dir
         apport.report._hook_dir = self.hookdir
 
@@ -182,10 +186,8 @@ class T(unittest.TestCase):
 
     def tearDown(self):
         sys.argv = self.orig_argv
-        shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
         self.orig_report_dir = None
-        shutil.rmtree(apport.ui.symptom_script_dir)
         apport.ui.symptom_script_dir = self.orig_symptom_script_dir
         self.orig_symptom_script_dir = None
 
@@ -204,8 +206,8 @@ class T(unittest.TestCase):
             except OSError:
                 pass
 
-        shutil.rmtree(self.hookdir)
         apport.report._hook_dir = self.orig_hook_dir
+        shutil.rmtree(self.workdir)
 
     def _run_test_executable(self, exename=None):
         if not exename:
