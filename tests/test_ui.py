@@ -1,7 +1,7 @@
 # coding: UTF-8
 import locale
 import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
-import subprocess, errno, glob
+import errno, glob
 from io import BytesIO, StringIO
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
@@ -12,6 +12,8 @@ import apport.report
 import problem_report
 import apport.crashdb_impl.memory
 import stat
+
+from tests.helper import pidof
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
@@ -193,7 +195,7 @@ class T(unittest.TestCase):
         self.ui = None
         self.report_file.close()
 
-        self.assertEqual(subprocess.call(['pidof', self.TEST_EXECUTABLE]), 1, 'no stray test processes')
+        self.assertEqual(pidof(self.TEST_EXECUTABLE), set(), 'no stray test processes')
 
         # clean up apport report from _gen_test_crash()
         for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):

@@ -11,6 +11,8 @@ import tempfile, shutil, os, subprocess, signal, time, stat, sys
 import resource, errno, grp, unittest, socket, array, pwd
 import apport.fileutils
 
+from tests.helper import pidof
+
 test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
 test_source = 'coreutils'
@@ -658,17 +660,14 @@ CoreDump: base64
                                  args=['-t', '-q', '--slice=system.slice',
                                        '-p', 'ProtectSystem=true',
                                        '/usr/bin/yes'])
-        yes_pid = int(subprocess.check_output(['pidof',
-                                               '/usr/bin/yes']).strip())
-        os.kill(yes_pid, signal.SIGSEGV)
+        yes_pids = pidof('/usr/bin/yes')
+        self.assertEqual(len(yes_pids), 1)
+        os.kill(yes_pids.pop(), signal.SIGSEGV)
 
         # wait max 10 seconds for apport to finish
         timeout = 50
         while timeout >= 0:
-            pidof = subprocess.Popen(['pidof', '-x', 'apport'],
-                                     stdout=subprocess.PIPE)
-            pidof.communicate()
-            if pidof.returncode != 0:
+            if not pidof('apport'):
                 break
             time.sleep(0.2)
             timeout -= 1
@@ -875,7 +874,7 @@ CoreDump: base64
         '''
         assert os.access(command, os.X_OK), command + ' is not executable'
         if check_running:
-            assert subprocess.call(['pidof', command]) == 1, 'no running test executable processes'
+            assert pidof(command) == set(), 'no running test executable processes'
         pid = os.fork()
         if pid == 0:
             if uid is not None:
@@ -965,15 +964,13 @@ CoreDump: base64
         # wait max 10 seconds for apport to finish
         timeout = 50
         while timeout >= 0:
-            pidof = subprocess.Popen(['pidof', '-x', 'apport'], stdout=subprocess.PIPE)
-            pidof.communicate()
-            if pidof.returncode != 0:
+            if not pidof('apport'):
                 break
             time.sleep(0.2)
             timeout -= 1
         self.assertGreater(timeout, 0)
         if check_running:
-            self.assertEqual(subprocess.call(['pidof', command]), 1,
+            self.assertEqual(pidof(command), set(),
                              'no running test executable processes')
 
         if core_location:
