@@ -686,7 +686,6 @@ bOgUs=
     def test_run_report_bug_kernel_thread(self):
         '''run_report_bug() for a pid of a kernel thread'''
 
-        pid = None
         for path in glob.glob('/proc/[0-9]*/stat'):
             with open(path) as f:
                 stat = f.read().split()
@@ -694,8 +693,9 @@ bOgUs=
             if flags & apport.ui.PF_KTHREAD:
                 pid = int(stat[0])
                 break
+        else:
+            self.skipTest("no kernel thread found")
 
-        self.assertFalse(pid is None)
         sys.argv = ['ui-test', '-f', '-P', str(pid)]
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
