@@ -50,12 +50,7 @@ do_start()
 		rm -f /var/lib/pm-utils/resume-hang.log
 	fi
 
-	# Old compatibility mode, switch later to second one
-	if true; then
-		echo "|$AGENT %p %s %c %d %P %E" > /proc/sys/kernel/core_pattern
-	else
-		echo "|$AGENT -p%p -s%s -c%c -d%d -P%P -E%E" > /proc/sys/kernel/core_pattern
-	fi
+	echo "|$AGENT -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E" > /proc/sys/kernel/core_pattern
 	echo 2 > /proc/sys/fs/suid_dumpable
 	echo 10 > /proc/sys/kernel/core_pipe_limit
 }

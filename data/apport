@@ -435,37 +435,45 @@ def parse_arguments():
     parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
     parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
     parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
-    parser.add_argument("-P", "--global-pid", nargs='?', help="pid in root namespace (%%P)")
-    parser.add_argument("-E", "--executable-path", nargs='?', help="path of executable (%%E)")
+    parser.add_argument("-P", "--global-pid", help="pid in root namespace (%%P)")
+    parser.add_argument("-u", "--uid", type=int, help="real UID (%%u)")
+    parser.add_argument("-g", "--gid", type=int, help="real GID (%%g)")
+    parser.add_argument("executable_path", nargs='*', help="path of executable (%%E)")
 
     options, rest = parser.parse_known_args()
 
-    if options.pid is not None:
-        for arg in rest:
-            error_log("Unknown argument: %s" % arg)
-
-    elif len(rest) in (4, 5, 6, 7):
+    # Legacy command line needs to remain for the scenario where a more
+    # recent apport is running inside a container with an older apport
+    # running on the host.
+    if options.pid is None and len(sys.argv) == 5:
         # Translate legacy command line
-        options.pid = rest[0]
-        options.signal_number = rest[1]
-        options.core_ulimit = rest[2]
-        options.dump_mode = rest[3]
-        try:
-            options.global_pid = rest[4]
-        except IndexError:
-            options.global_pid = None
-        try:
-            options.executable_path = rest[5].replace('!', '/')
-        except IndexError:
-            options.executable_path = None
-        try:
-            if rest[6] == '(deleted)':
-                options.executable_path += ' %s' % rest[6]
-        except IndexError:
-            pass
-    else:
+        return argparse.Namespace(
+            pid=sys.argv[1],
+            signal_number=sys.argv[2],
+            core_ulimit=sys.argv[3],
+            dump_mode=sys.argv[4],
+            global_pid=None,
+            uid=None,
+            gid=None,
+            executable_path=None,
+        )
+
+    if options.pid is None:
         parser.print_usage()
         sys.exit(1)
+
+    for arg in rest:
+        error_log("Unknown argument: %s" % arg)
+
+    # In kernels before 5.3.0, an executable path with spaces may be split
+    # into separate arguments. If options.executable_path is a list, join
+    # it back into a string. Also restore directory separators.
+    if isinstance(options.executable_path, list):
+        options.executable_path = " ".join(options.executable_path)
+    options.executable_path = options.executable_path.replace('!', '/')
+    # Sanity check to prevent trickery later on
+    if '../' in options.executable_path:
+        options.executable_path = None
 
     return options
 
@@ -589,8 +597,12 @@ if options.global_pid is not None:
                       options.global_pid)
             sys.exit(0)
 
-        # Send all arguments except for the first (exec path) and last (global pid)
-        args = ' '.join(sys.argv[1:5])
+        # Send main arguments only
+        # Older apport in containers doesn't support positional arguments
+        args = "%s %s %s %s" % (options.pid,
+                                options.signal_number,
+                                options.core_ulimit,
+                                options.dump_mode)
         try:
             sock.sendmsg([args.encode()], [
                 # Send a ucred containing the global pid
@@ -630,14 +642,28 @@ try:
 
     get_pid_info(pid)
 
-    # Check if the process was replaced after the crash happened.
-    # Ideally we'd use the time of dump value provided by the kernel,
-    # but this would be a backwards-incompatible change that would
-    # require adding support to apport outside and inside of containers.
+    # Sanity check to make sure the process wasn't replaced after the crash
+    # happened. The start time isn't fine-grained enough to be an adequate
+    # security check.
     apport_start = get_apport_starttime()
     process_start = get_process_starttime()
     if process_start > apport_start:
         error_log('process was replaced after Apport started, ignoring')
+        sys.exit(0)
+
+    # Make sure the process uid/gid match the ones provided by the kernel
+    # if available, if not, it may have been replaced
+    if (options.uid is not None) and (options.gid is not None):
+        if (options.uid != crash_uid) or (options.gid != crash_gid):
+            error_log("process uid/gid doesn't match expected, ignoring")
+            sys.exit(0)
+
+    # check if the executable was modified after the process started (e. g.
+    # package got upgraded in between).
+    exe_mtime = os.stat('exe', dir_fd=proc_pid_fd).st_mtime
+    process_mtime = os.lstat('cmdline', dir_fd=proc_pid_fd).st_mtime
+    if not os.path.exists(os.readlink('exe', dir_fd=proc_pid_fd)) or exe_mtime > process_mtime:
+        error_log('executable was modified after program start, ignoring')
         sys.exit(0)
 
     error_log('called for pid %s, signal %s, core limit %s, dump mode %s' % (pid, signum, core_ulimit, dump_mode))
@@ -663,14 +689,6 @@ try:
         write_user_coredump(pid, process_start, core_ulimit)
         sys.exit(0)
 
-    # check if the executable was modified after the process started (e. g.
-    # package got upgraded in between)
-    exe_mtime = os.stat('exe', dir_fd=proc_pid_fd).st_mtime
-    process_mtime = os.lstat('cmdline', dir_fd=proc_pid_fd).st_mtime
-    if not os.path.exists(os.readlink('exe', dir_fd=proc_pid_fd)) or exe_mtime > process_mtime:
-        error_log('executable was modified after program start, ignoring')
-        sys.exit(0)
-
     info = apport.Report('Crash')
     info['Signal'] = signum
     core_size_limit = usable_ram() * 3 / 4
@@ -679,7 +697,6 @@ try:
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
-
     if options.executable_path is not None and os.path.exists(options.executable_path):
         info['ExecutablePath'] = options.executable_path
 
