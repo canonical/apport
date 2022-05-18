@@ -374,6 +374,22 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
         f.close()
 
+    def test_get_dbus_socket(self):
+        '''get_dbus_socket()'''
+
+        tests = [("unix:path=/run/user/1000/bus", "/run/user/1000/bus"),
+                 ("unix:path=/run/user/1000/bus;unix:path=/run/user/0/bus", None),
+                 ("unix:path=%2Frun/user/1000/bus", None),
+                 ("unix:path=/run/user/1000/bus,path=/run/user/0/bus", None),
+                 ("unix:path=/etc/passwd", None),
+                 ("unix:path=/run/user/../../etc/passwd", None),
+                 ("unix:path=/run/user/1000/bus=", None),
+                 ("", None),
+                 ("tcp:host=localhost,port=8100", None)]
+
+        for (addr, result) in tests:
+            self.assertEqual(apport.fileutils.get_dbus_socket(addr), result)
+
     def test_shared_libraries(self):
         '''shared_libraries()'''
 

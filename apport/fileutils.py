@@ -57,6 +57,33 @@ def allowed_to_report():
         return False
 
 
+def get_dbus_socket(dbus_addr):
+    '''Extract the socket from a DBus address.'''
+
+    if not dbus_addr:
+        return None
+
+    # Only support unix domain sockets, and only the default Ubuntu path
+    if not dbus_addr.startswith("unix:path=/run/user/"):
+        return None
+
+    # Prevent path traversal
+    if "../" in dbus_addr:
+        return None
+
+    # Don't support escaped values, multiple addresses, or multiple keys
+    # and values
+    for search in ["%", ",", ";"]:
+        if search in dbus_addr:
+            return None
+
+    parts = dbus_addr.split("=")
+    if len(parts) != 2:
+        return None
+
+    return parts[1]
+
+
 def find_package_desktopfile(package):
     '''Return a package's .desktop file.
 

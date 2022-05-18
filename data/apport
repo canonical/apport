@@ -313,6 +313,10 @@ def is_closing_session():
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     '''
+    # Sanity check, don't do anything for root processes
+    if crash_uid == 0 or crash_gid == 0:
+        return False
+
     with open('environ', 'rb', opener=proc_pid_opener) as e:
         env = e.read().split(b'\0')
     for e in env:
@@ -321,6 +325,15 @@ def is_closing_session():
             break
     else:
         error_log('is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment')
+        return False
+
+    dbus_socket = apport.fileutils.get_dbus_socket(dbus_addr)
+    if not dbus_socket:
+        error_log('is_closing_session(): Could not determine DBUS socket.')
+        return False
+
+    if not os.path.exists(dbus_socket):
+        error_log("is_closing_session(): DBUS socket doesn't exist.")
         return False
 
     # We need to drop both the real and effective uid/gid before calling
