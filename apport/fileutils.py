@@ -550,7 +550,7 @@ def clean_core_directory(uid):
     uid_files = find_core_files_by_uid(uid)
     sorted_files = sorted(uid_files, key=itemgetter(1))
 
-    # Substract a extra one to make room for the new core file
+    # Subtract a extra one to make room for the new core file
     if len(uid_files) > max_corefiles_per_uid - 1:
         for x in range(len(uid_files) - max_corefiles_per_uid + 1):
             os.remove(os.path.join(core_dir, sorted_files[0][0]))
