@@ -191,6 +191,54 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file_if_exists(report, '/etc/../etc/passwd')
         self.assertEqual(list(report), [])
 
+    @unittest.mock.patch("subprocess.Popen")
+    @unittest.mock.patch(
+        "os.path.exists", unittest.mock.MagicMock(return_value=True)
+    )
+    def test_attach_journal_errors_with_date(self, popen_mock):
+        popen_mock.return_value.returncode = 0
+        popen_mock.return_value.communicate.return_value = (
+            b"journalctl output",
+            b"",
+        )
+
+        report = apport.Report(date="Wed May 18 18:31:08 2022")
+        apport.hookutils.attach_journal_errors(report)
+
+        self.assertEqual(popen_mock.call_count, 1)
+        self.assertEqual(report.get("JournalErrors"), "journalctl output")
+        self.assertEqual(
+            popen_mock.call_args[0][0],
+            [
+                "journalctl",
+                "--priority=warning",
+                "--since=2022-05-18 18:30:58",
+                "--until=2022-05-18 18:31:18",
+            ],
+        )
+
+    @unittest.mock.patch("subprocess.Popen")
+    @unittest.mock.patch(
+        "os.path.exists", unittest.mock.MagicMock(return_value=True)
+    )
+    def test_attach_journal_errors_without_date(self, popen_mock):
+        popen_mock.return_value.returncode = 0
+        popen_mock.return_value.communicate.return_value = (
+            b"journalctl output",
+            b"",
+        )
+
+        report = apport.Report()
+        del report["Date"]
+        apport.hookutils.attach_journal_errors(report)
+
+        self.assertEqual(popen_mock.call_count, 1)
+        self.assertEqual(report.get("JournalErrors"), "journalctl output")
+        self.assertEqual(
+            popen_mock.call_args[0][0],
+            ["journalctl", "--priority=warning", "-b", "--lines=1000"],
+        )
+
     def test_path_to_key(self):
         '''transforming a file path to a valid report key'''
 

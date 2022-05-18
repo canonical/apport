@@ -88,9 +88,7 @@ Do you want to continue the report process anyway?
 
     # log errors
     if report['ProblemType'] == 'Crash':
-        if os.path.exists('/run/systemd/system'):
-            report['JournalErrors'] = apport.hookutils.command_output(
-                ['journalctl', '-b', '--priority=warning', '--lines=1000'])
+        apport.hookutils.attach_journal_errors(report)
 
 
 if __name__ == '__main__':

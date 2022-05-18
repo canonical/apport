@@ -725,6 +725,29 @@ def attach_gsettings_package(report, package):
         attach_gsettings_schema(report, schema)
 
 
+def attach_journal_errors(report, time_window=10) -> None:
+    '''Attach journal warnings and errors.
+
+    If the report contains a date, get the journal logs around that
+    date (plus/minus the time_window in seconds). Otherwise attach the
+    latest 1000 journal logs since the last boot.
+    '''
+
+    if not os.path.exists('/run/systemd/system'):
+        return
+
+    crash_time = report.get_date()
+    if crash_time:
+        before_crash = crash_time - datetime.timedelta(seconds=time_window)
+        after_crash = crash_time + datetime.timedelta(seconds=time_window)
+        args = [f'--since={before_crash}', f'--until={after_crash}']
+    else:
+        args = ['-b', '--lines=1000']
+    report['JournalErrors'] = command_output(
+        ['journalctl', '--priority=warning'] + args
+    )
+
+
 def attach_network(report):
     '''Attach generic network-related information to report.'''
 
