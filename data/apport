@@ -771,7 +771,7 @@ try:
                 # os.O_CREAT|os.O_EXCL
                 os.unlink(report)
             else:
-                error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
+                error_log('apport: report %s already exists and unseen, skipping to avoid disk usage DoS' % report)
                 write_user_coredump(pid, process_start, core_ulimit)
                 sys.exit(0)
         # we prefer having a file mode of 0 while writing;
