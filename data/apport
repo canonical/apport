@@ -202,7 +202,8 @@ def write_user_coredump(pid, timestamp, limit, from_report=None):
     (core_name, core_path) = apport.fileutils.get_core_path(pid,
                                                             options.executable_path,
                                                             crash_uid,
-                                                            timestamp)
+                                                            timestamp,
+                                                            proc_pid_fd)
 
     try:
         # Limit number of core files to prevent DoS

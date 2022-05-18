@@ -440,7 +440,18 @@ def get_boot_id():
     return boot_id
 
 
-def get_core_path(pid=None, exe=None, uid=None, timestamp=None):
+def get_process_path(proc_pid_fd=None):
+    '''Gets the process path from a proc directory file descriptor'''
+
+    if proc_pid_fd is None:
+        return 'unknown'
+    try:
+        return os.readlink('exe', dir_fd=proc_pid_fd)
+    except OSError:
+        return 'unknown'
+
+
+def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None):
     '''Get the path to a core file'''
 
     if pid is None:
@@ -453,9 +464,8 @@ def get_core_path(pid=None, exe=None, uid=None, timestamp=None):
             timestamp = get_starttime(stat_contents)
 
     if exe is None:
-        exe = 'unknown'
-    else:
-        exe = exe.replace('/', '_').replace('.', '_')
+        exe = get_process_path(proc_pid_fd)
+    exe = exe.replace('/', '_').replace('.', '_')
 
     if uid is None:
         uid = os.getuid()
