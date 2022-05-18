@@ -372,6 +372,14 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertEqual(apport.fileutils.get_config('spethial', 'nope', 'moo'), 'moo')
         apport.fileutils.get_config.config = None  # trash cache
 
+        # interpolation
+        f.write(b'[inter]\none=1\ntwo = TWO\ntest = %(two)s\n')
+        f.flush()
+        self.assertEqual(apport.fileutils.get_config('inter', 'one'), '1')
+        self.assertEqual(apport.fileutils.get_config('inter', 'two'), 'TWO')
+        self.assertEqual(apport.fileutils.get_config('inter', 'test'), '%(two)s')
+        apport.fileutils.get_config.config = None  # trash cache
+
         f.close()
 
     def test_get_dbus_socket(self):

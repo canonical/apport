@@ -397,7 +397,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
     fd = None
     f = None
     if not get_config.config:
-        get_config.config = ConfigParser()
+        get_config.config = ConfigParser(interpolation=None)
 
         try:
             fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
