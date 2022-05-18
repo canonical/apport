@@ -200,7 +200,7 @@ def write_user_coredump(pid, timestamp, limit, from_report=None):
         return
 
     (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                            options.exe_path,
+                                                            options.executable_path,
                                                             crash_uid,
                                                             timestamp)
 
@@ -404,12 +404,12 @@ def parse_arguments():
         except IndexError:
             options.global_pid = None
         try:
-            options.exe_path = rest[5].replace('!', '/')
+            options.executable_path = rest[5].replace('!', '/')
         except IndexError:
-            options.exe_path = None
+            options.executable_path = None
         try:
             if rest[6] == '(deleted)':
-                options.exe_path += ' %s' % rest[6]
+                options.executable_path += ' %s' % rest[6]
         except IndexError:
             pass
     else:
@@ -648,8 +648,8 @@ try:
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
 
-    if options.exe_path is not None and os.path.exists(options.exe_path):
-        info['ExecutablePath'] = options.exe_path
+    if options.executable_path is not None and os.path.exists(options.executable_path):
+        info['ExecutablePath'] = options.executable_path
 
     # Drop privileges temporarily to make sure that we don't
     # include information in the crash report that the user should
