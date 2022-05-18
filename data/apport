@@ -536,15 +536,28 @@ if options.global_pid is not None:
 
         # Instead, attempt to find apport inside the container and
         # forward the process information there.
-        if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
-            error_log('host pid %s crashed in a container without apport support' %
-                      options.global_pid)
-            sys.exit(0)
 
         proc_host_pid_fd = os.open('/proc/%d' % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
 
         def proc_host_pid_opener(path, flags):
             return os.open(path, flags, dir_fd=proc_host_pid_fd)
+
+        # Validate that the target socket is owned by the user namespace of the process
+        try:
+            sock_fd = os.open("root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_host_pid_fd)
+            socket_uid = os.fstat(sock_fd).st_uid
+        except FileNotFoundError:
+            error_log('host pid %s crashed in a container without apport support' %
+                      options.global_pid)
+            sys.exit(0)
+
+        try:
+            with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                if not apport.fileutils.search_map(fd, socket_uid):
+                    error_log("user is trying to trick apport into accessing a socket that doesn't belong to the container")
+                    sys.exit(0)
+        except FileNotFoundError:
+            pass
 
         # Validate that the crashed binary is owned by the user namespace of the process
         task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
@@ -567,20 +580,10 @@ if options.global_pid is not None:
         except FileNotFoundError:
             pass
 
-        # Chdir and chroot to the task
-        # WARNING: After this point, all "import" calls are security issues
-        __builtins__.__dict__['__import__'] = None
-
-        host_cwd = os.open('cwd', os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_host_pid_fd)
-
-        os.chdir(host_cwd)
-        # WARNING: we really should be using a file descriptor here,
-        #          but os.chroot won't take it
-        os.chroot(os.readlink('root', dir_fd=proc_host_pid_fd))
-
+        # Now open the socket
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
-            sock.connect('/run/apport.socket')
+            sock.connect('/proc/self/fd/%s' % sock_fd)
         except Exception:
             error_log('host pid %s crashed in a container with a broken apport' %
                       options.global_pid)
@@ -596,7 +599,7 @@ if options.global_pid is not None:
                 # Send fd 0 (the coredump)
                 (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [0]))])
             sock.shutdown(socket.SHUT_RDWR)
-        except socket.timeout:
+        except Exception:
             error_log('Container apport failed to process crash within 30s')
 
         sys.exit(0)
