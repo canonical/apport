@@ -92,7 +92,7 @@ failed=0
 
 # check command line whether to only run a subset of tests
 if [ -z "$1" ]; then
-    TESTS=$(ls $mydir/*.py | cut -f2- -d_ | cut -f1 -d.)
+    TESTS=$(ls $mydir/test_*.py | cut -f2- -d_ | cut -f1 -d.)
 else
     while [ -n "$1" ]; do
         if [ -e "$mydir/test_${1%%.*}.py" ]; then
