@@ -12,6 +12,8 @@
 # the full text of the license.
 
 import zlib, base64, time, gzip, struct, os
+import datetime
+import typing
 from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -260,6 +262,12 @@ class ProblemReport(UserDict):
         if False in b64_block.values():
             raise ValueError('%s has no binary content' %
                              [item for item, element in b64_block.items() if element is False])
+
+    def get_date(self) -> typing.Optional[datetime.datetime]:
+        '''Return crash date as datetime object.'''
+        if 'Date' not in self:
+            return None
+        return datetime.datetime.strptime(self['Date'], '%a %b %d %H:%M:%S %Y')
 
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.

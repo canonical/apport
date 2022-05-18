@@ -1,4 +1,5 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
+import datetime
 import locale
 import unittest, tempfile, os, shutil, email, gzip, time
 
@@ -46,6 +47,17 @@ class T(unittest.TestCase):
         self.assertEqual(pr['ProblemType'], 'KernelCrash')
         pr = problem_report.ProblemReport(date='19801224 12:34')
         self.assertEqual(pr['Date'], '19801224 12:34')
+
+    def test_get_date(self):
+        '''get_date() returns date.'''
+        pr = problem_report.ProblemReport(date='Wed May 18 09:49:57 2022')
+        self.assertEqual(pr.get_date(), datetime.datetime(2022, 5, 18, 9, 49, 57))
+
+    def test_get_date_returns_none(self):
+        '''get_date() returns None.'''
+        pr = problem_report.ProblemReport()
+        del pr['Date']
+        self.assertEqual(pr.get_date(), None)
 
     def test_sanity_checks(self):
         '''various error conditions.'''
