@@ -270,6 +270,43 @@ def usable_ram():
     return (memfree + cached - writeback) * 1024
 
 
+def _run_with_output_limit_and_timeout(args, output_limit, timeout, close_fds=True, env=None):
+    '''Run command like subprocess.run() but with output limit and timeout.
+
+    Return (stdout, stderr).'''
+
+    stdout = b""
+    stderr = b""
+
+    process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               close_fds=close_fds, env=env)
+    try:
+        # Don't block so we don't deadlock
+        os.set_blocking(process.stdout.fileno(), False)
+        os.set_blocking(process.stderr.fileno(), False)
+
+        for _ in range(timeout):
+            alive = process.poll() is None
+
+            while len(stdout) < output_limit and len(stderr) < output_limit:
+                tempout = process.stdout.read(100)
+                if tempout:
+                    stdout += tempout
+                temperr = process.stderr.read(100)
+                if temperr:
+                    stderr += temperr
+                if not tempout and not temperr:
+                    break
+
+            if not alive or len(stdout) >= output_limit or len(stderr) >= output_limit:
+                break
+            time.sleep(1)
+    finally:
+        process.kill()
+
+    return stdout, stderr
+
+
 def is_closing_session():
     '''Check if pid is in a closing user session.
 
@@ -298,11 +335,11 @@ def is_closing_session():
     try:
         os.setresgid(crash_gid, crash_gid, real_gid)
         os.setresuid(crash_uid, crash_uid, real_uid)
-        gdbus = subprocess.Popen(['/usr/bin/gdbus', 'call', '-e', '-d',
-                                  'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
-                                  'org.gnome.SessionManager.IsSessionRunning'], stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, env={'DBUS_SESSION_BUS_ADDRESS': dbus_addr})
-        (out, err) = gdbus.communicate()
+        out, err = _run_with_output_limit_and_timeout(['/usr/bin/gdbus', 'call', '-e', '-d',
+                                                       'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
+                                                       'org.gnome.SessionManager.IsSessionRunning', '-t', '5'],
+                                                      1000, 5, env={'DBUS_SESSION_BUS_ADDRESS': dbus_addr})
+
         if err:
             error_log('gdbus call error: ' + err.decode('UTF-8'))
     except OSError as e:
