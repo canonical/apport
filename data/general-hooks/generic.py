@@ -31,7 +31,10 @@ def add_info(report, ui):
     treshold = 50
 
     for mount in mounts:
-        st = os.statvfs(mount)
+        try:
+            st = os.statvfs(mount)
+        except FileNotFoundError:
+            continue
         free_mb = st.f_bavail * st.f_frsize / 1000000
 
         if free_mb < treshold:
