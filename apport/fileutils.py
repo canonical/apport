@@ -459,6 +459,22 @@ def get_uid_and_gid(contents):
     return (real_uid, real_gid)
 
 
+def search_map(mapfd, uid):
+    '''Search for an ID in a map fd'''
+    for line in mapfd:
+        fields = line.split()
+        if len(fields) != 3:
+            continue
+
+        host_start = int(fields[1])
+        host_end = host_start + int(fields[2])
+
+        if uid >= host_start and uid <= host_end:
+            return True
+
+    return False
+
+
 def get_boot_id():
     '''Gets the kernel boot id'''
 

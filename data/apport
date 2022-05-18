@@ -550,18 +550,7 @@ if options.global_pid is not None:
         task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
         try:
             with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
-                for line in fd:
-                    fields = line.split()
-                    if len(fields) != 3:
-                        continue
-
-                    host_start = int(fields[1])
-                    host_end = host_start + int(fields[2])
-
-                    if task_uid >= host_start and task_uid <= host_end:
-                        break
-
-                else:
+                if not apport.fileutils.search_map(fd, task_uid):
                     error_log("host pid %s crashed in a container with no access to the binary"
                               % options.global_pid)
                     sys.exit(0)
@@ -571,18 +560,7 @@ if options.global_pid is not None:
         task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
         try:
             with open("gid_map", "r", opener=proc_host_pid_opener) as fd:
-                for line in fd:
-                    fields = line.split()
-                    if len(fields) != 3:
-                        continue
-
-                    host_start = int(fields[1])
-                    host_end = host_start + int(fields[2])
-
-                    if task_gid >= host_start and task_gid <= host_end:
-                        break
-
-                else:
+                if not apport.fileutils.search_map(fd, task_gid):
                     error_log("host pid %s crashed in a container with no access to the binary"
                               % options.global_pid)
                     sys.exit(0)
