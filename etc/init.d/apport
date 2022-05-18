@@ -57,6 +57,7 @@ do_start()
 		echo "|$AGENT -p%p -s%s -c%c -d%d -P%P -E%E" > /proc/sys/kernel/core_pattern
 	fi
 	echo 2 > /proc/sys/fs/suid_dumpable
+	echo 10 > /proc/sys/kernel/core_pipe_limit
 }
 
 #
@@ -70,6 +71,7 @@ do_stop()
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
 
+	echo 0 > /proc/sys/kernel/core_pipe_limit
 	echo 0 > /proc/sys/fs/suid_dumpable
 
 	# Check for a hung resume.  If we find one try and grab everything
