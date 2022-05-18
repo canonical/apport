@@ -527,6 +527,7 @@ def find_core_files_by_uid(uid):
     '''Searches the core file directory for files that belong to a
        specified uid. Returns a list of lists containing the filename and
        the file modification time.'''
+    uid = str(uid)
     core_files = []
     uid_files = []
 
@@ -535,7 +536,7 @@ def find_core_files_by_uid(uid):
 
     for f in core_files:
         try:
-            if f.split('.')[2] == str(uid):
+            if f.split('.')[2] == uid:
                 time = os.path.getmtime(os.path.join(core_dir, f))
                 uid_files.append([f, time])
         except (IndexError, FileNotFoundError):
