@@ -74,6 +74,8 @@ class T(unittest.TestCase):
             for desktop_file in apport.packaging.get_files(pkg):
                 if not desktop_file.endswith('.desktop'):
                     continue
+                if desktop_file.startswith('/usr/share/mimelnk'):
+                    continue
                 with open(desktop_file, 'rb') as desktop_file:
                     if b'NoDisplay=true' in desktop_file.read():
                         no_display_num += 1
