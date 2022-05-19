@@ -16,13 +16,17 @@ class T(unittest.TestCase):
     def setUp(self):
         # save and restore configuration file
         self.orig_conf = impl.configuration
+        self.orig_environ = os.environ.copy()
         self.workdir = tempfile.mkdtemp()
+        os.environ["HOME"] = self.workdir
         # reset internal caches between tests
         impl._apt_cache = None
         impl._sandbox_apt_cache = None
 
     def tearDown(self):
         impl.configuration = self.orig_conf
+        os.environ.clear()
+        os.environ.update(self.orig_environ)
         shutil.rmtree(self.workdir)
 
     def test_check_files_md5(self):
