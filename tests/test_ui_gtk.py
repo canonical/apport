@@ -569,6 +569,7 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
     @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
     @patch('apport.report.Report.add_gdb_info')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
@@ -613,6 +614,7 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
     @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
     @patch('apport.report.Report.add_gdb_info')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_crash_details(self, *args):
         '''Crash report with showing details'''
 
@@ -666,6 +668,7 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'open_url')
     @patch.object(GTKUserInterface, 'ui_start_upload_progress')
     @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_broken_crash_details(self, *args):
         '''Broken crash report with showing details'''
 
@@ -724,6 +727,7 @@ Type=Application''')
         self.assertIn('decompressing', self.error_text)
 
     @patch.object(GTKUserInterface, 'open_url')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_crash_noaccept(self, *args):
         '''Crash report with non-accepting crash DB'''
 
@@ -760,6 +764,7 @@ Type=Application''')
         self.assertTrue('libc' in r['Dependencies'])
 
     @patch.object(GTKUserInterface, 'open_url')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_kerneloops_nodetails(self, *args):
         '''Kernel oops report without showing details'''
 
