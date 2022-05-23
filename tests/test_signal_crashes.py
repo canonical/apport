@@ -1016,7 +1016,7 @@ CoreDump: base64
                         r.get('Stacktrace', 'no Stacktrace field'))
 
     def wait_for_apport_to_finish(self, timeout_sec=10.0):
-        self.wait_for_no_instance_running('apport', timeout_sec)
+        self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
     def wait_for_no_instance_running(self, program, timeout_sec=10.0):
         while timeout_sec > 0:
