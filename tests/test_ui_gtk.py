@@ -21,7 +21,7 @@ import subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import GLib, Gtk
+from gi.repository import GLib, GObject, Gtk
 from importlib.machinery import SourceFileLoader
 from apport import unicode_gettext as _
 from unittest.mock import patch
@@ -821,9 +821,10 @@ Type=Application''')
         def c(*args):
             if Gtk.events_pending():
                 return True
-            if not self.app.w('dont_send_button').get_visible():
+            dont_send_button = self.app.w('dont_send_button')
+            if not self.has_click_event_connected(dont_send_button):
                 return True
-            self.app.w('dont_send_button').clicked()
+            dont_send_button.clicked()
             return False
 
         self.app.report_file = None
@@ -842,9 +843,10 @@ Type=Application''')
         def c(*args):
             if Gtk.events_pending():
                 return True
-            if not self.app.w('dont_send_button').get_visible():
+            dont_send_button = self.app.w('dont_send_button')
+            if not self.has_click_event_connected(dont_send_button):
                 return True
-            self.app.w('dont_send_button').clicked()
+            dont_send_button.clicked()
             return False
 
         pkg = apport.packaging.get_uninstalled_package()
@@ -1052,6 +1054,20 @@ Type=Application''')
         self.app.run_crash(self.app.report_file)
 
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
+
+    @staticmethod
+    def has_click_event_connected(widget):
+        signal_id = GObject.signal_lookup("clicked", widget)
+        signal_handler_id = GObject.signal_handler_find(
+            widget,
+            GObject.SignalMatchType.ID | GObject.SignalMatchType.UNBLOCKED,
+            signal_id,
+            0,
+            None,
+            0,
+            0,
+        )
+        return signal_handler_id != 0
 
 
 if __name__ == "__main__":
