@@ -40,6 +40,8 @@ GTKUserInterface = SourceFileLoader('', apport_gtk_path).load_module().GTKUserIn
 
 
 class T(unittest.TestCase):
+    POLLING_INTERVAL_MS = 10
+
     @classmethod
     def setUpClass(klass):
         r = apport.Report()
@@ -576,10 +578,12 @@ Type=Application''')
         self.visible_progress = None
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(200, check_progress)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
             return False
 
         def check_progress(*args):
@@ -587,7 +591,7 @@ Type=Application''')
                 'window_information_collection').get_property('visible')
             return False
 
-        GLib.timeout_add_seconds(60, cont)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
@@ -621,20 +625,24 @@ Type=Application''')
         self.visible_progress = None
 
         def show_details(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('show_details').get_visible():
                 return True
             self.app.w('show_details').clicked()
-            GLib.timeout_add(200, cont)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             # wait until data collection is done and tree filled
             if self.app.tree_model.get_iter_first() is None:
                 return True
 
             self.assertTrue(self.app.w('continue_button').get_visible())
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(200, check_progress)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
             return False
 
         def check_progress(*args):
@@ -642,7 +650,7 @@ Type=Application''')
                 'window_information_collection').get_property('visible')
             return False
 
-        GLib.timeout_add(200, show_details)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, show_details)
         self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
@@ -676,24 +684,30 @@ Type=Application''')
         self.error_text = None
 
         def show_details(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('show_details').get_visible():
                 return True
             self.app.w('show_details').clicked()
-            GLib.timeout_add(200, cont)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
 
         def cont(*args):
             # wait until data collection is done and tree filled
+            if Gtk.events_pending():
+                return True
             if self.app.tree_model.get_iter_first() is None:
                 return True
 
             self.assertTrue(self.app.w('continue_button').get_visible())
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(100, ack_error)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, ack_error)
             return False
 
         def ack_error(*args):
             # wait until error dialog gets visible
+            if Gtk.events_pending():
+                return True
             if not self.app.md:
                 return True
             self.error_title = self.app.md.get_title()
@@ -708,7 +722,7 @@ Type=Application''')
         with open(self.app.report_file, 'w') as f:
             f.write(''.join(lines))
         self.app.report = None
-        GLib.timeout_add(200, show_details)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, show_details)
         self.app.run_crash(self.app.report_file)
 
         # upload dialog not shown
@@ -734,10 +748,12 @@ Type=Application''')
         self.visible_progress = None
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(200, check_progress)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
             return False
 
         def check_progress(*args):
@@ -745,7 +761,7 @@ Type=Application''')
                 'window_information_collection').get_property('visible')
             return False
 
-        GLib.timeout_add_seconds(60, cont)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.crashdb.options['problem_types'] = ['bug']
         self.app.run_crash(self.app.report_file)
 
@@ -769,6 +785,8 @@ Type=Application''')
         '''Kernel oops report without showing details'''
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
@@ -780,7 +798,7 @@ Type=Application''')
         kernel_oops.communicate(b'Plasma conduit phase misalignment')
         self.assertEqual(kernel_oops.returncode, 0)
 
-        GLib.timeout_add_seconds(60, cont)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_crashes()
 
         # we should have reported one crash
@@ -801,6 +819,8 @@ Type=Application''')
         '''Bug report for installed package'''
 
         def c(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('dont_send_button').get_visible():
                 return True
             self.app.w('dont_send_button').clicked()
@@ -808,7 +828,7 @@ Type=Application''')
 
         self.app.report_file = None
         self.app.options.package = 'bash'
-        GLib.timeout_add_seconds(60, c)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')
@@ -820,6 +840,8 @@ Type=Application''')
         '''Bug report for uninstalled package'''
 
         def c(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('dont_send_button').get_visible():
                 return True
             self.app.w('dont_send_button').clicked()
@@ -828,7 +850,7 @@ Type=Application''')
         pkg = apport.packaging.get_uninstalled_package()
         self.app.report_file = None
         self.app.options.package = pkg
-        GLib.timeout_add_seconds(60, c)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')
@@ -843,6 +865,8 @@ Type=Application''')
         self.app.report_file = None
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             if self.app.tree_model.get_iter_first() is None:
                 return True
             self.app.w('continue_button').clicked()
@@ -854,7 +878,7 @@ Type=Application''')
         self.app.options.update_report = 0
         self.app.options.package = 'bash'
 
-        GLib.timeout_add(200, cont)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()
 
         # no new bug reported
@@ -876,6 +900,8 @@ Type=Application''')
         self.app.report_file = None
 
         def cont(*args):
+            if Gtk.events_pending():
+                return True
             if self.app.tree_model.get_iter_first() is None:
                 return True
             self.app.w('continue_button').clicked()
@@ -903,7 +929,7 @@ Type=Application''')
         self.app.options.update_report = 0
         self.app.options.package = kernel_src
 
-        GLib.timeout_add(200, cont)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()
 
         # no new bug reported
@@ -980,17 +1006,19 @@ Type=Application''')
         '''Non-ASCII title/text in dialogs'''
 
         def close(response):
+            if Gtk.events_pending():
+                return True
             if not self.app.md:
                 return True
             self.app.md.response(response)
             return False
 
         # unicode arguments
-        GLib.timeout_add(200, close, 0)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, close, 0)
         self.app.ui_info_message(b'title \xe2\x99\xaa'.decode('UTF-8'), b'text \xe2\x99\xaa'.decode('UTF-8'))
 
         # with URLs
-        GLib.timeout_add(200, close, 0)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, close, 0)
         self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa'.decode('UTF-8'))
 
     def test_immediate_close(self):
@@ -1006,17 +1034,21 @@ Type=Application''')
         '''Close details window during information collection'''
 
         def show_details(*args):
+            if Gtk.events_pending():
+                return True
             if not self.app.w('show_details').get_visible():
                 return True
             self.app.w('show_details').clicked()
-            GLib.timeout_add(200, close)
+            GLib.timeout_add(self.POLLING_INTERVAL_MS, close)
             return False
 
         def close(*args):
+            if Gtk.events_pending():
+                return True
             self.app.w('dialog_crash_new').destroy()
             return False
 
-        GLib.timeout_add(200, show_details)
+        GLib.timeout_add(self.POLLING_INTERVAL_MS, show_details)
         self.app.run_crash(self.app.report_file)
 
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
