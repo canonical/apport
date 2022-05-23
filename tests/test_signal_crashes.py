@@ -664,13 +664,7 @@ CoreDump: base64
         self.assertEqual(len(yes_pids), 1)
         os.kill(yes_pids.pop(), signal.SIGSEGV)
 
-        # wait max 10 seconds for apport to finish
-        timeout = 50
-        while timeout >= 0:
-            if not pidof('apport'):
-                break
-            time.sleep(0.2)
-            timeout -= 1
+        self.wait_for_apport_to_finish()
 
         # check crash report
         reports = apport.fileutils.get_all_reports()
@@ -961,14 +955,7 @@ CoreDump: base64
         self.assertEqual(os.WSTOPSIG(result), 0, 'test process was not signaled to stop')
         self.assertEqual(os.WTERMSIG(result), sig, 'test process died due to proper signal')
 
-        # wait max 10 seconds for apport to finish
-        timeout = 50
-        while timeout >= 0:
-            if not pidof('apport'):
-                break
-            time.sleep(0.2)
-            timeout -= 1
-        self.assertGreater(timeout, 0)
+        self.wait_for_apport_to_finish()
         if check_running:
             self.assertEqual(pidof(command), set(),
                              'no running test executable processes')
@@ -1027,6 +1014,18 @@ CoreDump: base64
         r.add_gdb_info()
         self.assertTrue('\n#2' in r.get('Stacktrace', ''),
                         r.get('Stacktrace', 'no Stacktrace field'))
+
+    def wait_for_apport_to_finish(self, timeout_sec=10.0):
+        self.wait_for_no_instance_running('apport', timeout_sec)
+
+    def wait_for_no_instance_running(self, program, timeout_sec=10.0):
+        while timeout_sec > 0:
+            if not pidof(program):
+                break
+            time.sleep(0.2)
+            timeout_sec -= 0.2
+        else:
+            self.fail(f"Timeout exceeded, but {program} is still running.")
 
 
 #
