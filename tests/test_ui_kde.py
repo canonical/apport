@@ -378,6 +378,7 @@ Type=Application''')
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
     @patch.object(MainUserInterface, 'open_url')
+    @patch('apport.report.Report.add_gdb_info')
     def test_1_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
@@ -409,12 +410,12 @@ Type=Application''')
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
     @patch.object(MainUserInterface, 'open_url')
+    @patch('apport.report.Report.add_gdb_info')
     def test_1_crash_details(self, *args):
         '''Crash report with showing details'''
 
@@ -461,12 +462,12 @@ Type=Application''')
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
     @patch.object(MainUserInterface, 'open_url')
+    @patch('apport.report.Report.add_gdb_info')
     def test_1_crash_noaccept(self, *args):
         '''Crash report with non-accepting crash DB'''
 
@@ -500,7 +501,6 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
-        self.assertTrue('Stacktrace' in r)
 
     def test_bug_report_installed_package(self):
         '''Bug report for installed package'''
