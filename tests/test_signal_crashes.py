@@ -930,7 +930,7 @@ CoreDump: base64
             kill.communicate()
             # need to clean up system state
             if command == '/usr/bin/crontab':
-                os.system('stty sane')
+                subprocess.call(['stty', 'sane'])
             if kill.returncode != 0:
                 self.fail("Couldn't kill process %s as user %s." %
                           (pid, user[0]))
@@ -952,6 +952,7 @@ CoreDump: base64
             subprocess.call(['sudo', '-s', '/bin/bash', '-c',
                              "/usr/bin/pkill -9 -f crontab",
                              '-u', 'mail'])
+            subprocess.call(['stty', 'sane'])
         self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
         self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
         self.assertEqual(os.WCOREDUMP(result), expect_coredump)
