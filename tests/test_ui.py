@@ -15,8 +15,9 @@ import apport.crashdb_impl.memory
 import stat
 
 from tests.helper import pidof
+from tests.paths import is_local_source_directory
 
-if os.environ.get('APPORT_TEST_LOCAL'):
+if is_local_source_directory():
     impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
 else:
     from apport.packaging_impl import impl

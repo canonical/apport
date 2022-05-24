@@ -11,6 +11,8 @@ import tempfile, unittest, subprocess, sys, os, os.path, shutil
 
 import apport, apport.fileutils
 
+from tests.paths import is_local_source_directory
+
 
 @unittest.skipIf(shutil.which('java') is None, 'Java not available')
 class T(unittest.TestCase):
@@ -23,7 +25,7 @@ class T(unittest.TestCase):
         os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
         os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
             datadir, 'java_uncaught_exception')
-        if os.environ.get('APPORT_TEST_LOCAL'):
+        if is_local_source_directory():
             self.crash_jar_path = os.path.join(self.srcdir, 'java', 'crash.jar')
             self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
         else:

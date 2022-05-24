@@ -1,8 +1,10 @@
-import unittest, imp, os
+import unittest, imp
 import shutil
 
+from tests.paths import is_local_source_directory
+
 try:
-    if os.environ.get('APPORT_TEST_LOCAL'):
+    if is_local_source_directory():
         impl = imp.load_source('', 'backends/packaging_rpm.py').impl
     else:
         from apport.packaging_impl import impl

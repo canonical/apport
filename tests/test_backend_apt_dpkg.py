@@ -4,8 +4,9 @@ from apt import apt_pkg
 from importlib.machinery import SourceFileLoader
 
 from tests.helper import has_internet
+from tests.paths import is_local_source_directory
 
-if os.environ.get('APPORT_TEST_LOCAL'):
+if is_local_source_directory():
     impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
 else:
     from apport.packaging_impl import impl

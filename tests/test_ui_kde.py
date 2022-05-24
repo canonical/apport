@@ -29,7 +29,9 @@ import apport
 from apport import unicode_gettext as _
 import apport.crashdb_impl.memory
 
-if os.environ.get('APPORT_TEST_LOCAL'):
+from tests.paths import is_local_source_directory
+
+if is_local_source_directory():
     apport_kde_path = 'kde/apport-kde'
 else:
     apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-kde')

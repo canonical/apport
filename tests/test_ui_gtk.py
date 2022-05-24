@@ -30,7 +30,9 @@ import apport.crashdb_impl.memory
 
 GLib.log_set_always_fatal(GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL)
 
-if os.environ.get('APPORT_TEST_LOCAL'):
+from tests.paths import is_local_source_directory
+
+if is_local_source_directory():
     apport_gtk_path = 'gtk/apport-gtk'
     kernel_oops_path = 'data/kernel_oops'
 else:
