@@ -413,21 +413,6 @@ class T(unittest.TestCase):
     @unittest.skipIf(apport.hookutils.apport.hookutils.in_session_of_problem(apport.Report()) is None, 'no logind session')
     def test_in_session_of_problem(self):
         '''in_session_of_problem()'''
-
-        old_ctime = locale.getlocale(locale.LC_TIME)
-        locale.setlocale(locale.LC_TIME, 'C')
-
-        report = {'Date': 'Sat Jan  1 12:00:00 2011'}
-        self.assertFalse(apport.hookutils.in_session_of_problem(report))
-
-        report = {'Date': 'Mon Oct 10 21:06:03 2009'}
-        self.assertFalse(apport.hookutils.in_session_of_problem(report))
-
-        report = {'Date': 'Tue Jan  1 12:00:00 2038'}
-        self.assertTrue(apport.hookutils.in_session_of_problem(report))
-
-        locale.setlocale(locale.LC_TIME, '')
-
         report = {'Date': 'Sat Jan  1 12:00:00 2011'}
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
@@ -439,7 +424,20 @@ class T(unittest.TestCase):
 
         self.assertEqual(apport.hookutils.in_session_of_problem({}), None)
 
-        locale.setlocale(locale.LC_TIME, old_ctime)
+        orig_ctime = locale.getlocale(locale.LC_TIME)
+        try:
+            locale.setlocale(locale.LC_TIME, 'C')
+
+            report = {'Date': 'Sat Jan  1 12:00:00 2011'}
+            self.assertFalse(apport.hookutils.in_session_of_problem(report))
+
+            report = {'Date': 'Mon Oct 10 21:06:03 2009'}
+            self.assertFalse(apport.hookutils.in_session_of_problem(report))
+
+            report = {'Date': 'Tue Jan  1 12:00:00 2038'}
+            self.assertTrue(apport.hookutils.in_session_of_problem(report))
+        finally:
+            locale.setlocale(locale.LC_TIME, orig_ctime)
 
     def test_xsession_errors(self):
         '''xsession_errors()'''

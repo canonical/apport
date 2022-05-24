@@ -16,6 +16,7 @@ import problem_report
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
+        klass.env = os.environ | {"LANGUAGE": "C.UTF-8"}
         klass.workdir = tempfile.mkdtemp()
 
         # create problem report file with all possible data types
@@ -104,7 +105,7 @@ class T(unittest.TestCase):
         self.assertEqual(out, '')
 
     def _call(self, argv):
-        a = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        a = subprocess.Popen(argv, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = a.communicate()
         return (a.returncode, out.decode('UTF-8'), err.decode('UTF-8'))
 

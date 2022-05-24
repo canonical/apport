@@ -45,6 +45,9 @@ else:
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
+        klass.orig_environ = os.environ.copy()
+        os.environ["LANGUAGE"] = "C"
+
         # Work around MainUserInterface using basename to find the KDE UI file.
         sys.argv[0] = apport_kde_path
 
@@ -56,6 +59,11 @@ class T(unittest.TestCase):
         r = apport.Report()
         r.add_os_info()
         klass.distro = r['DistroRelease']
+
+    @classmethod
+    def tearDownClass(cls):
+        os.environ.clear()
+        os.environ.update(cls.orig_environ)
 
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()

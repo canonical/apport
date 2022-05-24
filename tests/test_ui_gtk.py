@@ -46,9 +46,16 @@ class T(unittest.TestCase):
 
     @classmethod
     def setUpClass(klass):
+        klass.orig_environ = os.environ.copy()
+        os.environ["LANGUAGE"] = "C"
         r = apport.Report()
         r.add_os_info()
         klass.distro = r['DistroRelease'].split()[0]
+
+    @classmethod
+    def tearDownClass(cls):
+        os.environ.clear()
+        os.environ.update(cls.orig_environ)
 
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
