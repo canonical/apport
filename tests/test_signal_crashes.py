@@ -656,11 +656,13 @@ CoreDump: base64
     def test_crash_system_slice(self):
         '''report generation for a protected process running in the system slice'''
 
+        self.assertEqual(pidof(test_executable), set(), 'no running test executable processes')
         self.create_test_process(command='/usr/bin/systemd-run',
+                                 check_running=False,
                                  args=['-t', '-q', '--slice=system.slice',
                                        '-p', 'ProtectSystem=true',
-                                       '/usr/bin/yes'])
-        yes_pids = pidof('/usr/bin/yes')
+                                       test_executable])
+        yes_pids = pidof(test_executable)
         self.assertEqual(len(yes_pids), 1)
         os.kill(yes_pids.pop(), signal.SIGSEGV)
 
