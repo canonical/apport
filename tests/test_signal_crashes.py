@@ -949,9 +949,9 @@ CoreDump: base64
             os.waitpid(pid, 0)
             self.fail('test process does not die on signal %i' % sig)
         if command == '/usr/bin/crontab':
-            subprocess.Popen(['sudo', '-s', '/bin/bash', '-c',
-                              "/usr/bin/pkill -9 -f crontab",
-                              '-u', 'mail'])
+            subprocess.call(['sudo', '-s', '/bin/bash', '-c',
+                             "/usr/bin/pkill -9 -f crontab",
+                             '-u', 'mail'])
         self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
         self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
         self.assertEqual(os.WCOREDUMP(result), expect_coredump)
