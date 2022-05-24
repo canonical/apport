@@ -664,6 +664,7 @@ CoreDump: base64
         self.assertEqual(len(yes_pids), 1)
         os.kill(yes_pids.pop(), signal.SIGSEGV)
 
+        self.wait_for_no_instance_running(test_executable)
         self.wait_for_apport_to_finish()
 
         # check crash report
