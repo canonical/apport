@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, os, shutil, os.path, sys
+import unittest, subprocess, tempfile, os, shutil, os.path
 
 from datetime import datetime
 
@@ -83,7 +83,7 @@ class T(unittest.TestCase):
             f.write('not me!')
 
         ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash', '-l',
-                               os.path.realpath(sys.argv[0]), '-l', self.workdir],
+                               os.path.realpath(__file__), '-l', self.workdir],
                               stdin=subprocess.PIPE)
         ph.communicate(b'something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -112,7 +112,7 @@ class T(unittest.TestCase):
         self.assertTrue(log1key)
         self.assertTrue(log2key)
         self.assertIn('0234lkjas', r[filekey])
-        self.assertEqual(len(r[filekey]), os.path.getsize(sys.argv[0]))
+        self.assertEqual(len(r[filekey]), os.path.getsize(__file__))
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
