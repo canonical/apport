@@ -1,4 +1,3 @@
-# vim: set encoding=UTF-8 fileencoding=UTF-8 :
 import datetime
 import locale
 import unittest, tempfile, os, shutil, email, gzip, time

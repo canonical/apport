@@ -1,4 +1,3 @@
-# vim: set fileencoding=UTF-8 :
 '''Crash database implementation for Launchpad.'''
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
@@ -219,10 +218,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         args = {}
         title = report.get('Title', report.standard_title())
         if title:
-            # always use UTF-8 encoding, urlencode() blows up otherwise in
-            # python 2.7
-            if not isinstance(title, bytes):
-                title = title.encode('UTF-8')
             args['field.title'] = title
 
         hostname = self.get_hostname()
@@ -1362,7 +1357,6 @@ and more
         def test_get_comment_url(self):
             '''get_comment_url() for non-ASCII titles'''
 
-            # UTF-8 bytestring, works in both python 2.7 and 3
             title = b'1\xc3\xa4\xe2\x99\xa52'
 
             # distro, UTF-8 bytestring

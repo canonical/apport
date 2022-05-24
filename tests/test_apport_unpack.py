@@ -53,31 +53,6 @@ class T(unittest.TestCase):
         self.assertEqual(self._get_unpack('binary'), self.bindata)
         self.assertEqual(self._get_unpack('compressed'), b'FooFoo!')
 
-    def test_unpack_python(self):
-        '''apport-unpack with explicity Python interpreter
-
-        This will catch Python 2/3 specific errors when running the tests with
-        a different $PYTHON than apport-unpacks' hashbang.
-        '''
-        apport_unpack = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bin',
-            'apport-unpack')
-        if not os.path.exists(apport_unpack):
-            apport_unpack = '/usr/bin/apport-unpack'
-        if not os.path.exists(apport_unpack):
-            self.skipTest('apport-unpack not found')
-
-        self.assertEqual(self._call([os.getenv('PYTHON', 'python3'),
-                                     apport_unpack,
-                                     self.report_file,
-                                     self.unpack_dir]),
-                         (0, '', ''))
-
-        self.assertEqual(self._get_unpack('utf8'), self.utf8_str)
-        self.assertEqual(self._get_unpack('unicode'), self.utf8_str)
-        self.assertEqual(self._get_unpack('binary'), self.bindata)
-        self.assertEqual(self._get_unpack('compressed'), b'FooFoo!')
-
     def test_help(self):
         '''calling apport-unpack with help'''
 

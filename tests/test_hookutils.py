@@ -1,4 +1,3 @@
-# coding: UTF-8
 import unittest, tempfile, locale, subprocess, re, shutil, os, sys
 import unittest.mock
 

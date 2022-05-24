@@ -1,4 +1,3 @@
-# coding: UTF-8
 import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
 import signal, resource
 import io

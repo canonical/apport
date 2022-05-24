@@ -1,4 +1,3 @@
-# coding: UTF-8
 '''GTK Apport user interface tests.'''
 
 # Copyright (C) 2012 Canonical Ltd.

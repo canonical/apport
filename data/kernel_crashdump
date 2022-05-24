@@ -60,8 +60,7 @@ else:
                 crash_report = os.path.join(apport.fileutils.report_dir, report_name)
                 dmesg_fd = os.open(dmesg_file, os.O_RDONLY | os.O_NOFOLLOW)
                 pr['VmCoreDmesg'] = (os.fdopen(dmesg_fd, 'rb'),)
-                # TODO: Replace with open(..., 'xb') once we drop Python 2 support
-                with os.fdopen(os.open(crash_report, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as f:
+                with open(crash_report, 'xb') as f:
                     pr.write(f)
             except (IOError, OSError) as e:
                 apport.fatal('Cannot create report: ' + str(e))

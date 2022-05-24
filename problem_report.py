@@ -1,5 +1,3 @@
-# vim: set encoding=UTF-8 fileencoding=UTF-8 :
-
 '''Store, load, and handle problem reports.'''
 
 # Copyright (C) 2006 - 2012 Canonical Ltd.

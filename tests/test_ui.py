@@ -1,4 +1,3 @@
-# coding: UTF-8
 import locale
 import unittest, shutil, signal, tempfile, pwd, time, os, sys
 import errno, glob
