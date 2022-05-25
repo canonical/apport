@@ -48,10 +48,8 @@ class T(unittest.TestCase):
         klass.orig_environ = os.environ.copy()
         os.environ["LANGUAGE"] = "C"
 
-        # Work around MainUserInterface using basename to find the KDE UI file.
-        sys.argv[0] = apport_kde_path
-
-        klass.app = QApplication(sys.argv)
+        klass.argv = [apport_kde_path]
+        klass.app = QApplication(klass.argv)
         klass.app.applicationName = 'apport-kde'
         klass.app.applicationDisplayName = _('Apport')
         klass.app.windowIcon = QIcon.fromTheme('apport')
@@ -72,6 +70,9 @@ class T(unittest.TestCase):
         # do not cause eternal hangs because of error dialog boxes
         os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
+        self.orig_argv = sys.argv
+        # Work around MainUserInterface using basename to find the KDE UI file.
+        sys.argv = self.argv
         self.app = MainUserInterface()
 
         # use in-memory crashdb
@@ -101,6 +102,7 @@ class T(unittest.TestCase):
 
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.hook_dir)
+        sys.argv = self.orig_argv
 
     def test_close_button(self):
         '''Clicking the close button on the window does not report the crash.'''

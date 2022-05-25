@@ -63,12 +63,12 @@ class T(unittest.TestCase):
         # do not cause eternal hangs because of error dialog boxes
         os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
-        saved = sys.argv[0]
+        saved = sys.argv
         # Work around GTKUserInterface using basename to find the GtkBuilder UI
         # file.
-        sys.argv[0] = apport_gtk_path
+        sys.argv = [apport_gtk_path]
         self.app = GTKUserInterface()
-        sys.argv[0] = saved
+        sys.argv = saved
 
         # use in-memory crashdb
         self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
