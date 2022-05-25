@@ -216,7 +216,3 @@ echo ApportRetraceError >&2''')
         self.assertEqual(out, '', 'no output messages:\n' + out)
         self.assertNotIn('Traceback', err)
         self.assertIn('nonexisting', err)
-
-
-if __name__ == "__main__":
-    unittest.main()

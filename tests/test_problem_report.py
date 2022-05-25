@@ -1056,7 +1056,3 @@ BadFile: base64
         self.assertEqual(pr['DataYes'], 'yesyes')
         self.assertEqual(pr['GoodFile'], bin_data)
         self.assertEqual(sorted(pr.keys()), ['DataYes', 'GoodFile'])
-
-
-if __name__ == '__main__':
-    unittest.main()

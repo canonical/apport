@@ -165,7 +165,3 @@ void makeleak(void){
         self.assertTrue(os.path.exists(cache),
                         'A cache directory %s was specified but was not created' %
                         cache)
-
-
-if __name__ == "__main__":
-    unittest.main()

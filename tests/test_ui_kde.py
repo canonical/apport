@@ -646,7 +646,3 @@ Type=Application''')
         self.app.ui_present_report_details(False)
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -15,7 +15,3 @@ class T(unittest.TestCase):
         pids = pidof(sys.executable)
         self.assertGreater(len(pids), 0)
         self.assertIn(os.getpid(), pids)
-
-
-if __name__ == "__main__":
-    unittest.main()

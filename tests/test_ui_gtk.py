@@ -1076,7 +1076,3 @@ Type=Application''')
             0,
         )
         return signal_handler_id != 0
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -87,7 +87,3 @@ class T(unittest.TestCase):
     def _get_unpack(self, fname):
         with open(os.path.join(self.unpack_dir, fname), 'rb') as f:
             return f.read()
-
-
-if __name__ == "__main__":
-    unittest.main()

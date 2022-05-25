@@ -87,11 +87,3 @@ class T(unittest.TestCase):
             self.assertEqual(r['MainClassUrl'], 'file:' + main_file)
         self.assertTrue('DistroRelease' in r)
         self.assertTrue('ProcCwd' in r)
-
-
-#
-# main
-#
-
-if __name__ == "__main__":
-    unittest.main()

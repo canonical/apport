@@ -539,7 +539,3 @@ class T(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertFalse(understood, details)
         self.assertTrue('Reason could not be automatically determined. (Unhandled exception in kernel code?)' in details, details)
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -82,7 +82,3 @@ class T(unittest.TestCase):
         t.start()
         t.join()
         self.assertRaises(UnicodeError, t.exc_raise)
-
-
-if __name__ == "__main__":
-    unittest.main()

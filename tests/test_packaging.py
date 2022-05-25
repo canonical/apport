@@ -25,7 +25,3 @@ class T(unittest.TestCase):
         # second one uses caching, should be identical
         (n2, v2) = apport.packaging.get_os_version()
         self.assertEqual((n, v), (n2, v2))
-
-
-if __name__ == "__main__":
-    unittest.main()

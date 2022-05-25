@@ -51,7 +51,3 @@ class T(unittest.TestCase):
         self.assertNotEqual(ver, None)
         ver = impl.get_version('alsa-utils')
         self.assertNotEqual(ver, None)
-
-
-if __name__ == "__main__":
-    unittest.main()

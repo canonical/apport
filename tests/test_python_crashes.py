@@ -479,7 +479,3 @@ g()''')
         with open(reports[0], 'rb') as f:
             pr.load(f)
         return pr
-
-
-if __name__ == "__main__":
-    unittest.main()

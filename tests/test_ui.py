@@ -2377,7 +2377,3 @@ Exec=gedit %U
         os.kill(pid, signal.SIGKILL)
         os.waitpid(pid, 0)
         self.ui.wait_for_pid(pid)
-
-
-if __name__ == "__main__":
-    unittest.main()

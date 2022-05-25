@@ -111,13 +111,12 @@ for t in $TESTS; do
             prefix="$prefix dbus-launch"
         fi
     fi
-    test_file="$mydir/test_${t%%.*}.py"
     if [ "$t" = "${t#*.}" ]; then
-        test_name=""
+        test_name="$mydir.test_${t%%.*}"
     else
-        test_name="T.${t#*.}"
+        test_name="$mydir.test_${t%%.*}.T.${t#*.}"
     fi
-    $prefix ${PYTHON:=python3} -tt $test_file -v $test_name || failed=$((failed+1))
+    $prefix ${PYTHON:=python3} -m unittest -v ${test_name} || failed=$((failed+1))
 done
 
 exit $failed

@@ -84,7 +84,3 @@ class T(unittest.TestCase):
         self.assertRaises(subprocess.CalledProcessError,
                           self.call_recoverable_problem,
                           'hello\0\0there')
-
-
-if __name__ == "__main__":
-    unittest.main()

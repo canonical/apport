@@ -2412,7 +2412,3 @@ No symbol table info available.
         os.unlink('/tmp/true')
         self.assertEqual(tmp_true, '/tmp/true')
         self.assertEqual(bin_true, '/usr/bin/true')
-
-
-if __name__ == '__main__':
-    unittest.main()

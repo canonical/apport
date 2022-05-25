@@ -1030,11 +1030,3 @@ CoreDump: base64
             timeout_sec -= 0.2
         else:
             self.fail(f"Timeout exceeded, but {program} is still running.")
-
-
-#
-# main
-#
-
-if __name__ == "__main__":
-    unittest.main()

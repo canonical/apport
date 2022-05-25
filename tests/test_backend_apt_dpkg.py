@@ -1137,7 +1137,3 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(archmap[expected] in machine,
                         '%s has unexpected machine type "%s" for architecture %s' % (
                             path, machine, expected))
-
-
-if __name__ == "__main__":
-    unittest.main()

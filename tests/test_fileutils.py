@@ -621,7 +621,3 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
                 uid=fake_uid,
                 timestamp=222222 + offset)
             self.assertTrue(os.path.exists(core_path))
-
-
-if __name__ == '__main__':
-    unittest.main()
