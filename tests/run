@@ -30,40 +30,7 @@ if [ -d tests -a -e setup.py ]; then
     export APPORT_CRASHDB_CONF=./etc/apport/crashdb.conf
     export APPORT_DATA_DIR=./data
 
-    # PEP8 tests, if pep8 is available
-    if PYCODESTYLE=$(which pycodestyle 2>/dev/null || which pep8 2>/dev/null); then
-        echo "Running $(basename $PYCODESTYLE)..."
-        # . catches all *.py modules; we explicitly need to specify the programs
-        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect,REThread.py .  `find bin data gtk kde -type f -executable`
-        # those tests deliberately have trailing whitespace in test files, ignore
-        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W291,W293 tests/test_problem_report.py
-        # has_key is minidom API, not the dict operator here
-        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W601 apport/report.py
-        # need the bare except to catch the dialog being closed
-        $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124,E722 apport/REThread.py
-    else
-        echo "Skipping PEP 8 tests, neither pycodestyle nor pep8 are installed"
-    fi
-
-    # pyflakes3, if available
-    if type pyflakes3 >/dev/null 2>&1; then
-        echo "Running pyflakes3..."
-        pyflakes3 `find -name '*.py'` `find bin data gtk -type f -executable ! -name is-enabled ! -name apport-bug ! -name root_info_wrapper ! -name apport-collect`
-    else
-        echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
-    fi
-
-    # assert that there are no hardcoded "Ubuntu" names
-    out=$(grep -rw Ubuntu tests/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
-    if [ -n "$out" ]; then
-        echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
-        exit 1
-    fi
-
-    if [ ! -e apport/packaging_impl.py ]; then
-	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py; run './setup.py build' for auto-detection." >&2
-	exit 1
-    fi
+    "$mydir"/run-linters
 else
     echo "Testing installed libraries/program."
 fi
