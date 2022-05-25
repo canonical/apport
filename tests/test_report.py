@@ -86,9 +86,9 @@ class T(unittest.TestCase):
             self.assertNotIn('LANG=', pr['ProcEnviron'])
         self.assertNotIn('USER', pr['ProcEnviron'])
         self.assertNotIn('PWD', pr['ProcEnviron'])
-        self.assertIn('report.py', pr['ExecutablePath'])
+        self.assertRegex(pr['ExecutablePath'], r'.*\.py$')
         self.assertEqual(int(pr['ExecutableTimestamp']),
-                         int(os.stat(__file__).st_mtime))
+                         int(os.stat(pr['ExecutablePath']).st_mtime))
 
         # check with one additional safe environment variable
         pr = apport.report.Report()
