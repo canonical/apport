@@ -725,9 +725,8 @@ int main() {
         # to get the core filename right
         shell = os.path.realpath('/bin/bash')
 
-        (fd, script) = tempfile.mkstemp()
-        try:
-            os.close(fd)
+        with tempfile.TemporaryDirectory() as workdir:
+            script = os.path.join(workdir, "self-killing-script")
 
             # create a test script which produces a core dump for us
             with open(script, 'w') as fd:
@@ -738,25 +737,23 @@ kill -SEGV $$
 ''' % shell)
             os.chmod(script, 0o755)
 
-            # call script and verify that it gives us a proper ELF core dump
-            pid = os.fork()
-            if pid == 0:
-                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-                sys.stdin.close()
-                os.setsid()
-                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-                os.chdir(apport.fileutils.report_dir)
-                os.execv(script, [script])
-                assert False, 'Could not execute ' + script
-
-            time.sleep(0.5)
-
-            (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                    shell)
-            os.kill(pid, signal.SIGSEGV)
-            os.waitpid(pid, 0)
-            # Otherwise the core dump is empty.
-            time.sleep(0.5)
+            core_path = os.path.join(workdir, "core")
+            try:
+                subprocess.check_call(
+                    [
+                        "gdb",
+                        "--batch",
+                        "--ex",
+                        f"run {script}",
+                        "--ex",
+                        f"generate-core-file {core_path}",
+                        shell,
+                    ],
+                    env={"HOME": workdir},
+                    stdout=subprocess.PIPE,
+                )
+            except FileNotFoundError as error:
+                self.skipTest(f"{error.filename} not available")
 
             self._validate_core(core_path)
 
@@ -765,11 +762,9 @@ kill -SEGV $$
             pr['ExecutablePath'] = script
             pr['CoreDump'] = (core_path,)
             pr.add_gdb_info()
-        finally:
-            os.unlink(script)
 
-        self._validate_gdb_fields(pr)
-        self.assertTrue('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
+            self._validate_gdb_fields(pr)
+            self.assertTrue('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
 
     def test_add_gdb_info_abort(self):
         '''add_gdb_info() with SIGABRT/assert()
