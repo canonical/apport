@@ -1,5 +1,4 @@
 import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
-import signal, resource
 import io
 import unittest.mock
 
@@ -512,12 +511,14 @@ int f(int x) {
     return x+1;
 }
 int main() { return f(42); }
-'''):
+''', args=None, extra_gcc_args=None):
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
 
         If file is given, the report is written into it. Return the apport.report.Report.'''
+        if not extra_gcc_args:
+            extra_gcc_args = []
 
         workdir = None
         orig_cwd = os.getcwd()
@@ -530,11 +531,11 @@ int main() { return f(42); }
             # create a test executable
             with open('crash.c', 'w') as fd:
                 fd.write(code)
-            assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
+            assert subprocess.call(['gcc'] + extra_gcc_args + ['-g', 'crash.c', '-o', 'crash']) == 0
             assert os.path.exists('crash')
 
             # call it through gdb and dump core
-            gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'run', '--ex',
+            gdb = subprocess.Popen(['gdb', '--batch', '--ex', f"run{' ' + ' '.join(args) if args else ''}", '--ex',
                                     'generate-core-file core', './crash'], env={"HOME": workdir}, stdout=subprocess.PIPE)
             gdb.communicate()
             klass._validate_core('core')
@@ -774,115 +775,25 @@ kill -SEGV $$
         '''
 
         # abort with assert
-        (fd, script) = tempfile.mkstemp()
-        script_bin = script + '.bin'
-
-        try:
-            os.close(fd)
-
-            # create a test script which produces a core dump for us
-            with open(script, 'w') as fd:
-                fd.write('''#!/bin/sh
-gcc -o $0.bin -x c - <<EOF
+        pr = self._generate_sigsegv_report(code='''\
 #include <assert.h>
 int main() { assert(1 < 0); }
-EOF
 ''')
-            os.chmod(script, 0o755)
-
-            # build the crashing binary
-            subprocess.check_call([script])
-
-            # call binary and verify that it gives us a proper ELF core dump
-            pid = os.fork()
-            if pid == 0:
-                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-                sys.stdin.close()
-                os.setsid()
-                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-                os.chdir(apport.fileutils.report_dir)
-                os.execv(script_bin, [script_bin])
-                assert False, 'Could not execute ' + script_bin
-
-            time.sleep(0.5)
-
-            (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                    script_bin)
-            os.kill(pid, signal.SIGSEGV)
-            os.waitpid(pid, 0)
-            # Otherwise the core dump is empty.
-            time.sleep(0.5)
-
-            self._validate_core(core_path)
-
-            pr = apport.report.Report()
-            pr['ExecutablePath'] = script_bin
-            pr['CoreDump'] = (core_path,)
-            pr.add_gdb_info()
-        finally:
-            os.unlink(script)
-            os.unlink(script_bin)
-
         self._validate_gdb_fields(pr)
-        self.assertIn("<stdin>:2: main: Assertion `1 < 0' failed.", pr['AssertionMessage'])
+        self.assertIn("crash.c:2: main: Assertion `1 < 0' failed.", pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
         self.assertNotIn('= 0x', pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort with internal error
-        (fd, script) = tempfile.mkstemp()
-        script_bin = script + '.bin'
-
-        try:
-            os.close(fd)
-
-            # create a test script which produces a core dump for us
-            with open(script, 'w') as fd:
-                fd.write('''#!/bin/sh
-gcc -O2 -D_FORTIFY_SOURCE=2 -o $0.bin -x c - <<EOF
+        pr = self._generate_sigsegv_report(code='''\
 #include <string.h>
 int main(int argc, char *argv[]) {
     char buf[8];
     strcpy(buf, argv[1]);
     return 0;
 }
-EOF
-''')
-            os.chmod(script, 0o755)
-
-            # build the crashing binary
-            subprocess.check_call([script])
-
-            # call binary and verify that it gives us a proper ELF core dump
-            pid = os.fork()
-            if pid == 0:
-                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-                sys.stdin.close()
-                os.setsid()
-                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-                os.chdir(apport.fileutils.report_dir)
-                os.execv(script_bin, [script_bin, 'aaaaaaaaaaaaaaaa'])
-                assert False, 'Could not execute ' + script_bin
-
-            time.sleep(0.5)
-
-            (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                    script_bin)
-            os.kill(pid, signal.SIGSEGV)
-            os.waitpid(pid, 0)
-            # Otherwise the core dump is empty.
-            time.sleep(0.5)
-
-            self._validate_core(core_path)
-
-            pr = apport.report.Report()
-            pr['ExecutablePath'] = script_bin
-            pr['CoreDump'] = (core_path,)
-            pr.add_gdb_info()
-        finally:
-            os.unlink(script)
-            os.unlink(script_bin)
-
+''', args=['aaaaaaaaaaaaaaaa'], extra_gcc_args=['-O2', '-D_FORTIFY_SOURCE=2'])
         self._validate_gdb_fields(pr)
         self.assertIn("** buffer overflow detected ***: terminated",
                       pr['AssertionMessage'])
@@ -891,55 +802,10 @@ EOF
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort without assertion
-        (fd, script) = tempfile.mkstemp()
-        script_bin = script + '.bin'
-
-        try:
-            os.close(fd)
-
-            # create a test script which produces a core dump for us
-            with open(script, 'w') as fd:
-                fd.write('''#!/bin/sh
-gcc -o $0.bin -x c - <<EOF
+        pr = self._generate_sigsegv_report(code='''\
 #include <stdlib.h>
 int main() { abort(); }
-EOF
 ''')
-            os.chmod(script, 0o755)
-
-            # build the crashing binary
-            subprocess.check_call([script])
-
-            # call binary and verify that it gives us a proper ELF core dump
-            pid = os.fork()
-            if pid == 0:
-                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-                sys.stdin.close()
-                os.setsid()
-                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-                os.chdir(apport.fileutils.report_dir)
-                os.execv(script_bin, [script_bin])
-                assert False, 'Could not execute ' + script_bin
-
-            time.sleep(0.5)
-
-            (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                    script_bin)
-            os.kill(pid, signal.SIGSEGV)
-            os.waitpid(pid, 0)
-            # Otherwise the core dump is empty.
-            time.sleep(0.5)
-
-            self._validate_core(core_path)
-
-            pr = apport.report.Report()
-            pr['ExecutablePath'] = script_bin
-            pr['CoreDump'] = (core_path,)
-            pr.add_gdb_info()
-        finally:
-            os.unlink(script)
-            os.unlink(script_bin)
-
         self._validate_gdb_fields(pr)
         self.assertFalse('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
@@ -975,7 +841,7 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertTrue(pr['AssertionMessage'].startswith('ERROR:<stdin>:2:main: assertion failed (1 < 0):'),
+        self.assertTrue(pr['AssertionMessage'].startswith('ERROR:crash.c:2:main: assertion failed (1 < 0):'),
                         pr['AssertionMessage'])
 
     # disabled: __nih_abort_msg symbol not available (LP: #1580601)
