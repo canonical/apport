@@ -1751,19 +1751,12 @@ bOgUs=
 
     def test_run_update_report_different_binary_source(self):
         '''run_update_report() on a source package which does not have a binary of the same name'''
-
-        kernel_pkg = apport.packaging.get_kernel_package()
-        kernel_src = apport.packaging.get_source(kernel_pkg)
-        self.assertNotEqual(kernel_pkg, kernel_src,
-                            'this test assumes that the kernel binary package != kernel source package')
-        self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
-                            'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
-
-        # this test assumes that the kernel source package name is not an
+        # this test assumes that the source package name is not an
         # installed binary package
-        self.assertRaises(ValueError, apport.packaging.get_version, kernel_src)
+        source_pkg = "shadow"
+        self.assertRaises(ValueError, apport.packaging.get_version, source_pkg)
 
-        sys.argv = ['ui-test', '-p', kernel_src, '-u', '1']
+        sys.argv = ['ui-test', '-p', source_pkg, '-u', '1']
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1771,7 +1764,7 @@ bOgUs=
                                             'restart': False,
                                             'remember': False}
 
-        with open(os.path.join(self.hookdir, 'source_%s.py' % kernel_src), 'w') as f:
+        with open(os.path.join(self.hookdir, 'source_%s.py' % source_pkg), 'w') as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
         self.assertEqual(self.ui.run_argv(), True, self.ui.report)
@@ -1781,7 +1774,7 @@ bOgUs=
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
-        self.assertEqual(self.ui.report['Package'], '%s (not installed)' % kernel_src)
+        self.assertEqual(self.ui.report['Package'], '%s (not installed)' % source_pkg)
         self.assertEqual(self.ui.report['MachineType'], 'Laptop')
         self.assertTrue('ProcEnviron' in self.ui.report.keys())
 

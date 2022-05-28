@@ -917,18 +917,13 @@ Type=Application''')
             self.app.w('continue_button').clicked()
             return False
 
-        kernel_pkg = apport.packaging.get_kernel_package()
-        kernel_src = apport.packaging.get_source(kernel_pkg)
-        self.assertNotEqual(kernel_pkg, kernel_src,
-                            'this test assumes that the kernel binary package != kernel source package')
-        self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
-                            'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
-        # this test assumes that the kernel source package name is not an
+        # this test assumes that the source package name is not an
         # installed binary package
-        self.assertRaises(ValueError, apport.packaging.get_version, kernel_src)
+        source_pkg = "shadow"
+        self.assertRaises(ValueError, apport.packaging.get_version, source_pkg)
 
         # create source package hook, as otherwise there is nothing to collect
-        with open(os.path.join(self.hook_dir, 'source_%s.py' % kernel_src), 'w') as f:
+        with open(os.path.join(self.hook_dir, 'source_%s.py' % source_pkg), 'w') as f:
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 
         # upload empty report
@@ -937,7 +932,7 @@ Type=Application''')
 
         # run in update mode for that bug
         self.app.options.update_report = 0
-        self.app.options.package = kernel_src
+        self.app.options.package = source_pkg
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()
