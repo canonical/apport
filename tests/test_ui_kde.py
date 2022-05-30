@@ -391,6 +391,7 @@ Type=Application''')
 
     @patch.object(MainUserInterface, 'open_url')
     @patch('apport.report.Report.add_gdb_info')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_1_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
@@ -428,6 +429,7 @@ Type=Application''')
 
     @patch.object(MainUserInterface, 'open_url')
     @patch('apport.report.Report.add_gdb_info')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_1_crash_details(self, *args):
         '''Crash report with showing details'''
 
@@ -480,6 +482,7 @@ Type=Application''')
 
     @patch.object(MainUserInterface, 'open_url')
     @patch('apport.report.Report.add_gdb_info')
+    @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_1_crash_noaccept(self, *args):
         '''Crash report with non-accepting crash DB'''
 
