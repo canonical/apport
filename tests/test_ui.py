@@ -683,8 +683,12 @@ bOgUs=
 
         self.assertEqual(self.ui.msg_severity, 'error')
 
-    def test_run_report_bug_kernel_thread(self):
+    @unittest.mock.patch("apport.packaging.get_version")
+    def test_run_report_bug_kernel_thread(self, get_version_mock):
         '''run_report_bug() for a pid of a kernel thread'''
+        # The kernel package might not be installed in chroot environments.
+        # Therefore mock get_version for the kernel package.
+        get_version_mock.return_value = '5.15.0-33.34'
 
         for path in glob.glob('/proc/[0-9]*/stat'):
             with open(path) as f:
@@ -705,7 +709,12 @@ bOgUs=
                                             'remember': False}
         self.ui.run_argv()
 
-        self.assertTrue(self.ui.report['Package'].startswith(apport.packaging.get_kernel_package()))
+        kernel_package = apport.packaging.get_kernel_package()
+        self.assertEqual(
+            self.ui.report['Package'],
+            f"{kernel_package} {get_version_mock.return_value}",
+        )
+        get_version_mock.assert_any_call(kernel_package)
 
     def test_run_report_bug_file(self):
         '''run_report_bug() with saving report into a file'''
