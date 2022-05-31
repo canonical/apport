@@ -1,8 +1,11 @@
 """Helper functions for the test cases."""
 
+import contextlib
 import os
 import os.path
 import subprocess
+import typing
+import unittest.mock
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -42,3 +45,33 @@ def pidof(program):
             return set()
         raise  # pragma: no cover
     return set(int(pid) for pid in stdout.decode().split())
+
+
+@contextlib.contextmanager
+def wrap_object(
+    target: object, attribute: str
+) -> typing.Generator[unittest.mock.MagicMock, None, None]:
+    """Wrap the named member on an object with a mock object.
+
+    wrap_object() can be used as a context manager. Inside the
+    body of the with statement, the attribute of the target is
+    wrapped with a :class:`unittest.mock.MagicMock` object. When
+    the with statement exits the patch is undone.
+
+    The instance argument 'self' of the wrapped attribute is
+    intentionally not logged in the MagicMock call. Therefore
+    wrap_object() can be used to check all calls to the object,
+    but not differentiate between different instances.
+
+    See also https://stackoverflow.com/questions/44768483 for
+    the use case.
+    """
+    mock = unittest.mock.MagicMock()
+    real_attribute = getattr(target, attribute)
+
+    def mocked_attribute(self, *args, **kwargs):
+        mock.__call__(*args, **kwargs)
+        return real_attribute(self, *args, **kwargs)
+
+    with unittest.mock.patch.object(target, attribute, mocked_attribute):
+        yield mock

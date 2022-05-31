@@ -29,6 +29,7 @@ import apport
 from apport import unicode_gettext as _
 import apport.crashdb_impl.memory
 
+from tests.helper import wrap_object
 from tests.paths import is_local_source_directory
 
 if is_local_source_directory():
@@ -36,13 +37,27 @@ if is_local_source_directory():
 else:
     apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-kde')
 if not PYQT5_IMPORT_ERROR:
-    MainUserInterface = SourceFileLoader('', apport_kde_path).load_module().MainUserInterface
+    apport_kde = SourceFileLoader('', apport_kde_path).load_module()
+    MainUserInterface = apport_kde.MainUserInterface
 else:
     MainUserInterface = None
 
 
 @unittest.skipIf(PYQT5_IMPORT_ERROR, f'PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}')
 class T(unittest.TestCase):
+    COLLECTING_DIALOG = unittest.mock.call(
+        'Collecting Problem Information',
+        'Collecting problem information',
+        'The collected information can be sent to the developers to improve '
+        'the application. This might take a few minutes.',
+    )
+    UPLOADING_DIALOG = unittest.mock.call(
+        'Uploading Problem Information',
+        'Uploading problem information',
+        'The collected information is being sent to the bug tracking system. '
+        'This might take a few minutes.',
+    )
+
     @classmethod
     def setUpClass(klass):
         klass.orig_environ = os.environ.copy()
@@ -395,21 +410,16 @@ Type=Application''')
     def test_1_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
-        self.visible_progress = None
-
         def cont(*args):
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(1000, cont)
 
-        def check_progress(*args):
-            self.visible_progress = (self.app.progress is not None)
-
         QTimer.singleShot(1000, cont)
-        self.app.run_crash(self.app.report_file)
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
+            self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
         self.assertEqual(self.app.crashdb.latest_id(), 0)
@@ -418,7 +428,7 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
         # should show a progress bar for info collection
-        self.assertEqual(self.visible_progress, True)
+        progress_dialog.assert_has_calls([self.COLLECTING_DIALOG, self.UPLOADING_DIALOG])
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
@@ -432,8 +442,6 @@ Type=Application''')
     @patch('apport.fileutils.allowed_to_report', unittest.mock.MagicMock(return_value=True))
     def test_1_crash_details(self, *args):
         '''Crash report with showing details'''
-
-        self.visible_progress = None
 
         def show_details(*args):
             if self.app.dialog and self.app.dialog.show_details.isVisible():
@@ -453,16 +461,13 @@ Type=Application''')
 
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(200, cont)
 
-        def check_progress(*args):
-            self.visible_progress = (self.app.progress is not None)
-
         QTimer.singleShot(200, show_details)
-        self.app.run_crash(self.app.report_file)
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
+            self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
         self.assertEqual(self.app.crashdb.latest_id(), 0)
@@ -471,7 +476,7 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
         # we already collected details, do not show the progress dialog again
-        self.assertFalse(self.visible_progress)
+        progress_dialog.assert_called_once_with(*self.UPLOADING_DIALOG.args)
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
@@ -486,29 +491,24 @@ Type=Application''')
     def test_1_crash_noaccept(self, *args):
         '''Crash report with non-accepting crash DB'''
 
-        self.visible_progress = None
-
         def cont(*args):
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(1000, cont)
 
-        def check_progress(*args):
-            self.visible_progress = (self.app.progress is not None)
-
         QTimer.singleShot(1000, cont)
         self.app.crashdb.options['problem_types'] = ['bug']
-        self.app.run_crash(self.app.report_file)
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
+            self.app.run_crash(self.app.report_file)
 
         # we should not have reported the crash
         self.assertEqual(self.app.crashdb.latest_id(), -1)
         self.assertEqual(self.app.open_url.call_count, 0)
 
         # no progress dialog for non-accepting DB
-        self.assertNotEqual(self.visible_progress, True)
+        progress_dialog.assert_not_called()
 
         # data was collected for whoopsie
         r = self.app.report
