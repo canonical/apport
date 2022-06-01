@@ -817,8 +817,9 @@ Type=Application''')
 
         # data was collected
         self.assertTrue('linux' in r['Package'])
-        self.assertTrue('Dependencies' in r)
         self.assertTrue('Plasma conduit' in r['Title'])
+        if not r['Package'].endswith(' (not installed)'):
+            self.assertTrue('Dependencies' in r)
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
