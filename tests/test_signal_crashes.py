@@ -305,25 +305,20 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if self.suid_dumpable:
-            self.do_crash(True, command=myexe, expect_corefile=False, uid=8)
+        self.do_crash(True, command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
 
-            # check crash report
-            reports = apport.fileutils.get_new_system_reports()
-            self.assertEqual(len(reports), 1)
-            report = reports[0]
-            st = os.stat(report)
-            os.unlink(report)
-            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must be owned by root as it is an unreadable binary
-            self.assertEqual(st.st_uid, 0, 'report has correct owner')
+        # check crash report
+        reports = apport.fileutils.get_new_system_reports()
+        self.assertEqual(len(reports), 1)
+        report = reports[0]
+        st = os.stat(report)
+        os.unlink(report)
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+        # this must be owned by root as it is an unreadable binary
+        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
-            # no user reports
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
-        else:
-            # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        # no user reports
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_core_dump_packaged(self):
         '''packaged executables create core dumps on proper ulimits'''
@@ -621,23 +616,18 @@ CoreDump: base64
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if self.suid_dumpable:
-            # if a user can crash a suid root binary, it should not create core files
-            self.do_crash(command=myexe, uid=8)
+        # if a user can crash a suid root binary, it should not create core files
+        self.do_crash(command=myexe, uid=8, suid_dumpable=2)
 
-            # check crash report
-            reports = apport.fileutils.get_all_reports()
-            self.assertEqual(len(reports), 1)
-            report = reports[0]
-            st = os.stat(report)
-            os.unlink(report)
-            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must be owned by root as it is a setuid binary
-            self.assertEqual(st.st_uid, 0, 'report has correct owner')
-        else:
-            # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        # check crash report
+        reports = apport.fileutils.get_all_reports()
+        self.assertEqual(len(reports), 1)
+        report = reports[0]
+        st = os.stat(report)
+        os.unlink(report)
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+        # this must be owned by root as it is a setuid binary
+        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_system_slice(self):
@@ -669,24 +659,18 @@ CoreDump: base64
         # run ping as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if self.suid_dumpable:
-            # if a user can crash a suid root binary, it should not create core files
-            self.do_crash(command='/bin/ping', args=['127.0.0.1'], uid=8)
+        # if a user can crash a suid root binary, it should not create core files
+        self.do_crash(command='/bin/ping', args=['127.0.0.1'], uid=8, suid_dumpable=2)
 
-            # check crash report
-            reports = apport.fileutils.get_all_reports()
-            self.assertEqual(len(reports), 1)
-            report = reports[0]
-            st = os.stat(report)
-            os.unlink(report)
-            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must be owned by root as it is a setuid binary
-            self.assertEqual(st.st_uid, 0, 'report has correct owner')
-        else:
-            # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command='/bin/ping', args=['127.0.0.1'],
-                          uid=8)
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        # check crash report
+        reports = apport.fileutils.get_all_reports()
+        self.assertEqual(len(reports), 1)
+        report = reports[0]
+        st = os.stat(report)
+        os.unlink(report)
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+        # this must be owned by root as it is a setuid binary
+        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
     @unittest.skipUnless(os.path.exists('/bin/ping'), 'this test needs /bin/ping')
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
@@ -699,31 +683,25 @@ CoreDump: base64
         # edit crontab as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if self.suid_dumpable:
-            user = pwd.getpwuid(8)
-            # if a user can crash a suid root binary, it should not create core files
-            orig_editor = os.getenv('EDITOR')
-            os.environ['EDITOR'] = '/usr/bin/yes'
-            self.do_crash(command='/usr/bin/crontab', args=['-e', '-u', user[0]],
-                          expect_corefile=False, core_location='/var/spool/cron/',
-                          killer_id=8)
-            if orig_editor is not None:
-                os.environ['EDITOR'] = orig_editor
+        user = pwd.getpwuid(8)
+        # if a user can crash a suid root binary, it should not create core files
+        orig_editor = os.getenv('EDITOR')
+        os.environ['EDITOR'] = '/usr/bin/yes'
+        self.do_crash(command='/usr/bin/crontab', args=['-e', '-u', user[0]],
+                      expect_corefile=False, core_location='/var/spool/cron/',
+                      killer_id=8, suid_dumpable=2)
+        if orig_editor is not None:
+            os.environ['EDITOR'] = orig_editor
 
-            # check crash report
-            reports = apport.fileutils.get_all_reports()
-            self.assertEqual(len(reports), 1)
-            report = reports[0]
-            st = os.stat(report)
-            os.unlink(report)
-            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must be owned by root as it is a setuid binary
-            self.assertEqual(st.st_uid, 0, 'report has correct owner')
-        else:
-            # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command='/bin/ping', args=['127.0.0.1'],
-                          uid=8)
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        # check crash report
+        reports = apport.fileutils.get_all_reports()
+        self.assertEqual(len(reports), 1)
+        report = reports[0]
+        st = os.stat(report)
+        os.unlink(report)
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+        # this must be owned by root as it is a setuid binary
+        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_setuid_unpackaged(self):
@@ -741,12 +719,8 @@ CoreDump: base64
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if self.suid_dumpable:
-            # if a user can crash a suid root binary, it should not create core files
-            self.do_crash(command=myexe, expect_corefile=False, uid=8)
-        else:
-            # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
+        # if a user can crash a suid root binary, it should not create core files
+        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
 
         # there should not be a crash report
         self.assertEqual(apport.fileutils.get_all_reports(), [])
@@ -852,7 +826,7 @@ CoreDump: base64
                  command=test_executable, uid=None,
                  expect_corefile_owner=None,
                  core_location=None,
-                 killer_id=False, args=[]):
+                 killer_id=False, args=[], suid_dumpable=None):
         '''Generate a test crash.
 
         This runs command (by default test_executable) in cwd, lets it crash,
@@ -863,6 +837,11 @@ CoreDump: base64
         If check_running is set (default), this will abort if test_process is
         already running.
         '''
+        if suid_dumpable is not None:
+            assert 0 <= suid_dumpable <= 2
+            if suid_dumpable > 0 and not self.suid_dumpable:
+                self.skipTest("needs /proc/sys/fs/suid_dumpable > 0")
+
         self.assertFalse(os.path.exists('core'), '%s/core already exists, please clean up first' % os.getcwd())
         pid = self.create_test_process(check_running, command, uid=uid, args=args)
 
