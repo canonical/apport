@@ -288,20 +288,6 @@ class T(unittest.TestCase):
         self.assertLess(count, 7, 'stops flooding after less than 7 repeated crashes')
 
     @unittest.skipIf(os.access('/run', os.W_OK), 'this test needs to be run as user')
-    def test_nonwritable_cwd(self):
-        '''core dump works for non-writable cwd'''
-
-        os.chdir('/run')
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash()
-        pr = apport.Report()
-        self.assertTrue(os.path.exists(self.test_report))
-        self.assertFalse(os.path.exists('/run/core'))
-        with open(self.test_report, 'rb') as f:
-            pr.load(f)
-        assert set(required_fields).issubset(set(pr.keys()))
-
-    @unittest.skipIf(os.access('/run', os.W_OK), 'this test needs to be run as user')
     def test_nonwritable_cwd_nonreadable_exe(self):
         '''no core file for non-readable exe in non-writable cwd'''
 
