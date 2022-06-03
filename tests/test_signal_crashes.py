@@ -615,6 +615,9 @@ CoreDump: base64
         os.close(fd)
         os.chmod(myexe, 0o4755)
 
+        # run test program in /run (which should only be writable to root)
+        os.chdir('/run')
+
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
@@ -747,42 +750,6 @@ CoreDump: base64
 
         # there should not be a crash report
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-
-    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
-    def test_crash_setuid_nonwritable_cwd(self):
-        '''report generation and core dump for setuid program, non-writable cwd'''
-
-        # create suid root executable in a path we can modify which apport
-        # regards as likely packaged
-        (fd, myexe) = tempfile.mkstemp(dir='/var/tmp')
-        self.addCleanup(os.unlink, myexe)
-        with open(test_executable, 'rb') as f:
-            os.write(fd, f.read())
-        os.close(fd)
-        os.chmod(myexe, 0o4755)
-
-        # run test program as user "mail" in /run (which should only be
-        # writable to root)
-        os.chdir('/run')
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
-        if self.suid_dumpable:
-            # we expect a report, but no core file
-            self.do_crash(command=myexe, expect_corefile=False, uid=8)
-
-            # check crash report
-            reports = apport.fileutils.get_all_reports()
-            self.assertEqual(len(reports), 1)
-            report = reports[0]
-            st = os.stat(report)
-            os.unlink(report)
-            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must be owned by root as it is a setuid binary
-            self.assertEqual(st.st_uid, 0, 'report has correct owner')
-        else:
-            # no core/report if suid_dumpable == 0
-            self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
-            self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_coredump_from_socket(self):
         '''forwarding of a core dump through socket
