@@ -287,9 +287,9 @@ class T(unittest.TestCase):
         self.assertGreater(count, 1, 'gets at least 2 repeated crashes')
         self.assertLess(count, 7, 'stops flooding after less than 7 repeated crashes')
 
-    @unittest.skipIf(os.access('/run', os.W_OK), 'this test needs to be run as user')
-    def test_nonwritable_cwd_nonreadable_exe(self):
-        '''no core file for non-readable exe in non-writable cwd'''
+    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
+    def test_nonreadable_exe(self):
+        '''report generation for non-readable exe'''
 
         # CVE-2015-1324: if a user cannot read an executable, it behaves much
         # like a suid root binary in terms of writing a core dump
@@ -303,19 +303,17 @@ class T(unittest.TestCase):
         os.close(fd)
         os.chmod(myexe, 0o111)
 
-        os.chdir('/run')
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
         if self.suid_dumpable:
-            self.do_crash(True, command=myexe, expect_corefile=False)
+            self.do_crash(True, command=myexe, expect_corefile=False, uid=8)
 
             # check crash report
             reports = apport.fileutils.get_new_system_reports()
             self.assertEqual(len(reports), 1)
             report = reports[0]
             st = os.stat(report)
-            # FIXME: we would like to clean up this, but don't have privileges for that
-            # os.unlink(report)
+            os.unlink(report)
             self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
             # this must be owned by root as it is an unreadable binary
             self.assertEqual(st.st_uid, 0, 'report has correct owner')
@@ -324,7 +322,7 @@ class T(unittest.TestCase):
             self.assertEqual(apport.fileutils.get_all_reports(), [])
         else:
             # no cores/dump if suid_dumpable == 0
-            self.do_crash(False, command=myexe, expect_corefile=False)
+            self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
             self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_core_dump_packaged(self):
