@@ -17,11 +17,8 @@ test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
 test_source = 'coreutils'
 
-# (core ulimit (bytes), expect core signal, expect core file, expect report)
-core_ulimit_table = [(1, False, False, False),
-                     (1000, True, False, True),
-                     (10000000, True, True, True),
-                     (-1, True, True, True)]
+# (core ulimit (bytes), expect core file)
+core_ulimit_table = [(1000, False), (10000000, True), (-1, True)]
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
                    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal',
@@ -305,7 +302,7 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        self.do_crash(True, command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
+        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
 
         # check crash report
         reports = apport.fileutils.get_new_system_reports()
@@ -325,18 +322,14 @@ class T(unittest.TestCase):
 
         # for SEGV and ABRT we expect reports and core files
         for sig in (signal.SIGSEGV, signal.SIGABRT):
-            for (kb, exp_sig, exp_file, exp_report) in core_ulimit_table:
+            for (kb, exp_file) in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
-                self.do_crash(expect_coredump=exp_sig,
-                              expect_corefile=exp_file,
+                self.do_crash(expect_corefile=exp_file,
                               expect_corefile_owner=os.geteuid(),
                               sig=sig)
-                if exp_report:
-                    self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-                    self.check_report_coredump(self.test_report)
-                    apport.fileutils.delete_report(self.test_report)
-                else:
-                    self.assertEqual(apport.fileutils.get_all_reports(), [])
+                self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
+                self.check_report_coredump(self.test_report)
+                apport.fileutils.delete_report(self.test_report)
 
             # creates core file with existing crash report, too
             self.do_crash(expect_corefile=True)
@@ -357,10 +350,9 @@ class T(unittest.TestCase):
         os.chmod(local_exe, 0o755)
 
         for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGQUIT):
-            for (kb, exp_sig, exp_file, exp_report) in core_ulimit_table:
+            for (kb, exp_file) in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
-                self.do_crash(expect_coredump=exp_sig,
-                              expect_corefile=exp_file,
+                self.do_crash(expect_corefile=exp_file,
                               expect_corefile_owner=os.geteuid(),
                               command=local_exe,
                               sig=sig)
@@ -821,7 +813,7 @@ CoreDump: base64
         time.sleep(0.3)  # needs some more setup time
         return pid
 
-    def do_crash(self, expect_coredump=True, expect_corefile=False,
+    def do_crash(self, expect_corefile=False,
                  sig=signal.SIGSEGV, check_running=True, sleep=0,
                  command=test_executable, uid=None,
                  expect_corefile_owner=None,
@@ -831,8 +823,7 @@ CoreDump: base64
 
         This runs command (by default test_executable) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
-        file behind if expect_corefile is set, and generating a crash report if
-        expect_coredump is set.
+        file behind if expect_corefile is set, and generating a crash report.
 
         If check_running is set (default), this will abort if test_process is
         already running.
@@ -885,7 +876,7 @@ CoreDump: base64
             subprocess.call(['stty', 'sane'])
         self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
         self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
-        self.assertEqual(os.WCOREDUMP(result), expect_coredump)
+        self.assertTrue(os.WCOREDUMP(result))
         self.assertEqual(os.WSTOPSIG(result), 0, 'test process was not signaled to stop')
         self.assertEqual(os.WTERMSIG(result), sig, 'test process died due to proper signal')
 
