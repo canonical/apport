@@ -1,7 +1,7 @@
 import unittest, sys, os.path
 
-datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
-sys.path.insert(0, os.path.join(datadir, 'general-hooks'))
+from tests.paths import get_data_directory
+sys.path.insert(0, os.path.join(get_data_directory(), 'general-hooks'))
 
 import parse_segv
 

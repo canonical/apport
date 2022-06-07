@@ -12,11 +12,13 @@
 import unittest, subprocess, tempfile, shutil, os, os.path
 import problem_report
 
+from tests.paths import local_test_environment
+
 
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
-        klass.env = os.environ | {"LANGUAGE": "C.UTF-8"}
+        klass.env = os.environ | local_test_environment() | {"LANGUAGE": "C.UTF-8"}
         klass.workdir = tempfile.mkdtemp()
 
         # create problem report file with all possible data types

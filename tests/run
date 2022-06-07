@@ -25,18 +25,11 @@ mydir=`dirname "$0"`
 # Run against source tree when we are in the source directory
 if [ -d tests -a -e setup.py ]; then
     echo "Testing local source tree."
-    export PATH=`pwd`/bin:$PATH
-    export PYTHONPATH=`pwd`
-    export APPORT_CRASHDB_CONF=./etc/apport/crashdb.conf
-    export APPORT_DATA_DIR=./data
 
     "$mydir"/run-linters
 else
     echo "Testing installed libraries/program."
 fi
-
-# avoid breaking the UI tests due to obsolete packages
-export APPORT_IGNORE_OBSOLETE_PACKAGES=1
 
 # do not assume/disturb session bus
 unset DBUS_SESSION_BUS_ADDRESS

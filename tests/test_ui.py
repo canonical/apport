@@ -14,7 +14,7 @@ import apport.crashdb_impl.memory
 import stat
 
 from tests.helper import pidof
-from tests.paths import is_local_source_directory
+from tests.paths import is_local_source_directory, local_test_environment, patch_data_dir, restore_data_dir
 
 if is_local_source_directory():
     impl = SourceFileLoader('', 'backends/packaging-apt-dpkg.py').load_module().impl
@@ -134,12 +134,17 @@ class T(unittest.TestCase):
     TEST_EXECUTABLE = '/usr/bin/yes'
 
     def setUp(self):
+        self.orig_environ = os.environ.copy()
+        os.environ |= local_test_environment()
+
         # we test a few strings, don't get confused by translations
         for v in ['LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_ALL']:
             try:
                 del os.environ[v]
             except KeyError:
                 pass
+
+        self.orig_data_dir = patch_data_dir(apport.report)
 
         self.workdir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
@@ -202,6 +207,10 @@ class T(unittest.TestCase):
 
         apport.report._hook_dir = self.orig_hook_dir
         shutil.rmtree(self.workdir)
+        os.environ.clear()
+        os.environ.update(self.orig_environ)
+
+        restore_data_dir(apport.report, self.orig_data_dir)
 
     def _run_test_executable(self, exename=None):
         if not exename:

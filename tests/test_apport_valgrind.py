@@ -14,6 +14,8 @@ import shutil
 import os
 import os.path
 
+from tests.paths import local_test_environment
+
 with open('/proc/meminfo') as f:
     for line in f.readlines():
         if line.startswith('MemTotal'):
@@ -27,6 +29,10 @@ with open('/proc/meminfo') as f:
 
 @unittest.skipIf(shutil.which('valgrind') is None, 'valgrind not installed')
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.env = os.environ | local_test_environment()
+
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
         self.pwd = os.getcwd()
@@ -46,7 +52,7 @@ class T(unittest.TestCase):
 
     def _call(self, argv):
         p = subprocess.Popen(
-            argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            argv, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         ret = p.returncode
         return ret, bytes.decode(out), bytes.decode(err)
@@ -156,7 +162,7 @@ void makeleak(void){
 
         cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache,
                '/bin/true']
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, env=self.env)
 
         self.assertTrue(os.path.exists(sandbox),
                         'A sandbox directory %s was specified but was not created'

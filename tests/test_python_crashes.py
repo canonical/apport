@@ -16,14 +16,16 @@ import unittest.mock
 
 import apport.fileutils
 import apport.report
+from tests.paths import local_test_environment
 
 
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.env = os.environ | local_test_environment()
         cls.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
-        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+        cls.env['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
         atexit.register(shutil.rmtree, apport.fileutils.report_dir)
 
     @classmethod
@@ -58,8 +60,8 @@ func(42)
 ''' % (os.getenv('PYTHON', 'python3'), extracode)).encode())
         os.close(fd)
         os.chmod(script, 0o755)
-        env = os.environ.copy()
-        env['PYTHONPATH'] = '.:/my/bogus/path'
+        env = self.env.copy()
+        env['PYTHONPATH'] = f"{env.get('PYTHONPATH', '.')}:/my/bogus/path"
 
         p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                              stderr=subprocess.PIPE, env=env)
@@ -148,7 +150,7 @@ func(42)
         self.addCleanup(os.unlink, script_link)
 
         # run script through symlink name
-        p = subprocess.Popen([script_link], stderr=subprocess.PIPE)
+        p = subprocess.Popen([script_link], env=self.env, stderr=subprocess.PIPE)
         err = p.communicate()[1].decode()
         self.assertEqual(p.returncode, 1,
                          'crashing test python program exits with failure code')
@@ -272,7 +274,7 @@ func(42)
                 r.mark_ignore()
                 r = None
 
-                p = subprocess.Popen([script, 'testarg1', 'testarg2'],
+                p = subprocess.Popen([script, 'testarg1', 'testarg2'], env=self.env,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 err = p.communicate()[1].decode()
                 self.assertEqual(p.returncode, 1,

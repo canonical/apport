@@ -29,7 +29,7 @@ import apport.crashdb_impl.memory
 
 GLib.log_set_always_fatal(GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL)
 
-from tests.paths import is_local_source_directory
+from tests.paths import is_local_source_directory, local_test_environment
 
 if is_local_source_directory():
     apport_gtk_path = 'gtk/apport-gtk'
@@ -46,6 +46,7 @@ class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
         klass.orig_environ = os.environ.copy()
+        os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
         r = apport.Report()
         r.add_os_info()
@@ -61,6 +62,7 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = self.report_dir
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
         # do not cause eternal hangs because of error dialog boxes
+        os.environ['APPORT_IGNORE_OBSOLETE_PACKAGES'] = '1'
         os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
         saved = sys.argv

@@ -14,15 +14,20 @@ import unittest, subprocess, tempfile, os, shutil, os.path
 from datetime import datetime
 
 import apport, apport.fileutils
+from tests.paths import get_data_directory, local_test_environment
 
-datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
+datadir = get_data_directory()
 
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.env = os.environ | local_test_environment()
+
     def setUp(self):
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
-        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+        self.env['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
 
         self.workdir = tempfile.mkdtemp()
 
@@ -36,7 +41,7 @@ class T(unittest.TestCase):
         '''package_hook without any log files.'''
 
         ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash'],
-                              stdin=subprocess.PIPE)
+                              env=self.env, stdin=subprocess.PIPE)
         ph.communicate(b'something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
 
@@ -56,7 +61,7 @@ class T(unittest.TestCase):
 
         pkg = apport.packaging.get_uninstalled_package()
         ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', pkg],
-                              stdin=subprocess.PIPE)
+                              env=self.env, stdin=subprocess.PIPE)
         ph.communicate(b'something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
 
@@ -84,7 +89,7 @@ class T(unittest.TestCase):
 
         ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash', '-l',
                                os.path.realpath(__file__), '-l', self.workdir],
-                              stdin=subprocess.PIPE)
+                              env=self.env, stdin=subprocess.PIPE)
         ph.communicate(b'something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
 
@@ -118,9 +123,8 @@ class T(unittest.TestCase):
 
     def test_package_hook_tags(self):
         '''package_hook with extra tags argument.'''
-
-        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash',
-                               '-t', 'dist-upgrade, verybad'], stdin=subprocess.PIPE)
+        cmd = ['%s/package_hook' % datadir, '-p', 'bash', '-t', 'dist-upgrade, verybad']
+        ph = subprocess.Popen(cmd, env=self.env, stdin=subprocess.PIPE)
         ph.communicate(b'something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
 
@@ -143,7 +147,7 @@ class T(unittest.TestCase):
         f.write('vmcore successfully dumped')
         f.close()
 
-        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir), 0,
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir, env=self.env), 0,
                          'kernel_crashdump finished successfully')
 
         reps = apport.fileutils.get_new_reports()
@@ -174,7 +178,7 @@ class T(unittest.TestCase):
         f.write('1' * 100)
         f.close()
 
-        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir), 0,
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir, env=self.env), 0,
                          'kernel_crashdump finished successfully')
 
         reps = apport.fileutils.get_new_reports()
@@ -208,7 +212,7 @@ class T(unittest.TestCase):
         os.symlink('vmcore', os.path.join(apport.fileutils.report_dir, 'vmcore.log'))
 
         self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
-                                            stderr=subprocess.PIPE),
+                                            env=self.env, stderr=subprocess.PIPE),
                             0, 'kernel_crashdump unexpectedly succeeded')
 
         self.assertEqual(apport.fileutils.get_new_reports(), [])
@@ -224,7 +228,7 @@ class T(unittest.TestCase):
         os.symlink('../kernel.crash', dmesgfile)
 
         self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
-                                            stderr=subprocess.PIPE),
+                                            env=self.env, stderr=subprocess.PIPE),
                             0, 'kernel_crashdump unexpectedly succeeded')
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
@@ -246,7 +250,7 @@ class T(unittest.TestCase):
         f.close()
 
         self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
-                                            stderr=subprocess.PIPE),
+                                            env=self.env, stderr=subprocess.PIPE),
                             0, 'kernel_crashdump unexpectedly succeeded')
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
@@ -284,8 +288,11 @@ class T(unittest.TestCase):
         test_source.flush()
         test_source.seek(0)
 
-        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % datadir, gcc_path, test_source.name]),
-                         0, 'gcc_ice_hook finished successfully')
+        self.assertEqual(
+            subprocess.call(['%s/gcc_ice_hook' % datadir, gcc_path, test_source.name], env=self.env),
+            0,
+            'gcc_ice_hook finished successfully',
+        )
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
@@ -313,8 +320,11 @@ class T(unittest.TestCase):
         test_source.flush()
         test_source.seek(0)
 
-        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % datadir, gcc_path, test_source.name]),
-                         0, 'gcc_ice_hook finished successfully')
+        self.assertEqual(
+            subprocess.call(['%s/gcc_ice_hook' % datadir, gcc_path, test_source.name], env=self.env),
+            0,
+            'gcc_ice_hook finished successfully',
+        )
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
@@ -332,7 +342,7 @@ class T(unittest.TestCase):
         test_source = 'int f(int x);'
 
         hook = subprocess.Popen(['%s/gcc_ice_hook' % datadir, gcc_path, '-'],
-                                stdin=subprocess.PIPE)
+                                env=self.env, stdin=subprocess.PIPE)
         hook.communicate(test_source.encode())
         self.assertEqual(hook.returncode, 0, 'gcc_ice_hook finished successfully')
 
@@ -357,7 +367,7 @@ kernel BUG at /tmp/oops.c:5!
 invalid opcode: 0000 [#1] SMP
 Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT iptable_filter ip_tables nf_conntrack_ipv6 xt_state nf_conntrack xt_tcpudp ip6t_ipv6header ip6t_REJECT ip6table_filter ip6_tables x_tables ipv6 loop dm_multipath rtc_cmos iTCO_wdt iTCO_vendor_support pcspkr i2c_i801 i2c_core battery video ac output power_supply button sg joydev usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 '''
-        hook = subprocess.Popen(['%s/kernel_oops' % datadir], stdin=subprocess.PIPE)
+        hook = subprocess.Popen(['%s/kernel_oops' % datadir], env=self.env, stdin=subprocess.PIPE)
         hook.communicate(test_source.encode())
         self.assertEqual(hook.returncode, 0, 'kernel_oops finished successfully')
 

@@ -6,8 +6,18 @@ import apport.report
 import problem_report
 import apport.packaging
 
+from tests.paths import patch_data_dir, restore_data_dir
+
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.orig_data_dir = patch_data_dir(apport.report)
+
+    @classmethod
+    def tearDownClass(cls):
+        restore_data_dir(apport.report, cls.orig_data_dir)
+
     def test_add_package_info(self):
         '''add_package_info().'''
 

@@ -7,29 +7,28 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import tempfile, unittest, subprocess, sys, os, os.path, shutil
+import tempfile, unittest, subprocess, os, os.path, shutil
 
 import apport, apport.fileutils
 
-from tests.paths import is_local_source_directory
+from tests.paths import SRCDIR, get_data_directory, is_local_source_directory, local_test_environment
 
 
 @unittest.skipIf(shutil.which('java') is None, 'Java not available')
 class T(unittest.TestCase):
     def setUp(self):
-        mydir = os.path.dirname(os.path.realpath(sys.argv[0]))
-        datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
-        self.srcdir = os.path.dirname(mydir)
+        self.env = os.environ | local_test_environment()
+        datadir = get_data_directory()
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
-        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
-        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
+        self.env['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+        self.env['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
             datadir, 'java_uncaught_exception')
         if is_local_source_directory():
-            self.crash_jar_path = os.path.join(self.srcdir, 'java', 'crash.jar')
-            self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
+            self.crash_jar_path = os.path.join(SRCDIR, 'java', 'crash.jar')
+            self.apport_jar_path = os.path.join(SRCDIR, 'java', 'apport.jar')
         else:
-            self.crash_jar_path = os.path.join(mydir, 'crash.jar')
+            self.crash_jar_path = os.path.join(datadir, 'testsuite', 'crash.jar')
             self.apport_jar_path = os.path.join(datadir, 'apport.jar')
         if not os.path.exists(self.apport_jar_path):
             self.skipTest(f"{self.apport_jar_path} missing")
@@ -46,7 +45,7 @@ class T(unittest.TestCase):
             self.skipTest(f"{crash_class} missing")
         p = subprocess.Popen(['java', '-classpath',
                               self.apport_jar_path + ':' + os.path.dirname(self.crash_jar_path), 'crash'],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                             env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue(b"Can't catch this" in err,
@@ -61,7 +60,7 @@ class T(unittest.TestCase):
             self.skipTest(f"{self.crash_jar_path} missing")
         p = subprocess.Popen(['java', '-classpath',
                               self.apport_jar_path + ':' + self.crash_jar_path, 'crash'],
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                             env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue(b"Can't catch this" in err,

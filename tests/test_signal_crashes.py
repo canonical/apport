@@ -14,7 +14,7 @@ import apport.fileutils
 import psutil
 
 from tests.helper import pidof, read_shebang
-from tests.paths import is_local_source_directory
+from tests.paths import get_data_directory, is_local_source_directory, local_test_environment
 
 test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
@@ -31,6 +31,9 @@ required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.orig_environ = os.environ.copy()
+        os.environ |= local_test_environment()
+
         with open('/proc/sys/kernel/core_pattern') as f:
             core_pattern = f.read().strip()
         if core_pattern[0] == '|':
@@ -38,7 +41,7 @@ class T(unittest.TestCase):
         else:
             cls.apport_path = None
         if is_local_source_directory():
-            cls.apport_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'apport')
+            cls.apport_path = os.path.join(get_data_directory(), "apport")
 
         cls.all_reports = apport.fileutils.get_all_reports()
 
@@ -52,15 +55,19 @@ class T(unittest.TestCase):
         if orig_home is not None:
             os.environ['HOME'] = orig_home
 
+        cls.orig_cwd = os.getcwd()
         cls.orig_core_dir = apport.fileutils.core_dir
         cls.orig_ignore_file = apport.report._ignore_file
         cls.orig_report_dir = apport.fileutils.report_dir
 
     @classmethod
     def tearDownClass(cls):
+        os.environ.clear()
+        os.environ.update(cls.orig_environ)
         apport.fileutils.core_dir = cls.orig_core_dir
         apport.report._ignore_file = cls.orig_ignore_file
         apport.fileutils.report_dir = cls.orig_report_dir
+        os.chdir(cls.orig_cwd)
 
     def setUp(self):
         if self.apport_path is None:

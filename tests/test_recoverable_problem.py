@@ -17,13 +17,16 @@ import time
 import shutil
 import apport.report
 
+from tests.paths import get_data_directory, local_test_environment
+
 
 class T(unittest.TestCase):
     def setUp(self):
+        self.env = os.environ | local_test_environment()
         self.report_dir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.report_dir)
-        os.environ['APPORT_REPORT_DIR'] = self.report_dir
-        self.datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
+        self.env['APPORT_REPORT_DIR'] = self.report_dir
+        self.datadir = get_data_directory()
 
     def wait_for_report(self):
         seconds = 0
@@ -39,7 +42,7 @@ class T(unittest.TestCase):
 
     def call_recoverable_problem(self, data):
         cmd = ['%s/recoverable_problem' % self.datadir]
-        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
+        proc = subprocess.Popen(cmd, env=self.env, stdin=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         err = proc.communicate(data.encode('UTF-8'))[1]
         if proc.returncode != 0:

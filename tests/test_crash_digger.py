@@ -13,10 +13,13 @@ import unittest, subprocess, tempfile, os, shutil, os.path
 
 import apport.fileutils
 
+from tests.paths import local_test_environment
+
 
 class T(unittest.TestCase):
     def setUp(self):
         '''Set up dummy config dir, crashdb.conf, and apport-retrace'''
+        self.env = os.environ | local_test_environment()
 
         self.workdir = tempfile.mkdtemp()
 
@@ -44,13 +47,12 @@ echo "$@" >> %s''' % self.apport_retrace_log)
 
         self.lock_file = os.path.join(self.workdir, 'lock')
 
-        os.environ['APPORT_CRASHDB_CONF'] = crashdb_conf
-        os.environ['PYTHONPATH'] = '.'
+        self.env['APPORT_CRASHDB_CONF'] = crashdb_conf
 
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = os.path.join(self.workdir, 'crashes')
         os.mkdir(apport.fileutils.report_dir)
-        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+        self.env['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
 
     def tearDown(self):
         shutil.rmtree(self.workdir)
@@ -62,7 +64,7 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         Return a pair (stdout, stderr).
         '''
         s = subprocess.Popen(['crash-digger', '--apport-retrace',
-                              self.apport_retrace] + args, stdout=subprocess.PIPE,
+                              self.apport_retrace] + args, env=self.env, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         (out, err) = s.communicate()
         return (out.decode('UTF-8'), err.decode('UTF-8'))
