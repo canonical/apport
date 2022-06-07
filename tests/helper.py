@@ -47,6 +47,19 @@ def pidof(program):
     return set(int(pid) for pid in stdout.decode().split())
 
 
+def read_shebang(command: str) -> typing.Optional[str]:
+    """Return the shebang of the given file.
+
+    If the given file is a script, return the executable from the
+    shebang. Otherwise `None`.
+    """
+    with open(command, "rb") as command_file:
+        first_line = command_file.readline(100).strip()
+    if not first_line.startswith(b"#!"):
+        return None
+    return first_line.decode().split(" ", 1)[0][2:]
+
+
 @contextlib.contextmanager
 def wrap_object(
     target: object, attribute: str

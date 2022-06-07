@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from tests.helper import pidof, wrap_object
+from tests.helper import pidof, read_shebang, wrap_object
 
 
 class Multiply:
@@ -25,6 +25,12 @@ class T(unittest.TestCase):
         pids = pidof(sys.executable)
         self.assertGreater(len(pids), 0)
         self.assertIn(os.getpid(), pids)
+
+    def test_read_shebang_binary(self):
+        self.assertEqual(read_shebang(sys.executable), None)
+
+    def test_read_shebang_shell_script(self):
+        self.assertEqual(read_shebang("/usr/bin/ldd"), "/bin/bash")
 
     def test_wrap_object_with_statement(self):
         with wrap_object(Multiply, "__init__") as mock:
