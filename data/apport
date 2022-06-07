@@ -34,7 +34,7 @@ def check_lock():
 
     # create a lock file
     try:
-        fd = os.open("/var/run/apport.lock",
+        fd = os.open(os.environ.get("APPORT_LOCK_FILE", "/var/run/apport.lock"),
                      os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, mode=0o600)
     except OSError as e:
         error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))

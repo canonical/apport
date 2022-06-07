@@ -22,7 +22,7 @@ from problem_report import ProblemReport
 from apport.packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
-core_dir = '/var/lib/apport/coredump'
+core_dir = os.environ.get('APPORT_COREDUMP_DIR', '/var/lib/apport/coredump')
 max_corefiles_per_uid = 5
 
 _config_file = '~/.config/apport/settings'

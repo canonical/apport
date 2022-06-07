@@ -32,7 +32,7 @@ _common_hook_dir = '%s/general-hooks/' % (_data_dir)
 _opt_dir = '/opt'
 
 # path of the ignore file
-_ignore_file = '~/.apport-ignore.xml'
+_ignore_file = os.environ.get('APPORT_IGNORE_FILE', '~/.apport-ignore.xml')
 
 # system-wide blacklist
 _blacklist_dir = '/etc/apport/blacklist.d'
