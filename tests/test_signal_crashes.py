@@ -11,7 +11,10 @@ import tempfile, shutil, os, subprocess, signal, time, stat, sys
 import resource, errno, grp, unittest, socket, array
 import apport.fileutils
 
-from tests.helper import pidof
+import psutil
+
+from tests.helper import pidof, read_shebang
+from tests.paths import is_local_source_directory
 
 test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
@@ -34,6 +37,8 @@ class T(unittest.TestCase):
             cls.apport_path = core_pattern[1:].split()[0]
         else:
             cls.apport_path = None
+        if is_local_source_directory():
+            cls.apport_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'apport')
 
         cls.all_reports = apport.fileutils.get_all_reports()
 
@@ -47,14 +52,15 @@ class T(unittest.TestCase):
         if orig_home is not None:
             os.environ['HOME'] = orig_home
 
-        # did we enable suid_dumpable?
-        cls.suid_dumpable = False
-        try:
-            with open('/proc/sys/fs/suid_dumpable') as f:
-                if f.read().strip() != '0':
-                    cls.suid_dumpable = True
-        except IOError:
-            pass
+        cls.orig_core_dir = apport.fileutils.core_dir
+        cls.orig_ignore_file = apport.report._ignore_file
+        cls.orig_report_dir = apport.fileutils.report_dir
+
+    @classmethod
+    def tearDownClass(cls):
+        apport.fileutils.core_dir = cls.orig_core_dir
+        apport.report._ignore_file = cls.orig_ignore_file
+        apport.fileutils.report_dir = cls.orig_report_dir
 
     def setUp(self):
         if self.apport_path is None:
@@ -67,8 +73,22 @@ class T(unittest.TestCase):
         # use local report dir
         self.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
+        apport.fileutils.report_dir = self.report_dir
 
         self.workdir = tempfile.mkdtemp()
+
+        apport.fileutils.core_dir = os.path.join(self.workdir, "coredump")
+        os.mkdir(apport.fileutils.core_dir)
+        os.environ['APPORT_COREDUMP_DIR'] = apport.fileutils.core_dir
+
+        os.environ['APPORT_IGNORE_FILE'] = os.path.join(
+            self.workdir, "apport-ignore.xml"
+        )
+        apport.report._ignore_file = os.environ['APPORT_IGNORE_FILE']
+
+        os.environ['APPORT_LOCK_FILE'] = os.path.join(
+            self.workdir, "apport.lock"
+        )
 
         # move aside current ignore file
         if os.path.exists(self.ifpath):
@@ -118,7 +138,7 @@ class T(unittest.TestCase):
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        self.assertEqual(self.get_temp_all_reports(), [])
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_crash_apport(self):
         '''report generation with apport'''
@@ -255,7 +275,7 @@ class T(unittest.TestCase):
         with open(local_exe, 'w') as f:
             f.write('#!/usr/bin/perl\nsystem("mv $0 $0.exe");\nsystem("ln -sf /etc/shadow $0");\n$0="..$0";\nsleep(10);\n')
         os.chmod(local_exe, 0o755)
-        self.do_crash(check_running=False, command=local_exe, sleep=2)
+        self.do_crash(command=local_exe, sleep=2)
 
         leak = os.path.join(apport.fileutils.report_dir, '_usr_bin_perl.%i.crash' %
                             (os.getuid()))
@@ -373,36 +393,37 @@ CoreDump: base64
  Yywoz0tNAQBl1rhlBgAAAA==
 ''')
 
-        # crash our test process and let it write a core file
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        pid = self.create_test_process()
 
-        # get the name of the core file
-        (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                test_executable)
+        def inject_bogus_report():
+            read, write = os.pipe()
+            pid = os.fork()
+            if pid > 0:
+                os.close(write)
+                # Wait until the other child process is ready,
+                # i.e. when it closes the pipe.
+                os.read(read, 1)
+                os.close(read)
+                return
+            os.close(read)
+            os.close(write)
 
-        os.kill(pid, signal.SIGSEGV)
+            # replace report with the crafted one above as soon as it exists and
+            # becomes deletable for us; this is a busy loop, we need to be really
+            # fast to intercept
+            while True:
+                try:
+                    os.unlink(self.test_report)
+                    break
+                except OSError:
+                    pass
+            os.rename(self.test_report + '.inject', self.test_report)
+            os._exit(os.EX_OK)
 
-        # replace report with the crafted one above as soon as it exists and
-        # becomes deletable for us; this is a busy loop, we need to be really
-        # fast to intercept
-        while True:
-            try:
-                os.unlink(self.test_report)
-                break
-            except OSError:
-                pass
-        os.rename(self.test_report + '.inject', self.test_report)
-
-        os.waitpid(pid, 0)
-        time.sleep(0.5)
-        os.sync()
-
-        # verify that we get the original core, not the injected one
-        with open(core_path, 'rb') as f:
-            core = f.read()
-        self.assertNotIn(b'pwned', core)
-        self.assertGreater(len(core), 10000)
+        # do_crash verifies that we get the original core, not the injected one
+        self.do_crash(
+            expect_corefile=True, hook_before_apport=inject_bogus_report
+        )
 
     def test_limit_size(self):
         '''core dumps are capped on available memory size'''
@@ -444,7 +465,7 @@ CoreDump: base64
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        reports = self.get_temp_all_reports()
+        reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
 
         pr = apport.Report()
@@ -514,7 +535,7 @@ CoreDump: base64
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        self.assertEqual(self.get_temp_all_reports(), [])
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_logging_file(self):
         '''outputs to log file, if available'''
@@ -542,7 +563,7 @@ CoreDump: base64
         self.assertTrue('wrote report' in logged, logged)
         self.assertFalse('Traceback' in logged, logged)
 
-        reports = self.get_temp_all_reports()
+        reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
 
         pr = apport.Report()
@@ -577,7 +598,7 @@ CoreDump: base64
         self.assertTrue('wrote report' in err, err)
         self.assertFalse('Traceback' in err, err)
 
-        reports = self.get_temp_all_reports()
+        reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
 
         pr = apport.Report()
@@ -624,6 +645,10 @@ CoreDump: base64
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_system_slice(self):
         '''report generation for a protected process running in the system slice'''
+        apport.fileutils.report_dir = self.orig_report_dir
+        self.test_report = os.path.join(
+            apport.fileutils.report_dir, '%s.%i.crash' %
+            (test_executable.replace('/', '_'), os.getuid()))
 
         self.assertEqual(pidof(test_executable), set(), 'no running test executable processes')
         self.create_test_process(command='/usr/bin/systemd-run',
@@ -731,7 +756,7 @@ CoreDump: base64
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        reports = self.get_temp_all_reports()
+        reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
         pr = apport.Report()
         with open(reports[0], 'rb') as f:
@@ -783,61 +808,85 @@ CoreDump: base64
         return pid
 
     def do_crash(self, expect_corefile=False,
-                 sig=signal.SIGSEGV, check_running=True, sleep=0,
+                 sig=signal.SIGSEGV, sleep=0,
                  command=test_executable, uid=None,
                  expect_corefile_owner=None,
-                 args=[], suid_dumpable=None):
+                 args=[], suid_dumpable: int = 1, hook_before_apport=None):
         '''Generate a test crash.
 
         This runs command (by default test_executable) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
         file behind if expect_corefile is set, and generating a crash report.
 
-        If check_running is set (default), this will abort if test_process is
-        already running.
+        Note: The arguments for the test program must not contain spaces.
+        Since there was no need for it, the support was not implemented.
         '''
-        if suid_dumpable is not None:
-            assert 0 <= suid_dumpable <= 2
-            if suid_dumpable > 0 and not self.suid_dumpable:
-                self.skipTest("needs /proc/sys/fs/suid_dumpable > 0")
+        assert 0 <= suid_dumpable <= 2
+        if not os.access(command, os.X_OK):
+            self.skipTest(f"{command} is not executable")
 
-        self.assertFalse(os.path.exists('core'), '%s/core already exists, please clean up first' % os.getcwd())
-        pid = self.create_test_process(check_running, command, uid=uid, args=args)
+        # Support calling scripts in GDB
+        shebang = read_shebang(command)
+        if shebang:
+            args.insert(0, command)
+            command = shebang
 
-        (core_name, core_path) = apport.fileutils.get_core_path(pid,
-                                                                command,
-                                                                uid)
+        gdb_core_file = os.path.join(self.workdir, "core")
+        self.assertFalse(
+            os.path.exists(gdb_core_file), f"{gdb_core_file} already exists"
+        )
 
-        if sleep > 0:
-            time.sleep(sleep)
-        os.kill(pid, sig)
-        # wait max 5 seconds for the process to die
-        timeout = 50
-        while timeout >= 0:
-            (p, result) = os.waitpid(pid, os.WNOHANG)
-            if p != 0:
-                break
-            time.sleep(0.1)
-            timeout -= 1
-        else:
-            os.kill(pid, signal.SIGKILL)
-            os.waitpid(pid, 0)
-            self.fail('test process does not die on signal %i' % sig)
-        if command == '/usr/bin/crontab':
-            subprocess.call(['sudo', '-s', '/bin/bash', '-c',
-                             "/usr/bin/pkill -9 -f crontab",
-                             '-u', 'mail'])
-            subprocess.call(['stty', 'sane'])
-        self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
-        self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
-        self.assertTrue(os.WCOREDUMP(result))
-        self.assertEqual(os.WSTOPSIG(result), 0, 'test process was not signaled to stop')
-        self.assertEqual(os.WTERMSIG(result), sig, 'test process died due to proper signal')
+        # set UTF-8 environment variable, to check proper parsing in apport
+        os.putenv('utf8trap', b'\xc3\xa0\xc3\xa4')
 
-        self.wait_for_apport_to_finish()
-        if check_running:
-            self.assertEqual(pidof(command), set(),
-                             'no running test executable processes')
+        try:
+            gdb = subprocess.Popen(  # pylint: disable=consider-using-with
+                self.gdb_command(command, args, gdb_core_file, uid),
+                env={"HOME": self.workdir},
+                stdin=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,  # ping and yes produce output!
+            )
+        except FileNotFoundError as error:
+            self.skipTest(f"{error.filename} not available")
+        except PermissionError:
+            if os.geteuid() != 0:
+                self.skipTest("needs to be run as root")
+            raise
+
+        try:
+            command_process = self.wait_for_gdb_child_process(gdb.pid, command)
+
+            if sleep > 0:
+                time.sleep(sleep)
+
+            os.kill(command_process.pid, sig)
+            self.wait_for_core_file(gdb.pid, gdb_core_file)
+
+            if hook_before_apport:
+                hook_before_apport()
+
+            cmd = [
+                self.apport_path,
+                f"-p{command_process.pid}",
+                f"-s{sig}",
+                f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
+                f"-d{suid_dumpable}",
+                f"-P{command_process.pid}",
+                f"-u{command_process.uids().real}",
+                f"-g{command_process.gids().real}",
+                "--",
+                command.replace('/', '!'),
+            ]
+            with open(gdb_core_file, "rb") as core_fd:
+                subprocess.check_call(cmd, stdin=core_fd)
+            os.unlink(gdb_core_file)
+
+            (core_name, core_path) = apport.fileutils.get_core_path(command_process.pid,
+                                                                    command,
+                                                                    command_process.uids().real)
+        finally:
+            gdb.kill()
+            gdb.communicate()
 
         if expect_corefile:
             self.assertTrue(os.path.exists(core_path), 'leaves wanted core file')
@@ -849,6 +898,7 @@ CoreDump: base64
                     self.assertEqual(st.st_uid, expect_corefile_owner, 'core file has correct owner')
 
                 # check that core file is valid
+                self.assertGreater(st.st_size, 10000)
                 gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
                                         command, core_path],
                                        stdout=subprocess.PIPE,
@@ -870,14 +920,37 @@ CoreDump: base64
 
                 self.fail('leaves unexpected core file behind')
 
-    def get_temp_all_reports(self):
-        '''Call apport.fileutils.get_all_reports() for our temp dir'''
+    def gdb_command(self, command, args, core_file, uid):
+        """Construct GDB arguments to call the test executable.
 
-        old_dir = apport.fileutils.report_dir
-        apport.fileutils.report_dir = self.report_dir
-        reports = apport.fileutils.get_all_reports()
-        apport.fileutils.report_dir = old_dir
-        return reports
+        GDB must be executed as root for test executables that use setuid.
+        If uid is specified, GDB will still be started by the current user
+        (probably root). `setpriv` is called to change to the given uid.
+        `sh` is called before executing the test executable for
+        capabilities (e.g. used by `ping`).
+
+        Note: The arguments for the command must not contain spaces.
+        Since there was no need for it, the support was not implemented.
+        """
+        gdb_args = ["gdb", "--quiet"]
+
+        args = " ".join(f" {a}" for a in args)
+        if uid is not None:
+            args = (
+                f" --reuid={uid} --clear-groups "
+                f"/bin/sh -c 'exec {command}{args}'"
+            )
+            command = "/usr/bin/setpriv"
+            gdb_args += ["--ex", "set follow-fork-mode child"]
+
+        gdb_args += [
+            "--ex",
+            f"run{args}",
+            "--ex",
+            f"generate-core-file {core_file}",
+            command,
+        ]
+        return gdb_args
 
     def check_report_coredump(self, report_path):
         '''Check that given report file has a valid core dump'''
@@ -893,6 +966,63 @@ CoreDump: base64
 
     def wait_for_apport_to_finish(self, timeout_sec=10.0):
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
+
+    def wait_for_core_file(self, gdb_pid: int, core_file: str) -> None:
+        """Wait for GDB to finish generating the core file.
+
+        wait_for_core_file() will wait until the GDB command
+        generate-core-file has written and closed the core file. In
+        case of an failure or timeout, let the test case fail.
+        """
+        timeout = 0
+        while timeout < 5:
+            if os.path.exists(core_file):
+                break
+            time.sleep(0.1)
+            timeout += 0.1
+        else:
+            self.fail(
+                f"Core file {core_file} not created "
+                f"within {int(timeout)} seconds."
+            )
+
+        gdb_process = psutil.Process(gdb_pid)
+        timeout = 0
+        while timeout < 60:
+            for open_file in gdb_process.open_files():
+                if open_file.path == core_file:
+                    break
+            else:
+                # Core file not opened by GDB any more.
+                break
+            time.sleep(0.1)
+            timeout += 0.1
+        else:
+            self.fail(
+                f"Corefile {core_file} not written by GDB "
+                f"within {int(timeout)} seconds."
+            )
+
+    def wait_for_gdb_child_process(self, gdb_pid: int, command: str) -> psutil.Process:
+        """Wait until GDB execv()ed the child process."""
+        gdb_process = psutil.Process(gdb_pid)
+        command_name = os.path.basename(command)
+        timeout = 0
+        while timeout < 5:
+            gdb_children = gdb_process.children()
+            command_processes = [
+                p for p in gdb_children if p.name() == command_name
+            ]
+            if command_processes:
+                break
+            time.sleep(0.1)
+            timeout += 0.1
+        else:
+            self.fail(
+                f"GDB child process {command} not started within "
+                f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
+            )
+        return command_processes.pop()
 
     def wait_for_no_instance_running(self, program, timeout_sec=10.0):
         while timeout_sec > 0:
