@@ -8,7 +8,7 @@
 # the full text of the license.
 
 import tempfile, shutil, os, subprocess, signal, time, stat, sys
-import resource, errno, grp, unittest, socket, array, pwd
+import resource, errno, grp, unittest, socket, array
 import apport.fileutils
 
 from tests.helper import pidof
@@ -664,37 +664,6 @@ CoreDump: base64
         # this must be owned by root as it is a setuid binary
         self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
-    @unittest.skipUnless(os.path.exists('/bin/ping'), 'this test needs /bin/ping')
-    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
-    def test_crash_setuid_drop_and_kill(self):
-        '''process started by root as another user, killed by that user no core'''
-        # override expected report file name
-        self.test_report = os.path.join(
-            apport.fileutils.report_dir, '%s.%i.crash' %
-            ('_usr_bin_crontab', os.getuid()))
-        # edit crontab as user "mail"
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
-        user = pwd.getpwuid(8)
-        # if a user can crash a suid root binary, it should not create core files
-        orig_editor = os.getenv('EDITOR')
-        os.environ['EDITOR'] = '/usr/bin/yes'
-        self.do_crash(command='/usr/bin/crontab', args=['-e', '-u', user[0]],
-                      expect_corefile=False, core_location='/var/spool/cron/',
-                      killer_id=8, suid_dumpable=2)
-        if orig_editor is not None:
-            os.environ['EDITOR'] = orig_editor
-
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, 'report has correct owner')
-
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_setuid_unpackaged(self):
         '''report generation for unpackaged setuid program'''
@@ -817,8 +786,7 @@ CoreDump: base64
                  sig=signal.SIGSEGV, check_running=True, sleep=0,
                  command=test_executable, uid=None,
                  expect_corefile_owner=None,
-                 core_location=None,
-                 killer_id=False, args=[], suid_dumpable=None):
+                 args=[], suid_dumpable=None):
         '''Generate a test crash.
 
         This runs command (by default test_executable) in cwd, lets it crash,
@@ -842,21 +810,7 @@ CoreDump: base64
 
         if sleep > 0:
             time.sleep(sleep)
-        if killer_id:
-            user = pwd.getpwuid(killer_id)
-            # testing different editors via VISUAL= didn't help
-            kill = subprocess.Popen(['sudo', '-s', '/bin/bash', '-c',
-                                     "/bin/kill -s %i %s" % (sig, pid),
-                                     '-u', user[0]])  # 'mail'])
-            kill.communicate()
-            # need to clean up system state
-            if command == '/usr/bin/crontab':
-                subprocess.call(['stty', 'sane'])
-            if kill.returncode != 0:
-                self.fail("Couldn't kill process %s as user %s." %
-                          (pid, user[0]))
-        else:
-            os.kill(pid, sig)
+        os.kill(pid, sig)
         # wait max 5 seconds for the process to die
         timeout = 50
         while timeout >= 0:
@@ -884,9 +838,6 @@ CoreDump: base64
         if check_running:
             self.assertEqual(pidof(command), set(),
                              'no running test executable processes')
-
-        if core_location:
-            core_path = '%s/core' % core_location
 
         if expect_corefile:
             self.assertTrue(os.path.exists(core_path), 'leaves wanted core file')
