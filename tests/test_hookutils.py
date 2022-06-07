@@ -530,7 +530,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             if orig_lcm is not None:
                 os.environ['LC_MESSAGES'] = orig_lcm
             else:
-                os.unsetenv('LC_MESSAGES')
+                del os.environ['LC_MESSAGES']
 
         # nonexisting binary
         out = apport.hookutils.command_output(['/non existing'])
