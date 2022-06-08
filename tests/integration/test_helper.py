@@ -4,17 +4,7 @@ import os
 import sys
 import unittest
 
-from tests.helper import pidof, read_shebang, wrap_object
-
-
-class Multiply:
-    """Test class for wrap_object test cases."""
-
-    def __init__(self, multiplier):
-        self.multiplier = multiplier
-
-    def multiply(self, x: int) -> int:
-        return x * self.multiplier
+from tests.helper import pidof, read_shebang
 
 
 class T(unittest.TestCase):
@@ -31,9 +21,3 @@ class T(unittest.TestCase):
 
     def test_read_shebang_shell_script(self):
         self.assertEqual(read_shebang("/usr/bin/ldd"), "/bin/bash")
-
-    def test_wrap_object_with_statement(self):
-        with wrap_object(Multiply, "__init__") as mock:
-            m = Multiply(7)
-            self.assertEqual(m.multiply(6), 42)
-        mock.assert_called_once_with(7)
