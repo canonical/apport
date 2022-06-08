@@ -790,21 +790,17 @@ CoreDump: base64
         assert os.access(command, os.X_OK), command + ' is not executable'
         if check_running:
             assert pidof(command) == set(), 'no running test executable processes'
-        pid = os.fork()
-        if pid == 0:
-            if uid is not None:
-                os.setuid(uid)
-            # set UTF-8 environment variable, to check proper parsing in apport
-            os.putenv('utf8trap', b'\xc3\xa0\xc3\xa4')
-            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
-            sys.stdin.close()
-            os.setsid()
-            os.execv(command, [command] + args)
-            assert False, 'Could not execute ' + command
+
+        env = os.environ.copy()
+        # set UTF-8 environment variable, to check proper parsing in apport
+        os.putenv('utf8trap', b'\xc3\xa0\xc3\xa4')
+        process = subprocess.Popen(
+            [command] + args, env=env, stdout=subprocess.DEVNULL, user=uid
+        )
 
         # wait until child process has execv()ed properly
         while True:
-            with open('/proc/%i/cmdline' % pid) as f:
+            with open('/proc/%i/cmdline' % process.pid) as f:
                 cmdline = f.read()
             if 'test_signal' in cmdline:
                 time.sleep(0.1)
@@ -812,7 +808,7 @@ CoreDump: base64
                 break
 
         time.sleep(0.3)  # needs some more setup time
-        return pid
+        return process.pid
 
     def do_crash(self, expect_corefile=False,
                  sig=signal.SIGSEGV, sleep=0,
