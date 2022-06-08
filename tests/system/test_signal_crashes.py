@@ -179,6 +179,7 @@ class T(unittest.TestCase):
             self.assertRegex(
                 err, b'core dump exceeded.*dropped from .*yes\\..*\\.crash')
 
+    @unittest.skipIf(shutil.which('systemd-run') is None, 'systemd-run not installed')
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_crash_system_slice(self):
         '''report generation for a protected process running in the system slice'''
