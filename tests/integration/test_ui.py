@@ -1325,7 +1325,7 @@ bOgUs=
         '''run_crash() for a kernel error'''
 
         sys_arch = impl.get_system_architecture()
-        if sys_arch in ['amd64', 'ppc64el']:
+        if sys_arch in ['amd64', 'arm64', 'ppc64el', 's390x']:
             src_pkg = 'linux-signed'
         else:
             src_pkg = 'linux'
