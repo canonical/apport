@@ -232,7 +232,7 @@ class T(unittest.TestCase):
                             0, 'kernel_crashdump unexpectedly succeeded')
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
-    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as user')
+    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
     def test_kernel_crashdump_kdump_log_dir_symlink(self):
         '''attempted DoS with dmesg dir symlink with kdump-tools'''
 
