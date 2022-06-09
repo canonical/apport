@@ -727,7 +727,9 @@ int main() {
 
         pr.add_proc_info()
         pr.add_hooks_info('fake_ui')
-        self.assertIn('not located in a known VMA region', pr['SegvAnalysis'])
+        if pr['Architecture'] in ['amd64', 'i386']:
+            # data/general-hooks/parse_segv.py only runs for x86 and x86_64
+            self.assertIn('not located in a known VMA region', pr['SegvAnalysis'])
 
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
