@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.20.12 (UNRELEASED)
---------------------
+2.21.0 (2022-06-09)
+-------------------
   * SECURITY UPDATE: TOCTOU issue allows local user to read arbitrary
     files (LP: #1830858)
     - apport/report.py: Avoid TOCTOU issue on users ignore file by
@@ -119,6 +119,14 @@ detailed list of changes, please see ChangeLog.
   * apport/ui.py: When saving a report for later processing if the filename
     to save it to ends with .gz then gzip the report file. Thanks to Yuan-Chen
     Cheng for the patch. (LP: #1837174)
+  * Catch zlib.error when decoding CoreDump from crash file (LP: #1947800)
+  * whoopsie-upload-all: Catch FileNotFoundError during process_report
+    (LP: #1867204)
+  * Drop Python 2 support
+  * Grab a slice of JournalErrors around the crash time (LP: #1962454)
+  * Fix several race conditions in test cases
+  * Make test cases more robust against running in specific environments
+  * Split the test suite into unit, integration, and system tests
 
 2.20.11 (2019-05-16)
 --------------------

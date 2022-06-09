@@ -28,7 +28,7 @@ from apport import unicode_gettext as _
 
 from configparser import ConfigParser
 
-__version__ = '2.20.11'
+__version__ = '2.21.0'
 
 
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
