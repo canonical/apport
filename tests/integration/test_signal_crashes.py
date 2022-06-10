@@ -325,7 +325,8 @@ class T(unittest.TestCase):
             self.do_crash(expect_corefile=True)
             apport.fileutils.delete_report(self.test_report)
 
-        # for SIGQUIT we only expect core files, no report
+    def test_core_dump_packaged_sigquit(self):
+        '''packaged executables create core files, no report for SIGQUIT'''
         resource.setrlimit(resource.RLIMIT_CORE, (1000000, -1))
         self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
