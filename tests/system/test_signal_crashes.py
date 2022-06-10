@@ -145,7 +145,8 @@ class T(unittest.TestCase):
             # with a SIGPIPE when apport aborts reading from stdin
             onemb = b' ' * 1048576
             while totalmb > 0:
-                if totalmb & 31 == 0:
+                if totalmb & 255 == 0:
+                    # Print a dot every 256 MiB
                     sys.stderr.write('.')
                     sys.stderr.flush()
                 try:
