@@ -13,6 +13,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import contextlib
 import sys, os, os.path, subprocess, time, traceback, pwd, io
 import signal, inspect, grp, fcntl, socket, atexit, array, struct
 import errno, argparse, stat
@@ -131,14 +132,15 @@ def init_error_log():
         log = os.environ.get('APPORT_LOG_FILE', '/var/log/apport.log')
         try:
             f = os.open(log, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
-            try:
-                admgid = grp.getgrnam('adm')[2]
-                os.chown(log, -1, admgid)
-                os.chmod(log, 0o640)
-            except KeyError:
-                pass  # if group adm doesn't exist, just leave it as root
         except OSError:  # on a permission error, don't touch stderr
             return
+
+        # if group adm doesn't exist, just leave it as root
+        with contextlib.suppress(KeyError, OSError):
+            admgid = grp.getgrnam('adm')[2]
+            os.chown(log, -1, admgid)
+            os.chmod(log, 0o640)
+
         os.dup2(f, 1)
         os.dup2(f, 2)
         sys.stderr = os.fdopen(2, 'wb')
