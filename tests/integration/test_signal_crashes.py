@@ -469,8 +469,13 @@ CoreDump: base64
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        self.assertEqual(out, b'')
-        self.assertEqual(err, b'')
+        if out != b'' or err != b'':
+            self.fail(
+                f"Apport wrote to stdout and/or stderr"
+                f" (exit code {app.returncode})."
+                f"\n*** stdout:\n{out.decode().strip()}"
+                f"\n*** stderr:\n{err.decode().strip()}"
+            )
         self.assertEqual(app.returncode, 0, err)
         with open(log) as f:
             logged = f.read()
