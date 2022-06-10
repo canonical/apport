@@ -327,7 +327,7 @@ class T(unittest.TestCase):
 
     def test_core_dump_packaged_sigquit(self):
         '''packaged executables create core files, no report for SIGQUIT'''
-        resource.setrlimit(resource.RLIMIT_CORE, (1000000, -1))
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
