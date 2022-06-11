@@ -31,7 +31,7 @@ class REThread(threading.Thread):
         if self.__target:
             try:
                 self._retval = self.__target(*self.__args, **self.__kwargs)
-            except:
+            except BaseException:
                 if sys:
                     self._exception = sys.exc_info()
 
