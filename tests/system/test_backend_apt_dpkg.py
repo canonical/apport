@@ -388,13 +388,6 @@ class T(unittest.TestCase):
 
         self._setup_foonux_config(release='xenial')
         vers = '16.04'
-        # install the GPG key for ports and xenial
-        keyring_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'trusted.gpg.d')
-        os.makedirs(keyring_dir, exist_ok=True)
-        subprocess.check_call(['/usr/lib/apt/apt-helper', 'download-file',
-                               'http://ports.ubuntu.com/project/ubuntu-archive-keyring.gpg',
-                               os.path.join(keyring_dir, 'ports.ubuntu.com.gpg')],
-                              stdout=subprocess.DEVNULL)
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux %s' % vers,
                                          [('coreutils', None),
                                           ('libc6', '2.23-0ubuntu0'),
@@ -674,17 +667,47 @@ class T(unittest.TestCase):
 
         # install GPG key for ddebs
         keyring_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'trusted.gpg.d')
-        os.makedirs(keyring_dir, exist_ok=True)
-        shutil.copy('/usr/share/keyrings/ubuntu-archive-keyring.gpg', keyring_dir)
-        subprocess.check_call(['/usr/lib/apt/apt-helper', 'download-file',
-                               'http://ddebs.ubuntu.com/dbgsym-release-key.asc',
-                               os.path.join(keyring_dir, 'ddebs.ubuntu.com.asc')],
-                              stdout=subprocess.DEVNULL)
+        self._copy_ubunut_keyrings(keyring_dir)
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
         keyring_arch_dir = os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf', 'trusted.gpg.d')
         os.symlink("../trusted.gpg.d", keyring_arch_dir)
+
+    def _copy_ubunut_keyrings(self, keyring_dir: str) -> None:
+        """Copy the archive and debug symbol archive keyring."""
+        os.makedirs(keyring_dir, exist_ok=True)
+        try:
+            shutil.copy(
+                "/usr/share/keyrings/ubuntu-archive-keyring.gpg", keyring_dir
+            )
+        except FileNotFoundError as error:  # pragma: no cover
+            self.skipTest(
+                f"{error.filename} missing. Please install ubuntu-keyring!"
+            )
+
+        dbgsym_keyring = "/usr/share/keyrings/ubuntu-dbgsym-keyring.gpg"
+        if not os.path.isfile(dbgsym_keyring):
+            self.skipTest(  # pragma: no cover
+                f"{dbgsym_keyring} missing. "
+                f"Please install ubuntu-dbgsym-keyring!"
+            )
+        # Convert from GPG keybox database format to OpenPGP Public Key format
+        output_dbgsym_keyring = os.path.join(
+            keyring_dir, os.path.basename(dbgsym_keyring)
+        )
+        try:
+            with open(output_dbgsym_keyring, "wb") as gpg_key:
+                gpg_cmd = [
+                    "gpg",
+                    "--no-default-keyring",
+                    "--keyring",
+                    dbgsym_keyring,
+                    "--export",
+                ]
+                subprocess.check_call(gpg_cmd, stdout=gpg_key)
+        except FileNotFoundError as error:  # pragma: no cover
+            self.skipTest(f"{error.filename} not available")
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
