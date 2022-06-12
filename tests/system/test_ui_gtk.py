@@ -9,27 +9,27 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest
-import tempfile
-import sys
 import os
-import apport
 import shutil
 import subprocess
-
-import gi
-gi.require_version('Gtk', '3.0')
-
-from gi.repository import GLib, GObject, Gtk
+import sys
+import tempfile
+import unittest
 from importlib.machinery import SourceFileLoader
-from apport import unicode_gettext as _
 from unittest.mock import patch
 
+import gi
+
+gi.require_version('Gtk', '3.0')  # noqa: E402, pylint: disable=C0413
+from gi.repository import GLib, GObject, Gtk
+
+import apport
 import apport.crashdb_impl.memory
+from apport import unicode_gettext as _
+from tests.paths import is_local_source_directory, local_test_environment
 
 GLib.log_set_always_fatal(GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL)
 
-from tests.paths import is_local_source_directory, local_test_environment
 
 if is_local_source_directory():
     apport_gtk_path = 'gtk/apport-gtk'

@@ -12,38 +12,41 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os.path
-import sys
 import os
+import sys
 
 try:
-    import apport
-    from PyQt5.QtCore import (QByteArray,
-                              QLibraryInfo,
-                              QLocale,
-                              Qt,
-                              QTimer,
-                              QTranslator)
-    from PyQt5.QtGui import (QIcon,
-                             QMovie,
-                             QPainter)
-    from PyQt5.QtWidgets import (QApplication,
-                                 QCheckBox,
-                                 QDialog,
-                                 QDialogButtonBox,
-                                 QLabel,
-                                 QLineEdit,
-                                 QMessageBox,
-                                 QProgressBar,
-                                 QPushButton,
-                                 QRadioButton,
-                                 QTreeWidget,
-                                 QTreeWidgetItem,
-                                 QFileDialog)
+    import sip
     from PyQt5 import uic
+    from PyQt5.QtCore import (
+        QByteArray,
+        QLibraryInfo,
+        QLocale,
+        Qt,
+        QTimer,
+        QTranslator,
+    )
+    from PyQt5.QtGui import QIcon, QMovie, QPainter
+    from PyQt5.QtWidgets import (
+        QApplication,
+        QCheckBox,
+        QDialog,
+        QDialogButtonBox,
+        QFileDialog,
+        QLabel,
+        QLineEdit,
+        QMessageBox,
+        QProgressBar,
+        QPushButton,
+        QRadioButton,
+        QTreeWidget,
+        QTreeWidgetItem,
+    )
+
+    import apport
     import apport.ui
     from apport import unicode_gettext as _
-    import sip
+
     # Work around for LP: 1282713
     try:
         sip.setdestroyonexit(False)

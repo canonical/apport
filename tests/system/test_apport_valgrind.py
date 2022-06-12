@@ -8,7 +8,6 @@
 # the full text of the license.
 
 import os
-import os.path
 import shutil
 import subprocess
 import tempfile

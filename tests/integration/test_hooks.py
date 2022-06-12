@@ -9,11 +9,15 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, os, shutil, os.path
-
+import os
+import shutil
+import subprocess
+import tempfile
+import unittest
 from datetime import datetime
 
-import apport, apport.fileutils
+import apport
+import apport.fileutils
 from tests.paths import get_data_directory, local_test_environment
 
 datadir = get_data_directory()

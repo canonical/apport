@@ -10,7 +10,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import atexit, os, os.path, re, shutil, tempfile
+import atexit
+import os
+import re
+import shutil
+import tempfile
+
 import apport
 
 

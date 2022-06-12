@@ -1,11 +1,18 @@
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
+import atexit
+import grp
 import io
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+import unittest
 import unittest.mock
 
+import apport.packaging
 import apport.report
 import problem_report
-import apport.packaging
-
 from tests.paths import patch_data_dir, restore_data_dir
 
 

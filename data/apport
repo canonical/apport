@@ -13,12 +13,28 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
+import array
+import atexit
 import contextlib
-import sys, os, os.path, subprocess, time, traceback, pwd, io
-import signal, inspect, grp, fcntl, socket, atexit, array, struct
-import errno, argparse, stat
+import errno
+import fcntl
+import grp
+import inspect
+import io
+import os
+import pwd
+import signal
+import socket
+import stat
+import struct
+import subprocess
+import sys
+import time
+import traceback
 
-import apport, apport.fileutils
+import apport
+import apport.fileutils
 
 #################################################################
 #

@@ -9,14 +9,21 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import tempfile, atexit, os.path, re, gzip, sys, email, time, shutil
+import atexit
+import email
+import gzip
+import os.path
+import re
+import shutil
+import sys
+import tempfile
+import time
+from http.client import HTTPSConnection
+from io import BytesIO
+from urllib.parse import urlencode
+from urllib.request import HTTPSHandler, Request, build_opener, urlopen
 
 from httplib2 import FailedToDecompressContent
-from io import BytesIO
-
-from urllib.request import HTTPSHandler, Request, build_opener, urlopen
-from urllib.parse import urlencode
-from http.client import HTTPSConnection
 
 try:
     from launchpadlib.errors import HTTPError
@@ -26,8 +33,8 @@ except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
     Launchpad = None
 
-import apport.crashdb
 import apport
+import apport.crashdb
 
 default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credentials')
 
@@ -1085,7 +1092,8 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 #
 
 if __name__ == '__main__':
-    import unittest, subprocess
+    import subprocess
+    import unittest
     from unittest.mock import patch
 
     crashdb = None

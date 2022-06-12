@@ -22,9 +22,14 @@ distributions.
 # is_distro_package() as well, if you don't sign all your official packages
 # (cough cough Fedora rawhide cough)
 
+import hashlib
+import os
+import stat
+import subprocess
+
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
 # class distro-agnostic.
-import rpm, hashlib, os, stat, subprocess
+import rpm
 
 
 class RPMPackageInfo:

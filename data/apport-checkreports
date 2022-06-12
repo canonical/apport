@@ -12,10 +12,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, optparse
+import optparse
+import sys
 
-from apport.fileutils import get_new_reports, get_new_system_reports
 import apport
+from apport.fileutils import get_new_reports, get_new_system_reports
 
 # parse command line options
 optparser = optparse.OptionParser('%prog [options]')

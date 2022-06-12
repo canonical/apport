@@ -9,7 +9,8 @@
 # the full text of the license.
 
 
-import smtplib, tempfile
+import smtplib
+import tempfile
 from email.mime.text import MIMEText
 
 import apport

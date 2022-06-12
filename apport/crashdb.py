@@ -9,12 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, os.path, sys, shutil
-
+import os
+import shutil
+import sys
 from functools import cmp_to_key
+from urllib.error import URLError
 from urllib.parse import quote_plus
 from urllib.request import urlopen
-from urllib.error import URLError
 
 import apport
 

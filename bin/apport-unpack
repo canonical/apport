@@ -12,10 +12,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, gettext, gzip
-from apport import unicode_gettext as _, fatal
+import gettext
+import gzip
+import os
+import sys
 
 import problem_report
+from apport import fatal
+from apport import unicode_gettext as _
 
 
 def help():

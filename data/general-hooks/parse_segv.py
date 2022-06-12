@@ -12,7 +12,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, re, logging
+import logging
+import re
+import sys
 
 
 class ParseSegv(object):

@@ -9,15 +9,21 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, optparse, subprocess, sys, zlib, errno, shutil
+import errno
+import optparse
+import os
+import shutil
+import subprocess
+import sys
+import zlib
 
 import apport
 from apport.crashdb import get_crashdb
 
-
 #
 # classes
 #
+
 
 class CrashDigger:
     def __init__(self, config_dir, auth_file, cache_dir, sandbox_dir,

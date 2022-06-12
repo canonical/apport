@@ -54,6 +54,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # is not supported. LP: #1774843
         try:
             import apt_pkg
+
             # make pyflakes happy
             apt_pkg.DATE
         except ImportError:
@@ -63,8 +64,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
-        import re, traceback
-        from apport.fileutils import likely_packaged, get_recent_crashes
+        import re
+        import traceback
+
+        from apport.fileutils import get_recent_crashes, likely_packaged
 
         # apport will look up the package from the executable path.
         try:
@@ -157,9 +160,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
 
 def dbus_service_unknown_analysis(exc_obj, report):
+    import re
+    import subprocess
+    from configparser import ConfigParser, NoOptionError, NoSectionError
     from glob import glob
-    import subprocess, re
-    from configparser import ConfigParser, NoSectionError, NoOptionError
 
     # determine D-BUS name
     m = re.search(r'name\s+(\S+)\s+was not provided by any .service',

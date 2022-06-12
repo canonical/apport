@@ -12,24 +12,23 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess
-import os
-import sys
-import time
+import base64
 import datetime
 import glob
+import locale
+import os
 import re
-import stat
-import base64
-import tempfile
 import select
 import shutil
-import locale
-
-from apport.packaging_impl import impl as packaging
+import stat
+import subprocess
+import sys
+import tempfile
+import time
 
 import apport
 import apport.fileutils
+from apport.packaging_impl import impl as packaging
 
 _invalid_key_chars_re = re.compile(r'[^0-9a-zA-Z_.-]')
 _AGENT = None

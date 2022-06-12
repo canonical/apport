@@ -11,8 +11,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, optparse, os.path, os
-import apport, apport.fileutils
+import optparse
+import os
+import sys
+
+import apport
+import apport.fileutils
 
 
 def mkattrname(path):

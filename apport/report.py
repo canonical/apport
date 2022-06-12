@@ -9,22 +9,36 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, re, pwd, grp, os, time, io
-import fnmatch, glob, traceback, errno, sys, atexit, locale, imp, stat
+import atexit
+import errno
+import fnmatch
+import glob
+import grp
+import imp
+import io
+import locale
+import os
+import pwd
+import re
 import shutil
-
-import xml.dom, xml.dom.minidom
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+import traceback
+import xml.dom
+import xml.dom.minidom
+from urllib.error import URLError
+from urllib.parse import unquote
+from urllib.request import urlopen
 from xml.parsers.expat import ExpatError
 
-from urllib.error import URLError
-from urllib.request import urlopen
-from urllib.parse import unquote
-
-import problem_report
 import apport
 import apport.fileutils
-from apport.packaging_impl import impl as packaging
+import problem_report
 from apport.hookutils import kill_pkttyagent
+from apport.packaging_impl import impl as packaging
 
 _data_dir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 _hook_dir = '%s/package-hooks/' % (_data_dir)

@@ -11,8 +11,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, re
-import apport.hookutils, apport.fileutils
+import os
+import re
+
+import apport.fileutils
+import apport.hookutils
 
 
 def add_info(report, ui):

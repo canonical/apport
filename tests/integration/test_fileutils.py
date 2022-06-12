@@ -1,10 +1,15 @@
-import unittest, tempfile, os, shutil, time, sys, pwd
+import os
+import pwd
+import shutil
+import sys
+import tempfile
+import time
+import unittest
+from unittest.mock import patch
 
-import problem_report
 import apport.fileutils
 import apport.packaging
-
-from unittest.mock import patch
+import problem_report
 
 
 class T(unittest.TestCase):

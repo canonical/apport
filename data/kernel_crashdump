@@ -11,8 +11,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, re, glob
-import apport, apport.fileutils
+import glob
+import os
+import re
+
+import apport
+import apport.fileutils
 
 pr = apport.Report('KernelCrash')
 package = apport.packaging.get_kernel_package()

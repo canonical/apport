@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
-from glob import glob
-import os.path, shutil, sys, subprocess
-from distutils.version import StrictVersion
-import distutils.core
 import distutils.command.build
 import distutils.command.clean
+import distutils.core
+import os.path
+import shutil
+import subprocess
+import sys
+from distutils.version import StrictVersion
+from glob import glob
 
 try:
     import DistUtilsExtra.auto
@@ -110,7 +113,7 @@ try:
 except (OSError, subprocess.CalledProcessError):
     print('Java support: Java not available, not building Java crash handler')
 
-from apport.ui import __version__
+from apport.ui import __version__  # noqa: E402
 
 # determine systemd unit directory
 try:

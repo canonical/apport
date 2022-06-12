@@ -13,9 +13,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, os.path, sys, errno, optparse
+import errno
+import optparse
+import os
+import sys
 
-import apport, apport.fileutils, apport.hookutils
+import apport
+import apport.fileutils
+import apport.hookutils
 
 
 def parse_argv():

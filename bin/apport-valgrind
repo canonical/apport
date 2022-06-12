@@ -14,13 +14,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys
-import os
-import os.path
-import shutil
-import subprocess
 import argparse
 import gettext
+import os
+import shutil
+import subprocess
+import sys
 
 import apport
 import apport.fileutils

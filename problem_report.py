@@ -9,16 +9,20 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import zlib, base64, time, gzip, struct, os
+import base64
 import datetime
+import gzip
+import os
+import struct
+import time
 import typing
+import zlib
+from collections import UserDict
 from email.encoders import encode_base64
-from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
-
-from collections import UserDict
 
 
 class CompressedValue:

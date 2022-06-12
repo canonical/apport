@@ -11,10 +11,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import optparse, sys, os.path
+import optparse
+import os.path
+import sys
 
-import apport.crashdb_impl.memory
 import apport
+import apport.crashdb_impl.memory
 
 
 def command_dump(crashdb, opts, args):

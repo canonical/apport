@@ -9,17 +9,26 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time, pwd, stat, json, socket
+import glob
 import http.client
+import json
+import os
+import pwd
+import socket
+import stat
+import subprocess
+import time
+from configparser import (
+    ConfigParser,
+    MissingSectionHeaderError,
+    NoOptionError,
+    NoSectionError,
+)
 from contextlib import closing
 from operator import itemgetter
 
-from configparser import (ConfigParser, NoOptionError, NoSectionError,
-                          MissingSectionHeaderError)
-
-from problem_report import ProblemReport
-
 from apport.packaging_impl import impl as packaging
+from problem_report import ProblemReport
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 core_dir = os.environ.get('APPORT_COREDUMP_DIR', '/var/lib/apport/coredump')

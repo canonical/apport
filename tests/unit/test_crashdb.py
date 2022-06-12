@@ -1,4 +1,8 @@
-import unittest, tempfile, shutil, os.path, copy
+import copy
+import os.path
+import shutil
+import tempfile
+import unittest
 
 import apport
 from apport.crashdb_impl.memory import CrashDatabase

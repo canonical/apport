@@ -11,24 +11,27 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os.path, sys, subprocess, os, re
+import os
+import re
+import subprocess
+import sys
 
 import gi
-gi.require_version('Wnck', '3.0')
-gi.require_version('GdkX11', '3.0')
-from gi.repository import GLib, Wnck, GdkX11, Gdk
-Gdk  # pyflakes; needed for GdkX11
+
+import apport
+import apport.ui
+from apport import unicode_gettext as _
+
 try:
-    from gi.repository import Gtk
+    gi.require_version('Wnck', '3.0')  # noqa: E402, pylint: disable=C0413
+    gi.require_version('GdkX11', '3.0')  # noqa: E402, pylint: disable=C0413
+    from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except RuntimeError as e:
     # probably session just closing down?
     sys.stderr.write('Cannot start: %s\n' % str(e))
     sys.exit(1)
 
-import apport
-from apport import unicode_gettext as _
-import apport.ui
-
+Gdk  # pyflakes; needed for GdkX11
 have_display = os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')
 
 

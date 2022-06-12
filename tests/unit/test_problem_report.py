@@ -1,8 +1,10 @@
 import datetime
+import email
 import locale
-import unittest, email, time
-
+import time
+import unittest
 from io import BytesIO
+
 import problem_report
 
 bin_data = b'ABABABABAB\0\0\0Z\x01\x02'

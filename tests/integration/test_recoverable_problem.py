@@ -9,14 +9,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest
 import os
+import shutil
 import subprocess
 import tempfile
 import time
-import shutil
-import apport.report
+import unittest
 
+import apport.report
 from tests.paths import get_data_directory, local_test_environment
 
 

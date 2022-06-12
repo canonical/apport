@@ -13,20 +13,32 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import glob, sys, os.path, optparse, traceback, locale, gettext, re, io
-import errno, zlib, gzip
-import subprocess, threading, webbrowser
+import ast
+import errno
+import gettext
+import glob
+import gzip
+import io
+import locale
+import optparse
+import os.path
+import re
 import shutil
 import signal
+import subprocess
+import sys
+import threading
 import time
-import ast
-
-import apport, apport.fileutils, apport.REThread
-
-import apport.crashdb
-from apport import unicode_gettext as _
-
+import traceback
+import webbrowser
+import zlib
 from configparser import ConfigParser
+
+import apport
+import apport.crashdb
+import apport.fileutils
+import apport.REThread
+from apport import unicode_gettext as _
 
 __version__ = '2.21.0'
 

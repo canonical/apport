@@ -7,6 +7,7 @@ This adds /var/log/apport.log and the file listing in /var/crash to the report.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 
 from glob import glob
+
 import apport.hookutils
 
 APPORT_LOG = '/var/log/apport.log'

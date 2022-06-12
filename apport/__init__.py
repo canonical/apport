@@ -1,16 +1,13 @@
-import sys
+import gettext
 import os
+import sys
 import time
 
-from apport.report import Report
-
 from apport.packaging_impl import impl as packaging
+from apport.report import Report
 
 Report  # pyflakes
 packaging  # pyflakes
-
-# fix gettext to output proper unicode strings
-import gettext
 
 
 def unicode_gettext(str):

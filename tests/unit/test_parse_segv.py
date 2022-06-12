@@ -1,9 +1,12 @@
-import unittest, sys, os.path
+import os.path
+import sys
+import unittest
 
 from tests.paths import get_data_directory
+
 sys.path.insert(0, os.path.join(get_data_directory(), 'general-hooks'))
 
-import parse_segv
+import parse_segv  # noqa: E402
 
 # Default global registers, maps, and disassembly for testing
 regs = '''eax            0xffffffff -1

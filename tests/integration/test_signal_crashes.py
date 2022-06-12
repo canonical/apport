@@ -7,12 +7,23 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import tempfile, shutil, os, subprocess, signal, time, stat, sys
-import resource, grp, unittest, socket, array
-import apport.fileutils
+import array
+import grp
+import os
+import resource
+import shutil
+import signal
+import socket
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+import unittest
 
 import psutil
 
+import apport.fileutils
 from tests.helper import pidof, read_shebang
 from tests.paths import get_data_directory, local_test_environment
 

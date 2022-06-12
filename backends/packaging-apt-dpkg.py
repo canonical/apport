@@ -12,17 +12,26 @@ This is used on Debian and derivatives such as Ubuntu.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, os, glob, stat, sys, tempfile, shutil, time
+import glob
+import gzip
 import hashlib
 import json
-
+import os
+import pickle
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import time
 from contextlib import closing
+from datetime import datetime
+from http.client import HTTPConnection
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote, unquote, urlparse
+from urllib.request import urlopen
 
 import apt
-from urllib.error import URLError, HTTPError
-from urllib.request import urlopen
-from urllib.parse import quote, unquote
-import pickle
 
 import apport
 from apport.packaging import PackageInfo
@@ -1291,9 +1300,6 @@ Debug::NoLocking "true";
             if age is None or age >= 86400:
                 url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
                 if age:
-                    from http.client import HTTPConnection
-                    from urllib.parse import urlparse
-                    from datetime import datetime
                     # HTTPConnection requires server name e.g.
                     # archive.ubuntu.com
                     server = urlparse(url)[1]
@@ -1340,7 +1346,6 @@ Debug::NoLocking "true";
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
-                import gzip
                 with gzip.open('%s' % map, 'rb') as contents:
                     line_num = 0
                     for line in contents:

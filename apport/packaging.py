@@ -10,9 +10,9 @@
 # the full text of the license.
 
 import os
-import sys
 import re
 import subprocess
+import sys
 
 
 class PackageInfo:

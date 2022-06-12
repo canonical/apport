@@ -7,11 +7,20 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import tempfile, unittest, subprocess, os, os.path, shutil
+import os
+import shutil
+import subprocess
+import tempfile
+import unittest
 
-import apport, apport.fileutils
-
-from tests.paths import SRCDIR, get_data_directory, is_local_source_directory, local_test_environment
+import apport
+import apport.fileutils
+from tests.paths import (
+    SRCDIR,
+    get_data_directory,
+    is_local_source_directory,
+    local_test_environment,
+)
 
 
 @unittest.skipIf(shutil.which('java') is None, 'Java not available')

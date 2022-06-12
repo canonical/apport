@@ -1,7 +1,13 @@
-import unittest, gzip, subprocess, tempfile, shutil, os, os.path
 import glob
-from apt import apt_pkg
+import gzip
+import os
+import shutil
+import subprocess
+import tempfile
+import unittest
 from importlib.machinery import SourceFileLoader
+
+from apt import apt_pkg
 
 from tests.helper import has_internet
 from tests.paths import is_local_source_directory

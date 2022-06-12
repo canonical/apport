@@ -1,5 +1,6 @@
-import unittest, imp
+import imp
 import shutil
+import unittest
 
 from tests.paths import is_local_source_directory
 

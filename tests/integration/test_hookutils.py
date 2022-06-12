@@ -1,4 +1,11 @@
-import unittest, tempfile, locale, subprocess, re, shutil, os, sys
+import locale
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
 import unittest.mock
 
 import apport.hookutils

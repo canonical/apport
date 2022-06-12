@@ -9,26 +9,25 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
-import unittest
-import tempfile
-import sys
 import os
 import shutil
-
+import sys
+import tempfile
+import unittest
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
+
 try:
-    from PyQt5.QtCore import QTimer, QCoreApplication
-    from PyQt5.QtWidgets import QApplication, QTreeWidget
+    from PyQt5.QtCore import QCoreApplication, QTimer
     from PyQt5.QtGui import QIcon
+    from PyQt5.QtWidgets import QApplication, QTreeWidget
     PYQT5_IMPORT_ERROR = None
 except ImportError as error:
     PYQT5_IMPORT_ERROR = error
 
 import apport
-from apport import unicode_gettext as _
 import apport.crashdb_impl.memory
-
+from apport import unicode_gettext as _
 from tests.helper import wrap_object
 from tests.paths import is_local_source_directory, local_test_environment
 

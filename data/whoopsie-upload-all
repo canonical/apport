@@ -13,19 +13,19 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
+import errno
+import fcntl
+import logging
 import os
 import stat
+import subprocess
 import sys
 import time
-import subprocess
-import argparse
-import fcntl
-import errno
-import logging
 import zlib
 
-import apport.fileutils
 import apport
+import apport.fileutils
 
 
 def process_report(report):

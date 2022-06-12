@@ -12,11 +12,23 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, argparse, shutil, tempfile, re, zlib
-import tty, termios, gettext
-import apport, apport.fileutils, apport.sandboxutils
-from apport.crashdb import get_crashdb
+import argparse
+import gettext
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import termios
+import tty
+import zlib
+
+import apport
+import apport.fileutils
+import apport.sandboxutils
 from apport import unicode_gettext as _
+from apport.crashdb import get_crashdb
 
 #
 # functions

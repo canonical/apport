@@ -10,7 +10,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, tempfile, subprocess, os, stat, shutil, atexit
+import atexit
+import os
+import shutil
+import stat
+import subprocess
+import tempfile
+import unittest
 import unittest.mock
 
 import apport.fileutils

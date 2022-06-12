@@ -1,4 +1,7 @@
-import unittest, time, traceback, sys
+import sys
+import time
+import traceback
+import unittest
 
 import apport.REThread
 

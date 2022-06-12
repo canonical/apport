@@ -9,9 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, shutil, os, os.path
-import problem_report
+import os
+import shutil
+import subprocess
+import tempfile
+import unittest
 
+import problem_report
 from tests.paths import local_test_environment
 
 

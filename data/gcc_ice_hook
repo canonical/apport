@@ -12,7 +12,9 @@
 # the full text of the license.
 
 import sys
-import apport, apport.fileutils
+
+import apport
+import apport.fileutils
 
 # parse command line arguments
 if len(sys.argv) != 3:

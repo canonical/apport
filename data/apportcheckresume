@@ -9,12 +9,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import datetime
 import os
 import sys
-import datetime
 
+import apport.report
 from apport import unicode_gettext as _
 from apport.hookutils import attach_file_if_exists
+from apport.packaging_impl import impl as packaging
 
 
 def main(argv=None):
@@ -23,11 +25,9 @@ def main(argv=None):
         argv = sys.argv
 
     try:
-        from apport.packaging_impl import impl as packaging
         if not packaging.enabled():
             return -1
 
-        import apport.report
         pr = apport.report.Report(type='KernelOops')
 
         libdir = '/var/lib/pm-utils'

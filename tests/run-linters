@@ -14,10 +14,17 @@
 
 set -e
 
+if type isort >/dev/null 2>&1; then
+    echo "Running isort..."
+    isort --check-only --diff .
+else
+    echo "Skipping isort tests, isort is not installed"
+fi
+
 if type pycodestyle >/dev/null 2>&1; then
     echo "Running pycodestyle..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
+    pycodestyle -r --ignore=E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
 else
     echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi

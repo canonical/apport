@@ -15,11 +15,16 @@
 #    w3m, lynx: do not work
 #    elinks: works
 
-import os.path, os, sys, subprocess, re, errno
-import termios, tempfile
+import errno
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import termios
 
-from apport import unicode_gettext as _
 import apport.ui
+from apport import unicode_gettext as _
 
 
 class CLIDialog:

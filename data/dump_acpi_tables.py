@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-import os, sys, stat
+import os
+import stat
+import sys
 
 
 def dump_acpi_table(filename, tablename, out):

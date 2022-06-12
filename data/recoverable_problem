@@ -15,10 +15,11 @@ nul-separated list of key-value pairs.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import apport.report
-import sys
-import os
 import argparse
+import os
+import sys
+
+import apport.report
 
 
 def main():

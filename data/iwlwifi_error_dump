@@ -11,8 +11,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, sys, re
-import apport, apport.fileutils
+import os
+import re
+import sys
+
+import apport
+import apport.fileutils
 from apport.hookutils import command_output
 
 if len(sys.argv) != 2:
