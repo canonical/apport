@@ -76,7 +76,7 @@ class T(unittest.TestCase):
         pr['UnprintableUnicode'] = b'a\xc3\xa4\x05z1\xc3\xa9'.decode('UTF-8')
         io = BytesIO()
         pr.write(io)
-        expected = '''ProblemType: Crash
+        expected = f'''ProblemType: Crash
 Date: now!
 Simple: bar
 SimpleUTF8: 1äö2Φ3
@@ -91,8 +91,8 @@ UnprintableUnicode: aä\x05z1é
 WhiteSpace:
   foo   bar
  baz
-   blip  
- 
+   blip{'  '}
+{' '}
  afteremptyline
 '''
         expected = expected.encode('UTF-8')
@@ -102,29 +102,29 @@ WhiteSpace:
         '''load() with various formatting.'''
 
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(b'''ProblemType: Crash
+        pr.load(BytesIO(f'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
   foo   bar
  baz
-   blip  
-'''))
+   blip{'  '}
+'''.encode()))
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
 
         # test last field a bit more
-        pr.load(BytesIO(b'''ProblemType: Crash
+        pr.load(BytesIO(f'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
   foo   bar
  baz
-   blip  
- 
-'''))
+   blip{'  '}
+{' '}
+'''.encode()))
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
@@ -143,25 +143,25 @@ WhiteSpace:
         self.assertEqual(pr['WhiteSpace'], 'foo\nbar')
 
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(b'''ProblemType: Crash
+        pr.load(BytesIO(f'''ProblemType: Crash
 WhiteSpace:
   foo   bar
  baz
- 
-   blip  
+{' '}
+   blip{'  '}
 Last: foo
-'''))
+'''.encode()))
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n\n  blip  ')
         self.assertEqual(pr['Last'], 'foo')
 
-        pr.load(BytesIO(b'''ProblemType: Crash
+        pr.load(BytesIO(f'''ProblemType: Crash
 WhiteSpace:
   foo   bar
  baz
-   blip  
+   blip{'  '}
 Last: foo
- 
-'''))
+{' '}
+'''.encode()))
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
         self.assertEqual(pr['Last'], 'foo\n')
 
@@ -416,9 +416,9 @@ TwoLineUnicode:
         self.assertEqual(parts[4].get_content_type(), 'text/plain')
         self.assertEqual(parts[4].get_content_charset(), 'utf-8')
         self.assertEqual(parts[4].get_filename(), 'Multiline.txt')
-        expected = ''' foo   bar
+        expected = f''' foo   bar
 baz
-  blip  
+  blip{'  '}
 line4
 line♥5!!
 łıµ€ ⅝

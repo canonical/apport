@@ -75,14 +75,14 @@ class T(unittest.TestCase):
         pr['Extra'] = 'appended'
         pr.write(io)
 
-        self.assertEqual(io.getvalue(),
-                         b'''ProblemType: Crash
+        self.assertEqual(io.getvalue().decode(),
+                         f'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
   foo   bar
  baz
-   blip  
+   blip{'  '}
 Extra: appended
 ''')
 

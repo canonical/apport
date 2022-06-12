@@ -18,9 +18,7 @@ set -e
 if PYCODESTYLE=$(which pycodestyle 2>/dev/null || which pep8 2>/dev/null); then
     echo "Running $(basename $PYCODESTYLE)..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=test_problem_report.py,is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
-    # those tests deliberately have trailing whitespace in test files, ignore
-    $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,W291,W293 tests/integration/test_problem_report.py tests/unit/test_problem_report.py
+    $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
 else
     echo "Skipping PEP 8 tests, neither pycodestyle nor pep8 are installed"
 fi
