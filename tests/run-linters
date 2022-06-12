@@ -14,13 +14,12 @@
 
 set -e
 
-# PEP8 tests, if pep8 is available
-if PYCODESTYLE=$(which pycodestyle 2>/dev/null || which pep8 2>/dev/null); then
-    echo "Running $(basename $PYCODESTYLE)..."
+if type pycodestyle >/dev/null 2>&1; then
+    echo "Running pycodestyle..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    $PYCODESTYLE -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
+    pycodestyle -r --ignore=E401,E402,E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
 else
-    echo "Skipping PEP 8 tests, neither pycodestyle nor pep8 are installed"
+    echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi
 
 # pyflakes3, if available
