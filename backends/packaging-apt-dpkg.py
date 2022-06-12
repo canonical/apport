@@ -18,8 +18,6 @@ import json
 
 from contextlib import closing
 
-import warnings
-warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 from urllib.error import URLError, HTTPError
 from urllib.request import urlopen
