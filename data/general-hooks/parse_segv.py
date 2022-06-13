@@ -299,8 +299,9 @@ class ParseSegv(object):
 
         # Handle I/O port operations
         if self.insn in ['out', 'in'] and not understood:
-            reason.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
-            details.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
+            msg = 'disallowed I/O port operation on port %d' % (self.register_value(self.src))
+            reason.append(msg)
+            details.append(msg)
             understood = True
 
         # Note position of SP with regard to "[stack]" VMA
@@ -319,12 +320,11 @@ class ParseSegv(object):
 
         if not understood:
             vma = self.find_vma(self.pc)
+            msg = 'Reason could not be automatically determined.'
             if vma and (vma['name'] == '[vdso]' or vma['name'] == '[vsyscall]'):
-                reason.append('Reason could not be automatically determined. (Unhandled exception in kernel code?)')
-                details.append('Reason could not be automatically determined. (Unhandled exception in kernel code?)')
-            else:
-                reason.append('Reason could not be automatically determined.')
-                details.append('Reason could not be automatically determined.')
+                msg += ' (Unhandled exception in kernel code?)'
+            reason.append(msg)
+            details.append(msg)
         return understood, '\n'.join(reason), '\n'.join(details)
 
 
