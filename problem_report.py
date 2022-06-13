@@ -24,6 +24,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
 
+# magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
+GZIP_HEADER_START = b'\037\213\010'
+
 
 class CompressedValue:
     '''Represent a ProblemReport value which is gzip compressed.'''
@@ -138,27 +141,7 @@ class ProblemReport(UserDict):
                     continue
                 assert (key is not None and value is not None)
                 if b64_block:
-                    block = base64.b64decode(line)
-                    if bd:
-                        value += bd.decompress(block)
-                    else:
-                        if binary == 'compressed':
-                            # check gzip header; if absent, we have legacy zlib
-                            # data
-                            if value.gzipvalue == b'' and not block.startswith(b'\037\213\010'):
-                                value.legacy_zlib = True
-                            value.gzipvalue += block
-                        else:
-                            # lazy initialization of bd
-                            # skip gzip header, if present
-                            if block.startswith(b'\037\213\010'):
-                                bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                                value = bd.decompress(self._strip_gzip_header(block))
-                            else:
-                                # legacy zlib-only format used default block
-                                # size
-                                bd = zlib.decompressobj()
-                                value += bd.decompress(block)
+                    bd, value = self._decompress_line(line, bd, value)
                 else:
                     if len(value) > 0:
                         value += b'\n'
@@ -239,20 +222,9 @@ class ProblemReport(UserDict):
                                 if line.startswith(b' '):
                                     assert (key is not None and value is not None)
                                     if b64_block[key]:
-                                        block = base64.b64decode(line)
-                                        if bd:
-                                            out.write(bd.decompress(block))
-                                        else:
-                                            # lazy initialization of bd
-                                            # skip gzip header, if present
-                                            if block.startswith(b'\037\213\010'):
-                                                bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                                                out.write(bd.decompress(self._strip_gzip_header(block)))
-                                            else:
-                                                # legacy zlib-only format used default block
-                                                # size
-                                                bd = zlib.decompressobj()
-                                                out.write(bd.decompress(block))
+                                        bd, line_value = self._decompress_line(line, bd)
+                                        if line_value:
+                                            out.write(line_value)
                                 else:
                                     break
                     except IOError:
@@ -277,6 +249,33 @@ class ProblemReport(UserDict):
         This could happen when using binary=False in load().
         '''
         return ('' in self.values())
+
+    @classmethod
+    def _decompress_line(cls, line, decompressor, value=b""):
+        '''Decompress a Base64 encoded line of gzip compressed data.'''
+        block = base64.b64decode(line)
+        if decompressor:
+            value += decompressor.decompress(block)
+        else:
+            if isinstance(value, CompressedValue):
+                # check gzip header; if absent, we have legacy zlib
+                # data
+                if value.gzipvalue == b'' and not block.startswith(GZIP_HEADER_START):
+                    value.legacy_zlib = True
+                value.gzipvalue += block
+            else:
+                # lazy initialization of decompressor
+                # skip gzip header, if present
+                if block.startswith(GZIP_HEADER_START):
+                    decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
+                    value = decompressor.decompress(cls._strip_gzip_header(block))
+                else:
+                    # legacy zlib-only format used default block
+                    # size
+                    decompressor = zlib.decompressobj()
+                    value += decompressor.decompress(block)
+
+        return decompressor, value
 
     @classmethod
     def _is_binary(klass, string):
@@ -404,7 +403,7 @@ class ProblemReport(UserDict):
                 continue
 
             # write gzip header
-            gzip_header = b'\037\213\010\010\000\000\000\000\002\377' + k.encode('UTF-8') + b'\000'
+            gzip_header = GZIP_HEADER_START + b'\010\000\000\000\000\002\377' + k.encode('UTF-8') + b'\000'
             file.write(base64.b64encode(gzip_header))
             file.write(b'\n ')
             crc = zlib.crc32(b'')
