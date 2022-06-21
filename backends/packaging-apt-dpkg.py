@@ -16,6 +16,7 @@ import glob
 import gzip
 import hashlib
 import json
+import logging
 import os
 import pickle
 import shutil
@@ -1055,32 +1056,33 @@ Debug::NoLocking "true";
 
         # unpack packages, weed out the ones that are already installed (for
         # permanent sandboxes)
+        logger = logging.getLogger(__name__)
         requested_pkgs = dict(packages)
         for p in real_pkgs.copy():
             if p in requested_pkgs:
                 if requested_pkgs[p] is None:
                     # We already have the latest version of this package
                     if pkg_versions.get(p) == cache[p].candidate.version:
-                        # print('Removing %s which is already the right version' % p)
+                        logger.debug('Removing %s which is already the right version', p)
                         real_pkgs.remove(p)
                     else:
-                        # print('Installing %s version %s' % (p, cache[p].candidate.version))
+                        logger.debug('Installing %s version %s', p, cache[p].candidate.version)
                         cache[p].mark_install(False, False)
                 elif pkg_versions.get(p) != requested_pkgs[p]:
-                    # print('Installing %s version %s' % (p, cache[p].candidate.version))
+                    logger.debug('Installing %s version %s', p, cache[p].candidate.version)
                     cache[p].mark_install(False, False)
                 elif pkg_versions.get(p) != cache[p].candidate.version:
-                    # print('Installing %s version %s' % (p, cache[p].candidate.version))
+                    logger.debug('Installing %s version %s', p, cache[p].candidate.version)
                     cache[p].mark_install(False, False)
                 else:
-                    # print('Removing %s which is already the right version' % p)
+                    logger.debug('Removing %s which is already the right version', p)
                     real_pkgs.remove(p)
             else:
                 if pkg_versions.get(p) != cache[p].candidate.version:
-                    # print('Installing %s' % p)
+                    logger.debug('Installing %s', p)
                     cache[p].mark_install(False, False)
                 else:
-                    # print('Removing %s which is already the right version' % p)
+                    logger.debug('Removing %s which is already the right version', p)
                     real_pkgs.remove(p)
 
         last_written = time.time()
