@@ -10,12 +10,11 @@
 # the full text of the license.
 
 import base64
-import datetime
 import gzip
+import locale
 import os
 import struct
 import time
-import typing
 import zlib
 from collections import UserDict
 from email.encoders import encode_base64
@@ -237,11 +236,23 @@ class ProblemReport(UserDict):
             raise ValueError('%s has no binary content' %
                              [item for item, element in b64_block.items() if element is False])
 
-    def get_date(self) -> typing.Optional[datetime.datetime]:
-        '''Return crash date as datetime object.'''
-        if 'Date' not in self:
+    def get_timestamp(self) -> int:
+        '''Get timestamp (seconds since epoch) from Date field
+
+        Return None if it is not present.
+        '''
+        # report time is from asctime(), not in locale representation
+        orig_ctime = locale.getlocale(locale.LC_TIME)
+        try:
+            try:
+                locale.setlocale(locale.LC_TIME, 'C')
+                return int(time.mktime(time.strptime(self['Date'])))
+            except KeyError:
+                return None
+            finally:
+                locale.setlocale(locale.LC_TIME, orig_ctime)
+        except locale.Error:
             return None
-        return datetime.datetime.strptime(self['Date'], '%a %b %d %H:%M:%S %Y')
 
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.

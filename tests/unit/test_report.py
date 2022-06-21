@@ -1,5 +1,4 @@
 import os
-import time
 import unittest
 import unittest.mock
 
@@ -797,15 +796,3 @@ No symbol table info available.
         del pr['dmi.bios.version']
         expected = 'suspend/resume:Cray XT5'
         self.assertEqual(expected, pr.crash_signature())
-
-    def test_get_timestamp(self):
-        r = apport.Report()
-        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=2)
-
-        r['Date'] = 'Thu Jan 9 12:00:00 2014'
-        # delta is ±12 hours, as this depends on the timezone that the test is
-        # run in
-        self.assertAlmostEqual(r.get_timestamp(), 1389265200.0, delta=43200)
-
-        del r['Date']
-        self.assertEqual(r.get_timestamp(), None)

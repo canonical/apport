@@ -1,4 +1,3 @@
-import datetime
 import email
 import locale
 import time
@@ -41,16 +40,32 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport(date='19801224 12:34')
         self.assertEqual(pr['Date'], '19801224 12:34')
 
-    def test_get_date(self):
-        '''get_date() returns date.'''
-        pr = problem_report.ProblemReport(date='Wed May 18 09:49:57 2022')
-        self.assertEqual(pr.get_date(), datetime.datetime(2022, 5, 18, 9, 49, 57))
+    def test_get_timestamp(self):
+        '''get_timestamp() returns timestamp.'''
+        r = problem_report.ProblemReport()
+        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=2)
 
-    def test_get_date_returns_none(self):
-        '''get_date() returns None.'''
+        r['Date'] = 'Thu Jan 9 12:00:00 2014'
+        # delta is ±12 hours, as this depends on the timezone that the test is
+        # run in
+        self.assertAlmostEqual(r.get_timestamp(), 1389265200, delta=43200)
+
+    def test_get_timestamp_locale_german(self):
+        '''get_timestamp() returns date when LC_TIME is set.'''
+        pr = problem_report.ProblemReport(date='Wed May 18 09:49:57 2022')
+        orig_ctime = locale.getlocale(locale.LC_TIME)
+        try:
+            locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
+        except locale.Error:
+            self.skipTest("Missing German locale support")
+        self.assertEqual(pr.get_timestamp(), 1652867397 + time.altzone)
+        locale.setlocale(locale.LC_TIME, orig_ctime)
+
+    def test_get_timestamp_returns_none(self):
+        '''get_timestamp() returns None.'''
         pr = problem_report.ProblemReport()
         del pr['Date']
-        self.assertEqual(pr.get_date(), None)
+        self.assertEqual(pr.get_timestamp(), None)
 
     def test_sanity_checks(self):
         '''various error conditions.'''

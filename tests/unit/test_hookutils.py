@@ -1,3 +1,4 @@
+import time
 import unittest
 import unittest.mock
 
@@ -45,8 +46,8 @@ class T(unittest.TestCase):
             [
                 "journalctl",
                 "--priority=warning",
-                "--since=2022-05-18 18:30:58",
-                "--until=2022-05-18 18:31:18",
+                f"--since=@{1652898658 + time.altzone}",
+                f"--until=@{1652898678 + time.altzone}",
             ],
         )
 

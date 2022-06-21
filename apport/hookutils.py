@@ -15,7 +15,6 @@
 import base64
 import datetime
 import glob
-import locale
 import os
 import re
 import select
@@ -24,7 +23,6 @@ import stat
 import subprocess
 import sys
 import tempfile
-import time
 
 import apport
 import apport.fileutils
@@ -735,11 +733,11 @@ def attach_journal_errors(report, time_window=10) -> None:
     if not os.path.exists('/run/systemd/system'):
         return
 
-    crash_time = report.get_date()
-    if crash_time:
-        before_crash = crash_time - datetime.timedelta(seconds=time_window)
-        after_crash = crash_time + datetime.timedelta(seconds=time_window)
-        args = [f'--since={before_crash}', f'--until={after_crash}']
+    crash_timestamp = report.get_timestamp()
+    if crash_timestamp:
+        before_crash = crash_timestamp - time_window
+        after_crash = crash_timestamp + time_window
+        args = [f'--since=@{before_crash}', f'--until=@{after_crash}']
     else:
         args = ['-b', '--lines=1000']
     report['JournalErrors'] = command_output(
@@ -987,17 +985,8 @@ def in_session_of_problem(report):
             else:
                 return None
 
-    # report time is in local TZ
-    orig_ctime = locale.getlocale(locale.LC_TIME)
-    try:
-        try:
-            locale.setlocale(locale.LC_TIME, 'C')
-            report_time = time.mktime(time.strptime(report['Date']))
-        except KeyError:
-            return None
-        finally:
-            locale.setlocale(locale.LC_TIME, orig_ctime)
-    except locale.Error:
+    report_time = report.get_timestamp()
+    if report_time is None:
         return None
 
     # determine session creation time
