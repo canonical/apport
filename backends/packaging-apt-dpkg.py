@@ -664,44 +664,6 @@ Debug::NoLocking "true";
         # TODO: Ubuntu specific
         return 'linux-image-' + os.uname()[2]
 
-    def _install_debug_kernel(self, report):
-        '''Install kernel debug package
-
-        Ideally this would be just another package but the kernel is
-        special in various ways currently so we can not use the apt
-        method.
-        '''
-        installed = []
-        outdated = []
-        kver = report['Uname'].split()[1]
-        arch = report['Architecture']
-        ver = report['Package'].split()[1]
-        debug_pkgname = 'linux-image-debug-%s' % kver
-        c = self._cache()
-        if debug_pkgname in c and c[debug_pkgname].isInstalled:
-            # print('kernel ddeb already installed')
-            return (installed, outdated)
-        target_dir = apt.apt_pkg.config.find_dir('Dir::Cache::archives') + '/partial'
-        deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
-        # FIXME: this package is currently not in Packages.gz
-        url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
-        out = open(os.path.join(target_dir, deb), 'w')
-        # urlretrieve does not return 404 in the headers so we use urlopen
-        u = urlopen(url)
-        if u.getcode() > 400:
-            return ('', 'linux')
-        while True:
-            block = u.read(8 * 1024)
-            if not block:
-                break
-            out.write(block)
-        out.flush()
-        out.close()
-        ret = subprocess.call(['dpkg', '-i', os.path.join(target_dir, deb)])
-        if ret == 0:
-            installed.append(deb.split('_')[0])
-        return (installed, outdated)
-
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
