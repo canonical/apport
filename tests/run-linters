@@ -12,7 +12,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-set -e
+set -eu
+
+PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper)
 
 if type isort >/dev/null 2>&1; then
     echo "Running isort..."
@@ -24,7 +26,7 @@ fi
 if type pycodestyle >/dev/null 2>&1; then
     echo "Running pycodestyle..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle -r --ignore=E501,W503,W504,E124 --exclude=is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
+    pycodestyle -r --ignore=E501,W503,W504,E124 . ${PYTHON_SCRIPTS}
 else
     echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi
@@ -32,7 +34,7 @@ fi
 # pyflakes3, if available
 if type pyflakes3 >/dev/null 2>&1; then
     echo "Running pyflakes3..."
-    pyflakes3 `find -name '*.py'` `find bin data gtk -type f -executable ! -name is-enabled ! -name apport-bug ! -name root_info_wrapper ! -name apport-collect`
+    pyflakes3 . ${PYTHON_SCRIPTS}
 else
     echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
 fi
