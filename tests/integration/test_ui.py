@@ -412,16 +412,23 @@ class T(unittest.TestCase):
         self.ui.collect_info()
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
+    def _write_crashdb_config_hook(self, crashdb: str, bash_hook: str = None):
+        '''Write source_bash.py hook that sets CrashDB'''
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write(
+                textwrap.dedent(
+                    f'''\
+                    def add_info(report, ui):
+                        report['CrashDB'] = """{crashdb}"""
+                    '''
+                )
+            )
+            if bash_hook:
+                f.write(f"    report['BashHook'] = '{bash_hook}'\n")
+
     def test_collect_info_crashdb_spec(self):
         '''collect_info() with package hook that defines a CrashDB'''
-
-        # set up hook
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = "{ 'impl': 'memory', 'local_opt': '1' }"
-    report['BashHook'] = 'Moo'
-''')
-
+        self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt': '1' }", 'Moo')
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
@@ -433,19 +440,7 @@ class T(unittest.TestCase):
 
     def test_collect_info_crashdb_name(self):
         '''collect_info() with package hook that chooses a different CrashDB'''
-
-        # set up hook
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write(
-                textwrap.dedent(
-                    '''\
-                    def add_info(report, ui):
-                        report['CrashDB'] = 'debug'
-                        report['BashHook'] = 'Moo'
-                    '''
-                )
-            )
-
+        self._write_crashdb_config_hook('debug', 'Moo')
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
@@ -458,11 +453,7 @@ class T(unittest.TestCase):
         '''collect_info() with package hook setting a broken CrashDB field'''
 
         # nonexisting implementation
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = "{ 'impl': 'nonexisting', 'local_opt': '1' }"
-''')
-
+        self._write_crashdb_config_hook("{ 'impl': 'nonexisting', 'local_opt': '1' }")
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
@@ -470,11 +461,7 @@ class T(unittest.TestCase):
                         self.ui.report.get('UnreportableReason', '<not set>'))
 
         # invalid syntax
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = "{ 'impl': 'memory', 'local_opt'"
-''')
-
+        self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt'")
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
@@ -482,11 +469,7 @@ class T(unittest.TestCase):
                         self.ui.report.get('UnreportableReason', '<not set>'))
 
         # nonexisting name
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = 'nonexisting'
-''')
-
+        self._write_crashdb_config_hook('nonexisting')
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
@@ -494,11 +477,7 @@ class T(unittest.TestCase):
                         self.ui.report.get('UnreportableReason', '<not set>'))
 
         # string with unsafe contents
-        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = """{'impl': 'memory', 'trap': exec('open("/tmp/pwned", "w").close()')}"""
-''')
-
+        self._write_crashdb_config_hook("""{'impl': 'memory', 'trap': exec('open("/tmp/pwned", "w").close()')}""")
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
