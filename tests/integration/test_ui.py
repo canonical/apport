@@ -9,6 +9,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import textwrap
 import time
 import unittest
 from importlib.machinery import SourceFileLoader
@@ -42,18 +43,23 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     def __init__(self):
         # use our dummy crashdb
         self.crashdb_conf = tempfile.NamedTemporaryFile()
-        self.crashdb_conf.write(b'''default = 'testsuite'
-databases = {
-    'testsuite': {
-        'impl': 'memory',
-        'bug_pattern_url': None,
-    },
-    'debug': {
-        'impl': 'memory',
-        'distro': 'debug',
-    },
-}
-''')
+        self.crashdb_conf.write(
+            textwrap.dedent(
+                '''\
+                default = 'testsuite'
+                databases = {
+                    'testsuite': {
+                        'impl': 'memory',
+                        'bug_pattern_url': None,
+                    },
+                    'debug': {
+                        'impl': 'memory',
+                        'distro': 'debug',
+                    },
+                }
+                '''
+            ).encode()
+        )
         self.crashdb_conf.flush()
 
         os.environ['APPORT_CRASHDB_CONF'] = self.crashdb_conf.name
@@ -300,11 +306,16 @@ class T(unittest.TestCase):
         # invalid base64 encoding
         self.report_file.seek(0)
         self.report_file.truncate()
-        self.report_file.write(b'''Type: test
-Package: foo 1-1
-CoreDump: base64
-bOgUs=
-''')
+        self.report_file.write(
+            textwrap.dedent(
+                '''\
+                Type: test
+                Package: foo 1-1
+                CoreDump: base64
+                bOgUs=
+                '''
+            ).encode()
+        )
         self.report_file.flush()
 
         self.ui.load_report(self.report_file.name)
@@ -425,10 +436,15 @@ bOgUs=
 
         # set up hook
         with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
-            f.write('''def add_info(report, ui):
-    report['CrashDB'] = 'debug'
-    report['BashHook'] = 'Moo'
-''')
+            f.write(
+                textwrap.dedent(
+                    '''\
+                    def add_info(report, ui):
+                        report['CrashDB'] = 'debug'
+                        report['BashHook'] = 'Moo'
+                    '''
+                )
+            )
 
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
@@ -1344,9 +1360,14 @@ bOgUs=
 
         # set up hook
         f = open(os.path.join(self.hookdir, 'source_%s.py' % src_pkg), 'w')
-        f.write('''def add_info(report, ui):
-    report['KernelDebug'] = 'LotsMoreInfo'
-''')
+        f.write(
+            textwrap.dedent(
+                '''\
+                def add_info(report, ui):
+                    report['KernelDebug'] = 'LotsMoreInfo'
+                '''
+            )
+        )
         f.close()
 
         # generate crash report
@@ -1442,13 +1463,17 @@ bOgUs=
         os.uname = lambda: uname
 
         def fake_add_gdb_info(self):
-            self['Stacktrace'] = '''#0  0xDEADBEEF in h (p=0x0) at crash.c:25
-#1  0x10000042 in g (x=1, y=42) at crash.c:26
-#1  0x10000001 in main () at crash.c:40
-'''
-            self['ProcMaps'] = '''
-10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash
-'''
+            self['Stacktrace'] = textwrap.dedent(
+                '''\
+                #0  0xDEADBEEF in h (p=0x0) at crash.c:25
+                #1  0x10000042 in g (x=1, y=42) at crash.c:26
+                #1  0x10000001 in main () at crash.c:40
+                '''
+            )
+            self['ProcMaps'] = (
+                '10000000-DEADBEF0 r-xp 00000000 08:02 100000'
+                '           /bin/crash\n'
+            )
             assert self.crash_signature_addresses() is not None
 
         try:
@@ -1824,10 +1849,15 @@ bOgUs=
                                             'examine': False,
                                             'restart': False,
                                             'remember': False}
-        self._run_hook('''report['begin'] = '1'
-ui.information('InfoText')
-report['end'] = '1'
-''')
+        self._run_hook(
+            textwrap.dedent(
+                '''\
+                report['begin'] = '1'
+                ui.information('InfoText')
+                report['end'] = '1'
+                '''
+            )
+        )
         self.assertEqual(self.ui.report['begin'], '1')
         self.assertEqual(self.ui.report['end'], '1')
         self.assertEqual(self.ui.msg_text, 'InfoText')
@@ -1841,10 +1871,15 @@ report['end'] = '1'
                                             'restart': False,
                                             'remember': False}
         self.ui.question_yesno_response = True
-        self._run_hook('''report['begin'] = '1'
-report['answer'] = str(ui.yesno('YesNo?'))
-report['end'] = '1'
-''')
+        self._run_hook(
+            textwrap.dedent(
+                '''\
+                report['begin'] = '1'
+                report['answer'] = str(ui.yesno('YesNo?'))
+                report['end'] = '1'
+                '''
+            )
+        )
         self.assertEqual(self.ui.report['begin'], '1')
         self.assertEqual(self.ui.report['end'], '1')
         self.assertEqual(self.ui.msg_text, 'YesNo?')
@@ -1869,10 +1904,15 @@ report['end'] = '1'
                                             'restart': False,
                                             'remember': False}
         self.ui.question_file_response = '/etc/fstab'
-        self._run_hook('''report['begin'] = '1'
-report['answer'] = str(ui.file('YourFile?'))
-report['end'] = '1'
-''')
+        self._run_hook(
+            textwrap.dedent(
+                '''\
+                report['begin'] = '1'
+                report['answer'] = str(ui.file('YourFile?'))
+                report['end'] = '1'
+                '''
+            )
+        )
         self.assertEqual(self.ui.report['begin'], '1')
         self.assertEqual(self.ui.report['end'], '1')
         self.assertEqual(self.ui.msg_text, 'YourFile?')
@@ -1892,10 +1932,16 @@ report['end'] = '1'
                                             'restart': False,
                                             'remember': False}
         self.ui.question_choice_response = [1]
-        self._run_hook('''report['begin'] = '1'
-report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
-report['end'] = '1'
-''')
+        self._run_hook(
+            textwrap.dedent(
+                '''\
+                report['begin'] = '1'
+                answer = ui.choice('YourChoice?', ['foo', 'bar'])
+                report['answer'] = str(answer)
+                report['end'] = '1'
+                '''
+            )
+        )
         self.assertEqual(self.ui.report['begin'], '1')
         self.assertEqual(self.ui.report['end'], '1')
         self.assertEqual(self.ui.msg_text, 'YourChoice?')
@@ -1909,11 +1955,17 @@ report['end'] = '1'
     def test_interactive_hooks_cancel(self):
         '''interactive hooks: user cancels'''
 
-        self.assertRaises(SystemExit, self._run_hook,
-                          '''report['begin'] = '1'
-raise StopIteration
-report['end'] = '1'
-''')
+        self.assertRaises(
+            SystemExit,
+            self._run_hook,
+            textwrap.dedent(
+                '''\
+                report['begin'] = '1'
+                raise StopIteration
+                report['end'] = '1'
+                '''
+            ),
+        )
 
     def test_run_symptom(self):
         '''run_symptom()'''
@@ -2008,11 +2060,16 @@ report['end'] = '1'
 
         # working interactive script
         f = open(os.path.join(apport.ui.symptom_script_dir, 'itching.py'), 'w')
-        f.write('''def run(report, ui):
-    report['itch'] = 'slap'
-    report['q'] = str(ui.yesno('do you?'))
-    return 'bash'
-''')
+        f.write(
+            textwrap.dedent(
+                '''\
+                def run(report, ui):
+                    report['itch'] = 'slap'
+                    report['q'] = str(ui.yesno('do you?'))
+                    return 'bash'
+                '''
+            )
+        )
         f.close()
         sys.argv = ['ui-test', '-s', 'itching']
         self.ui = TestSuiteUserInterface()
@@ -2037,10 +2094,15 @@ report['end'] = '1'
         '''run_report_bug() without specifying arguments and available symptoms'''
 
         f = open(os.path.join(apport.ui.symptom_script_dir, 'foo.py'), 'w')
-        f.write('''description = 'foo does not work'
-def run(report, ui):
-    return 'bash'
-''')
+        f.write(
+            textwrap.dedent(
+                '''\
+                description = 'foo does not work'
+                def run(report, ui):
+                    return 'bash'
+                '''
+            )
+        )
         f.close()
         f = open(os.path.join(apport.ui.symptom_script_dir, 'bar.py'), 'w')
         f.write('def run(report, ui):\n  return "coreutils"\n')
@@ -2108,10 +2170,15 @@ def run(report, ui):
 
         # symptom is preferred over package
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
-        f.write('''description = 'foo does not work'
-def run(report, ui):
-return 'bash'
-''')
+        f.write(
+            textwrap.dedent(
+                '''\
+                description = 'foo does not work'
+                def run(report, ui):
+                    return 'bash'
+                '''
+            )
+        )
         f.close()
         _chk('apport-cli', 'coreutils',
              {'filebug': True, 'package': None, 'pid': None, 'crash_file':
@@ -2180,10 +2247,15 @@ return 'bash'
 
         # symptom (preferred over package)
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
-        f.write('''description = 'foo does not work'
-def run(report, ui):
-return 'bash'
-''')
+        f.write(
+            textwrap.dedent(
+                '''\
+                description = 'foo does not work'
+                def run(report, ui):
+                    return 'bash'
+                '''
+            )
+        )
         f.close()
         _chk(['coreutils'], {'filebug': True, 'package': None, 'pid': None,
                              'crash_file': None, 'symptom': 'coreutils',
@@ -2321,71 +2393,89 @@ return 'bash'
     def test_get_desktop_entry(self):
         '''parsing of .desktop files'''
 
-        desktop_file = tempfile.NamedTemporaryFile()
-        desktop_file.write(b'''[Desktop Entry]
-Name=gtranslate
-GenericName=Translator
-GenericName[de]=\xc3\x9cbersetzer
-Exec=gedit %U
-Categories=GNOME;GTK;Utility;TextEditor;
-''')
+        desktop_file = tempfile.NamedTemporaryFile(mode="w+")
+        desktop_file.write(
+            textwrap.dedent(
+                '''\
+                [Desktop Entry]
+                Name=gtranslate
+                GenericName=Translator
+                GenericName[de]=Übersetzer
+                Exec=gedit %U
+                Categories=GNOME;GTK;Utility;TextEditor;
+                '''
+            )
+        )
         desktop_file.flush()
 
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
-        exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
 
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
                                 'name': 'gtranslate',
-                                'genericname[de]': exp_genericname,
+                                'genericname[de]': 'Übersetzer',
                                 'exec': 'gedit %U'})
 
     def test_get_desktop_entry_broken(self):
         '''parsing of broken .desktop files'''
 
         # duplicate key
-        desktop_file = tempfile.NamedTemporaryFile()
-        desktop_file.write(b'''[Desktop Entry]
-Name=gtranslate
-GenericName=Translator
-GenericName[de]=\xc3\x9cbersetzer
-Exec=gedit %U
-Keywords=foo;bar;
-Categories=GNOME;GTK;Utility;TextEditor;
-Keywords=baz
-''')
+        desktop_file = tempfile.NamedTemporaryFile(mode="w+")
+        desktop_file.write(
+            textwrap.dedent(
+                '''\
+                [Desktop Entry]
+                Name=gtranslate
+                GenericName=Translator
+                GenericName[de]=Übersetzer
+                Exec=gedit %U
+                Keywords=foo;bar;
+                Categories=GNOME;GTK;Utility;TextEditor;
+                Keywords=baz
+                '''
+            )
+        )
         desktop_file.flush()
 
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
-        exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
                                 'name': 'gtranslate',
-                                'genericname[de]': exp_genericname,
+                                'genericname[de]': 'Übersetzer',
                                 'keywords': 'baz',
                                 'exec': 'gedit %U'})
 
         # no header
         desktop_file.seek(0)
-        desktop_file.write('''Name=gtranslate
-GenericName=Translator
-Exec=gedit %U
-'''.encode('UTF-8'))
+        desktop_file.write(
+            textwrap.dedent(
+                '''\
+                Name=gtranslate
+                GenericName=Translator
+                Exec=gedit %U
+                '''
+            )
+        )
         desktop_file.flush()
 
         self.assertEqual(self.ui.get_desktop_entry(), None)
 
         # syntax error
         desktop_file.seek(0)
-        desktop_file.write('''[Desktop Entry]
-Name gtranslate
-GenericName=Translator
-Exec=gedit %U
-'''.encode('UTF-8'))
+        desktop_file.write(
+            textwrap.dedent(
+                '''\
+                [Desktop Entry]
+                Name gtranslate
+                GenericName=Translator
+                Exec=gedit %U
+                '''
+            )
+        )
         desktop_file.flush()
 
         self.assertEqual(self.ui.get_desktop_entry(), None)

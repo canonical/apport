@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import time
 import unittest
 import unittest.mock
@@ -191,10 +192,16 @@ class T(unittest.TestCase):
 
         # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
-        os.write(fd, ('''#!/usr/bin/%s
-import sys
-sys.stdin.readline()
-''' % os.getenv('PYTHON', 'python3')).encode('ascii'))
+        os.write(
+            fd,
+            textwrap.dedent(
+                f'''\
+                #!/usr/bin/{os.getenv('PYTHON', 'python3')}
+                import sys
+                sys.stdin.readline()
+                '''
+            ).encode('ascii'),
+        )
         os.close(fd)
         os.chmod(testscript, 0o755)
         p = subprocess.Popen([testscript], stdin=subprocess.PIPE,
@@ -614,13 +621,17 @@ int main() { return f(42); }
         self.assertFalse('AssertionMessage' in pr)
 
         # crash where gdb generates output on stderr
-        pr = self._generate_sigsegv_report(code='''
-int main() {
-    void     (*function)(void);
-    function = 0;
-    function();
-}
-''')
+        pr = self._generate_sigsegv_report(
+            code=textwrap.dedent(
+                '''\
+                int main() {
+                    void     (*function)(void);
+                    function = 0;
+                    function();
+                }
+                '''
+            )
+        )
         self._validate_gdb_fields(pr)
         self.assertNotEqual(pr['Disassembly'], '')
         self.assertNotIn('AssertionMessage', pr)
@@ -750,11 +761,16 @@ int main() {
 
             # create a test script which produces a core dump for us
             with open(script, 'w') as fd:
-                fd.write('''#!%s
-cd `dirname $0`
-ulimit -c unlimited
-kill -SEGV $$
-''' % shell)
+                fd.write(
+                    textwrap.dedent(
+                        f'''\
+                        #!{shell}
+                        cd `dirname $0`
+                        ulimit -c unlimited
+                        kill -SEGV $$
+                        '''
+                    )
+                )
             os.chmod(script, 0o755)
 
             core_path = os.path.join(workdir, "core")
@@ -794,10 +810,14 @@ kill -SEGV $$
         '''
 
         # abort with assert
-        pr = self._generate_sigsegv_report(code='''\
-#include <assert.h>
-int main() { assert(1 < 0); }
-''')
+        pr = self._generate_sigsegv_report(
+            code=textwrap.dedent(
+                '''\
+                #include <assert.h>
+                int main() { assert(1 < 0); }
+                '''
+            )
+        )
         self._validate_gdb_fields(pr)
         self.assertIn("crash.c:2: main: Assertion `1 < 0' failed.", pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
@@ -805,14 +825,20 @@ int main() { assert(1 < 0); }
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort with internal error
-        pr = self._generate_sigsegv_report(code='''\
-#include <string.h>
-int main(int argc, char *argv[]) {
-    char buf[8];
-    strcpy(buf, argv[1]);
-    return 0;
-}
-''', args=['aaaaaaaaaaaaaaaa'], extra_gcc_args=['-O2', '-D_FORTIFY_SOURCE=2'])
+        pr = self._generate_sigsegv_report(
+            code=textwrap.dedent(
+                '''\
+                #include <string.h>
+                int main(int argc, char *argv[]) {
+                    char buf[8];
+                    strcpy(buf, argv[1]);
+                    return 0;
+                }
+                '''
+            ),
+            args=['aaaaaaaaaaaaaaaa'],
+            extra_gcc_args=['-O2', '-D_FORTIFY_SOURCE=2'],
+        )
         self._validate_gdb_fields(pr)
         self.assertIn("** buffer overflow detected ***: terminated",
                       pr['AssertionMessage'])
@@ -821,10 +847,14 @@ int main(int argc, char *argv[]) {
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort without assertion
-        pr = self._generate_sigsegv_report(code='''\
-#include <stdlib.h>
-int main() { abort(); }
-''')
+        pr = self._generate_sigsegv_report(
+            code=textwrap.dedent(
+                '''\
+                #include <stdlib.h>
+                int main() { abort(); }
+                '''
+            )
+        )
         self._validate_gdb_fields(pr)
         self.assertFalse('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
@@ -838,14 +868,20 @@ int main() { abort(); }
 
             # create a test script which produces a core dump for us
             with open(script, 'w') as fd:
-                fd.write('''#!/bin/sh
-gcc -o $0.bin -x c - `pkg-config --cflags --libs glib-2.0` <<EOF
-#include <glib.h>
-int main() { g_assert_cmpint(1, <, 0); }
-EOF
-ulimit -c unlimited
-$0.bin 2>/dev/null
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        #!/bin/sh
+                        gcc -o $0.bin -x c - \
+                            `pkg-config --cflags --libs glib-2.0` <<EOF
+                        #include <glib.h>
+                        int main() { g_assert_cmpint(1, <, 0); }
+                        EOF
+                        ulimit -c unlimited
+                        $0.bin 2>/dev/null
+                        '''
+                    )
+                )
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call(['/bin/sh', script]) != 0
             self._validate_core('core')
@@ -873,14 +909,20 @@ $0.bin 2>/dev/null
 
             # create a test script which produces a core dump for us
             with open(script, 'w') as fd:
-                fd.write('''#!/bin/sh
-gcc -o $0.bin -x c - `pkg-config --cflags --libs libnih` <<EOF
-#include <libnih.h>
-int main() { nih_assert (1 < 0); }
-EOF
-ulimit -c unlimited
-$0.bin 2>/dev/null
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        #!/bin/sh
+                        gcc -o $0.bin -x c - \
+                            `pkg-config --cflags --libs libnih` <<EOF
+                        #include <libnih.h>
+                        int main() { nih_assert (1 < 0); }
+                        EOF
+                        ulimit -c unlimited
+                        $0.bin 2>/dev/null
+                        '''
+                    )
+                )
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call(['/bin/sh', script]) != 0
             self._validate_core('core')
@@ -902,41 +944,45 @@ $0.bin 2>/dev/null
 
         patterns = tempfile.NamedTemporaryFile(prefix='apport-')
         # create some test patterns
-        patterns.write(b'''<?xml version="1.0"?>
-<patterns>
-    <pattern url="http://bugtracker.net/bugs/1">
-        <re key="Package">^bash </re>
-        <re key="Foo">ba.*r</re>
-    </pattern>
-    <pattern url="http://bugtracker.net/bugs/2">
-        <re key="Package">^bash 1-2$</re>
-        <re key="Foo">write_(hello|goodbye)</re>
-    </pattern>
-    <pattern url="http://bugtracker.net/bugs/3">
-        <re key="Package">^coreutils </re>
-        <re key="Bar">^1$</re>
-    </pattern>
-    <pattern url="http://bugtracker.net/bugs/4">
-        <re key="Package">^coreutils </re>
-        <re></re>
-        <re key="Bar">*</re> <!-- invalid RE -->
-        <re key="broken">+[1^</re>
-    </pattern>
-    <pattern url="http://bugtracker.net/bugs/5">
-        <re key="SourcePackage">^bazaar$</re>
-        <re key="LogFile">AssertionError</re>
-    </pattern>
-    <pattern url="http://bugtracker.net/bugs/6">
-        <re key="Package">^update-notifier</re>
-        <re key="LogFile">AssertionError \xe2\x80\xbd</re>
-    </pattern>
-</patterns>''')
+        patterns.write(
+            textwrap.dedent(
+                '''\
+                <?xml version="1.0"?>
+                <patterns>
+                    <pattern url="http://bugtracker.net/bugs/1">
+                        <re key="Package">^bash </re>
+                        <re key="Foo">ba.*r</re>
+                    </pattern>
+                    <pattern url="http://bugtracker.net/bugs/2">
+                        <re key="Package">^bash 1-2$</re>
+                        <re key="Foo">write_(hello|goodbye)</re>
+                    </pattern>
+                    <pattern url="http://bugtracker.net/bugs/3">
+                        <re key="Package">^coreutils </re>
+                        <re key="Bar">^1$</re>
+                    </pattern>
+                    <pattern url="http://bugtracker.net/bugs/4">
+                        <re key="Package">^coreutils </re>
+                        <re></re>
+                        <re key="Bar">*</re> <!-- invalid RE -->
+                        <re key="broken">+[1^</re>
+                    </pattern>
+                    <pattern url="http://bugtracker.net/bugs/5">
+                        <re key="SourcePackage">^bazaar$</re>
+                        <re key="LogFile">AssertionError</re>
+                    </pattern>
+                    <pattern url="http://bugtracker.net/bugs/6">
+                        <re key="Package">^update-notifier</re>
+                        <re key="LogFile">AssertionError ‽</re>
+                    </pattern>
+                </patterns>'''
+            ).encode()
+        )
         patterns.flush()
 
         # invalid XML
         invalid = tempfile.NamedTemporaryFile(prefix='apport-')
-        invalid.write(b'''<?xml version="1.0"?>
-</patterns>''')
+        invalid.write(b'<?xml version="1.0"?>\n</patterns>')
         invalid.flush()
 
         # create some reports
@@ -958,7 +1004,7 @@ $0.bin 2>/dev/null
 
         r_unicode = apport.report.Report()
         r_unicode['Package'] = 'update-notifier'
-        r_unicode['LogFile'] = b'AssertionError \xe2\x80\xbd'
+        r_unicode['LogFile'] = 'AssertionError ‽'
 
         pattern_url = 'file://' + patterns.name
 
@@ -1038,39 +1084,59 @@ $0.bin 2>/dev/null
         apport.report._common_hook_dir = tempfile.mkdtemp()
         try:
             with open(os.path.join(apport.report._hook_dir, 'foo.py'), 'w') as fd:
-                fd.write('''
-import sys
-def add_info(report):
-    report['Field1'] = 'Field 1'
-    report['Field2'] = 'Field 2\\nBla'
-    if 'Spethial' in report:
-        raise StopIteration
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        import sys
+                        def add_info(report):
+                            report['Field1'] = 'Field 1'
+                            report['Field2'] = 'Field 2\\nBla'
+                            if 'Spethial' in report:
+                                raise StopIteration
+                        '''
+                    )
+                )
 
             with open(os.path.join(apport.report._common_hook_dir, 'foo1.py'), 'w') as fd:
-                fd.write('''
-def add_info(report):
-    report['CommonField1'] = 'CommonField 1'
-    if report['Package'] == 'commonspethial':
-        raise StopIteration
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report):
+                            report['CommonField1'] = 'CommonField 1'
+                            if report['Package'] == 'commonspethial':
+                                raise StopIteration
+                        '''
+                    )
+                )
             with open(os.path.join(apport.report._common_hook_dir, 'foo2.py'), 'w') as fd:
-                fd.write('''
-def add_info(report):
-    report['CommonField2'] = 'CommonField 2'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report):
+                            report['CommonField2'] = 'CommonField 2'
+                        '''
+                    )
+                )
             with open(os.path.join(apport.report._common_hook_dir, 'foo3.py'), 'w') as fd:
-                fd.write('''
-def add_info(report, ui):
-    report['CommonField3'] = str(ui)
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['CommonField3'] = str(ui)
+                        '''
+                    )
+                )
 
             # should only catch .py files
             with open(os.path.join(apport.report._common_hook_dir, 'notme'), 'w') as fd:
-                fd.write('''
-def add_info(report):
-    report['BadField'] = 'XXX'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report):
+                            report['BadField'] = 'XXX'
+                        '''
+                    )
+                )
             r = apport.report.Report()
             r['Package'] = 'bar'
             # should not throw any exceptions
@@ -1127,13 +1193,17 @@ def add_info(report):
 
             # source package hook
             with open(os.path.join(apport.report._hook_dir, 'source_foo.py'), 'w') as fd:
-                fd.write('''
-def add_info(report, ui):
-    report['Field1'] = 'Field 1'
-    report['Field2'] = 'Field 2\\nBla'
-    if report['Package'] == 'spethial':
-        raise StopIteration
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['Field1'] = 'Field 1'
+                            report['Field2'] = 'Field 2\\nBla'
+                            if report['Package'] == 'spethial':
+                                raise StopIteration
+                        '''
+                    )
+                )
             r = apport.report.Report()
             r['SourcePackage'] = 'foo'
             r['Package'] = 'libfoo 3'
@@ -1175,13 +1245,23 @@ def add_info(report, ui):
                                         'apport', 'package-hooks')
             os.makedirs(opt_hook_dir)
             with open(os.path.join(opt_hook_dir, 'source_foo.py'), 'w') as fd:
-                fd.write('''def add_info(report, ui):
-    report['SourceHook'] = '1'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['SourceHook'] = '1'
+                        '''
+                    )
+                )
             with open(os.path.join(opt_hook_dir, 'foo-bin.py'), 'w') as fd:
-                fd.write('''def add_info(report, ui):
-    report['BinHook'] = '1'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['BinHook'] = '1'
+                        '''
+                    )
+                )
 
             r = apport.report.Report()
             r['Package'] = 'foo-bin 0.2'
@@ -1209,17 +1289,27 @@ def add_info(report, ui):
         sys.stderr = io.StringIO()
         try:
             with open(os.path.join(apport.report._hook_dir, 'fooprogs.py'), 'w') as fd:
-                fd.write('''def add_info(report, ui):
-    report['BinHookBefore'] = '1'
-    1/0
-    report['BinHookAfter'] = '1'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['BinHookBefore'] = '1'
+                            1/0
+                            report['BinHookAfter'] = '1'
+                        '''
+                    )
+                )
             with open(os.path.join(apport.report._hook_dir, 'source_foo.py'), 'w') as fd:
-                fd.write('''def add_info(report, ui):
-    report['SourceHookBefore'] = '1'
-    unknown()
-    report['SourceHookAfter'] = '1'
-''')
+                fd.write(
+                    textwrap.dedent(
+                        '''\
+                        def add_info(report, ui):
+                            report['SourceHookBefore'] = '1'
+                            unknown()
+                            report['SourceHookAfter'] = '1'
+                        '''
+                    )
+                )
 
             r = apport.report.Report()
             r['Package'] = 'fooprogs 0.2'

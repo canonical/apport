@@ -208,8 +208,10 @@ class T(unittest.TestCase):
         self.assertEqual(segv.src, '0x4(%esp)', segv.src)
         self.assertEqual(segv.dest, '%ecx', segv.dest)
 
-        disasm = '''0x404127 <exo_mount_hal_device_mount+167>:
-    repz cmpsb %es:(%rdi),%ds:(%rsi)\n'''
+        disasm = (
+            '0x404127 <exo_mount_hal_device_mount+167>:\n'
+            '    repz cmpsb %es:(%rdi),%ds:(%rsi)\n'
+        )
         segv = parse_segv.ParseSegv(regs, disasm, '')
         self.assertEqual(segv.pc, 0x0404127, segv.pc)
         self.assertEqual(segv.insn, 'repz cmpsb', segv.insn)
@@ -258,13 +260,18 @@ class T(unittest.TestCase):
         '''I/O port violations'''
 
         regs = 'rax            0x3  3'
-        disasm = '''0x4087f1 <snd_pcm_hw_params_set_channels_near@plt+19345>:
-    out    %al,$0xb3
-'''
-        maps = '''00400000-00412000 r-xp 00000000 08:04 10371157                           /usr/sbin/pommed
-00611000-00614000 rw-p 00011000 08:04 10371157                           /usr/sbin/pommed
-00614000-00635000 rw-p 00614000 00:00 0                                  [heap]
-'''
+        disasm = (
+            '0x4087f1 <snd_pcm_hw_params_set_channels_near@plt+19345>:\n'
+            '    out    %al,$0xb3\n'
+        )
+        maps = (
+            '00400000-00412000 r-xp 00000000 08:04 10371157                   '
+            '        /usr/sbin/pommed\n'
+            '00611000-00614000 rw-p 00011000 08:04 10371157                   '
+            '        /usr/sbin/pommed\n'
+            '00614000-00635000 rw-p 00614000 00:00 0                          '
+            '        [heap]\n'
+        )
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         self.assertEqual(segv.pc, 0x4087f1, segv.pc)
         self.assertEqual(segv.insn, 'out', segv.insn)
@@ -283,9 +290,12 @@ class T(unittest.TestCase):
         maps = 'asdlkfjaadf'
         self.assertRaises(ValueError, parse_segv.ParseSegv, regs, disasm, maps)
 
-        maps = '''005a3000-005a4000 rw-p 00035000 08:06 65575      /lib/libncurses.so.5.7
-00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]
-00c67000-00c68000 r--p 00000000 00:00 0 '''
+        maps = (
+            '005a3000-005a4000 rw-p 00035000 08:06 65575  '
+            '    /lib/libncurses.so.5.7\n'
+            '00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]\n'
+            '00c67000-00c68000 r--p 00000000 00:00 0 '
+        )
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         self.assertEqual(segv.maps[0]['start'], 0x005a3000, segv)
         self.assertEqual(segv.maps[0]['end'], 0x005a4000, segv)
@@ -307,10 +317,12 @@ class T(unittest.TestCase):
 
         regs = 'a 0x10'
         disasm = 'Dump ...\n0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
-        maps = '''005a3000-005a4000 rw-p 00035000 08:06 65575      /lib/libncurses.so.5.7
-00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]
-00c67000-00c68000 r--p 00000000 00:00 0 '''
-
+        maps = (
+            '005a3000-005a4000 rw-p 00035000 08:06 65575  '
+            '    /lib/libncurses.so.5.7\n'
+            '00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]\n'
+            '00c67000-00c68000 r--p 00000000 00:00 0 '
+        )
         with self.assertLogs(level="DEBUG"):
             segv = parse_segv.ParseSegv(regs, disasm, maps)
         self.assertTrue(segv is not None, segv)

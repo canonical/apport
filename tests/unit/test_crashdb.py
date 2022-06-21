@@ -2,6 +2,7 @@ import copy
 import os.path
 import shutil
 import tempfile
+import textwrap
 import unittest
 
 import apport
@@ -48,26 +49,31 @@ class T(unittest.TestCase):
         '''Dynamic code in crashdb.conf'''
 
         # use our dummy crashdb
-        crashdb_conf = tempfile.NamedTemporaryFile()
-        crashdb_conf.write(b'''default = 'testsuite'
+        crashdb_conf = tempfile.NamedTemporaryFile(mode='w+')
+        crashdb_conf.write(
+            textwrap.dedent(
+                '''\
+                default = 'testsuite'
 
-def get_dyn():
-    return str(2 + 2)
+                def get_dyn():
+                    return str(2 + 2)
 
-def get_dyn_name():
-    return 'on_the' + 'fly'
+                def get_dyn_name():
+                    return 'on_the' + 'fly'
 
-databases = {
-    'testsuite': {
-        'impl': 'memory',
-        'dyn_option': get_dyn(),
-    },
-    get_dyn_name(): {
-        'impl': 'memory',
-        'whoami': 'dynname',
-    }
-}
-''')
+                databases = {
+                    'testsuite': {
+                        'impl': 'memory',
+                        'dyn_option': get_dyn(),
+                    },
+                    get_dyn_name(): {
+                        'impl': 'memory',
+                        'whoami': 'dynname',
+                    }
+                }
+                '''
+            )
+        )
         crashdb_conf.flush()
 
         db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
@@ -88,16 +94,21 @@ databases = {
         '''accepts(): problem_types option in crashdb.conf'''
 
         # create a crash DB with type limits
-        crashdb_conf = tempfile.NamedTemporaryFile()
-        crashdb_conf.write(b'''default = 'testsuite'
+        crashdb_conf = tempfile.NamedTemporaryFile(mode='w+')
+        crashdb_conf.write(
+            textwrap.dedent(
+                '''\
+                default = 'testsuite'
 
-databases = {
-    'testsuite': {
-        'impl': 'memory',
-        'problem_types': ['Bug', 'Kernel'],
-    },
-}
-''')
+                databases = {
+                    'testsuite': {
+                        'impl': 'memory',
+                        'problem_types': ['Bug', 'Kernel'],
+                    },
+                }
+                '''
+            )
+        )
         crashdb_conf.flush()
 
         db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
@@ -496,18 +507,21 @@ databases = {
         r['Package'] = 'bash 5'
         r['ExecutablePath'] = '/bin/bash'
         r['Signal'] = '11'
-        r['ProcMaps'] = '''
-00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
-7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
-'''
-
-        r['Stacktrace'] = '''
-#0  0x00007f491fac5687 in kill ()
-#1  0x000000000042eb76 in ?? ()
-#2  0x00000000004324d8 in ??
-#3  0x00000000004707e3 in parse_and_execute ()
-#4  0x000000000041d703 in _start ()
-'''
+        r['ProcMaps'] = (
+            '00400000-004df000 r-xp 00000000 08:02 1044485                    '
+            '        /bin/bash\n'
+            '7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605             '
+            '        /lib/x86_64-linux-gnu/libc-2.13.so\n'
+        )
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x00007f491fac5687 in kill ()
+            #1  0x000000000042eb76 in ?? ()
+            #2  0x00000000004324d8 in ??
+            #3  0x00000000004707e3 in parse_and_execute ()
+            #4  0x000000000041d703 in _start ()
+            '''
+        )
 
         self.assertNotEqual(r.crash_signature_addresses(), None)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
@@ -524,19 +538,21 @@ databases = {
         r2['Package'] = 'bash 5'
         r2['ExecutablePath'] = '/bin/bash'
         r2['Signal'] = '11'
-
-        r2['ProcMaps'] = '''
-00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
-5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
-'''
-
-        r2['Stacktrace'] = '''
-#0  0x00005f491fac5687 in kill ()
-#1  0x000000000042eb76 in ?? ()
-#2  0x00000000004324d8 in ??
-#3  0x00000000004707e3 in parse_and_execute ()
-#4  0x000000000041d703 in _start ()
-'''
+        r2['ProcMaps'] = (
+            '00400000-004df000 r-xp 00000000 08:02 1044485                    '
+            '        /bin/bash\n'
+            '5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605             '
+            '        /lib/x86_64-linux-gnu/libc-2.13.so\n'
+        )
+        r2['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x00005f491fac5687 in kill ()
+            #1  0x000000000042eb76 in ?? ()
+            #2  0x00000000004324d8 in ??
+            #3  0x00000000004707e3 in parse_and_execute ()
+            #4  0x000000000041d703 in _start ()
+            '''
+        )
 
         self.assertEqual(r.crash_signature_addresses(),
                          r2.crash_signature_addresses())
@@ -556,19 +572,21 @@ databases = {
         r3['Package'] = 'bash 5'
         r3['ExecutablePath'] = '/bin/bash'
         r3['Signal'] = '11'
-
-        r3['ProcMaps'] = '''
-00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
-5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
-'''
-
-        r3['Stacktrace'] = '''
-#0  0x00005f491fac5687 in kill ()
-#1  0x000000000042eb76 in ?? ()
-#2  0x0000000000432401 in ??
-#3  0x00000000004707e3 in parse_and_execute ()
-#4  0x000000000041d703 in _start ()
-'''
+        r3['ProcMaps'] = (
+            '00400000-004df000 r-xp 00000000 08:02 1044485                    '
+            '        /bin/bash\n'
+            '5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605             '
+            '        /lib/x86_64-linux-gnu/libc-2.13.so\n'
+        )
+        r3['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x00005f491fac5687 in kill ()
+            #1  0x000000000042eb76 in ?? ()
+            #2  0x0000000000432401 in ??
+            #3  0x00000000004707e3 in parse_and_execute ()
+            #4  0x000000000041d703 in _start ()
+            '''
+        )
         self.assertNotEqual(r.crash_signature_addresses(),
                             r3.crash_signature_addresses())
         self.crashes.duplicate_db_publish(self.dupdb_dir)

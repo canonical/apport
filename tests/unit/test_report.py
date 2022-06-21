@@ -1,4 +1,5 @@
 import os
+import textwrap
 import unittest
 import unittest.mock
 
@@ -49,10 +50,13 @@ class T(unittest.TestCase):
         # named signal crash
         report['Signal'] = '11'
         report['ExecutablePath'] = '/bin/bash'
-        report['StacktraceTop'] = '''foo()
-bar(x=3)
-baz()
-'''
+        report['StacktraceTop'] = textwrap.dedent(
+            '''\
+            foo()
+            bar(x=3)
+            baz()
+            '''
+        )
         self.assertEqual(report.standard_title(),
                          'bash crashed with SIGSEGV in foo()')
 
@@ -112,10 +116,14 @@ order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
         # Python crash with custom message
         report = apport.report.Report()
         report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
-        report['Traceback'] = '''Traceback (most recent call last):
-  File "/x/foo.py", line 242, in setup_chooser
-    raise "Moo"
-Mo?o[a-1]'''
+        report['Traceback'] = textwrap.dedent(
+            '''\
+            Traceback (most recent call last):
+              File "/x/foo.py", line 242, in setup_chooser
+                raise "Moo"
+            Mo?o[a-1]
+            '''
+        )
 
         self.assertEqual(report.standard_title(), 'apport-gtk crashed with Mo?o[a-1] in setup_chooser()')
 
@@ -149,11 +157,14 @@ ImportError: No module named nonexistent
         # Python crash at top level in main program
         report = apport.report.Report()
         report['ExecutablePath'] = '/usr/bin/dcut'
-        report['Traceback'] = '''Traceback (most recent call last):
-  File "/usr/bin/dcut", line 28, in <module>
-    import nonexistent
-ImportError: No module named nonexistent
-'''
+        report['Traceback'] = textwrap.dedent(
+            '''\
+            Traceback (most recent call last):
+              File "/usr/bin/dcut", line 28, in <module>
+                import nonexistent
+            ImportError: No module named nonexistent
+            '''
+        )
         self.assertEqual(report.standard_title(),
                          "dcut crashed with ImportError in __main__: No module named nonexistent")
 
@@ -178,10 +189,13 @@ ImportError: No module named nonexistent
         # matching package/system architectures
         report['Signal'] = '11'
         report['ExecutablePath'] = '/bin/bash'
-        report['StacktraceTop'] = '''foo()
-bar(x=3)
-baz()
-'''
+        report['StacktraceTop'] = textwrap.dedent(
+            '''\
+            foo()
+            bar(x=3)
+            baz()
+            '''
+        )
         report['PackageArchitecture'] = 'amd64'
         report['Architecture'] = 'amd64'
         self.assertEqual(report.standard_title(),
@@ -206,88 +220,133 @@ baz()
 
         # nothing to chop off
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x10000488 in h (p=0x0) at crash.c:25
-#1  0x100004c8 in g (x=1, y=42) at crash.c:26
-#2  0x10000514 in f (x=1) at crash.c:27
-#3  0x10000530 in e (x=1) at crash.c:28
-#4  0x10000530 in d (x=1) at crash.c:29
-#5  0x10000530 in c (x=1) at crash.c:30
-#6  0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x10000488 in h (p=0x0) at crash.c:25
+            #1  0x100004c8 in g (x=1, y=42) at crash.c:26
+            #2  0x10000514 in f (x=1) at crash.c:27
+            #3  0x10000530 in e (x=1) at crash.c:28
+            #4  0x10000530 in d (x=1) at crash.c:29
+            #5  0x10000530 in c (x=1) at crash.c:30
+            #6  0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
-g (x=1, y=42) at crash.c:26
-f (x=1) at crash.c:27
-e (x=1) at crash.c:28
-d (x=1) at crash.c:29''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                h (p=0x0) at crash.c:25
+                g (x=1, y=42) at crash.c:26
+                f (x=1) at crash.c:27
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29'''
+            ),
+        )
 
         # nothing to chop off: some addresses missing (LP #269133)
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0 h (p=0x0) at crash.c:25
-#1  0x100004c8 in g (x=1, y=42) at crash.c:26
-#2 f (x=1) at crash.c:27
-#3  0x10000530 in e (x=1) at crash.c:28
-#4  0x10000530 in d (x=1) at crash.c:29
-#5  0x10000530 in c (x=1) at crash.c:30
-#6  0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0 h (p=0x0) at crash.c:25
+            #1  0x100004c8 in g (x=1, y=42) at crash.c:26
+            #2 f (x=1) at crash.c:27
+            #3  0x10000530 in e (x=1) at crash.c:28
+            #4  0x10000530 in d (x=1) at crash.c:29
+            #5  0x10000530 in c (x=1) at crash.c:30
+            #6  0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
-g (x=1, y=42) at crash.c:26
-f (x=1) at crash.c:27
-e (x=1) at crash.c:28
-d (x=1) at crash.c:29''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                h (p=0x0) at crash.c:25
+                g (x=1, y=42) at crash.c:26
+                f (x=1) at crash.c:27
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29'''
+            ),
+        )
 
         # single signal handler invocation
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
-#1  0x100004c8 in ??
-#2  <signal handler called>
-#3  0x10000530 in e (x=1) at crash.c:28
-#4  0x10000530 in d (x=1) at crash.c:29
-#5  0x10000530 in c (x=1) at crash.c:30
-#6  0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x10000488 in raise () from /lib/libpthread.so.0
+            #1  0x100004c8 in ??
+            #2  <signal handler called>
+            #3  0x10000530 in e (x=1) at crash.c:28
+            #4  0x10000530 in d (x=1) at crash.c:29
+            #5  0x10000530 in c (x=1) at crash.c:30
+            #6  0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
-d (x=1) at crash.c:29
-c (x=1) at crash.c:30
-main () at crash.c:31''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29
+                c (x=1) at crash.c:30
+                main () at crash.c:31'''
+            ),
+        )
 
         # single signal handler invocation: some addresses missing
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
-#1  ??
-#2  <signal handler called>
-#3  0x10000530 in e (x=1) at crash.c:28
-#4  d (x=1) at crash.c:29
-#5  0x10000530 in c (x=1) at crash.c:30
-#6  0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x10000488 in raise () from /lib/libpthread.so.0
+            #1  ??
+            #2  <signal handler called>
+            #3  0x10000530 in e (x=1) at crash.c:28
+            #4  d (x=1) at crash.c:29
+            #5  0x10000530 in c (x=1) at crash.c:30
+            #6  0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
-d (x=1) at crash.c:29
-c (x=1) at crash.c:30
-main () at crash.c:31''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29
+                c (x=1) at crash.c:30
+                main () at crash.c:31'''
+            ),
+        )
 
         # stacked signal handler; should only cut the first one
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
-#1  0x100004c8 in ??
-#2  <signal handler called>
-#3  0x10000530 in e (x=1) at crash.c:28
-#4  0x10000530 in d (x=1) at crash.c:29
-#5  0x10000123 in raise () from /lib/libpthread.so.0
-#6  <signal handler called>
-#7  0x10000530 in c (x=1) at crash.c:30
-#8  0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x10000488 in raise () from /lib/libpthread.so.0
+            #1  0x100004c8 in ??
+            #2  <signal handler called>
+            #3  0x10000530 in e (x=1) at crash.c:28
+            #4  0x10000530 in d (x=1) at crash.c:29
+            #5  0x10000123 in raise () from /lib/libpthread.so.0
+            #6  <signal handler called>
+            #7  0x10000530 in c (x=1) at crash.c:30
+            #8  0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
-d (x=1) at crash.c:29
-raise () from /lib/libpthread.so.0
-<signal handler called>
-c (x=1) at crash.c:30''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29
+                raise () from /lib/libpthread.so.0
+                <signal handler called>
+                c (x=1) at crash.c:30'''
+            ),
+        )
 
         # Gnome assertion; should unwind the logs and assert call
         r = apport.report.Report()
@@ -366,36 +425,48 @@ dispatch_queue () at canberra-gtk-module.c:815''')
 
         # problem with too old gdb, only assertion, nothing else
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x00987416 in __kernel_vsyscall ()
-No symbol table info available.
-#1  0x00ebecb1 in *__GI_raise (sig=6)
-        selftid = 945
-#2  0x00ec218e in *__GI_abort () at abort.c:59
-        save_stage = Unhandled dwarf expression opcode 0x9f
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x00987416 in __kernel_vsyscall ()
+            No symbol table info available.
+            #1  0x00ebecb1 in *__GI_raise (sig=6)
+                    selftid = 945
+            #2  0x00ec218e in *__GI_abort () at abort.c:59
+                    save_stage = Unhandled dwarf expression opcode 0x9f
+            '''
+        )
         r._gen_stacktrace_top()
         self.assertEqual(r['StacktraceTop'], '')
 
         # ignore uninteresting frames
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0x00987416 in __kernel_vsyscall ()
-#1  __strchr_sse42 () at strchr.S:97
-#2 h (p=0x0) at crash.c:25
-#3  0x100004c8 in g (x=1, y=42) at crash.c:26
-#4  0x10000999 in __memmove_ssse3 ()
-#5 f (x=1) at crash.c:27
-#6  0x10000530 in e (x=1) at crash.c:28
-#7  0x10000999 in __strlen_sse2_back () at strchr.S:42
-#8  0x10000530 in d (x=1) at crash.c:29
-#9  0x10000530 in c (x=1) at crash.c:30
-#10 0x10000550 in main () at crash.c:31
-'''
+        r['Stacktrace'] = textwrap.dedent(
+            '''\
+            #0  0x00987416 in __kernel_vsyscall ()
+            #1  __strchr_sse42 () at strchr.S:97
+            #2 h (p=0x0) at crash.c:25
+            #3  0x100004c8 in g (x=1, y=42) at crash.c:26
+            #4  0x10000999 in __memmove_ssse3 ()
+            #5 f (x=1) at crash.c:27
+            #6  0x10000530 in e (x=1) at crash.c:28
+            #7  0x10000999 in __strlen_sse2_back () at strchr.S:42
+            #8  0x10000530 in d (x=1) at crash.c:29
+            #9  0x10000530 in c (x=1) at crash.c:30
+            #10 0x10000550 in main () at crash.c:31
+            '''
+        )
         r._gen_stacktrace_top()
-        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
-g (x=1, y=42) at crash.c:26
-f (x=1) at crash.c:27
-e (x=1) at crash.c:28
-d (x=1) at crash.c:29''')
+        self.assertEqual(
+            r['StacktraceTop'],
+            textwrap.dedent(
+                '''\
+                h (p=0x0) at crash.c:25
+                g (x=1, y=42) at crash.c:26
+                f (x=1) at crash.c:27
+                e (x=1) at crash.c:28
+                d (x=1) at crash.c:29'''
+            ),
+        )
 
     def test_crash_signature(self):
         '''crash_signature().'''
@@ -407,19 +478,25 @@ d (x=1) at crash.c:29''')
         r['Signal'] = '42'
         r['ExecutablePath'] = '/bin/crash'
 
-        r['StacktraceTop'] = '''foo_bar (x=1) at crash.c:28
-d01 (x=1) at crash.c:29
-raise () from /lib/libpthread.so.0
-<signal handler called>
-__frob::~frob (x=1) at crash.c:30'''
+        r['StacktraceTop'] = textwrap.dedent(
+            '''\
+            foo_bar (x=1) at crash.c:28
+            d01 (x=1) at crash.c:29
+            raise () from /lib/libpthread.so.0
+            <signal handler called>
+            __frob::~frob (x=1) at crash.c:30'''
+        )
 
         self.assertEqual(r.crash_signature(), '/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob::~frob')
 
-        r['StacktraceTop'] = '''foo_bar (x=1) at crash.c:28
-??
-raise () from /lib/libpthread.so.0
-<signal handler called>
-__frob (x=1) at crash.c:30'''
+        r['StacktraceTop'] = textwrap.dedent(
+            '''\
+            foo_bar (x=1) at crash.c:28
+            ??
+            raise () from /lib/libpthread.so.0
+            <signal handler called>
+            __frob (x=1) at crash.c:30'''
+        )
         self.assertEqual(r.crash_signature(), None)
 
         r['StacktraceTop'] = ''
@@ -427,14 +504,17 @@ __frob (x=1) at crash.c:30'''
 
         # Python crashes
         del r['Signal']
-        r['Traceback'] = '''Traceback (most recent call last):
-  File "test.py", line 7, in <module>
-    print(_f(5))
-  File "test.py", line 5, in _f
-    return g_foo00(x+1)
-  File "test.py", line 2, in g_foo00
-    return x/0
-ZeroDivisionError: integer division or modulo by zero'''
+        r['Traceback'] = textwrap.dedent(
+            '''\
+            Traceback (most recent call last):
+              File "test.py", line 7, in <module>
+                print(_f(5))
+              File "test.py", line 5, in _f
+                return g_foo00(x+1)
+              File "test.py", line 2, in g_foo00
+                return x/0
+            ZeroDivisionError: integer division or modulo by zero'''
+        )
         self.assertEqual(r.crash_signature(), '/bin/crash:ZeroDivisionError:test.py@7:_f:g_foo00')
 
         # sometimes Python traces do not have file references

@@ -1,5 +1,6 @@
 import email
 import locale
+import textwrap
 import time
 import unittest
 from io import BytesIO
@@ -93,101 +94,108 @@ class T(unittest.TestCase):
         pr['UnprintableUnicode'] = b'a\xc3\xa4\x05z1\xc3\xa9'.decode('UTF-8')
         io = BytesIO()
         pr.write(io)
-        expected = f'''ProblemType: Crash
-Date: now!
-Simple: bar
-SimpleUTF8: 1äö2Φ3
-SimpleUnicode: 1äö2Φ3
-TwoLineUTF8:
- pi-π
- nu-η
-TwoLineUnicode:
- pi-π
- nu-η
-UnprintableUnicode: aä\x05z1é
-WhiteSpace:
-  foo   bar
- baz
-   blip{'  '}
-{' '}
- afteremptyline
-'''
+        expected = (
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                Simple: bar
+                SimpleUTF8: 1äö2Φ3
+                SimpleUnicode: 1äö2Φ3
+                TwoLineUTF8:
+                 pi-π
+                 nu-η
+                TwoLineUnicode:
+                 pi-π
+                 nu-η
+                UnprintableUnicode: aä\x05z1é
+                WhiteSpace:
+                '''
+            )
+            + '  foo   bar\n baz\n   blip  \n \n afteremptyline\n'
+        )
         expected = expected.encode('UTF-8')
         self.assertEqual(io.getvalue(), expected)
 
     def test_load(self):
         '''load() with various formatting.'''
 
+        report = textwrap.dedent(
+            f'''\
+            ProblemType: Crash
+            Date: now!
+            Simple: bar
+            WhiteSpace:
+              foo   bar
+             baz
+               blip{'  '}
+            '''
+        )
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(f'''ProblemType: Crash
-Date: now!
-Simple: bar
-WhiteSpace:
-  foo   bar
- baz
-   blip{'  '}
-'''.encode()))
+        pr.load(BytesIO(report.encode()))
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
 
         # test last field a bit more
-        pr.load(BytesIO(f'''ProblemType: Crash
-Date: now!
-Simple: bar
-WhiteSpace:
-  foo   bar
- baz
-   blip{'  '}
-{' '}
-'''.encode()))
+        report += " \n"
+        pr.load(BytesIO(report.encode()))
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
 
         # last field might not be \n terminated
-        pr.load(BytesIO(b'''ProblemType: Crash
-Date: now!
-Simple: bar
-WhiteSpace:
- foo
- bar'''))
+        pr.load(
+            BytesIO(
+                textwrap.dedent(
+                    '''\
+                    ProblemType: Crash
+                    Date: now!
+                    Simple: bar
+                    WhiteSpace:
+                     foo
+                     bar'''
+                ).encode()
+            )
+        )
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], 'foo\nbar')
 
+        report = (
+            'ProblemType: Crash\n'
+            'WhiteSpace:\n'
+            '  foo   bar\n'
+            ' baz\n'
+            ' \n'
+            '   blip  \n'
+            'Last: foo\n'
+        )
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(f'''ProblemType: Crash
-WhiteSpace:
-  foo   bar
- baz
-{' '}
-   blip{'  '}
-Last: foo
-'''.encode()))
+        pr.load(BytesIO(report.encode()))
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n\n  blip  ')
         self.assertEqual(pr['Last'], 'foo')
 
-        pr.load(BytesIO(f'''ProblemType: Crash
-WhiteSpace:
-  foo   bar
- baz
-   blip{'  '}
-Last: foo
-{' '}
-'''.encode()))
-        self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+        report += " \n"
+        pr = problem_report.ProblemReport()
+        pr.load(BytesIO(report.encode()))
+        self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n\n  blip  ')
         self.assertEqual(pr['Last'], 'foo\n')
 
         # empty lines in values must have a leading space in coding
-        invalid_spacing = BytesIO(b'''WhiteSpace:
- first
+        invalid_spacing = BytesIO(
+            textwrap.dedent(
+                '''\
+                WhiteSpace:
+                 first
 
- second
-''')
+                 second
+                '''
+            ).encode()
+        )
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, pr.load, invalid_spacing)
 
@@ -232,13 +240,16 @@ Last: foo
     def test_read_file(self):
         '''reading a report with binary data.'''
 
-        bin_report = b'''ProblemType: Crash
-Date: now!
-File: base64
- H4sICAAAAAAC/0ZpbGUA
- c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-Foo: Bar
-'''
+        bin_report = textwrap.dedent(
+            '''\
+            ProblemType: Crash
+            Date: now!
+            File: base64
+             H4sICAAAAAAC/0ZpbGUA
+             c3RyhEIGBoYoRiYAM5XUCxAAAAA=
+            Foo: Bar
+            '''
+        ).encode()
 
         # test with reading everything
         pr = problem_report.ProblemReport()
@@ -263,13 +274,16 @@ Foo: Bar
         '''reading a report with binary data in legacy format without gzip
         header.'''
 
-        bin_report = b'''ProblemType: Crash
-Date: now!
-File: base64
- eJw=
- c3RyxIAMcBAFAG55BXk=
-Foo: Bar
-'''
+        bin_report = textwrap.dedent(
+            '''\
+            ProblemType: Crash
+            Date: now!
+            File: base64
+             eJw=
+             c3RyxIAMcBAFAG55BXk=
+            Foo: Bar
+            '''
+        ).encode()
 
         # test with reading everything
         pr = problem_report.ProblemReport()
@@ -309,17 +323,20 @@ Foo: Bar
     def test_modify(self):
         '''reading, modifying fields, and writing back.'''
 
-        report = b'''ProblemType: Crash
-Date: now!
-Long:
- xxx
- .
- yyy
-Short: Bar
-File: base64
- H4sICAAAAAAC/0ZpbGUA
- c3RyxIAMcBAFAK/2p9MfAAAA
-'''
+        report = textwrap.dedent(
+            '''\
+            ProblemType: Crash
+            Date: now!
+            Long:
+             xxx
+             .
+             yyy
+            Short: Bar
+            File: base64
+             H4sICAAAAAAC/0ZpbGUA
+             c3RyxIAMcBAFAK/2p9MfAAAA
+            '''
+        ).encode()
 
         pr = problem_report.ProblemReport()
         pr.load(BytesIO(report))
@@ -335,17 +352,22 @@ File: base64
         pr['Long'] = '123'
         io = BytesIO()
         pr.write(io)
-        self.assertEqual(io.getvalue(),
-                         b'''ProblemType: Crash
-Date: now!
-Long: 123
-Short:
- aaa
- bbb
-File: base64
- H4sICAAAAAAC/0ZpbGUA
- c3RyxIAMcBAFAK/2p9MfAAAA
-''')
+        self.assertEqual(
+            io.getvalue(),
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                Long: 123
+                Short:
+                 aaa
+                 bbb
+                File: base64
+                 H4sICAAAAAAC/0ZpbGUA
+                 c3RyxIAMcBAFAK/2p9MfAAAA
+                '''
+            ).encode(),
+        )
 
     def test_write_mime_text(self):
         '''write_mime() for text values.'''
@@ -385,33 +407,35 @@ File: base64
         self.assertEqual(parts[1].get_content_type(), 'text/plain')
         self.assertEqual(parts[1].get_content_charset(), 'utf-8')
         self.assertEqual(parts[1].get_filename(), None)
-        expected = '''ProblemType: Crash
-Date: now!
-InlineMargin:
- first
- second
- third
- fourth
- fifth
-LargeMultiline:
- AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
- BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-Largeline: %s
-Simple: bar
-SimpleLineEnd: bar
-SimpleUTF8: 1äö2Φ3
-SimpleUnicode: 1äö2Φ3
-TwoLine:
- first
- second
-TwoLineUTF8:
- pi-π
- nu-η
-TwoLineUnicode:
- pi-π
- nu-η
-''' % pr['Largeline']
-        expected = expected.encode('UTF-8')
+        expected = textwrap.dedent(
+            f'''\
+            ProblemType: Crash
+            Date: now!
+            InlineMargin:
+             first
+             second
+             third
+             fourth
+             fifth
+            LargeMultiline:
+             {'A' * 120}
+             {'B' * 90}
+            Largeline: {'A' * 999}
+            Simple: bar
+            SimpleLineEnd: bar
+            SimpleUTF8: 1äö2Φ3
+            SimpleUnicode: 1äö2Φ3
+            TwoLine:
+             first
+             second
+            TwoLineUTF8:
+             pi-π
+             nu-η
+            TwoLineUnicode:
+             pi-π
+             nu-η
+            '''
+        ).encode('UTF-8')
         self.assertEqual(parts[1].get_payload(decode=True), expected)
 
         # third part should be the HugeMultiline: field as attachment
@@ -433,14 +457,16 @@ TwoLineUnicode:
         self.assertEqual(parts[4].get_content_type(), 'text/plain')
         self.assertEqual(parts[4].get_content_charset(), 'utf-8')
         self.assertEqual(parts[4].get_filename(), 'Multiline.txt')
-        expected = f''' foo   bar
-baz
-  blip{'  '}
-line4
-line♥5!!
-łıµ€ ⅝
-'''
-        expected = expected.encode('UTF-8')
+        expected = textwrap.dedent(
+            f'''\
+             foo   bar
+            baz
+              blip{'  '}
+            line4
+            line♥5!!
+            łıµ€ ⅝
+            '''
+        ).encode('UTF-8')
         self.assertEqual(parts[4].get_payload(decode=True), expected)
 
     def test_write_mime_extra_headers(self):
@@ -495,24 +521,37 @@ line♥5!!
         self.assertEqual(parts[1].get_content_type(), 'text/plain')
         self.assertEqual(parts[1].get_content_charset(), 'utf-8')
         self.assertEqual(parts[1].get_filename(), None)
-        self.assertEqual(parts[1].get_payload(decode=True), b'''FirstText: Who
-SecondText: What
-ThirdText: I Don't Know
-FourthText: Today
-ProblemType: Crash
-Date: now!
-''')
+        self.assertEqual(
+            parts[1].get_payload(decode=True),
+            textwrap.dedent(
+                '''\
+                FirstText: Who
+                SecondText: What
+                ThirdText: I Don't Know
+                FourthText: Today
+                ProblemType: Crash
+                Date: now!
+                '''
+            ).encode(),
+        )
 
     def test_updating(self):
         '''new_keys() and write() with only_new=True.'''
 
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
-        pr.load(BytesIO(b'''ProblemType: Crash
-Date: now!
-Foo: bar
-Baz: blob
-'''))
+        pr.load(
+            BytesIO(
+                textwrap.dedent(
+                    '''\
+                    ProblemType: Crash
+                    Date: now!
+                    Foo: bar
+                    Baz: blob
+                    '''
+                ).encode()
+            )
+        )
 
         self.assertEqual(pr.new_keys(), set())
 
@@ -547,18 +586,21 @@ Baz: blob
     def test_load_key_filter(self):
         '''load a report with filtering keys.'''
 
-        io = BytesIO(b'''ProblemType: Crash
-DataNo: nonono
-GoodFile: base64
- H4sICAAAAAAC/0FmaWxlAA==
- c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-DataYes: yesyes
-BadFile: base64
- H4sICAAAAAAC/0ZpbGUA
- S8vPZ0hKLAIACq50HgcAAAA=
-''')
+        report = textwrap.dedent(
+            '''\
+            ProblemType: Crash
+            DataNo: nonono
+            GoodFile: base64
+             H4sICAAAAAAC/0FmaWxlAA==
+             c3RyhEIGBoYoRiYAM5XUCxAAAAA=
+            DataYes: yesyes
+            BadFile: base64
+             H4sICAAAAAAC/0ZpbGUA
+             S8vPZ0hKLAIACq50HgcAAAA=
+            '''
+        ).encode()
         pr = problem_report.ProblemReport()
-        pr.load(io, key_filter=['DataYes', 'GoodFile'])
+        pr.load(BytesIO(report), key_filter=['DataYes', 'GoodFile'])
         self.assertEqual(pr['DataYes'], 'yesyes')
         self.assertEqual(pr['GoodFile'], bin_data)
         self.assertEqual(sorted(pr.keys()), ['DataYes', 'GoodFile'])

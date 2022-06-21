@@ -3,6 +3,7 @@ import gzip
 import os
 import shutil
 import tempfile
+import textwrap
 import time
 import unittest
 from io import BytesIO
@@ -75,16 +76,21 @@ class T(unittest.TestCase):
         pr['Extra'] = 'appended'
         pr.write(io)
 
-        self.assertEqual(io.getvalue().decode(),
-                         f'''ProblemType: Crash
-Date: now!
-Simple: bar
-WhiteSpace:
-  foo   bar
- baz
-   blip{'  '}
-Extra: appended
-''')
+        self.assertEqual(
+            io.getvalue().decode(),
+            textwrap.dedent(
+                f'''\
+                ProblemType: Crash
+                Date: now!
+                Simple: bar
+                WhiteSpace:
+                  foo   bar
+                 baz
+                   blip{'  '}
+                Extra: appended
+                '''
+            ),
+        )
 
         temp = tempfile.NamedTemporaryFile()
         temp.write(bin_data)
@@ -169,16 +175,21 @@ Extra: appended
         pr.write(io)
         temp.close()
 
-        self.assertEqual(io.getvalue(),
-                         b'''ProblemType: Crash
-Date: now!
-Afile: base64
- H4sICAAAAAAC/0FmaWxlAA==
- c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-File: base64
- H4sICAAAAAAC/0ZpbGUA
- c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-''')
+        self.assertEqual(
+            io.getvalue().decode(),
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                Afile: base64
+                 H4sICAAAAAAC/0FmaWxlAA==
+                 c3RyhEIGBoYoRiYAM5XUCxAAAAA=
+                File: base64
+                 H4sICAAAAAAC/0ZpbGUA
+                 c3RyhEIGBoYoRiYAM5XUCxAAAAA=
+                '''
+            ),
+        )
 
         # force compression/encoding bool
         temp = tempfile.NamedTemporaryFile()
@@ -189,23 +200,33 @@ File: base64
         io = BytesIO()
         pr.write(io)
 
-        self.assertEqual(io.getvalue(),
-                         b'''ProblemType: Crash
-Date: now!
-File: foo\0bar
-''')
+        self.assertEqual(
+            io.getvalue().decode(),
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                File: foo\0bar
+                '''
+            ),
+        )
 
         pr['File'] = (temp.name, True)
         io = BytesIO()
         pr.write(io)
 
-        self.assertEqual(io.getvalue(),
-                         b'''ProblemType: Crash
-Date: now!
-File: base64
- H4sICAAAAAAC/0ZpbGUA
- S8vPZ0hKLAIACq50HgcAAAA=
-''')
+        self.assertEqual(
+            io.getvalue().decode(),
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                File: base64
+                 H4sICAAAAAAC/0ZpbGUA
+                 S8vPZ0hKLAIACq50HgcAAAA=
+                '''
+            ),
+        )
         temp.close()
 
     def test_write_delayed_fileobj(self):
@@ -511,10 +532,16 @@ File: base64
         self.assertEqual(parts[1].get_content_type(), 'text/plain')
         self.assertEqual(parts[1].get_content_charset(), 'utf-8')
         self.assertEqual(parts[1].get_filename(), None)
-        self.assertEqual(parts[1].get_payload(decode=True), b'''ProblemType: Crash
-Date: now!
-GoodText: Hi
-''')
+        self.assertEqual(
+            parts[1].get_payload(decode=True),
+            textwrap.dedent(
+                '''\
+                ProblemType: Crash
+                Date: now!
+                GoodText: Hi
+                '''
+            ).encode(),
+        )
 
         # third part should be the GoodBin: field as attachment
         self.assertTrue(not parts[2].is_multipart())

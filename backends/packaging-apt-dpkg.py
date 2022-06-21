@@ -593,11 +593,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         # configure apt for sandbox
         env = os.environ.copy()
         if sandbox:
-            f = tempfile.NamedTemporaryFile()
-            f.write(('''Dir "%s";
-Dir::State::Status "/var/lib/dpkg/status";
-Debug::NoLocking "true";
- ''' % sandbox).encode())
+            f = tempfile.NamedTemporaryFile("w+")
+            f.write(
+                f'Dir "{sandbox}";\n'
+                f'Dir::State::Status "/var/lib/dpkg/status";\n'
+                f'Debug::NoLocking "true";\n'
+            )
             f.flush()
             env['APT_CONFIG'] = f.name
 

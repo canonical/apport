@@ -18,6 +18,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import textwrap
 import time
 import unittest
 
@@ -369,11 +370,16 @@ class T(unittest.TestCase):
 
         with open(self.test_report + '.inject', 'w') as f:
             # \x01pwned
-            f.write('''ProblemType: Crash
-CoreDump: base64
- H4sICAAAAAAC/0NvcmVEdW1wAA==
- Yywoz0tNAQBl1rhlBgAAAA==
-''')
+            f.write(
+                textwrap.dedent(
+                    '''\
+                    ProblemType: Crash
+                    CoreDump: base64
+                     H4sICAAAAAAC/0NvcmVEdW1wAA==
+                     Yywoz0tNAQBl1rhlBgAAAA==
+                    '''
+                )
+            )
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 

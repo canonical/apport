@@ -41,9 +41,12 @@ def add_info(report, ui):
         free_mb = st.f_bavail * st.f_frsize / 1000000
 
         if free_mb < treshold:
-            report['UnreportableReason'] = 'Your %s partition has less than \
-%s MB of free space available, which leads to problems using applications \
-and installing updates. Please free some space.' % (mounts[mount], free_mb)
+            report['UnreportableReason'] = (
+                f"Your {mounts[mount]} partition has less than {free_mb} MB"
+                f" of free space available, which leads to problems using"
+                f" applications and installing updates."
+                f" Please free some space."
+            )
 
     # important glib errors/assertions (which should not have private data)
     if 'ExecutablePath' in report:

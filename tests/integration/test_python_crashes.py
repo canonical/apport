@@ -16,6 +16,7 @@ import shutil
 import stat
 import subprocess
 import tempfile
+import textwrap
 import unittest
 import unittest.mock
 
@@ -53,16 +54,19 @@ class T(unittest.TestCase):
             (fd, script) = tempfile.mkstemp(dir='/var/tmp')
             self.addCleanup(os.unlink, script)
 
-        os.write(fd, ('''#!/usr/bin/env %s
+        os.write(
+            fd,
+            f'''\
+#!/usr/bin/env {os.getenv('PYTHON', 'python3')}
 import apport_python_hook
 apport_python_hook.install()
 
 def func(x):
     raise Exception(b'This should happen. \\xe2\\x99\\xa5'.decode('UTF-8'))
 
-%s
+{extracode}
 func(42)
-''' % (os.getenv('PYTHON', 'python3'), extracode)).encode())
+'''.encode())
         os.close(fd)
         os.chmod(script, 0o755)
         env = self.env.copy()
@@ -257,19 +261,25 @@ func(42)
         (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:
             with tempfile.NamedTemporaryFile() as ignore_file, unittest.mock.patch("apport.report._ignore_file", ignore_file.name):
-                os.write(fd, ('''#!/usr/bin/env %s
-import apport_python_hook
-apport_python_hook.install()
+                os.write(
+                    fd,
+                    textwrap.dedent(
+                        f'''\
+                        #!/usr/bin/env {os.getenv('PYTHON', 'python3')}
+                        import apport_python_hook
+                        apport_python_hook.install()
 
-# Inject the mocked ignore file path.
-import apport.report
-apport.report._ignore_file = "%s"
+                        # Inject the mocked ignore file path.
+                        import apport.report
+                        apport.report._ignore_file = "{ignore_file.name}"
 
-def func(x):
-    raise Exception('This should happen.')
+                        def func(x):
+                            raise Exception('This should happen.')
 
-func(42)
-''' % (os.getenv('PYTHON', 'python3'), ignore_file.name)).encode('ascii'))
+                        func(42)
+                        '''
+                    ).encode('ascii'),
+                )
                 os.close(fd)
                 os.chmod(script, 0o755)
 
@@ -316,10 +326,16 @@ func(42)
     def test_generic_os_error(self):
         '''OSError with errno and no known subclass'''
 
-        self._test_crash(extracode='''def g():
-    raise OSError(99, 'something bad')
+        self._test_crash(
+            extracode=textwrap.dedent(
+                '''\
+                def g():
+                    raise OSError(99, 'something bad')
 
-g()''')
+                g()
+                '''
+            )
+        )
         pr = self._load_report()
         # we expect it to append errno
         exe = pr['ExecutablePath']
@@ -329,10 +345,16 @@ g()''')
     def test_generic_os_error_no_errno(self):
         '''OSError without errno and no known subclass'''
 
-        self._test_crash(extracode='''def g():
-    raise OSError('something bad')
+        self._test_crash(
+            extracode=textwrap.dedent(
+                '''\
+                def g():
+                    raise OSError('something bad')
 
-g()''')
+                g()
+                '''
+            )
+        )
         pr = self._load_report()
         # we expect it to not stumble over the missing errno
         exe = pr['ExecutablePath']
@@ -342,10 +364,16 @@ g()''')
     def test_subclassed_os_error(self):
         '''OSError with known subclass'''
 
-        self._test_crash(extracode='''def g():
-    raise OSError(2, 'no such file /notexisting')
+        self._test_crash(
+            extracode=textwrap.dedent(
+                '''\
+                def g():
+                    raise OSError(2, 'no such file /notexisting')
 
-g()''')
+                g()
+                '''
+            )
+        )
         pr = self._load_report()
         # we expect it to not append errno, as it's already encoded in the subclass
         exe = pr['ExecutablePath']

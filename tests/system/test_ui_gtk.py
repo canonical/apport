@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
@@ -202,11 +203,17 @@ class T(unittest.TestCase):
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['CrashCounter'] = '1'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        with tempfile.NamedTemporaryFile() as fp:
-            fp.write(b'''[Desktop Entry]
-Version=1.0
-Name=Apport
-Type=Application''')
+        with tempfile.NamedTemporaryFile(mode='w+') as fp:
+            fp.write(
+                textwrap.dedent(
+                    '''\
+                    [Desktop Entry]
+                    Version=1.0
+                    Name=Apport
+                    Type=Application
+                    '''
+                )
+            )
             fp.flush()
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
@@ -248,11 +255,17 @@ Type=Application''')
         self.app.report['CrashCounter'] = '1'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        with tempfile.NamedTemporaryFile() as fp:
-            fp.write(b'''[Desktop Entry]
-Version=1.0
-Name=Apport
-Type=Application''')
+        with tempfile.NamedTemporaryFile(mode='w+') as fp:
+            fp.write(
+                textwrap.dedent(
+                    '''\
+                    [Desktop Entry]
+                    Version=1.0
+                    Name=Apport
+                    Type=Application
+                    '''
+                )
+            )
             fp.flush()
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
@@ -293,11 +306,17 @@ Type=Application''')
         self.app.report['CrashCounter'] = '1'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        with tempfile.NamedTemporaryFile() as fp:
-            fp.write(b'''[Desktop Entry]
-Version=1.0
-Name=Apport
-Type=Application''')
+        with tempfile.NamedTemporaryFile(mode='w+') as fp:
+            fp.write(
+                textwrap.dedent(
+                    '''\
+                    [Desktop Entry]
+                    Version=1.0
+                    Name=Apport
+                    Type=Application
+                    '''
+                )
+            )
             fp.flush()
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
@@ -334,11 +353,17 @@ Type=Application''')
         self.app.report['ProblemType'] = 'Hang'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        with tempfile.NamedTemporaryFile() as fp:
-            fp.write(b'''[Desktop Entry]
-Version=1.0
-Name=Apport
-Type=Application''')
+        with tempfile.NamedTemporaryFile(mode='w+') as fp:
+            fp.write(
+                textwrap.dedent(
+                    '''\
+                    [Desktop Entry]
+                    Version=1.0
+                    Name=Apport
+                    Type=Application
+                    '''
+                )
+            )
             fp.flush()
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
@@ -544,11 +569,17 @@ Type=Application''')
         self.app.report['ProblemType'] = 'RecoverableProblem'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         self.app.report['DialogBody'] = 'Some developer-specified error text.'
-        with tempfile.NamedTemporaryFile() as fp:
-            fp.write(b'''[Desktop Entry]
-Version=1.0
-Name=Apport
-Type=Application''')
+        with tempfile.NamedTemporaryFile(mode='w+') as fp:
+            fp.write(
+                textwrap.dedent(
+                    '''\
+                    [Desktop Entry]
+                    Version=1.0
+                    Name=Apport
+                    Type=Application
+                    '''
+                )
+            )
             fp.flush()
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
