@@ -166,10 +166,6 @@ and try again.') % report['DistroRelease'].split()[0]
 versions installed. Please upgrade the following packages and check if the \
 problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
-    # disabled: if we have a SIGABRT without an assertion message, declare as unreportable
-    # if report.get('Signal') == '6' and 'AssertionMessage' not in report:
-    #     report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
-
     if reportfile:
         try:
             with open(reportfile, 'ab') as f:

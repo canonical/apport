@@ -411,7 +411,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # other parts are the attachments:
         for part in msg_iter:
-            # print '   attachment: %s...' % part.get_filename()
             bug.addAttachment(comment=attachment_comment or '',
                               description=part.get_filename(),
                               content_type=None,
@@ -1605,7 +1604,6 @@ and more
                 tags=self.crashdb.arch_tag,
                 target=self.crashdb.lp_distro,
                 title='ubuntu distro retrace bug')
-            # print('distro bug: https://staging.launchpad.net/bugs/%i' % distro_bug.id)
 
             # create a project crash DB and a bug
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
@@ -1618,7 +1616,6 @@ and more
                 tags=project_db.arch_tag,
                 target=project_db.lp_distro,
                 title='project retrace bug')
-            # print('project bug: https://staging.launchpad.net/bugs/%i' % project_bug.id)
 
             # on project_db, we recognize the project bug and can mark it
             unretraced_before = project_db.get_unretraced()
