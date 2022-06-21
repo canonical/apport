@@ -646,28 +646,26 @@ class T(unittest.TestCase):
         os.mkdir(self.rootdir)
         os.mkdir(self.configdir)
         os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers))
-        with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
-            f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
-            f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
-            if updates:
-                f.write('deb http://archive.ubuntu.com/ubuntu/ %s-updates main\n' % release)
-                f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s-updates main\n' % release)
-                f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
+        self._write_source_file(
+            os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list'),
+            'http://archive.ubuntu.com/ubuntu/',
+            release,
+            updates,
+        )
         if ppa:
             os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list.d'))
             with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'sources.list.d', 'fooser-bar-ppa.list'), 'w') as f:
-                f.write('deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu %s main main/debug\n' % release)
-                f.write('deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu %s main\n' % release)
+                f.write(
+                    f'deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu {release} main main/debug\n'
+                    f'deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu {release} main\n'
+                )
         os.mkdir(os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf'))
-        with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf', 'sources.list'), 'w') as f:
-            f.write('deb http://ports.ubuntu.com/ %s main\n' % release)
-            f.write('deb-src http://ports.ubuntu.com/ %s main\n' % release)
-            f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
-            if updates:
-                f.write('deb http://ports.ubuntu.com/ %s-updates main\n' % release)
-                f.write('deb-src http://ports.ubuntu.com/ %s-updates main\n' % release)
-                f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
+        self._write_source_file(
+            os.path.join(self.configdir, 'Foonux %s' % vers, 'armhf', 'sources.list'),
+            'http://ports.ubuntu.com/',
+            release,
+            updates,
+        )
         with open(os.path.join(self.configdir, 'Foonux %s' % vers, 'codename'), 'w') as f:
             f.write('%s' % release)
 
@@ -714,6 +712,21 @@ class T(unittest.TestCase):
                 subprocess.check_call(gpg_cmd, stdout=gpg_key)
         except FileNotFoundError as error:  # pragma: no cover
             self.skipTest(f"{error.filename} not available")
+
+    def _write_source_file(self, sources_filename: str, uri: str, release: str, updates: bool) -> None:
+        '''Write sources.list file.'''
+        with open(sources_filename, 'w') as sources_file:
+            sources_file.write(
+                f'deb {uri} {release} main\n'
+                f'deb-src {uri} {release} main\n'
+                f'deb http://ddebs.ubuntu.com/ {release} main\n'
+            )
+            if updates:
+                sources_file.write(
+                    f'deb {uri} {release}-updates main\n'
+                    f'deb-src {uri} {release}-updates main\n'
+                    f'deb http://ddebs.ubuntu.com/ {release}-updates main\n'
+                )
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
