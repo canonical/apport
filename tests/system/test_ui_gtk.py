@@ -44,9 +44,8 @@ else:
     kernel_oops_path = os.path.join(
         os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "kernel_oops"
     )
-GTKUserInterface = (
-    SourceFileLoader("", apport_gtk_path).load_module().GTKUserInterface
-)
+apport_gtk = SourceFileLoader("", apport_gtk_path).load_module()
+GTKUserInterface = apport_gtk.GTKUserInterface
 
 
 class T(unittest.TestCase):
@@ -1229,6 +1228,26 @@ class T(unittest.TestCase):
         self.app.run_crash(self.app.report_file)
 
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
+
+    def test_text_to_markup(self):
+        """Test text_to_markup() with different URLs."""
+        urls = ["https://example.com", "https://example.com/file-bug-report"]
+        for url in urls:
+            with self.subTest(url=url):
+                self.assertEqual(
+                    apport_gtk.text_to_markup(
+                        f"Contact them via {url} for help."
+                    ),
+                    f'Contact them via <a href="{url}">{url}</a> for help.',
+                )
+
+    def test_text_to_markup_url_followed_by_dot(self):
+        """Test text_to_markup() with https URL followed by a dot."""
+        url = "https://example.com/file-bug-report"
+        self.assertEqual(
+            apport_gtk.text_to_markup(f"Für Hilfe gehen Sie über {url}."),
+            f'Für Hilfe gehen Sie über <a href="{url}">{url}</a>.',
+        )
 
     @staticmethod
     def has_click_event_connected(widget):

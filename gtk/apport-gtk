@@ -681,7 +681,7 @@ def text_to_markup(text: str) -> str:
     """Turn URLs into links"""
     escaped_text = GLib.markup_escape_text(text)
     return re.sub(
-        "(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%+=./-])*)",
+        "(https?://[a-zA-Z0-9._-]+[a-zA-Z0-9_#?%+=./-]*[a-zA-Z0-9_#?%+=/-])",
         r'<a href="\1">\1</a>',
         escaped_text,
     )
