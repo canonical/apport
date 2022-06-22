@@ -10,8 +10,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import io
-import os
 import sys
 
 CONFIG = "/etc/default/apport"
@@ -22,6 +20,7 @@ def enabled():
 
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
+    # pylint: disable=import-outside-toplevel; for Python starup time
     import re
 
     try:
@@ -46,6 +45,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
     # import locally here so that there is no routine overhead on python
     # startup time - only when a traceback occurs will this trigger.
+    # pylint: disable=import-outside-toplevel
     try:
         # ignore 'safe' exit types.
         if exc_type in (KeyboardInterrupt,):
@@ -65,6 +65,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
+        import io
+        import os
         import re
         import traceback
 
@@ -167,6 +169,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
 
 def dbus_service_unknown_analysis(exc_obj, report):
+    # pylint: disable=import-outside-toplevel; for Python starup time
     import re
     import subprocess
     from configparser import ConfigParser, NoOptionError, NoSectionError
