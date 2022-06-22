@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-'''Qt 5 Apport User Interface'''
+"""Qt 5 Apport User Interface"""
 
 # Copyright (C) 2015 Harald Sitter <sitter@kde.org>
 # Copyright (C) 2007 - 2009 Canonical Ltd.
@@ -55,18 +55,22 @@ try:
 
 except ImportError as e:
     # this can happen while upgrading python packages
-    apport.fatal('Could not import module, is a package upgrade in progress?  Error: %s', str(e))
+    apport.fatal(
+        "Could not import module, is a package upgrade in progress?"
+        "  Error: %s",
+        str(e),
+    )
 
 
 def translate(self, prop):
-    '''Reimplement method from uic to change it to use gettext.'''
+    """Reimplement method from uic to change it to use gettext."""
 
-    if prop.get('notr', None) == 'true':
+    if prop.get("notr", None) == "true":
         return self._cstring(prop)
     else:
         if prop.text is None:
-            return ''
-        text = prop.text.encode('UTF-8')
+            return ""
+        text = prop.text.encode("UTF-8")
         return _(text)
 
 
@@ -74,7 +78,7 @@ uic.properties.Properties._string = translate
 
 
 class Dialog(QDialog):
-    '''Main dialog wrapper'''
+    """Main dialog wrapper"""
 
     def __init__(self, ui, title, heading, text):
         QDialog.__init__(self, None, Qt.Window)
@@ -82,9 +86,9 @@ class Dialog(QDialog):
         uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
 
         self.setWindowTitle(title)
-        if self.findChild(QLabel, 'heading'):
-            self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
-        self.findChild(QLabel, 'text').setText(text)
+        if self.findChild(QLabel, "heading"):
+            self.findChild(QLabel, "heading").setText("<h2>%s</h2>" % heading)
+        self.findChild(QLabel, "text").setText(text)
 
     def on_buttons_clicked(self, button):
         self.actionbutton = button
@@ -92,14 +96,16 @@ class Dialog(QDialog):
             button.window().done(2)
 
     def addbutton(self, button):
-        return self.findChild(QDialogButtonBox, 'buttons').addButton(button, QDialogButtonBox.ActionRole)
+        return self.findChild(QDialogButtonBox, "buttons").addButton(
+            button, QDialogButtonBox.ActionRole
+        )
 
 
 class ChoicesDialog(Dialog):
-    '''Choices dialog wrapper'''
+    """Choices dialog wrapper"""
 
     def __init__(self, title, text):
-        Dialog.__init__(self, 'choices.ui', title, None, text)
+        Dialog.__init__(self, "choices.ui", title, None, text)
 
         self.setMaximumSize(1, 1)
 
@@ -110,10 +116,10 @@ class ChoicesDialog(Dialog):
 
 
 class ProgressDialog(Dialog):
-    '''Progress dialog wrapper'''
+    """Progress dialog wrapper"""
 
     def __init__(self, title, heading, text):
-        Dialog.__init__(self, 'progress.ui', title, heading, text)
+        Dialog.__init__(self, "progress.ui", title, heading, text)
 
         self.setMaximumSize(1, 1)
 
@@ -123,7 +129,7 @@ class ProgressDialog(Dialog):
             sys.exit(0)
 
     def set(self, value=None):
-        progress = self.findChild(QProgressBar, 'progress')
+        progress = self.findChild(QProgressBar, "progress")
         if not value:
             progress.setRange(0, 0)
             progress.setValue(0)
@@ -134,38 +140,42 @@ class ProgressDialog(Dialog):
 
 
 class ReportDialog(Dialog):
-    '''Report dialog wrapper'''
+    """Report dialog wrapper"""
 
     def __init__(self, report, allowed_to_report, ui, desktop_info):
-        if 'DistroRelease' not in report:
+        if "DistroRelease" not in report:
             report.add_os_info()
-        distro = report['DistroRelease']
-        Dialog.__init__(self, 'bugreport.ui', distro.split()[0], '', '')
-        self.details = self.findChild(QPushButton, 'show_details')
+        distro = report["DistroRelease"]
+        Dialog.__init__(self, "bugreport.ui", distro.split()[0], "", "")
+        self.details = self.findChild(QPushButton, "show_details")
         self.details.clicked.connect(self.on_show_details_clicked)
-        self.continue_button = self.findChild(QPushButton, 'continue_button')
+        self.continue_button = self.findChild(QPushButton, "continue_button")
         self.continue_button.clicked.connect(self.on_continue_clicked)
-        self.closed_button = self.findChild(QPushButton, 'closed_button')
+        self.closed_button = self.findChild(QPushButton, "closed_button")
         self.closed_button.clicked.connect(self.on_closed_clicked)
-        self.examine_button = self.findChild(QPushButton, 'examine_button')
+        self.examine_button = self.findChild(QPushButton, "examine_button")
         self.examine_button.clicked.connect(self.on_examine_clicked)
-        self.cancel_button = self.findChild(QPushButton, 'cancel_button')
+        self.cancel_button = self.findChild(QPushButton, "cancel_button")
         self.cancel_button.clicked.connect(self.on_cancel_button_clicked)
-        self.treeview = self.findChild(QTreeWidget, 'details')
-        self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
-        self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
-        self.heading = self.findChild(QLabel, 'heading')
-        self.text = self.findChild(QLabel, 'text')
+        self.treeview = self.findChild(QTreeWidget, "details")
+        self.send_error_report = self.findChild(QCheckBox, "send_error_report")
+        self.ignore_future_problems = self.findChild(
+            QCheckBox, "ignore_future_problems"
+        )
+        self.heading = self.findChild(QLabel, "heading")
+        self.text = self.findChild(QLabel, "text")
         self.ui = ui
         self.collect_called = False
         icon = None
-        report_type = report.get('ProblemType')
+        report_type = report.get("ProblemType")
 
-        self.spinner = QLabel('', parent=self.treeview)
+        self.spinner = QLabel("", parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
         self.movie = QMovie(
-            os.path.join(os.path.dirname(sys.argv[0]), 'spinner.gif'),
-            QByteArray(), self.spinner)
+            os.path.join(os.path.dirname(sys.argv[0]), "spinner.gif"),
+            QByteArray(),
+            self.spinner,
+        )
         self.spinner.setMovie(self.movie)
         self.spinner.setVisible(False)
 
@@ -183,11 +193,12 @@ class ReportDialog(Dialog):
             # This is a bug generated through `apport-bug $package`, or
             # `apport-collect $id`.
 
-            # avoid collecting information again, in this mode we already have it
-            if 'Uname' in report:
+            # avoid collecting information again,
+            # in this mode we already have it
+            if "Uname" in report:
                 self.collect_called = True
                 self.ui.ui_update_view(self)
-            self.heading.setText(_('Send problem report to the developers?'))
+            self.heading.setText(_("Send problem report to the developers?"))
             self.text.hide()
             self.closed_button.hide()
             self.ignore_future_problems.hide()
@@ -195,67 +206,88 @@ class ReportDialog(Dialog):
             self.cancel_button.show()
             self.send_error_report.setChecked(True)
             self.send_error_report.hide()
-            self.continue_button.setText(_('Send'))
+            self.continue_button.setText(_("Send"))
             self.showtree(True)
 
-        elif report_type == 'KernelCrash' or report_type == 'KernelOops':
+        elif report_type == "KernelCrash" or report_type == "KernelOops":
             self.ignore_future_problems.setChecked(False)
             self.ignore_future_problems.hide()
-            self.heading.setText(_('Sorry, %s has experienced an '
-                                   'internal error.') % distro)
+            self.heading.setText(
+                _("Sorry, %s has experienced an internal error.") % distro
+            )
             self.closed_button.hide()
             self.text.hide()
-            icon = 'distributor-logo'
-        elif report_type == 'Package':
-            package = report.get('Package')
+            icon = "distributor-logo"
+        elif report_type == "Package":
+            package = report.get("Package")
             if package:
-                self.text.setText(_('Package: %s') % package)
+                self.text.setText(_("Package: %s") % package)
                 self.text.show()
             else:
                 self.text.hide()
             self.closed_button.hide()
             self.ignore_future_problems.hide()
-            self.heading.setText(_('Sorry, a problem occurred while installing software.'))
+            self.heading.setText(
+                _("Sorry, a problem occurred while installing software.")
+            )
         else:
             # Regular crash.
             if desktop_info:
-                icon = desktop_info.get('icon')
-                if report_type == 'RecoverableProblem':
-                    self.heading.setText(_('The application %s has experienced an internal error.') %
-                                         desktop_info['name'])
+                icon = desktop_info.get("icon")
+                if report_type == "RecoverableProblem":
+                    self.heading.setText(
+                        _(
+                            "The application %s has experienced"
+                            " an internal error."
+                        )
+                        % desktop_info["name"]
+                    )
                 else:
-                    self.heading.setText(_('The application %s has closed unexpectedly.') %
-                                         desktop_info['name'])
+                    self.heading.setText(
+                        _("The application %s has closed unexpectedly.")
+                        % desktop_info["name"]
+                    )
                 self.text.hide()
 
                 pid = apport.ui.get_pid(report)
                 still_running = pid and apport.ui.still_running(pid)
-                if 'ProcCmdline' not in report or still_running or not self.ui.offer_restart:
+                if (
+                    "ProcCmdline" not in report
+                    or still_running
+                    or not self.ui.offer_restart
+                ):
                     self.closed_button.hide()
-                    self.continue_button.setText(_('Continue'))
+                    self.continue_button.setText(_("Continue"))
                 else:
                     self.closed_button.show()
-                    self.closed_button.setText(_('Leave Closed'))
-                    self.continue_button.setText(_('Relaunch'))
+                    self.closed_button.setText(_("Leave Closed"))
+                    self.continue_button.setText(_("Relaunch"))
             else:
-                icon = 'distributor-logo'
-                self.heading.setText(_('Sorry, %s has experienced an '
-                                       'internal error.') % distro)
+                icon = "distributor-logo"
+                self.heading.setText(
+                    _("Sorry, %s has experienced an internal error.") % distro
+                )
                 self.text.show()
-                self.text.setText(_('If you notice further problems, '
-                                    'try restarting the computer.'))
+                self.text.setText(
+                    _(
+                        "If you notice further problems, "
+                        "try restarting the computer."
+                    )
+                )
                 self.closed_button.hide()
-                self.continue_button.setText(_('Continue'))
-                self.ignore_future_problems.setText(_('Ignore future problems of this type'))
-            if report.get('CrashCounter'):
+                self.continue_button.setText(_("Continue"))
+                self.ignore_future_problems.setText(
+                    _("Ignore future problems of this type")
+                )
+            if report.get("CrashCounter"):
                 self.ignore_future_problems.show()
             else:
                 self.ignore_future_problems.hide()
 
-            if report_type == 'RecoverableProblem':
-                body = report.get('DialogBody', '')
+            if report_type == "RecoverableProblem":
+                body = report.get("DialogBody", "")
                 if body:
-                    del report['DialogBody']
+                    del report["DialogBody"]
                     # Set a maximum size for the dialog body, so developers do
                     # not try to shove entire log files into this dialog.
                     self.text.setText(body[:1024])
@@ -263,15 +295,19 @@ class ReportDialog(Dialog):
 
         if icon:
             base = QIcon.fromTheme(icon).pixmap(42, 42)
-            overlay = QIcon.fromTheme('dialog-error').pixmap(16, 16)
+            overlay = QIcon.fromTheme("dialog-error").pixmap(16, 16)
             p = QPainter(base)
-            p.drawPixmap(base.width() - overlay.width(),
-                         base.height() - overlay.height(), overlay)
+            p.drawPixmap(
+                base.width() - overlay.width(),
+                base.height() - overlay.height(),
+                overlay,
+            )
             p.end()
             self.application_icon.setPixmap(base)
         else:
             self.application_icon.setPixmap(
-                QIcon.fromTheme('dialog-error').pixmap(42, 42))
+                QIcon.fromTheme("dialog-error").pixmap(42, 42)
+            )
 
         if self.ui.report_file:
             self.showtree(False)
@@ -290,10 +326,10 @@ class ReportDialog(Dialog):
 
     def on_show_details_clicked(self):
         if not self.treeview.isVisible():
-            self.details.setText(_('Hide Details'))
+            self.details.setText(_("Hide Details"))
             self.showtree(True)
         else:
-            self.details.setText(_('Show Details'))
+            self.details.setText(_("Show Details"))
             self.showtree(False)
 
     def collect_done(self):
@@ -302,8 +338,10 @@ class ReportDialog(Dialog):
     def showtree(self, visible):
         self.treeview.setVisible(visible)
         if visible and not self.collect_called:
-            self.ui.ui_update_view(self, ['ExecutablePath'])
-            QTimer.singleShot(0, lambda: self.ui.collect_info(on_finished=self.collect_done))
+            self.ui.ui_update_view(self, ["ExecutablePath"])
+            QTimer.singleShot(
+                0, lambda: self.ui.collect_info(on_finished=self.collect_done)
+            )
             self.collect_called = True
         if visible:
             self.setMaximumSize(16777215, 16777215)
@@ -312,12 +350,12 @@ class ReportDialog(Dialog):
 
 
 class UserPassDialog(Dialog):
-    '''Username/Password dialog wrapper'''
+    """Username/Password dialog wrapper"""
 
     def __init__(self, title, text):
-        Dialog.__init__(self, 'userpass.ui', title, None, text)
-        self.findChild(QLabel, 'l_username').setText(_('Username:'))
-        self.findChild(QLabel, 'l_password').setText(_('Password:'))
+        Dialog.__init__(self, "userpass.ui", title, None, text)
+        self.findChild(QLabel, "l_username").setText(_("Username:"))
+        self.findChild(QLabel, "l_password").setText(_("Password:"))
 
     def on_buttons_clicked(self, button):
         Dialog.on_buttons_clicked(self, button)
@@ -326,7 +364,7 @@ class UserPassDialog(Dialog):
 
 
 class MainUserInterface(apport.ui.UserInterface):
-    '''The main user interface presented to the user'''
+    """The main user interface presented to the user"""
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
@@ -340,7 +378,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_update_view(self, dialog, shown_keys=None):
         # report contents
-        details = dialog.findChild(QTreeWidget, 'details')
+        details = dialog.findChild(QTreeWidget, "details")
         if shown_keys:
             keys = set(self.report.keys()) & set(shown_keys)
         else:
@@ -348,46 +386,56 @@ class MainUserInterface(apport.ui.UserInterface):
         details.clear()
         for key in sorted(keys):
             # ignore internal keys
-            if key.startswith('_'):
+            if key.startswith("_"):
                 continue
 
             keyitem = QTreeWidgetItem([key])
             details.addTopLevelItem(keyitem)
 
             # string value
-            if not hasattr(self.report[key], 'gzipvalue') and \
-               hasattr(self.report[key], 'isspace') and \
-               not self.report._is_binary(self.report[key]):
+            if (
+                not hasattr(self.report[key], "gzipvalue")
+                and hasattr(self.report[key], "isspace")
+                and not self.report._is_binary(self.report[key])
+            ):
                 lines = self.report[key].splitlines()
                 for line in lines:
                     QTreeWidgetItem(keyitem, [str(line)])
                 if len(lines) < 4:
                     keyitem.setExpanded(True)
             else:
-                QTreeWidgetItem(keyitem, [_('(binary data)')])
+                QTreeWidgetItem(keyitem, [_("(binary data)")])
 
-    def ui_present_report_details(self, allowed_to_report=True, modal_for=None):
+    def ui_present_report_details(
+        self, allowed_to_report=True, modal_for=None
+    ):
         desktop_info = self.get_desktop_entry()
-        self.dialog = ReportDialog(self.report, allowed_to_report, self,
-                                   desktop_info)
+        self.dialog = ReportDialog(
+            self.report, allowed_to_report, self, desktop_info
+        )
 
         response = self.dialog.exec_()
 
-        return_value = {'report': False, 'blacklist': False, 'remember': False,
-                        'restart': False, 'examine': False}
+        return_value = {
+            "report": False,
+            "blacklist": False,
+            "remember": False,
+            "restart": False,
+            "examine": False,
+        }
         if response == QDialog.Rejected:
             return return_value
         elif response == 3:
-            return_value['examine'] = True
+            return_value["examine"] = True
             return return_value
 
-        text = self.dialog.continue_button.text().replace('&', '')
-        if response == 1 and text == _('Relaunch') and self.offer_restart:
-            return_value['restart'] = True
+        text = self.dialog.continue_button.text().replace("&", "")
+        if response == 1 and text == _("Relaunch") and self.offer_restart:
+            return_value["restart"] = True
         if self.dialog.send_error_report.isChecked():
-            return_value['report'] = True
+            return_value["report"] = True
         if self.dialog.ignore_future_problems.isChecked():
-            return_value['blacklist'] = True
+            return_value["blacklist"] = True
         return return_value
 
     def ui_info_message(self, title, text):
@@ -400,18 +448,24 @@ class MainUserInterface(apport.ui.UserInterface):
         # show a spinner if we already have the main window
         if self.dialog and self.dialog.isVisible():
             rect = self.dialog.spinner.parent().rect()
-            self.dialog.spinner.setGeometry(rect.width() // 2 - self.dialog.spinner.width() // 2,
-                                            rect.height() // 2 - self.dialog.spinner.height() // 2,
-                                            self.dialog.spinner.width(), self.dialog.spinner.height())
+            self.dialog.spinner.setGeometry(
+                rect.width() // 2 - self.dialog.spinner.width() // 2,
+                rect.height() // 2 - self.dialog.spinner.height() // 2,
+                self.dialog.spinner.width(),
+                self.dialog.spinner.height(),
+            )
             self.dialog.movie.start()
         elif self.crashdb.accepts(self.report):
             # show a progress dialog if our DB accepts the crash
             self.progress = ProgressDialog(
-                _('Collecting Problem Information'),
-                _('Collecting problem information'),
-                _('The collected information can be sent to the developers '
-                  'to improve the application. This might take a few '
-                  'minutes.'))
+                _("Collecting Problem Information"),
+                _("Collecting problem information"),
+                _(
+                    "The collected information can be sent to the developers "
+                    "to improve the application. This might take a few "
+                    "minutes."
+                ),
+            )
             self.progress.set()
             self.progress.show()
 
@@ -435,10 +489,13 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_start_upload_progress(self):
         self.progress = ProgressDialog(
-            _('Uploading Problem Information'),
-            _('Uploading problem information'),
-            _('The collected information is being sent to the bug '
-              'tracking system. This might take a few minutes.'))
+            _("Uploading Problem Information"),
+            _("Uploading problem information"),
+            _(
+                "The collected information is being sent to the bug "
+                "tracking system. This might take a few minutes."
+            ),
+        )
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):
@@ -452,8 +509,12 @@ class MainUserInterface(apport.ui.UserInterface):
         self.progress.hide()
 
     def ui_question_yesno(self, text):
-        response = QMessageBox.question(None, '', text,
-                                        QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+        response = QMessageBox.question(
+            None,
+            "",
+            text,
+            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+        )
         if response == QMessageBox.Yes:
             return True
         if response == QMessageBox.No:
@@ -461,7 +522,7 @@ class MainUserInterface(apport.ui.UserInterface):
         return None
 
     def ui_question_choice(self, text, options, multiple):
-        ''' Show a question with predefined choices.
+        """Show a question with predefined choices.
 
         @options is a list of strings to present.
         @multiple - if True, choices should be QCheckBoxes, if False then
@@ -469,8 +530,8 @@ class MainUserInterface(apport.ui.UserInterface):
 
         Return list of selected option indexes, or None if the user cancelled.
         If multiple is False, the list will always have one element.
-        '''
-        dialog = ChoicesDialog(_('Apport'), text)
+        """
+        dialog = ChoicesDialog(_("Apport"), text)
 
         b = None
         for option in options:
@@ -483,53 +544,61 @@ class MainUserInterface(apport.ui.UserInterface):
         response = dialog.exec_()
 
         if response == QDialog.Rejected:
-            return 'cancel'
+            return "cancel"
 
-        response = [c for c in range(0, dialog.vbox_choices.count())
-                    if dialog.vbox_choices.itemAt(c).widget().isChecked()]
+        response = [
+            c
+            for c in range(0, dialog.vbox_choices.count())
+            if dialog.vbox_choices.itemAt(c).widget().isChecked()
+        ]
 
         return response
 
     def ui_question_file(self, text):
-        ''' Show a file selector dialog.
+        """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
-        '''
+        """
         response = QFileDialog.getOpenFileName(None, str(text))
         if response.length() == 0:
             return None
         return str(response)
 
     def ui_question_userpass(self, text):
-        '''Show a Username/Password dialog.
+        """Show a Username/Password dialog.
 
         Return a tuple (user, pass) or None if cancelled.
-        '''
-        dialog = UserPassDialog(_('Apport'), text)
+        """
+        dialog = UserPassDialog(_("Apport"), text)
         response = dialog.exec_()
 
         if response == QDialog.Rejected:
             return None
 
-        username = str(dialog.findChild(QLineEdit, 'e_username').text())
-        password = str(dialog.findChild(QLineEdit, 'e_password').text())
+        username = str(dialog.findChild(QLineEdit, "e_username").text())
+        password = str(dialog.findChild(QLineEdit, "e_password").text())
 
         if len(username) == 0 or len(password) == 0:
             return None
         return (username, password)
 
 
-if __name__ == '__main__':
-    if not os.environ.get('DISPLAY'):
-        apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
+if __name__ == "__main__":
+    if not os.environ.get("DISPLAY"):
+        apport.fatal(
+            "This program needs a running X session. Please see"
+            ' "man apport-cli" for a command line version of Apport.'
+        )
 
     app = QApplication(sys.argv)
-    app.setApplicationName('apport-kde')
-    app.setApplicationDisplayName(_('Apport'))
-    app.setWindowIcon(QIcon.fromTheme('apport'))
+    app.setApplicationName("apport-kde")
+    app.setApplicationDisplayName(_("Apport"))
+    app.setWindowIcon(QIcon.fromTheme("apport"))
     translator = QTranslator()
-    translator.load("qtbase_" + QLocale.system().name(),
-                    QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    translator.load(
+        "qtbase_" + QLocale.system().name(),
+        QLibraryInfo.location(QLibraryInfo.TranslationsPath),
+    )
     app.installTranslator(translator)
 
     UserInterface = MainUserInterface()

@@ -10,7 +10,7 @@ from io import BytesIO
 
 import problem_report
 
-bin_data = b'ABABABABAB\0\0\0Z\x01\x02'
+bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):
@@ -23,35 +23,38 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_compressed_values(self):
-        '''handling of CompressedValue values.'''
+        """handling of CompressedValue values."""
 
-        large_val = b'A' * 5000000
+        large_val = b"A" * 5000000
 
         pr = problem_report.ProblemReport()
-        pr['Foo'] = problem_report.CompressedValue(b'FooFoo!')
-        pr['Bin'] = problem_report.CompressedValue()
-        pr['Bin'].set_value(bin_data)
-        pr['Large'] = problem_report.CompressedValue(large_val)
+        pr["Foo"] = problem_report.CompressedValue(b"FooFoo!")
+        pr["Bin"] = problem_report.CompressedValue()
+        pr["Bin"].set_value(bin_data)
+        pr["Large"] = problem_report.CompressedValue(large_val)
 
-        self.assertTrue(isinstance(pr['Foo'], problem_report.CompressedValue))
-        self.assertTrue(isinstance(pr['Bin'], problem_report.CompressedValue))
-        self.assertEqual(pr['Foo'].get_value(), b'FooFoo!')
-        self.assertEqual(pr['Bin'].get_value(), bin_data)
-        self.assertEqual(pr['Large'].get_value(), large_val)
-        self.assertEqual(len(pr['Foo']), 7)
-        self.assertEqual(len(pr['Bin']), len(bin_data))
-        self.assertEqual(len(pr['Large']), len(large_val))
+        self.assertTrue(isinstance(pr["Foo"], problem_report.CompressedValue))
+        self.assertTrue(isinstance(pr["Bin"], problem_report.CompressedValue))
+        self.assertEqual(pr["Foo"].get_value(), b"FooFoo!")
+        self.assertEqual(pr["Bin"].get_value(), bin_data)
+        self.assertEqual(pr["Large"].get_value(), large_val)
+        self.assertEqual(len(pr["Foo"]), 7)
+        self.assertEqual(len(pr["Bin"]), len(bin_data))
+        self.assertEqual(len(pr["Large"]), len(large_val))
 
         io = BytesIO()
-        pr['Bin'].write(io)
+        pr["Bin"].write(io)
         self.assertEqual(io.getvalue(), bin_data)
         io = BytesIO()
-        pr['Large'].write(io)
+        pr["Large"].write(io)
         self.assertEqual(io.getvalue(), large_val)
 
-        pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
-        self.assertEqual(pr['Multiline'].splitlines(),
-                         [b'\1\1\1', b'\2\2', b'\3\3\3'])
+        pr["Multiline"] = problem_report.CompressedValue(
+            b"\1\1\1\n\2\2\n\3\3\3"
+        )
+        self.assertEqual(
+            pr["Multiline"].splitlines(), [b"\1\1\1", b"\2\2", b"\3\3\3"]
+        )
 
         # test writing of reports with CompressedValues
         io = BytesIO()
@@ -59,27 +62,27 @@ class T(unittest.TestCase):
         io.seek(0)
         pr = problem_report.ProblemReport()
         pr.load(io)
-        self.assertEqual(pr['Foo'], 'FooFoo!')
-        self.assertEqual(pr['Bin'], bin_data)
-        self.assertEqual(pr['Large'], large_val.decode('ASCII'))
+        self.assertEqual(pr["Foo"], "FooFoo!")
+        self.assertEqual(pr["Bin"], bin_data)
+        self.assertEqual(pr["Large"], large_val.decode("ASCII"))
 
     def test_write_append(self):
-        '''write() with appending to an existing file.'''
+        """write() with appending to an existing file."""
 
-        pr = problem_report.ProblemReport(date='now!')
-        pr['Simple'] = 'bar'
-        pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
+        pr = problem_report.ProblemReport(date="now!")
+        pr["Simple"] = "bar"
+        pr["WhiteSpace"] = " foo   bar\nbaz\n  blip  "
         io = BytesIO()
         pr.write(io)
 
         pr.clear()
-        pr['Extra'] = 'appended'
+        pr["Extra"] = "appended"
         pr.write(io)
 
         self.assertEqual(
             io.getvalue().decode(),
             textwrap.dedent(
-                f'''\
+                f"""\
                 ProblemType: Crash
                 Date: now!
                 Simple: bar
@@ -88,7 +91,7 @@ class T(unittest.TestCase):
                  baz
                    blip{'  '}
                 Extra: appended
-                '''
+                """
             ),
         )
 
@@ -96,81 +99,100 @@ class T(unittest.TestCase):
         temp.write(bin_data)
         temp.flush()
 
-        pr = problem_report.ProblemReport(date='now!')
-        pr['File'] = (temp.name,)
+        pr = problem_report.ProblemReport(date="now!")
+        pr["File"] = (temp.name,)
         io = BytesIO()
         pr.write(io)
         temp.close()
 
         pr.clear()
-        pr['Extra'] = 'appended'
+        pr["Extra"] = "appended"
         pr.write(io)
 
         io.seek(0)
         pr = problem_report.ProblemReport()
         pr.load(io)
 
-        self.assertEqual(pr['Date'], 'now!')
-        self.assertEqual(pr['File'], bin_data)
-        self.assertEqual(pr['Extra'], 'appended')
+        self.assertEqual(pr["Date"], "now!")
+        self.assertEqual(pr["File"], bin_data)
+        self.assertEqual(pr["Extra"], "appended")
 
     def test_extract_keys(self):
-        '''extract_keys() with various binary elements.'''
+        """extract_keys() with various binary elements."""
 
         # create a test report with binary elements
-        large_val = b'A' * 5000000
+        large_val = b"A" * 5000000
 
         pr = problem_report.ProblemReport()
-        pr['Txt'] = 'some text'
-        pr['MoreTxt'] = 'some more text'
-        pr['Foo'] = problem_report.CompressedValue(b'FooFoo!')
-        pr['Uncompressed'] = bin_data
-        pr['Bin'] = problem_report.CompressedValue()
-        pr['Bin'].set_value(bin_data)
-        pr['Large'] = problem_report.CompressedValue(large_val)
-        pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
+        pr["Txt"] = "some text"
+        pr["MoreTxt"] = "some more text"
+        pr["Foo"] = problem_report.CompressedValue(b"FooFoo!")
+        pr["Uncompressed"] = bin_data
+        pr["Bin"] = problem_report.CompressedValue()
+        pr["Bin"].set_value(bin_data)
+        pr["Large"] = problem_report.CompressedValue(large_val)
+        pr["Multiline"] = problem_report.CompressedValue(
+            b"\1\1\1\n\2\2\n\3\3\3"
+        )
 
         report = BytesIO()
         pr.write(report)
         report.seek(0)
 
-        self.assertRaises(IOError, pr.extract_keys, report, 'Bin', os.path.join(self.workdir, 'nonexistant'))
+        self.assertRaises(
+            IOError,
+            pr.extract_keys,
+            report,
+            "Bin",
+            os.path.join(self.workdir, "nonexistant"),
+        )
         # Test exception handling: Non-binary and nonexistent key
-        tests = [(ValueError, 'Txt'), (ValueError, ['Foo', 'Txt']),
-                 (KeyError, 'Bar'), (KeyError, ['Foo', 'Bar'])]
+        tests = [
+            (ValueError, "Txt"),
+            (ValueError, ["Foo", "Txt"]),
+            (KeyError, "Bar"),
+            (KeyError, ["Foo", "Bar"]),
+        ]
         for exc, keys_arg in tests:
             report.seek(0)
-            self.assertRaises(exc, pr.extract_keys, report, keys_arg, self.workdir)
+            self.assertRaises(
+                exc, pr.extract_keys, report, keys_arg, self.workdir
+            )
 
         # Check valid single elements
-        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data, 'Bin': bin_data, 'Large': large_val,
-                 'Multiline': b'\1\1\1\n\2\2\n\3\3\3'}
+        tests = {
+            "Foo": b"FooFoo!",
+            "Uncompressed": bin_data,
+            "Bin": bin_data,
+            "Large": large_val,
+            "Multiline": b"\1\1\1\n\2\2\n\3\3\3",
+        }
         for key, expected in tests.items():
             report.seek(0)
             pr.extract_keys(report, key, self.workdir)
-            with open(os.path.join(self.workdir, key), 'rb') as f:
+            with open(os.path.join(self.workdir, key), "rb") as f:
                 self.assertEqual(f.read(), expected)
             # remove file for next pass
             os.remove(os.path.join(self.workdir, key))
 
         # Check element list
         report.seek(0)
-        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data}
+        tests = {"Foo": b"FooFoo!", "Uncompressed": bin_data}
         pr.extract_keys(report, tests.keys(), self.workdir)
         for key, expected in tests.items():
-            with open(os.path.join(self.workdir, key), 'rb') as f:
+            with open(os.path.join(self.workdir, key), "rb") as f:
                 self.assertEqual(f.read(), expected)
 
     def test_write_file(self):
-        '''writing a report with binary file data.'''
+        """writing a report with binary file data."""
 
         temp = tempfile.NamedTemporaryFile()
         temp.write(bin_data)
         temp.flush()
 
-        pr = problem_report.ProblemReport(date='now!')
-        pr['File'] = (temp.name,)
-        pr['Afile'] = (temp.name,)
+        pr = problem_report.ProblemReport(date="now!")
+        pr["File"] = (temp.name,)
+        pr["Afile"] = (temp.name,)
         io = BytesIO()
         pr.write(io)
         temp.close()
@@ -178,7 +200,7 @@ class T(unittest.TestCase):
         self.assertEqual(
             io.getvalue().decode(),
             textwrap.dedent(
-                '''\
+                """\
                 ProblemType: Crash
                 Date: now!
                 Afile: base64
@@ -187,70 +209,70 @@ class T(unittest.TestCase):
                 File: base64
                  H4sICAAAAAAC/0ZpbGUA
                  c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-                '''
+                """
             ),
         )
 
         # force compression/encoding bool
         temp = tempfile.NamedTemporaryFile()
-        temp.write(b'foo\0bar')
+        temp.write(b"foo\0bar")
         temp.flush()
-        pr = problem_report.ProblemReport(date='now!')
-        pr['File'] = (temp.name, False)
+        pr = problem_report.ProblemReport(date="now!")
+        pr["File"] = (temp.name, False)
         io = BytesIO()
         pr.write(io)
 
         self.assertEqual(
             io.getvalue().decode(),
             textwrap.dedent(
-                '''\
+                """\
                 ProblemType: Crash
                 Date: now!
                 File: foo\0bar
-                '''
+                """
             ),
         )
 
-        pr['File'] = (temp.name, True)
+        pr["File"] = (temp.name, True)
         io = BytesIO()
         pr.write(io)
 
         self.assertEqual(
             io.getvalue().decode(),
             textwrap.dedent(
-                '''\
+                """\
                 ProblemType: Crash
                 Date: now!
                 File: base64
                  H4sICAAAAAAC/0ZpbGUA
                  S8vPZ0hKLAIACq50HgcAAAA=
-                '''
+                """
             ),
         )
         temp.close()
 
     def test_write_delayed_fileobj(self):
-        '''writing a report with file pointers and delayed data.'''
+        """writing a report with file pointers and delayed data."""
 
         (fout, fin) = os.pipe()
 
         if os.fork() == 0:
             os.close(fout)
             time.sleep(0.3)
-            os.write(fin, b'ab' * 512 * 1024)
+            os.write(fin, b"ab" * 512 * 1024)
             time.sleep(0.3)
-            os.write(fin, b'hello')
+            os.write(fin, b"hello")
             time.sleep(0.3)
-            os.write(fin, b' world')
+            os.write(fin, b" world")
             os.close(fin)
             os._exit(0)
 
         os.close(fin)
 
-        pr = problem_report.ProblemReport(date='now!')
+        pr = problem_report.ProblemReport(date="now!")
         io = BytesIO()
-        with os.fdopen(fout, 'rb') as f:
-            pr['BinFile'] = (f,)
+        with os.fdopen(fout, "rb") as f:
+            pr["BinFile"] = (f,)
             pr.write(io)
         assert os.wait()[1] == 0
 
@@ -258,10 +280,10 @@ class T(unittest.TestCase):
 
         pr2 = problem_report.ProblemReport()
         pr2.load(io)
-        self.assertEqual(pr2['BinFile'], 'ab' * 512 * 1024 + 'hello world')
+        self.assertEqual(pr2["BinFile"], "ab" * 512 * 1024 + "hello world")
 
     def test_big_file(self):
-        '''writing and re-decoding a big random file.'''
+        """writing and re-decoding a big random file."""
 
         # create 1 MB random file
         temp = tempfile.NamedTemporaryFile()
@@ -271,9 +293,9 @@ class T(unittest.TestCase):
 
         # write it into problem report
         pr = problem_report.ProblemReport()
-        pr['File'] = (temp.name,)
-        pr['Before'] = 'xtestx'
-        pr['ZAfter'] = 'ytesty'
+        pr["File"] = (temp.name,)
+        pr["Before"] = "xtestx"
+        pr["ZAfter"] = "ytesty"
         io = BytesIO()
         pr.write(io)
         temp.close()
@@ -283,9 +305,9 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(io)
 
-        self.assertTrue(pr['File'] == data)
-        self.assertEqual(pr['Before'], 'xtestx')
-        self.assertEqual(pr['ZAfter'], 'ytesty')
+        self.assertTrue(pr["File"] == data)
+        self.assertEqual(pr["Before"], "xtestx")
+        self.assertEqual(pr["ZAfter"], "ytesty")
 
         # write it again
         io2 = BytesIO()
@@ -295,11 +317,11 @@ class T(unittest.TestCase):
         # check gzip compatibility
         io.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io, binary='compressed')
-        self.assertEqual(pr['File'].get_value(), data)
+        pr.load(io, binary="compressed")
+        self.assertEqual(pr["File"].get_value(), data)
 
     def test_size_limit(self):
-        '''writing and a big random file with a size limit key.'''
+        """writing and a big random file with a size limit key."""
 
         # create 1 MB random file
         temp = tempfile.NamedTemporaryFile()
@@ -309,13 +331,13 @@ class T(unittest.TestCase):
 
         # write it into problem report
         pr = problem_report.ProblemReport()
-        pr['FileSmallLimit'] = (temp.name, True, 100)
-        pr['FileLimitMinus1'] = (temp.name, True, 1048575)
-        pr['FileExactLimit'] = (temp.name, True, 1048576)
-        pr['FileLimitPlus1'] = (temp.name, True, 1048577)
-        pr['FileLimitNone'] = (temp.name, True, None)
-        pr['Before'] = 'xtestx'
-        pr['ZAfter'] = 'ytesty'
+        pr["FileSmallLimit"] = (temp.name, True, 100)
+        pr["FileLimitMinus1"] = (temp.name, True, 1048575)
+        pr["FileExactLimit"] = (temp.name, True, 1048576)
+        pr["FileLimitPlus1"] = (temp.name, True, 1048577)
+        pr["FileLimitNone"] = (temp.name, True, None)
+        pr["Before"] = "xtestx"
+        pr["ZAfter"] = "ytesty"
         io = BytesIO()
         pr.write(io)
         temp.close()
@@ -325,25 +347,25 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(io)
 
-        self.assertFalse('FileSmallLimit' in pr)
-        self.assertFalse('FileLimitMinus1' in pr)
-        self.assertTrue(pr['FileExactLimit'] == data)
-        self.assertTrue(pr['FileLimitPlus1'] == data)
-        self.assertTrue(pr['FileLimitNone'] == data)
-        self.assertEqual(pr['Before'], 'xtestx')
-        self.assertEqual(pr['ZAfter'], 'ytesty')
+        self.assertFalse("FileSmallLimit" in pr)
+        self.assertFalse("FileLimitMinus1" in pr)
+        self.assertTrue(pr["FileExactLimit"] == data)
+        self.assertTrue(pr["FileLimitPlus1"] == data)
+        self.assertTrue(pr["FileLimitNone"] == data)
+        self.assertEqual(pr["Before"], "xtestx")
+        self.assertEqual(pr["ZAfter"], "ytesty")
 
     def test_add_to_existing(self):
-        '''adding information to an existing report.'''
+        """adding information to an existing report."""
 
         # original report
         pr = problem_report.ProblemReport()
-        pr['old1'] = '11'
-        pr['old2'] = '22'
+        pr["old1"] = "11"
+        pr["old2"] = "22"
 
         (fd, rep) = tempfile.mkstemp()
         os.close(fd)
-        with open(rep, 'wb') as f:
+        with open(rep, "wb") as f:
             pr.write(f)
 
         origstat = os.stat(rep)
@@ -351,7 +373,7 @@ class T(unittest.TestCase):
         # create a new one and add it
         pr = problem_report.ProblemReport()
         pr.clear()
-        pr['new1'] = '33'
+        pr["new1"] = "33"
 
         pr.add_to_existing(rep, keep_times=True)
 
@@ -363,11 +385,11 @@ class T(unittest.TestCase):
 
         # check report contents
         newpr = problem_report.ProblemReport()
-        with open(rep, 'rb') as f:
+        with open(rep, "rb") as f:
             newpr.load(f)
-        self.assertEqual(newpr['old1'], '11')
-        self.assertEqual(newpr['old2'], '22')
-        self.assertEqual(newpr['new1'], '33')
+        self.assertEqual(newpr["old1"], "11")
+        self.assertEqual(newpr["old2"], "22")
+        self.assertEqual(newpr["new1"], "33")
 
         # create a another new one and add it, but make sure mtime must be
         # different
@@ -378,7 +400,7 @@ class T(unittest.TestCase):
 
         pr = problem_report.ProblemReport()
         pr.clear()
-        pr['new2'] = '44'
+        pr["new2"] = "44"
 
         pr.add_to_existing(rep)
 
@@ -392,10 +414,10 @@ class T(unittest.TestCase):
         while len(dir) > 1:
             dir, filename = os.path.split(dir)
             if os.path.ismount(dir):
-                with open('/proc/mounts') as f:
+                with open("/proc/mounts") as f:
                     for line in f:
-                        mount, fs, options = line.split(' ')[1:4]
-                        if mount == dir and 'noatime' in options.split(','):
+                        mount, fs, options = line.split(" ")[1:4]
+                        if mount == dir and "noatime" in options.split(","):
                             skip_atime = True
                             break
                 break
@@ -404,36 +426,36 @@ class T(unittest.TestCase):
 
         # check report contents
         newpr = problem_report.ProblemReport()
-        with open(rep, 'rb') as f:
+        with open(rep, "rb") as f:
             newpr.load(f)
-        self.assertEqual(newpr['old1'], '11')
-        self.assertEqual(newpr['old2'], '22')
-        self.assertEqual(newpr['new1'], '33')
-        self.assertEqual(newpr['new2'], '44')
+        self.assertEqual(newpr["old1"], "11")
+        self.assertEqual(newpr["old2"], "22")
+        self.assertEqual(newpr["new1"], "33")
+        self.assertEqual(newpr["new2"], "44")
 
         os.unlink(rep)
 
     def test_write_mime_binary(self):
-        '''write_mime() for binary values and file references.'''
+        """write_mime() for binary values and file references."""
 
         temp = tempfile.NamedTemporaryFile()
         temp.write(bin_data)
         temp.flush()
 
         tempgz = tempfile.NamedTemporaryFile()
-        gz = gzip.GzipFile('File1', 'w', fileobj=tempgz)
+        gz = gzip.GzipFile("File1", "w", fileobj=tempgz)
         gz.write(bin_data)
         gz.close()
         tempgz.flush()
 
-        pr = problem_report.ProblemReport(date='now!')
-        pr['Context'] = 'Test suite'
-        pr['File1'] = (temp.name,)
-        pr['File1.gz'] = (tempgz.name,)
-        pr['Value1'] = bin_data
-        with open(tempgz.name, 'rb') as f:
-            pr['Value1.gz'] = f.read()
-        pr['ZValue'] = problem_report.CompressedValue(bin_data)
+        pr = problem_report.ProblemReport(date="now!")
+        pr["Context"] = "Test suite"
+        pr["File1"] = (temp.name,)
+        pr["File1.gz"] = (tempgz.name,)
+        pr["Value1"] = bin_data
+        with open(tempgz.name, "rb") as f:
+            pr["Value1.gz"] = f.read()
+        pr["ZValue"] = problem_report.CompressedValue(bin_data)
         io = BytesIO()
         pr.write_mime(io)
         io.seek(0)
@@ -448,75 +470,77 @@ class T(unittest.TestCase):
         # second part should be an inline text/plain attachments with all short
         # fields
         self.assertTrue(not parts[1].is_multipart())
-        self.assertEqual(parts[1].get_content_type(), 'text/plain')
-        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_content_type(), "text/plain")
+        self.assertEqual(parts[1].get_content_charset(), "utf-8")
         self.assertEqual(parts[1].get_filename(), None)
-        self.assertEqual(parts[1].get_payload(decode=True),
-                         b'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
+        self.assertEqual(
+            parts[1].get_payload(decode=True),
+            b"ProblemType: Crash\nContext: Test suite\nDate: now!\n",
+        )
 
         # third part should be the File1: file contents as gzip'ed attachment
         self.assertTrue(not parts[2].is_multipart())
-        self.assertEqual(parts[2].get_content_type(), 'application/x-gzip')
-        self.assertEqual(parts[2].get_filename(), 'File1.gz')
+        self.assertEqual(parts[2].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[2].get_filename(), "File1.gz")
         f = tempfile.TemporaryFile()
         f.write(parts[2].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         self.assertTrue(not parts[3].is_multipart())
-        self.assertEqual(parts[3].get_content_type(), 'application/x-gzip')
-        self.assertEqual(parts[3].get_filename(), 'File1.gz')
+        self.assertEqual(parts[3].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[3].get_filename(), "File1.gz")
         f = tempfile.TemporaryFile()
         f.write(parts[3].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()
 
         # fifth part should be the Value1: value as gzip'ed attachment
         self.assertTrue(not parts[4].is_multipart())
-        self.assertEqual(parts[4].get_content_type(), 'application/x-gzip')
-        self.assertEqual(parts[4].get_filename(), 'Value1.gz')
+        self.assertEqual(parts[4].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[4].get_filename(), "Value1.gz")
         f = tempfile.TemporaryFile()
         f.write(parts[4].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[5].is_multipart())
-        self.assertEqual(parts[5].get_content_type(), 'application/x-gzip')
-        self.assertEqual(parts[5].get_filename(), 'Value1.gz')
+        self.assertEqual(parts[5].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[5].get_filename(), "Value1.gz")
         f = tempfile.TemporaryFile()
         f.write(parts[5].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[6].is_multipart())
-        self.assertEqual(parts[6].get_content_type(), 'application/x-gzip')
-        self.assertEqual(parts[6].get_filename(), 'ZValue.gz')
+        self.assertEqual(parts[6].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[6].get_filename(), "ZValue.gz")
         f = tempfile.TemporaryFile()
         f.write(parts[6].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()
 
     def test_write_mime_filter(self):
-        '''write_mime() with key filters.'''
+        """write_mime() with key filters."""
 
-        pr = problem_report.ProblemReport(date='now!')
-        pr['GoodText'] = 'Hi'
-        pr['BadText'] = 'YouDontSeeMe'
-        pr['GoodBin'] = bin_data
-        pr['BadBin'] = 'Y' + '\x05' * 10 + '-'
+        pr = problem_report.ProblemReport(date="now!")
+        pr["GoodText"] = "Hi"
+        pr["BadText"] = "YouDontSeeMe"
+        pr["GoodBin"] = bin_data
+        pr["BadBin"] = "Y" + "\x05" * 10 + "-"
         io = BytesIO()
-        pr.write_mime(io, skip_keys=['BadText', 'BadBin'])
+        pr.write_mime(io, skip_keys=["BadText", "BadBin"])
         io.seek(0)
 
         msg = email.message_from_binary_file(io)
@@ -529,17 +553,17 @@ class T(unittest.TestCase):
         # second part should be an inline text/plain attachments with all short
         # fields
         self.assertTrue(not parts[1].is_multipart())
-        self.assertEqual(parts[1].get_content_type(), 'text/plain')
-        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_content_type(), "text/plain")
+        self.assertEqual(parts[1].get_content_charset(), "utf-8")
         self.assertEqual(parts[1].get_filename(), None)
         self.assertEqual(
             parts[1].get_payload(decode=True),
             textwrap.dedent(
-                '''\
+                """\
                 ProblemType: Crash
                 Date: now!
                 GoodText: Hi
-                '''
+                """
             ).encode(),
         )
 
@@ -548,5 +572,5 @@ class T(unittest.TestCase):
         f = tempfile.TemporaryFile()
         f.write(parts[2].get_payload(decode=True))
         f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_data)
+        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
         f.close()

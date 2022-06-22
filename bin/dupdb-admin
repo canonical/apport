@@ -20,42 +20,51 @@ import apport.crashdb_impl.memory
 
 
 def command_dump(crashdb, opts, args):
-    '''Print out all entries.'''
+    """Print out all entries."""
 
-    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).items():
-        sys.stdout.write('%7i: %s ' % (id, sig))
-        if version == '':
-            sys.stdout.write('[fixed] ')
+    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(
+        True
+    ).items():
+        sys.stdout.write("%7i: %s " % (id, sig))
+        if version == "":
+            sys.stdout.write("[fixed] ")
         elif version:
-            sys.stdout.write('[fixed in: %s] ' % version)
+            sys.stdout.write("[fixed in: %s] " % version)
         else:
-            sys.stdout.write('[open] ')
-        print('last change: %s' % str(lastchange))
+            sys.stdout.write("[open] ")
+        print("last change: %s" % str(lastchange))
 
 
 def command_changeid(crashdb, opts, args):
-    '''Change the master ID of a crash.'''
+    """Change the master ID of a crash."""
 
     if len(args) != 2:
-        apport.fatal('changeid needs exactly two arguments (use --help for a short help)')
+        apport.fatal(
+            "changeid needs exactly two arguments"
+            " (use --help for a short help)"
+        )
     (oldid, newid) = args
 
     crashdb.duplicate_db_change_master_id(oldid, newid)
 
 
 def command_removeid(crashdb, opts, args):
-    '''Remove a crash.'''
+    """Remove a crash."""
 
     if len(args) != 1:
-        apport.fatal('removeid needs exactly one argument (use --help for a short help)')
+        apport.fatal(
+            "removeid needs exactly one argument (use --help for a short help)"
+        )
     crashdb.duplicate_db_remove(args[0])
 
 
 def command_publish(crashdb, opts, args):
-    '''Publish crash database to a directory.'''
+    """Publish crash database to a directory."""
 
     if len(args) != 1:
-        apport.fatal('publish needs exactly one argument (use --help for a short help)')
+        apport.fatal(
+            "publish needs exactly one argument (use --help for a short help)"
+        )
     crashdb.duplicate_db_publish(args[0])
 
 
@@ -64,21 +73,28 @@ def command_publish(crashdb, opts, args):
 #
 
 # parse command line options
-optparser = optparse.OptionParser('''%prog [options] dump
+optparser = optparse.OptionParser(
+    """%prog [options] dump
 %prog [options] changeid <old ID> <new ID>
 %prog [options] removeid <ID>
-%prog [options] publish <path>''')
+%prog [options] publish <path>"""
+)
 
-optparser.add_option('-f', '--database-file', dest='db_file', metavar='PATH',
-                     default='apport_duplicates.db',
-                     help='Location of the database file')
+optparser.add_option(
+    "-f",
+    "--database-file",
+    dest="db_file",
+    metavar="PATH",
+    default="apport_duplicates.db",
+    help="Location of the database file",
+)
 options, args = optparser.parse_args()
 
 if len(args) == 0:
-    optparser.error('No command specified')
+    optparser.error("No command specified")
 
 if not os.path.exists(options.db_file):
-    apport.fatal('file does not exist: %s', options.db_file)
+    apport.fatal("file does not exist: %s", options.db_file)
 
 # pure DB operations don't need a real backend, and thus no crashdb.conf
 crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
@@ -91,8 +107,8 @@ crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 crashdb.init_duplicate_db(options.db_file)
 
 try:
-    command = globals()['command_' + args.pop(0)]
+    command = globals()["command_" + args.pop(0)]
 except KeyError:
-    apport.fatal('unknown command (use --help for a short help)')
+    apport.fatal("unknown command (use --help for a short help)")
 
 command(crashdb, options, args)

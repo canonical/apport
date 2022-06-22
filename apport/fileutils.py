@@ -1,4 +1,4 @@
-'''Functions to manage apport problem report files.'''
+"""Functions to manage apport problem report files."""
 
 # Copyright (C) 2006 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -30,22 +30,21 @@ from operator import itemgetter
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
 
-report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
-core_dir = os.environ.get('APPORT_COREDUMP_DIR', '/var/lib/apport/coredump')
+report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
+core_dir = os.environ.get("APPORT_COREDUMP_DIR", "/var/lib/apport/coredump")
 max_corefiles_per_uid = 5
 
-_config_file = '~/.config/apport/settings'
+_config_file = "~/.config/apport/settings"
 
-SNAPD_SOCKET = '/run/snapd.socket'
+SNAPD_SOCKET = "/run/snapd.socket"
 
 
 #  UHTTPConnection is based on code from the UpdateManager package:
 #  Copyright (c) 2017 Canonical
 #  Author: Andrea Azzarone <andrea.azzarone@canonical.com>
 class UHTTPConnection(http.client.HTTPConnection):
-
     def __init__(self, path):
-        http.client.HTTPConnection.__init__(self, 'localhost')
+        http.client.HTTPConnection.__init__(self, "localhost")
         self.path = path
 
     def connect(self):
@@ -55,19 +54,20 @@ class UHTTPConnection(http.client.HTTPConnection):
 
 
 def allowed_to_report():
-    '''Check whether crash reporting is enabled.'''
+    """Check whether crash reporting is enabled."""
 
     if not os.access("/usr/bin/whoopsie", os.X_OK):
         return True
 
     try:
-        return subprocess.call(["/bin/systemctl", "-q", "is-enabled", "whoopsie.path"]) == 0
+        cmd = ["/bin/systemctl", "-q", "is-enabled", "whoopsie.path"]
+        return subprocess.call(cmd) == 0
     except OSError:
         return False
 
 
 def get_dbus_socket(dbus_addr):
-    '''Extract the socket from a DBus address.'''
+    """Extract the socket from a DBus address."""
 
     if not dbus_addr:
         return None
@@ -94,58 +94,73 @@ def get_dbus_socket(dbus_addr):
 
 
 def find_package_desktopfile(package):
-    '''Return a package's .desktop file.
+    """Return a package's .desktop file.
 
     If given package is installed and has a single .desktop file, return the
     path to it, otherwise return None.
-    '''
+    """
     if package is None:
         return None
 
     desktopfile = None
 
     for line in packaging.get_files(package):
-        if line.endswith('.desktop'):
+        if line.endswith(".desktop"):
             # restrict to autostart and applications, see LP#1147528
-            if not line.startswith('/etc/xdg/autostart') and not line.startswith('/usr/share/applications/'):
+            if not line.startswith(
+                "/etc/xdg/autostart"
+            ) and not line.startswith("/usr/share/applications/"):
                 continue
 
             if desktopfile:
                 return None  # more than one
             else:
                 # only consider visible ones
-                with open(line, 'rb') as f:
-                    if b'NoDisplay=true' not in f.read():
+                with open(line, "rb") as f:
+                    if b"NoDisplay=true" not in f.read():
                         desktopfile = line
 
     return desktopfile
 
 
 def likely_packaged(file):
-    '''Check whether the given file is likely to belong to a package.
+    """Check whether the given file is likely to belong to a package.
 
     This is semi-decidable: A return value of False is definitive, a True value
     is only a guess which needs to be checked with find_file_package().
     However, this function is very fast and does not access the package
     database.
-    '''
-    pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-                     '/opt', '/usr/', '/var']  # packages only ship executables in these directories
+    """
+    # packages only ship executables in these directories
+    pkg_whitelist = [
+        "/bin/",
+        "/boot",
+        "/etc/",
+        "/initrd",
+        "/lib",
+        "/sbin/",
+        "/opt",
+        "/usr/",
+        "/var",
+    ]
 
     whitelist_match = False
     for i in pkg_whitelist:
         if file.startswith(i):
             whitelist_match = True
             break
-    return whitelist_match and not file.startswith('/usr/local/') and not \
-        file.startswith('/var/lib/')
+    return (
+        whitelist_match
+        and not file.startswith("/usr/local/")
+        and not file.startswith("/var/lib/")
+    )
 
 
 def find_file_package(file):
-    '''Return the package that ships the given file.
+    """Return the package that ships the given file.
 
     Return None if no package ships it.
-    '''
+    """
     # resolve symlinks in directories
     (dir, name) = os.path.split(file)
     resolved_dir = os.path.realpath(dir)
@@ -159,65 +174,65 @@ def find_file_package(file):
 
 
 def find_snap(snap):
-    '''Return the data of the given snap.
+    """Return the data of the given snap.
 
     Return None if the snap is not found to be installed.
-    '''
+    """
     try:
         with closing(UHTTPConnection(SNAPD_SOCKET)) as c:
-            url = f'/v2/snaps/{snap}'
-            c.request('GET', url)
+            url = f"/v2/snaps/{snap}"
+            c.request("GET", url)
             response = c.getresponse()
             if response.status == 200:
-                return json.loads(response.read())['result']
+                return json.loads(response.read())["result"]
     except Exception:
         return None
 
 
 def seen_report(report):
-    '''Check whether the report file has already been processed earlier.'''
+    """Check whether the report file has already been processed earlier."""
 
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
 
 def mark_report_upload(report):
-    upload = '%s.upload' % report.rsplit('.', 1)[0]
-    uploaded = '%s.uploaded' % report.rsplit('.', 1)[0]
+    upload = "%s.upload" % report.rsplit(".", 1)[0]
+    uploaded = "%s.uploaded" % report.rsplit(".", 1)[0]
     # if uploaded exists and is older than the report remove it and upload
     if os.path.exists(uploaded) and os.path.exists(upload):
         report_st = os.stat(report)
         upload_st = os.stat(upload)
         if upload_st.st_mtime < report_st.st_mtime:
             os.unlink(upload)
-    with open(upload, 'a'):
+    with open(upload, "a"):
         pass
 
 
 def mark_hanging_process(report, pid):
-    if 'ExecutablePath' in report:
-        subject = report['ExecutablePath'].replace('/', '_')
+    if "ExecutablePath" in report:
+        subject = report["ExecutablePath"].replace("/", "_")
     else:
-        raise ValueError('report does not have the ExecutablePath attribute')
+        raise ValueError("report does not have the ExecutablePath attribute")
 
     uid = os.geteuid()
-    base = '%s.%s.%s.hanging' % (subject, str(uid), pid)
+    base = "%s.%s.%s.hanging" % (subject, str(uid), pid)
     path = os.path.join(report_dir, base)
-    with open(path, 'a'):
+    with open(path, "a"):
         pass
 
 
 def mark_report_seen(report):
-    '''Mark given report file as seen.'''
+    """Mark given report file as seen."""
 
     st = os.stat(report)
     try:
         os.utime(report, (st.st_mtime, st.st_mtime - 1))
     except OSError:
         # file is probably not our's, so do it the slow and boring way
-        # change the file's access time until it stat's different than the mtime.
-        # This might take a while if we only have 1-second resolution. Time out
-        # after 1.2 seconds.
+        # change the file's access time until it stat's different than the
+        # mtime. This might take a while if we only have 1-second resolution.
+        # Time out after 1.2 seconds.
         timeout = 12
         while timeout > 0:
             f = open(report)
@@ -239,10 +254,10 @@ def mark_report_seen(report):
 
 
 def get_all_reports():
-    '''Return a list with all report files accessible to the calling user.'''
+    """Return a list with all report files accessible to the calling user."""
 
     reports = []
-    for r in glob.glob(os.path.join(report_dir, '*.crash')):
+    for r in glob.glob(os.path.join(report_dir, "*.crash")):
         try:
             if os.path.getsize(r) > 0 and os.access(r, os.R_OK | os.W_OK):
                 reports.append(r)
@@ -254,11 +269,11 @@ def get_all_reports():
 
 
 def get_new_reports():
-    '''Get new reports for calling user.
+    """Get new reports for calling user.
 
     Return a list with all report files which have not yet been processed
     and are accessible to the calling user.
-    '''
+    """
     reports = []
     for r in get_all_reports():
         try:
@@ -272,20 +287,21 @@ def get_new_reports():
 
 
 def get_all_system_reports():
-    '''Get all system reports.
+    """Get all system reports.
 
     Return a list with all report files which belong to a system user (i. e.
     uid < 500 according to LSB).
-    '''
+    """
     reports = []
-    for r in glob.glob(os.path.join(report_dir, '*.crash')):
+    for r in glob.glob(os.path.join(report_dir, "*.crash")):
         try:
             st = os.stat(r)
             if st.st_size > 0 and st.st_uid < 500:
-                # filter out guest session crashes; they might have a system UID
+                # filter out guest session crashes;
+                # they might have a system UID
                 try:
                     pw = pwd.getpwuid(st.st_uid)
-                    if pw.pw_name.startswith('guest'):
+                    if pw.pw_name.startswith("guest"):
                         continue
                 except KeyError:
                     pass
@@ -299,38 +315,38 @@ def get_all_system_reports():
 
 
 def get_new_system_reports():
-    '''Get new system reports.
+    """Get new system reports.
 
     Return a list with all report files which have not yet been processed
     and belong to a system user (i. e. uid < 500 according to LSB).
-    '''
+    """
     return [r for r in get_all_system_reports() if not seen_report(r)]
 
 
 def delete_report(report):
-    '''Delete the given report file.
+    """Delete the given report file.
 
     If unlinking the file fails due to a permission error (if report_dir is not
     writable to normal users), the file will be truncated to 0 bytes instead.
-    '''
+    """
     try:
         os.unlink(report)
     except OSError:
-        with open(report, 'w') as f:
+        with open(report, "w") as f:
             f.truncate(0)
 
 
 def get_recent_crashes(report):
-    '''Return the number of recent crashes for the given report file.
+    """Return the number of recent crashes for the given report file.
 
     Return the number of recent crashes (currently, crashes which happened more
     than 24 hours ago are discarded).
-    '''
+    """
     pr = ProblemReport()
-    pr.load(report, False, key_filter=['CrashCounter', 'Date'])
+    pr.load(report, False, key_filter=["CrashCounter", "Date"])
     try:
-        count = int(pr['CrashCounter'])
-        report_time = time.mktime(time.strptime(pr['Date']))
+        count = int(pr["CrashCounter"])
+        report_time = time.mktime(time.strptime(pr["Date"]))
         cur_time = time.mktime(time.localtime())
         # discard reports which are older than 24 hours
         if cur_time - report_time > 24 * 3600:
@@ -341,39 +357,45 @@ def get_recent_crashes(report):
 
 
 def make_report_file(report, uid=None):
-    '''Construct a canonical pathname for a report and open it for writing
+    """Construct a canonical pathname for a report and open it for writing
 
-    If uid is not given, it defaults to the effective uid of the current process.
-    The report file must not exist already, to prevent losing previous reports
-    or symlink attacks.
+    If uid is not given, it defaults to the effective uid of the current
+    process. The report file must not exist already, to prevent losing
+    previous reports or symlink attacks.
 
     Return an open file object for binary writing.
-    '''
-    if 'ExecutablePath' in report:
-        subject = report['ExecutablePath'].replace('/', '_')
-    elif 'Package' in report:
-        subject = report['Package'].split(None, 1)[0]
+    """
+    if "ExecutablePath" in report:
+        subject = report["ExecutablePath"].replace("/", "_")
+    elif "Package" in report:
+        subject = report["Package"].split(None, 1)[0]
     else:
-        raise ValueError('report has neither ExecutablePath nor Package attribute')
+        raise ValueError(
+            "report has neither ExecutablePath nor Package attribute"
+        )
 
     if not uid:
         uid = os.geteuid()
 
-    path = os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
-    return open(path, 'xb')
+    path = os.path.join(report_dir, "%s.%s.crash" % (subject, str(uid)))
+    return open(path, "xb")
 
 
 def check_files_md5(sumfile):
-    '''Check file integrity against md5 sum file.
+    """Check file integrity against md5 sum file.
 
     sumfile must be md5sum(1) format (relative to /).
 
     Return a list of files that don't match.
-    '''
+    """
     assert os.path.exists(sumfile)
-    m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         cwd='/', env={})
+    m = subprocess.Popen(
+        ["/usr/bin/md5sum", "-c", sumfile],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        cwd="/",
+        env={},
+    )
     out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output
@@ -382,27 +404,27 @@ def check_files_md5(sumfile):
 
     mismatches = []
     for line in out.splitlines():
-        if line.endswith('FAILED'):
-            mismatches.append(line.rsplit(':', 1)[0])
+        if line.endswith("FAILED"):
+            mismatches.append(line.rsplit(":", 1)[0])
 
     return mismatches
 
 
 def get_config(section, setting, default=None, path=None, bool=False):
-    '''Return a setting from user configuration.
+    """Return a setting from user configuration.
 
     This is read from ~/.config/apport/settings or path. If bool is True, the
     value is interpreted as a boolean.
 
     Privileges may need to be dropped before calling this.
-    '''
+    """
 
     if not path:
         # Properly handle dropped privileges
         homedir = pwd.getpwuid(os.geteuid())[5]
         path = _config_file.replace("~", homedir)
 
-    contents = ''
+    contents = ""
     fd = None
     f = None
     if not get_config.config:
@@ -412,7 +434,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
             fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
             st = os.fstat(fd)
             if stat.S_ISREG(st.st_mode):
-                f = os.fdopen(fd, 'r')
+                f = os.fdopen(fd, "r")
                 # Limit size to prevent DoS
                 contents = f.read(500)
         except (IOError, OSError):
@@ -441,19 +463,19 @@ get_config.config = None
 
 
 def get_starttime(contents):
-    '''Extracts the starttime from the contents of a stat file'''
+    """Extracts the starttime from the contents of a stat file"""
 
     # 22nd field in a stat file is the time the process started after
     # system boot in clock ticks. In order to prevent filename
     # manipulations including spaces or extra parentheses, skip all the way
     # to the very last closing parentheses, then start counting.
-    stripped = contents[contents.rfind(")") + 2:]
+    stripped = contents[contents.rfind(")") + 2 :]
     # We've skipped over the PID and the filename, so index is now 19.
     return int(stripped.split()[19])
 
 
 def get_uid_and_gid(contents):
-    '''Extracts the uid and gid from the contents of a status file'''
+    """Extracts the uid and gid from the contents of a status file"""
 
     real_uid = None
     real_gid = None
@@ -461,15 +483,15 @@ def get_uid_and_gid(contents):
         # Iterate through the whole contents to make sure we're getting
         # the last Uid and Gid lines in the file and not a manipulated
         # process name with embedded newlines.
-        if line.startswith('Uid:') and len(line.split()) > 1:
+        if line.startswith("Uid:") and len(line.split()) > 1:
             real_uid = int(line.split()[1])
-        elif line.startswith('Gid:') and len(line.split()) > 1:
+        elif line.startswith("Gid:") and len(line.split()) > 1:
             real_gid = int(line.split()[1])
     return (real_uid, real_gid)
 
 
 def search_map(mapfd, uid):
-    '''Search for an ID in a map fd'''
+    """Search for an ID in a map fd"""
     for line in mapfd:
         fields = line.split()
         if len(fields) != 3:
@@ -485,30 +507,32 @@ def search_map(mapfd, uid):
 
 
 def get_boot_id():
-    '''Gets the kernel boot id'''
+    """Gets the kernel boot id"""
 
-    with open('/proc/sys/kernel/random/boot_id') as f:
+    with open("/proc/sys/kernel/random/boot_id") as f:
         boot_id = f.read().strip()
     return boot_id
 
 
 def get_process_path(proc_pid_fd=None):
-    '''Gets the process path from a proc directory file descriptor'''
+    """Gets the process path from a proc directory file descriptor"""
 
     if proc_pid_fd is None:
-        return 'unknown'
+        return "unknown"
     try:
-        return os.readlink('exe', dir_fd=proc_pid_fd)
+        return os.readlink("exe", dir_fd=proc_pid_fd)
     except OSError:
-        return 'unknown'
+        return "unknown"
 
 
-def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None):
-    '''Get the path to a core file'''
+def get_core_path(
+    pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
+):
+    """Get the path to a core file"""
 
     if pid is None:
-        pid = 'unknown'
-        timestamp = 'unknown'
+        pid = "unknown"
+        timestamp = "unknown"
     else:
         if timestamp is None:
             with open("/proc/%s/stat" % pid) as stat_file:
@@ -517,15 +541,20 @@ def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
 
     if exe is None:
         exe = get_process_path(proc_pid_fd)
-    exe = exe.replace('/', '_').replace('.', '_')
+    exe = exe.replace("/", "_").replace(".", "_")
 
     if uid is None:
         uid = os.getuid()
 
     # This is similar to systemd-coredump, but with the exe name instead
     # of the command name
-    core_name = ('core.%s.%s.%s.%s.%s' % (exe, uid, get_boot_id(),
-                                          str(pid), str(timestamp)))
+    core_name = "core.%s.%s.%s.%s.%s" % (
+        exe,
+        uid,
+        get_boot_id(),
+        str(pid),
+        str(timestamp),
+    )
 
     core_path = os.path.join(core_dir, core_name)
 
@@ -533,9 +562,9 @@ def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
 
 
 def find_core_files_by_uid(uid):
-    '''Searches the core file directory for files that belong to a
-       specified uid. Returns a list of lists containing the filename and
-       the file modification time.'''
+    """Searches the core file directory for files that belong to a
+    specified uid. Returns a list of lists containing the filename and
+    the file modification time."""
     uid = str(uid)
     core_files = []
     uid_files = []
@@ -545,7 +574,7 @@ def find_core_files_by_uid(uid):
 
     for f in core_files:
         try:
-            if f.split('.')[2] == uid:
+            if f.split(".")[2] == uid:
                 time = os.path.getmtime(os.path.join(core_dir, f))
                 uid_files.append([f, time])
         except (IndexError, FileNotFoundError):
@@ -554,8 +583,8 @@ def find_core_files_by_uid(uid):
 
 
 def clean_core_directory(uid):
-    '''Removes old files from the core directory if there are more than
-       the maximum allowed per uid'''
+    """Removes old files from the core directory if there are more than
+    the maximum allowed per uid"""
 
     uid_files = find_core_files_by_uid(uid)
     sorted_files = sorted(uid_files, key=itemgetter(1))
@@ -568,29 +597,32 @@ def clean_core_directory(uid):
 
 
 def shared_libraries(path):
-    '''Get libraries with which the specified binary is linked.
+    """Get libraries with which the specified binary is linked.
 
     Return a library name -> path mapping, for example 'libc.so.6' ->
     '/lib/x86_64-linux-gnu/libc.so.6'.
-    '''
+    """
     libs = {}
 
-    ldd = subprocess.Popen(['ldd', path], stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT,
-                           universal_newlines=True)
+    ldd = subprocess.Popen(
+        ["ldd", path],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+    )
     for line in ldd.stdout:
         try:
-            name, rest = line.split('=>', 1)
+            name, rest = line.split("=>", 1)
         except ValueError:
             continue
 
         name = name.strip()
         # exclude linux-vdso since that is a virtual so
-        if 'linux-vdso' in name:
+        if "linux-vdso" in name:
             continue
         # this is usually "path (address)"
         rest = rest.split()[0].strip()
-        if rest.startswith('('):
+        if rest.startswith("("):
             continue
         libs[name] = rest
     ldd.stdout.close()
@@ -602,18 +634,18 @@ def shared_libraries(path):
 
 
 def links_with_shared_library(path, lib):
-    '''Check if the binary at path links with the library named lib.
+    """Check if the binary at path links with the library named lib.
 
     path should be a fully qualified path (e.g. report['ExecutablePath']),
     lib may be of the form 'lib<name>' or 'lib<name>.so.<version>'
-    '''
+    """
     libs = shared_libraries(path)
 
     if lib in libs:
         return True
 
     for linked_lib in libs:
-        if linked_lib.startswith(lib + '.so.'):
+        if linked_lib.startswith(lib + ".so."):
             return True
 
     return False

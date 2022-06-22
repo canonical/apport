@@ -23,22 +23,23 @@ if len(sys.argv) > 1:
 
 oops = sys.stdin.read()
 
-pr = apport.Report('KernelOops')
-pr['Failure'] = 'oops'
-pr['Tags'] = 'kernel-oops'
-pr['Annotation'] = _('Your system might become unstable '
-                     'now and might need to be restarted.')
+pr = apport.Report("KernelOops")
+pr["Failure"] = "oops"
+pr["Tags"] = "kernel-oops"
+pr["Annotation"] = _(
+    "Your system might become unstable now and might need to be restarted."
+)
 package = apport.packaging.get_kernel_package()
 pr.add_package(package)
-pr['SourcePackage'] = 'linux'
+pr["SourcePackage"] = "linux"
 
-pr['OopsText'] = oops
+pr["OopsText"] = oops
 u = os.uname()
-pr['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
+pr["Uname"] = "%s %s %s" % (u[0], u[2], u[4])
 
 # write report
 try:
     with apport.fileutils.make_report_file(pr, uid=checksum) as f:
         pr.write(f)
 except (IOError, OSError) as e:
-    apport.fatal('Cannot create report: ' + str(e))
+    apport.fatal("Cannot create report: " + str(e))

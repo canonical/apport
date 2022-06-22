@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-'''Receive details from ApportUncaughtExceptionHandler.
+"""Receive details from ApportUncaughtExceptionHandler.
 
 This generates and saves a problem report.
-'''
+"""
 
 # Copyright 2010 Canonical Ltd.
 # Author: Matt Zimmerman <mdz@ubuntu.com>
@@ -23,10 +23,10 @@ from apport.packaging_impl import impl as packaging
 
 
 def make_title(report):
-    lines = report['StackTrace'].split('\n')
+    lines = report["StackTrace"].split("\n")
     message = lines[0].strip()
     stackframe = lines[1].strip()
-    return '%s in %s' % (message, stackframe)
+    return "%s in %s" % (message, stackframe)
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
 
     # read from the JVM process a sequence of key, value delimited by null
     # bytes
-    items = sys.stdin.read().split('\0')
+    items = sys.stdin.read().split("\0")
     d = dict()
     while items:
         key = items.pop(0)
@@ -45,15 +45,15 @@ def main():
         d[key] = value
 
     # create report
-    report = apport.report.Report(type='Crash')
+    report = apport.report.Report(type="Crash")
     # assume our parent is the JVM process
     report.pid = os.getppid()
 
     report.add_os_info()
     report.add_proc_info()
     # these aren't relevant because the crash was in bytecode
-    del report['ProcMaps']
-    del report['ProcStatus']
+    del report["ProcMaps"]
+    del report["ProcStatus"]
     report.add_user_info()
 
     # add in data which was fed to us from the JVM process
@@ -61,31 +61,31 @@ def main():
         report[key] = value
 
     # Add an ExecutablePath pointing to the file where the main class resides
-    if 'MainClassUrl' in report:
-        url = report['MainClassUrl']
+    if "MainClassUrl" in report:
+        url = report["MainClassUrl"]
 
         scheme, netloc, path, params, query, fragment = urlparse(url)
 
-        if scheme == 'jar':
+        if scheme == "jar":
             # path is then a URL to the jar file
             scheme, netloc, path, params, query, fragment = urlparse(path)
-            if '!/' in path:
-                path = path.split('!/', 1)[0]
+            if "!/" in path:
+                path = path.split("!/", 1)[0]
 
-        if scheme == 'file':
-            report['ExecutablePath'] = path
+        if scheme == "file":
+            report["ExecutablePath"] = path
         else:
             # Program at some non-file URL crashed. Give up.
             return
 
-    report['Title'] = make_title(report)
+    report["Title"] = make_title(report)
 
     try:
         with apport.fileutils.make_report_file(report) as f:
             report.write(f)
     except (IOError, OSError) as e:
-        apport.fatal('Cannot create report: ' + str(e))
+        apport.fatal("Cannot create report: " + str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

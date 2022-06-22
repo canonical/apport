@@ -29,22 +29,22 @@ import apport.fileutils
 
 
 def process_report(report):
-    '''Collect information for a report and mark for whoopsie upload
+    """Collect information for a report and mark for whoopsie upload
 
     errors.ubuntu.com does not collect any hook data anyway, so we do not need
     to bother collecting it.
 
     Return path of upload stamp if report was successfully processed, or None
     otherwise.
-    '''
-    upload_stamp = '%s.upload' % report.rsplit('.', 1)[0]
+    """
+    upload_stamp = "%s.upload" % report.rsplit(".", 1)[0]
 
     # whoopsie-upload-all is only called if autoreporting of crashes is set,
     # so its unlikely that systems with that set are interested in having the
     # .crash file around. Additionally, having .crash files left over causes
     # systemd's PathExistsGlob to be constantly triggered. See systemd issue
     # #16669 and LP: #1891657 for some details.
-    uploaded_stamp = upload_stamp + 'ed'
+    uploaded_stamp = upload_stamp + "ed"
     if os.path.exists(uploaded_stamp) and os.path.exists(report):
         report_st = os.stat(report)
         uploaded_st = os.stat(uploaded_stamp)
@@ -58,7 +58,7 @@ def process_report(report):
                     os.unlink(upload_stamp)
 
     if os.path.exists(upload_stamp):
-        logging.info('%s already marked for upload, skipping', report)
+        logging.info("%s already marked for upload, skipping", report)
         return upload_stamp
 
     report_stat = None
@@ -67,36 +67,40 @@ def process_report(report):
     # make sure we're actually on the hook to write this updated report
     # before we start doing expensive collection operations
     try:
-        with open(report, 'rb') as f:
+        with open(report, "rb") as f:
             try:
                 fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except IOError:
-                logging.info('%s already being processed, skipping', report)
+                logging.info("%s already being processed, skipping", report)
                 return None
-            r.load(f, binary='compressed')
+            r.load(f, binary="compressed")
             report_stat = os.stat(report)
     except Exception as e:
-        sys.stderr.write('ERROR: cannot load %s: %s\n' % (report, str(e)))
+        sys.stderr.write("ERROR: cannot load %s: %s\n" % (report, str(e)))
         return None
-    if r.get('ProblemType', '') != 'Crash' and 'ExecutablePath' not in r:
-        logging.info('  skipping, not a crash')
+    if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:
+        logging.info("  skipping, not a crash")
         return None
-    if 'Dependencies' in r:
-        logging.info('%s already has info collected', report)
+    if "Dependencies" in r:
+        logging.info("%s already has info collected", report)
     else:
-        logging.info('Collecting info for %s...', report)
+        logging.info("Collecting info for %s...", report)
         r.add_os_info()
         try:
             r.add_package_info()
         except (SystemError, ValueError) as e:
-            sys.stderr.write('ERROR: cannot add package info on %s: %s\n' %
-                             (report, str(e)))
+            sys.stderr.write(
+                "ERROR: cannot add package info on %s: %s\n" % (report, str(e))
+            )
             return None
         # add information from package specific hooks
         try:
             r.add_hooks_info(None)
         except Exception as e:
-            sys.stderr.write('WARNING: hook failed for processing %s: %s\n' % (report, str(e)))
+            sys.stderr.write(
+                "WARNING: hook failed for processing %s: %s\n"
+                % (report, str(e))
+            )
 
         try:
             r.add_gdb_info()
@@ -106,8 +110,10 @@ def process_report(report):
             # Calling add_gdb_info raises ENOENT if the crash's executable
             # is missing or gdb is not available, but apport-retrace could
             # still process it.
-            if getattr(e, 'errno') != errno.ENOENT:
-                sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
+            if getattr(e, "errno") != errno.ENOENT:
+                sys.stderr.write(
+                    "ERROR: processing %s: %s\n" % (report, str(e))
+                )
                 if os.path.exists(report):
                     os.unlink(report)
                 return None
@@ -116,19 +122,22 @@ def process_report(report):
         # /proc/sys/fs/protected_regular is set to 1 (LP: #1848064)
         # make sure the file isn't a FIFO or symlink
         try:
-            fd = os.open(report, os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK)
+            fd = os.open(
+                report,
+                os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK,
+            )
         except FileNotFoundError:
             # The crash report was deleted. Nothing left to do.
             return None
         st = os.fstat(fd)
         if stat.S_ISREG(st.st_mode):
-            with os.fdopen(fd, 'wb') as f:
+            with os.fdopen(fd, "wb") as f:
                 os.fchmod(fd, 0)
                 r.write(f, only_new=True)
                 os.fchmod(fd, 0o640)
 
     # now tell whoopsie to upload the report
-    logging.info('Marking %s for whoopsie upload', report)
+    logging.info("Marking %s for whoopsie upload", report)
     apport.fileutils.mark_report_upload(report)
     assert os.path.exists(upload_stamp)
     os.chown(upload_stamp, report_stat.st_uid, report_stat.st_gid)
@@ -136,13 +145,15 @@ def process_report(report):
 
 
 def collect_info():
-    '''Collect information for all reports
+    """Collect information for all reports
 
     Return set of all generated upload stamps.
-    '''
+    """
     if os.geteuid() != 0:
-        sys.stderr.write('WARNING: Not running as root, cannot process reports'
-                         ' which are not owned by uid %i\n' % os.getuid())
+        sys.stderr.write(
+            "WARNING: Not running as root, cannot process reports"
+            " which are not owned by uid %i\n" % os.getuid()
+        )
 
     stamps = set()
     reports = apport.fileutils.get_all_reports()
@@ -155,25 +166,27 @@ def collect_info():
 
 
 def wait_uploaded(stamps, timeout):
-    '''Wait until all reports were uploaded.
+    """Wait until all reports were uploaded.
 
     Times out after a given number of seconds.
 
     Return True if all reports were uploaded, False if there are some missing.
-    '''
-    logging.info('Waiting for whoopsie to upload reports (timeout: %d s)', timeout)
+    """
+    logging.info(
+        "Waiting for whoopsie to upload reports (timeout: %d s)", timeout
+    )
 
     while timeout >= 0:
         # determine missing stamps
-        missing = ''
+        missing = ""
         for stamp in stamps:
-            uploaded = stamp + 'ed'
+            uploaded = stamp + "ed"
             if os.path.exists(stamp) and not os.path.exists(uploaded):
-                missing += uploaded + ' '
+                missing += uploaded + " "
         if not missing:
             return True
 
-        logging.info('  missing (remaining: %d s): %s', timeout, missing)
+        logging.info("  missing (remaining: %d s): %s", timeout, missing)
         time.sleep(10)
         timeout -= 10
 
@@ -181,12 +194,21 @@ def wait_uploaded(stamps, timeout):
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Noninteractively upload all '
-                                     'Apport crash reports to errors.ubuntu.com')
-    parser.add_argument('-t', '--timeout', default=0, type=int,
-                        help='seconds to wait for whoopsie to upload the reports (default: do not wait)')
-    parser.add_argument("--loglevel", default="info",
-                        help="log level (default: info)")
+    parser = argparse.ArgumentParser(
+        description="Noninteractively upload all "
+        "Apport crash reports to errors.ubuntu.com"
+    )
+    parser.add_argument(
+        "-t",
+        "--timeout",
+        default=0,
+        type=int,
+        help="seconds to wait for whoopsie to upload the reports"
+        " (default: do not wait)",
+    )
+    parser.add_argument(
+        "--loglevel", default="info", help="log level (default: info)"
+    )
     opts = parser.parse_args()
 
     numeric_level = getattr(logging, opts.loglevel.upper(), None)
@@ -195,8 +217,14 @@ def main() -> None:
     logging.basicConfig(level=numeric_level)
 
     # verify that whoopsie.path is enabled
-    if subprocess.call(['/bin/systemctl', '--quiet', 'is-enabled', 'whoopsie.path'], stdout=subprocess.PIPE) != 0:
-        sys.stderr.write('ERROR: whoopsie.path is not enabled\n')
+    if (
+        subprocess.call(
+            ["/bin/systemctl", "--quiet", "is-enabled", "whoopsie.path"],
+            stdout=subprocess.PIPE,
+        )
+        != 0
+    ):
+        sys.stderr.write("ERROR: whoopsie.path is not enabled\n")
         sys.exit(1)
 
     stamps = collect_info()
@@ -211,9 +239,9 @@ def main() -> None:
         if opts.timeout > 0:
             if not wait_uploaded(stamps, opts.timeout):
                 sys.exit(2)
-            logging.info('All reports uploaded successfully')
+            logging.info("All reports uploaded successfully")
         else:
-            logging.info('All reports processed')
+            logging.info("All reports processed")
 
 
 if __name__ == "__main__":

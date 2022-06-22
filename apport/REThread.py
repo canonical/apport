@@ -1,4 +1,4 @@
-'''Enhanced Thread with support for return values and exception propagation.'''
+"""Enhanced Thread with support for return values and exception propagation."""
 
 # Copyright (C) 2007 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -14,10 +14,10 @@ import threading
 
 
 class REThread(threading.Thread):
-    '''Thread with return values and exception propagation.'''
+    """Thread with return values and exception propagation."""
 
     def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):
-        '''Initialize Thread, identical to threading.Thread.__init__().'''
+        """Initialize Thread, identical to threading.Thread.__init__()."""
 
         threading.Thread.__init__(self, group, target, name, args, kwargs)
         self.__target = target
@@ -27,7 +27,7 @@ class REThread(threading.Thread):
         self._exception = None
 
     def run(self):
-        '''Run target function, identical to threading.Thread.run().'''
+        """Run target function, identical to threading.Thread.run()."""
 
         if self.__target:
             try:
@@ -37,24 +37,24 @@ class REThread(threading.Thread):
                     self._exception = sys.exc_info()
 
     def return_value(self):
-        '''Return value from target function.
+        """Return value from target function.
 
         This can only be called after the thread has finished, i. e. when
         is_alive() is False and did not terminate with an exception.
-        '''
+        """
         assert not self.is_alive()
         assert not self._exception
         return self._retval
 
     def exc_info(self):
-        '''Return (type, value, traceback) of the exception caught in run().'''
+        """Return (type, value, traceback) of the exception caught in run()."""
 
         return self._exception
 
     def exc_raise(self):
-        '''Raise the exception caught in the thread.
+        """Raise the exception caught in the thread.
 
         Do nothing if no exception was caught.
-        '''
+        """
         if self._exception:
             raise self._exception[1].with_traceback(self._exception[2])

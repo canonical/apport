@@ -18,23 +18,26 @@ import apport.fileutils
 
 # parse command line arguments
 if len(sys.argv) != 3:
-    print('Usage: %s <executable name> <gcc -E output file>' % sys.argv[0])
-    print('If "-" is specified as second argument, the preprocessed source is read from stdin.')
+    print("Usage: %s <executable name> <gcc -E output file>" % sys.argv[0])
+    print(
+        'If "-" is specified as second argument,'
+        " the preprocessed source is read from stdin."
+    )
     sys.exit(1)
 
 (exename, sourcefile) = sys.argv[1:]
 
 # create report
 pr = apport.Report()
-pr['ExecutablePath'] = exename
-if sourcefile == '-':
-    pr['PreprocessedSource'] = (sys.stdin, False)
+pr["ExecutablePath"] = exename
+if sourcefile == "-":
+    pr["PreprocessedSource"] = (sys.stdin, False)
 else:
-    pr['PreprocessedSource'] = (sourcefile, False)
+    pr["PreprocessedSource"] = (sourcefile, False)
 
 # write report
 try:
     with apport.fileutils.make_report_file(pr) as f:
         pr.write(f)
 except (IOError, OSError) as e:
-    apport.fatal('Cannot create report: ' + str(e))
+    apport.fatal("Cannot create report: " + str(e))

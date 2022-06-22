@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-'''Report an error that can be recovered from.
+"""Report an error that can be recovered from.
 
 This application should be called with its standard input pipe fed a
 nul-separated list of key-value pairs.
-'''
+"""
 
 # Copyright (C) 2012 Canonical Ltd.
 # Author: Evan Dandrea <ev@ubuntu.com>
@@ -24,12 +24,14 @@ import apport.report
 
 def main():
     # Check parameters
-    argparser = argparse.ArgumentParser('%(prog) [options]')
-    argparser.add_argument('-p', '--pid', action='store', type=int, dest='optpid')
+    argparser = argparse.ArgumentParser("%(prog) [options]")
+    argparser.add_argument(
+        "-p", "--pid", action="store", type=int, dest="optpid"
+    )
     args = argparser.parse_args()
 
     # Build the base report
-    report = apport.report.Report('RecoverableProblem')
+    report = apport.report.Report("RecoverableProblem")
 
     # If we have a parameter pid, use that, otherwise look to our parent
     if args.optpid:
@@ -42,13 +44,16 @@ def main():
         report.add_proc_info(report.pid)
     except ValueError as e:
         # The process may have gone away before we could get to it.
-        if str(e) == 'invalid process':
+        if str(e) == "invalid process":
             return
 
     # Get the info on the bug
-    items = sys.stdin.read().split('\0')
+    items = sys.stdin.read().split("\0")
     if len(items) % 2 != 0:
-        sys.stderr.write('Expect even number of fields in stdin, needs to have pairs of key and value.\n')
+        sys.stderr.write(
+            "Expect even number of fields in stdin,"
+            " needs to have pairs of key and value.\n"
+        )
         sys.exit(1)
 
     while items:
@@ -62,18 +67,18 @@ def main():
     report.add_os_info()
     report.add_user_info()
 
-    ds = report.get('DuplicateSignature', '')
-    exec_path = report.get('ExecutablePath', '')
+    ds = report.get("DuplicateSignature", "")
+    exec_path = report.get("ExecutablePath", "")
     if exec_path and ds:
-        report['DuplicateSignature'] = '%s:%s' % (exec_path, ds)
+        report["DuplicateSignature"] = "%s:%s" % (exec_path, ds)
 
     # Write the final report
     try:
         with apport.fileutils.make_report_file(report) as f:
             report.write(f)
     except (IOError, OSError) as e:
-        apport.fatal('Cannot create report: ' + str(e))
+        apport.fatal("Cannot create report: " + str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

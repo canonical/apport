@@ -1,4 +1,4 @@
-'''Attach generally useful information, not specific to any package.'''
+"""Attach generally useful information, not specific to any package."""
 
 # Copyright (C) 2009 Canonical Ltd.
 # Authors: Matt Zimmerman <mdz@canonical.com>
@@ -21,16 +21,14 @@ import apport.hookutils
 def add_info(report, ui):
     nm = apport.hookutils.nonfree_kernel_modules()
     if nm:
-        report['NonfreeKernelModules'] = ' '.join(nm)
+        report["NonfreeKernelModules"] = " ".join(nm)
 
     # check for low space
-    mounts = {'/': 'system',
-              '/var': '/var',
-              '/tmp': '/tmp'}
+    mounts = {"/": "system", "/var": "/var", "/tmp": "/tmp"}
 
-    home = os.getenv('HOME')
+    home = os.getenv("HOME")
     if home:
-        mounts[home] = 'home'
+        mounts[home] = "home"
     treshold = 50
 
     for mount in mounts:
@@ -41,7 +39,7 @@ def add_info(report, ui):
         free_mb = st.f_bavail * st.f_frsize / 1000000
 
         if free_mb < treshold:
-            report['UnreportableReason'] = (
+            report["UnreportableReason"] = (
                 f"Your {mounts[mount]} partition has less than {free_mb} MB"
                 f" of free space available, which leads to problems using"
                 f" applications and installing updates."
@@ -49,59 +47,85 @@ def add_info(report, ui):
             )
 
     # important glib errors/assertions (which should not have private data)
-    if 'ExecutablePath' in report:
-        path = report['ExecutablePath']
-        gtk_like = (apport.fileutils.links_with_shared_library(path, 'libgtk') or
-                    apport.fileutils.links_with_shared_library(path, 'libgtk-3') or
-                    apport.fileutils.links_with_shared_library(path, 'libX11'))
+    if "ExecutablePath" in report:
+        path = report["ExecutablePath"]
+        gtk_like = (
+            apport.fileutils.links_with_shared_library(path, "libgtk")
+            or apport.fileutils.links_with_shared_library(path, "libgtk-3")
+            or apport.fileutils.links_with_shared_library(path, "libX11")
+        )
         if gtk_like and apport.hookutils.in_session_of_problem(report):
             xsession_errors = apport.hookutils.xsession_errors()
             if xsession_errors:
-                report['XsessionErrors'] = xsession_errors
+                report["XsessionErrors"] = xsession_errors
 
     # using local libraries?
-    if 'ProcMaps' in report:
+    if "ProcMaps" in report:
         local_libs = set()
-        for lib in re.finditer(r'\s(/[^ ]+\.so[.0-9]*)$', report['ProcMaps'], re.M):
+        for lib in re.finditer(
+            r"\s(/[^ ]+\.so[.0-9]*)$", report["ProcMaps"], re.M
+        ):
             if not apport.fileutils.likely_packaged(lib.group(1)):
                 local_libs.add(lib.group(1))
         if ui and local_libs:
-            if not ui.yesno('''The crashed program seems to use third-party or local libraries:
+            if not ui.yesno(
+                """\
+The crashed program seems to use third-party or local libraries:
 
 %s
 
 It is highly recommended to check if the problem persists without those first.
 
 Do you want to continue the report process anyway?
-''' % '\n'.join(local_libs)):
+"""
+                % "\n".join(local_libs)
+            ):
                 raise StopIteration
-            report['LocalLibraries'] = ' '.join(local_libs)
-            report['Tags'] = (report.get('Tags', '') + ' local-libs').strip()
+            report["LocalLibraries"] = " ".join(local_libs)
+            report["Tags"] = (report.get("Tags", "") + " local-libs").strip()
 
     # using third-party packages?
-    if '[origin:' in report.get('Package', '') or '[origin:' in report.get('Dependencies', ''):
-        report['Tags'] = (report.get('Tags', '') + ' third-party-packages').strip()
+    if "[origin:" in report.get("Package", "") or "[origin:" in report.get(
+        "Dependencies", ""
+    ):
+        report["Tags"] = (
+            report.get("Tags", "") + " third-party-packages"
+        ).strip()
 
     # using ecryptfs?
-    if os.path.exists(os.path.expanduser('~/.ecryptfs/wrapped-passphrase')):
-        report['EcryptfsInUse'] = 'Yes'
+    if os.path.exists(os.path.expanduser("~/.ecryptfs/wrapped-passphrase")):
+        report["EcryptfsInUse"] = "Yes"
 
     # filter out crashes on missing GLX (LP#327673)
-    in_gl = '/usr/lib/libGL.so' in (report.get('StacktraceTop') or '\n').splitlines()[0]
-    if in_gl and 'Loading extension GLX' not in apport.hookutils.read_file('/var/log/Xorg.0.log'):
-        report['UnreportableReason'] = 'The X.org server does not support the GLX extension, which the crashed program expected to use.'
+    in_gl = (
+        "/usr/lib/libGL.so"
+        in (report.get("StacktraceTop") or "\n").splitlines()[0]
+    )
+    if in_gl and "Loading extension GLX" not in apport.hookutils.read_file(
+        "/var/log/Xorg.0.log"
+    ):
+        report["UnreportableReason"] = (
+            "The X.org server does not support the GLX extension,"
+            " which the crashed program expected to use."
+        )
     # filter out package install failures due to a segfault
-    if 'Segmentation fault' in report.get('ErrorMessage', '') \
-            and report['ProblemType'] == 'Package':
-        report['UnreportableReason'] = 'The package installation resulted in a segmentation fault which is better reported as a crash report rather than a package install failure.'
+    if (
+        "Segmentation fault" in report.get("ErrorMessage", "")
+        and report["ProblemType"] == "Package"
+    ):
+        report["UnreportableReason"] = (
+            "The package installation resulted in a segmentation fault which"
+            " is better reported as a crash report rather than a package"
+            " install failure."
+        )
 
     # log errors
-    if report['ProblemType'] == 'Crash':
+    if report["ProblemType"] == "Crash":
         apport.hookutils.attach_journal_errors(report)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     r = {}
     add_info(r, None)
     for k in r:
-        print('%s: %s' % (k, r[k]))
+        print("%s: %s" % (k, r[k]))

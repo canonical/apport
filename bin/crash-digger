@@ -26,10 +26,20 @@ from apport.crashdb import get_crashdb
 
 
 class CrashDigger:
-    def __init__(self, config_dir, auth_file, cache_dir, sandbox_dir,
-                 apport_retrace, verbose=False, dup_db=None, dupcheck_mode=False,
-                 publish_dir=None, crash_db=None):
-        '''Initialize pools.'''
+    def __init__(
+        self,
+        config_dir,
+        auth_file,
+        cache_dir,
+        sandbox_dir,
+        apport_retrace,
+        verbose=False,
+        dup_db=None,
+        dupcheck_mode=False,
+        publish_dir=None,
+        crash_db=None,
+    ):
+        """Initialize pools."""
 
         self.retrace_pool = set()
         self.dupcheck_pool = set()
@@ -43,7 +53,7 @@ class CrashDigger:
         try:
             self.crashdb = get_crashdb(auth_file, name=crash_db)
         except KeyError:
-            apport.error('Crash database %s does not exist', crash_db)
+            apport.error("Crash database %s does not exist", crash_db)
             sys.exit(1)
         self.lp = False
         try:
@@ -56,96 +66,145 @@ class CrashDigger:
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
-            apport.log('Available releases: %s' % str(self.releases), True)
+            apport.log("Available releases: %s" % str(self.releases), True)
         else:
             self.releases = None
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
             # this verified DB integrity; make a backup now
-            shutil.copy2(self.dup_db, self.dup_db + '.backup')
+            shutil.copy2(self.dup_db, self.dup_db + ".backup")
 
     def fill_pool(self):
-        '''Query crash db for new IDs to process.'''
+        """Query crash db for new IDs to process."""
 
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
-            apport.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool), True)
+            apport.log(
+                "fill_pool: dup check pool now: %s" % str(self.dupcheck_pool),
+                True,
+            )
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
-            apport.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool), True)
+            apport.log(
+                "fill_pool: retrace pool now: %s" % str(self.retrace_pool),
+                True,
+            )
 
     def retrace_next(self):
-        '''Grab an ID from the retrace pool and retrace it.'''
+        """Grab an ID from the retrace pool and retrace it."""
 
         id = self.retrace_pool.pop()
-        apport.log('retracing %s#%i (left in pool: %i)' %
-                   ("LP: " if self.lp else "", id, len(self.retrace_pool)), True)
+        apport.log(
+            "retracing %s#%i (left in pool: %i)"
+            % ("LP: " if self.lp else "", id, len(self.retrace_pool)),
+            True,
+        )
 
         try:
             rel = self.crashdb.get_distro_release(id)
         except ValueError:
-            apport.log('could not determine release -- no DistroRelease field?', True)
+            apport.log(
+                "could not determine release -- no DistroRelease field?", True
+            )
             self.crashdb.mark_retraced(id)
             return
         if rel not in self.releases:
-            apport.log('crash is release %s which does not have a config available, skipping' % rel, True)
+            apport.log(
+                "crash is release %s which does not have a config available,"
+                " skipping" % rel,
+                True,
+            )
             return
 
-        argv = [self.apport_retrace, '-S', self.config_dir, '--auth',
-                self.auth_file, '--timestamps']
+        argv = [
+            self.apport_retrace,
+            "-S",
+            self.config_dir,
+            "--auth",
+            self.auth_file,
+            "--timestamps",
+        ]
         if self.cache_dir:
-            argv += ['--cache', self.cache_dir]
+            argv += ["--cache", self.cache_dir]
         if self.sandbox_dir:
-            argv += ['--sandbox-dir', self.sandbox_dir]
+            argv += ["--sandbox-dir", self.sandbox_dir]
         if self.dup_db:
-            argv += ['--duplicate-db', self.dup_db]
+            argv += ["--duplicate-db", self.dup_db]
         if self.verbose:
-            argv.append('-v')
+            argv.append("-v")
         argv.append(str(id))
 
-        result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
+        result = subprocess.call(
+            argv, stdout=sys.stdout, stderr=subprocess.STDOUT
+        )
         if result != 0:
-            apport.log('retracing %s#%i failed with status: %i' %
-                       ("LP: " if self.lp else "", id, result), True)
+            apport.log(
+                "retracing %s#%i failed with status: %i"
+                % ("LP: " if self.lp else "", id, result),
+                True,
+            )
             if result == 99:
                 self.retrace_pool = set()
-                apport.log('transient error reported; halting', True)
+                apport.log("transient error reported; halting", True)
                 return
 
         self.crashdb.mark_retraced(id)
 
     def dupcheck_next(self):
-        '''Grab an ID from the dupcheck pool and process it.'''
+        """Grab an ID from the dupcheck pool and process it."""
 
         id = self.dupcheck_pool.pop()
-        apport.log('checking %s#%i for duplicate (left in pool: %i)' %
-                   ("LP: " if self.lp else "", id, len(self.dupcheck_pool)), True)
+        apport.log(
+            "checking %s#%i for duplicate (left in pool: %i)"
+            % ("LP: " if self.lp else "", id, len(self.dupcheck_pool)),
+            True,
+        )
 
         try:
             report = self.crashdb.download(id)
-        except (MemoryError, TypeError, ValueError, IOError, AssertionError, zlib.error) as e:
-            if str(e) == "bug description must contain standard apport format data":
-                apport.log('Cannot download report: ' + str(e), True)
-                apport.error('Cannot download report %i: %s', id, str(e))
+        except (
+            MemoryError,
+            TypeError,
+            ValueError,
+            IOError,
+            AssertionError,
+            zlib.error,
+        ) as e:
+            if (
+                str(e)
+                == "bug description must contain standard apport format data"
+            ):
+                apport.log("Cannot download report: " + str(e), True)
+                apport.error("Cannot download report %i: %s", id, str(e))
                 return
-            apport.log('Cannot download report: ' + str(e), True)
-            apport.error('Cannot download report %i: %s', id, str(e))
+            apport.log("Cannot download report: " + str(e), True)
+            apport.error("Cannot download report %i: %s", id, str(e))
             return
 
         res = self.crashdb.check_duplicate(id, report)
         if res:
             if res[1] is None:
-                apport.log('Report is a duplicate of #%i (not fixed yet)' % res[0], True)
-            elif res[1] == '':
-                apport.log('Report is a duplicate of #%i (fixed in latest version)' % res[0], True)
+                apport.log(
+                    "Report is a duplicate of #%i (not fixed yet)" % res[0],
+                    True,
+                )
+            elif res[1] == "":
+                apport.log(
+                    "Report is a duplicate of #%i (fixed in latest version)"
+                    % res[0],
+                    True,
+                )
             else:
-                apport.log('Report is a duplicate of #%i (fixed in version %s)' % res, True)
+                apport.log(
+                    "Report is a duplicate of #%i (fixed in version %s)" % res,
+                    True,
+                )
         else:
-            apport.log('Duplicate check negative', True)
+            apport.log("Duplicate check negative", True)
 
     def run(self):
-        '''Process the work pools until they are empty.'''
+        """Process the work pools until they are empty."""
 
         self.fill_pool()
         while self.dupcheck_pool:
@@ -161,40 +220,91 @@ class CrashDigger:
 # functions
 #
 
-def parse_options():
-    '''Parse command line options and return (options, args) tuple.'''
 
-    optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-c', '--config-dir', metavar='DIR',
-                         help='Packaging system configuration base directory.')
-    optparser.add_option('--sandbox-dir', metavar='DIR',
-                         help='Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.')
-    optparser.add_option('-C', '--cache', metavar='DIR',
-                         help='Cache directory for packages downloaded in the sandbox')
-    optparser.add_option('-a', '--auth', dest='auth_file',
-                         help='Path to a file with the crash database authentication information.')
-    optparser.add_option('-l', '--lock', dest='lockfile',
-                         help='Lock file; will be created and removed on successful exit, and '
-                              'program immediately aborts if it already exists')
-    optparser.add_option('-d', '--duplicate-db', dest='dup_db', metavar='PATH',
-                         help='Path to the duplicate sqlite database (default: disabled)')
-    optparser.add_option('--crash-db', metavar='NAME',
-                         help='Use a different crash database than the "default" in /etc/apport/crashdb.conf')
-    optparser.add_option('-D', '--dupcheck', dest='dupcheck_mode', default=False, action='store_true',
-                         help='Only check duplicates for architecture independent crashes (like Python exceptions)')
-    optparser.add_option('-v', '--verbose', action='store_true', default=False,
-                         help='Verbose operation (also passed to apport-retrace)')
-    optparser.add_option('--apport-retrace', metavar='PATH',
-                         help='Path to apport-retrace script (default: directory of crash-digger or $PATH)')
-    optparser.add_option('--publish-db', metavar='DIR',
-                         help='After processing all reports, publish duplicate database to given directory')
+def parse_options():
+    """Parse command line options and return (options, args) tuple."""
+
+    optparser = optparse.OptionParser("%prog [options]")
+    optparser.add_option(
+        "-c",
+        "--config-dir",
+        metavar="DIR",
+        help="Packaging system configuration base directory.",
+    )
+    optparser.add_option(
+        "--sandbox-dir",
+        metavar="DIR",
+        help="Directory for unpacked packages. Future runs will assume that"
+        " any already downloaded package is also extracted to this sandbox.",
+    )
+    optparser.add_option(
+        "-C",
+        "--cache",
+        metavar="DIR",
+        help="Cache directory for packages downloaded in the sandbox",
+    )
+    optparser.add_option(
+        "-a",
+        "--auth",
+        dest="auth_file",
+        help="Path to a file with the crash database authentication"
+        " information.",
+    )
+    optparser.add_option(
+        "-l",
+        "--lock",
+        dest="lockfile",
+        help="Lock file; will be created and removed on successful exit, and "
+        "program immediately aborts if it already exists",
+    )
+    optparser.add_option(
+        "-d",
+        "--duplicate-db",
+        dest="dup_db",
+        metavar="PATH",
+        help="Path to the duplicate sqlite database (default: disabled)",
+    )
+    optparser.add_option(
+        "--crash-db",
+        metavar="NAME",
+        help='Use a different crash database than the "default"'
+        " in /etc/apport/crashdb.conf",
+    )
+    optparser.add_option(
+        "-D",
+        "--dupcheck",
+        dest="dupcheck_mode",
+        default=False,
+        action="store_true",
+        help="Only check duplicates for architecture independent crashes"
+        " (like Python exceptions)",
+    )
+    optparser.add_option(
+        "-v",
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="Verbose operation (also passed to apport-retrace)",
+    )
+    optparser.add_option(
+        "--apport-retrace",
+        metavar="PATH",
+        help="Path to apport-retrace script"
+        " (default: directory of crash-digger or $PATH)",
+    )
+    optparser.add_option(
+        "--publish-db",
+        metavar="DIR",
+        help="After processing all reports, publish duplicate database"
+        " to given directory",
+    )
 
     (opts, args) = optparser.parse_args()
 
     if not opts.config_dir and not opts.dupcheck_mode:
-        apport.fatal('Error: --config-dir or --dupcheck needs to be given')
+        apport.fatal("Error: --config-dir or --dupcheck needs to be given")
     if not opts.auth_file:
-        apport.fatal('Error: -a/--auth needs to be given')
+        apport.fatal("Error: -a/--auth needs to be given")
 
     return (opts, args)
 
@@ -208,9 +318,11 @@ opts, args = parse_options()
 
 # support running from tree, then fall back to $PATH
 if not opts.apport_retrace:
-    opts.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]), 'apport-retrace')
+    opts.apport_retrace = os.path.join(
+        os.path.dirname(sys.argv[0]), "apport-retrace"
+    )
     if not os.access(opts.apport_retrace, os.X_OK):
-        opts.apport_retrace = 'apport-retrace'
+        opts.apport_retrace = "apport-retrace"
 
 if opts.lockfile:
     try:
@@ -224,9 +336,18 @@ if opts.lockfile:
             raise
 
 try:
-    CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.sandbox_dir,
-                opts.apport_retrace, opts.verbose, opts.dup_db,
-                opts.dupcheck_mode, opts.publish_db, opts.crash_db).run()
+    CrashDigger(
+        opts.config_dir,
+        opts.auth_file,
+        opts.cache,
+        opts.sandbox_dir,
+        opts.apport_retrace,
+        opts.verbose,
+        opts.dup_db,
+        opts.dupcheck_mode,
+        opts.publish_db,
+        opts.crash_db,
+    ).run()
 except SystemExit as exit:
     if exit.code == 99:
         pass  # fall through lock cleanup

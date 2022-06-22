@@ -5,16 +5,16 @@ import apport
 
 class T(unittest.TestCase):
     def test_get_uninstalled_package(self):
-        '''get_uninstalled_package()'''
+        """get_uninstalled_package()"""
 
         p = apport.packaging.get_uninstalled_package()
         self.assertNotEqual(p, None)
-        self.assertNotEqual(apport.packaging.get_available_version(p), '')
+        self.assertNotEqual(apport.packaging.get_available_version(p), "")
         self.assertRaises(ValueError, apport.packaging.get_version, p)
         self.assertTrue(apport.packaging.is_distro_package(p))
 
     def test_get_os_version(self):
-        '''get_os_version()'''
+        """get_os_version()"""
 
         (n, v) = apport.packaging.get_os_version()
         self.assertEqual(type(n), str)

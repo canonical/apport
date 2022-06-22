@@ -1,8 +1,8 @@
-'''A partial apport.PackageInfo class implementation for RPM.
+"""A partial apport.PackageInfo class implementation for RPM.
 
 Used as a base class for Fedora, RHEL, openSUSE, SUSE Linux, and many other
 distributions.
-'''
+"""
 
 # Copyright (C) 2007 Red Hat Inc.
 # Copyright (C) 2008 Nikolay Derkach
@@ -33,8 +33,8 @@ import rpm
 
 
 class RPMPackageInfo:
-    '''Partial apport.PackageInfo class implementation for RPM, as
-    found in Fedora, RHEL, CentOS, etc.'''
+    """Partial apport.PackageInfo class implementation for RPM, as
+    found in Fedora, RHEL, CentOS, etc."""
 
     # Empty keylist. Should contain a list of key ids (8 lowercase hex digits).
     # e.g. official_keylist = ('30c9ecf8','4f2a6fd2','897da07a','1ac70ce6')
@@ -45,35 +45,38 @@ class RPMPackageInfo:
         self._mirror = None
 
     def get_version(self, package):
-        '''Return the installed version of a package.'''
+        """Return the installed version of a package."""
         hdr = self._get_header(package)
         if hdr is None:
             raise ValueError
         # Note - "version" here seems to refer to the full EVR, so..
-        if not hdr['e']:
-            return hdr['v'] + '-' + hdr['r']
-        if not hdr['v'] or not hdr['r']:
+        if not hdr["e"]:
+            return hdr["v"] + "-" + hdr["r"]
+        if not hdr["v"] or not hdr["r"]:
             return None
         else:
-            return hdr['e'] + ':' + hdr['v'] + '-' + hdr['r']
+            return hdr["e"] + ":" + hdr["v"] + "-" + hdr["r"]
 
     def get_available_version(self, package):
-        '''Return the latest available version of a package.'''
+        """Return the latest available version of a package."""
         # used in report.py, which is used by the frontends
-        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
+        raise NotImplementedError(
+            "method must be implemented by distro-specific"
+            " RPMPackageInfo subclass"
+        )
 
     def get_dependencies(self, package):
-        '''Return a list of packages a package depends on.'''
+        """Return a list of packages a package depends on."""
         hdr = self._get_header(package)
         # parse this package's Requires
         reqs = []
-        for r in hdr['requires']:
-            if r.startswith('rpmlib') or r.startswith('uname('):
+        for r in hdr["requires"]:
+            if r.startswith("rpmlib") or r.startswith("uname("):
                 continue  # we've got rpmlib, thanks
-            if r[0] == '/':  # file requires
-                req_heads = self._get_headers_by_tag('basenames', r)
-            else:           # other requires
-                req_heads = self._get_headers_by_tag('provides', r)
+            if r[0] == "/":  # file requires
+                req_heads = self._get_headers_by_tag("basenames", r)
+            else:  # other requires
+                req_heads = self._get_headers_by_tag("provides", r)
             for rh in req_heads:
                 rh_envra = self._make_envra_from_header(rh)
                 if rh_envra not in reqs:
@@ -81,36 +84,36 @@ class RPMPackageInfo:
         return reqs
 
     def get_source(self, package):
-        '''Return the source package name for a package.'''
+        """Return the source package name for a package."""
         hdr = self._get_header(package)
-        return hdr['sourcerpm']
+        return hdr["sourcerpm"]
 
     def get_architecture(self, package):
-        '''Return the architecture of a package.
+        """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g.  an i386 Firefox
-        package on a x86_64 system)'''
+        package on a x86_64 system)"""
         # Yeah, this is kind of redundant, as package is ENVRA, but I want
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
-        return hdr['arch']
+        return hdr["arch"]
 
     def get_files(self, package):
-        '''Return list of files shipped by a package.'''
+        """Return list of files shipped by a package."""
         hdr = self._get_header(package)
         files = []
-        for (f, mode) in zip(hdr['filenames'], hdr['filemodes']):
+        for (f, mode) in zip(hdr["filenames"], hdr["filemodes"]):
             if not stat.S_ISDIR(mode):
                 files.append(f)
         return files
 
     def get_modified_files(self, package):
-        '''Return list of all modified files of a package.'''
+        """Return list of all modified files of a package."""
         hdr = self._get_header(package)
 
-        files = hdr['filenames']
-        mtimes = hdr['filemtimes']
-        md5s = hdr['filemd5s']
+        files = hdr["filenames"]
+        mtimes = hdr["filemtimes"]
+        md5s = hdr["filemd5s"]
 
         modified = []
         for i in range(len(files)):
@@ -133,9 +136,15 @@ class RPMPackageInfo:
 
         return modified
 
-    def get_file_package(self, file, uninstalled=False, map_cachedir=None,
-                         release=None, arch=None):
-        '''Return the package a file belongs to.
+    def get_file_package(
+        self,
+        file,
+        uninstalled=False,
+        map_cachedir=None,
+        release=None,
+        arch=None,
+    ):
+        """Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
 
@@ -146,47 +155,52 @@ class RPMPackageInfo:
         downloaded maps. If it is not set, a temporary directory will be used.
         Also, release and arch can be set to a foreign release/architecture
         instead of the one from the current system.
-        '''
-        # The policy for handling files which belong to multiple packages depends on the distro
-        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
+        """
+        # The policy for handling files which belong to multiple packages
+        # depends on the distro
+        raise NotImplementedError(
+            "method must be implemented by distro-specific"
+            " RPMPackageInfo subclass"
+        )
 
     def get_system_architecture(self):
-        '''Return the architecture of the system, in the notation used by the
-        particular distribution.'''
-        rpmarch = subprocess.Popen(['rpm', '--eval', '%_target_cpu'],
-                                   stdout=subprocess.PIPE)
+        """Return the architecture of the system, in the notation used by the
+        particular distribution."""
+        rpmarch = subprocess.Popen(
+            ["rpm", "--eval", "%_target_cpu"], stdout=subprocess.PIPE
+        )
         arch = rpmarch.communicate()[0].strip()
         return arch
 
     def is_distro_package(self, package):
-        '''Check if a package is a genuine distro package (True) or comes from
-        a third-party source.'''
+        """Check if a package is a genuine distro package (True) or comes from
+        a third-party source."""
         # This is a list of official keys, set by the concrete subclass
         if not self.official_keylist:
-            raise Exception('Subclass the RPM implementation for your distro!')
+            raise Exception("Subclass the RPM implementation for your distro!")
         hdr = self._get_header(package)
         if not hdr:
             return False
         # Check the GPG sig and key ID to see if this package was signed
         # with an official key.
-        if hdr['siggpg']:
+        if hdr["siggpg"]:
             # Package is signed
-            keyid = hdr['siggpg'][13:17].encode('hex')
+            keyid = hdr["siggpg"][13:17].encode("hex")
             if keyid in self.official_keylist:
                 return True
         return False
 
     def set_mirror(self, url):
-        '''Explicitly set a distribution mirror URL for operations that need to
+        """Explicitly set a distribution mirror URL for operations that need to
         fetch distribution files/packages from the network.
 
         By default, the mirror will be read from the system configuration
-        files.'''
+        files."""
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
     def get_source_tree(self, srcpackage, dir, version=None):
-        '''Download given source package and unpack it into dir (which should
+        """Download given source package and unpack it into dir (which should
         be empty).
 
         This also has to care about applying patches etc., so that dir will
@@ -197,25 +211,31 @@ class RPMPackageInfo:
 
         Return the directory that contains the actual source root directory
         (which might be a subdirectory of dir). Return None if the source is
-        not available.'''
+        not available."""
         # Used only by apport-retrace.
-        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
+        raise NotImplementedError(
+            "method must be implemented by distro-specific"
+            " RPMPackageInfo subclass"
+        )
 
     def compare_versions(self, ver1, ver2):
-        '''Compare two package versions.
+        """Compare two package versions.
 
-        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2."""
         # Used by crashdb.py (i.e. the frontends)
         # I could duplicate stringToVersion/compareEVR from rpmUtils.misc,
         # but I hate duplicating code. So if you don't want to require rpmUtils
         # you can implement this function yourself. Probably you've got
         # equivalent code in whatever your distro uses instead of yum anyway.
-        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
+        raise NotImplementedError(
+            "method must be implemented by distro-specific"
+            " RPMPackageInfo subclass"
+        )
 
     def package_name_glob(self, glob):
-        '''Return known package names which match given glob.'''
+        """Return known package names which match given glob."""
 
-        raise NotImplementedError('TODO')
+        raise NotImplementedError("TODO")
 
     #
     # Internal helper methods. These are only single-underscore, so you can use
@@ -223,56 +243,56 @@ class RPMPackageInfo:
     #
 
     def _get_headers_by_tag(self, tag, arg):
-        '''Get a list of RPM headers by doing dbMatch on the given tag and
-        argument.'''
+        """Get a list of RPM headers by doing dbMatch on the given tag and
+        argument."""
         matches = self.ts.dbMatch(tag, arg)
         if matches.count() == 0:
-            raise ValueError('Could not find package with %s: %s' % (tag, arg))
+            raise ValueError("Could not find package with %s: %s" % (tag, arg))
         return [m for m in matches]
 
     def _get_header(self, envra):
-        '''Get the RPM header that matches the given ENVRA.'''
+        """Get the RPM header that matches the given ENVRA."""
 
         querystr = envra
         qlen = len(envra)
         while qlen > 0:
-            mi = impl.ts.dbMatch('name', querystr)
+            mi = impl.ts.dbMatch("name", querystr)
             hdrs = [m for m in mi]
             if len(hdrs) > 0:
                 # yay! we found something
-                # Unless there's some rpmdb breakage, you should have one header
-                # here. If you do manage to have two rpms with the same ENVRA,
-                # who cares which one you get?
+                # Unless there's some rpmdb breakage, you should have one
+                # header here. If you do manage to have two rpms with the
+                # same ENVRA, who cares which one you get?
                 h = hdrs[0]
                 break
 
             # remove the last char of querystr and retry the search
-            querystr = querystr[0:len(querystr) - 1]
+            querystr = querystr[0 : len(querystr) - 1]
             qlen = qlen - 1
 
         if qlen == 0:
-            raise ValueError('No headers found for this envra: %s' % envra)
+            raise ValueError("No headers found for this envra: %s" % envra)
         return h
 
     def _make_envra_from_header(self, h):
-        '''Generate an ENVRA string from an rpm header'''
+        """Generate an ENVRA string from an rpm header"""
 
-        nvra = "%s-%s-%s.%s" % (h['n'], h['v'], h['r'], h['arch'])
-        if h['e']:
-            envra = "%s:%s" % (h['e'], nvra)
+        nvra = "%s-%s-%s.%s" % (h["n"], h["v"], h["r"], h["arch"])
+        if h["e"]:
+            envra = "%s:%s" % (h["e"], nvra)
         else:
             envra = nvra
         return envra
 
     def _checkmd5(self, filename, filemd5):
-        '''Internal function to check a file's md5sum'''
+        """Internal function to check a file's md5sum"""
 
         m = hashlib.md5()
         f = open(filename)
         data = f.read()
         f.close()
         m.update(data)
-        return (filemd5 == m.hexdigest())
+        return filemd5 == m.hexdigest()
 
 
 impl = RPMPackageInfo()

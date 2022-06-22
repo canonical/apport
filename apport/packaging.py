@@ -1,4 +1,4 @@
-'''Abstraction of packaging operations.'''
+"""Abstraction of packaging operations."""
 
 # Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -17,87 +17,111 @@ import sys
 
 class PackageInfo:
     # default global configuration file
-    configuration = '/etc/default/apport'
+    configuration = "/etc/default/apport"
 
     def get_version(self, package):
-        '''Return the installed version of a package.
+        """Return the installed version of a package.
 
         Throw ValueError if package does not exist.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_available_version(self, package):
-        '''Return the latest available version of a package.
+        """Return the latest available version of a package.
 
         Throw ValueError if package does not exist.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_dependencies(self, package):
-        '''Return a list of packages a package depends on.'''
+        """Return a list of packages a package depends on."""
 
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_source(self, package):
-        '''Return the source package name for a package.
+        """Return the source package name for a package.
 
         Throw ValueError if package does not exist.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_package_origin(self, package):
-        '''Return package origin.
+        """Return package origin.
 
         Return the repository name from which a package was installed, or None
         if it cannot be determined.
 
         Throw ValueError if package is not installed.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def is_distro_package(self, package):
-        '''Check package origin.
+        """Check package origin.
 
         Return True if the package is a genuine distro package, or False if it
         comes from a third-party source.
 
         Throw ValueError if package does not exist.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_architecture(self, package):
-        '''Return the architecture of a package.
+        """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_files(self, package):
-        '''Return list of files shipped by a package.
+        """Return list of files shipped by a package.
 
         Throw ValueError if package does not exist.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_modified_files(self, package):
-        '''Return list of all modified files of a package.'''
+        """Return list of all modified files of a package."""
 
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_modified_conffiles(self, package):
-        '''Return modified configuration files of a package.
+        """Return modified configuration files of a package.
 
         Return a file name -> file contents map of all configuration files of
         package. Please note that apport.hookutils.attach_conffiles() is the
         official user-facing API for this, which will ask for confirmation and
         allows filtering.
-        '''
+        """
         return {}
 
-    def get_file_package(self, file, uninstalled=False, map_cachedir=None,
-                         release=None, arch=None):
-        '''Return the package a file belongs to.
+    def get_file_package(
+        self,
+        file,
+        uninstalled=False,
+        map_cachedir=None,
+        release=None,
+        arch=None,
+    ):
+        """Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
 
@@ -108,39 +132,45 @@ class PackageInfo:
         downloaded maps. If it is not set, a temporary directory will be used.
         Also, release and arch can be set to a foreign release/architecture
         instead of the one from the current system.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_system_architecture(self):
-        '''Return the architecture of the system.
+        """Return the architecture of the system.
 
         This should use the notation of the particular distribution.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_library_paths(self):
-        '''Return a list of default library search paths.
+        """Return a list of default library search paths.
 
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
-        '''
+        """
         # dummy default implementation
-        return '/lib:/usr/lib'
+        return "/lib:/usr/lib"
 
     def set_mirror(self, url):
-        '''Explicitly set a distribution mirror URL.
+        """Explicitly set a distribution mirror URL.
 
         This might be called for operations that need to fetch distribution
         files/packages from the network.
 
         By default, the mirror will be read from the system configuration
         files.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def get_source_tree(self, srcpackage, dir, version=None):
-        '''Download a source package and unpack it into dir..
+        """Download a source package and unpack it into dir..
 
         dir should exist and be empty.
 
@@ -153,18 +183,22 @@ class PackageInfo:
         Return the directory that contains the actual source root directory
         (which might be a subdirectory of dir). Return None if the source is
         not available.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def compare_versions(self, ver1, ver2):
-        '''Compare two package versions.
+        """Compare two package versions.
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def enabled(self):
-        '''Return whether Apport should generate crash reports.
+        """Return whether Apport should generate crash reports.
 
         Signal crashes are controlled by /proc/sys/kernel/core_pattern, but
         some init script needs to set that value based on a configuration file.
@@ -173,7 +207,7 @@ class PackageInfo:
 
         Implementations should parse the configuration file which controls
         Apport (such as /etc/default/apport in Debian/Ubuntu).
-        '''
+        """
         try:
             with open(self.configuration) as f:
                 conf = f.read()
@@ -181,20 +215,32 @@ class PackageInfo:
             # if the file does not exist, assume it's enabled
             return True
 
-        return re.search(r'^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+        return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
 
     def get_kernel_package(self):
-        '''Return the actual Linux kernel package name.
+        """Return the actual Linux kernel package name.
 
         This is used when the user reports a bug against the "linux" package.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
-    def install_packages(self, rootdir, configdir, release, packages,
-                         verbose=False, cache_dir=None,
-                         permanent_rootdir=False, architecture=None,
-                         origins=None, install_dbg=True, install_deps=False):
-        '''Install packages into a sandbox (for apport-retrace).
+    def install_packages(
+        self,
+        rootdir,
+        configdir,
+        release,
+        packages,
+        verbose=False,
+        cache_dir=None,
+        permanent_rootdir=False,
+        architecture=None,
+        origins=None,
+        install_dbg=True,
+        install_deps=False,
+    ):
+        """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
         the running system, this should only download and unpack packages into
@@ -234,32 +280,36 @@ class PackageInfo:
         If something is wrong with the environment (invalid configuration,
         package servers down, etc.), this should raise a SystemError with a
         meaningful error message.
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def package_name_glob(self, glob):
-        '''Return known package names which match given glob.'''
+        """Return known package names which match given glob."""
 
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
 
     def is_native_origin_package(self, package):
-        '''Check if a package is one which has been white listed.
+        """Check if a package is one which has been white listed.
 
         Return True for a package which came from an origin which is listed in
         native-origins.d, False if it comes from a third-party source.
-        '''
+        """
         # Default implementation does nothing, i. e. native origins are not
         # supported.
         return False
 
     def get_uninstalled_package(self):
-        '''Return a valid package name which is not installed.
+        """Return a valid package name which is not installed.
 
         This is only used in the test suite. The default implementation should
         work, but might be slow for your backend, so you might want to
         reimplement this.
-        '''
-        for p in self.package_name_glob('*'):
+        """
+        for p in self.package_name_glob("*"):
             if not self.is_distro_package(p):
                 continue
             try:
@@ -271,39 +321,48 @@ class PackageInfo:
     _os_version = None
 
     def get_os_version(self):
-        '''Return (osname, osversion) tuple.
+        """Return (osname, osversion) tuple.
 
         This is read from /etc/os-release, or if that doesn't exist,
         'lsb_release -sir' output.
-        '''
+        """
         if self._os_version:
             return self._os_version
 
-        if os.path.exists('/etc/os-release'):
+        if os.path.exists("/etc/os-release"):
             name = None
             version = None
-            with open('/etc/os-release') as f:
+            with open("/etc/os-release") as f:
                 for line in f:
-                    if line.startswith('NAME='):
-                        name = line.split('=', 1)[1]
+                    if line.startswith("NAME="):
+                        name = line.split("=", 1)[1]
                         if name.startswith('"'):
                             name = name[1:-2].strip()
-                        # work around inconsistent "Debian GNU/Linux" in os-release
-                        if name.endswith('GNU/Linux'):
+                        # work around inconsistent "Debian GNU/Linux"
+                        # in os-release
+                        if name.endswith("GNU/Linux"):
                             name = name.split()[0:-1]
-                    elif line.startswith('VERSION_ID='):
-                        version = line.split('=', 1)[1]
+                    elif line.startswith("VERSION_ID="):
+                        version = line.split("=", 1)[1]
                         if version.startswith('"'):
                             version = version[1:-2].strip()
             if name and version:
                 self._os_version = (name, version)
                 return self._os_version
             else:
-                sys.stderr.write('invalid /etc/os-release: Does not contain NAME and VERSION_ID\n')
+                sys.stderr.write(
+                    "invalid /etc/os-release:"
+                    " Does not contain NAME and VERSION_ID\n"
+                )
 
         # fall back to lsb_release
-        p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        (name, version) = p.communicate()[0].decode().strip().replace('\n', ' ').split()
+        p = subprocess.Popen(
+            ["lsb_release", "-sir"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        (name, version) = (
+            p.communicate()[0].decode().strip().replace("\n", " ").split()
+        )
         self._os_version = (name.strip(), version.strip())
         return self._os_version

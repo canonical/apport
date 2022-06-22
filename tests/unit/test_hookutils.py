@@ -8,22 +8,22 @@ import apport.hookutils
 class T(unittest.TestCase):
     @unittest.mock.patch("apport.hookutils.root_command_output")
     def test_attach_dmesg(self, root_command_output_mock):
-        '''attach_dmesg()'''
-        root_command_output_mock.return_value = '[30804.972250] CPU0 is up'
+        """attach_dmesg()"""
+        root_command_output_mock.return_value = "[30804.972250] CPU0 is up"
 
         report = {}
         apport.hookutils.attach_dmesg(report)
-        self.assertEqual(report, {'CurrentDmesg': '[30804.972250] CPU0 is up'})
+        self.assertEqual(report, {"CurrentDmesg": "[30804.972250] CPU0 is up"})
 
-        root_command_output_mock.assert_called_once_with(['dmesg'])
+        root_command_output_mock.assert_called_once_with(["dmesg"])
 
     def test_dmesg_overwrite(self):
-        '''attach_dmesg() does not overwrite already existing data'''
+        """attach_dmesg() does not overwrite already existing data"""
 
-        report = {'CurrentDmesg': 'existingcurrent'}
+        report = {"CurrentDmesg": "existingcurrent"}
 
         apport.hookutils.attach_dmesg(report)
-        self.assertEqual(report['CurrentDmesg'], 'existingcurrent')
+        self.assertEqual(report["CurrentDmesg"], "existingcurrent")
 
     @unittest.mock.patch("subprocess.Popen")
     @unittest.mock.patch(
@@ -74,11 +74,16 @@ class T(unittest.TestCase):
         )
 
     def test_path_to_key(self):
-        '''transforming a file path to a valid report key'''
+        """transforming a file path to a valid report key"""
 
-        self.assertEqual(apport.hookutils.path_to_key('simple.txt'),
-                         'simple.txt')
-        self.assertEqual(apport.hookutils.path_to_key('path/with/dirs.txt'),
-                         'path.with.dirs.txt')
-        self.assertEqual(apport.hookutils.path_to_key('/funny:characters!& ".txt'),
-                         '.funny.characters.._..txt')
+        self.assertEqual(
+            apport.hookutils.path_to_key("simple.txt"), "simple.txt"
+        )
+        self.assertEqual(
+            apport.hookutils.path_to_key("path/with/dirs.txt"),
+            "path.with.dirs.txt",
+        )
+        self.assertEqual(
+            apport.hookutils.path_to_key('/funny:characters!& ".txt'),
+            ".funny.characters.._..txt",
+        )

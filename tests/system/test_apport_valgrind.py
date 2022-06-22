@@ -15,9 +15,9 @@ import unittest
 
 from tests.paths import local_test_environment
 
-with open('/proc/meminfo') as f:
+with open("/proc/meminfo") as f:
     for line in f.readlines():
-        if line.startswith('MemTotal'):
+        if line.startswith("MemTotal"):
             memtotal = int(line.split()[1])
             break
     if memtotal < 2000000:
@@ -26,7 +26,7 @@ with open('/proc/meminfo') as f:
         low_memory = False
 
 
-@unittest.skipIf(shutil.which('valgrind') is None, 'valgrind not installed')
+@unittest.skipIf(shutil.which("valgrind") is None, "valgrind not installed")
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -40,21 +40,30 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
-    @unittest.skipIf(low_memory, 'not enough memory')
+    @unittest.skipIf(low_memory, "not enough memory")
     def test_sandbox_cache_options(self):
-        '''apport-valgrind creates a user specified sandbox and cache'''
+        """apport-valgrind creates a user specified sandbox and cache"""
 
-        sandbox = os.path.join(self.workdir, 'test-sandbox')
-        cache = os.path.join(self.workdir, 'test-cache')
+        sandbox = os.path.join(self.workdir, "test-sandbox")
+        cache = os.path.join(self.workdir, "test-cache")
 
-        cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache,
-               '/bin/true']
+        cmd = [
+            "apport-valgrind",
+            "--sandbox-dir",
+            sandbox,
+            "--cache",
+            cache,
+            "/bin/true",
+        ]
         subprocess.check_call(cmd, env=self.env)
 
-        self.assertTrue(os.path.exists(sandbox),
-                        'A sandbox directory %s was specified but was not created'
-                        % sandbox)
+        self.assertTrue(
+            os.path.exists(sandbox),
+            "A sandbox directory %s was specified but was not created"
+            % sandbox,
+        )
 
-        self.assertTrue(os.path.exists(cache),
-                        'A cache directory %s was specified but was not created' %
-                        cache)
+        self.assertTrue(
+            os.path.exists(cache),
+            "A cache directory %s was specified but was not created" % cache,
+        )

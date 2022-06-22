@@ -16,6 +16,13 @@ set -eu
 
 PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper)
 
+if type black >/dev/null 2>&1; then
+    echo "Running black..."
+    black --check --diff . ${PYTHON_SCRIPTS}
+else
+    echo "Skipping black tests, black is not installed"
+fi
+
 if type isort >/dev/null 2>&1; then
     echo "Running isort..."
     isort --check-only --diff .
@@ -26,7 +33,7 @@ fi
 if type pycodestyle >/dev/null 2>&1; then
     echo "Running pycodestyle..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle -r --ignore=E501,W503,W504,E124 . ${PYTHON_SCRIPTS}
+    pycodestyle --max-line-length=79 -r --ignore=E203,W503 . ${PYTHON_SCRIPTS}
 else
     echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi

@@ -19,9 +19,14 @@ import apport
 from apport.fileutils import get_new_reports, get_new_system_reports
 
 # parse command line options
-optparser = optparse.OptionParser('%prog [options]')
-optparser.add_option('-s', '--system', default=False, action='store_true',
-                     help='Check for crash reports from system users.')
+optparser = optparse.OptionParser("%prog [options]")
+optparser.add_option(
+    "-s",
+    "--system",
+    default=False,
+    action="store_true",
+    help="Check for crash reports from system users.",
+)
 options, args = optparser.parse_args()
 
 if options.system:
@@ -31,11 +36,11 @@ else:
 
 if len(reports) > 0:
     for r in reports:
-        print(r.split('.')[0].split('_')[-1])
+        print(r.split(".")[0].split("_")[-1])
     if apport.packaging.enabled():
         sys.exit(0)
     else:
-        print('new reports but apport disabled')
+        print("new reports but apport disabled")
         sys.exit(2)
 else:
     sys.exit(1)
