@@ -461,16 +461,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     ):
         self.md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if "http://" in text or "https://" in text:
-            if not isinstance(text, bytes):
-                text = text.encode("UTF-8")
-            text = GLib.markup_escape_text(text)
-            text = re.sub(
-                r"(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%+=./-])*)",
-                r'<a href="\1">\1</a>',
-                text,
-            )
-            # turn URLs into links
-            self.md.set_markup(text)
+            self.md.set_markup(text_to_markup(text))
         else:
             # work around gnome #620579
             self.md.set_property("text", text)
@@ -684,6 +675,16 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w("window_report_upload").hide()
         sys.exit(0)
         return True
+
+
+def text_to_markup(text: str) -> str:
+    """Turn URLs into links"""
+    escaped_text = GLib.markup_escape_text(text)
+    return re.sub(
+        "(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%+=./-])*)",
+        r'<a href="\1">\1</a>',
+        escaped_text,
+    )
 
 
 if __name__ == "__main__":
