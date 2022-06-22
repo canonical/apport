@@ -295,6 +295,31 @@ class T(unittest.TestCase):
         self.do_crash(command="./myscript")
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
+    def test_unsupported_arguments_no_stderr(self):
+        """Write failure to log file when stderr is missing
+
+        The kernel calls apport with no stdout and stderr file
+        descriptors set.
+        """
+
+        def close_stdin_and_stderr():
+            """Close stdin and stderr"""
+            os.close(sys.stdout.fileno())
+            os.close(sys.stderr.fileno())
+
+        log = os.path.join(self.workdir, "apport.log")
+        env = os.environ.copy()
+        env["APPORT_LOG_FILE"] = log
+        app = subprocess.run(
+            [self.apport_path], env=env, preexec_fn=close_stdin_and_stderr
+        )
+
+        self.assertEqual(app.returncode, 2)
+        with open(log) as log_file:
+            logged = log_file.read()
+        self.assertIn("usage", logged)
+        self.assertIn("error: No process ID (PID) provided", logged)
+
     def test_ignore_sigquit(self):
         """apport ignores SIGQUIT"""
 

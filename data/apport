@@ -551,7 +551,9 @@ def parse_arguments():
         )
 
     if options.pid is None:
-        parser.print_usage()
+        parser.error(
+            "No process ID (PID) provided. Please specify PID with -p/--pid."
+        )
         sys.exit(1)
 
     for arg in rest:
@@ -634,9 +636,8 @@ if "LISTEN_FDS" in os.environ:
         sys.exit(1)
 
 
-options = parse_arguments()
-
 init_error_log()
+options = parse_arguments()
 
 # Check if we received a valid global PID (kernel >= 3.12). If we do,
 # then compare it with the local PID. If they don't match, it's an
