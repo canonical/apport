@@ -70,6 +70,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         import re
         import traceback
 
+        import apport.report
         from apport.fileutils import get_recent_crashes, likely_packaged
 
         # apport will look up the package from the executable path.
@@ -90,8 +91,6 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # filter out binaries in user accessible paths
         if not likely_packaged(binary):
             return
-
-        import apport.report
 
         pr = apport.report.Report()
 
