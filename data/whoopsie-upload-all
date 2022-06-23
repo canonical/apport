@@ -110,7 +110,7 @@ def process_report(report):
             # Calling add_gdb_info raises ENOENT if the crash's executable
             # is missing or gdb is not available, but apport-retrace could
             # still process it.
-            if getattr(e, "errno") != errno.ENOENT:
+            if getattr(e, "errno", None) != errno.ENOENT:
                 sys.stderr.write(
                     "ERROR: processing %s: %s\n" % (report, str(e))
                 )
