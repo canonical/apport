@@ -14,7 +14,7 @@ import errno
 import fnmatch
 import glob
 import grp
-import imp
+import importlib
 import io
 import os
 import pwd
@@ -611,32 +611,16 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    @classmethod
-    def _python_module_path(klass, module):
+    @staticmethod
+    def _python_module_path(module):
         """Determine path of given Python module"""
-
-        module = module.replace("/", ".").split(".")
-        pathlist = sys.path
-
-        path = None
-        while module:
-            name = module.pop(0)
-
-            try:
-                (fd, path, desc) = imp.find_module(name, pathlist)
-            except ImportError:
-                path = None
-                break
-            if fd:
-                fd.close()
-            pathlist = [path]
-
-            if not module and desc[2] == imp.PKG_DIRECTORY:
-                module = ["__init__"]
-
-        if path and path.endswith(".pyc"):
-            path = path[:-1]
-        return path
+        try:
+            spec = importlib.util.find_spec(module)
+        except ImportError:
+            return None
+        if spec is None:
+            return None
+        return spec.origin
 
     def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=[]):
         """Add /proc/pid information.

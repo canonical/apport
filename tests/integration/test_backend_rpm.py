@@ -1,12 +1,16 @@
-import imp
 import shutil
 import unittest
+from importlib.machinery import SourceFileLoader
 
 from tests.paths import is_local_source_directory
 
 try:
     if is_local_source_directory():
-        impl = imp.load_source("", "backends/packaging_rpm.py").impl
+        impl = (
+            SourceFileLoader("", "backends/packaging_rpm.py")
+            .load_module()
+            .impl
+        )
     else:
         from apport.packaging_impl import impl
     HAS_RPM = True

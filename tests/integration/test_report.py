@@ -489,10 +489,10 @@ class T(unittest.TestCase):
             pr = apport.report.Report()
             pr["ExecutablePath"] = "/usr/bin/python2.7"
             pr["ProcStatus"] = "Name:\tpython"
-            pr["ProcCmdline"] = "python\0-tt\0-m\0apport/report\0-v"
+            pr["ProcCmdline"] = "python\0-tt\0-m\0apport.report\0-v"
             pr._check_interpreted()
             self.assertEqual(pr["InterpreterPath"], "/usr/bin/python2.7")
-            self.assertIn("report", pr["ExecutablePath"])
+            self.assertIn("apport/report.py", pr["ExecutablePath"])
 
             # python script through -m, with dot separator; top-level module
             pr = apport.report.Report()
@@ -511,6 +511,26 @@ class T(unittest.TestCase):
             pr._check_interpreted()
             self.assertEqual(pr["InterpreterPath"], "/usr/bin/python3")
             self.assertIn("distutils/cmd.py", pr["ExecutablePath"])
+
+            # Python script through -m, non-existent module
+            pr = apport.report.Report()
+            pr["ExecutablePath"] = "/usr/bin/python3"
+            pr["ProcStatus"] = "Name:\tpython3"
+            pr["ProcCmdline"] = "python3\0-m\0nonexistent"
+            pr._check_interpreted()
+            self.assertNotIn("InterpreterPath", pr)
+            self.assertEqual(pr["ExecutablePath"], "/usr/bin/python3")
+            self.assertIn("UnreportableReason", pr)
+
+            # Python script through -m, non-existent sub-level module
+            pr = apport.report.Report()
+            pr["ExecutablePath"] = "/usr/bin/python3"
+            pr["ProcStatus"] = "Name:\tpython3"
+            pr["ProcCmdline"] = "python3\0-m\0apport.fileutils.nonexistent"
+            pr._check_interpreted()
+            self.assertNotIn("InterpreterPath", pr)
+            self.assertEqual(pr["ExecutablePath"], "/usr/bin/python3")
+            self.assertIn("UnreportableReason", pr)
         finally:
             if restore_root:
                 os.setresuid(0, 0, -1)
