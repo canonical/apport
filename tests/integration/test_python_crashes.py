@@ -302,13 +302,20 @@ func(42)
         try:
             for d in ("/tmp", "/usr/local", "/usr"):
                 os.chdir(d)
+                env = os.environ.copy()
+                env["PYTHONPATH"] = orig_cwd
                 p = subprocess.Popen(
                     ["python3"],
+                    env=env,
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )
-                (out, err) = p.communicate(b"raise ValueError")
+                (out, err) = p.communicate(
+                    b"import apport_python_hook\n"
+                    b"apport_python_hook.install()\n"
+                    b"raise ValueError"
+                )
                 out = out.decode()
                 err = err.decode()
                 assert p.returncode != 0
