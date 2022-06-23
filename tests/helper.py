@@ -1,6 +1,8 @@
 """Helper functions for the test cases."""
 
 import contextlib
+import importlib.machinery
+import importlib.util
 import os
 import subprocess
 import typing
@@ -29,6 +31,17 @@ def has_internet():
 
 
 has_internet.cache = None
+
+
+def import_module_from_file(filename: str):
+    """Import a module by its filename."""
+    name = os.path.splitext(os.path.basename(filename))[0].replace("-", "_")
+    spec = importlib.util.spec_from_loader(
+        name, importlib.machinery.SourceFileLoader(name, filename)
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def pidof(program):

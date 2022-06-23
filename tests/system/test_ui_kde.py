@@ -15,7 +15,6 @@ import sys
 import tempfile
 import textwrap
 import unittest
-from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
 
 try:
@@ -30,7 +29,7 @@ except ImportError as error:
 import apport
 import apport.crashdb_impl.memory
 from apport import unicode_gettext as _
-from tests.helper import wrap_object
+from tests.helper import import_module_from_file, wrap_object
 from tests.paths import is_local_source_directory, local_test_environment
 
 if is_local_source_directory():
@@ -40,7 +39,7 @@ else:
         os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "apport-kde"
     )
 if not PYQT5_IMPORT_ERROR:
-    apport_kde = SourceFileLoader("", apport_kde_path).load_module()
+    apport_kde = import_module_from_file(apport_kde_path)
     MainUserInterface = apport_kde.MainUserInterface
 else:
     MainUserInterface = None

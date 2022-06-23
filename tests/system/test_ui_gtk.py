@@ -16,7 +16,6 @@ import sys
 import tempfile
 import textwrap
 import unittest
-from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
 
 import gi
@@ -27,6 +26,7 @@ from gi.repository import GLib, GObject, Gtk
 import apport
 import apport.crashdb_impl.memory
 from apport import unicode_gettext as _
+from tests.helper import import_module_from_file
 from tests.paths import is_local_source_directory, local_test_environment
 
 GLib.log_set_always_fatal(
@@ -44,7 +44,7 @@ else:
     kernel_oops_path = os.path.join(
         os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "kernel_oops"
     )
-apport_gtk = SourceFileLoader("", apport_gtk_path).load_module()
+apport_gtk = import_module_from_file(apport_gtk_path)
 GTKUserInterface = apport_gtk.GTKUserInterface
 
 

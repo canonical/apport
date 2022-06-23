@@ -5,19 +5,14 @@ import shutil
 import subprocess
 import tempfile
 import unittest
-from importlib.machinery import SourceFileLoader
 
 from apt import apt_pkg
 
-from tests.helper import has_internet
+from tests.helper import has_internet, import_module_from_file
 from tests.paths import is_local_source_directory
 
 if is_local_source_directory():
-    impl = (
-        SourceFileLoader("", "backends/packaging-apt-dpkg.py")
-        .load_module()
-        .impl
-    )
+    impl = import_module_from_file("backends/packaging-apt-dpkg.py").impl
 else:
     from apport.packaging_impl import impl
 

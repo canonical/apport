@@ -12,31 +12,21 @@ import tempfile
 import textwrap
 import time
 import unittest
-from importlib.machinery import SourceFileLoader
 from io import BytesIO, StringIO
 from unittest.mock import patch
 
 import apport.crashdb_impl.memory
+import apport.packaging
 import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _
 from tests.helper import pidof
 from tests.paths import (
-    is_local_source_directory,
     local_test_environment,
     patch_data_dir,
     restore_data_dir,
 )
-
-if is_local_source_directory():
-    impl = (
-        SourceFileLoader("", "backends/packaging-apt-dpkg.py")
-        .load_module()
-        .impl
-    )
-else:
-    from apport.packaging_impl import impl
 
 logind_session = apport.Report.get_logind_session(os.getpid())
 
@@ -1516,7 +1506,7 @@ class T(unittest.TestCase):
     def test_run_crash_kernel(self):
         """run_crash() for a kernel error"""
 
-        sys_arch = impl.get_system_architecture()
+        sys_arch = apport.packaging.get_system_architecture()
         if sys_arch in ["amd64", "arm64", "ppc64el", "s390x"]:
             src_pkg = "linux-signed"
         else:

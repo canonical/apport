@@ -5,16 +5,12 @@ import subprocess
 import tempfile
 import time
 import unittest
-from importlib.machinery import SourceFileLoader
 
+from tests.helper import import_module_from_file
 from tests.paths import is_local_source_directory
 
 if is_local_source_directory():
-    impl = (
-        SourceFileLoader("", "backends/packaging-apt-dpkg.py")
-        .load_module()
-        .impl
-    )
+    impl = import_module_from_file("backends/packaging-apt-dpkg.py").impl
 else:
     from apport.packaging_impl import impl
 
