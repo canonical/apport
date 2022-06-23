@@ -12,6 +12,7 @@
 
 import atexit
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -26,6 +27,8 @@ from tests.paths import local_test_environment
 
 
 class T(unittest.TestCase):
+    maxDiff = None
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()
@@ -294,6 +297,58 @@ func(42)
         self.assertEqual(
             len(reports), 0, "no crash reports present (cwd: %s)" % os.getcwd()
         )
+
+    def test_deleted_working_directory(self):
+        """Relative Python script from deleted working directory."""
+        orig_cwd = os.getcwd()
+        try:
+            with tempfile.TemporaryDirectory(dir="/var/tmp") as tmpdir:
+                deleted_dir = os.path.join(tmpdir, "gone")
+                os.mkdir(deleted_dir)
+                os.chdir(deleted_dir)
+                os.rmdir(deleted_dir)
+
+                with open(os.path.join(tmpdir, "script.py"), "w") as script:
+                    script.write(
+                        "import apport_python_hook\n"
+                        "apport_python_hook.install()\n"
+                        "raise ValueError()\n"
+                    )
+
+                env = os.environ.copy()
+                env["PYTHONPATH"] = orig_cwd
+                process = subprocess.run(
+                    ["python3", "../script.py"],
+                    env=env,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+        finally:
+            os.chdir(orig_cwd)
+
+        # Workaround for pytest bug.
+        # See https://github.com/pytest-dev/pytest-cov/issues/541
+        stderr = re.sub(
+            r"^Error processing [A-Za-z0-9 /-]*init_cov_core.pth:\n[\S\W]*\n"
+            r"pytest-cov: Failed to setup subprocess coverage.*\n",
+            "",
+            process.stderr.decode(),
+        )
+
+        self.assertEqual(
+            stderr,
+            textwrap.dedent(
+                """\
+                Traceback (most recent call last):
+                  File "../script.py", line 3, in <module>
+                    raise ValueError()
+                ValueError
+                """
+            ),
+        )
+        self.assertEqual(process.stdout.decode(), "")
+        self.assertEqual(process.returncode, 1)
+        self._assert_no_reports()
 
     def test_interactive(self):
         """interactive Python sessions never generate a report."""

@@ -20,10 +20,10 @@ def enabled():
 
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
-    # pylint: disable=import-outside-toplevel; for Python starup time
-    import re
-
     try:
+        # pylint: disable=import-outside-toplevel; for Python starup time
+        import re
+
         with open(CONFIG) as f:
             conf = f.read()
         return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
@@ -55,15 +55,15 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
-        import io
-        import os
-        import re
-        import traceback
-
         try:
+            import io
+            import os
+            import re
+            import traceback
+
             import apport.report
             from apport.fileutils import get_recent_crashes, likely_packaged
-        except ImportError:
+        except (ImportError, IOError):
             return
 
         # apport will look up the package from the executable path.
