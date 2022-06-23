@@ -55,23 +55,16 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
-        # if python apt modules are not built for the python version than it
-        # is not supported. LP: #1774843
-        try:
-            import apt_pkg
-
-            # make pyflakes happy
-            apt_pkg.DATE
-        except ImportError:
-            return
-
         import io
         import os
         import re
         import traceback
 
-        import apport.report
-        from apport.fileutils import get_recent_crashes, likely_packaged
+        try:
+            import apport.report
+            from apport.fileutils import get_recent_crashes, likely_packaged
+        except ImportError:
+            return
 
         # apport will look up the package from the executable path.
         try:
