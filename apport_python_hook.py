@@ -32,7 +32,7 @@ def enabled():
         return True
 
 
-def apport_excepthook(exc_type, exc_obj, exc_tb):
+def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
     """Catch an uncaught exception and make a traceback."""
 
     # create and save a problem report. Note that exceptions in this code
@@ -66,20 +66,11 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         except (ImportError, IOError):
             return
 
-        # apport will look up the package from the executable path.
-        try:
-            binary = os.path.realpath(os.path.join(os.getcwd(), sys.argv[0]))
-        except (TypeError, AttributeError, IndexError):
-            # the module has mutated sys.argv, plan B
-            try:
-                binary = os.readlink("/proc/%i/exe" % os.getpid())
-            except OSError:
-                return
-
-        # for interactive python sessions, sys.argv[0] == ''; catch that and
-        # other irregularities
-        if not os.access(binary, os.X_OK) or not os.path.isfile(binary):
+        # for interactive Python sessions, sys.argv[0] == ""
+        if not binary:
             return
+
+        binary = os.path.realpath(binary)
 
         # filter out binaries in user accessible paths
         if not likely_packaged(binary):
@@ -220,4 +211,23 @@ def dbus_service_unknown_analysis(exc_obj, report):
 def install():
     """Install the python apport hook."""
 
-    sys.excepthook = apport_excepthook
+    # Record before the program can mutate sys.argv and can call os.chdir().
+    binary = sys.argv[0]
+    if binary and not binary.startswith("/"):
+        # pylint: disable=import-outside-toplevel; for Python starup time
+        import os
+
+        try:
+            binary = f"{os.getcwd()}/{binary}"
+        except FileNotFoundError:
+            try:
+                binary = os.readlink("/proc/self/cwd")
+                if binary.endswith(" (deleted)"):
+                    binary = binary[:-10]
+            except IOError:
+                return
+
+    def partial_apport_excepthook(exc_type, exc_obj, exc_tb):
+        return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
+
+    sys.excepthook = partial_apport_excepthook

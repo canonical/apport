@@ -45,7 +45,7 @@ class T(unittest.TestCase):
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
 
-    def _test_crash(self, extracode="", scriptname=None):
+    def _test_crash(self, extracode="", scriptname=None, relpath=False):
         """Create a test crash."""
 
         # put the script into /var/tmp, since that isn't ignored in the
@@ -73,12 +73,24 @@ func(42)
         )
         os.close(fd)
         os.chmod(script, 0o755)
-        env = self.env.copy()
-        env["PYTHONPATH"] = f"{env.get('PYTHONPATH', '.')}:/my/bogus/path"
 
-        p = subprocess.Popen(
-            [script, "testarg1", "testarg2"], stderr=subprocess.PIPE, env=env
-        )
+        if relpath:
+            binary = os.path.join(".", os.path.basename(script))
+            orig_cwd = os.getcwd()
+            os.chdir(os.path.dirname(script))
+        else:
+            binary = script
+            orig_cwd = "."
+        env = self.env.copy()
+        env["PYTHONPATH"] = f"{env.get('PYTHONPATH', orig_cwd)}:/my/bogus/path"
+        try:
+            p = subprocess.Popen(
+                [binary, "testarg1", "testarg2"],
+                stderr=subprocess.PIPE,
+                env=env,
+            )
+        finally:
+            os.chdir(orig_cwd)
         err = p.communicate()[1].decode()
         self.assertEqual(
             p.returncode,
@@ -224,7 +236,7 @@ func(42)
     def test_no_argv(self):
         """with zapped sys.argv."""
 
-        self._test_crash("import sys\nsys.argv = None")
+        script = self._test_crash("import sys\nsys.argv = None")
 
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
@@ -260,9 +272,7 @@ func(42)
             "report has necessary fields",
         )
         self.assertIn("bin/python", pr["InterpreterPath"])
-        # we have no actual executable, so we should fall back to the
-        # interpreter
-        self.assertEqual(pr["ExecutablePath"], pr["InterpreterPath"])
+        self.assertEqual(pr["ExecutablePath"], script)
         if "ExecutableTimestamp" in pr:
             self.assertEqual(
                 pr["ExecutableTimestamp"],
@@ -502,6 +512,30 @@ func(42)
         self.assertEqual(
             pr.crash_signature(), "%s:OSError:%s@11:g" % (exe, exe)
         )
+
+    def test_getcwd_error(self):
+        """FileNotFoundError on os.getcwd() call"""
+        for relpath in (True, False):
+            with self.subTest(relpath=relpath):
+                self._test_crash(
+                    extracode=textwrap.dedent(
+                        """\
+                        import os
+                        import tempfile
+
+                        tempdir = tempfile.mkdtemp()
+                        os.chdir(tempdir)
+                        os.rmdir(tempdir)
+                        os.getcwd()
+                        """
+                    ),
+                    relpath=relpath,
+                )
+                pr = self._load_report()
+                self.assertIn(":FileNotFoundError:", pr.crash_signature())
+                self.assertIn(
+                    "os.getcwd()\nFileNotFoundError", pr["Traceback"]
+                )
 
     def test_subclassed_os_error(self):
         """OSError with known subclass"""
