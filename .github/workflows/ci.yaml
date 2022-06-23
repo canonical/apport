@@ -171,7 +171,7 @@ jobs:
       - name: Build
         run: ./setup.py build
       - name: Install
-        run: sudo ./setup.py install --prefix=/usr
+        run: sudo ./setup.py install --install-layout=deb --prefix=/usr
       - name: Enable Apport
         run: >
           echo "|/usr/share/apport/apport "
