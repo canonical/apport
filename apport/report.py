@@ -14,7 +14,7 @@ import errno
 import fnmatch
 import glob
 import grp
-import importlib
+import importlib.util
 import io
 import os
 import pwd
