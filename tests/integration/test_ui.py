@@ -1053,6 +1053,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
     @patch("apport.report.Report.add_gdb_info")
+    @patch("apport.hookutils.attach_conffiles")
     def test_run_crash_argv_file(self, *args):
         """run_crash() through a file specified on the command line"""
 
@@ -2218,6 +2219,9 @@ class T(unittest.TestCase):
             ),
         )
 
+    @unittest.mock.patch(
+        "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
+    )
     def test_run_symptom(self):
         """run_symptom()"""
 
