@@ -145,6 +145,10 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         return self.question_file_response
 
 
+@unittest.mock.patch(
+    "apport.hookutils._root_command_prefix",
+    unittest.mock.MagicMock(return_value=[]),
+)
 class T(unittest.TestCase):
     TEST_EXECUTABLE = "/usr/bin/yes"
 

@@ -850,6 +850,10 @@ int main() { return f(42); }
 
         self.assertRaises(FileNotFoundError, pr.add_gdb_info)
 
+    @unittest.mock.patch(
+        "apport.hookutils._root_command_prefix",
+        unittest.mock.MagicMock(return_value=[]),
+    )
     def test_add_zz_parse_segv_details(self):
         """parse-segv produces sensible results"""
         rep = tempfile.NamedTemporaryFile()
