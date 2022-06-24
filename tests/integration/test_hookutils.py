@@ -8,6 +8,7 @@ import tempfile
 import unittest
 import unittest.mock
 
+import apport
 import apport.hookutils
 
 
@@ -403,10 +404,10 @@ class T(unittest.TestCase):
     )
     def test_in_session_of_problem(self):
         """in_session_of_problem()"""
-        report = {"Date": "Sat Jan  1 12:00:00 2011"}
+        report = apport.Report(date="Sat Jan  1 12:00:00 2011")
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-        report = {"Date": "Mon Oct 10 21:06:03 2009"}
+        report = apport.Report(date="Mon Oct 10 21:06:03 2009")
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
         report = apport.Report()
@@ -418,13 +419,13 @@ class T(unittest.TestCase):
         try:
             locale.setlocale(locale.LC_TIME, "C")
 
-            report = {"Date": "Sat Jan  1 12:00:00 2011"}
+            report = apport.Report(date="Sat Jan  1 12:00:00 2011")
             self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-            report = {"Date": "Mon Oct 10 21:06:03 2009"}
+            report = apport.Report(date="Mon Oct 10 21:06:03 2009")
             self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-            report = {"Date": "Tue Jan  1 12:00:00 2038"}
+            report = apport.Report(date="Tue Jan  1 12:00:00 2038")
             self.assertTrue(apport.hookutils.in_session_of_problem(report))
         finally:
             locale.setlocale(locale.LC_TIME, orig_ctime)

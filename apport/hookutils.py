@@ -1136,7 +1136,10 @@ def in_session_of_problem(report):
             else:
                 return None
 
-    report_time = report.get_timestamp()
+    try:
+        report_time = report.get_timestamp()
+    except AttributeError:
+        return None
     if report_time is None:
         return None
 
