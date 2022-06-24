@@ -716,25 +716,20 @@ class T(unittest.TestCase):
     def test_crash_nodetails(self, *args):
         """Crash report without showing details"""
 
-        self.visible_progress = None
-
         def cont(*args):
             if Gtk.events_pending():
                 return True
             if not self.app.w("continue_button").get_visible():
                 return True
             self.app.w("continue_button").clicked()
-            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
-            return False
-
-        def check_progress(*args):
-            self.visible_progress = self.app.w(
-                "window_information_collection"
-            ).get_property("visible")
             return False
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
-        self.app.run_crash(self.app.report_file)
+        info_collection_window = self.app.w("window_information_collection")
+        with unittest.mock.patch.object(
+            info_collection_window, "show", wraps=info_collection_window.show
+        ) as info_collection_window_show_mock:
+            self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
         self.assertEqual(self.app.crashdb.latest_id(), 0)
@@ -743,7 +738,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
 
         # should show a progress bar for info collection
-        self.assertEqual(self.visible_progress, True)
+        info_collection_window_show_mock.assert_called_once_with()
 
         # data was collected
         self.assertTrue(r["Package"].startswith("bash "))
@@ -767,8 +762,6 @@ class T(unittest.TestCase):
     def test_crash_details(self, *args):
         """Crash report with showing details"""
 
-        self.visible_progress = None
-
         def show_details(*args):
             if Gtk.events_pending():
                 return True
@@ -787,17 +780,14 @@ class T(unittest.TestCase):
 
             self.assertTrue(self.app.w("continue_button").get_visible())
             self.app.w("continue_button").clicked()
-            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
-            return False
-
-        def check_progress(*args):
-            self.visible_progress = self.app.w(
-                "window_information_collection"
-            ).get_property("visible")
             return False
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, show_details)
-        self.app.run_crash(self.app.report_file)
+        info_collection_window = self.app.w("window_information_collection")
+        with unittest.mock.patch.object(
+            info_collection_window, "show", wraps=info_collection_window.show
+        ) as info_collection_window_show_mock:
+            self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
         self.assertEqual(self.app.crashdb.latest_id(), 0)
@@ -806,7 +796,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
 
         # we already collected details, do not show the progress dialog again
-        self.assertNotEqual(self.visible_progress, True)
+        info_collection_window_show_mock.assert_not_called()
 
         # data was collected
         self.assertTrue(r["Package"].startswith("bash "))
@@ -897,33 +887,28 @@ class T(unittest.TestCase):
     def test_crash_noaccept(self, *args):
         """Crash report with non-accepting crash DB"""
 
-        self.visible_progress = None
-
         def cont(*args):
             if Gtk.events_pending():
                 return True
             if not self.app.w("continue_button").get_visible():
                 return True
             self.app.w("continue_button").clicked()
-            GLib.timeout_add(self.POLLING_INTERVAL_MS, check_progress)
-            return False
-
-        def check_progress(*args):
-            self.visible_progress = self.app.w(
-                "window_information_collection"
-            ).get_property("visible")
             return False
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.crashdb.options["problem_types"] = ["bug"]
-        self.app.run_crash(self.app.report_file)
+        info_collection_window = self.app.w("window_information_collection")
+        with unittest.mock.patch.object(
+            info_collection_window, "show", wraps=info_collection_window.show
+        ) as info_collection_window_show_mock:
+            self.app.run_crash(self.app.report_file)
 
         # we should not have reported the crash
         self.assertEqual(self.app.crashdb.latest_id(), -1)
         self.assertEqual(self.app.open_url.call_count, 0)
 
         # no progress dialog for non-accepting DB
-        self.assertNotEqual(self.visible_progress, True)
+        info_collection_window_show_mock.assert_not_called()
 
         # data was collected for whoopsie
         r = self.app.report
