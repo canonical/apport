@@ -50,7 +50,7 @@ a report. You can influence this in various ways:
    because they happen on known-bad hardware, from a third-party repository, or
    other situations. This can be achieved by adding a field
 
-      report['UnreportableReason'] = _('explanation')
+      report["UnreportableReason"] = _("explanation")
 
    Such reports are displayed by the apport frontends as unreportable with the
    given explanation. Please ensure proper i18n for the texts.
@@ -64,7 +64,7 @@ a report. You can influence this in various ways:
 
 For special classes of problems where Apport does not have a builtin crash
 duplicate detection (such as for signal and Python crashes), hooks can also set
-report['DuplicateSignature']. This should both uniquely identify the problem
+report["DuplicateSignature"]. This should both uniquely identify the problem
 class (e. g. "XorgGPUFreeze") as well as the particular problem (i. e.
 variables which tell this instance apart from different problems).
 
@@ -86,7 +86,7 @@ Tags
 Some bug tracking systems support tags to further categorize bug reports and
 make searching/duplication easier. Hooks can set tags with
 
-  report['Tags'] = 'tag1 tag2'
+  report["Tags"] = "tag1 tag2"
 
 i. e. a space separated list of tag names.
 
@@ -102,7 +102,7 @@ If there is no existing database, or you do not want to ship a configuration,
 the 'CrashDB' field can also contain the DB specification itself, i. e. what
 would otherwise be in /etc/apport/crashdb.conf.d/*.conf. Example:
 
-  report['CrashDB'] = '{ "impl": "launchpad", "project": "foo", "my_option": "1"}'
+  report["CrashDB"] = '{"impl": "launchpad", "project": "foo", "my_option": "1"}'
 
 Please see crashdb-conf.txt for a description of available implementations and
 options.
@@ -128,9 +128,11 @@ binary package foo, put this into /usr/share/apport/package-hooks/foo.py:
 ------------ 8< ----------------
 import os.path
 
+
 def add_info(report, ui):
-    if os.path.exists('/var/log/foo.log'):
-        report['FooLog'] = open('/var/log/foo.log').read()
+    if os.path.exists("/var/log/foo.log"):
+        with open("/var/log/foo.log") as f:
+            report["FooLog"] = f.read()
 ------------ 8< ----------------
 
 
@@ -139,18 +141,20 @@ Example with an interactive question and attaching sound hardware information:
 ------------ 8< ----------------
 import apport.hookutils
 
+
 def add_info(report, ui):
     apport.hookutils.attach_alsa(report)
 
-    ui.information('Now playing test sound...')
+    ui.information("Now playing test sound...")
 
-    report['AplayOut'] = apport.hookutils.command_output(['aplay',
-	    '/usr/share/sounds/question.wav'])
+    report["AplayOut"] = apport.hookutils.command_output(
+        ["aplay", "/usr/share/sounds/question.wav"]
+    )
 
-    response = ui.yesno('Did you hear the sound?')
-    if response == None: # user cancelled
+    response = ui.yesno("Did you hear the sound?")
+    if response is None:  # user cancelled
         raise StopIteration
-    report['SoundAudible'] = str(response)
+    report["SoundAudible"] = str(response)
 ------------ 8< ----------------
 
 Apport itself ships a source package hook, see

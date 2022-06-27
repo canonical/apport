@@ -21,16 +21,18 @@ Symptom scripts go into /usr/share/apport/symptoms/symptomname.py, and have the
 following structure:
 
 ------------ 8< ----------------
-description = 'One-line description'
+description = "One-line description"
+
 
 def run(report, ui):
-    problem = ui.choice('What particular problem do you observe?',
-        ['Thing 1', 'Thing 2', ... ])
+    problem = ui.choice(
+        "What particular problem do you observe?",
+        ["Thing 1", "Thing 2", ...],
+    )
 
     # collect debugging information here, ask further questions, and figure out
     # package name
-    return 'packagename'
-
+    return "packagename"
 ------------ 8< ----------------
 
 They need to define a run() method which can use the passed HookUI object for
@@ -54,20 +56,23 @@ Example
 
 import apport
 
-description = 'External or internal storage devices (e. g. USB sticks)'
+description = "External or internal storage devices (e. g. USB sticks)"
+
 
 def run(report, ui):
-    problem = ui.choice('What particular problem do you observe?',
-        ['Removable storage device is not mounted automatically',
-         'Internal hard disk partition cannot be mounted manually',
-         # ...
-        ]
+    problem = ui.choice(
+        "What particular problem do you observe?",
+        [
+            "Removable storage device is not mounted automatically",
+            "Internal hard disk partition cannot be mounted manually",
+            # ...
+        ],
+    )
 
     # collect debugging information here, ask further questions
 
     if not kernel_detected:
         return apport.packaging.get_kernel_package()
     if not udev_detected:
-	return 'udev'
-    return 'devicekit-disks'
-
+        return "udev"
+    return "devicekit-disks"
