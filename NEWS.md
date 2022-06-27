@@ -1,6 +1,27 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.22.0 (2022-06-27)
+-------------------
+
+* Fix several pycodestyle warnings
+* Sort Python imports with isort
+* Replace `ProblemReport.get_date` by `ProblemReport.get_timestamp`, fixes
+  regression in 2.21.0 (LP: #1978487)
+* Format Python code with black
+* apport-gtk: Exclude trailing dot from URL links (LP: #1978301)
+* Fix `AttributeError`: 'NoneType' object has no attribute 'write', fixes
+  regression in 2.21.0 (LP: #1979211)
+* `apport_python_hook`:
+  * Properly handle missing modules (LP: #1774843)
+  * Fix `FileNotFoundError` if the current directory was deleted (LP: #1979637)
+  * Fix crash if `os.getcwd()` fails (LP: #1977954)
+* Replace deprecated `imp` module (LP: #1947425)
+* tests: Replace deprecated `load_module()`
+* `whoopsie-upload-all`: Fix 'EOFError' object has no attribute 'errno', fixes
+  regression in 2.21.0 (LP: #1979681)
+* Convert documentation to Markdown
+
 2.21.0 (2022-06-09)
 -------------------
   * SECURITY UPDATE: TOCTOU issue allows local user to read arbitrary
