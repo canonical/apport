@@ -14,31 +14,41 @@ problem can be marked as "not reportable" with an explanation.
 
 This happens by placing a Python code snippet into
 
-  /usr/share/apport/package-hooks/<packagename>.py
+```
+/usr/share/apport/package-hooks/<packagename>.py
+```
 
 or
 
-  /usr/share/apport/package-hooks/source_<sourcepackagename>.py
+```
+/usr/share/apport/package-hooks/source_<sourcepackagename>.py
+```
 
 Apport will import this and call a function
 
-  add_info(report, ui)
+```python
+add_info(report, ui)
+```
 
 and pass two arguments:
 
  - The currently processed problem report. This is an instance of
-   apport.Report, and should mainly be used as a dictionary (keys have to be
+   `apport.Report`, and should mainly be used as a dictionary (keys have to be
    alphanumeric and may contain dots, dashes, or underscores). Please see the
    Python help of this class for details:
-   
-     python -c 'import apport; help(apport.Report)'
 
- - An instance of apport.ui.HookUI which can be used to interactively get more
+   ```sh
+   python -c 'import apport; help(apport.Report)'
+   ```
+
+ - An instance of `apport.ui.HookUI` which can be used to interactively get more
    information from the user, such as asking for doing a particular action,
    yes/no question, multiple choices, or a file selector. Please see the Python
    help for available functions:
 
-     python -c 'import apport.ui; help(apport.ui.HookUI)'
+   ```sh
+   python -c 'import apport.ui; help(apport.ui.HookUI)'
+   ```
 
 Hook behaviour
 ==============
@@ -50,7 +60,9 @@ a report. You can influence this in various ways:
    because they happen on known-bad hardware, from a third-party repository, or
    other situations. This can be achieved by adding a field
 
-      report["UnreportableReason"] = _("explanation")
+   ```python
+   report["UnreportableReason"] = _("explanation")
+   ```
 
    Such reports are displayed by the apport frontends as unreportable with the
    given explanation. Please ensure proper i18n for the texts.
@@ -58,14 +70,16 @@ a report. You can influence this in various ways:
  * The user cancelled an interactive question for which the hook requires an
    answer. Then you should call
 
-     raise StopIteration
+   ```python
+   raise StopIteration
+   ```
 
    to cancel the problem report submission.
 
 For special classes of problems where Apport does not have a builtin crash
 duplicate detection (such as for signal and Python crashes), hooks can also set
-report["DuplicateSignature"]. This should both uniquely identify the problem
-class (e. g. "XorgGPUFreeze") as well as the particular problem (i. e.
+`report["DuplicateSignature"]`. This should both uniquely identify the problem
+class (e. g. `XorgGPUFreeze`) as well as the particular problem (i. e.
 variables which tell this instance apart from different problems).
 
 Package independent hooks
@@ -77,16 +91,21 @@ want to include violation logs from SELinux or AppArmor for every
 crash. The interface and file format is identical to the per-package
 hooks, except that they need to be put into
 
-  /usr/share/apport/general-hooks/<hookname>.py
+```
+/usr/share/apport/general-hooks/<hookname>.py
+```
 
-The <hookname> can be arbitrary and should describe the functionality.
+The `<hookname>` can be arbitrary and should describe the functionality.
 
 Tags
 ====
+
 Some bug tracking systems support tags to further categorize bug reports and
 make searching/duplication easier. Hooks can set tags with
 
-  report["Tags"] = "tag1 tag2"
+```python
+report["Tags"] = "tag1 tag2"
+```
 
 i. e. a space separated list of tag names.
 
@@ -94,26 +113,30 @@ Customize the crash DB to use
 =============================
 
 To use another crash database than the default one, you should create
-an hook that adds a 'CrashDB' field with the name of the database to
-use. See /etc/apport/crashdb.conf and
-/etc/apport/crashdb.conf.d/*.conf for available databases.
+an hook that adds a `CrashDB` field with the name of the database to
+use. See `/etc/apport/crashdb.conf` and
+`/etc/apport/crashdb.conf.d/*.conf` for available databases.
 
 If there is no existing database, or you do not want to ship a configuration,
-the 'CrashDB' field can also contain the DB specification itself, i. e. what
-would otherwise be in /etc/apport/crashdb.conf.d/*.conf. Example:
+the `CrashDB` field can also contain the DB specification itself, i. e. what
+would otherwise be in `/etc/apport/crashdb.conf.d/*.conf`. Example:
 
-  report["CrashDB"] = '{"impl": "launchpad", "project": "foo", "my_option": "1"}'
+```python
+report["CrashDB"] = '{"impl": "launchpad", "project": "foo", "my_option": "1"}'
+```
 
-Please see crashdb-conf.txt for a description of available implementations and
-options.
+Please see [crashdb-conf.md](./crashdb-conf.md) for a description of available
+implementations and options.
 
 Standard hook functions
 =======================
 
-If you write hooks, please have a look at the apport.hookutils
+If you write hooks, please have a look at the `apport.hookutils`
 module first: 
 
- python -c 'import apport.hookutils; help(apport.hookutils)'
+```sh
+python -c 'import apport.hookutils; help(apport.hookutils)'
+```
 
 It provides readymade and safe functions many standard situations, 
 such as getting a command's output, attaching a file's contents, 
@@ -122,10 +145,10 @@ attaching hardware related information, etc.
 Examples
 ========
 
-Trivial example: To attach a log file /var/log/foo.log for crashes in
-binary package foo, put this into /usr/share/apport/package-hooks/foo.py:
+Trivial example: To attach a log file `/var/log/foo.log` for crashes in
+binary package `foo`, put this into `/usr/share/apport/package-hooks/foo.py`:
 
------------- 8< ----------------
+```python
 import os.path
 
 
@@ -133,12 +156,12 @@ def add_info(report, ui):
     if os.path.exists("/var/log/foo.log"):
         with open("/var/log/foo.log") as f:
             report["FooLog"] = f.read()
------------- 8< ----------------
+```
 
 
 Example with an interactive question and attaching sound hardware information:
 
------------- 8< ----------------
+```python
 import apport.hookutils
 
 
@@ -155,8 +178,7 @@ def add_info(report, ui):
     if response is None:  # user cancelled
         raise StopIteration
     report["SoundAudible"] = str(response)
------------- 8< ----------------
+```
 
 Apport itself ships a source package hook, see
-/usr/share/apport/package-hooks/source_apport.py.
-
+`/usr/share/apport/package-hooks/source_apport.py`.

@@ -10,15 +10,15 @@ set -eu
     exit 1
 }
 
-version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
+version=$(grep '(UNRELEASED)' NEWS.md | cut -f1 -d' ')
 [ -n "$version" ] || {
-    echo "no UNRELEASED in NEWS" >&2
+    echo "no UNRELEASED in NEWS.md" >&2
     exit 1
 }
 
 sed -i -r "s/__version__ = '[0-9.]*'/__version__ = '${version}'/" apport/ui.py
-sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS
-git commit -s -m "Release apport $version" apport/ui.py NEWS
+sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS.md
+git commit -s -m "Release apport $version" apport/ui.py NEWS.md
 git tag "$version"
 
 git archive --format=tar --prefix="apport-${version}/" "$version" | xz -z -9 > "../apport-${version}.tar.xz"

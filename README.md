@@ -8,30 +8,33 @@ with again collecting as much information about it as possible.
 
 It currently supports
 
- - Crashes from standard signals (SIGSEGV, SIGILL, etc.) through the kernel
+ - Crashes from standard signals (`SIGSEGV`, `SIGILL`, etc.) through the kernel
    coredump handler (in piping mode)
  - Unhandled Python exceptions
  - GTK, KDE, and command line user interfaces
  - Packages can ship hooks for collecting specific data (such as
-   /var/log/Xorg.0.log for X.org, or modified gconf settings for GNOME
+   `/var/log/Xorg.0.log` for X.org, or modified gconf settings for GNOME
    programs)
  - apt/dpkg and rpm backend (in production use in Ubuntu and OpenSUSE)
  - Reprocessing a core dump and debug symbols for post-mortem (and preferably
-   server-side) generation of fully symbolic stack traces (apport-retrace)
+   server-side) generation of fully symbolic stack traces (`apport-retrace`)
  - Reporting bugs to Launchpad (more backends can be easily added)
 
 Please see https://wiki.ubuntu.com/Apport for more details and further links.
-The files in doc/ document particular details such as package hooks, crash
-database configuration, or the internal data format.
+The files in [doc/](./doc/) document particular details such as package hooks,
+crash database configuration, or the internal data format.
 
 Temporarily enabling apport
 ===========================
 
 The automatic crash interception component of apport is disabled by default in
-stable releases for a number of reasons [1].  To enable it just for the current
-session, do
+stable releases
+[for a number of reasons](https://wiki.ubuntu.com/Apport#How%20to%20enable%20apport).
+To enable it just for the current session, do
 
-  sudo service apport start force_start=1
+```sh
+sudo service apport start force_start=1
+```
 
 Then you can simply trigger the crash again, and Apport's dialog will show up
 with instructions to report a bug with traces. Apport will be automatically
@@ -42,34 +45,36 @@ that didn't use Apport in the first place.
 
 To enable it permanently, do:
 
-  sudo nano /etc/default/apport
+```sh
+sudo nano /etc/default/apport
+```
 
-and change enabled from "0" to "1".
-
-[1] https://wiki.ubuntu.com/Apport#How%20to%20enable%20apport
+and change enabled from `0` to `1`.
 
 Crash notification on servers
 =============================
 
 You can add
 
-if [ -x /usr/bin/apport-cli ]; then 
+```sh
+if [ -x /usr/bin/apport-cli ]; then
     if groups | grep -qw admin && /usr/share/apport/apport-checkreports -s; then
-	cat <<-EOF
-	You have new problem reports waiting in /var/crash. 
-	To take a look at them, run "sudo apport-cli".
+        cat <<-EOF
+You have new problem reports waiting in /var/crash.
+To take a look at them, run "sudo apport-cli".
 
-	EOF
+EOF
     elif /usr/share/apport/apport-checkreports; then
-	cat <<-EOF
-	You have new problem reports waiting in /var/crash. 
-	To take a look at them, run "apport-cli".
+        cat <<-EOF
+You have new problem reports waiting in /var/crash.
+To take a look at them, run "apport-cli".
 
-	EOF
+EOF
     fi
 fi
+```
 
-to your ~/.bashrc to get automatic notification of problem reports.
+to your `~/.bashrc` to get automatic notification of problem reports.
 
 Contributing
 ============
@@ -80,8 +85,8 @@ control, the bug tracker, translations, downloads, etc.:
   https://launchpad.net/apport
 
 The preferred mode of operation for Linux distribution packagers is to create
-their own branch from 'trunk' and add the distro specific packaging and patches
-to it. Please send patches which are applicable to trunk as merge requests or
-bug reports, so that (1) other distributions can benefit from them as well, and
-(2) you reduce the code delta to upstream.
-
+their own branch from `main` and add the distro specific packaging and patches
+to it. Please send patches which are applicable to main as merge requests or
+bug reports, so that
+1. other distributions can benefit from them as well, and
+2. you reduce the code delta to upstream.
