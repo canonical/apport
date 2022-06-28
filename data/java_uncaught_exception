@@ -64,15 +64,15 @@ def main():
     if "MainClassUrl" in report:
         url = report["MainClassUrl"]
 
-        scheme, netloc, path, params, query, fragment = urlparse(url)
+        url_parts = urlparse(url)
+        path = url_parts.path
 
-        if scheme == "jar":
+        if url_parts.scheme == "jar":
             # path is then a URL to the jar file
-            scheme, netloc, path, params, query, fragment = urlparse(path)
-            if "!/" in path:
-                path = path.split("!/", 1)[0]
+            url_parts = urlparse(path)
+            path = url_parts.path.split("!/", 1)[0]
 
-        if scheme == "file":
+        if url_parts.scheme == "file":
             report["ExecutablePath"] = path
         else:
             # Program at some non-file URL crashed. Give up.
