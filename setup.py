@@ -3,12 +3,12 @@
 import distutils.command.build
 import distutils.command.clean
 import distutils.core
+import distutils.version
+import glob
 import os.path
 import shutil
 import subprocess
 import sys
-from distutils.version import StrictVersion
-from glob import glob
 
 try:
     import DistUtilsExtra.auto
@@ -20,7 +20,7 @@ except ImportError:
     sys.exit(1)
 
 assert (
-    StrictVersion(DistUtilsExtra.auto.__version__) >= "2.24"
+    distutils.version.StrictVersion(DistUtilsExtra.auto.__version__) >= "2.24"
 ), "needs DistUtilsExtra.auto >= 2.24"
 
 
@@ -42,10 +42,11 @@ class build_java_subdir(distutils.core.Command):
 
         subprocess.check_call(
             ["javac", "-source", "1.6", "-target", "1.6"]
-            + glob("com/ubuntu/apport/*.java")
+            + glob.glob("com/ubuntu/apport/*.java")
         )
         subprocess.check_call(
-            ["jar", "cvf", "apport.jar"] + glob("com/ubuntu/apport/*.class")
+            ["jar", "cvf", "apport.jar"]
+            + glob.glob("com/ubuntu/apport/*.class")
         )
         subprocess.check_call(
             ["javac", "-source", "1.6", "-target", "1.6", "crash.java"]
@@ -162,13 +163,13 @@ DistUtilsExtra.auto.setup(
     description="intercept, process, and report crashes and bug reports",
     version=__version__,
     data_files=[
-        ("share/doc/apport/", glob("doc/*.txt")),
+        ("share/doc/apport/", glob.glob("doc/*.txt")),
         # these are not supposed to be called directly, use apport-bug instead
         ("share/apport", ["gtk/apport-gtk", "kde/apport-kde"]),
-        ("lib/pm-utils/sleep.d/", glob("pm-utils/sleep.d/*")),
-        ("/lib/udev/rules.d", glob("udev/*.rules")),
-        (systemd_unit_dir, glob("data/systemd/*.s*")),
-        (systemd_tmpfiles_dir, glob("data/systemd/*.conf")),
+        ("lib/pm-utils/sleep.d/", glob.glob("pm-utils/sleep.d/*")),
+        ("/lib/udev/rules.d", glob.glob("udev/*.rules")),
+        (systemd_unit_dir, glob.glob("data/systemd/*.s*")),
+        (systemd_tmpfiles_dir, glob.glob("data/systemd/*.conf")),
     ]
     + optional_data_files,
     cmdclass=cmdclass,

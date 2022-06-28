@@ -5,7 +5,7 @@ import sys
 import tempfile
 import time
 import unittest
-from unittest.mock import patch
+import unittest.mock
 
 import apport.fileutils
 import apport.packaging
@@ -259,8 +259,8 @@ class T(unittest.TestCase):
                 set(apport.fileutils.get_new_system_reports()), set([])
             )
 
-    @patch.object(os, "stat")
-    @patch.object(pwd, "getpwuid")
+    @unittest.mock.patch.object(os, "stat")
+    @unittest.mock.patch.object(pwd, "getpwuid")
     def test_get_system_reports_guest(self, *args):
         """get_all_system_reports() filters out reports from guest user"""
 

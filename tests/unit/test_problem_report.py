@@ -1,9 +1,9 @@
 import email
+import io
 import locale
 import textwrap
 import time
 import unittest
-from io import BytesIO
 
 import problem_report
 
@@ -99,8 +99,8 @@ class T(unittest.TestCase):
         pr["WhiteSpace"] = " foo   bar\nbaz\n  blip  \n\nafteremptyline"
         # Unicode with a non-space low ASCII character \x05 in it
         pr["UnprintableUnicode"] = b"a\xc3\xa4\x05z1\xc3\xa9".decode("UTF-8")
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         expected = (
             textwrap.dedent(
                 """\
@@ -122,7 +122,7 @@ class T(unittest.TestCase):
             + "  foo   bar\n baz\n   blip  \n \n afteremptyline\n"
         )
         expected = expected.encode("UTF-8")
-        self.assertEqual(io.getvalue(), expected)
+        self.assertEqual(out.getvalue(), expected)
 
     def test_load(self):
         """load() with various formatting."""
@@ -139,7 +139,7 @@ class T(unittest.TestCase):
             """
         )
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(report.encode()))
+        pr.load(io.BytesIO(report.encode()))
         self.assertEqual(pr["ProblemType"], "Crash")
         self.assertEqual(pr["Date"], "now!")
         self.assertEqual(pr["Simple"], "bar")
@@ -147,7 +147,7 @@ class T(unittest.TestCase):
 
         # test last field a bit more
         report += " \n"
-        pr.load(BytesIO(report.encode()))
+        pr.load(io.BytesIO(report.encode()))
         self.assertEqual(pr["ProblemType"], "Crash")
         self.assertEqual(pr["Date"], "now!")
         self.assertEqual(pr["Simple"], "bar")
@@ -155,7 +155,7 @@ class T(unittest.TestCase):
 
         # last field might not be \n terminated
         pr.load(
-            BytesIO(
+            io.BytesIO(
                 textwrap.dedent(
                     """\
                     ProblemType: Crash
@@ -182,18 +182,18 @@ class T(unittest.TestCase):
             "Last: foo\n"
         )
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(report.encode()))
+        pr.load(io.BytesIO(report.encode()))
         self.assertEqual(pr["WhiteSpace"], " foo   bar\nbaz\n\n  blip  ")
         self.assertEqual(pr["Last"], "foo")
 
         report += " \n"
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(report.encode()))
+        pr.load(io.BytesIO(report.encode()))
         self.assertEqual(pr["WhiteSpace"], " foo   bar\nbaz\n\n  blip  ")
         self.assertEqual(pr["Last"], "foo\n")
 
         # empty lines in values must have a leading space in coding
-        invalid_spacing = BytesIO(
+        invalid_spacing = io.BytesIO(
             textwrap.dedent(
                 """\
                 WhiteSpace:
@@ -207,24 +207,24 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, pr.load, invalid_spacing)
 
         # test that load() cleans up properly
-        pr.load(BytesIO(b"ProblemType: Crash"))
+        pr.load(io.BytesIO(b"ProblemType: Crash"))
         self.assertEqual(list(pr.keys()), ["ProblemType"])
 
     def test_write_fileobj(self):
         """writing a report with a pointer to a file-like object."""
 
-        tempbin = BytesIO(bin_data)
-        tempasc = BytesIO(b"Hello World")
+        tempbin = io.BytesIO(bin_data)
+        tempasc = io.BytesIO(b"Hello World")
 
         pr = problem_report.ProblemReport(date="now!")
         pr["BinFile"] = (tempbin,)
         pr["AscFile"] = (tempasc, False)
-        io = BytesIO()
-        pr.write(io)
-        io.seek(0)
+        out = io.BytesIO()
+        pr.write(out)
+        out.seek(0)
 
         pr = problem_report.ProblemReport()
-        pr.load(io)
+        pr.load(out)
         self.assertEqual(pr["BinFile"], tempbin.getvalue())
         self.assertEqual(pr["AscFile"], tempasc.getvalue().decode())
 
@@ -232,18 +232,18 @@ class T(unittest.TestCase):
         """writing a report with a pointer to a file-like object with
         enforcing non-emptyness."""
 
-        tempbin = BytesIO(b"")
-        tempasc = BytesIO(b"")
+        tempbin = io.BytesIO(b"")
+        tempasc = io.BytesIO(b"")
 
         pr = problem_report.ProblemReport(date="now!")
         pr["BinFile"] = (tempbin, True, None, True)
-        io = BytesIO()
-        self.assertRaises(IOError, pr.write, io)
+        out = io.BytesIO()
+        self.assertRaises(IOError, pr.write, out)
 
         pr = problem_report.ProblemReport(date="now!")
         pr["AscFile"] = (tempasc, False, None, True)
-        io = BytesIO()
-        self.assertRaises(IOError, pr.write, io)
+        out = io.BytesIO()
+        self.assertRaises(IOError, pr.write, out)
 
     def test_read_file(self):
         """reading a report with binary data."""
@@ -261,17 +261,17 @@ class T(unittest.TestCase):
 
         # test with reading everything
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(bin_report))
+        pr.load(io.BytesIO(bin_report))
         self.assertEqual(pr["File"], bin_data)
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
-        pr.load(BytesIO(bin_report), binary=False)
+        pr.load(io.BytesIO(bin_report), binary=False)
         self.assertEqual(pr["File"], "")
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping compressed binary data
-        pr.load(BytesIO(bin_report), binary="compressed")
+        pr.load(io.BytesIO(bin_report), binary="compressed")
         self.assertEqual(pr["Foo"], "Bar")
         self.assertEqual(pr.has_removed_fields(), False)
         self.assertTrue(isinstance(pr["File"], problem_report.CompressedValue))
@@ -295,26 +295,26 @@ class T(unittest.TestCase):
 
         # test with reading everything
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(bin_report))
+        pr.load(io.BytesIO(bin_report))
         self.assertEqual(pr["File"], b"AB" * 10 + b"\0" * 10 + b"Z")
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
-        pr.load(BytesIO(bin_report), binary=False)
+        pr.load(io.BytesIO(bin_report), binary=False)
         self.assertEqual(pr["File"], "")
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping CompressedValues
-        pr.load(BytesIO(bin_report), binary="compressed")
+        pr.load(io.BytesIO(bin_report), binary="compressed")
         self.assertEqual(pr.has_removed_fields(), False)
         self.assertEqual(len(pr["File"]), 31)
         self.assertEqual(
             pr["File"].get_value(), b"AB" * 10 + b"\0" * 10 + b"Z"
         )
-        io = BytesIO()
-        pr["File"].write(io)
-        io.seek(0)
-        self.assertEqual(io.read(), b"AB" * 10 + b"\0" * 10 + b"Z")
+        out = io.BytesIO()
+        pr["File"].write(out)
+        out.seek(0)
+        self.assertEqual(out.read(), b"AB" * 10 + b"\0" * 10 + b"Z")
 
     def test_iter(self):
         """problem_report.ProblemReport iteration."""
@@ -349,21 +349,21 @@ class T(unittest.TestCase):
         ).encode()
 
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(report))
+        pr.load(io.BytesIO(report))
 
         self.assertEqual(pr["Long"], "xxx\n.\nyyy")
 
         # write back unmodified
-        io = BytesIO()
-        pr.write(io)
-        self.assertEqual(io.getvalue(), report)
+        out = io.BytesIO()
+        pr.write(out)
+        self.assertEqual(out.getvalue(), report)
 
         pr["Short"] = "aaa\nbbb"
         pr["Long"] = "123"
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         self.assertEqual(
-            io.getvalue(),
+            out.getvalue(),
             textwrap.dedent(
                 """\
                 ProblemType: Crash
@@ -402,11 +402,11 @@ class T(unittest.TestCase):
         # too big for inline text, these become attachments
         pr["Hugeline"] = "A" * 10000
         pr["HugeMultiline"] = "A" * 900 + "\n" + "B" * 900 + "\n" + "C" * 900
-        io = BytesIO()
-        pr.write_mime(io)
-        io.seek(0)
+        out = io.BytesIO()
+        pr.write_mime(out)
+        out.seek(0)
 
-        msg = email.message_from_binary_file(io)
+        msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
         self.assertEqual(len(parts), 5)
 
@@ -491,13 +491,13 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["TwoLine"] = "first\nsecond\n"
-        io = BytesIO()
+        out = io.BytesIO()
         pr.write_mime(
-            io, extra_headers={"Greeting": "hello world", "Foo": "Bar"}
+            out, extra_headers={"Greeting": "hello world", "Foo": "Bar"}
         )
-        io.seek(0)
+        out.seek(0)
 
-        msg = email.message_from_binary_file(io)
+        msg = email.message_from_binary_file(out)
         self.assertEqual(msg["Greeting"], "hello world")
         self.assertEqual(msg["Foo"], "Bar")
         parts = [p for p in msg.walk()]
@@ -520,9 +520,9 @@ class T(unittest.TestCase):
         pr["FirstText"] = "Who"
         pr["FourthText"] = "Today"
         pr["ThirdText"] = "I Don't Know"
-        io = BytesIO()
+        out = io.BytesIO()
         pr.write_mime(
-            io,
+            out,
             priority_fields=[
                 "FirstText",
                 "SecondText",
@@ -531,9 +531,9 @@ class T(unittest.TestCase):
                 "FourthText",
             ],
         )
-        io.seek(0)
+        out.seek(0)
 
-        msg = email.message_from_binary_file(io)
+        msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
         self.assertEqual(len(parts), 2)
 
@@ -566,7 +566,7 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(["ProblemType", "Date"]))
         pr.load(
-            BytesIO(
+            io.BytesIO(
                 textwrap.dedent(
                     """\
                     ProblemType: Crash
@@ -584,7 +584,7 @@ class T(unittest.TestCase):
         pr["NewKey"] = "new new"
         self.assertEqual(pr.new_keys(), set(["NewKey"]))
 
-        out = BytesIO()
+        out = io.BytesIO()
         pr.write(out, only_new=True)
         self.assertEqual(out.getvalue(), b"NewKey: new new\n")
 
@@ -625,7 +625,7 @@ class T(unittest.TestCase):
             """
         ).encode()
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(report), key_filter=["DataYes", "GoodFile"])
+        pr.load(io.BytesIO(report), key_filter=["DataYes", "GoodFile"])
         self.assertEqual(pr["DataYes"], "yesyes")
         self.assertEqual(pr["GoodFile"], bin_data)
         self.assertEqual(sorted(pr.keys()), ["DataYes", "GoodFile"])

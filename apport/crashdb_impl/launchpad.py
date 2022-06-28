@@ -13,16 +13,16 @@
 import atexit
 import email
 import gzip
+import http.client
+import io
 import os.path
 import re
 import shutil
 import sys
 import tempfile
 import time
-from http.client import HTTPSConnection
-from io import BytesIO
-from urllib.parse import urlencode
-from urllib.request import HTTPSHandler, Request, build_opener, urlopen
+import urllib.parse
+import urllib.request
 
 from httplib2 import FailedToDecompressContent
 
@@ -276,21 +276,21 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     self.distro,
                     report["SourcePackage"],
                     handle,
-                    urlencode(args),
+                    urllib.parse.urlencode(args),
                 )
             else:
                 return "https://bugs.%s/%s/+filebug/%s?%s" % (
                     hostname,
                     self.distro,
                     handle,
-                    urlencode(args),
+                    urllib.parse.urlencode(args),
                 )
         else:
             return "https://bugs.%s/%s/+filebug/%s?%s" % (
                 hostname,
                 project,
                 handle,
-                urlencode(args),
+                urllib.parse.urlencode(args),
             )
 
     def get_id_url(self, report, id):
@@ -338,7 +338,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # just parse out the Apport block; e. g. LP #269539
                 description = description.split(b"\n\n", 1)[0]
 
-        report.load(BytesIO(description))
+        report.load(io.BytesIO(description))
 
         if "Date" not in report:
             # We had not submitted this field for a while, claiming it
@@ -1051,7 +1051,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report["DuplicateOf"] = url
 
         try:
-            f = urlopen(url + "/+text")
+            f = urllib.request.urlopen(url + "/+text")
         except IOError:
             # if we are offline, or LP is down, upload will fail anyway, so we
             # can just as well avoid the upload
@@ -1199,7 +1199,7 @@ _https_upload_callback = None
 # This progress code is based on KodakLoader by Jason Hildebrand
 # <jason@opensky.ca>. See http://www.opensky.ca/~jdhildeb/software/kodakloader/
 # for details.
-class HTTPSProgressConnection(HTTPSConnection):
+class HTTPSProgressConnection(http.client.HTTPSConnection):
     """Implement a HTTPSConnection with an optional callback function for
     upload progress."""
 
@@ -1208,7 +1208,7 @@ class HTTPSProgressConnection(HTTPSConnection):
 
         # if callback has not been set, call the old method
         if not _https_upload_callback:
-            HTTPSConnection.send(self, data)
+            http.client.HTTPSConnection.send(self, data)
             return
 
         sent = 0
@@ -1217,7 +1217,9 @@ class HTTPSProgressConnection(HTTPSConnection):
         while sent < total:
             _https_upload_callback(sent, total)
             t1 = time.time()
-            HTTPSConnection.send(self, data[sent : (sent + chunksize)])
+            http.client.HTTPSConnection.send(
+                self, data[sent : (sent + chunksize)]
+            )
             sent += chunksize
             t2 = time.time()
 
@@ -1230,7 +1232,7 @@ class HTTPSProgressConnection(HTTPSConnection):
                     chunksize >>= 1
 
 
-class HTTPSProgressHandler(HTTPSHandler):
+class HTTPSProgressHandler(urllib.request.HTTPSHandler):
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
 
@@ -1269,17 +1271,17 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     form_blob.set_payload(blob.read().decode("ascii"))
     data.attach(form_blob)
 
-    data_flat = BytesIO()
+    data_flat = io.BytesIO()
     gen = email.generator.BytesGenerator(data_flat, mangle_from_=False)
     gen.flatten(data)
 
     # do the request; we need to explicitly set the content type here, as it
     # defaults to x-www-form-urlencoded
-    req = Request(url, data_flat.getvalue())
+    req = urllib.request.Request(url, data_flat.getvalue())
     req.add_header(
         "Content-Type", "multipart/form-data; boundary=" + data.get_boundary()
     )
-    opener = build_opener(HTTPSProgressHandler)
+    opener = urllib.request.build_opener(HTTPSProgressHandler)
     result = opener.open(req)
     ticket = result.info().get("X-Launchpad-Blob-Token")
 

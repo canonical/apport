@@ -25,12 +25,12 @@ import subprocess
 import sys
 import tempfile
 import traceback
+import urllib.error
+import urllib.parse
+import urllib.request
 import xml.dom
 import xml.dom.minidom
-from urllib.error import URLError
-from urllib.parse import unquote
-from urllib.request import urlopen
-from xml.parsers.expat import ExpatError
+import xml.parsers.expat
 
 import apport
 import apport.fileutils
@@ -207,7 +207,7 @@ def _check_bug_pattern(report, pattern):
 def _check_bug_patterns(report, patterns):
     try:
         dom = xml.dom.minidom.parseString(patterns)
-    except (ExpatError, UnicodeEncodeError):
+    except (xml.parsers.expat.ExpatError, UnicodeEncodeError):
         return None
 
     for pattern in dom.getElementsByTagName("pattern"):
@@ -450,7 +450,7 @@ class Report(problem_report.ProblemReport):
                 r"^https?:\/\/.*launchpad\.net\/"
                 r"((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?"
             )
-            m = re.search(p, unquote(snap.get("contact", "")))
+            m = re.search(p, urllib.parse.unquote(snap.get("contact", "")))
             if m and m.group(1):
                 self["SnapSource"] = m.group(1)
                 if m.group(2):
@@ -1166,10 +1166,10 @@ class Report(problem_report.ProblemReport):
             return
 
         try:
-            f = urlopen(url)
+            f = urllib.request.urlopen(url)
             patterns = f.read().decode("UTF-8", errors="replace")
             f.close()
-        except (IOError, URLError):
+        except (IOError, urllib.error.URLError):
             # doesn't exist or failed to load
             return
 
@@ -1220,7 +1220,7 @@ class Report(problem_report.ProblemReport):
         else:
             try:
                 dom = xml.dom.minidom.parseString(contents)
-            except ExpatError as e:
+            except xml.parsers.expat.ExpatError as e:
                 raise ValueError(
                     "%s has invalid format: %s" % (_ignore_file, str(e))
                 )

@@ -9,23 +9,18 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import configparser
+import contextlib
 import glob
 import http.client
 import json
+import operator
 import os
 import pwd
 import socket
 import stat
 import subprocess
 import time
-from configparser import (
-    ConfigParser,
-    MissingSectionHeaderError,
-    NoOptionError,
-    NoSectionError,
-)
-from contextlib import closing
-from operator import itemgetter
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -179,7 +174,7 @@ def find_snap(snap):
     Return None if the snap is not found to be installed.
     """
     try:
-        with closing(UHTTPConnection(SNAPD_SOCKET)) as c:
+        with contextlib.closing(UHTTPConnection(SNAPD_SOCKET)) as c:
             url = f"/v2/snaps/{snap}"
             c.request("GET", url)
             response = c.getresponse()
@@ -428,7 +423,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
     fd = None
     f = None
     if not get_config.config:
-        get_config.config = ConfigParser(interpolation=None)
+        get_config.config = configparser.ConfigParser(interpolation=None)
 
         try:
             fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
@@ -447,7 +442,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
 
     try:
         get_config.config.read_string(contents)
-    except MissingSectionHeaderError:
+    except configparser.MissingSectionHeaderError:
         pass
 
     try:
@@ -455,7 +450,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
             return get_config.config.getboolean(section, setting)
         else:
             return get_config.config.get(section, setting)
-    except (NoOptionError, NoSectionError):
+    except (configparser.NoOptionError, configparser.NoSectionError):
         return default
 
 
@@ -587,7 +582,7 @@ def clean_core_directory(uid):
     the maximum allowed per uid"""
 
     uid_files = find_core_files_by_uid(uid)
-    sorted_files = sorted(uid_files, key=itemgetter(1))
+    sorted_files = sorted(uid_files, key=operator.itemgetter(1))
 
     # Subtract a extra one to make room for the new core file
     if len(uid_files) > max_corefiles_per_uid - 1:

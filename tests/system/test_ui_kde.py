@@ -15,7 +15,7 @@ import sys
 import tempfile
 import textwrap
 import unittest
-from unittest.mock import patch
+import unittest.mock
 
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
@@ -461,9 +461,9 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
-    @patch.object(MainUserInterface, "open_url")
-    @patch("apport.report.Report.add_gdb_info")
-    @patch(
+    @unittest.mock.patch.object(MainUserInterface, "open_url")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -501,9 +501,9 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @patch.object(MainUserInterface, "open_url")
-    @patch("apport.report.Report.add_gdb_info")
-    @patch(
+    @unittest.mock.patch.object(MainUserInterface, "open_url")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -554,9 +554,9 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @patch.object(MainUserInterface, "open_url")
-    @patch("apport.report.Report.add_gdb_info")
-    @patch(
+    @unittest.mock.patch.object(MainUserInterface, "open_url")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -638,7 +638,7 @@ class T(unittest.TestCase):
             self.app.report["Package"], "%s (not installed)" % pkg
         )
 
-    @patch.object(MainUserInterface, "open_url")
+    @unittest.mock.patch.object(MainUserInterface, "open_url")
     def test_1_update_report(self, *args):
         """Updating an existing report"""
 
@@ -672,7 +672,7 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @patch.object(MainUserInterface, "open_url")
+    @unittest.mock.patch.object(MainUserInterface, "open_url")
     def test_1_update_report_different_binary_source(self, *args):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""

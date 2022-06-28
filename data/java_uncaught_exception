@@ -16,7 +16,7 @@ This generates and saves a problem report.
 
 import os
 import sys
-from urllib.parse import urlparse
+import urllib.parse
 
 import apport.report
 from apport.packaging_impl import impl as packaging
@@ -64,12 +64,12 @@ def main():
     if "MainClassUrl" in report:
         url = report["MainClassUrl"]
 
-        url_parts = urlparse(url)
+        url_parts = urllib.parse.urlparse(url)
         path = url_parts.path
 
         if url_parts.scheme == "jar":
             # path is then a URL to the jar file
-            url_parts = urlparse(path)
+            url_parts = urllib.parse.urlparse(path)
             path = url_parts.path.split("!/", 1)[0]
 
         if url_parts.scheme == "file":

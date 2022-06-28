@@ -1,5 +1,6 @@
 import errno
 import glob
+import io
 import locale
 import os
 import pwd
@@ -12,8 +13,7 @@ import tempfile
 import textwrap
 import time
 import unittest
-from io import BytesIO, StringIO
-from unittest.mock import patch
+import unittest.mock
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -614,7 +614,7 @@ class T(unittest.TestCase):
         sys.argv = ["ubuntu-bug", "-v"]
         self.ui = TestSuiteUserInterface()
         orig_stdout = sys.stdout
-        sys.stdout = StringIO()
+        sys.stdout = io.StringIO()
         self.assertEqual(self.ui.run_argv(), True)
         output = sys.stdout.getvalue()
         sys.stdout = orig_stdout
@@ -1052,8 +1052,8 @@ class T(unittest.TestCase):
         self.assertTrue("decompress" in self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    @patch("apport.report.Report.add_gdb_info")
-    @patch("apport.hookutils.attach_conffiles")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch("apport.hookutils.attach_conffiles")
     def test_run_crash_argv_file(self, *args):
         """run_crash() through a file specified on the command line"""
 
@@ -1107,7 +1107,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
     def test_run_crash_unreportable(self, *args):
         """run_crash() on a crash with the UnreportableReason field"""
 
@@ -1131,7 +1131,7 @@ class T(unittest.TestCase):
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
-    @patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
     def test_run_crash_malicious_crashdb(self, *args):
         """run_crash() on a crash with malicious CrashDB"""
 
@@ -1155,7 +1155,7 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists("/tmp/pwned"))
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
-    @patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
     def test_run_crash_malicious_package(self, *args):
         """Package: path traversal"""
 
@@ -1614,7 +1614,7 @@ class T(unittest.TestCase):
 
         self.assertFalse("ProcCwd" in self.ui.report)
 
-        dump = BytesIO()
+        dump = io.BytesIO()
         # this contains more or less random characters which might contain the
         # user name
         del self.ui.report["CoreDump"]
@@ -2246,7 +2246,7 @@ class T(unittest.TestCase):
         orig_stderr = sys.stderr
         sys.argv = ["ui-test", "-s", "nopkg"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr
@@ -2258,7 +2258,7 @@ class T(unittest.TestCase):
         f.close()
         sys.argv = ["ui-test", "-s", "norun"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr
@@ -2270,7 +2270,7 @@ class T(unittest.TestCase):
         f.close()
         sys.argv = ["ui-test", "-s", "crash"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr

@@ -9,13 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import functools
 import os
 import shutil
 import sys
-from functools import cmp_to_key
-from urllib.error import URLError
-from urllib.parse import quote_plus
-from urllib.request import urlopen
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import apport
 
@@ -298,16 +298,18 @@ class CrashDatabase:
             # the hash is already quoted, but we really want to open the quoted
             # file names; as urlopen() unquotes, we need to double-quote here
             # again so that urlopen() sees the single-quoted file names
-            url = os.path.join(self.options["dupdb_url"], kind, quote_plus(h))
+            url = os.path.join(
+                self.options["dupdb_url"], kind, urllib.parse.quote_plus(h)
+            )
 
             # read data file
             try:
-                f = urlopen(url)
+                f = urllib.request.urlopen(url)
                 contents = f.read().decode("UTF-8")
                 f.close()
                 if "<title>404 Not Found" in contents:
                     continue
-            except (IOError, URLError):
+            except (IOError, urllib.error.URLError):
                 # does not exist, failed to load, etc.
                 continue
 
@@ -522,7 +524,7 @@ class CrashDatabase:
                 return -1
             return apport.packaging.compare_versions(x, y)
 
-        existing.sort(key=cmp_to_key(cmp))
+        existing.sort(key=functools.cmp_to_key(cmp))
 
         return existing
 
@@ -670,7 +672,7 @@ class CrashDatabase:
         i = "_".join(i.split(":", 2)[:2])
         # we manually quote '/' to make them nicer to read
         i = i.replace("/", "_")
-        i = quote_plus(i.encode("UTF-8"))
+        i = urllib.parse.quote_plus(i.encode("UTF-8"))
         # avoid too long file names
         i = i[:200]
         return i

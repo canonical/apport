@@ -1,12 +1,12 @@
 import email
 import gzip
+import io
 import os
 import shutil
 import tempfile
 import textwrap
 import time
 import unittest
-from io import BytesIO
 
 import problem_report
 
@@ -42,12 +42,12 @@ class T(unittest.TestCase):
         self.assertEqual(len(pr["Bin"]), len(bin_data))
         self.assertEqual(len(pr["Large"]), len(large_val))
 
-        io = BytesIO()
-        pr["Bin"].write(io)
-        self.assertEqual(io.getvalue(), bin_data)
-        io = BytesIO()
-        pr["Large"].write(io)
-        self.assertEqual(io.getvalue(), large_val)
+        out = io.BytesIO()
+        pr["Bin"].write(out)
+        self.assertEqual(out.getvalue(), bin_data)
+        out = io.BytesIO()
+        pr["Large"].write(out)
+        self.assertEqual(out.getvalue(), large_val)
 
         pr["Multiline"] = problem_report.CompressedValue(
             b"\1\1\1\n\2\2\n\3\3\3"
@@ -57,11 +57,11 @@ class T(unittest.TestCase):
         )
 
         # test writing of reports with CompressedValues
-        io = BytesIO()
-        pr.write(io)
-        io.seek(0)
+        out = io.BytesIO()
+        pr.write(out)
+        out.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io)
+        pr.load(out)
         self.assertEqual(pr["Foo"], "FooFoo!")
         self.assertEqual(pr["Bin"], bin_data)
         self.assertEqual(pr["Large"], large_val.decode("ASCII"))
@@ -72,15 +72,15 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["WhiteSpace"] = " foo   bar\nbaz\n  blip  "
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
 
         pr.clear()
         pr["Extra"] = "appended"
-        pr.write(io)
+        pr.write(out)
 
         self.assertEqual(
-            io.getvalue().decode(),
+            out.getvalue().decode(),
             textwrap.dedent(
                 f"""\
                 ProblemType: Crash
@@ -101,17 +101,17 @@ class T(unittest.TestCase):
 
         pr = problem_report.ProblemReport(date="now!")
         pr["File"] = (temp.name,)
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         temp.close()
 
         pr.clear()
         pr["Extra"] = "appended"
-        pr.write(io)
+        pr.write(out)
 
-        io.seek(0)
+        out.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io)
+        pr.load(out)
 
         self.assertEqual(pr["Date"], "now!")
         self.assertEqual(pr["File"], bin_data)
@@ -135,7 +135,7 @@ class T(unittest.TestCase):
             b"\1\1\1\n\2\2\n\3\3\3"
         )
 
-        report = BytesIO()
+        report = io.BytesIO()
         pr.write(report)
         report.seek(0)
 
@@ -193,12 +193,12 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport(date="now!")
         pr["File"] = (temp.name,)
         pr["Afile"] = (temp.name,)
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         temp.close()
 
         self.assertEqual(
-            io.getvalue().decode(),
+            out.getvalue().decode(),
             textwrap.dedent(
                 """\
                 ProblemType: Crash
@@ -219,11 +219,11 @@ class T(unittest.TestCase):
         temp.flush()
         pr = problem_report.ProblemReport(date="now!")
         pr["File"] = (temp.name, False)
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
 
         self.assertEqual(
-            io.getvalue().decode(),
+            out.getvalue().decode(),
             textwrap.dedent(
                 """\
                 ProblemType: Crash
@@ -234,11 +234,11 @@ class T(unittest.TestCase):
         )
 
         pr["File"] = (temp.name, True)
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
 
         self.assertEqual(
-            io.getvalue().decode(),
+            out.getvalue().decode(),
             textwrap.dedent(
                 """\
                 ProblemType: Crash
@@ -270,16 +270,16 @@ class T(unittest.TestCase):
         os.close(fin)
 
         pr = problem_report.ProblemReport(date="now!")
-        io = BytesIO()
+        out = io.BytesIO()
         with os.fdopen(fout, "rb") as f:
             pr["BinFile"] = (f,)
-            pr.write(io)
+            pr.write(out)
         assert os.wait()[1] == 0
 
-        io.seek(0)
+        out.seek(0)
 
         pr2 = problem_report.ProblemReport()
-        pr2.load(io)
+        pr2.load(out)
         self.assertEqual(pr2["BinFile"], "ab" * 512 * 1024 + "hello world")
 
     def test_big_file(self):
@@ -296,28 +296,28 @@ class T(unittest.TestCase):
         pr["File"] = (temp.name,)
         pr["Before"] = "xtestx"
         pr["ZAfter"] = "ytesty"
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         temp.close()
 
         # read it again
-        io.seek(0)
+        out.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io)
+        pr.load(out)
 
         self.assertTrue(pr["File"] == data)
         self.assertEqual(pr["Before"], "xtestx")
         self.assertEqual(pr["ZAfter"], "ytesty")
 
         # write it again
-        io2 = BytesIO()
+        io2 = io.BytesIO()
         pr.write(io2)
-        self.assertTrue(io.getvalue() == io2.getvalue())
+        self.assertTrue(out.getvalue() == io2.getvalue())
 
         # check gzip compatibility
-        io.seek(0)
+        out.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io, binary="compressed")
+        pr.load(out, binary="compressed")
         self.assertEqual(pr["File"].get_value(), data)
 
     def test_size_limit(self):
@@ -338,14 +338,14 @@ class T(unittest.TestCase):
         pr["FileLimitNone"] = (temp.name, True, None)
         pr["Before"] = "xtestx"
         pr["ZAfter"] = "ytesty"
-        io = BytesIO()
-        pr.write(io)
+        out = io.BytesIO()
+        pr.write(out)
         temp.close()
 
         # read it again
-        io.seek(0)
+        out.seek(0)
         pr = problem_report.ProblemReport()
-        pr.load(io)
+        pr.load(out)
 
         self.assertFalse("FileSmallLimit" in pr)
         self.assertFalse("FileLimitMinus1" in pr)
@@ -456,11 +456,11 @@ class T(unittest.TestCase):
         with open(tempgz.name, "rb") as f:
             pr["Value1.gz"] = f.read()
         pr["ZValue"] = problem_report.CompressedValue(bin_data)
-        io = BytesIO()
-        pr.write_mime(io)
-        io.seek(0)
+        out = io.BytesIO()
+        pr.write_mime(out)
+        out.seek(0)
 
-        msg = email.message_from_binary_file(io)
+        msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
         self.assertEqual(len(parts), 7)
 
@@ -539,11 +539,11 @@ class T(unittest.TestCase):
         pr["BadText"] = "YouDontSeeMe"
         pr["GoodBin"] = bin_data
         pr["BadBin"] = "Y" + "\x05" * 10 + "-"
-        io = BytesIO()
-        pr.write_mime(io, skip_keys=["BadText", "BadBin"])
-        io.seek(0)
+        out = io.BytesIO()
+        pr.write_mime(out, skip_keys=["BadText", "BadBin"])
+        out.seek(0)
 
-        msg = email.message_from_binary_file(io)
+        msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
         self.assertEqual(len(parts), 3)
 

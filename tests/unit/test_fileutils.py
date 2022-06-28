@@ -1,6 +1,6 @@
+import io
 import time
 import unittest
-from io import BytesIO
 
 import apport.fileutils
 import apport.packaging
@@ -30,16 +30,16 @@ class T(unittest.TestCase):
         """get_recent_crashes()"""
 
         # incomplete fields
-        r = BytesIO(b"""ProblemType: Crash""")
+        r = io.BytesIO(b"""ProblemType: Crash""")
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
-        r = BytesIO(
+        r = io.BytesIO(
             b"""ProblemType: Crash\nDate: Wed Aug 01 00:00:01 1990\n"""
         )
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # ancient report
-        r = BytesIO(
+        r = io.BytesIO(
             b"ProblemType: Crash\n"
             b"Date: Wed Aug 01 00:00:01 1990\n"
             b"CrashCounter: 3\n"
@@ -48,14 +48,14 @@ class T(unittest.TestCase):
 
         # old report (one day + one hour ago)
         date = time.ctime(time.mktime(time.localtime()) - 25 * 3600)
-        r = BytesIO(
+        r = io.BytesIO(
             f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode()
         )
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # current report (one hour ago)
         date = time.ctime(time.mktime(time.localtime()) - 3600)
-        r = BytesIO(
+        r = io.BytesIO(
             f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode()
         )
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 3)

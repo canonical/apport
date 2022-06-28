@@ -9,12 +9,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import datetime
 import os
 import shutil
 import subprocess
 import tempfile
 import unittest
-from datetime import datetime
 
 import apport
 import apport.fileutils
@@ -220,7 +220,9 @@ class T(unittest.TestCase):
     def test_kernel_crashdump_kdump(self):
         """kernel_crashdump using kdump-tools."""
 
-        timedir = datetime.strftime(datetime.now(), "%Y%m%d%H%M")
+        timedir = datetime.datetime.strftime(
+            datetime.datetime.now(), "%Y%m%d%H%M"
+        )
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
@@ -293,7 +295,9 @@ class T(unittest.TestCase):
     def test_kernel_crashdump_kdump_log_symlink(self):
         """attempted DoS with dmesg symlink with kdump-tools"""
 
-        timedir = datetime.strftime(datetime.now(), "%Y%m%d%H%M")
+        timedir = datetime.datetime.strftime(
+            datetime.datetime.now(), "%Y%m%d%H%M"
+        )
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
@@ -315,7 +319,9 @@ class T(unittest.TestCase):
     def test_kernel_crashdump_kdump_log_dir_symlink(self):
         """attempted DoS with dmesg dir symlink with kdump-tools"""
 
-        timedir = datetime.strftime(datetime.now(), "%Y%m%d%H%M")
+        timedir = datetime.datetime.strftime(
+            datetime.datetime.now(), "%Y%m%d%H%M"
+        )
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir + ".real")
         # pretend that a user tries information disclosure by pre-creating a

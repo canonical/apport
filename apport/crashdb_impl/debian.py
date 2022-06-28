@@ -9,9 +9,9 @@
 # the full text of the license.
 
 
+import email.mime.text
 import smtplib
 import tempfile
-from email.mime.text import MIMEText
 
 import apport
 import apport.crashdb
@@ -101,7 +101,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         temp.file.seek(0)
 
-        msg = MIMEText(temp.file.read().decode("UTF-8"))
+        msg = email.mime.text.MIMEText(temp.file.read().decode("UTF-8"))
         msg["Subject"] = report["Title"]
         msg["From"] = self.options["sender"]
         msg["To"] = self.options["recipient"]

@@ -12,9 +12,12 @@ This is used on Debian and derivatives such as Ubuntu.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import contextlib
+import datetime
 import glob
 import gzip
 import hashlib
+import http.client
 import json
 import logging
 import os
@@ -25,12 +28,9 @@ import subprocess
 import sys
 import tempfile
 import time
-from contextlib import closing
-from datetime import datetime
-from http.client import HTTPConnection
-from urllib.error import HTTPError, URLError
-from urllib.parse import quote, unquote, urlparse
-from urllib.request import urlopen
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import apt
 
@@ -330,14 +330,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         desired.
         """
         try:
-            response = urlopen(url)
-        except (URLError, HTTPError):
-            apport.warning("cannot connect to: %s" % unquote(url))
+            response = urllib.request.urlopen(url)
+        except (urllib.error.URLError, urllib.error.HTTPError):
+            apport.warning("cannot connect to: %s" % urllib.parse.unquote(url))
             return None
         try:
             content = response.read()
         except IOError:
-            apport.warning("failure reading data at: %s" % unquote(url))
+            apport.warning(
+                "failure reading data at: %s" % urllib.parse.unquote(url)
+            )
             return None
         if isinstance(content, bytes):
             content = content.decode("utf-8")
@@ -1501,16 +1503,18 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if age:
                     # HTTPConnection requires server name e.g.
                     # archive.ubuntu.com
-                    server = urlparse(url)[1]
-                    conn = HTTPConnection(server)
-                    conn.request("HEAD", urlparse(url)[2])
+                    server = urllib.parse.urlparse(url)[1]
+                    conn = http.client.HTTPConnection(server)
+                    conn.request("HEAD", urllib.parse.urlparse(url)[2])
                     res = conn.getresponse()
                     modified_str = res.getheader("last-modified", None)
                     if modified_str:
-                        modified = datetime.strptime(
+                        modified = datetime.datetime.strptime(
                             modified_str, "%a, %d %b %Y %H:%M:%S %Z"
                         )
-                        update = modified > datetime.fromtimestamp(st.st_mtime)
+                        update = modified > datetime.datetime.fromtimestamp(
+                            st.st_mtime
+                        )
                     else:
                         update = True
                     # don't update the file if it is empty
@@ -1521,7 +1525,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if update:
                     self._contents_update = True
                     try:
-                        src = urlopen(url)
+                        src = urllib.request.urlopen(url)
                     except IOError:
                         # we ignore non-existing pockets, but we do crash
                         # if the release pocket doesn't exist
@@ -1658,8 +1662,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 user = str.join("-", components[:index])
                 ppa_name = str.join("-", components[index:])
                 try:
-                    with closing(
-                        urlopen(
+                    with contextlib.closing(
+                        urllib.request.urlopen(
                             apport.packaging._ppa_archive_url
                             % {
                                 "user": user,
@@ -1669,7 +1673,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         )
                     ) as response:
                         response.read()
-                except (URLError, HTTPError):
+                except (urllib.error.URLError, urllib.error.HTTPError):
                     index += 1
                     if index == len(components):
                         if try_ppa:
@@ -1692,10 +1696,12 @@ class __AptDpkgPackageInfo(PackageInfo):
                     % (user, ppa_name, distro, release_codename)
                 )
                 try:
-                    with closing(urlopen(debug_url)) as response:
+                    with contextlib.closing(
+                        urllib.request.urlopen(debug_url)
+                    ) as response:
                         response.read()
                     add_debug = " main/debug"
-                except (URLError, HTTPError):
+                except (urllib.error.URLError, urllib.error.HTTPError):
                     add_debug = ""
                 return ppa_line + add_debug + "\ndeb-src" + ppa_line[3:] + "\n"
         return None
@@ -1817,9 +1823,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         if origins and source_list_content:
             for origin, (ppa_user, ppa_name) in origin_data.items():
                 ppa_archive_url = apport.packaging._ppa_archive_url % {
-                    "user": quote(ppa_user),
+                    "user": urllib.parse.quote(ppa_user),
                     "distro": distro_name,
-                    "ppaname": quote(ppa_name),
+                    "ppaname": urllib.parse.quote(ppa_name),
                 }
                 ppa_info = apport.packaging.json_request(ppa_archive_url)
                 if not ppa_info:

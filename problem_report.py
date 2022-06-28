@@ -10,18 +10,18 @@
 # the full text of the license.
 
 import base64
+import collections
+import email.encoders
+import email.mime.base
+import email.mime.multipart
+import email.mime.text
 import gzip
+import io
 import locale
 import os
 import struct
 import time
 import zlib
-from collections import UserDict
-from email.encoders import encode_base64
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from io import BytesIO
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
@@ -46,7 +46,7 @@ class CompressedValue:
     def set_value(self, value):
         """Set uncompressed value."""
 
-        out = BytesIO()
+        out = io.BytesIO()
         gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
         self.gzipvalue = out.getvalue()
         self.legacy_zlib = False
@@ -59,7 +59,7 @@ class CompressedValue:
 
         if self.legacy_zlib:
             return zlib.decompress(self.gzipvalue)
-        return gzip.GzipFile(fileobj=BytesIO(self.gzipvalue)).read()
+        return gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue)).read()
 
     def write(self, file):
         """Write uncompressed value into given file-like object."""
@@ -70,7 +70,7 @@ class CompressedValue:
             file.write(zlib.decompress(self.gzipvalue))
             return
 
-        gz = gzip.GzipFile(fileobj=BytesIO(self.gzipvalue))
+        gz = gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue))
         while True:
             block = gz.read(1048576)
             if not block:
@@ -91,7 +91,7 @@ class CompressedValue:
         return self.get_value().splitlines()
 
 
-class ProblemReport(UserDict):
+class ProblemReport(collections.UserDict):
     def __init__(self, type="Crash", date=None):
         """Initialize a fresh problem report.
 
@@ -597,8 +597,8 @@ class ProblemReport(UserDict):
                 if k.endswith(".gz"):
                     attach_value = f.read()
                 else:
-                    io = BytesIO()
-                    gf = gzip.GzipFile(k, mode="wb", fileobj=io, mtime=0)
+                    out = io.BytesIO()
+                    gf = gzip.GzipFile(k, mode="wb", fileobj=out, mtime=0)
                     while True:
                         block = f.read(1048576)
                         if block:
@@ -606,7 +606,7 @@ class ProblemReport(UserDict):
                         else:
                             gf.close()
                             break
-                    attach_value = io.getvalue()
+                    attach_value = out.getvalue()
                 f.close()
 
             # binary value
@@ -618,7 +618,7 @@ class ProblemReport(UserDict):
 
             # if we have an attachment value, create an attachment
             if attach_value:
-                att = MIMEBase("application", "x-gzip")
+                att = email.mime.base.MIMEBase("application", "x-gzip")
                 if k.endswith(".gz"):
                     att.add_header(
                         "Content-Disposition", "attachment", filename=k
@@ -628,7 +628,7 @@ class ProblemReport(UserDict):
                         "Content-Disposition", "attachment", filename=k + ".gz"
                     )
                 att.set_payload(attach_value)
-                encode_base64(att)
+                email.encoders.encode_base64(att)
                 attachments.append(att)
             else:
                 # plain text value
@@ -651,7 +651,7 @@ class ProblemReport(UserDict):
                     text += v.strip().replace("\n", "\n ") + "\n"
                 else:
                     # too large, separate attachment
-                    att = MIMEText(v, _charset="UTF-8")
+                    att = email.mime.text.MIMEText(v, _charset="UTF-8")
                     att.add_header(
                         "Content-Disposition",
                         "attachment",
@@ -660,11 +660,11 @@ class ProblemReport(UserDict):
                     attachments.append(att)
 
         # create initial text attachment
-        att = MIMEText(text, _charset="UTF-8")
+        att = email.mime.text.MIMEText(text, _charset="UTF-8")
         att.add_header("Content-Disposition", "inline")
         attachments.insert(0, att)
 
-        msg = MIMEMultipart()
+        msg = email.mime.multipart.MIMEMultipart()
         for k, v in extra_headers.items():
             msg.add_header(k, v)
         for a in attachments:

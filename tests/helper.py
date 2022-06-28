@@ -7,8 +7,8 @@ import os
 import subprocess
 import typing
 import unittest.mock
-from urllib.error import URLError
-from urllib.request import urlopen
+import urllib.error
+import urllib.request
 
 
 def has_internet():
@@ -22,10 +22,12 @@ def has_internet():
     if has_internet.cache is None:
         has_internet.cache = False
         try:
-            f = urlopen("https://api.launchpad.net/devel/ubuntu/", timeout=30)
+            f = urllib.request.urlopen(
+                "https://api.launchpad.net/devel/ubuntu/", timeout=30
+            )
             if b"web_link" in f.readline():
                 has_internet.cache = True
-        except URLError:
+        except urllib.error.URLError:
             pass
     return has_internet.cache
 

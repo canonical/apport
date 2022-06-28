@@ -14,6 +14,7 @@ implementation (like GTK, Qt, or CLI).
 # the full text of the license.
 
 import ast
+import configparser
 import errno
 import gettext
 import glob
@@ -32,7 +33,6 @@ import time
 import traceback
 import webbrowser
 import zlib
-from configparser import ConfigParser
 
 import apport
 import apport.crashdb
@@ -1971,7 +1971,7 @@ class UserInterface:
         if not desktop_file:
             return None
 
-        cp = ConfigParser(interpolation=None, strict=False)
+        cp = configparser.ConfigParser(interpolation=None, strict=False)
         try:
             cp.read(desktop_file, encoding="UTF-8")
         except Exception as e:

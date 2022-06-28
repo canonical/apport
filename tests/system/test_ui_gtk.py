@@ -16,7 +16,7 @@ import sys
 import tempfile
 import textwrap
 import unittest
-from unittest.mock import patch
+import unittest.mock
 
 import gi
 
@@ -555,7 +555,7 @@ class T(unittest.TestCase):
             self.app.w("ignore_future_problems").get_property("visible")
         )
 
-    @patch.object(GTKUserInterface, "can_examine_locally")
+    @unittest.mock.patch.object(GTKUserInterface, "can_examine_locally")
     def test_examine_button(self, *args):
         """
         +---------------------------------------------------------------------+
@@ -705,11 +705,11 @@ class T(unittest.TestCase):
         self.assertFalse(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
 
-    @patch.object(GTKUserInterface, "open_url")
-    @patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @patch.object(GTKUserInterface, "ui_stop_upload_progress")
-    @patch("apport.report.Report.add_gdb_info")
-    @patch(
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -751,11 +751,11 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @patch.object(GTKUserInterface, "open_url")
-    @patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @patch.object(GTKUserInterface, "ui_stop_upload_progress")
-    @patch("apport.report.Report.add_gdb_info")
-    @patch(
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
+    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -809,10 +809,10 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @patch.object(GTKUserInterface, "open_url")
-    @patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @patch.object(GTKUserInterface, "ui_stop_upload_progress")
-    @patch(
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -879,8 +879,8 @@ class T(unittest.TestCase):
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 
-    @patch.object(GTKUserInterface, "open_url")
-    @patch(
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -917,8 +917,8 @@ class T(unittest.TestCase):
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertTrue("libc" in r["Dependencies"])
 
-    @patch.object(GTKUserInterface, "open_url")
-    @patch(
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
@@ -1007,7 +1007,7 @@ class T(unittest.TestCase):
             self.app.report["Package"], "%s (not installed)" % pkg
         )
 
-    @patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
     def test_update_report(self, *args):
         """Updating an existing report"""
 
@@ -1042,7 +1042,7 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(GTKUserInterface, "open_url")
     def test_update_report_different_binary_source(self, *args):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
@@ -1092,7 +1092,7 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @patch.object(GTKUserInterface, "get_desktop_entry")
+    @unittest.mock.patch.object(GTKUserInterface, "get_desktop_entry")
     def test_missing_icon(self, *args):
         # LP: 937354
         self.app.report["ProblemType"] = "Crash"
@@ -1190,7 +1190,7 @@ class T(unittest.TestCase):
         GLib.idle_add(Gtk.main_quit)
         self.app.run_crash(self.app.report_file)
 
-    @patch.object(GTKUserInterface, "ui_start_upload_progress")
+    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
     def test_close_during_collect(self, *args):
         """Close details window during information collection"""
 
