@@ -23,8 +23,8 @@ import apport.ui
 from apport import unicode_gettext as _
 
 try:
-    gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("GdkX11", "3.0")  # noqa: E402, pylint: disable=C0413
+    gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
     from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except RuntimeError as e:
     # probably session just closing down?
