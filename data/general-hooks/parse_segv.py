@@ -17,7 +17,7 @@ import re
 import sys
 
 
-class ParseSegv(object):
+class ParseSegv:
     def __init__(self, registers, disassembly, maps):
         self.regs = self.parse_regs(registers)
         self.sp = None
