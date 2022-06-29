@@ -101,7 +101,7 @@ class ProblemReport(collections.UserDict):
         """
         if date is None:
             date = time.asctime()
-        self.data = {"ProblemType": type, "Date": date}
+        super().__init__({"ProblemType": type, "Date": date})
 
         # keeps track of keys which were added since the last ctor or load()
         self.old_keys = set()
