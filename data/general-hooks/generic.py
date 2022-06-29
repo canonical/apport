@@ -31,7 +31,7 @@ def add_info(report, ui):
         mounts[home] = "home"
     treshold = 50
 
-    for mount in mounts:
+    for mount, mount_name in mounts.items():
         try:
             st = os.statvfs(mount)
         except FileNotFoundError:
@@ -40,7 +40,7 @@ def add_info(report, ui):
 
         if free_mb < treshold:
             report["UnreportableReason"] = (
-                f"Your {mounts[mount]} partition has less than {free_mb} MB"
+                f"Your {mount_name} partition has less than {free_mb} MB"
                 f" of free space available, which leads to problems using"
                 f" applications and installing updates."
                 f" Please free some space."
@@ -127,5 +127,5 @@ Do you want to continue the report process anyway?
 if __name__ == "__main__":
     r = {}
     add_info(r, None)
-    for k in r:
-        print("%s: %s" % (k, r[k]))
+    for key, value in r.items():
+        print(f"{key}: {value}")

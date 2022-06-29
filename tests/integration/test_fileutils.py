@@ -448,9 +448,9 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertIn("libc.so.6", libs)
         self.assertIn("libc.so.6", libs["libc.so.6"])
         self.assertTrue(os.path.exists(libs["libc.so.6"]))
-        for line in libs:
-            self.assertNotIn("vdso", line, libs)
-            self.assertTrue(os.path.exists(libs[line]))
+        for library_name, library_path in libs.items():
+            self.assertNotIn("vdso", library_name, libs)
+            self.assertTrue(os.path.exists(library_path))
 
         self.assertEqual(
             apport.fileutils.shared_libraries("/non/existing"), {}
