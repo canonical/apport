@@ -137,7 +137,7 @@ try:
 except (OSError, subprocess.CalledProcessError):
     print("Java support: Java not available, not building Java crash handler")
 
-from apport.ui import __version__  # noqa: E402
+from apport.ui import __version__  # noqa: E402, pylint: disable=C0413
 
 # determine systemd unit directory
 try:

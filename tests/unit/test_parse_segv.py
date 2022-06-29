@@ -6,7 +6,7 @@ from tests.paths import get_data_directory
 
 sys.path.insert(0, os.path.join(get_data_directory(), "general-hooks"))
 
-import parse_segv  # noqa: E402
+import parse_segv  # noqa: E402, pylint: disable=C0411,C0413
 
 # Default global registers, maps, and disassembly for testing
 regs = """\
