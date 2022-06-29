@@ -249,7 +249,7 @@ def attach_dmi(report):
 
             try:
                 value = read_file(p)
-            except (OSError, IOError):
+            except OSError:
                 continue
             if value:
                 report["dmi." + f.replace("_", ".")] = value
@@ -596,7 +596,7 @@ def attach_root_command_outputs(report, command_map):
             try:
                 with open(os.path.join(workdir, keyname), "rb") as f:
                     buf = f.read().strip()
-            except IOError:
+            except OSError:
                 # this can happen if the user dismisses authorization in
                 # _root_command_prefix
                 continue
@@ -1068,7 +1068,7 @@ def nonfree_kernel_modules(module_list="/proc/modules"):
     try:
         with open(module_list) as f:
             mods = [line.split()[0] for line in f]
-    except IOError:
+    except OSError:
         return []
 
     nonfree = []
@@ -1148,7 +1148,7 @@ def in_session_of_problem(report):
         session_start_time = os.stat(
             "/run/systemd/sessions/" + session_id
         ).st_mtime
-    except (IOError, OSError):
+    except OSError:
         return None
 
     return session_start_time <= report_time

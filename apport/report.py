@@ -109,7 +109,7 @@ def _read_proc_file(path, pid=None, dir_fd=None):
 
         with io.open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
-    except (OSError, IOError) as error:
+    except OSError as error:
         return "Error: " + str(error)
 
 
@@ -127,7 +127,7 @@ def _read_maps(proc_pid_fd):
             opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd),
         ) as fd:
             maps = fd.read().strip()
-    except (OSError, IOError) as error:
+    except OSError as error:
         return "Error: " + str(error)
     return maps
 
@@ -721,7 +721,7 @@ class Report(problem_report.ProblemReport):
                 val = _read_proc_file("attr/current", pid, proc_pid_fd)
                 if val != "unconfined":
                     self["ProcAttrCurrent"] = val
-        except (IOError, OSError):
+        except OSError:
             pass
 
         ret = self.get_logind_session(pid, proc_pid_fd)
@@ -864,7 +864,7 @@ class Report(problem_report.ProblemReport):
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
 
-        Raises a IOError if the core dump is invalid/truncated, or OSError if
+        Raises a OSError if the core dump is invalid/truncated, or OSError if
         calling gdb fails, or FileNotFoundError if gdb or the crashing
         executable cannot be found.
         """
@@ -921,7 +921,7 @@ class Report(problem_report.ProblemReport):
                 warnings = out.splitlines()[0]
             reason = "Invalid core dump: " + warnings.strip()
             self["UnreportableReason"] = reason
-            raise IOError(reason)
+            raise OSError(reason)
         elif out.split("\n")[0].endswith("No such file or directory."):
             raise FileNotFoundError(
                 errno.ENOENT,
@@ -1169,7 +1169,7 @@ class Report(problem_report.ProblemReport):
             f = urllib.request.urlopen(url)
             patterns = f.read().decode("UTF-8", errors="replace")
             f.close()
-        except (IOError, urllib.error.URLError):
+        except (OSError, urllib.error.URLError):
             # doesn't exist or failed to load
             return
 
@@ -1204,7 +1204,7 @@ class Report(problem_report.ProblemReport):
                 f = os.fdopen(fd, "r")
                 # Limit size to prevent DoS
                 contents = f.read(50000)
-        except (IOError, OSError):
+        except OSError:
             pass
         finally:
             if f is not None:
@@ -1257,7 +1257,7 @@ class Report(problem_report.ProblemReport):
                         for line in fd:
                             if line.strip() == self["ExecutablePath"]:
                                 return True
-                except IOError:
+                except OSError:
                     continue
         except OSError:
             pass
@@ -1270,7 +1270,7 @@ class Report(problem_report.ProblemReport):
                     with open(os.path.join(_whitelist_dir, f)) as fd:
                         for line in fd:
                             whitelist.add(line.strip())
-                except IOError:
+                except OSError:
                     continue
 
             if whitelist and self["ExecutablePath"] not in whitelist:
@@ -2026,7 +2026,7 @@ class Report(problem_report.ProblemReport):
             session_start_time = os.stat(
                 "/run/systemd/sessions/" + my_session
             ).st_mtime
-        except (IOError, OSError):
+        except OSError:
             return None
 
         return (my_session, session_start_time)

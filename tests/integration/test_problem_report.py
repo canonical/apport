@@ -140,7 +140,7 @@ class T(unittest.TestCase):
         report.seek(0)
 
         self.assertRaises(
-            IOError,
+            OSError,
             pr.extract_keys,
             report,
             "Bin",

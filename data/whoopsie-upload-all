@@ -70,7 +70,7 @@ def process_report(report):
         with open(report, "rb") as f:
             try:
                 fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except IOError:
+            except OSError:
                 logging.info("%s already being processed, skipping", report)
                 return None
             r.load(f, binary="compressed")
@@ -105,7 +105,7 @@ def process_report(report):
 
         try:
             r.add_gdb_info()
-        except (IOError, EOFError, OSError, zlib.error) as error:
+        except (EOFError, OSError, zlib.error) as error:
             # gzip.GzipFile.read can raise zlib.error. See LP bug #1947800
 
             # Calling add_gdb_info raises ENOENT if the crash's executable

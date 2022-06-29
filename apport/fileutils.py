@@ -432,7 +432,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
                 f = os.fdopen(fd, "r")
                 # Limit size to prevent DoS
                 contents = f.read(500)
-        except (IOError, OSError):
+        except OSError:
             pass
         finally:
             if f is not None:

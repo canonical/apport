@@ -309,7 +309,7 @@ class CrashDatabase:
                 f.close()
                 if "<title>404 Not Found" in contents:
                     continue
-            except (IOError, urllib.error.URLError):
+            except (OSError, urllib.error.URLError):
                 # does not exist, failed to load, etc.
                 continue
 
@@ -820,7 +820,7 @@ class CrashDatabase:
 
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).
+        raise an exception (preferably OSError).
         """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
@@ -836,7 +836,7 @@ class CrashDatabase:
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).
+        raise an exception (preferably OSError).
         """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"

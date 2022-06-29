@@ -27,7 +27,7 @@ def enabled():
         with open(CONFIG) as f:
             conf = f.read()
         return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
-    except IOError:
+    except OSError:
         # if the file does not exist, assume it's enabled
         return True
 
@@ -63,7 +63,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
 
             import apport.report
             from apport.fileutils import get_recent_crashes, likely_packaged
-        except (ImportError, IOError):
+        except (ImportError, OSError):
             return
 
         # for interactive Python sessions, sys.argv[0] == ""
@@ -224,7 +224,7 @@ def install():
                 binary = os.readlink("/proc/self/cwd")
                 if binary.endswith(" (deleted)"):
                     binary = binary[:-10]
-            except IOError:
+            except OSError:
                 return
 
     def partial_apport_excepthook(exc_type, exc_obj, exc_tb):

@@ -61,7 +61,7 @@ else:
         else:
             with open(report, "rb") as f:
                 pr.load(f, binary=False)
-    except IOError as error:
+    except OSError as error:
         fatal(str(error))
 for k in pr:
     if pr[k] == "":
@@ -79,5 +79,5 @@ try:
     else:
         with open(report, "rb") as f:
             pr.extract_keys(f, bin_keys, dir)
-except IOError as error:
+except OSError as error:
     fatal(str(error))

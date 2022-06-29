@@ -211,7 +211,7 @@ class PackageInfo:
         try:
             with open(self.configuration) as f:
                 conf = f.read()
-        except IOError:
+        except OSError:
             # if the file does not exist, assume it's enabled
             return True
 

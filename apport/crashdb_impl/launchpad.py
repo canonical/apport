@@ -387,7 +387,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             elif ext == ".gz":
                 try:
                     report[key] = gzip.GzipFile(fileobj=attachment).read()
-                except IOError as error:
+                except OSError as error:
                     # some attachments are only called .gz, but are
                     # uncompressed (LP #574360)
                     if "Not a gzip" not in str(error):
@@ -637,7 +637,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError)."""
+        raise an exception (preferably OSError)."""
 
         bugs = self.lp_distro.searchTasks(tags="apport-crash")
         return id_set(bugs)
@@ -666,7 +666,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).
+        raise an exception (preferably OSError).
         """
         # do not do version tracking yet; for that, we need to get the current
         # distrorelease and the current package version in that distrorelease
@@ -1052,7 +1052,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         try:
             f = urllib.request.urlopen(url + "/+text")
-        except IOError:
+        except OSError:
             # if we are offline, or LP is down, upload will fail anyway, so we
             # can just as well avoid the upload
             return url

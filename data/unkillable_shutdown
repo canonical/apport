@@ -115,7 +115,7 @@ def do_report(pid, blacklist):
     try:
         with apport.fileutils.make_report_file(r) as f:
             r.write(f)
-    except (IOError, OSError) as error:
+    except OSError as error:
         apport.fatal("Cannot create report: " + str(error))
 
 

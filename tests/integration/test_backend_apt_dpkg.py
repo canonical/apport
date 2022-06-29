@@ -247,7 +247,7 @@ bin/true                                                admin/superutils
             # invalid mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertRaises(
-                IOError, impl.get_file_package, "usr/bin/frob", True
+                OSError, impl.get_file_package, "usr/bin/frob", True
             )
 
             # valid mirror, test cache directory
@@ -395,14 +395,14 @@ usr/bin/frob                                            foo/frob
             # invalid mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertRaises(
-                IOError,
+                OSError,
                 impl.get_file_package,
                 "/usr/lib/even/libfrob.so.1",
                 True,
                 arch="even",
             )
             self.assertRaises(
-                IOError,
+                OSError,
                 impl.get_file_package,
                 "/usr/lib/even/libfrob.so.0",
                 True,
@@ -455,7 +455,7 @@ usr/bin/frob                                            foo/frob
 
             # but no cached file for the other arch
             self.assertRaises(
-                IOError,
+                OSError,
                 impl.get_file_package,
                 "usr/bin/frob",
                 True,
@@ -472,7 +472,7 @@ usr/bin/frob                                            foo/frob
                 )
 
             self.assertRaises(
-                IOError,
+                OSError,
                 impl.get_file_package,
                 "usr/bin/frob",
                 True,

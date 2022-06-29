@@ -60,11 +60,11 @@ try:
         # Firmware dump could contain sensitive information
         pr["LaunchpadPrivate"] = "yes"
         pr["LaunchpadSubscribe"] = "canonical-kernel-team"
-except IOError:
+except OSError:
     pass
 
 try:
     with apport.fileutils.make_report_file(pr) as f:
         pr.write(f)
-except IOError as error:
+except OSError as error:
     apport.fatal("Cannot create report: " + str(error))

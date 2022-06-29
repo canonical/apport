@@ -272,7 +272,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         line = line.strip()
                         if line:
                             native_origins.append(line)
-            except IOError:
+            except OSError:
                 pass
 
         if pkg.candidate and pkg.candidate.origins:  # might be None
@@ -336,7 +336,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return None
         try:
             content = response.read()
-        except IOError:
+        except OSError:
             apport.warning(
                 "failure reading data at: %s" % urllib.parse.unquote(url)
             )
@@ -491,7 +491,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
                     if calculated_md5sum != default_md5sum:
                         modified[path] = contents
-                except IOError as error:
+                except OSError as error:
                     modified[path] = "[inaccessible: %s]" % str(error)
             else:
                 modified[path] = "[deleted]"
@@ -1528,7 +1528,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     self._contents_update = True
                     try:
                         src = urllib.request.urlopen(url)
-                    except IOError:
+                    except OSError:
                         # we ignore non-existing pockets, but we do crash
                         # if the release pocket doesn't exist
                         if pocket == "":

@@ -784,7 +784,7 @@ int main() { return f(42); }
         # truncate core file
         os.truncate(pr["CoreDump"][0], 10000)
 
-        self.assertRaises(IOError, pr.add_gdb_info)
+        self.assertRaises(OSError, pr.add_gdb_info)
 
         self.assertNotIn("Stacktrace", pr)
         self.assertNotIn("StacktraceTop", pr)

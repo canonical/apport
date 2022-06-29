@@ -230,8 +230,8 @@ class ProblemReport(collections.UserDict):
                                             out.write(line_value)
                                 else:
                                     break
-                    except IOError:
-                        raise IOError(
+                    except OSError:
+                        raise OSError(
                             "unable to open %s" % (os.path.join(dir, key))
                         )
                 else:
@@ -341,7 +341,7 @@ class ProblemReport(collections.UserDict):
         gzip compressed and base64-encoded (this defaults to True). If limit is
         set to a positive integer, the file is not attached if it's larger
         than the given limit, and the entire key will be removed. If
-        fail_on_empty is True, reading zero bytes will cause an IOError.
+        fail_on_empty is True, reading zero bytes will cause an OSError.
 
         file needs to be opened in binary mode.
 
@@ -399,7 +399,7 @@ class ProblemReport(collections.UserDict):
                         v = f.read()
 
                 if fail_on_empty and len(v) == 0:
-                    raise IOError("did not get any data for field " + k)
+                    raise OSError("did not get any data for field " + k)
 
                 if limit is not None and len(v) > limit:
                     del self.data[k]
@@ -490,7 +490,7 @@ class ProblemReport(collections.UserDict):
 
                 if len(v) >= 4 and v[3]:
                     if size == 0:
-                        raise IOError(
+                        raise OSError(
                             "did not get any data for field %s from %s"
                             % (k, str(v[0]))
                         )

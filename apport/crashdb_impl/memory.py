@@ -152,7 +152,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError)."""
+        raise an exception (preferably OSError)."""
 
         result = set()
         for i in range(len(self.reports)):
@@ -174,7 +174,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError)."""
+        raise an exception (preferably OSError)."""
 
         try:
             if self.reports[id]["dup_of"] is not None:

@@ -70,7 +70,7 @@ def check_lock():
     signal.alarm(30)  # Timeout after that many seconds
     try:
         fcntl.lockf(fd, fcntl.LOCK_EX)
-    except IOError:
+    except OSError:
         error_running()
     finally:
         signal.alarm(0)
@@ -243,7 +243,7 @@ def write_user_coredump(pid, timestamp, limit, from_report=None):
             mode=0o400,
             dir_fd=cwd,
         )
-    except (OSError, IOError):
+    except OSError:
         return
 
     error_log("writing core dump to %s (limit: %s)" % (core_name, str(limit)))
@@ -469,7 +469,7 @@ def is_systemd_watchdog_restart(signum):
         )
         out = journalctl.communicate()[0]
         return b"Watchdog timeout" in out
-    except (IOError, OSError) as error:
+    except OSError as error:
         error_log(
             "cannot determine if this crash is from systemd watchdog: %s"
             % error
@@ -980,7 +980,7 @@ try:
             os.fchown(fd, pidstat.st_uid, gid)
         except (OSError, KeyError):
             os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
-    except (OSError, IOError) as error:
+    except OSError as error:
         error_log("Could not create report file: %s" % str(error))
         sys.exit(1)
 
@@ -995,7 +995,7 @@ try:
 
     try:
         info.write(reportfile)
-    except IOError:
+    except OSError:
         os.unlink(report)
         raise
     if "CoreDump" not in info:

@@ -238,12 +238,12 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport(date="now!")
         pr["BinFile"] = (tempbin, True, None, True)
         out = io.BytesIO()
-        self.assertRaises(IOError, pr.write, out)
+        self.assertRaises(OSError, pr.write, out)
 
         pr = problem_report.ProblemReport(date="now!")
         pr["AscFile"] = (tempasc, False, None, True)
         out = io.BytesIO()
-        self.assertRaises(IOError, pr.write, out)
+        self.assertRaises(OSError, pr.write, out)
 
     def test_read_file(self):
         """reading a report with binary data."""

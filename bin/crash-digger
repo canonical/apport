@@ -167,7 +167,7 @@ class CrashDigger:
             MemoryError,
             TypeError,
             ValueError,
-            IOError,
+            OSError,
             AssertionError,
             zlib.error,
         ) as error:

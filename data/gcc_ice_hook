@@ -39,5 +39,5 @@ else:
 try:
     with apport.fileutils.make_report_file(pr) as f:
         pr.write(f)
-except (IOError, OSError) as error:
+except OSError as error:
     apport.fatal("Cannot create report: " + str(error))

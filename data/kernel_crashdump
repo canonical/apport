@@ -41,7 +41,7 @@ if os.path.exists(vmcore_path):
         pr["VmCore"] = (os.fdopen(core_fd, "rb"),)
         with apport.fileutils.make_report_file(pr) as f:
             pr.write(f)
-    except (IOError, OSError) as error:
+    except OSError as error:
         apport.fatal("Cannot create report: " + str(error))
 
     try:
@@ -70,5 +70,5 @@ else:
                 pr["VmCoreDmesg"] = (os.fdopen(dmesg_fd, "rb"),)
                 with open(crash_report, "xb") as f:
                     pr.write(f)
-            except (IOError, OSError) as error:
+            except OSError as error:
                 apport.fatal("Cannot create report: " + str(error))

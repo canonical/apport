@@ -84,7 +84,7 @@ func(42)
         )
         if not extracode:
             self.assertIn("This should happen.", err)
-        self.assertNotIn("IOError", err)
+        self.assertNotIn("OSError", err)
 
         return script
 
