@@ -170,16 +170,16 @@ class CrashDigger:
             IOError,
             AssertionError,
             zlib.error,
-        ) as e:
+        ) as error:
             if (
-                str(e)
+                str(error)
                 == "bug description must contain standard apport format data"
             ):
-                apport.log("Cannot download report: " + str(e), True)
-                apport.error("Cannot download report %i: %s", id, str(e))
+                apport.log("Cannot download report: " + str(error), True)
+                apport.error("Cannot download report %i: %s", id, str(error))
                 return
-            apport.log("Cannot download report: " + str(e), True)
-            apport.error("Cannot download report %i: %s", id, str(e))
+            apport.log("Cannot download report: " + str(error), True)
+            apport.error("Cannot download report %i: %s", id, str(error))
             return
 
         res = self.crashdb.check_duplicate(id, report)
@@ -329,8 +329,8 @@ if opts.lockfile:
         f = os.open(opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
         os.write(f, ("%u\n" % os.getpid()).encode())
         os.close(f)
-    except OSError as e:
-        if e.errno == errno.EEXIST:
+    except OSError as error:
+        if error.errno == errno.EEXIST:
             sys.exit(0)
         else:
             raise

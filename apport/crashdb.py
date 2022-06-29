@@ -123,8 +123,8 @@ class CrashDatabase:
         try:
             cur.execute("SELECT format FROM version")
             result = cur.fetchone()
-        except self.duplicate_db.OperationalError as e:
-            if "no such table" in str(e):
+        except self.duplicate_db.OperationalError as error:
+            if "no such table" in str(error):
                 # first db format did not have version table yet
                 result = [0]
         if result[0] > self.format_version:
@@ -968,10 +968,10 @@ def get_crashdb(auth_file, name=None, conf=None):
                             compile(f.read(), cfpath, "exec"),
                             settings["databases"],
                         )
-                except Exception as e:
+                except Exception as error:
                     # ignore broken files
                     sys.stderr.write(
-                        "Invalid file %s: %s\n" % (cfpath, str(e))
+                        "Invalid file %s: %s\n" % (cfpath, str(error))
                     )
                     pass
 

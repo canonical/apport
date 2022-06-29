@@ -967,10 +967,10 @@ class T(unittest.TestCase):
             if os.path.exists(core_path):
                 try:
                     os.unlink(core_path)
-                except OSError as e:
+                except OSError as error:
                     sys.stderr.write(
                         "WARNING: cannot clean up core file %s: %s\n"
-                        % (core_path, str(e))
+                        % (core_path, str(error))
                     )
 
                 self.fail("leaves unexpected core file behind")

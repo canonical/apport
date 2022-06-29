@@ -701,8 +701,8 @@ class T(unittest.TestCase):
             pid += 1
             try:
                 os.kill(pid, 0)
-            except OSError as e:
-                if e.errno == errno.ESRCH:
+            except OSError as error:
+                if error.errno == errno.ESRCH:
                     break
         return pid
 

@@ -28,9 +28,9 @@ try:
     gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
     from gi.repository import GdkX11, GLib, Gtk, Wnck
-except RuntimeError as e:
+except RuntimeError as error:
     # probably session just closing down?
-    sys.stderr.write("Cannot start: %s\n" % str(e))
+    sys.stderr.write("Cannot start: %s\n" % str(error))
     sys.exit(1)
 
 have_display = os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")

@@ -109,8 +109,8 @@ def _read_proc_file(path, pid=None, dir_fd=None):
 
         with io.open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
-    except (OSError, IOError) as e:
-        return "Error: " + str(e)
+    except (OSError, IOError) as error:
+        return "Error: " + str(error)
 
 
 def _read_maps(proc_pid_fd):
@@ -127,8 +127,8 @@ def _read_maps(proc_pid_fd):
             opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd),
         ) as fd:
             maps = fd.read().strip()
-    except (OSError, IOError) as e:
-        return "Error: " + str(e)
+    except (OSError, IOError) as error:
+        return "Error: " + str(error)
     return maps
 
 
@@ -239,8 +239,8 @@ def _run_hook(report, ui, hook):
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
             symb["add_info"](report, ui)
-        except TypeError as e:
-            if str(e).startswith("add_info()"):
+        except TypeError as error:
+            if str(error).startswith("add_info()"):
                 # older versions of apport did not pass UI, and hooks that
                 # do not require it don't need to take it
                 symb["add_info"](report)
@@ -658,8 +658,8 @@ class Report(problem_report.ProblemReport):
                 )
             except PermissionError:
                 raise ValueError("not accessible")
-            except OSError as e:
-                if e.errno == errno.ENOENT:
+            except OSError as error:
+                if error.errno == errno.ENOENT:
                     raise ValueError("invalid process")
                 else:
                     raise
@@ -683,8 +683,8 @@ class Report(problem_report.ProblemReport):
                 )
             except PermissionError:
                 raise ValueError("not accessible")
-            except OSError as e:
-                if e.errno == errno.ENOENT:
+            except OSError as error:
+                if error.errno == errno.ENOENT:
                     raise ValueError("invalid process")
                 else:
                     raise
@@ -1220,9 +1220,9 @@ class Report(problem_report.ProblemReport):
         else:
             try:
                 dom = xml.dom.minidom.parseString(contents)
-            except xml.parsers.expat.ExpatError as e:
+            except xml.parsers.expat.ExpatError as error:
                 raise ValueError(
-                    "%s has invalid format: %s" % (_ignore_file, str(e))
+                    "%s has invalid format: %s" % (_ignore_file, str(error))
                 )
 
         # remove whitespace so that writing back the XML does not accumulate
@@ -1319,9 +1319,9 @@ class Report(problem_report.ProblemReport):
         dom = self._get_ignore_dom()
         try:
             mtime = str(int(os.stat(self["ExecutablePath"]).st_mtime))
-        except OSError as e:
+        except OSError as error:
             # file went away underneath us, ignore
-            if e.errno == errno.ENOENT:
+            if error.errno == errno.ENOENT:
                 return
             else:
                 raise

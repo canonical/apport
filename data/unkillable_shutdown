@@ -81,12 +81,12 @@ def orphaned_processes(blacklist):
 
         try:
             os.readlink(os.path.join("/proc", d, "exe"))
-        except OSError as e:
-            if e.errno == errno.ENOENT:
+        except OSError as error:
+            if error.errno == errno.ENOENT:
                 # kernel thread or similar, silently ignore
                 continue
             apport.warning(
-                "Could not read information about pid %s: %s", d, str(e)
+                "Could not read information about pid %s: %s", d, str(error)
             )
             continue
 
@@ -115,8 +115,8 @@ def do_report(pid, blacklist):
     try:
         with apport.fileutils.make_report_file(r) as f:
             r.write(f)
-    except (IOError, OSError) as e:
-        apport.fatal("Cannot create report: " + str(e))
+    except (IOError, OSError) as error:
+        apport.fatal("Cannot create report: " + str(error))
 
 
 #

@@ -243,8 +243,8 @@ def make_sandbox(
             architecture=report.get("Architecture"),
             origins=origins,
         )
-    except SystemError as e:
-        apport.fatal(str(e))
+    except SystemError as error:
+        apport.fatal(str(error))
     # install the extra packages and their deps
     if extra_pkgs:
         try:
@@ -261,8 +261,8 @@ def make_sandbox(
                 install_dbg=False,
                 install_deps=True,
             )
-        except SystemError as e:
-            apport.fatal(str(e))
+        except SystemError as error:
+            apport.fatal(str(error))
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(
@@ -313,8 +313,8 @@ def make_sandbox(
                 architecture=report.get("Architecture"),
                 origins=origins,
             )
-        except SystemError as e:
-            apport.fatal(str(e))
+        except SystemError as error:
+            apport.fatal(str(error))
 
     # sanity check: for a packaged binary we require having the executable in
     # the sandbox; TODO: for an unpackage binary we don't currently copy its

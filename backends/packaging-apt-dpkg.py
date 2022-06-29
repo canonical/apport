@@ -156,8 +156,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 # We don't need to update this multiple times.
                 self._sandbox_apt_cache.update(fetchProgress)
-            except apt.cache.FetchFailedException as e:
-                raise SystemError(str(e))
+            except apt.cache.FetchFailedException as error:
+                raise SystemError(str(error))
             self._sandbox_apt_cache.open()
         else:
             self._sandbox_apt_cache.clear()
@@ -491,8 +491,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
                     if calculated_md5sum != default_md5sum:
                         modified[path] = contents
-                except IOError as e:
-                    modified[path] = "[inaccessible: %s]" % str(e)
+                except IOError as error:
+                    modified[path] = "[inaccessible: %s]" % str(error)
             else:
                 modified[path] = "[deleted]"
 
@@ -811,8 +811,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self.set_mirror(
                     self._get_primary_mirror_from_apt_sources(apt_sources)
                 )
-            except SystemError as e:
-                apport.warning("cannot determine mirror: %s" % str(e))
+            except SystemError as error:
+                apport.warning("cannot determine mirror: %s" % str(error))
 
             # set current release code name for _distro_release_to_codename
             with open(os.path.join(configdir, release, "codename")) as f:
@@ -873,8 +873,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 cache.update(fetchProgress)
-            except apt.cache.FetchFailedException as e:
-                raise SystemError(str(e))
+            except apt.cache.FetchFailedException as error:
+                raise SystemError(str(error))
             cache.open()
 
         archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
@@ -1290,8 +1290,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         # fetch packages
         try:
             cache.fetch_archives(fetcher=fetcher)
-        except apt.cache.FetchFailedException as e:
-            apport.error("Package download error, try again later: %s", str(e))
+        except apt.cache.FetchFailedException as error:
+            apport.error(
+                "Package download error, try again later: %s", str(error)
+            )
             sys.exit(1)  # transient error
 
         if verbose:

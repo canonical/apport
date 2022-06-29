@@ -42,9 +42,9 @@ def main():
     # Grab PID info right away, as we don't know how long it'll stick around
     try:
         report.add_proc_info(report.pid)
-    except ValueError as e:
+    except ValueError as error:
         # The process may have gone away before we could get to it.
-        if str(e) == "invalid process":
+        if str(error) == "invalid process":
             return
 
     # Get the info on the bug
@@ -76,8 +76,8 @@ def main():
     try:
         with apport.fileutils.make_report_file(report) as f:
             report.write(f)
-    except (IOError, OSError) as e:
-        apport.fatal("Cannot create report: " + str(e))
+    except (IOError, OSError) as error:
+        apport.fatal("Cannot create report: " + str(error))
 
 
 if __name__ == "__main__":

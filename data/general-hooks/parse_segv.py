@@ -411,8 +411,8 @@ def add_info(report):
         if understood:
             report["SegvReason"] = reason
         report["SegvAnalysis"] = details
-    except BaseException as e:
-        report["SegvAnalysis"] = "Failure: %s" % (str(e))
+    except BaseException as error:
+        report["SegvAnalysis"] = "Failure: %s" % (str(error))
 
 
 if __name__ == "__main__":

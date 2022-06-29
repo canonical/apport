@@ -101,8 +101,8 @@ def read_file(path, force_unicode=False):
             return contents.decode("UTF-8")
         except UnicodeDecodeError:
             return contents
-    except Exception as e:
-        return "Error: " + str(e)
+    except Exception as error:
+        return "Error: " + str(error)
 
 
 def attach_file(report, path, key=None, overwrite=True, force_unicode=False):
@@ -446,8 +446,8 @@ def command_output(
             stdin=(input and subprocess.PIPE or None),
             env=env,
         )
-    except OSError as e:
-        return "Error: " + str(e)
+    except OSError as error:
+        return "Error: " + str(error)
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:

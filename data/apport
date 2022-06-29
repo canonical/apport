@@ -56,9 +56,9 @@ def check_lock():
             os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW,
             mode=0o600,
         )
-    except OSError as e:
+    except OSError as error:
         error_log(
-            "cannot create lock file (uid %i): %s" % (os.getuid(), str(e))
+            "cannot create lock file (uid %i): %s" % (os.getuid(), str(error))
         )
         sys.exit(1)
 
@@ -422,9 +422,10 @@ def is_closing_session():
 
         if err:
             error_log("gdbus call error: " + err.decode("UTF-8"))
-    except OSError as e:
+    except OSError as error:
         error_log(
-            "gdbus call failed, cannot determine running session: " + str(e)
+            "gdbus call failed, cannot determine running session: "
+            + str(error)
         )
         return False
     finally:
@@ -468,9 +469,10 @@ def is_systemd_watchdog_restart(signum):
         )
         out = journalctl.communicate()[0]
         return b"Watchdog timeout" in out
-    except (IOError, OSError) as e:
+    except (IOError, OSError) as error:
         error_log(
-            "cannot determine if this crash is from systemd watchdog: %s" % e
+            "cannot determine if this crash is from systemd watchdog: %s"
+            % error
         )
         return False
 
@@ -488,8 +490,8 @@ def is_same_ns(pid, ns):
         ):
             # Check that the inode for both namespaces is the same
             return True
-    except OSError as e:
-        if e.errno == errno.ENOENT:
+    except OSError as error:
+        if error.errno == errno.ENOENT:
             return True
         else:
             raise
@@ -978,8 +980,8 @@ try:
             os.fchown(fd, pidstat.st_uid, gid)
         except (OSError, KeyError):
             os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
-    except (OSError, IOError) as e:
-        error_log("Could not create report file: %s" % str(e))
+    except (OSError, IOError) as error:
+        error_log("Could not create report file: %s" % str(error))
         sys.exit(1)
 
     # Drop privileges before writing out the reportfile.

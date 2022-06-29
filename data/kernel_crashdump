@@ -32,8 +32,8 @@ if os.path.exists(vmcore_path + ".log"):
         log_fd = os.open(vmcore_path + ".log", os.O_RDONLY | os.O_NOFOLLOW)
         pr["VmCoreLog"] = (os.fdopen(log_fd, "rb"),)
         os.unlink(vmcore_path + ".log")
-    except OSError as e:
-        apport.fatal("Cannot open vmcore log: " + str(e))
+    except OSError as error:
+        apport.fatal("Cannot open vmcore log: " + str(error))
 
 if os.path.exists(vmcore_path):
     try:
@@ -41,8 +41,8 @@ if os.path.exists(vmcore_path):
         pr["VmCore"] = (os.fdopen(core_fd, "rb"),)
         with apport.fileutils.make_report_file(pr) as f:
             pr.write(f)
-    except (IOError, OSError) as e:
-        apport.fatal("Cannot create report: " + str(e))
+    except (IOError, OSError) as error:
+        apport.fatal("Cannot create report: " + str(error))
 
     try:
         os.unlink(vmcore_path)
@@ -70,5 +70,5 @@ else:
                 pr["VmCoreDmesg"] = (os.fdopen(dmesg_fd, "rb"),)
                 with open(crash_report, "xb") as f:
                     pr.write(f)
-            except (IOError, OSError) as e:
-                apport.fatal("Cannot create report: " + str(e))
+            except (IOError, OSError) as error:
+                apport.fatal("Cannot create report: " + str(error))

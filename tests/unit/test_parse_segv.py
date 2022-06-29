@@ -142,8 +142,8 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, parse_segv.ParseSegv, regs, "", "")
         try:
             segv = parse_segv.ParseSegv(regs, "", "")
-        except ValueError as e:
-            self.assertIn("invalid literal for int()", str(e))
+        except ValueError as error:
+            self.assertIn("invalid literal for int()", str(error))
 
         regs = "a 0x10"
         disasm = "0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n"

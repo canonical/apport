@@ -75,8 +75,8 @@ def process_report(report):
                 return None
             r.load(f, binary="compressed")
             report_stat = os.stat(report)
-    except Exception as e:
-        sys.stderr.write("ERROR: cannot load %s: %s\n" % (report, str(e)))
+    except Exception as error:
+        sys.stderr.write("ERROR: cannot load %s: %s\n" % (report, str(error)))
         return None
     if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:
         logging.info("  skipping, not a crash")
@@ -88,31 +88,32 @@ def process_report(report):
         r.add_os_info()
         try:
             r.add_package_info()
-        except (SystemError, ValueError) as e:
+        except (SystemError, ValueError) as error:
             sys.stderr.write(
-                "ERROR: cannot add package info on %s: %s\n" % (report, str(e))
+                "ERROR: cannot add package info on %s: %s\n"
+                % (report, str(error))
             )
             return None
         # add information from package specific hooks
         try:
             r.add_hooks_info(None)
-        except Exception as e:
+        except Exception as error:
             sys.stderr.write(
                 "WARNING: hook failed for processing %s: %s\n"
-                % (report, str(e))
+                % (report, str(error))
             )
 
         try:
             r.add_gdb_info()
-        except (IOError, EOFError, OSError, zlib.error) as e:
+        except (IOError, EOFError, OSError, zlib.error) as error:
             # gzip.GzipFile.read can raise zlib.error. See LP bug #1947800
 
             # Calling add_gdb_info raises ENOENT if the crash's executable
             # is missing or gdb is not available, but apport-retrace could
             # still process it.
-            if getattr(e, "errno", None) != errno.ENOENT:
+            if getattr(error, "errno", None) != errno.ENOENT:
                 sys.stderr.write(
-                    "ERROR: processing %s: %s\n" % (report, str(e))
+                    "ERROR: processing %s: %s\n" % (report, str(error))
                 )
                 if os.path.exists(report):
                     os.unlink(report)

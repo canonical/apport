@@ -388,9 +388,9 @@ class T(unittest.TestCase):
                 "install_packages() unexpectedly succeeded"
                 " with broken sources.list"
             )
-        except SystemError as e:
-            self.assertIn("bogus", str(e))
-            self.assertNotIn("Exception", str(e))
+        except SystemError as error:
+            self.assertIn("bogus", str(error))
+            self.assertNotIn("Exception", str(error))
 
         # sources.list with wrong server
         with open(
@@ -413,16 +413,16 @@ class T(unittest.TestCase):
                 "install_packages() unexpectedly succeeded"
                 " with broken server URL"
             )
-        except SystemError as e:
-            self.assertIn("nosuchdistro", str(e))
+        except SystemError as error:
+            self.assertIn("nosuchdistro", str(error))
             try:
                 self.assertRegex(
-                    str(e),
+                    str(error),
                     ".*'http://archive.ubuntu.com/nosuchdistro trusty.*'"
                     " does not have a Release file",
                 )
             except AssertionError:
-                self.assertIn("index files failed to download", str(e))
+                self.assertIn("index files failed to download", str(error))
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_permanent_sandbox(self):

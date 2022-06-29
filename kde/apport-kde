@@ -53,12 +53,12 @@ try:
     except AttributeError:
         pass
 
-except ImportError as e:
+except ImportError as error:
     # this can happen while upgrading python packages
     apport.fatal(
         "Could not import module, is a package upgrade in progress?"
         "  Error: %s",
-        str(e),
+        str(error),
     )
 
 

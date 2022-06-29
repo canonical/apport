@@ -186,9 +186,9 @@ class CLIUserInterface(apport.ui.UserInterface):
                 ["/usr/bin/sensible-pager"], stdin=subprocess.PIPE
             )
             p.communicate(report.encode("UTF-8"))
-        except IOError as e:
+        except IOError as error:
             # ignore broken pipe (premature quit)
-            if e.errno == errno.EPIPE:
+            if error.errno == errno.EPIPE:
                 pass
             else:
                 raise

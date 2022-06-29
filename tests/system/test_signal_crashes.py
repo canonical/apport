@@ -161,8 +161,8 @@ class T(unittest.TestCase):
                     sys.stderr.flush()
                 try:
                     app.stdin.write(onemb)
-                except IOError as e:
-                    if e.errno == errno.EPIPE:
+                except IOError as error:
+                    if error.errno == errno.EPIPE:
                         break
                     else:
                         raise

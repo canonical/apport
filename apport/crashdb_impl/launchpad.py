@@ -174,11 +174,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 credentials_file=self.auth,
                 version="1.0",
             )
-        except Exception as e:
-            if hasattr(e, "content"):
-                msg = e.content
+        except Exception as error:
+            if hasattr(error, "content"):
+                msg = error.content
             else:
-                msg = str(e)
+                msg = str(error)
             apport.error(
                 "connecting to Launchpad failed: %s\n"
                 'You can reset the credentials by removing the file "%s"',
@@ -387,10 +387,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             elif ext == ".gz":
                 try:
                     report[key] = gzip.GzipFile(fileobj=attachment).read()
-                except IOError as e:
+                except IOError as error:
                     # some attachments are only called .gz, but are
                     # uncompressed (LP #574360)
-                    if "Not a gzip" not in str(e):
+                    if "Not a gzip" not in str(error):
                         raise
                     attachment.seek(0)
                     report[key] = attachment.read()
@@ -609,8 +609,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 tags=self.arch_tag, created_since="2011-08-01"
             )
             return id_set(bugs)
-        except Exception as e:
-            apport.error("connecting to Launchpad failed: %s", str(e))
+        except Exception as error:
+            apport.error("connecting to Launchpad failed: %s", str(error))
             sys.exit(99)  # transient error
 
     def get_dup_unchecked(self):
@@ -626,8 +626,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 tags="need-duplicate-check", created_since="2011-08-01"
             )
             return id_set(bugs)
-        except Exception as e:
-            apport.error("connecting to Launchpad failed: %s", str(e))
+        except Exception as error:
+            apport.error("connecting to Launchpad failed: %s", str(error))
             sys.exit(99)  # transient error
 
     def get_unfixed(self):

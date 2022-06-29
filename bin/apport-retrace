@@ -373,16 +373,16 @@ if os.path.exists(options.report):
         with open(options.report, "rb") as f:
             report.load(f, binary="compressed")
         apport.memdbg("loaded report from file")
-    except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
-        apport.fatal("Cannot open report file: %s", str(e))
+    except (MemoryError, TypeError, ValueError, IOError, zlib.error) as error:
+        apport.fatal("Cannot open report file: %s", str(error))
 elif options.report.isdigit():
     # crash ID
     try:
         report = crashdb.download(int(options.report))
         apport.memdbg("downloaded report from crash DB")
-    except AssertionError as e:
-        if "apport format data" in str(e):
-            apport.error("Broken report: %s", str(e))
+    except AssertionError as error:
+        if "apport format data" in str(error):
+            apport.error("Broken report: %s", str(error))
             sys.exit(0)
         else:
             raise
@@ -394,12 +394,12 @@ elif options.report.isdigit():
         SystemError,
         OverflowError,
         zlib.error,
-    ) as e:
+    ) as error:
         # if we process the report automatically, and it is invalid,
         # close it with an informative message and exit cleanly
         # to not break crash-digger
         if options.auth and not options.output and not options.stdout:
-            apport.error("Broken report: %s, closing as invalid", str(e))
+            apport.error("Broken report: %s, closing as invalid", str(error))
             crashdb.mark_retrace_failed(
                 options.report,
                 """Thank you for your report!
@@ -414,7 +414,7 @@ If you encounter the crash again, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                % str(e),
+                % str(error),
             )
             sys.exit(0)
         else:
@@ -601,9 +601,9 @@ else:
     apport.memdbg("before collecting gdb info")
     try:
         report.add_gdb_info(sandbox, gdb_sandbox)
-    except IOError as e:
+    except IOError as error:
         if not options.auth:
-            apport.fatal(str(e))
+            apport.fatal(str(error))
         if not options.confirm or confirm_traces(report):
             invalid_msg = """Thank you for your report!
 
@@ -615,7 +615,7 @@ transit.
 Thank you for your understanding, and sorry for the inconvenience!
 """
             crashdb.mark_retrace_failed(crashid, invalid_msg)
-        apport.fatal(str(e))
+        apport.fatal(str(error))
     if options.sandbox == "system":
         apt_root = os.path.join(cache, "system", "apt")
     elif options.sandbox:

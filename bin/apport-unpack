@@ -46,8 +46,8 @@ try:
             fatal(_("Destination directory exists and is not empty."))
     else:
         os.mkdir(dir)
-except OSError as e:
-    fatal(str(e))
+except OSError as error:
+    fatal(str(error))
 
 bin_keys = []
 pr = problem_report.ProblemReport()
@@ -61,8 +61,8 @@ else:
         else:
             with open(report, "rb") as f:
                 pr.load(f, binary=False)
-    except IOError as e:
-        fatal(str(e))
+    except IOError as error:
+        fatal(str(error))
 for k in pr:
     if pr[k] == "":
         bin_keys.append(k)
@@ -79,5 +79,5 @@ try:
     else:
         with open(report, "rb") as f:
             pr.extract_keys(f, bin_keys, dir)
-except IOError as e:
-    fatal(str(e))
+except IOError as error:
+    fatal(str(error))
