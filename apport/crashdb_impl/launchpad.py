@@ -191,7 +191,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def _get_distro_tasks(self, tasks):
         if not self.distro:
-            raise StopIteration
+            return
 
         for t in tasks:
             if t.bug_target_name.lower() == self.distro or re.match(
