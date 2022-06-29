@@ -209,7 +209,7 @@ class ReportDialog(Dialog):
             self.continue_button.setText(_("Send"))
             self.showtree(True)
 
-        elif report_type == "KernelCrash" or report_type == "KernelOops":
+        elif report_type in ("KernelCrash", "KernelOops"):
             self.ignore_future_problems.setChecked(False)
             self.ignore_future_problems.hide()
             self.heading.setText(

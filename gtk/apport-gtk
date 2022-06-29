@@ -275,7 +275,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w("remember_send_report_choice").hide()
             self.w("send_problem_notice_label").hide()
             self.setup_bug_report()
-        elif report_type == "KernelCrash" or report_type == "KernelOops":
+        elif report_type in ("KernelCrash", "KernelOops"):
             self.w("ignore_future_problems").set_active(False)
             self.w("ignore_future_problems").hide()
             self.w("title_label").set_label(
