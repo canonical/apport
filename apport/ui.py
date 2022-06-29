@@ -419,15 +419,14 @@ class UserInterface:
                 if self.check_unreportable():
                     return
                 self.file_report()
+        except PermissionError:
+            self.ui_error_message(
+                _("Invalid problem report"),
+                _("You are not allowed to access this problem report."),
+            )
+            sys.exit(1)
         except IOError as e:
-            # fail gracefully if file is not readable for us
-            if e.errno in (errno.EPERM, errno.EACCES):
-                self.ui_error_message(
-                    _("Invalid problem report"),
-                    _("You are not allowed to access this problem report."),
-                )
-                sys.exit(1)
-            elif e.errno == errno.ENOSPC:
+            if e.errno == errno.ENOSPC:
                 self.ui_error_message(
                     _("Error"),
                     _(
@@ -576,21 +575,20 @@ class UserInterface:
                     self.report.add_proc_info(
                         pid=self.options.pid, proc_pid_fd=proc_pid_fd
                     )
+            except PermissionError:
+                self.ui_error_message(
+                    _("Permission denied"),
+                    _(
+                        "The specified process does not belong to you. Please"
+                        " run this program as the process owner or as root."
+                    ),
+                )
+                return False
             except (ValueError, IOError, OSError) as e:
                 if hasattr(e, "errno"):
                     # silently ignore nonexisting PIDs; the user must not
                     # close the application prematurely
                     if e.errno == errno.ENOENT:
-                        return False
-                    elif e.errno == errno.EACCES:
-                        self.ui_error_message(
-                            _("Permission denied"),
-                            _(
-                                "The specified process does not belong"
-                                " to you. Please run this program"
-                                " as the process owner or as root."
-                            ),
-                        )
                         return False
                 self.ui_error_message(
                     _("Invalid PID"),

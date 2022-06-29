@@ -656,9 +656,9 @@ class Report(problem_report.ProblemReport):
                 proc_pid_fd = os.open(
                     "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
+            except PermissionError:
+                raise ValueError("not accessible")
             except OSError as e:
-                if e.errno in (errno.EPERM, errno.EACCES):
-                    raise ValueError("not accessible")
                 if e.errno == errno.ENOENT:
                     raise ValueError("invalid process")
                 else:
@@ -681,9 +681,9 @@ class Report(problem_report.ProblemReport):
                 self["ExecutablePath"] = _read_proc_link(
                     "exe", pid, proc_pid_fd
                 )
+            except PermissionError:
+                raise ValueError("not accessible")
             except OSError as e:
-                if e.errno in (errno.EPERM, errno.EACCES):
-                    raise ValueError("not accessible")
                 if e.errno == errno.ENOENT:
                     raise ValueError("invalid process")
                 else:
