@@ -246,9 +246,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
 
         # on Ubuntu system-image we might not have any /var/lib/apt/lists
-        if set([o.origin for o in pkg.candidate.origins]) == set(
-            [""]
-        ) and os.path.exists("/etc/system-image/channel.ini"):
+        if {o.origin for o in pkg.candidate.origins} == {
+            ""
+        } and os.path.exists("/etc/system-image/channel.ini"):
             return True
 
         return False
