@@ -425,8 +425,10 @@ class UserInterface:
                 _("You are not allowed to access this problem report."),
             )
             sys.exit(1)
-        except IOError as error:
-            if error.errno == errno.ENOSPC:
+        except OSError as error:
+            if error.errno == errno.ENOMEM:
+                apport.fatal("Out of memory, aborting")
+            elif error.errno == errno.ENOSPC:
                 self.ui_error_message(
                     _("Error"),
                     _(
@@ -435,17 +437,12 @@ class UserInterface:
                     ),
                 )
                 sys.exit(1)
-            else:
+            elif error.errno == errno.EIO:
                 self.ui_error_message(
                     _("Invalid problem report"), error.strerror
                 )
                 sys.exit(1)
-        except OSError as error:
-            # fail gracefully on ENOMEM
-            if error.errno == errno.ENOMEM:
-                apport.fatal("Out of memory, aborting")
-            else:
-                raise
+            raise
 
     def finish_hang(self, f):
         """Finish processing a hanging application after the core pipe handler
