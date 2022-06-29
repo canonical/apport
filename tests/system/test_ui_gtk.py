@@ -191,8 +191,8 @@ class T(unittest.TestCase):
         )
 
     def test_regular_crash_thread_layout(self):
-        """A thread of execution has failed, but the application persists."""
-        """
+        """A thread of execution has failed, but the application persists.
+
         +-----------------------------------------------------------------+
         | [ logo] YourDistro has experienced an internal error.           |
         |            Send problem report to the developers?               |
