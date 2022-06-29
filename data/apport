@@ -1023,7 +1023,7 @@ try:
     )
 
 except (SystemExit, KeyboardInterrupt):
-    raise
+    pass
 except Exception:
     error_log("Unhandled exception:")
     traceback.print_exc()
