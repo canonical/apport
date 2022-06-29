@@ -18,12 +18,8 @@ from tests.paths import local_test_environment
 with open("/proc/meminfo") as f:
     for line in f.readlines():
         if line.startswith("MemTotal"):
-            memtotal = int(line.split()[1])
+            MEM_TOTAL_MiB = int(line.split()[1]) // 1024
             break
-    if memtotal < 2000000:
-        low_memory = True
-    else:
-        low_memory = False
 
 
 @unittest.skipIf(shutil.which("valgrind") is None, "valgrind not installed")
@@ -40,7 +36,9 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
-    @unittest.skipIf(low_memory, "not enough memory")
+    @unittest.skipIf(
+        MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory"
+    )
     def test_sandbox_cache_options(self):
         """apport-valgrind creates a user specified sandbox and cache"""
 
