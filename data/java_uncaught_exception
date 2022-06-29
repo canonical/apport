@@ -36,7 +36,7 @@ def main():
     # read from the JVM process a sequence of key, value delimited by null
     # bytes
     items = sys.stdin.read().split("\0")
-    d = dict()
+    d = {}
     while items:
         key = items.pop(0)
         if not items:

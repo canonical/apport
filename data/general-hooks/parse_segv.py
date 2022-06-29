@@ -70,7 +70,7 @@ class ParseSegv:
         return maps
 
     def parse_regs(self, reg_str):
-        regs = dict()
+        regs = {}
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]
             regs[reg] = int(hexvalue, 16)
