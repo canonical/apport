@@ -311,7 +311,10 @@ class T(unittest.TestCase):
         env = os.environ.copy()
         env["APPORT_LOG_FILE"] = log
         app = subprocess.run(
-            [self.apport_path], env=env, preexec_fn=close_stdin_and_stderr
+            [self.apport_path],
+            check=False,
+            env=env,
+            preexec_fn=close_stdin_and_stderr,
         )
 
         self.assertEqual(app.returncode, 2)

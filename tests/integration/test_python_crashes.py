@@ -329,6 +329,7 @@ func(42)
                 env["PYTHONPATH"] = orig_cwd
                 process = subprocess.run(
                     ["python3", "../script.py"],
+                    check=False,
                     env=env,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
