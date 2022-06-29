@@ -150,7 +150,8 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     unittest.mock.MagicMock(return_value=[]),
 )
 class T(unittest.TestCase):
-    TEST_EXECUTABLE = "/usr/bin/yes"
+    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_ARGS = ["86400"]
 
     def setUp(self):
         self.orig_environ = os.environ.copy()
@@ -242,7 +243,7 @@ class T(unittest.TestCase):
             exename = self.TEST_EXECUTABLE
 
         os.dup2(os.open("/dev/null", os.O_WRONLY), sys.stdout.fileno())
-        os.execv(exename, [exename])
+        os.execv(exename, [exename] + self.TEST_ARGS)
         assert False, "Could not execute " + exename
 
     def test_format_filesize(self):
@@ -654,7 +655,7 @@ class T(unittest.TestCase):
         time.sleep(0.5)
 
         try:
-            # report a bug on yes process
+            # report a bug on text executable process
             sys.argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
             self.ui = TestSuiteUserInterface()
             self.ui.present_details_response = {
@@ -852,7 +853,7 @@ class T(unittest.TestCase):
                     "gdb",
                     "--batch",
                     "--ex",
-                    "run",
+                    f"run {' '.join(self.TEST_ARGS)}",
                     "--ex",
                     f"generate-core-file {core_path}",
                     self.TEST_EXECUTABLE,
@@ -1015,7 +1016,7 @@ class T(unittest.TestCase):
 
         # generate broken crash report
         r = apport.Report()
-        r["ExecutablePath"] = "/usr/bin/yes"
+        r["ExecutablePath"] = self.TEST_EXECUTABLE
         r["Signal"] = "11"
         r["CoreDump"] = problem_report.CompressedValue()
         r["CoreDump"].gzipvalue = b"AAAAAAAA"

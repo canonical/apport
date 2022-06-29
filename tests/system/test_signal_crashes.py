@@ -17,10 +17,11 @@ from tests.paths import (
     local_test_environment,
 )
 
-test_executable = "/usr/bin/yes"
-
 
 class T(unittest.TestCase):
+    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_ARGS = ["86400"]
+
     @classmethod
     def setUpClass(cls):
         cls.orig_environ = os.environ.copy()
@@ -107,7 +108,7 @@ class T(unittest.TestCase):
         # expected report name for test executable report
         self.test_report = os.path.join(
             apport.fileutils.report_dir,
-            "%s.%i.crash" % (test_executable.replace("/", "_"), os.getuid()),
+            f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
     def tearDown(self):
@@ -183,12 +184,14 @@ class T(unittest.TestCase):
         os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
-        self.assertEqual(pr["ExecutablePath"], test_executable)
+        self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertNotIn("CoreDump", pr)
         # FIXME: sometimes this is empty!?
         if err:
             self.assertRegex(
-                err, b"core dump exceeded.*dropped from .*yes\\..*\\.crash"
+                err.decode(),
+                f"core dump exceeded.*dropped from .*"
+                f"{os.path.basename(self.TEST_EXECUTABLE)}\\..*\\.crash",
             )
 
     @unittest.skipIf(
@@ -201,11 +204,11 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = self.orig_report_dir
         self.test_report = os.path.join(
             apport.fileutils.report_dir,
-            "%s.%i.crash" % (test_executable.replace("/", "_"), os.getuid()),
+            f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
         self.assertEqual(
-            pidof(test_executable),
+            pidof(self.TEST_EXECUTABLE),
             set(),
             "no running test executable processes",
         )
@@ -218,29 +221,37 @@ class T(unittest.TestCase):
                 "--slice=system.slice",
                 "-p",
                 "ProtectSystem=true",
-                test_executable,
-            ],
+                self.TEST_EXECUTABLE,
+            ]
+            + self.TEST_ARGS,
         )
-        yes_pids = pidof(test_executable)
-        self.assertEqual(len(yes_pids), 1)
-        os.kill(yes_pids.pop(), signal.SIGSEGV)
+        pids = pidof(self.TEST_EXECUTABLE)
+        self.assertEqual(len(pids), 1)
+        os.kill(pids.pop(), signal.SIGSEGV)
 
-        self.wait_for_no_instance_running(test_executable)
+        self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
         self.wait_for_apport_to_finish()
 
         # check crash report
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
-        self.assertEqual(reports[0], "/var/crash/_usr_bin_yes.0.crash")
+        self.assertEqual(
+            reports[0],
+            f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash",
+        )
 
-    @classmethod
     def create_test_process(
-        klass, check_running=True, command=test_executable, uid=None, args=[]
+        self, check_running=True, command=None, uid=None, args=None
     ):
-        """Spawn test_executable.
+        """Spawn test executable.
 
         Wait until it is fully running, and return its PID.
         """
+        if command is None:
+            command = self.TEST_EXECUTABLE
+        if args is None:
+            args = self.TEST_ARGS
+
         assert os.access(command, os.X_OK), command + " is not executable"
         if check_running:
             assert (

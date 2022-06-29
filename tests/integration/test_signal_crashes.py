@@ -28,7 +28,6 @@ import apport.fileutils
 from tests.helper import pidof, read_shebang
 from tests.paths import get_data_directory, local_test_environment
 
-test_executable = "/usr/bin/yes"
 test_package = "coreutils"
 test_source = "coreutils"
 
@@ -49,6 +48,9 @@ required_fields = [
 
 
 class T(unittest.TestCase):
+    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_ARGS = ["86400"]
+
     @classmethod
     def setUpClass(cls):
         cls.orig_environ = os.environ.copy()
@@ -100,7 +102,7 @@ class T(unittest.TestCase):
         # expected report name for test executable report
         self.test_report = os.path.join(
             apport.fileutils.report_dir,
-            "%s.%i.crash" % (test_executable.replace("/", "_"), os.getuid()),
+            f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
     def tearDown(self):
@@ -169,8 +171,11 @@ class T(unittest.TestCase):
             set(required_fields).issubset(set(pr.keys())),
             "report has required fields",
         )
-        self.assertEqual(pr["ExecutablePath"], test_executable)
-        self.assertEqual(pr["ProcCmdline"], test_executable)
+        self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
+        self.assertEqual(
+            pr["ProcCmdline"],
+            " ".join([self.TEST_EXECUTABLE] + self.TEST_ARGS),
+        )
         self.assertEqual(pr["Signal"], "%i" % signal.SIGSEGV)
 
         # check safe environment subset
@@ -214,7 +219,7 @@ class T(unittest.TestCase):
         """only one apport instance is ran at a time"""
 
         test_proc = self.create_test_process()
-        test_proc2 = self.create_test_process(False, "/bin/dd")
+        test_proc2 = self.create_test_process(False, "/bin/dd", args=[])
         try:
             app = subprocess.Popen(
                 [self.apport_path, str(test_proc), "42", "0", "1"],
@@ -266,7 +271,7 @@ class T(unittest.TestCase):
 
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
-            with open(test_executable, "rb") as src:
+            with open(self.TEST_EXECUTABLE, "rb") as src:
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe)
@@ -279,14 +284,14 @@ class T(unittest.TestCase):
         with open(local_exe, "w") as f:
             f.write("#!/bin/sh\nkill -SEGV $$")
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe)
+        self.do_crash(command=local_exe, args=[])
 
         # absolute path
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
         # relative path
         os.chdir(self.workdir)
-        self.do_crash(command="./myscript")
+        self.do_crash(command="./myscript", args=[])
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_unsupported_arguments_no_stderr(self):
@@ -335,7 +340,7 @@ class T(unittest.TestCase):
                 "sleep(10);\n"
             )
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe, sleep=2)
+        self.do_crash(command=local_exe, args=[], sleep=2)
 
         leak = os.path.join(
             apport.fileutils.report_dir,
@@ -379,7 +384,7 @@ class T(unittest.TestCase):
         # regards as likely packaged
         (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, myexe)
-        with open(test_executable, "rb") as f:
+        with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
         os.close(fd)
         os.chmod(myexe, 0o111)
@@ -438,7 +443,7 @@ class T(unittest.TestCase):
 
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
-            with open(test_executable, "rb") as src:
+            with open(self.TEST_EXECUTABLE, "rb") as src:
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
 
@@ -530,7 +535,7 @@ class T(unittest.TestCase):
         # likely packaged
         (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, myexe)
-        with open(test_executable, "rb") as f:
+        with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
         os.close(fd)
         os.chmod(myexe, 0o755)
@@ -611,7 +616,7 @@ class T(unittest.TestCase):
         os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
-        self.assertEqual(pr["ExecutablePath"], test_executable)
+        self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
     def test_logging_stderr(self):
@@ -649,7 +654,7 @@ class T(unittest.TestCase):
         os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
-        self.assertEqual(pr["ExecutablePath"], test_executable)
+        self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
@@ -660,7 +665,7 @@ class T(unittest.TestCase):
         # regards as likely packaged
         (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, myexe)
-        with open(test_executable, "rb") as f:
+        with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
         os.close(fd)
         os.chmod(myexe, 0o4755)
@@ -723,7 +728,7 @@ class T(unittest.TestCase):
         # regards as not packaged
         (fd, myexe) = tempfile.mkstemp(dir="/tmp")
         self.addCleanup(os.unlink, myexe)
-        with open(test_executable, "rb") as f:
+        with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
         os.close(fd)
         os.chmod(myexe, 0o4755)
@@ -800,7 +805,7 @@ class T(unittest.TestCase):
             pr.load(f)
         os.unlink(reports[0])
         self.assertEqual(pr["Signal"], "11")
-        self.assertEqual(pr["ExecutablePath"], test_executable)
+        self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
         # should not create report on the host
@@ -810,14 +815,18 @@ class T(unittest.TestCase):
     # Helper methods
     #
 
-    @classmethod
     def create_test_process(
-        klass, check_running=True, command=test_executable, uid=None, args=[]
+        self, check_running=True, command=None, uid=None, args=None
     ):
-        """Spawn test_executable.
+        """Spawn test executable.
 
         Wait until it is fully running, and return its PID.
         """
+        if command is None:
+            command = self.TEST_EXECUTABLE
+        if args is None:
+            args = self.TEST_ARGS
+
         assert os.access(command, os.X_OK), command + " is not executable"
         if check_running:
             assert (
@@ -848,16 +857,16 @@ class T(unittest.TestCase):
         expect_corefile=False,
         sig=signal.SIGSEGV,
         sleep=0,
-        command=test_executable,
+        command=None,
         uid=None,
         expect_corefile_owner=None,
-        args=[],
+        args=None,
         suid_dumpable: int = 1,
         hook_before_apport=None,
     ):
         """Generate a test crash.
 
-        This runs command (by default test_executable) in cwd, lets it crash,
+        This runs command (by default TEST_EXECUTABLE) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
         file behind if expect_corefile is set, and generating a crash report.
 
@@ -865,6 +874,10 @@ class T(unittest.TestCase):
         Since there was no need for it, the support was not implemented.
         """
         assert 0 <= suid_dumpable <= 2
+        if command is None:
+            command = self.TEST_EXECUTABLE
+        if args is None:
+            args = self.TEST_ARGS
         if not os.access(command, os.X_OK):
             self.skipTest(f"{command} is not executable")
 
@@ -887,7 +900,7 @@ class T(unittest.TestCase):
                 self.gdb_command(command, args, gdb_core_file, uid),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
-                stdout=subprocess.DEVNULL,  # ping and yes produce output!
+                stdout=subprocess.DEVNULL,  # ping produces output!
             )
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
