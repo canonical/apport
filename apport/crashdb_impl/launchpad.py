@@ -2312,7 +2312,7 @@ NameError: global name 'weird' is not defined"""
                     b = db.launchpad.bugs[self.get_segv_report()]
                     has_escalation_tag = db.options["escalation_tag"] in b.tags
                     has_escalation_subscription = any(
-                        [s.person_link == p for s in b.subscriptions]
+                        s.person_link == p for s in b.subscriptions
                     )
                     if count <= 10:
                         self.assertFalse(has_escalation_tag)
