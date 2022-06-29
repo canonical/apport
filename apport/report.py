@@ -622,7 +622,7 @@ class Report(problem_report.ProblemReport):
             return None
         return spec.origin
 
-    def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=[]):
+    def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=None):
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -728,7 +728,7 @@ class Report(problem_report.ProblemReport):
         if ret:
             self["_LogindSession"] = ret[0]
 
-    def add_proc_environ(self, pid=None, extraenv=[], proc_pid_fd=None):
+    def add_proc_environ(self, pid=None, extraenv=None, proc_pid_fd=None):
         """Add environment information.
 
         If pid is not given, it defaults to the process' current pid.
@@ -757,7 +757,9 @@ class Report(problem_report.ProblemReport):
             "LC_MEASUREMENT",
             "LC_IDENTIFICATION",
             "LOCPATH",
-        ] + extraenv
+        ]
+        if extraenv:
+            safe_vars += extraenv
 
         if not proc_pid_fd:
             if not pid:

@@ -528,7 +528,7 @@ class ProblemReport(collections.UserDict):
         self,
         file,
         attach_treshold=5,
-        extra_headers={},
+        extra_headers=None,
         skip_keys=None,
         priority_fields=None,
     ):
@@ -665,8 +665,9 @@ class ProblemReport(collections.UserDict):
         attachments.insert(0, att)
 
         msg = email.mime.multipart.MIMEMultipart()
-        for k, v in extra_headers.items():
-            msg.add_header(k, v)
+        if extra_headers:
+            for k, v in extra_headers.items():
+                msg.add_header(k, v)
         for a in attachments:
             msg.attach(a)
 

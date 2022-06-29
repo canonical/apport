@@ -16,8 +16,12 @@ import threading
 class REThread(threading.Thread):
     """Thread with return values and exception propagation."""
 
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):
+    def __init__(
+        self, group=None, target=None, name=None, args=(), kwargs=None
+    ):
         """Initialize Thread, identical to threading.Thread.__init__()."""
+        if kwargs is None:
+            kwargs = {}
 
         threading.Thread.__init__(self, group, target, name, args, kwargs)
         self.__target = target

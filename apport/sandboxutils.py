@@ -129,7 +129,7 @@ def make_sandbox(
     config_dir,
     cache_dir=None,
     sandbox_dir=None,
-    extra_packages=[],
+    extra_packages=None,
     verbose=False,
     log_timestamps=False,
     dynamic_origins=False,
@@ -212,11 +212,6 @@ def make_sandbox(
     ):
         pkgs = needed_packages(report)
 
-    # add user-specified extra packages, if any
-    extra_pkgs = []
-    for p in extra_packages:
-        extra_pkgs.append((p, None))
-
     if config_dir == "system":
         config_dir = None
 
@@ -245,14 +240,15 @@ def make_sandbox(
         )
     except SystemError as error:
         apport.fatal(str(error))
+
     # install the extra packages and their deps
-    if extra_pkgs:
+    if extra_packages:
         try:
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir,
                 config_dir,
                 report["DistroRelease"],
-                extra_pkgs,
+                [(p, None) for p in extra_packages],
                 verbose,
                 cache_dir,
                 permanent_rootdir,
