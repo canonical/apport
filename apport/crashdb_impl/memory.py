@@ -155,11 +155,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         raise an exception (preferably OSError)."""
 
         result = set()
-        for i in range(len(self.reports)):
-            if (
-                self.reports[i]["dup_of"] is None
-                and self.reports[i]["fixed_version"] is None
-            ):
+        for i, report in enumerate(self.reports):
+            if report["dup_of"] is None and report["fixed_version"] is None:
                 result.add(i)
 
         return result

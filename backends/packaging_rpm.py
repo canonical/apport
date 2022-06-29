@@ -116,23 +116,23 @@ class RPMPackageInfo:
         md5s = hdr["filemd5s"]
 
         modified = []
-        for i in range(len(files)):
+        for i, filename in enumerate(files):
             # Skip files we're not tracking md5s for
             if not md5s[i]:
                 continue
             # Skip files we can't read
-            if not os.access(files[i], os.R_OK):
+            if not os.access(filename, os.R_OK):
                 continue
             # Skip things that aren't real files
-            s = os.stat(files[i])
+            s = os.stat(filename)
             if not stat.S_ISREG(s.st_mode):
                 continue
             # Skip things that haven't been modified
             if mtimes[i] == s.st_mtime:
                 continue
             # Oh boy, an actual possibly-modified file. Check the md5sum!
-            if not self._checkmd5(files[i], md5s[i]):
-                modified.append(files[i])
+            if not self._checkmd5(filename, md5s[i]):
+                modified.append(filename)
 
         return modified
 
