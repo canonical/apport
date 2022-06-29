@@ -147,7 +147,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
     finally:
         # resume original processing to get the default behaviour,
         # but do not trigger an AttributeError on interpreter shutdown.
-        if sys:
+        if sys:  # pylint: disable=using-constant-test
             sys.__excepthook__(exc_type, exc_obj, exc_tb)
 
 
