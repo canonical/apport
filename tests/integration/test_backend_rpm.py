@@ -42,7 +42,7 @@ class T(unittest.TestCase):
         arch = impl.get_system_architecture()
         # must be nonempty without line breaks
         self.assertNotEqual(arch, "")
-        self.assertTrue("\n" not in arch)
+        self.assertNotIn("\n", arch)
 
     def test_get_version(self):
         """get_version()."""

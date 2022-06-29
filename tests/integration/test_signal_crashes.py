@@ -199,10 +199,7 @@ class T(unittest.TestCase):
 
         for line in pr["ProcEnviron"].splitlines():
             (k, v) = line.split("=", 1)
-            self.assertTrue(
-                k in allowed_vars,
-                "report contains sensitive environment variable %s" % k,
-            )
+            self.assertIn(k, allowed_vars)
 
         # UserGroups only has system groups
         for g in pr["UserGroups"].split():
@@ -210,10 +207,7 @@ class T(unittest.TestCase):
                 continue
             self.assertLess(grp.getgrnam(g).gr_gid, 500)
 
-        self.assertFalse(
-            "root" in pr["UserGroups"],
-            "collected system groups are not those from root",
-        )
+        self.assertNotIn("root", pr["UserGroups"])
 
     @unittest.skip("fix test as multiple instances can be started within 30s")
     def test_parallel_crash(self):
@@ -353,7 +347,7 @@ class T(unittest.TestCase):
         # On a leak, no report is created since the executable path will be
         # replaced by the symlink path, and it doesn't belong to any package.
         self.assertEqual(pr["ExecutablePath"], "/usr/bin/perl")
-        self.assertFalse("InterpreterPath" in pr)
+        self.assertNotIn("InterpreterPath", pr)
         apport.fileutils.delete_report(leak)
 
     def test_flood_limit(self):
@@ -604,9 +598,9 @@ class T(unittest.TestCase):
         self.assertEqual(app.returncode, 0, err)
         with open(log) as f:
             logged = f.read()
-        self.assertTrue("called for pid" in logged, logged)
-        self.assertTrue("wrote report" in logged, logged)
-        self.assertFalse("Traceback" in logged, logged)
+        self.assertIn("called for pid", logged)
+        self.assertIn("wrote report", logged)
+        self.assertNotIn("Traceback", logged)
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -642,9 +636,9 @@ class T(unittest.TestCase):
 
         self.assertEqual(out, b"")
         self.assertEqual(app.returncode, 0, err)
-        self.assertTrue("called for pid" in err, err)
-        self.assertTrue("wrote report" in err, err)
-        self.assertFalse("Traceback" in err, err)
+        self.assertIn("called for pid", err)
+        self.assertIn("wrote report", err)
+        self.assertNotIn("Traceback", err)
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -1019,13 +1013,10 @@ class T(unittest.TestCase):
         r = apport.Report()
         with open(report_path, "rb") as f:
             r.load(f)
-        self.assertTrue("CoreDump" in r)
+        self.assertIn("CoreDump", r)
         self.assertGreater(len(r["CoreDump"]), 5000)
         r.add_gdb_info()
-        self.assertTrue(
-            "\n#2" in r.get("Stacktrace", ""),
-            r.get("Stacktrace", "no Stacktrace field"),
-        )
+        self.assertIn("\n#2", r.get("Stacktrace"))
 
     def wait_for_core_file(self, gdb_pid: int, core_file: str) -> None:
         """Wait for GDB to finish generating the core file.

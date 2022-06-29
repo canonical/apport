@@ -87,7 +87,7 @@ class T(unittest.TestCase):
         db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
         self.assertEqual(db.options["dyn_option"], "4")
         db = apport.crashdb.get_crashdb(None, "on_thefly", crashdb_conf.name)
-        self.assertFalse("dyn_opion" in db.options)
+        self.assertNotIn("dyn_opion", db.options)
         self.assertEqual(db.options["whoami"], "dynname")
 
     def test_accepts_default(self):
@@ -192,7 +192,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.crashes.reports[1]["comment"], "muhaha")
         self.assertEqual(self.crashes.download(1)["Package"], "libfoo1 1.2-4")
         self.assertEqual(self.crashes.download(1)["StacktraceTop"], "Fresh!")
-        self.assertFalse("FooBar" in self.crashes.download(1))
+        self.assertNotIn("FooBar", self.crashes.download(1))
 
         self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 

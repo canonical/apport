@@ -63,7 +63,7 @@ class T(unittest.TestCase):
             report = apport.report.Report()
             report.load(report_path)
             self.assertEqual(report["hello"], "there")
-            self.assertTrue("Pid:\t%d" % os.getpid() in report["ProcStatus"])
+            self.assertIn("Pid:\t%d" % os.getpid(), report["ProcStatus"])
 
     def test_recoverable_problem_dupe_sig(self):
         """recoverable_problem duplicate signature includes ExecutablePath"""
@@ -77,7 +77,7 @@ class T(unittest.TestCase):
             self.assertEqual(
                 report["DuplicateSignature"], "%s:ds" % (exec_path)
             )
-            self.assertTrue("Pid:\t%d" % os.getpid() in report["ProcStatus"])
+            self.assertIn("Pid:\t%d" % os.getpid(), report["ProcStatus"])
 
     def test_invalid_data(self):
         """recoverable_problem with invalid data"""

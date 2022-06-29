@@ -445,11 +445,11 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
         libs = apport.fileutils.shared_libraries(sys.executable)
         self.assertGreater(len(libs), 3)
-        self.assertTrue("libc.so.6" in libs, libs)
-        self.assertTrue("libc.so.6" in libs["libc.so.6"], libs["libc.so.6"])
+        self.assertIn("libc.so.6", libs)
+        self.assertIn("libc.so.6", libs["libc.so.6"])
         self.assertTrue(os.path.exists(libs["libc.so.6"]))
         for line in libs:
-            self.assertFalse("vdso" in line, libs)
+            self.assertNotIn("vdso", line, libs)
             self.assertTrue(os.path.exists(libs[line]))
 
         self.assertEqual(

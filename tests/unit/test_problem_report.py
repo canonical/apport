@@ -510,7 +510,7 @@ class T(unittest.TestCase):
         # fields
         self.assertTrue(not parts[1].is_multipart())
         self.assertEqual(parts[1].get_content_type(), "text/plain")
-        self.assertTrue(b"Simple: bar" in parts[1].get_payload(decode=True))
+        self.assertIn(b"Simple: bar", parts[1].get_payload(decode=True))
 
     def test_write_mime_order(self):
         """write_mime() with keys ordered."""

@@ -88,7 +88,7 @@ class T(unittest.TestCase):
             ["apport-unpack", "/nonexisting.crash", self.unpack_dir]
         )
         self.assertEqual(ret, 1)
-        self.assertTrue("/nonexisting.crash" in err)
+        self.assertIn("/nonexisting.crash", err)
         self.assertEqual(out, "")
 
     def _call(self, argv):

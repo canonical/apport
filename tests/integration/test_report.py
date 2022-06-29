@@ -182,7 +182,7 @@ class T(unittest.TestCase):
         pr.pid = p.pid
         pr.add_proc_info()
         p.communicate(b"exit\n")
-        self.assertFalse("InterpreterPath" in pr, pr.get("InterpreterPath"))
+        self.assertNotIn("InterpreterPath", pr)
         self.assertEqual(pr["ExecutablePath"], os.path.realpath("/bin/sh"))
         self.assertEqual(
             int(pr["ExecutableTimestamp"]),
@@ -286,7 +286,7 @@ class T(unittest.TestCase):
         r.add_proc_info(pid=p.pid)
         p.communicate(b"")
         self.assertEqual(r["ProcEnviron"], "LANG=xx_YY.UTF-8")
-        self.assertFalse("CurrentDesktop" in r, r)
+        self.assertNotIn("CurrentDesktop", r)
 
         p = subprocess.Popen(
             ["cat"],
@@ -316,10 +316,7 @@ class T(unittest.TestCase):
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b"")
-        self.assertFalse(
-            "PATH" in r["ProcEnviron"],
-            "system default $PATH should be filtered out",
-        )
+        self.assertNotIn("PATH", r["ProcEnviron"])
 
         # no user paths
         p = subprocess.Popen(
@@ -363,7 +360,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"] = "gedit\0/" + f.name
             pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/usr/bin/gedit")
-            self.assertFalse("InterpreterPath" in pr)
+            self.assertNotIn("InterpreterPath", pr)
             f.close()
 
             # bogus argv[0]
@@ -373,7 +370,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"] = "nonexisting\0/foo"
             pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/bin/dash")
-            self.assertFalse("InterpreterPath" in pr)
+            self.assertNotIn("InterpreterPath", pr)
 
             # standard sh script
             pr = apport.report.Report()
@@ -420,7 +417,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"] = "python\0/etc/shadow"
             pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/usr/bin/python")
-            self.assertFalse("InterpreterPath" in pr)
+            self.assertNotIn("InterpreterPath", pr)
 
             # succeed on files we should have access to when name!=argv[0]
             pr = apport.report.Report()
@@ -438,7 +435,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"] = "../etc/shadow"
             pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/usr/bin/python")
-            self.assertFalse("InterpreterPath" in pr)
+            self.assertNotIn("InterpreterPath", pr)
 
             # succeed on files we should have access to when name==argv[0]
             pr = apport.report.Report()
@@ -456,7 +453,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"] = "python"
             pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/usr/bin/python")
-            self.assertFalse("InterpreterPath" in pr)
+            self.assertNotIn("InterpreterPath", pr)
 
             # python script (abuse /bin/bash since it must exist)
             pr = apport.report.Report()
@@ -743,7 +740,7 @@ int main() { return f(42); }
             "f (x=42) at crash.c:3\nmain () at crash.c:6",
             pr["StacktraceTop"],
         )
-        self.assertFalse("AssertionMessage" in pr)
+        self.assertNotIn("AssertionMessage", pr)
 
         # crash where gdb generates output on stderr
         pr = self._generate_sigsegv_report(
@@ -1013,7 +1010,7 @@ int main() { return f(42); }
             )
         )
         self._validate_gdb_fields(pr)
-        self.assertFalse("AssertionMessage" in pr, pr.get("AssertionMessage"))
+        self.assertNotIn("AssertionMessage", pr)
 
     # disabled: __glib_assert_msg symbol not available (LP: #1689344)
     def disabled_test_add_gdb_info_abort_glib(self):
@@ -1887,7 +1884,7 @@ int main() { return f(42); }
     def test_command_output_passes_env(self):
         fake_env = {"GCONV_PATH": "/tmp"}
         out = apport.report._command_output(["env"], env=fake_env)
-        self.assertTrue(b"GCONV_PATH" in out)
+        self.assertIn(b"GCONV_PATH", out)
 
     def test_extrapath_preferred(self):
         """if extrapath is passed it is preferred"""

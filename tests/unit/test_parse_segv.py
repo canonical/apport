@@ -143,7 +143,7 @@ class T(unittest.TestCase):
         try:
             segv = parse_segv.ParseSegv(regs, "", "")
         except ValueError as e:
-            self.assertTrue("invalid literal for int()" in str(e), str(e))
+            self.assertIn("invalid literal for int()", str(e))
 
         regs = "a 0x10"
         disasm = "0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n"
@@ -408,21 +408,19 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "PC (0x00083540) not located in a known VMA region" in details,
-            details,
+        self.assertIn(
+            "PC (0x00083540) not located in a known VMA region", details
         )
-        self.assertTrue("executing unknown VMA" in reason, reason)
+        self.assertIn("executing unknown VMA", reason)
 
         disasm = """0x00083544:"""
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "PC (0x00083544) not located in a known VMA region" in details,
-            details,
+        self.assertIn(
+            "PC (0x00083544) not located in a known VMA region", details
         )
-        self.assertTrue("executing unknown VMA" in reason, reason)
+        self.assertIn("executing unknown VMA", reason)
 
     def test_segv_pc_null(self):
         """Handles PC in NULL VMA"""
@@ -431,11 +429,10 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "PC (0x00000540) not located in a known VMA region" in details,
-            details,
+        self.assertIn(
+            "PC (0x00000540) not located in a known VMA region", details
         )
-        self.assertTrue("executing NULL VMA" in reason, reason)
+        self.assertIn("executing NULL VMA", reason)
 
     def test_segv_pc_nx_writable(self):
         """Handles PC in writable NX VMA"""
@@ -444,12 +441,8 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "PC (0x005a3000) in non-executable VMA region:" in details, details
-        )
-        self.assertTrue(
-            "executing writable VMA /lib/libncurses.so.5.7" in reason, reason
-        )
+        self.assertIn("PC (0x005a3000) in non-executable VMA region:", details)
+        self.assertIn("executing writable VMA /lib/libncurses.so.5.7", reason)
 
     def test_segv_pc_nx_unwritable(self):
         """Handles PC in non-writable NX VMA"""
@@ -458,12 +451,9 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "PC (0x00dfb000) in non-executable VMA region:" in details, details
-        )
-        self.assertTrue(
-            "executing non-writable VMA /lib/libreadline.so.5.2" in reason,
-            reason,
+        self.assertIn("PC (0x00dfb000) in non-executable VMA region:", details)
+        self.assertIn(
+            "executing non-writable VMA /lib/libreadline.so.5.2", reason
         )
 
     def test_segv_src_missing(self):
@@ -476,24 +466,23 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'source "-0x4(%ecx)" (0x0006af20)'
-            " not located in a known VMA region" in details,
+            " not located in a known VMA region",
             details,
         )
-        self.assertTrue("reading unknown VMA" in reason, reason)
+        self.assertIn("reading unknown VMA", reason)
 
         # Valid crash
         disasm = "0x08083547 <main+7>:    callq  *%ecx"
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            'source "*%ecx" (0x0006af24) not located in a known VMA region'
-            in details,
+        self.assertIn(
+            'source "*%ecx" (0x0006af24) not located in a known VMA region',
             details,
         )
-        self.assertTrue("reading unknown VMA" in reason, reason)
+        self.assertIn("reading unknown VMA", reason)
 
     def test_segv_src_null(self):
         """Handles source in NULL VMA"""
@@ -504,12 +493,12 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'source "-0x4(%ecx)" (0x00000020)'
-            " not located in a known VMA region" in details,
+            " not located in a known VMA region",
             details,
         )
-        self.assertTrue("reading NULL VMA" in reason, reason)
+        self.assertIn("reading NULL VMA", reason)
 
     def test_segv_src_not_readable(self):
         """Handles source not in readable VMA"""
@@ -519,18 +508,13 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            'source "-0x4(%ecx)" (0x0026c07c) in non-readable VMA region:'
-            in details,
+        self.assertIn(
+            'source "-0x4(%ecx)" (0x0026c07c) in non-readable VMA region:',
             details,
         )
-        self.assertTrue(
-            "reading VMA /lib/tls/i686/cmov/libc-2.9.so" in reason, reason
-        )
-        self.assertFalse("Stack memory exhausted" in details, details)
-        self.assertFalse(
-            "Stack pointer not within stack segment" in details, details
-        )
+        self.assertIn("reading VMA /lib/tls/i686/cmov/libc-2.9.so", reason)
+        self.assertNotIn("Stack memory exhausted", details)
+        self.assertNotIn("Stack pointer not within stack segment", details)
 
     def test_segv_dest_missing(self):
         """Handles destintation in missing VMA"""
@@ -541,12 +525,12 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'destination "(%esp)" (0x0006af24)'
-            " not located in a known VMA region" in details,
+            " not located in a known VMA region",
             details,
         )
-        self.assertTrue("writing unknown VMA" in reason, reason)
+        self.assertIn("writing unknown VMA", reason)
 
     def test_segv_dest_null(self):
         """Handles destintation in NULL VMA"""
@@ -557,12 +541,12 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'destination "(%esp)" (0x00000024)'
-            " not located in a known VMA region" in details,
+            " not located in a known VMA region",
             details,
         )
-        self.assertTrue("writing NULL VMA" in reason, reason)
+        self.assertIn("writing NULL VMA", reason)
 
     def test_segv_dest_not_writable(self):
         """Handles destination not in writable VMA"""
@@ -572,12 +556,11 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            'destination "(%esp)" (0x08048080) in non-writable VMA region:'
-            in details,
+        self.assertIn(
+            'destination "(%esp)" (0x08048080) in non-writable VMA region:',
             details,
         )
-        self.assertTrue("writing VMA /usr/bin/gdb" in reason, reason)
+        self.assertIn("writing VMA /usr/bin/gdb", reason)
 
     def test_segv_crackful_disasm(self):
         """Rejects insane disassemblies"""
@@ -599,9 +582,9 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'destination "(%esp)" (0xbfc56ff0) not located'
-            " in a known VMA region (needed writable region)!" in details,
+            " in a known VMA region (needed writable region)!",
             details,
         )
 
@@ -611,12 +594,12 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             'destination "(%esp)" (0xbfc56fff) not located'
-            " in a known VMA region (needed writable region)!" in details,
+            " in a known VMA region (needed writable region)!",
             details,
         )
-        self.assertTrue("Stack memory exhausted" in details, details)
+        self.assertIn("Stack memory exhausted", details)
 
         # Triggered via unknown reason
         reg = regs + "esp            0xdfc56000   0xdfc56000"
@@ -624,14 +607,12 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(reg, disasm, maps)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
+        self.assertIn(
             "SP (0xdfc56000) not located in a known VMA region"
-            " (needed readable region)!" in details,
+            " (needed readable region)!",
             details,
         )
-        self.assertTrue(
-            "Stack pointer not within stack segment" in details, details
-        )
+        self.assertIn("Stack pointer not within stack segment", details)
 
     def test_segv_stack_kernel_segfault(self):
         """Handles unknown segfaults in kernel"""
@@ -641,20 +622,16 @@ class T(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertFalse(understood, details)
-        self.assertTrue(
-            "Reason could not be automatically determined." in details, details
-        )
-        self.assertFalse(
-            "(Unhandled exception in kernel code?)" in details, details
-        )
+        self.assertIn("Reason could not be automatically determined.", details)
+        self.assertNotIn("(Unhandled exception in kernel code?)", details)
 
         # Crash from kernel code path
         disasm = """0x00b67422 <__kernel_vsyscall+2>: ret"""
         segv = parse_segv.ParseSegv(regs, disasm, maps)
         understood, reason, details = segv.report()
         self.assertFalse(understood, details)
-        self.assertTrue(
+        self.assertIn(
             "Reason could not be automatically determined."
-            " (Unhandled exception in kernel code?)" in details,
+            " (Unhandled exception in kernel code?)",
             details,
         )

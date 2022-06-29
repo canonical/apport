@@ -72,10 +72,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(
             p.returncode, 0, "crash must exit with nonzero code"
         )
-        self.assertTrue(
-            b"Can't catch this" in err,
-            "crash handler must print original exception:\n" + err.decode(),
-        )
+        self.assertIn(b"Can't catch this", err)
 
         self._check_crash_report(crash_class)
 
@@ -99,10 +96,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(
             p.returncode, 0, "crash must exit with nonzero code"
         )
-        self.assertTrue(
-            b"Can't catch this" in err,
-            "crash handler must print original exception:\n" + err.decode(),
-        )
+        self.assertIn(b"Can't catch this", err)
 
         self._check_crash_report(self.crash_jar_path + "!/crash.class")
 
@@ -125,5 +119,5 @@ class T(unittest.TestCase):
             self.assertEqual(r["MainClassUrl"], "jar:file:" + main_file)
         else:
             self.assertEqual(r["MainClassUrl"], "file:" + main_file)
-        self.assertTrue("DistroRelease" in r)
-        self.assertTrue("ProcCwd" in r)
+        self.assertIn("DistroRelease", r)
+        self.assertIn("ProcCwd", r)

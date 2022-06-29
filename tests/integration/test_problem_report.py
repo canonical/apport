@@ -347,8 +347,8 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(out)
 
-        self.assertFalse("FileSmallLimit" in pr)
-        self.assertFalse("FileLimitMinus1" in pr)
+        self.assertNotIn("FileSmallLimit", pr)
+        self.assertNotIn("FileLimitMinus1", pr)
         self.assertTrue(pr["FileExactLimit"] == data)
         self.assertTrue(pr["FileLimitPlus1"] == data)
         self.assertTrue(pr["FileLimitNone"] == data)

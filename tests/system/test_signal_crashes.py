@@ -184,7 +184,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(pr["Signal"], "42")
         self.assertEqual(pr["ExecutablePath"], test_executable)
-        self.assertFalse("CoreDump" in pr)
+        self.assertNotIn("CoreDump", pr)
         # FIXME: sometimes this is empty!?
         if err:
             self.assertRegex(

@@ -151,4 +151,4 @@ void makeleak(void){
 
         with open(logpath) as f:
             log = f.read()
-            self.assertTrue(exepath in log, log)
+            self.assertIn(exepath, log)

@@ -50,12 +50,10 @@ class T(unittest.TestCase):
         self.assertEqual(
             apport.hookutils._get_module_license("does-not-exist"), "invalid"
         )
-        self.assertTrue(
-            "GPL" in apport.hookutils._get_module_license(good_ko.name)
+        self.assertIn(
+            "GPL", apport.hookutils._get_module_license(good_ko.name)
         )
-        self.assertTrue(
-            "BAD" in apport.hookutils._get_module_license(bad_ko.name)
-        )
+        self.assertIn("BAD", apport.hookutils._get_module_license(bad_ko.name))
 
         # check via nonfree_kernel_modules logic
         f = tempfile.NamedTemporaryFile()
@@ -66,9 +64,9 @@ class T(unittest.TestCase):
         )
         f.flush()
         nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
-        self.assertTrue("does-not-exist" in nonfree)
-        self.assertFalse(good_ko.name in nonfree)
-        self.assertTrue(bad_ko.name in nonfree)
+        self.assertIn("does-not-exist", nonfree)
+        self.assertNotIn(good_ko.name, nonfree)
+        self.assertIn(bad_ko.name, nonfree)
 
     def test_real_module_license_evaluation(self):
         """module licenses can be validated correctly for real module"""
@@ -249,7 +247,7 @@ class T(unittest.TestCase):
 
         report = {}
         apport.hookutils.attach_mac_events(report)
-        self.assertTrue("KernLog" in report)
+        self.assertIn("KernLog", report)
 
         # No AppArmor messages
         report = {}
@@ -263,7 +261,7 @@ class T(unittest.TestCase):
         )
 
         apport.hookutils.attach_mac_events(report)
-        self.assertFalse("Tags" in report)
+        self.assertNotIn("Tags", report)
 
         # AppArmor message, but not a denial
         report = {}
@@ -274,7 +272,7 @@ class T(unittest.TestCase):
         )
 
         apport.hookutils.attach_mac_events(report)
-        self.assertFalse("Tags" in report)
+        self.assertNotIn("Tags", report)
 
         # AppArmor denial, empty tags, no profile specified
         report = {}
@@ -324,7 +322,7 @@ class T(unittest.TestCase):
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cup")
-        self.assertFalse("Tags" in report)
+        self.assertNotIn("Tags", report)
 
         # AppArmor hex-encoded denial, single profile specified
         report = {}
@@ -338,7 +336,7 @@ class T(unittest.TestCase):
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/nonexistent")
-        self.assertFalse("Tags" in report)
+        self.assertNotIn("Tags", report)
 
         # AppArmor denial, multiple profiles specified
         report = {}
@@ -354,7 +352,7 @@ class T(unittest.TestCase):
         profiles = ["/usr/bin/nonexistent", "/usr/sbin/anotherone"]
 
         apport.hookutils.attach_mac_events(report, profiles)
-        self.assertFalse("Tags" in report)
+        self.assertNotIn("Tags", report)
 
         # Multiple AppArmor denials, second match
         report = {}
@@ -481,16 +479,14 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 
             # default pattern includes glib assertions and X Errors
             res = apport.hookutils.xsession_errors()
-            self.assertFalse("nonstandard warning" in res)
-            self.assertFalse("keyring" in res)
-            self.assertFalse("credentials" in res)
-            self.assertTrue("WARNING: standard glib warning" in res, res)
-            self.assertTrue("GdkPixbuf-CRITICAL" in res, res)
-            self.assertTrue(
-                "'gnome-settings-daemon' received an X Window" in res, res
-            )
-            self.assertTrue("BadMatch" in res, res)
-            self.assertTrue("serial 723" in res, res)
+            self.assertNotIn("nonstandard warning", res)
+            self.assertNotIn("keyring", res)
+            self.assertNotIn("credentials", res)
+            self.assertIn("WARNING: standard glib warning", res)
+            self.assertIn("GdkPixbuf-CRITICAL", res)
+            self.assertIn("'gnome-settings-daemon' received an X Window", res)
+            self.assertIn("BadMatch", res)
+            self.assertIn("serial 723", res)
 
         finally:
             if orig_home is not None:
@@ -526,11 +522,11 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         try:
             # default mode: disable translations
             out = apport.hookutils.command_output(["env"])
-            self.assertTrue("LC_MESSAGES=C" in out)
+            self.assertIn("LC_MESSAGES=C", out)
 
             # keep locale
             out = apport.hookutils.command_output(["env"], keep_locale=True)
-            self.assertFalse("LC_MESSAGES=C" in out, out)
+            self.assertNotIn("LC_MESSAGES=C", out)
         finally:
             if orig_lcm is not None:
                 os.environ["LC_MESSAGES"] = orig_lcm

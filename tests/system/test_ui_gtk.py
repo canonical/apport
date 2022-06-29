@@ -742,7 +742,7 @@ class T(unittest.TestCase):
 
         # data was collected
         self.assertTrue(r["Package"].startswith("bash "))
-        self.assertTrue("libc" in r["Dependencies"])
+        self.assertIn("libc", r["Dependencies"])
 
         # upload dialog shown
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
@@ -800,7 +800,7 @@ class T(unittest.TestCase):
 
         # data was collected
         self.assertTrue(r["Package"].startswith("bash "))
-        self.assertTrue("libc" in r["Dependencies"])
+        self.assertIn("libc", r["Dependencies"])
 
         # upload dialog shown
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
@@ -915,7 +915,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["ProblemType"], "Crash")
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
         self.assertTrue(r["Package"].startswith("bash "))
-        self.assertTrue("libc" in r["Dependencies"])
+        self.assertIn("libc", r["Dependencies"])
 
     @unittest.mock.patch.object(GTKUserInterface, "open_url")
     @unittest.mock.patch(
@@ -951,10 +951,10 @@ class T(unittest.TestCase):
         self.assertEqual(r["OopsText"], "Plasma conduit phase misalignment")
 
         # data was collected
-        self.assertTrue("linux" in r["Package"])
-        self.assertTrue("Plasma conduit" in r["Title"])
+        self.assertIn("linux", r["Package"])
+        self.assertIn("Plasma conduit", r["Title"])
         if not r["Package"].endswith(" (not installed)"):
-            self.assertTrue("Dependencies" in r)
+            self.assertIn("Dependencies", r)
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
@@ -1036,8 +1036,8 @@ class T(unittest.TestCase):
         # bug was updated
         r = self.app.crashdb.download(0)
         self.assertTrue(r["Package"].startswith("bash "))
-        self.assertTrue("libc" in r["Dependencies"])
-        self.assertTrue("DistroRelease" in r)
+        self.assertIn("libc", r["Dependencies"])
+        self.assertIn("DistroRelease", r)
 
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
@@ -1084,9 +1084,9 @@ class T(unittest.TestCase):
 
         # bug was updated
         r = self.app.crashdb.download(0)
-        self.assertTrue("ProcEnviron" in r)
-        self.assertTrue("DistroRelease" in r)
-        self.assertTrue("Uname" in r)
+        self.assertIn("ProcEnviron", r)
+        self.assertIn("DistroRelease", r)
+        self.assertIn("Uname", r)
         self.assertEqual(r["MachineType"], "Laptop")
 
         # No URL in this mode

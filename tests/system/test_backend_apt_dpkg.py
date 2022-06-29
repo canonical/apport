@@ -1154,8 +1154,9 @@ class T(unittest.TestCase):
         else:
             self.fail("could not find Machine: in readelf output")
 
-        self.assertTrue(
-            archmap[expected] in machine,
+        self.assertIn(
+            archmap[expected],
+            machine,
             '%s has unexpected machine type "%s" for architecture %s'
             % (path, machine, expected),
         )

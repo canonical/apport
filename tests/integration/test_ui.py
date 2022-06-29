@@ -482,11 +482,8 @@ class T(unittest.TestCase):
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
-        self.assertTrue("CrashDB" in self.ui.report)
-        self.assertFalse(
-            "UnreportableReason" in self.ui.report,
-            self.ui.report.get("UnreportableReason"),
-        )
+        self.assertIn("CrashDB", self.ui.report)
+        self.assertNotIn("UnreportableReason", self.ui.report)
         self.assertEqual(self.ui.report["BashHook"], "Moo")
         self.assertEqual(self.ui.crashdb.options["local_opt"], "1")
 
@@ -496,10 +493,7 @@ class T(unittest.TestCase):
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
-        self.assertFalse(
-            "UnreportableReason" in self.ui.report,
-            self.ui.report.get("UnreportableReason"),
-        )
+        self.assertNotIn("UnreportableReason", self.ui.report)
         self.assertEqual(self.ui.report["BashHook"], "Moo")
         self.assertEqual(self.ui.crashdb.options["distro"], "debug")
 
@@ -513,30 +507,21 @@ class T(unittest.TestCase):
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
-        self.assertTrue(
-            "nonexisting" in self.ui.report["UnreportableReason"],
-            self.ui.report.get("UnreportableReason", "<not set>"),
-        )
+        self.assertIn("nonexisting", self.ui.report["UnreportableReason"])
 
         # invalid syntax
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt'")
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
-        self.assertTrue(
-            "package hook" in self.ui.report["UnreportableReason"],
-            self.ui.report.get("UnreportableReason", "<not set>"),
-        )
+        self.assertIn("package hook", self.ui.report["UnreportableReason"])
 
         # nonexisting name
         self._write_crashdb_config_hook("nonexisting")
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
-        self.assertTrue(
-            "nonexisting" in self.ui.report["UnreportableReason"],
-            self.ui.report.get("UnreportableReason", "<not set>"),
-        )
+        self.assertIn("nonexisting", self.ui.report["UnreportableReason"])
 
         # string with unsafe contents
         self._write_crashdb_config_hook(
@@ -644,8 +629,8 @@ class T(unittest.TestCase):
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
         # should not crash on nonexisting package
@@ -685,17 +670,17 @@ class T(unittest.TestCase):
             os.kill(pid, signal.SIGKILL)
             os.waitpid(pid, 0)
 
-        self.assertTrue("SourcePackage" in self.ui.report.keys())
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcMaps" in self.ui.report.keys())
+        self.assertIn("SourcePackage", self.ui.report)
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcMaps", self.ui.report)
         self.assertEqual(
             self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE
         )
-        self.assertFalse("ProcCmdline" in self.ui.report)  # privacy!
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertNotIn("ProcCmdline", self.ui.report)  # privacy!
+        self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
-        self.assertTrue("Tags" in self.ui.report.keys())
-        self.assertTrue("foo" in self.ui.report["Tags"])
+        self.assertIn("Tags", self.ui.report)
+        self.assertIn("foo", self.ui.report["Tags"])
 
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -837,8 +822,8 @@ class T(unittest.TestCase):
             r.load(f)
 
         self.assertEqual(r["SourcePackage"], "bash")
-        self.assertTrue("Dependencies" in r.keys())
-        self.assertTrue("ProcEnviron" in r.keys())
+        self.assertIn("Dependencies", r)
+        self.assertIn("ProcEnviron", r)
         self.assertEqual(r["ProblemType"], "Bug")
 
         # report it
@@ -954,12 +939,12 @@ class T(unittest.TestCase):
         self.assertNotEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
 
-        self.assertTrue("SourcePackage" in self.ui.report.keys())
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("Stacktrace" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
-        self.assertFalse("ExecutableTimestamp" in self.ui.report.keys())
-        self.assertFalse("StacktraceAddressSignature" in self.ui.report.keys())
+        self.assertIn("SourcePackage", self.ui.report)
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("Stacktrace", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertNotIn("ExecutableTimestamp", self.ui.report)
+        self.assertNotIn("StacktraceAddressSignature", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Crash")
         self.assertTrue(len(self.ui.report["CoreDump"]) > 10000)
         self.assertTrue(
@@ -1011,15 +996,15 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
-        self.assertTrue("SourcePackage" in self.ui.report.keys())
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("Stacktrace" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
-        self.assertFalse("ExecutableTimestamp" in self.ui.report.keys())
+        self.assertIn("SourcePackage", self.ui.report)
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("Stacktrace", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertNotIn("ExecutableTimestamp", self.ui.report)
         self.assertEqual(self.ui.report["Signal"], "6")
 
         # we disable the ABRT filtering, we want these crashes after all
-        # self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
+        # self.assertIn('assert', self.ui.msg_text, '%s: %s' %
         #     (self.ui.msg_title, self.ui.msg_text))
         # self.assertEqual(self.ui.msg_severity, 'info')
         self.assertEqual(self.ui.msg_severity, None)
@@ -1049,7 +1034,7 @@ class T(unittest.TestCase):
         }
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "info", self.ui.msg_text)
-        self.assertTrue("decompress" in self.ui.msg_text)
+        self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info")
@@ -1095,8 +1080,9 @@ class T(unittest.TestCase):
         }
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertTrue(
-            "It stinks." in self.ui.msg_text,
+        self.assertIn(
+            "It stinks.",
+            self.ui.msg_text,
             "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
         )
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1125,8 +1111,9 @@ class T(unittest.TestCase):
 
         self.ui.run_crash(self.report_file.name)
 
-        self.assertTrue(
-            "It stinks." in self.ui.msg_text,
+        self.assertIn(
+            "It stinks.",
+            self.ui.msg_text,
             "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
         )
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1255,8 +1242,9 @@ class T(unittest.TestCase):
         self.ui = TestSuiteUserInterface()
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "error")
-        self.assertTrue(
-            "memory" in self.ui.msg_text,
+        self.assertIn(
+            "memory",
+            self.ui.msg_text,
             "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
         )
 
@@ -1436,13 +1424,15 @@ class T(unittest.TestCase):
         }
         self.ui.run_crash(report_file)
 
-        self.assertFalse("ExecutableTimestamp" in self.ui.report)
-        self.assertTrue(
-            self.ui.report["ExecutablePath"] in self.ui.msg_text,
+        self.assertNotIn("ExecutableTimestamp", self.ui.report)
+        self.assertIn(
+            self.ui.report["ExecutablePath"],
+            self.ui.msg_text,
             "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
         )
-        self.assertTrue(
-            "changed" in self.ui.msg_text,
+        self.assertIn(
+            "changed",
+            self.ui.msg_text,
             "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
         )
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1499,14 +1489,14 @@ class T(unittest.TestCase):
         )
         self.assertTrue(self.ui.present_details_shown)
 
-        self.assertTrue("SourcePackage" in self.ui.report.keys())
-        self.assertTrue("Package" in self.ui.report.keys())
+        self.assertIn("SourcePackage", self.ui.report)
+        self.assertIn("Package", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Package")
 
         # verify that additional information has been collected
-        self.assertTrue("Architecture" in self.ui.report.keys())
-        self.assertTrue("DistroRelease" in self.ui.report.keys())
-        self.assertTrue("Uname" in self.ui.report.keys())
+        self.assertIn("Architecture", self.ui.report)
+        self.assertIn("DistroRelease", self.ui.report)
+        self.assertIn("Uname", self.ui.report)
 
     def test_run_crash_kernel(self):
         """run_crash() for a kernel error"""
@@ -1584,9 +1574,9 @@ class T(unittest.TestCase):
         )
         self.assertTrue(self.ui.present_details_shown)
 
-        self.assertTrue("SourcePackage" in self.ui.report.keys())
+        self.assertIn("SourcePackage", self.ui.report)
         # did we run the hooks properly?
-        self.assertTrue("KernelDebug" in self.ui.report.keys())
+        self.assertIn("KernelDebug", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "KernelCrash")
 
     def test_run_crash_anonymity(self):
@@ -1612,7 +1602,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
-        self.assertFalse("ProcCwd" in self.ui.report)
+        self.assertNotIn("ProcCwd", self.ui.report)
 
         dump = io.BytesIO()
         # this contains more or less random characters which might contain the
@@ -1625,8 +1615,9 @@ class T(unittest.TestCase):
         bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
 
         for s in bad_strings:
-            self.assertFalse(
-                s in report,
+            self.assertNotIn(
+                s,
+                report,
                 "dump contains sensitive string: %s:\n%s" % (s, report),
             )
 
@@ -1849,8 +1840,8 @@ class T(unittest.TestCase):
         )
         # internal key should not be uploaded to the crash db
         r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
-        self.assertTrue("SourcePackage" in r)
-        self.assertFalse("_Temp" in r)
+        self.assertIn("SourcePackage", r)
+        self.assertNotIn("_Temp", r)
 
     @unittest.skipIf(logind_session is None, "not running in logind session")
     def test_run_crash_older_session(self):
@@ -1919,9 +1910,7 @@ class T(unittest.TestCase):
         self.ui = TestSuiteUserInterface()
 
         self.assertEqual(self.ui.run_argv(), False)
-        self.assertTrue(
-            "No additional information collected." in self.ui.msg_text
-        )
+        self.assertIn("No additional information collected.", self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
     def test_run_update_report_nonexisting_package_cli(self):
@@ -1931,9 +1920,7 @@ class T(unittest.TestCase):
         self.ui = TestSuiteUserInterface()
 
         self.assertEqual(self.ui.run_argv(), False)
-        self.assertTrue(
-            "No additional information collected." in self.ui.msg_text
-        )
+        self.assertIn("No additional information collected.", self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
     def test_run_update_report_existing_package_from_bug(self):
@@ -1959,8 +1946,8 @@ class T(unittest.TestCase):
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
 
     def test_run_update_report_existing_package_cli_tags(self):
         """run_update_report() on an existing package (CLI argument)
@@ -1984,9 +1971,9 @@ class T(unittest.TestCase):
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
-        self.assertTrue("foo" in self.ui.report["Tags"])
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertIn("foo", self.ui.report["Tags"])
 
     def test_run_update_report_existing_package_cli_cmdname(self):
         """run_update_report() on an existing package (-collect program)"""
@@ -2009,8 +1996,8 @@ class T(unittest.TestCase):
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
 
     def test_run_update_report_noninstalled_but_hook(self):
         """run_update_report() on an uninstalled package with a source hook"""
@@ -2037,7 +2024,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertEqual(self.ui.report["Package"], "foo (not installed)")
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("ProcEnviron", self.ui.report)
 
     def test_run_update_report_different_binary_source(self):
         """run_update_report() on a source package which does not have
@@ -2073,7 +2060,7 @@ class T(unittest.TestCase):
             self.ui.report["Package"], "%s (not installed)" % source_pkg
         )
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("ProcEnviron", self.ui.report)
 
     def _run_hook(self, code):
         f = open(os.path.join(self.hookdir, "coreutils.py"), "w")
@@ -2236,7 +2223,7 @@ class T(unittest.TestCase):
             "remember": False,
         }
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertTrue('foobar" is not known' in self.ui.msg_text)
+        self.assertIn('foobar" is not known', self.ui.msg_text)
         self.assertEqual(self.ui.msg_severity, "error")
 
         # does not determine package
@@ -2250,7 +2237,7 @@ class T(unittest.TestCase):
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr
-        self.assertTrue("did not determine the affected package" in err)
+        self.assertIn("did not determine the affected package", err)
 
         # does not define run()
         f = open(os.path.join(apport.ui.symptom_script_dir, "norun.py"), "w")
@@ -2262,7 +2249,7 @@ class T(unittest.TestCase):
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr
-        self.assertTrue("norun.py crashed:" in err)
+        self.assertIn("norun.py crashed:", err)
 
         # crashing script
         f = open(os.path.join(apport.ui.symptom_script_dir, "crash.py"), "w")
@@ -2274,8 +2261,8 @@ class T(unittest.TestCase):
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = sys.stderr.getvalue()
         sys.stderr = orig_stderr
-        self.assertTrue("crash.py crashed:" in err)
-        self.assertTrue("ZeroDivisionError:" in err)
+        self.assertIn("crash.py crashed:", err)
+        self.assertIn("ZeroDivisionError:", err)
 
         # working noninteractive script
         f = open(os.path.join(apport.ui.symptom_script_dir, "itching.py"), "w")
@@ -2300,7 +2287,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertEqual(self.ui.report["itch"], "scratch")
-        self.assertTrue("DistroRelease" in self.ui.report)
+        self.assertIn("DistroRelease", self.ui.report)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
@@ -2321,7 +2308,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertEqual(self.ui.report["itch"], "scratch")
-        self.assertTrue("foo" in self.ui.report["Tags"])
+        self.assertIn("foo", self.ui.report["Tags"])
 
         # working interactive script
         f = open(os.path.join(apport.ui.symptom_script_dir, "itching.py"), "w")
@@ -2351,7 +2338,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_text, "do you?")
 
         self.assertEqual(self.ui.report["itch"], "slap")
-        self.assertTrue("DistroRelease" in self.ui.report)
+        self.assertIn("DistroRelease", self.ui.report)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
@@ -2389,7 +2376,7 @@ class T(unittest.TestCase):
         self.ui.question_choice_response = None
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None)
-        self.assertTrue("kind of problem" in self.ui.msg_text)
+        self.assertIn("kind of problem", self.ui.msg_text)
         self.assertEqual(
             set(self.ui.msg_choices),
             set(["bar", "foo does not work", "Other problem"]),
@@ -2800,7 +2787,7 @@ class T(unittest.TestCase):
             else:
                 # if we run tests in installed system, we just check that
                 # it doesn't crash
-                self.assertTrue(self.ui.can_examine_locally() in [False, True])
+                self.assertIn(self.ui.can_examine_locally(), [False, True])
 
             self.ui.ui_run_terminal = lambda command: False
             self.assertEqual(self.ui.can_examine_locally(), False)
@@ -2855,8 +2842,8 @@ class T(unittest.TestCase):
 
         # data was collected for whoopsie
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertTrue("Dependencies" in self.ui.report.keys())
-        self.assertTrue("ProcEnviron" in self.ui.report.keys())
+        self.assertIn("Dependencies", self.ui.report)
+        self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
         # no upload happend
