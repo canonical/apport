@@ -1204,8 +1204,6 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
     upload progress."""
 
     def send(self, data):
-        global _https_upload_callback
-
         # if callback has not been set, call the old method
         if not _https_upload_callback:
             http.client.HTTPSConnection.send(self, data)
