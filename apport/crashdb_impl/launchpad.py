@@ -1098,7 +1098,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         )
         if not person.replace(str(self.launchpad._root_uri), "").strip(
             "~"
-        ) in [str(sub).split("/")[-1] for sub in bug.subscriptions]:
+        ) in [
+            str(sub).split("/", maxsplit=1)[-1] for sub in bug.subscriptions
+        ]:
             bug.subscribe(person=person)
 
     def _generate_upload_blob(self, report):

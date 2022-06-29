@@ -922,12 +922,14 @@ class Report(problem_report.ProblemReport):
             reason = "Invalid core dump: " + warnings.strip()
             self["UnreportableReason"] = reason
             raise OSError(reason)
-        elif out.split("\n")[0].endswith("No such file or directory."):
-            raise FileNotFoundError(
-                errno.ENOENT,
-                os.strerror(errno.ENOENT),
-                "executable file for coredump not found",
-            )
+        else:
+            first_line = out.split("\n", maxsplit=1)[0]
+            if first_line.endswith("No such file or directory."):
+                raise FileNotFoundError(
+                    errno.ENOENT,
+                    os.strerror(errno.ENOENT),
+                    "executable file for coredump not found",
+                )
 
         # split the output into the various fields
         part_re = re.compile(r"^\$\d+\s*=\s*-99$", re.MULTILINE)
