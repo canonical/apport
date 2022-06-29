@@ -13,6 +13,10 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint fails to import the apport module, because it has the same name.
+# See bug https://github.com/PyCQA/pylint/issues/7093
+# pylint: disable=c-extension-no-member,no-name-in-module,not-callable
+
 import argparse
 import array
 import atexit
