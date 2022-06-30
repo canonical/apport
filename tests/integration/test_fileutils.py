@@ -261,14 +261,14 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch.object(os, "stat")
     @unittest.mock.patch.object(pwd, "getpwuid")
-    def test_get_system_reports_guest(self, *args):
+    def test_get_system_reports_guest(self, getpwuid_mock, stat_mock):
         """get_all_system_reports() filters out reports from guest user"""
 
         self._create_reports()
 
-        os.stat.return_value.st_size = 1000
-        os.stat.return_value.st_uid = 123
-        pwd.getpwuid.return_value.pw_name = "guest_tmp987"
+        stat_mock.return_value.st_size = 1000
+        stat_mock.return_value.st_uid = 123
+        getpwuid_mock.return_value.pw_name = "guest_tmp987"
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
     def test_unwritable_report(self):
