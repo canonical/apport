@@ -175,14 +175,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 version="1.0",
             )
         except Exception as error:
-            if hasattr(error, "content"):
-                msg = error.content
-            else:
-                msg = str(error)
             apport.error(
                 "connecting to Launchpad failed: %s\n"
                 'You can reset the credentials by removing the file "%s"',
-                msg,
+                getattr(error, "content", str(error)),
                 self.auth,
             )
             sys.exit(99)  # transient error

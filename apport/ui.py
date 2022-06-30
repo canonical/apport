@@ -584,11 +584,10 @@ class UserInterface:
                 )
                 return False
             except (ValueError, OSError) as error:
-                if hasattr(error, "errno"):
+                if getattr(error, "errno", None) == errno.ENOENT:
                     # silently ignore nonexisting PIDs; the user must not
                     # close the application prematurely
-                    if error.errno == errno.ENOENT:
-                        return False
+                    return False
                 self.ui_error_message(
                     _("Invalid PID"),
                     _(
