@@ -340,7 +340,9 @@ class T(unittest.TestCase):
                 "sleep(10);\n"
             )
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe, args=[], sleep=2)
+        self.do_crash(
+            command=local_exe, args=[], expected_command=f"..{local_exe}"
+        )
 
         leak = os.path.join(
             apport.fileutils.report_dir,
@@ -857,8 +859,8 @@ class T(unittest.TestCase):
         self,
         expect_corefile=False,
         sig=signal.SIGSEGV,
-        sleep=0,
         command=None,
+        expected_command=None,
         uid=None,
         expect_corefile_owner=None,
         args=None,
@@ -911,10 +913,9 @@ class T(unittest.TestCase):
             raise
 
         try:
-            command_process = self.wait_for_gdb_child_process(gdb.pid, command)
-
-            if sleep > 0:
-                time.sleep(sleep)
+            command_process = self.wait_for_gdb_child_process(
+                gdb.pid, expected_command or command
+            )
 
             os.kill(command_process.pid, sig)
             self.wait_for_core_file(gdb.pid, gdb_core_file)
@@ -1073,12 +1074,13 @@ class T(unittest.TestCase):
     ) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
-        command_name = os.path.basename(command)
         timeout = 0
         while timeout < 5:
             gdb_children = gdb_process.children()
             command_processes = [
-                p for p in gdb_children if p.name() == command_name
+                p
+                for p in gdb_children
+                if p.cmdline()[0] == command and p.status() != "tracing-stop"
             ]
             if command_processes:
                 break
