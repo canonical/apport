@@ -282,7 +282,7 @@ class T(unittest.TestCase):
 
         local_exe = os.path.join(self.workdir, "myscript")
         with open(local_exe, "w") as f:
-            f.write("#!/bin/sh\nkill -SEGV $$")
+            f.write("#!/usr/bin/perl\nsleep(86400);\n")
         os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe, args=[])
 
