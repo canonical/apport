@@ -1144,7 +1144,14 @@ class T(unittest.TestCase):
 
         Expected is a Debian-style architecture (i386, amd64, armhf)
         """
-        archmap = {"i386": "80386", "amd64": "X86-64", "armhf": "ARM"}
+        archmap = {
+            "amd64": "X86-64",
+            "arm64": "AArch64",
+            "armhf": "ARM",
+            "i386": "80386",
+            "ppc64el": "PowerPC64",
+            "s390x": "IBM S/390",
+        }
 
         # get ELF machine type
         readelf = subprocess.Popen(
