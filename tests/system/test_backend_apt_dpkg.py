@@ -1004,6 +1004,14 @@ class T(unittest.TestCase):
 
         self.assertEqual(sandbox_ver("apport"), "2.20.11-0ubuntu27.14~ppa1")
 
+    def _ubuntu_archive_uri(self, arch=None):
+        """Return archive URI for the given architecture."""
+        if arch is None:
+            arch = impl.get_system_architecture()
+        if arch in ("amd64", "i386"):
+            return "http://archive.ubuntu.com/ubuntu"
+        return "http://ports.ubuntu.com/ubuntu-ports"
+
     def _setup_foonux_config(self, updates=False, release="trusty", ppa=False):
         """Set up directories and configuration for install_packages()
 
@@ -1027,7 +1035,7 @@ class T(unittest.TestCase):
         os.mkdir(os.path.join(self.configdir, "Foonux %s" % vers))
         self._write_source_file(
             os.path.join(self.configdir, "Foonux %s" % vers, "sources.list"),
-            "http://archive.ubuntu.com/ubuntu/",
+            self._ubuntu_archive_uri(),
             release,
             updates,
         )
@@ -1057,7 +1065,7 @@ class T(unittest.TestCase):
             os.path.join(
                 self.configdir, "Foonux %s" % vers, "armhf", "sources.list"
             ),
-            "http://ports.ubuntu.com/",
+            self._ubuntu_archive_uri("armhf"),
             release,
             updates,
         )
