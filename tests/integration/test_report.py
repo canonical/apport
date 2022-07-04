@@ -938,10 +938,7 @@ int main() { return f(42); }
             pr.add_gdb_info()
 
             self._validate_gdb_fields(pr)
-            self.assertTrue(
-                "libc.so" in pr["Stacktrace"]
-                or "in execute_command" in pr["Stacktrace"]
-            )
+            self.assertIn("in kill_builtin", pr["Stacktrace"])
 
     def test_add_gdb_info_abort(self):
         """add_gdb_info() with SIGABRT/assert()
