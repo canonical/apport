@@ -1101,6 +1101,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                     src_records.restart()
                     if src_records.lookup(candidate.source_name):
                         # ignore transitional packages
+                        # False positive, see
+                        # https://github.com/PyCQA/pylint/issues/7122
+                        # pylint: disable=not-an-iterable
                         dbgs = [
                             p
                             for p in src_records.binaries
@@ -1298,7 +1301,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if verbose:
             print("Extracting downloaded debs...")
-        for i in fetcher.items:
+        # False positive, see https://github.com/PyCQA/pylint/issues/7122
+        for i in fetcher.items:  # pylint: disable=not-an-iterable
             out = subprocess.check_output(
                 ["dpkg-deb", "--show", i.destfile]
             ).decode()
