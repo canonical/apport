@@ -40,17 +40,16 @@ class T(unittest.TestCase):
         """install_packages() with versions and with cache"""
 
         release = self._setup_foonux_config(release="xenial", updates=True)
-        v_coreutils = "8.25-2ubuntu2"
-        v_libc = "2.23-0ubuntu3"
+        wanted = {
+            "coreutils": "8.25-2ubuntu2",  # should not come from updates
+            "libc6": "2.23-0ubuntu3",
+            "tzdata": None,  # should come from -updates, > 2014b-1
+        }
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [
-                ("coreutils", v_coreutils),  # should not come from updates
-                ("libc6", v_libc),
-                ("tzdata", None),  # should come from -updates, > 2014b-1
-            ],
+            [(package, version) for package, version in wanted.items()],
             False,
             self.cachedir,
         )
@@ -90,17 +89,17 @@ class T(unittest.TestCase):
         )
 
         # their versions are as expected
-        self.assertEqual(sandbox_ver("coreutils"), v_coreutils)
-        self.assertEqual(sandbox_ver("libc6"), v_libc)
-        self.assertEqual(sandbox_ver("libc6-dbg"), v_libc)
+        self.assertEqual(sandbox_ver("coreutils"), wanted["coreutils"])
+        self.assertEqual(sandbox_ver("libc6"), wanted["libc6"])
+        self.assertEqual(sandbox_ver("libc6-dbg"), wanted["libc6"])
         self.assertGreater(sandbox_ver("tzdata"), "2016")
 
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("coreutils " + v_coreutils, pkglist)
-        self.assertIn("coreutils-dbgsym " + v_coreutils, pkglist)
-        self.assertIn("libc6 " + v_libc, pkglist)
-        self.assertIn("libc6-dbg " + v_libc, pkglist)
+        self.assertIn(f"coreutils {wanted['coreutils']}", pkglist)
+        self.assertIn(f"coreutils-dbgsym {wanted['coreutils']}", pkglist)
+        self.assertIn(f"libc6 {wanted['libc6']}", pkglist)
+        self.assertIn(f"libc6-dbg {wanted['libc6']}", pkglist)
         self.assertIn("tzdata " + sandbox_ver("tzdata"), pkglist)
         self.assertEqual(len(pkglist), 5, str(pkglist))
 
@@ -134,11 +133,13 @@ class T(unittest.TestCase):
                 cache_versions[name] = ver
             except ValueError:
                 pass  # not a .deb, ignore
-        self.assertEqual(cache_versions["coreutils"], v_coreutils)
-        self.assertEqual(cache_versions["coreutils-dbgsym"], v_coreutils)
+        self.assertEqual(cache_versions["coreutils"], wanted["coreutils"])
+        self.assertEqual(
+            cache_versions["coreutils-dbgsym"], wanted["coreutils"]
+        )
         self.assertIn("tzdata", cache_versions)
-        self.assertEqual(cache_versions["libc6"], v_libc)
-        self.assertEqual(cache_versions["libc6-dbg"], v_libc)
+        self.assertEqual(cache_versions["libc6"], wanted["libc6"])
+        self.assertEqual(cache_versions["libc6-dbg"], wanted["libc6"])
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, "usr/bin/stat"))
@@ -147,7 +148,7 @@ class T(unittest.TestCase):
             self.rootdir,
             self.configdir,
             release,
-            [("coreutils", v_coreutils)],
+            [("coreutils", wanted["coreutils"])],
             False,
             self.cachedir,
         )
@@ -198,7 +199,7 @@ class T(unittest.TestCase):
             self.rootdir,
             self.configdir,
             release,
-            [("coreutils", v_coreutils), ("dpkg", None)],
+            [("coreutils", wanted["coreutils"]), ("dpkg", None)],
             False,
             self.cachedir,
         )
@@ -577,11 +578,13 @@ class T(unittest.TestCase):
         """install_packages() for foreign architecture armhf"""
 
         release = self._setup_foonux_config(release="xenial")
+        wanted_version = "2.23-0ubuntu0"
+        got_version = "2.23-0ubuntu3"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("coreutils", None), ("libc6", "2.23-0ubuntu0")],
+            [("coreutils", None), ("libc6", wanted_version)],
             False,
             self.cachedir,
             architecture="armhf",
@@ -589,8 +592,8 @@ class T(unittest.TestCase):
 
         self.assertEqual(
             obsolete,
-            "libc6 version 2.23-0ubuntu0 required,"
-            " but 2.23-0ubuntu3 is available\n",
+            f"libc6 version {wanted_version} required,"
+            f" but {got_version} is available\n",
         )
 
         self.assertTrue(
@@ -618,23 +621,24 @@ class T(unittest.TestCase):
             )
         )
         self.assertIn("coreutils_8.25-2ubuntu2_armhf.deb", cache)
-        self.assertIn("libc6_2.23-0ubuntu3_armhf.deb", cache)
+        self.assertIn(f"libc6_{got_version}_armhf.deb", cache)
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_from_launchpad(self):
         """install_packages() using packages only available on Launchpad"""
 
         release = self._setup_foonux_config()
+        wanted = {
+            "distro-info-data": "0.18ubuntu0.2",
+            "oxideqt-codecs": "1.6.6-0ubuntu0.14.04.1",
+            "qemu-utils": "2.0.0+dfsg-2ubuntu1.11",
+            "unity-services": "7.2.5+14.04.20150521.1-0ubuntu1",
+        }
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [
-                ("oxideqt-codecs", "1.6.6-0ubuntu0.14.04.1"),
-                ("distro-info-data", "0.18ubuntu0.2"),
-                ("qemu-utils", "2.0.0+dfsg-2ubuntu1.11"),
-                ("unity-services", "7.2.5+14.04.20150521.1-0ubuntu1"),
-            ],
+            [(package, version) for package, version in wanted.items()],
             False,
             self.cachedir,
         )
@@ -667,24 +671,29 @@ class T(unittest.TestCase):
 
         # their versions are as expected
         self.assertEqual(
-            sandbox_ver("oxideqt-codecs"), "1.6.6-0ubuntu0.14.04.1"
+            sandbox_ver("oxideqt-codecs"), wanted["oxideqt-codecs"]
         )
         self.assertEqual(
-            sandbox_ver("oxideqt-codecs-dbg"), "1.6.6-0ubuntu0.14.04.1"
+            sandbox_ver("oxideqt-codecs-dbg"), wanted["oxideqt-codecs"]
         )
         self.assertEqual(
-            sandbox_ver("distro-info-data", debian=False), "0.18ubuntu0.2"
+            sandbox_ver("distro-info-data", debian=False),
+            wanted["distro-info-data"],
         )
 
         # keeps track of package versions
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("oxideqt-codecs 1.6.6-0ubuntu0.14.04.1", pkglist)
-        self.assertIn("oxideqt-codecs-dbg 1.6.6-0ubuntu0.14.04.1", pkglist)
-        self.assertIn("distro-info-data 0.18ubuntu0.2", pkglist)
-        self.assertIn("qemu-utils-dbgsym 2.0.0+dfsg-2ubuntu1.11", pkglist)
+        self.assertIn(f"oxideqt-codecs {wanted['oxideqt-codecs']}", pkglist)
         self.assertIn(
-            "unity-services-dbgsym 7.2.5+14.04.20150521.1-0ubuntu1", pkglist
+            f"oxideqt-codecs-dbg {wanted['oxideqt-codecs']}", pkglist
+        )
+        self.assertIn(
+            f"distro-info-data {wanted['distro-info-data']}", pkglist
+        )
+        self.assertIn(f"qemu-utils-dbgsym {wanted['qemu-utils']}", pkglist)
+        self.assertIn(
+            f"unity-services-dbgsym {wanted['unity-services']}", pkglist
         )
 
         # caches packages, and their versions are as expected
@@ -710,14 +719,16 @@ class T(unittest.TestCase):
             except ValueError:
                 pass  # not a .deb, ignore
         self.assertIn(
-            ("oxideqt-codecs", "1.6.6-0ubuntu0.14.04.1"), cache_versions
+            ("oxideqt-codecs", wanted["oxideqt-codecs"]), cache_versions
         )
         self.assertIn(
-            ("oxideqt-codecs-dbg", "1.6.6-0ubuntu0.14.04.1"), cache_versions
+            ("oxideqt-codecs-dbg", wanted["oxideqt-codecs"]), cache_versions
         )
-        self.assertIn(("distro-info-data", "0.18ubuntu0.2"), cache_versions)
         self.assertIn(
-            ("qemu-utils-dbgsym", "2.0.0+dfsg-2ubuntu1.11"), cache_versions
+            ("distro-info-data", wanted["distro-info-data"]), cache_versions
+        )
+        self.assertIn(
+            ("qemu-utils-dbgsym", wanted["qemu-utils"]), cache_versions
         )
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -725,11 +736,13 @@ class T(unittest.TestCase):
         """sandbox will install older package versions from launchpad"""
 
         release = self._setup_foonux_config()
+        wanted_package = "oxideqt-codecs"
+        wanted_version = "1.7.8-0ubuntu0.14.04.1"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("oxideqt-codecs", "1.7.8-0ubuntu0.14.04.1")],
+            [(wanted_package, wanted_version)],
             False,
             self.cachedir,
         )
@@ -745,20 +758,19 @@ class T(unittest.TestCase):
                 return f.readline().decode().split()[1][1:-1]
 
         # the version is as expected
-        self.assertEqual(
-            sandbox_ver("oxideqt-codecs"), "1.7.8-0ubuntu0.14.04.1"
-        )
+        self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # keeps track of package version
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("oxideqt-codecs 1.7.8-0ubuntu0.14.04.1", pkglist)
+        self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
+        wanted_version = "1.6.6-0ubuntu0.14.04.1"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("oxideqt-codecs", "1.6.6-0ubuntu0.14.04.1")],
+            [(wanted_package, wanted_version)],
             False,
             self.cachedir,
         )
@@ -766,14 +778,12 @@ class T(unittest.TestCase):
         self.assertEqual(obsolete, "")
 
         # the old version is installed
-        self.assertEqual(
-            sandbox_ver("oxideqt-codecs"), "1.6.6-0ubuntu0.14.04.1"
-        )
+        self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # the old versions is tracked
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("oxideqt-codecs 1.6.6-0ubuntu0.14.04.1", pkglist)
+        self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_get_source_tree_sandbox(self):
@@ -801,6 +811,8 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_get_source_tree_lp_sandbox(self):
         release = self._setup_foonux_config()
+        wanted_package = "debian-installer"
+        wanted_version = "20101020ubuntu318.16"
         out_dir = os.path.join(self.workdir, "out")
         os.mkdir(out_dir)
         impl._build_apt_sandbox(
@@ -811,9 +823,9 @@ class T(unittest.TestCase):
             origins=None,
         )
         res = impl.get_source_tree(
-            "debian-installer",
+            wanted_package,
             out_dir,
-            version="20101020ubuntu318.16",
+            version=wanted_version,
             sandbox=self.rootdir,
             apt_update=True,
         )
@@ -821,7 +833,7 @@ class T(unittest.TestCase):
         # this needs to be updated when the release in _setup_foonux_config
         # changes
         self.assertTrue(
-            res.endswith("/debian-installer-20101020ubuntu318.16"),
+            res.endswith(f"/{wanted_package}-{wanted_version}"),
             "unexpected version: " + res.split("/")[-1],
         )
 
@@ -966,11 +978,13 @@ class T(unittest.TestCase):
         """Install a package from a PPA."""
         ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
         release = self._setup_foonux_config(release="focal")
+        wanted_package = "apport"
+        wanted_version = "2.20.11-0ubuntu27.14~ppa1"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("apport", "2.20.11-0ubuntu27.14~ppa1")],
+            [(wanted_package, wanted_version)],
             False,
             self.cachedir,
             origins=[ppa],
@@ -986,7 +1000,7 @@ class T(unittest.TestCase):
             ) as f:
                 return f.readline().decode().split()[1][1:-1]
 
-        self.assertEqual(sandbox_ver("apport"), "2.20.11-0ubuntu27.14~ppa1")
+        self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
     def _ubuntu_archive_uri(self, arch=None):
         """Return archive URI for the given architecture."""
