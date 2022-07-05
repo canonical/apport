@@ -39,13 +39,13 @@ class T(unittest.TestCase):
     def test_install_packages_versioned(self):
         """install_packages() with versions and with cache"""
 
-        self._setup_foonux_config(release="xenial", updates=True)
+        release = self._setup_foonux_config(release="xenial", updates=True)
         v_coreutils = "8.25-2ubuntu2"
         v_libc = "2.23-0ubuntu3"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 16.04",
+            release,
             [
                 ("coreutils", v_coreutils),  # should not come from updates
                 ("libc6", v_libc),
@@ -105,17 +105,13 @@ class T(unittest.TestCase):
         self.assertEqual(len(pkglist), 5, str(pkglist))
 
         # does not clobber config dir
-        self.assertEqual(os.listdir(self.configdir), ["Foonux 16.04"])
+        self.assertEqual(os.listdir(self.configdir), [release])
         self.assertEqual(
-            sorted(os.listdir(os.path.join(self.configdir, "Foonux 16.04"))),
+            sorted(os.listdir(os.path.join(self.configdir, release))),
             ["armhf", "codename", "sources.list", "trusted.gpg.d"],
         )
         self.assertEqual(
-            sorted(
-                os.listdir(
-                    os.path.join(self.configdir, "Foonux 16.04", "armhf")
-                )
-            ),
+            sorted(os.listdir(os.path.join(self.configdir, release, "armhf"))),
             ["sources.list", "trusted.gpg.d"],
         )
 
@@ -123,7 +119,7 @@ class T(unittest.TestCase):
         cache = os.listdir(
             os.path.join(
                 self.cachedir,
-                "Foonux 16.04",
+                release,
                 "apt",
                 "var",
                 "cache",
@@ -150,7 +146,7 @@ class T(unittest.TestCase):
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 16.04",
+            release,
             [("coreutils", v_coreutils)],
             False,
             self.cachedir,
@@ -162,10 +158,7 @@ class T(unittest.TestCase):
 
         # complains about obsolete packages
         result = impl.install_packages(
-            self.rootdir,
-            self.configdir,
-            "Foonux 16.04",
-            [("aspell-doc", "1.1")],
+            self.rootdir, self.configdir, release, [("aspell-doc", "1.1")]
         )
         self.assertIn(
             "aspell-doc version 1.1 required, but 0.60.7~20110707-3", result
@@ -180,10 +173,7 @@ class T(unittest.TestCase):
 
         # does not crash on nonexisting packages
         result = impl.install_packages(
-            self.rootdir,
-            self.configdir,
-            "Foonux 16.04",
-            [("buggerbogger", None)],
+            self.rootdir, self.configdir, release, [("buggerbogger", None)]
         )
         self.assertEqual(len(result.splitlines()), 1)
         self.assertIn("buggerbogger", result)
@@ -207,7 +197,7 @@ class T(unittest.TestCase):
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 16.04",
+            release,
             [("coreutils", v_coreutils), ("dpkg", None)],
             False,
             self.cachedir,
@@ -223,11 +213,11 @@ class T(unittest.TestCase):
     def test_install_packages_unversioned(self):
         """install_packages() without versions and no cache"""
 
-        self._setup_foonux_config(release="xenial")
+        release = self._setup_foonux_config(release="xenial")
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 16.04",
+            release,
             [("coreutils", None), ("tzdata", None)],
             False,
             None,
@@ -253,17 +243,13 @@ class T(unittest.TestCase):
         )
 
         # does not clobber config dir
-        self.assertEqual(os.listdir(self.configdir), ["Foonux 16.04"])
+        self.assertEqual(os.listdir(self.configdir), [release])
         self.assertEqual(
-            sorted(os.listdir(os.path.join(self.configdir, "Foonux 16.04"))),
+            sorted(os.listdir(os.path.join(self.configdir, release))),
             ["armhf", "codename", "sources.list", "trusted.gpg.d"],
         )
         self.assertEqual(
-            sorted(
-                os.listdir(
-                    os.path.join(self.configdir, "Foonux 16.04", "armhf")
-                )
-            ),
+            sorted(os.listdir(os.path.join(self.configdir, release, "armhf"))),
             ["sources.list", "trusted.gpg.d"],
         )
 
@@ -282,12 +268,12 @@ class T(unittest.TestCase):
     def test_install_packages_dependencies(self):
         """install packages's dependencies"""
 
-        self._setup_foonux_config(release="xenial")
+        release = self._setup_foonux_config(release="xenial")
         # coreutils should always depend on libc6
         result = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 16.04",
+            release,
             [("coreutils", None)],
             False,
             None,
@@ -369,9 +355,9 @@ class T(unittest.TestCase):
         """install_packages() with errors"""
 
         # sources.list with invalid format
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         with open(
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"), "w"
+            os.path.join(self.configdir, release, "sources.list"), "w"
         ) as f:
             f.write("bogus format")
 
@@ -379,7 +365,7 @@ class T(unittest.TestCase):
             impl.install_packages(
                 self.rootdir,
                 self.configdir,
-                "Foonux 14.04",
+                release,
                 [("tzdata", None)],
                 False,
                 self.cachedir,
@@ -394,7 +380,7 @@ class T(unittest.TestCase):
 
         # sources.list with wrong server
         with open(
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"), "w"
+            os.path.join(self.configdir, release, "sources.list"), "w"
         ) as f:
             f.write(
                 "deb http://archive.ubuntu.com/nosuchdistro/ trusty main\n"
@@ -404,7 +390,7 @@ class T(unittest.TestCase):
             impl.install_packages(
                 self.rootdir,
                 self.configdir,
-                "Foonux 14.04",
+                release,
                 [("tzdata", None)],
                 False,
                 self.cachedir,
@@ -428,13 +414,13 @@ class T(unittest.TestCase):
     def test_install_packages_permanent_sandbox(self):
         """install_packages() with a permanent sandbox"""
 
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         zonetab = os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab")
 
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("tzdata", None)],
             False,
             self.cachedir,
@@ -452,7 +438,7 @@ class T(unittest.TestCase):
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("coreutils", None), ("tzdata", None)],
             False,
             self.cachedir,
@@ -491,7 +477,7 @@ class T(unittest.TestCase):
             impl.install_packages,
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("libc6", None)],
             False,
             self.cachedir,
@@ -502,7 +488,7 @@ class T(unittest.TestCase):
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("coreutils", None), ("tzdata", None)],
             False,
             self.cachedir,
@@ -511,14 +497,13 @@ class T(unittest.TestCase):
         # even without cached debs, trying to install the same versions should
         # be a no-op and succeed
         for f in glob.glob(
-            "%s/Foonux 14.04/apt/var/cache/apt/archives/coreutils*"
-            % self.cachedir
+            f"{self.cachedir}/{release}/apt/var/cache/apt/archives/coreutils*"
         ):
             os.unlink(f)
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("coreutils", None)],
             False,
             self.cachedir,
@@ -531,7 +516,7 @@ class T(unittest.TestCase):
             impl.install_packages,
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("aspell-doc", None)],
             False,
             self.cachedir,
@@ -549,12 +534,12 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_permanent_sandbox_repack(self):
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         include_path = os.path.join(self.rootdir, "usr/include/krb5.h")
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("libkrb5-dev", None)],
             False,
             self.cachedir,
@@ -565,7 +550,7 @@ class T(unittest.TestCase):
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("heimdal-dev", None)],
             False,
             self.cachedir,
@@ -576,7 +561,7 @@ class T(unittest.TestCase):
         impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("libkrb5-dev", None)],
             False,
             self.cachedir,
@@ -591,12 +576,11 @@ class T(unittest.TestCase):
     def test_install_packages_armhf(self):
         """install_packages() for foreign architecture armhf"""
 
-        self._setup_foonux_config(release="xenial")
-        vers = "16.04"
+        release = self._setup_foonux_config(release="xenial")
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux %s" % vers,
+            release,
             [("coreutils", None), ("libc6", "2.23-0ubuntu0")],
             False,
             self.cachedir,
@@ -624,7 +608,7 @@ class T(unittest.TestCase):
         cache = os.listdir(
             os.path.join(
                 self.cachedir,
-                "Foonux 16.04",
+                release,
                 "armhf",
                 "apt",
                 "var",
@@ -640,11 +624,11 @@ class T(unittest.TestCase):
     def test_install_packages_from_launchpad(self):
         """install_packages() using packages only available on Launchpad"""
 
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [
                 ("oxideqt-codecs", "1.6.6-0ubuntu0.14.04.1"),
                 ("distro-info-data", "0.18ubuntu0.2"),
@@ -707,7 +691,7 @@ class T(unittest.TestCase):
         cache = os.listdir(
             os.path.join(
                 self.cachedir,
-                "Foonux 14.04",
+                release,
                 "apt",
                 "var",
                 "cache",
@@ -740,11 +724,11 @@ class T(unittest.TestCase):
     def test_install_old_packages(self):
         """sandbox will install older package versions from launchpad"""
 
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("oxideqt-codecs", "1.7.8-0ubuntu0.14.04.1")],
             False,
             self.cachedir,
@@ -773,7 +757,7 @@ class T(unittest.TestCase):
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 14.04",
+            release,
             [("oxideqt-codecs", "1.6.6-0ubuntu0.14.04.1")],
             False,
             self.cachedir,
@@ -793,12 +777,12 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_get_source_tree_sandbox(self):
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, "out")
         os.mkdir(out_dir)
         impl._build_apt_sandbox(
             self.rootdir,
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"),
+            os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "trusty",
             origins=None,
@@ -816,12 +800,12 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_get_source_tree_lp_sandbox(self):
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, "out")
         os.mkdir(out_dir)
         impl._build_apt_sandbox(
             self.rootdir,
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"),
+            os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "trusty",
             origins=None,
@@ -845,10 +829,10 @@ class T(unittest.TestCase):
     def test_create_sources_for_a_named_ppa(self):
         """Add sources.list entries for a named PPA."""
         ppa = "LP-PPA-daisy-pluckers-daisy-seeds"
-        self._setup_foonux_config()
+        release = self._setup_foonux_config()
         impl._build_apt_sandbox(
             self.rootdir,
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"),
+            os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "trusty",
             origins=[ppa],
@@ -899,10 +883,10 @@ class T(unittest.TestCase):
     def test_create_sources_for_an_unnamed_ppa(self):
         """Add sources.list entries for an unnamed PPA."""
         ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-        self._setup_foonux_config(release="focal", ppa=True)
+        release = self._setup_foonux_config(release="focal", ppa=True)
         impl._build_apt_sandbox(
             self.rootdir,
-            os.path.join(self.configdir, "Foonux 20.04", "sources.list"),
+            os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "focal",
             origins=[ppa],
@@ -952,10 +936,10 @@ class T(unittest.TestCase):
     def test_use_sources_for_a_ppa(self):
         """Use a sources.list.d file for a PPA."""
         ppa = "fooser-bar-ppa"
-        self._setup_foonux_config(ppa=True)
+        release = self._setup_foonux_config(ppa=True)
         impl._build_apt_sandbox(
             self.rootdir,
-            os.path.join(self.configdir, "Foonux 14.04", "sources.list"),
+            os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "trusty",
             origins=["LP-PPA-%s" % ppa],
@@ -981,11 +965,11 @@ class T(unittest.TestCase):
     def test_install_package_from_a_ppa(self):
         """Install a package from a PPA."""
         ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-        self._setup_foonux_config(release="focal")
+        release = self._setup_foonux_config(release="focal")
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
-            "Foonux 20.04",
+            release,
             [("apport", "2.20.11-0ubuntu27.14~ppa1")],
             False,
             self.cachedir,
@@ -1018,6 +1002,9 @@ class T(unittest.TestCase):
         If ppa is True, then a sources.list file for a PPA will be created
         in sources.list.d used to test copying of a sources.list file to a
         sandbox.
+
+        Return name and version of the operating system (DistroRelease
+        field in crash report).
         """
         versions = {
             "trusty": "14.04",
@@ -1025,32 +1012,26 @@ class T(unittest.TestCase):
             "boinic": "18.04",
             "focal": "20.04",
         }
-        vers = versions[release]
+        distro_release = f"Foonux {versions[release]}"
         self.cachedir = os.path.join(self.workdir, "cache")
         self.rootdir = os.path.join(self.workdir, "root")
         self.configdir = os.path.join(self.workdir, "config")
+        config_release_dir = os.path.join(self.configdir, distro_release)
         os.mkdir(self.cachedir)
         os.mkdir(self.rootdir)
         os.mkdir(self.configdir)
-        os.mkdir(os.path.join(self.configdir, "Foonux %s" % vers))
+        os.mkdir(config_release_dir)
         self._write_source_file(
-            os.path.join(self.configdir, "Foonux %s" % vers, "sources.list"),
+            os.path.join(config_release_dir, "sources.list"),
             self._ubuntu_archive_uri(),
             release,
             updates,
         )
         if ppa:
-            os.mkdir(
-                os.path.join(
-                    self.configdir, "Foonux %s" % vers, "sources.list.d"
-                )
-            )
+            os.mkdir(os.path.join(config_release_dir, "sources.list.d"))
             with open(
                 os.path.join(
-                    self.configdir,
-                    "Foonux %s" % vers,
-                    "sources.list.d",
-                    "fooser-bar-ppa.list",
+                    config_release_dir, "sources.list.d", "fooser-bar-ppa.list"
                 ),
                 "w",
             ) as f:
@@ -1060,32 +1041,27 @@ class T(unittest.TestCase):
                     f"deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
                     f" {release} main\n"
                 )
-        os.mkdir(os.path.join(self.configdir, "Foonux %s" % vers, "armhf"))
+        os.mkdir(os.path.join(config_release_dir, "armhf"))
         self._write_source_file(
-            os.path.join(
-                self.configdir, "Foonux %s" % vers, "armhf", "sources.list"
-            ),
+            os.path.join(config_release_dir, "armhf", "sources.list"),
             self._ubuntu_archive_uri("armhf"),
             release,
             updates,
         )
-        with open(
-            os.path.join(self.configdir, "Foonux %s" % vers, "codename"), "w"
-        ) as f:
+        with open(os.path.join(config_release_dir, "codename"), "w") as f:
             f.write("%s" % release)
 
         # install GPG key for ddebs
-        keyring_dir = os.path.join(
-            self.configdir, "Foonux %s" % vers, "trusted.gpg.d"
-        )
+        keyring_dir = os.path.join(config_release_dir, "trusted.gpg.d")
         self._copy_ubunut_keyrings(keyring_dir)
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
         keyring_arch_dir = os.path.join(
-            self.configdir, "Foonux %s" % vers, "armhf", "trusted.gpg.d"
+            config_release_dir, "armhf", "trusted.gpg.d"
         )
         os.symlink("../trusted.gpg.d", keyring_arch_dir)
+        return distro_release
 
     def _copy_ubunut_keyrings(self, keyring_dir: str) -> None:
         """Copy the archive and debug symbol archive keyring."""
