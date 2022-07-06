@@ -938,7 +938,7 @@ class T(unittest.TestCase):
         )
         apt_keys = d.communicate()[0].decode()
         assert d.returncode == 0
-        self.assertIn("", apt_keys)
+        self.assertEqual("", apt_keys)
 
     def test_use_sources_for_a_ppa(self):
         """Use a sources.list.d file for a PPA."""
