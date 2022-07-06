@@ -233,8 +233,10 @@ class T(unittest.TestCase):
         self.wait_for_apport_to_finish()
 
         # check crash report
+        with open("/var/log/apport.log") as logfile:
+            apport_log = logfile.read().strip()
         reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
+        self.assertEqual(len(reports), 1, f"Apport log:\n{apport_log}")
         self.assertEqual(
             reports[0],
             f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash",
