@@ -978,6 +978,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "%s version %s required, but %s is available\n"
                         % (pkg, ver, cache_pkg.candidate.version)
                     )
+                    ver = cache_pkg.candidate.version
 
             candidate = cache_pkg.candidate
             real_pkgs.add(pkg)
