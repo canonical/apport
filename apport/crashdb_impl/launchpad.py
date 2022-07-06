@@ -2098,8 +2098,6 @@ and more
                 )
             elif project:
                 return db.launchpad.projects[project]
-            else:
-                return self.lp_distro
 
         def _file_bug(self, bug_target, report, description=None):
             """File a bug report for a report.
