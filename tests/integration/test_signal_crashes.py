@@ -1077,18 +1077,17 @@ class T(unittest.TestCase):
         timeout = 0
         while timeout < 5:
             gdb_children = gdb_process.children()
-            command_processes = [
-                p
-                for p in gdb_children
-                if p.cmdline()[0] == command and p.status() != "tracing-stop"
-            ]
-            if command_processes:
-                break
+            for process in gdb_children:
+                if process.status() == "tracing-stop":
+                    continue
+                cmdline = process.cmdline()
+                if cmdline and cmdline[0] == command:
+                    return process
+
             time.sleep(0.1)
             timeout += 0.1
-        else:
-            self.fail(
-                f"GDB child process {command} not started within "
-                f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
-            )
-        return command_processes.pop()
+
+        self.fail(
+            f"GDB child process {command} not started within "
+            f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
+        )
