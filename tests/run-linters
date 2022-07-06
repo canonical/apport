@@ -46,6 +46,13 @@ else
     echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
 fi
 
+if type pylint >/dev/null 2>&1; then
+    echo "Running pylint..."
+    pylint $(find . -name '*.py') ${PYTHON_SCRIPTS}
+else
+    echo "Skipping pylint tests, pylint is not installed"
+fi
+
 # assert that there are no hardcoded "Ubuntu" names
 out=$(grep -rw Ubuntu tests/*/*.py tests/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
 if [ -n "$out" ]; then
