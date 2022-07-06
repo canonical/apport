@@ -41,6 +41,7 @@ def import_module_from_file(filename: str):
     spec = importlib.util.spec_from_loader(
         name, importlib.machinery.SourceFileLoader(name, filename)
     )
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

@@ -1040,7 +1040,7 @@ class T(unittest.TestCase):
         generate-core-file has written and closed the core file. In
         case of an failure or timeout, let the test case fail.
         """
-        timeout = 0
+        timeout = 0.0
         while timeout < 5:
             if os.path.exists(core_file):
                 break
@@ -1053,7 +1053,7 @@ class T(unittest.TestCase):
             )
 
         gdb_process = psutil.Process(gdb_pid)
-        timeout = 0
+        timeout = 0.0
         while timeout < 60:
             for open_file in gdb_process.open_files():
                 if open_file.path == core_file:
@@ -1074,7 +1074,7 @@ class T(unittest.TestCase):
     ) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
-        timeout = 0
+        timeout = 0.0
         while timeout < 5:
             gdb_children = gdb_process.children()
             for process in gdb_children:

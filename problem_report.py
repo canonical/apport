@@ -21,6 +21,7 @@ import locale
 import os
 import struct
 import time
+import typing
 import zlib
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
@@ -250,7 +251,7 @@ class ProblemReport(collections.UserDict):
                 ]
             )
 
-    def get_timestamp(self) -> int:
+    def get_timestamp(self) -> typing.Optional[int]:
         """Get timestamp (seconds since epoch) from Date field
 
         Return None if it is not present.
