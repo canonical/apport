@@ -237,7 +237,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         launchpad_instance = self.options.get("launchpad_instance")
         if launchpad_instance:
-            if launchpad_instance == "staging":
+            if launchpad_instance == "qastaging":
+                hostname = "qastaging.launchpad.net"
+            elif launchpad_instance == "staging":
                 hostname = "staging.launchpad.net"
             else:
                 hostname = "launchpad.dev"
@@ -1244,8 +1246,8 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     Return None on error, or the ticket number on success.
 
     By default this uses the production Launchpad hostname. Set
-    hostname to 'launchpad.dev' or 'staging.launchpad.net' to use another
-    instance for testing.
+    hostname to 'launchpad.dev', 'qastaging.launchpad.net', or
+    'staging.launchpad.net' to use another instance for testing.
     """
     ticket = None
     url = "https://%s/+storeblob" % hostname
@@ -1935,7 +1937,7 @@ and more
 
             # create a project crash DB and a bug
             launchpad_instance = (
-                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "staging"
+                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
 
             project_db = CrashDatabase(
@@ -1972,7 +1974,7 @@ and more
 
             # create a DB for fake arch
             launchpad_instance = (
-                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "staging"
+                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
             fakearch_db = CrashDatabase(
                 os.environ.get("LP_CREDENTIALS"),
@@ -2078,7 +2080,7 @@ and more
             """Create a CrashDB instance"""
 
             launchpad_instance = (
-                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "staging"
+                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
 
             return CrashDatabase(
@@ -2206,7 +2208,7 @@ and more
             """reporting crashes against a project instead of a distro"""
 
             launchpad_instance = (
-                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "staging"
+                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
@@ -2282,7 +2284,7 @@ NameError: global name 'weird' is not defined"""
             """Escalating bugs with more than 10 duplicates"""
 
             launchpad_instance = (
-                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "staging"
+                os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
             db = CrashDatabase(
                 os.environ.get("LP_CREDENTIALS"),
