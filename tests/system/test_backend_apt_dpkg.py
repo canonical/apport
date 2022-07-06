@@ -39,11 +39,12 @@ class T(unittest.TestCase):
     def test_install_packages_versioned(self):
         """install_packages() with versions and with cache"""
 
-        release = self._setup_foonux_config(release="xenial", updates=True)
+        release = self._setup_foonux_config(updates=True)
         wanted = {
-            "coreutils": "8.25-2ubuntu2",  # should not come from updates
-            "libc6": "2.23-0ubuntu3",
-            "tzdata": None,  # should come from -updates, > 2014b-1
+            "coreutils": "8.32-4.1ubuntu1",
+            "libc6": "2.35-0ubuntu3",
+            "libcurl4": "7.81.0-1",  # should not come from -updates
+            "tzdata": None,  # should come from -updates, > 2022a
         }
         obsolete = impl.install_packages(
             self.rootdir,
@@ -82,17 +83,18 @@ class T(unittest.TestCase):
                 os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab")
             )
         )
-        self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/share/doc/libc6/copyright")
+        for library in ("libc6", "libcurl4"):
+            copyright = f"usr/share/doc/{library}/copyright"
+            self.assertTrue(
+                os.path.exists(os.path.join(self.rootdir, copyright))
             )
-        )
 
         # their versions are as expected
         self.assertEqual(sandbox_ver("coreutils"), wanted["coreutils"])
         self.assertEqual(sandbox_ver("libc6"), wanted["libc6"])
         self.assertEqual(sandbox_ver("libc6-dbg"), wanted["libc6"])
-        self.assertGreater(sandbox_ver("tzdata"), "2016")
+        self.assertEqual(sandbox_ver("libcurl4"), wanted["libcurl4"])
+        self.assertGreater(sandbox_ver("tzdata"), "2022a")
 
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
@@ -100,8 +102,10 @@ class T(unittest.TestCase):
         self.assertIn(f"coreutils-dbgsym {wanted['coreutils']}", pkglist)
         self.assertIn(f"libc6 {wanted['libc6']}", pkglist)
         self.assertIn(f"libc6-dbg {wanted['libc6']}", pkglist)
+        self.assertIn(f"libcurl4 {wanted['libcurl4']}", pkglist)
+        self.assertIn(f"libcurl4-dbgsym {wanted['libcurl4']}", pkglist)
         self.assertIn("tzdata " + sandbox_ver("tzdata"), pkglist)
-        self.assertEqual(len(pkglist), 5, str(pkglist))
+        self.assertEqual(len(pkglist), 7, str(pkglist))
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), [release])
@@ -137,9 +141,10 @@ class T(unittest.TestCase):
         self.assertEqual(
             cache_versions["coreutils-dbgsym"], wanted["coreutils"]
         )
-        self.assertIn("tzdata", cache_versions)
         self.assertEqual(cache_versions["libc6"], wanted["libc6"])
         self.assertEqual(cache_versions["libc6-dbg"], wanted["libc6"])
+        self.assertEqual(cache_versions["libcurl4"], wanted["libcurl4"])
+        self.assertIn("tzdata", cache_versions)
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, "usr/bin/stat"))
@@ -162,7 +167,7 @@ class T(unittest.TestCase):
             self.rootdir, self.configdir, release, [("aspell-doc", "1.1")]
         )
         self.assertIn(
-            "aspell-doc version 1.1 required, but 0.60.7~20110707-3", result
+            "aspell-doc version 1.1 required, but 0.60.8-4build1", result
         )
         # ... but installs the current version anyway
         self.assertTrue(
@@ -170,7 +175,7 @@ class T(unittest.TestCase):
                 os.path.join(self.rootdir, "usr/share/info/aspell.info.gz")
             )
         )
-        self.assertGreaterEqual(sandbox_ver("aspell-doc"), "0.60.7~2011")
+        self.assertGreaterEqual(sandbox_ver("aspell-doc"), "0.60.8")
 
         # does not crash on nonexisting packages
         result = impl.install_packages(
@@ -214,7 +219,7 @@ class T(unittest.TestCase):
     def test_install_packages_unversioned(self):
         """install_packages() without versions and no cache"""
 
-        release = self._setup_foonux_config(release="xenial")
+        release = self._setup_foonux_config()
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
@@ -260,16 +265,16 @@ class T(unittest.TestCase):
         # keeps track of package versions
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("coreutils 8.25-2ubuntu2", pkglist)
-        self.assertIn("coreutils-dbgsym 8.25-2ubuntu2", pkglist)
-        self.assertIn("tzdata 2016d-0ubuntu0.16.04", pkglist)
+        self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
+        self.assertIn("coreutils-dbgsym 8.32-4.1ubuntu1", pkglist)
+        self.assertIn("tzdata 2022a-0ubuntu1", pkglist)
         self.assertEqual(len(pkglist), 3, str(pkglist))
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_dependencies(self):
         """install packages's dependencies"""
 
-        release = self._setup_foonux_config(release="xenial")
+        release = self._setup_foonux_config()
         # coreutils should always depend on libc6
         result = impl.install_packages(
             self.rootdir,
@@ -284,8 +289,8 @@ class T(unittest.TestCase):
         # check packages.txt for a dependency
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn("coreutils 8.25-2ubuntu2", pkglist)
-        self.assertIn("libc6 2.23-0ubuntu3", pkglist)
+        self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
+        self.assertIn("libc6 2.35-0ubuntu3", pkglist)
 
         # ensure obsolete packages doesn't include libc6
         self.assertNotIn("libc6", result)
@@ -383,9 +388,7 @@ class T(unittest.TestCase):
         with open(
             os.path.join(self.configdir, release, "sources.list"), "w"
         ) as f:
-            f.write(
-                "deb http://archive.ubuntu.com/nosuchdistro/ trusty main\n"
-            )
+            f.write("deb http://archive.ubuntu.com/nosuchdistro/ jammy main\n")
 
         try:
             impl.install_packages(
@@ -405,7 +408,7 @@ class T(unittest.TestCase):
             try:
                 self.assertRegex(
                     str(error),
-                    ".*'http://archive.ubuntu.com/nosuchdistro trusty.*'"
+                    ".*'http://archive.ubuntu.com/nosuchdistro jammy.*'"
                     " does not have a Release file",
                 )
             except AssertionError:
@@ -535,40 +538,42 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_permanent_sandbox_repack(self):
+        # Both packages needs to conflict with each other, because they
+        # ship the same file.
         release = self._setup_foonux_config()
-        include_path = os.path.join(self.rootdir, "usr/include/krb5.h")
         impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("libkrb5-dev", None)],
+            [("libcurl4-gnutls-dev", None)],
             False,
             self.cachedir,
             permanent_rootdir=True,
         )
-        self.assertIn("mit-krb5/", os.readlink(include_path))
+        curl_library = self._get_library_path("libcurl.so", self.rootdir)
+        self.assertEqual("libcurl-gnutls.so", os.readlink(curl_library))
 
         impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("heimdal-dev", None)],
+            [("libcurl4-nss-dev", None)],
             False,
             self.cachedir,
             permanent_rootdir=True,
         )
-        self.assertIn("heimdal/", os.readlink(include_path))
+        self.assertEqual("libcurl-nss.so", os.readlink(curl_library))
 
         impl.install_packages(
             self.rootdir,
             self.configdir,
             release,
-            [("libkrb5-dev", None)],
+            [("libcurl4-gnutls-dev", None)],
             False,
             self.cachedir,
             permanent_rootdir=True,
         )
-        self.assertIn("mit-krb5/", os.readlink(include_path))
+        self.assertEqual("libcurl-gnutls.so", os.readlink(curl_library))
 
     @unittest.skipUnless(has_internet(), "online test")
     @unittest.skipIf(
@@ -577,9 +582,9 @@ class T(unittest.TestCase):
     def test_install_packages_armhf(self):
         """install_packages() for foreign architecture armhf"""
 
-        release = self._setup_foonux_config(release="xenial")
-        wanted_version = "2.23-0ubuntu0"
-        got_version = "2.23-0ubuntu3"
+        release = self._setup_foonux_config()
+        wanted_version = "2.35-0ubuntu0"
+        got_version = "2.35-0ubuntu3"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
@@ -620,19 +625,19 @@ class T(unittest.TestCase):
                 "archives",
             )
         )
-        self.assertIn("coreutils_8.25-2ubuntu2_armhf.deb", cache)
+        self.assertIn("coreutils_8.32-4.1ubuntu1_armhf.deb", cache)
         self.assertIn(f"libc6_{got_version}_armhf.deb", cache)
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_from_launchpad(self):
         """install_packages() using packages only available on Launchpad"""
 
-        release = self._setup_foonux_config()
+        release = self._setup_foonux_config(release="focal")
+        # Wanted are superseded versions from -updates or -security.
         wanted = {
-            "distro-info-data": "0.18ubuntu0.2",
-            "oxideqt-codecs": "1.6.6-0ubuntu0.14.04.1",
-            "qemu-utils": "2.0.0+dfsg-2ubuntu1.11",
-            "unity-services": "7.2.5+14.04.20150521.1-0ubuntu1",
+            "distro-info-data": "0.43ubuntu1.9",  # arch all
+            "libc6": "2.31-0ubuntu9.4",  # -dbg, arch specfic
+            "qemu-utils": "1:4.2-3ubuntu6.1",  # -dbgsym, arch specific
         }
         obsolete = impl.install_packages(
             self.rootdir,
@@ -658,43 +663,36 @@ class T(unittest.TestCase):
         # packages get installed
         self.assertTrue(
             os.path.exists(
-                os.path.join(
-                    self.rootdir, "usr/share/doc/oxideqt-codecs/copyright"
-                )
+                os.path.join(self.rootdir, "usr/share/distro-info/ubuntu.csv")
             )
         )
         self.assertTrue(
             os.path.exists(
-                os.path.join(self.rootdir, "usr/share/distro-info/ubuntu.csv")
+                os.path.join(self.rootdir, "usr/lib/debug/.build-id")
             )
+        )
+        self.assertTrue(
+            os.path.exists(os.path.join(self.rootdir, "usr/bin/qemu-img"))
         )
 
         # their versions are as expected
         self.assertEqual(
-            sandbox_ver("oxideqt-codecs"), wanted["oxideqt-codecs"]
-        )
-        self.assertEqual(
-            sandbox_ver("oxideqt-codecs-dbg"), wanted["oxideqt-codecs"]
-        )
-        self.assertEqual(
             sandbox_ver("distro-info-data", debian=False),
             wanted["distro-info-data"],
         )
+        self.assertEqual(sandbox_ver("libc6"), wanted["libc6"])
+        self.assertEqual(sandbox_ver("libc6-dbg"), wanted["libc6"])
 
         # keeps track of package versions
         with open(os.path.join(self.rootdir, "packages.txt")) as f:
             pkglist = f.read().splitlines()
-        self.assertIn(f"oxideqt-codecs {wanted['oxideqt-codecs']}", pkglist)
-        self.assertIn(
-            f"oxideqt-codecs-dbg {wanted['oxideqt-codecs']}", pkglist
-        )
         self.assertIn(
             f"distro-info-data {wanted['distro-info-data']}", pkglist
         )
+        self.assertIn(f"libc6 {wanted['libc6']}", pkglist)
+        self.assertIn(f"libc6-dbg {wanted['libc6']}", pkglist)
+        self.assertIn(f"qemu-utils {wanted['qemu-utils']}", pkglist)
         self.assertIn(f"qemu-utils-dbgsym {wanted['qemu-utils']}", pkglist)
-        self.assertIn(
-            f"unity-services-dbgsym {wanted['unity-services']}", pkglist
-        )
 
         # caches packages, and their versions are as expected
         cache = os.listdir(
@@ -719,16 +717,12 @@ class T(unittest.TestCase):
             except ValueError:
                 pass  # not a .deb, ignore
         self.assertIn(
-            ("oxideqt-codecs", wanted["oxideqt-codecs"]), cache_versions
-        )
-        self.assertIn(
-            ("oxideqt-codecs-dbg", wanted["oxideqt-codecs"]), cache_versions
-        )
-        self.assertIn(
             ("distro-info-data", wanted["distro-info-data"]), cache_versions
         )
+        self.assertIn(("libc6-dbg", wanted["libc6"]), cache_versions)
         self.assertIn(
-            ("qemu-utils-dbgsym", wanted["qemu-utils"]), cache_versions
+            ("qemu-utils-dbgsym", self._strip_epoch(wanted["qemu-utils"])),
+            cache_versions,
         )
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -736,8 +730,8 @@ class T(unittest.TestCase):
         """sandbox will install older package versions from launchpad"""
 
         release = self._setup_foonux_config()
-        wanted_package = "oxideqt-codecs"
-        wanted_version = "1.7.8-0ubuntu0.14.04.1"
+        wanted_package = "libcurl4"
+        wanted_version = "7.81.0-1"  # pre-release version
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
@@ -765,7 +759,7 @@ class T(unittest.TestCase):
             pkglist = f.read().splitlines()
         self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
-        wanted_version = "1.6.6-0ubuntu0.14.04.1"
+        wanted_version = "7.74.0-1.3ubuntu3"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
@@ -794,7 +788,7 @@ class T(unittest.TestCase):
             self.rootdir,
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
-            "trusty",
+            "jammy",
             origins=None,
         )
         res = impl.get_source_tree(
@@ -804,22 +798,22 @@ class T(unittest.TestCase):
         # this needs to be updated when the release in _setup_foonux_config
         # changes
         self.assertTrue(
-            res.endswith("/base-files-7.2ubuntu5"),
+            res.endswith("/base-files-12ubuntu4"),
             "unexpected version: " + res.split("/")[-1],
         )
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_get_source_tree_lp_sandbox(self):
         release = self._setup_foonux_config()
-        wanted_package = "debian-installer"
-        wanted_version = "20101020ubuntu318.16"
+        wanted_package = "curl"
+        wanted_version = "7.81.0-1ubuntu1.2"  # superseded -security version
         out_dir = os.path.join(self.workdir, "out")
         os.mkdir(out_dir)
         impl._build_apt_sandbox(
             self.rootdir,
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
-            "trusty",
+            "jammy",
             origins=None,
         )
         res = impl.get_source_tree(
@@ -832,8 +826,9 @@ class T(unittest.TestCase):
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
+        upstream_version = wanted_version.split("-", maxsplit=1)[0]
         self.assertTrue(
-            res.endswith(f"/{wanted_package}-{wanted_version}"),
+            res.endswith(f"/{wanted_package}-{upstream_version}"),
             "unexpected version: " + res.split("/")[-1],
         )
 
@@ -846,7 +841,7 @@ class T(unittest.TestCase):
             self.rootdir,
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
-            "trusty",
+            "jammy",
             origins=[ppa],
         )
         with open(
@@ -857,12 +852,12 @@ class T(unittest.TestCase):
             sources = f.read().splitlines()
         self.assertIn(
             "deb http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu"
-            " trusty main main/debug",
+            " jammy main main/debug",
             sources,
         )
         self.assertIn(
             "deb-src http://ppa.launchpad.net"
-            "/daisy-pluckers/daisy-seeds/ubuntu trusty main",
+            "/daisy-pluckers/daisy-seeds/ubuntu jammy main",
             sources,
         )
 
@@ -895,12 +890,12 @@ class T(unittest.TestCase):
     def test_create_sources_for_an_unnamed_ppa(self):
         """Add sources.list entries for an unnamed PPA."""
         ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-        release = self._setup_foonux_config(release="focal", ppa=True)
+        release = self._setup_foonux_config(ppa=True)
         impl._build_apt_sandbox(
             self.rootdir,
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
-            "focal",
+            "jammy",
             origins=[ppa],
         )
         with open(
@@ -911,12 +906,12 @@ class T(unittest.TestCase):
             sources = f.read().splitlines()
         self.assertIn(
             "deb http://ppa.launchpad.net"
-            "/apport-hackers/apport-autopkgtests/ubuntu focal main",
+            "/apport-hackers/apport-autopkgtests/ubuntu jammy main main/debug",
             sources,
         )
         self.assertIn(
             "deb-src http://ppa.launchpad.net"
-            "/apport-hackers/apport-autopkgtests/ubuntu focal main",
+            "/apport-hackers/apport-autopkgtests/ubuntu jammy main",
             sources,
         )
 
@@ -953,7 +948,7 @@ class T(unittest.TestCase):
             self.rootdir,
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
-            "trusty",
+            "jammy",
             origins=["LP-PPA-%s" % ppa],
         )
         with open(
@@ -964,22 +959,24 @@ class T(unittest.TestCase):
             sources = f.read().splitlines()
         self.assertIn(
             "deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-            " trusty main main/debug",
+            " jammy main main/debug",
             sources,
         )
         self.assertIn(
             "deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-            " trusty main",
+            " jammy main",
             sources,
         )
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_package_from_a_ppa(self):
         """Install a package from a PPA."""
+        # Needs apport package in https://launchpad.net
+        # /~apport-hackers/+archive/ubuntu/apport-autopkgtests
         ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-        release = self._setup_foonux_config(release="focal")
+        release = self._setup_foonux_config()
         wanted_package = "apport"
-        wanted_version = "2.20.11-0ubuntu27.14~ppa1"
+        wanted_version = "2.20.11-0ubuntu82.1~ppa2"
         obsolete = impl.install_packages(
             self.rootdir,
             self.configdir,
@@ -1002,6 +999,16 @@ class T(unittest.TestCase):
 
         self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
+    def _get_library_path(self, library_name: str, root_dir: str = "/") -> str:
+        """Find library path regardless of the architecture."""
+        libraries = glob.glob(
+            os.path.join(root_dir, "usr/lib/*", library_name)
+        )
+        self.assertEqual(
+            len(libraries), 1, f"glob for {library_name}: {libraries!r}"
+        )
+        return libraries[0]
+
     def _ubuntu_archive_uri(self, arch=None):
         """Return archive URI for the given architecture."""
         if arch is None:
@@ -1010,7 +1017,7 @@ class T(unittest.TestCase):
             return "http://archive.ubuntu.com/ubuntu"
         return "http://ports.ubuntu.com/ubuntu-ports"
 
-    def _setup_foonux_config(self, updates=False, release="trusty", ppa=False):
+    def _setup_foonux_config(self, updates=False, release="jammy", ppa=False):
         """Set up directories and configuration for install_packages()
 
         If ppa is True, then a sources.list file for a PPA will be created
@@ -1020,12 +1027,7 @@ class T(unittest.TestCase):
         Return name and version of the operating system (DistroRelease
         field in crash report).
         """
-        versions = {
-            "trusty": "14.04",
-            "xenial": "16.04",
-            "boinic": "18.04",
-            "focal": "20.04",
-        }
+        versions = {"focal": "20.04", "jammy": "22.04"}
         distro_release = f"Foonux {versions[release]}"
         self.cachedir = os.path.join(self.workdir, "cache")
         self.rootdir = os.path.join(self.workdir, "root")
@@ -1076,6 +1078,11 @@ class T(unittest.TestCase):
         )
         os.symlink("../trusted.gpg.d", keyring_arch_dir)
         return distro_release
+
+    @staticmethod
+    def _strip_epoch(version: str) -> str:
+        """Strip epoch from Debian package version."""
+        return version.split(":", maxsplit=1)[-1]
 
     def _copy_ubunut_keyrings(self, keyring_dir: str) -> None:
         """Copy the archive and debug symbol archive keyring."""
