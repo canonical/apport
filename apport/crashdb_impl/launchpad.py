@@ -1050,31 +1050,31 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report["DuplicateOf"] = url
 
         try:
-            f = urllib.request.urlopen(url + "/+text")
+            with urllib.request.urlopen(url + "/+text") as f:
+                line = f.readline()
+                if not line.startswith(b"bug:"):
+                    # presumably a 404 etc. page,
+                    # which happens for private bugs
+                    return True
+
+                # check tags
+                for line in f:
+                    if line.startswith(b"tags:"):
+                        if (
+                            b"apport-failed-retrace" in line
+                            or b"apport-request-retrace" in line
+                        ):
+                            return None
+                        else:
+                            break
+
+                    # stop at the first task, tags are in the first block
+                    if not line.strip():
+                        break
         except OSError:
             # if we are offline, or LP is down, upload will fail anyway, so we
             # can just as well avoid the upload
             return url
-
-        line = f.readline()
-        if not line.startswith(b"bug:"):
-            # presumably a 404 etc. page, which happens for private bugs
-            return True
-
-        # check tags
-        for line in f:
-            if line.startswith(b"tags:"):
-                if (
-                    b"apport-failed-retrace" in line
-                    or b"apport-request-retrace" in line
-                ):
-                    return None
-                else:
-                    break
-
-            # stop at the first task, tags are in the first block
-            if not line.strip():
-                break
 
         return url
 
