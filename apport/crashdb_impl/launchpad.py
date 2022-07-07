@@ -73,7 +73,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Recognized options are:
         - distro: Name of the distribution in Launchpad
         - project: Name of the project in Launchpad
-        (Note that exactly one of "distro" or "project" must be given.)
+          (Note that exactly one of "distro" or "project" must be given.)
         - launchpad_instance: If set, this uses the given launchpad instance
           instead of production (optional). This can be overriden or set by
           $APPORT_LAUNCHPAD_INSTANCE environment.
