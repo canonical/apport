@@ -109,8 +109,10 @@ Crash database implementations
    - `distro`: Name of the distribution in Launchpad
    - `project`: Name of the project in Launchpad
      (Note that exactly one of `distro` or `project` must be given.)
-   - `staging`: If set, this uses staging instead of production (optional).
-     This can be overriden or set by `APPORT_STAGING` environment.
+   - `launchpad_instance`: If set, this uses the given launchpad instance
+     instead of production (optional). This can be overriden or set by
+     `APPORT_LAUNCHPAD_INSTANCE` environment. For example: `qastaging` or
+     `staging`.
    - `cache_dir`: Path to a permanent cache directory; by default it uses a
      temporary one. (optional). This can be overridden or set by
      `APPORT_LAUNCHPAD_CACHE` environment.
