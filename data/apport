@@ -584,6 +584,8 @@ def parse_arguments():
 #
 #################################################################
 
+init_error_log()
+
 # systemd socket activation
 if "LISTEN_FDS" in os.environ:
     try:
@@ -642,7 +644,6 @@ if "LISTEN_FDS" in os.environ:
         sys.exit(1)
 
 
-init_error_log()
 options = parse_arguments()
 
 # Check if we received a valid global PID (kernel >= 3.12). If we do,
