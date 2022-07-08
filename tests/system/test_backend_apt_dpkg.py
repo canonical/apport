@@ -186,11 +186,12 @@ class T(unittest.TestCase):
         self.assertIn("not exist", result)
 
         # can interleave with other operations
-        dpkg = subprocess.Popen(
-            ["dpkg-query", "-Wf${Version}", "dash"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg-query", "-Wf${Version}", "dash"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        dash_version = dpkg.communicate()[0].decode()
-        self.assertEqual(dpkg.returncode, 0)
+        dash_version = dpkg.stdout.decode()
 
         self.assertEqual(impl.get_version("dash"), dash_version)
         self.assertRaises(
@@ -861,7 +862,7 @@ class T(unittest.TestCase):
             sources,
         )
 
-        d = subprocess.Popen(
+        gpg = subprocess.run(
             [
                 "gpg",
                 "--no-options",
@@ -880,10 +881,10 @@ class T(unittest.TestCase):
                     "LP-PPA-daisy-pluckers-daisy-seeds.gpg",
                 ),
             ],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        apt_keys = d.communicate()[0].decode()
-        assert d.returncode == 0
+        apt_keys = gpg.stdout.decode()
         self.assertIn("Launchpad PPA for Daisy Pluckers", apt_keys)
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -915,7 +916,7 @@ class T(unittest.TestCase):
             sources,
         )
 
-        d = subprocess.Popen(
+        gpg = subprocess.run(
             [
                 "gpg",
                 "--no-options",
@@ -934,10 +935,10 @@ class T(unittest.TestCase):
                     "LP-PPA-apport-hackers.gpg",
                 ),
             ],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        apt_keys = d.communicate()[0].decode()
-        assert d.returncode == 0
+        apt_keys = gpg.stdout.decode()
         self.assertEqual("", apt_keys)
 
     def test_use_sources_for_a_ppa(self):
@@ -1151,15 +1152,14 @@ class T(unittest.TestCase):
         }
 
         # get ELF machine type
-        readelf = subprocess.Popen(
+        readelf = subprocess.run(
             ["readelf", "-e", path],
+            check=True,
             env={},
             stdout=subprocess.PIPE,
-            universal_newlines=True,
+            text=True,
         )
-        out = readelf.communicate()[0]
-        assert readelf.returncode == 0
-        for line in out.splitlines():
+        for line in readelf.stdout.splitlines():
             if line.startswith("  Machine:"):
                 machine = line.split(None, 1)[1]
                 break

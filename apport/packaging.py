@@ -356,13 +356,13 @@ class PackageInfo:
                 )
 
         # fall back to lsb_release
-        p = subprocess.Popen(
+        lsb_release = subprocess.run(
             ["lsb_release", "-sir"],
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=True,
         )
-        (name, version) = (
-            p.communicate()[0].decode().strip().replace("\n", " ").split()
-        )
+        (name, version) = lsb_release.stdout.strip().replace("\n", " ").split()
         self._os_version = (name.strip(), version.strip())
         return self._os_version

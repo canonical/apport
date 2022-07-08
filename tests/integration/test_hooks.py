@@ -44,12 +44,12 @@ class T(unittest.TestCase):
     def test_package_hook_nologs(self):
         """package_hook without any log files."""
 
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", "bash"],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -71,12 +71,12 @@ class T(unittest.TestCase):
         """package_hook on an uninstalled package (might fail to install)."""
 
         pkg = apport.packaging.get_uninstalled_package()
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", pkg],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -103,7 +103,7 @@ class T(unittest.TestCase):
         with open(os.path.join(self.workdir, "logsub", "notme.log"), "w") as f:
             f.write("not me!")
 
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             [
                 "%s/package_hook" % datadir,
                 "-p",
@@ -113,10 +113,10 @@ class T(unittest.TestCase):
                 "-l",
                 self.workdir,
             ],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -158,8 +158,9 @@ class T(unittest.TestCase):
             "-t",
             "dist-upgrade, verybad",
         ]
-        ph = subprocess.Popen(cmd, env=self.env, stdin=subprocess.PIPE)
-        ph.communicate(b"something is wrong")
+        ph = subprocess.run(
+            cmd, check=False, env=self.env, input=b"something is wrong"
+        )
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -350,13 +351,11 @@ class T(unittest.TestCase):
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
 
-        gcc = subprocess.Popen(["gcc", "--version"], stdout=subprocess.PIPE)
-        out = gcc.communicate()[0].decode()
-        assert (
-            gcc.returncode == 0
-        ), '"gcc --version" must work for this test suite'
+        gcc = subprocess.run(
+            ["gcc", "--version"], check=True, stdout=subprocess.PIPE, text=True
+        )
 
-        ver_fields = out.splitlines()[0].split()[3].split(".")
+        ver_fields = gcc.stdout.splitlines()[0].split()[3].split(".")
         # try major/minor first
         gcc_ver = ".".join(ver_fields[:2])
         gcc_path = "/usr/bin/gcc-" + gcc_ver
@@ -365,10 +364,8 @@ class T(unittest.TestCase):
             gcc_ver = ver_fields[0]
             gcc_path = "/usr/bin/gcc-" + gcc_ver
 
-        gcc = subprocess.Popen([gcc_path, "--version"], stdout=subprocess.PIPE)
-        gcc.communicate()
-        assert gcc.returncode == 0, (
-            gcc_path + " must exist and work for this test suite"
+        subprocess.run(
+            [gcc_path, "--version"], check=True, stdout=subprocess.PIPE
         )
 
         return (gcc_ver, gcc_path)
@@ -442,12 +439,12 @@ class T(unittest.TestCase):
 
         test_source = "int f(int x);"
 
-        hook = subprocess.Popen(
+        hook = subprocess.run(
             ["%s/gcc_ice_hook" % datadir, gcc_path, "-"],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=test_source.encode(),
         )
-        hook.communicate(test_source.encode())
         self.assertEqual(
             hook.returncode, 0, "gcc_ice_hook finished successfully"
         )
@@ -479,10 +476,12 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4\
  usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic\
  ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 """
-        hook = subprocess.Popen(
-            ["%s/kernel_oops" % datadir], env=self.env, stdin=subprocess.PIPE
+        hook = subprocess.run(
+            ["%s/kernel_oops" % datadir],
+            check=False,
+            env=self.env,
+            input=test_source.encode(),
         )
-        hook.communicate(test_source.encode())
         self.assertEqual(
             hook.returncode, 0, "kernel_oops finished successfully"
         )

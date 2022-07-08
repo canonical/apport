@@ -890,15 +890,15 @@ class UserInterface:
                     " application window to report a problem about it."
                 ),
             )
-            xprop = subprocess.Popen(
+            xprop = subprocess.run(
                 ["xprop", "_NET_WM_PID"],
+                check=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            (out, err) = xprop.communicate()
             if xprop.returncode == 0:
                 try:
-                    self.options.pid = int(out.split()[-1])
+                    self.options.pid = int(xprop.stdout.split()[-1])
                 except ValueError:
                     self.ui_error_message(
                         _("Cannot create report"),
@@ -914,7 +914,7 @@ class UserInterface:
                     _("Cannot create report"),
                     _("xprop failed to determine process ID of the window")
                     + "\n\n"
-                    + err,
+                    + xprop.stderr.decode(),
                 )
                 return True
         else:

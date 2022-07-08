@@ -935,11 +935,11 @@ class T(unittest.TestCase):
 
         # remove the crash from setUp() and create a kernel oops
         os.remove(self.app.report_file)
-        kernel_oops = subprocess.Popen(
-            [kernel_oops_path], stdin=subprocess.PIPE
+        subprocess.run(
+            [kernel_oops_path],
+            check=True,
+            input=b"Plasma conduit phase misalignment",
         )
-        kernel_oops.communicate(b"Plasma conduit phase misalignment")
-        self.assertEqual(kernel_oops.returncode, 0)
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_crashes()

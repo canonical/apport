@@ -138,27 +138,28 @@ def _command_output(command, input=None, env=None):
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     """
-    sp = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
-    )
-    # gdb can timeout when trying to retrace some core files, giving it 30
-    # minutes to run should be more than enough.
     try:
-        out = sp.communicate(input=input, timeout=1800)[0]
-    except subprocess.TimeoutExpired:
-        sp.kill()
-        out, errs = sp.communicate()
+        # gdb can timeout when trying to retrace some core files, giving it
+        # 30 minutes to run should be more than enough.
+        sp = subprocess.run(
+            command,
+            check=False,
+            env=env,
+            input=input,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=1800,
+        )
+    except subprocess.TimeoutExpired as error:
+        out = error.stdout.decode("UTF-8", errors="replace")
         raise OSError(
-            "Error: command %s timedout with exit code %i: %s"
-            % (str(command), sp.returncode, out)
+            f"Error: command {str(error.cmd)} timed out"
+            f" after {error.timeout} seconds: {out}"
         )
     if sp.returncode == 0:
-        return out
+        return sp.stdout
     else:
-        if out:
-            out = out.decode("UTF-8", errors="replace")
-        else:
-            out = ""
+        out = sp.stdout.decode("UTF-8", errors="replace")
         raise OSError(
             "Error: command %s failed with exit code %i: %s"
             % (str(command), sp.returncode, out)
@@ -825,23 +826,19 @@ class Report(problem_report.ProblemReport):
             kver = self["Uname"].split()[1]
             command = ["crash", "/usr/lib/debug/boot/vmlinux-%s" % kver, core]
             try:
-                p = subprocess.Popen(
+                crash = subprocess.run(
                     command,
-                    stdin=subprocess.PIPE,
+                    check=False,
+                    input=b"bt -a -f\nps\nrunq\nquit\n",
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                 )
             except OSError:
                 return False
-            p.stdin.write("bt -a -f\n")
-            p.stdin.write("ps\n")
-            p.stdin.write("runq\n")
-            p.stdin.write("quit\n")
-            # FIXME: split it up nicely etc
-            out = p.stdout.read()
-            ret = p.wait() == 0
+            ret = crash.returncode == 0
             if ret:
-                self["Stacktrace"] = out
+                # FIXME: split it up nicely etc
+                self["Stacktrace"] = crash.stdout
         finally:
             if unlink_core:
                 os.unlink(core)

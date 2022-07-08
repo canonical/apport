@@ -79,14 +79,15 @@ class T(unittest.TestCase):
 
         Return a pair (stdout, stderr).
         """
-        s = subprocess.Popen(
+        crash_digger = subprocess.run(
             ["crash-digger", "--apport-retrace", self.apport_retrace] + args,
+            check=False,
+            encoding="UTF-8",
             env=self.env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        (out, err) = s.communicate()
-        return (out.decode("UTF-8"), err.decode("UTF-8"))
+        return (crash_digger.stdout, crash_digger.stderr)
 
     def test_crashes(self):
         """Crash retracing"""

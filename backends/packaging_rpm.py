@@ -166,10 +166,13 @@ class RPMPackageInfo:
     def get_system_architecture(self):
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
-        rpmarch = subprocess.Popen(
-            ["rpm", "--eval", "%_target_cpu"], stdout=subprocess.PIPE
+        rpmarch = subprocess.run(
+            ["rpm", "--eval", "%_target_cpu"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        arch = rpmarch.communicate()[0].strip()
+        arch = rpmarch.stdout.strip()
         return arch
 
     def is_distro_package(self, package):

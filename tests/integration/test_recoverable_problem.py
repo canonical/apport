@@ -45,14 +45,19 @@ class T(unittest.TestCase):
 
     def call_recoverable_problem(self, data):
         cmd = ["%s/recoverable_problem" % self.datadir]
-        proc = subprocess.Popen(
-            cmd, env=self.env, stdin=subprocess.PIPE, stderr=subprocess.PIPE
+        proc = subprocess.run(
+            cmd,
+            check=False,
+            env=self.env,
+            input=data,
+            stderr=subprocess.PIPE,
+            text=True,
         )
-        err = proc.communicate(data.encode("UTF-8"))[1]
         if proc.returncode != 0:
-            self.assertNotEqual(err, b"")  # we expect some error message
+            # we expect some error message
+            self.assertNotEqual(proc.stderr, "")
             raise subprocess.CalledProcessError(proc.returncode, cmd[0])
-        self.assertEqual(err, b"")
+        self.assertEqual(proc.stderr, "")
 
     def test_recoverable_problem(self):
         """recoverable_problem with valid data"""

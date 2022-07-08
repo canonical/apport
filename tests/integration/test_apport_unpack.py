@@ -92,11 +92,15 @@ class T(unittest.TestCase):
         self.assertEqual(out, "")
 
     def _call(self, argv):
-        a = subprocess.Popen(
-            argv, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        process = subprocess.run(
+            argv,
+            check=False,
+            encoding="UTF-8",
+            env=self.env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        (out, err) = a.communicate()
-        return (a.returncode, out.decode("UTF-8"), err.decode("UTF-8"))
+        return (process.returncode, process.stdout, process.stderr)
 
     def _get_unpack(self, fname):
         with open(os.path.join(self.unpack_dir, fname), "rb") as f:

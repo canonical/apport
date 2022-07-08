@@ -552,16 +552,17 @@ class T(unittest.TestCase):
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            app = subprocess.Popen(
+            app = subprocess.run(
                 [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+                check=False,
+                input=b"foo",
                 stderr=subprocess.PIPE,
             )
-            err = app.communicate(b"foo")[1]
+            err = app.stderr.decode()
             self.assertEqual(app.returncode, 0, err)
             if os.getuid() > 0:
                 self.assertIn(
-                    b"executable was modified after program start", err
+                    "executable was modified after program start", err
                 )
             else:
                 with open("/var/log/apport.log") as f:
@@ -583,26 +584,27 @@ class T(unittest.TestCase):
         try:
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = log
-            app = subprocess.Popen(
+            app = subprocess.run(
                 [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+                check=False,
                 env=env,
+                input="hel\x01lo",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                text=True,
             )
-            (out, err) = app.communicate(b"hel\x01lo")
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        if out != b"" or err != b"":
+        if app.stdout != "" or app.stderr != "":
             self.fail(
                 f"Apport wrote to stdout and/or stderr"
                 f" (exit code {app.returncode})."
-                f"\n*** stdout:\n{out.decode().strip()}"
-                f"\n*** stderr:\n{err.decode().strip()}"
+                f"\n*** stdout:\n{app.stdout.strip()}"
+                f"\n*** stderr:\n{app.stderr.strip()}"
             )
-        self.assertEqual(app.returncode, 0, err)
+        self.assertEqual(app.returncode, 0, app.stderr)
         with open(log) as f:
             logged = f.read()
         self.assertIn("called for pid", logged)
@@ -628,24 +630,25 @@ class T(unittest.TestCase):
         try:
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = "/not/existing/apport.log"
-            app = subprocess.Popen(
+            app = subprocess.run(
                 [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+                check=False,
+                encoding="UTF-8",
                 env=env,
+                input="hel\x01lo",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                text=True,
             )
-            (out, err) = app.communicate(b"hel\x01lo")
-            err = err.decode("UTF-8")
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
 
-        self.assertEqual(out, b"")
-        self.assertEqual(app.returncode, 0, err)
-        self.assertIn("called for pid", err)
-        self.assertIn("wrote report", err)
-        self.assertNotIn("Traceback", err)
+        self.assertEqual(app.stdout, "")
+        self.assertEqual(app.returncode, 0, app.stderr)
+        self.assertIn("called for pid", app.stderr)
+        self.assertIn("wrote report", app.stderr)
+        self.assertNotIn("Traceback", app.stderr)
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -787,14 +790,14 @@ class T(unittest.TestCase):
                 conn = server.accept()[0]
                 os.dup2(conn.fileno(), 3)
 
-            app = subprocess.Popen(
+            app = subprocess.run(
                 [self.apport_path],
+                check=False,
                 preexec_fn=child_setup,
                 pass_fds=[3],
                 stderr=subprocess.PIPE,
             )
-            log = app.communicate()[1]
-            self.assertEqual(app.returncode, 0, log)
+            self.assertEqual(app.returncode, 0, app.stderr.decode())
             server.close()
         finally:
             os.kill(test_proc, 9)
@@ -967,15 +970,14 @@ class T(unittest.TestCase):
 
                 # check that core file is valid
                 self.assertGreater(st.st_size, 10000)
-                gdb = subprocess.Popen(
+                gdb = subprocess.run(
                     ["gdb", "--batch", "--ex", "bt", command, core_path],
+                    check=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
+                    text=True,
                 )
-                (out, err) = gdb.communicate()
-                self.assertEqual(gdb.returncode, 0)
-                out = out.decode()
-                err = err.decode().strip()
+                self.assertNotEqual(gdb.stdout.strip(), "")
             finally:
                 os.unlink(core_path)
         else:

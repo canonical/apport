@@ -460,7 +460,7 @@ def is_systemd_watchdog_restart(signum):
             else:
                 return False
 
-        journalctl = subprocess.Popen(
+        journalctl = subprocess.run(
             [
                 "/bin/journalctl",
                 "--output=cat",
@@ -469,10 +469,10 @@ def is_systemd_watchdog_restart(signum):
                 "--unit",
                 unit,
             ],
+            check=False,
             stdout=subprocess.PIPE,
         )
-        out = journalctl.communicate()[0]
-        return b"Watchdog timeout" in out
+        return b"Watchdog timeout" in journalctl.stdout
     except OSError as error:
         error_log(
             "cannot determine if this crash is from systemd watchdog: %s"

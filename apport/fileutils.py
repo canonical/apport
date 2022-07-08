@@ -384,21 +384,21 @@ def check_files_md5(sumfile):
     Return a list of files that don't match.
     """
     assert os.path.exists(sumfile)
-    m = subprocess.Popen(
+    md5sum = subprocess.run(
         ["/usr/bin/md5sum", "-c", sumfile],
+        check=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd="/",
         env={},
     )
-    out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output
-    if m.returncode == 0:
+    if md5sum.returncode == 0:
         return []
 
     mismatches = []
-    for line in out.splitlines():
+    for line in md5sum.stdout.decode().splitlines():
         if line.endswith("FAILED"):
             mismatches.append(line.rsplit(":", 1)[0])
 

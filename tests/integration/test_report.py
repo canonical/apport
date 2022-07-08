@@ -664,7 +664,7 @@ int main() { return f(42); }
             assert os.path.exists("crash")
 
             # call it through gdb and dump core
-            gdb = subprocess.Popen(
+            subprocess.run(
                 [
                     "gdb",
                     "--batch",
@@ -674,10 +674,10 @@ int main() { return f(42); }
                     "generate-core-file core",
                     "./crash",
                 ],
+                check=False,
                 env={"HOME": workdir},
                 stdout=subprocess.PIPE,
             )
-            gdb.communicate()
             klass._validate_core("core")
 
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
@@ -703,11 +703,9 @@ int main() { return f(42); }
             time.sleep(0.5)
             count += 1
         assert os.path.exists(core_path)
-        readelf = subprocess.Popen(
-            ["readelf", "-n", core_path], stdout=subprocess.PIPE
+        subprocess.run(
+            ["readelf", "-n", core_path], check=True, stdout=subprocess.PIPE
         )
-        readelf.communicate()
-        assert readelf.returncode == 0
 
     def _validate_gdb_fields(self, pr):
         self.assertIn("Stacktrace", pr)

@@ -464,17 +464,17 @@ class __AptDpkgPackageInfo(PackageInfo):
         official user-facing API for this, which will ask for confirmation and
         allows filtering.
         """
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-query", "-W", "--showformat=${Conffiles}", "--", package],
+            check=False,
             stdout=subprocess.PIPE,
         )
 
-        out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:
             return {}
 
         modified = {}
-        for line in out.splitlines():
+        for line in dpkg.stdout.decode().splitlines():
             if not line:
                 continue
             # just take the first two fields, to not stumble over obsolete
@@ -507,16 +507,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         i = 0
 
         while not match and i < len(file_list):
-            p = subprocess.Popen(
+            fgrep = subprocess.run(
                 ["fgrep", "-lxm", "1", "--", pattern]
                 + file_list[i : (i + slice_size)],
+                check=False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            out = p.communicate()[0].decode("UTF-8")
-            if p.returncode == 0:
-                match = out
+            if fgrep.returncode == 0:
+                match = fgrep.stdout.decode("UTF-8")
             i += slice_size
 
         return match
@@ -545,12 +545,13 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._search_contents(file, map_cachedir, release, arch)
 
         # check if the file is a diversion
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-divert", "--list", file],
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        out = dpkg.communicate()[0].decode("UTF-8")
+        out = dpkg.stdout.decode("UTF-8")
         if dpkg.returncode == 0 and out:
             pkg = out.split()[-1]
             if pkg != "hardening-wrapper":
@@ -589,11 +590,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
 
-        dpkg = subprocess.Popen(
-            ["dpkg", "--print-architecture"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg", "--print-architecture"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        arch = dpkg.communicate()[0].decode().strip()
-        assert dpkg.returncode == 0
+        arch = dpkg.stdout.decode().strip()
         assert arch
         return arch
 
@@ -604,12 +606,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-architecture", "-qDEB_HOST_MULTIARCH"],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        multiarch_triple = dpkg.communicate()[0].decode().strip()
-        assert dpkg.returncode == 0
+        multiarch_triple = dpkg.stdout.decode().strip()
 
         return "/lib/%s:/lib" % multiarch_triple
 
@@ -1367,12 +1369,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Call dpkg with given arguments and return output, or return None on
         error."""
 
-        dpkg = subprocess.Popen(
-            ["dpkg"] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg"] + args,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        out = dpkg.communicate(input)[0].decode("UTF-8")
         if dpkg.returncode == 0:
-            return out
+            return dpkg.stdout.decode("UTF-8")
         else:
             raise ValueError("package does not exist")
 
@@ -1383,31 +1387,28 @@ class __AptDpkgPackageInfo(PackageInfo):
         testable.
         """
         if os.path.exists(sumfile):
-            m = subprocess.Popen(
-                ["/usr/bin/md5sum", "-c", sumfile],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                cwd="/",
-                env={},
-            )
-            out = m.communicate()[0].decode("UTF-8", errors="replace")
+            args = [sumfile]
+            stdin = None
         else:
             assert (
                 type(sumfile) == bytes
             ), "md5sum list value must be a byte array"
-            m = subprocess.Popen(
-                ["/usr/bin/md5sum", "-c"],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                cwd="/",
-                env={},
-            )
-            out = m.communicate(sumfile)[0].decode("UTF-8", errors="replace")
+            args = []
+            stdin = sumfile
+        md5sum = subprocess.run(
+            ["/usr/bin/md5sum", "-c"] + args,
+            check=False,
+            input=stdin,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd="/",
+            env={},
+        )
 
         # if md5sum succeeded, don't bother parsing the output
-        if m.returncode == 0:
+        if md5sum.returncode == 0:
             return []
+        out = md5sum.stdout.decode("UTF-8", errors="replace")
 
         mismatches = []
         for line in out.splitlines():
@@ -1869,11 +1870,12 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _deb_version(klass, pkg):
         """Return the version of a .deb file"""
 
-        dpkg = subprocess.Popen(
-            ["dpkg-deb", "-f", pkg, "Version"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg-deb", "-f", pkg, "Version"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        out = dpkg.communicate(input)[0].decode("UTF-8").strip()
-        assert dpkg.returncode == 0
+        out = dpkg.stdout.decode("UTF-8").strip()
         assert out
         return out
 
@@ -1891,13 +1893,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Get "lsb_release -sc", cache the result."""
 
         if self._distro_codename is None:
-            lsb_release = subprocess.Popen(
-                ["lsb_release", "-sc"], stdout=subprocess.PIPE
+            lsb_release = subprocess.run(
+                ["lsb_release", "-sc"], check=True, stdout=subprocess.PIPE
             )
-            self._distro_codename = (
-                lsb_release.communicate()[0].decode("UTF-8").strip()
-            )
-            assert lsb_release.returncode == 0
+            self._distro_codename = lsb_release.stdout.decode("UTF-8").strip()
 
         return self._distro_codename
 

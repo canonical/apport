@@ -439,19 +439,19 @@ def command_output(
     if not keep_locale:
         env["LC_MESSAGES"] = "C"
     try:
-        sp = subprocess.Popen(
+        sp = subprocess.run(
             command,
+            check=False,
+            input=input,
             stdout=subprocess.PIPE,
             stderr=stderr,
-            stdin=(input and subprocess.PIPE or None),
             env=env,
         )
     except OSError as error:
         return "Error: " + str(error)
 
-    out = sp.communicate(input)[0]
     if sp.returncode == 0:
-        res = out.strip()
+        res = sp.stdout.strip()
     else:
         res = (
             b"Error: command "
@@ -459,7 +459,7 @@ def command_output(
             + b" failed with exit code "
             + str(sp.returncode).encode()
             + b": "
-            + out
+            + sp.stdout
         )
 
     if decode_utf8:
@@ -586,10 +586,9 @@ def attach_root_command_outputs(report, command_map):
         script.close()
 
         # run script
-        sp = subprocess.Popen(
-            _root_command_prefix() + [wrapper_path, script_path]
+        subprocess.run(
+            _root_command_prefix() + [wrapper_path, script_path], check=False
         )
-        sp.wait()
 
         # now read back the individual outputs
         for keyname in command_map:
@@ -1042,17 +1041,17 @@ def _get_module_license(module):
     """Return the license for a given kernel module."""
 
     try:
-        modinfo = subprocess.Popen(
+        modinfo = subprocess.run(
             ["/sbin/modinfo", module],
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        out = modinfo.communicate()[0].decode("UTF-8")
         if modinfo.returncode != 0:
             return "invalid"
     except OSError:
         return None
-    for line in out.splitlines():
+    for line in modinfo.stdout.decode("UTF-8").splitlines():
         fields = line.split(":", 1)
         if len(fields) < 2:
             continue

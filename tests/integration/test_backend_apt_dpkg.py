@@ -160,11 +160,13 @@ class T(unittest.TestCase):
 
         self.assertRaises(ValueError, impl.get_architecture, "nonexisting")
         # just assume that bash uses the native architecture
-        d = subprocess.Popen(
-            ["dpkg", "--print-architecture"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg", "--print-architecture"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        system_arch = d.communicate()[0].decode().strip()
-        assert d.returncode == 0
+        system_arch = dpkg.stdout.strip()
         self.assertEqual(impl.get_architecture("bash"), system_arch)
 
     def test_get_files(self):
