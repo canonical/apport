@@ -246,6 +246,11 @@ class T(unittest.TestCase):
         os.execv(exename, [exename] + self.TEST_ARGS)
         assert False, "Could not execute " + exename
 
+    def _write_symptom_script(self, script_name: str, content: str) -> None:
+        path = os.path.join(apport.ui.symptom_script_dir, script_name)
+        with open(path, "w") as symptom_script:
+            symptom_script.write(content)
+
     def test_format_filesize(self):
         """format_filesize()"""
 
@@ -2226,9 +2231,9 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "error")
 
         # does not determine package
-        f = open(os.path.join(apport.ui.symptom_script_dir, "nopkg.py"), "w")
-        f.write("def run(report, ui):\n    pass\n")
-        f.close()
+        self._write_symptom_script(
+            "nopkg.py", "def run(report, ui):\n    pass\n"
+        )
         sys.argv = ["ui-test", "-s", "nopkg"]
         self.ui = TestSuiteUserInterface()
         stderr_mock.truncate(0)
@@ -2237,9 +2242,9 @@ class T(unittest.TestCase):
         self.assertIn("did not determine the affected package", err)
 
         # does not define run()
-        f = open(os.path.join(apport.ui.symptom_script_dir, "norun.py"), "w")
-        f.write("def something(x, y):\n    return 1\n")
-        f.close()
+        self._write_symptom_script(
+            "norun.py", "def something(x, y):\n    return 1\n"
+        )
         sys.argv = ["ui-test", "-s", "norun"]
         self.ui = TestSuiteUserInterface()
         stderr_mock.truncate(0)
@@ -2248,9 +2253,9 @@ class T(unittest.TestCase):
         self.assertIn("norun.py crashed:", err)
 
         # crashing script
-        f = open(os.path.join(apport.ui.symptom_script_dir, "crash.py"), "w")
-        f.write("def run(report, ui):\n    return 1/0\n")
-        f.close()
+        self._write_symptom_script(
+            "crash.py", "def run(report, ui):\n    return 1/0\n"
+        )
         sys.argv = ["ui-test", "-s", "crash"]
         self.ui = TestSuiteUserInterface()
         stderr_mock.truncate(0)
@@ -2260,13 +2265,12 @@ class T(unittest.TestCase):
         self.assertIn("ZeroDivisionError:", err)
 
         # working noninteractive script
-        f = open(os.path.join(apport.ui.symptom_script_dir, "itching.py"), "w")
-        f.write(
+        self._write_symptom_script(
+            "itching.py",
             "def run(report, ui):\n"
             '  report["itch"] = "scratch"\n'
-            '  return "bash"\n'
+            '  return "bash"\n',
         )
-        f.close()
         sys.argv = ["ui-test", "-s", "itching"]
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {
@@ -2306,8 +2310,8 @@ class T(unittest.TestCase):
         self.assertIn("foo", self.ui.report["Tags"])
 
         # working interactive script
-        f = open(os.path.join(apport.ui.symptom_script_dir, "itching.py"), "w")
-        f.write(
+        self._write_symptom_script(
+            "itching.py",
             textwrap.dedent(
                 """\
                 def run(report, ui):
@@ -2315,9 +2319,8 @@ class T(unittest.TestCase):
                     report['q'] = str(ui.yesno('do you?'))
                     return 'bash'
                 """
-            )
+            ),
         )
-        f.close()
         sys.argv = ["ui-test", "-s", "itching"]
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {
@@ -2343,20 +2346,19 @@ class T(unittest.TestCase):
         """run_report_bug() without specifying arguments and available
         symptoms"""
 
-        f = open(os.path.join(apport.ui.symptom_script_dir, "foo.py"), "w")
-        f.write(
+        self._write_symptom_script(
+            "foo.py",
             textwrap.dedent(
                 """\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
                 """
-            )
+            ),
         )
-        f.close()
-        f = open(os.path.join(apport.ui.symptom_script_dir, "bar.py"), "w")
-        f.write('def run(report, ui):\n  return "coreutils"\n')
-        f.close()
+        self._write_symptom_script(
+            "bar.py", 'def run(report, ui):\n  return "coreutils"\n'
+        )
 
         sys.argv = ["ui-test", "-f"]
         self.ui = TestSuiteUserInterface()
@@ -2450,19 +2452,16 @@ class T(unittest.TestCase):
         )
 
         # symptom is preferred over package
-        f = open(
-            os.path.join(apport.ui.symptom_script_dir, "coreutils.py"), "w"
-        )
-        f.write(
+        self._write_symptom_script(
+            "coreutils.py",
             textwrap.dedent(
                 """\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
                 """
-            )
+            ),
         )
-        f.close()
         _chk(
             "apport-cli",
             "coreutils",
@@ -2616,19 +2615,16 @@ class T(unittest.TestCase):
         )
 
         # symptom (preferred over package)
-        f = open(
-            os.path.join(apport.ui.symptom_script_dir, "coreutils.py"), "w"
-        )
-        f.write(
+        self._write_symptom_script(
+            "coreutils.py",
             textwrap.dedent(
                 """\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
                 """
-            )
+            ),
         )
-        f.close()
         _chk(
             ["coreutils"],
             {
