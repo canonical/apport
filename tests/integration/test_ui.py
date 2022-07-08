@@ -594,17 +594,14 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), False)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    def test_run_version(self):
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_run_version(self, stdout_mock):
         """run_report_bug() as "ubuntu-bug" with version argument"""
 
         sys.argv = ["ubuntu-bug", "-v"]
         self.ui = TestSuiteUserInterface()
-        orig_stdout = sys.stdout
-        sys.stdout = io.StringIO()
         self.assertEqual(self.ui.run_argv(), True)
-        output = sys.stdout.getvalue()
-        sys.stdout = orig_stdout
-        self.assertEqual(output, apport.ui.__version__ + "\n")
+        self.assertEqual(stdout_mock.getvalue(), apport.ui.__version__ + "\n")
 
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
@@ -2210,7 +2207,8 @@ class T(unittest.TestCase):
     @unittest.mock.patch(
         "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
     )
-    def test_run_symptom(self):
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    def test_run_symptom(self, stderr_mock):
         """run_symptom()"""
 
         # unknown symptom
@@ -2231,13 +2229,11 @@ class T(unittest.TestCase):
         f = open(os.path.join(apport.ui.symptom_script_dir, "nopkg.py"), "w")
         f.write("def run(report, ui):\n    pass\n")
         f.close()
-        orig_stderr = sys.stderr
         sys.argv = ["ui-test", "-s", "nopkg"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = io.StringIO()
+        stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
-        err = sys.stderr.getvalue()
-        sys.stderr = orig_stderr
+        err = stderr_mock.getvalue()
         self.assertIn("did not determine the affected package", err)
 
         # does not define run()
@@ -2246,10 +2242,9 @@ class T(unittest.TestCase):
         f.close()
         sys.argv = ["ui-test", "-s", "norun"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = io.StringIO()
+        stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
-        err = sys.stderr.getvalue()
-        sys.stderr = orig_stderr
+        err = stderr_mock.getvalue()
         self.assertIn("norun.py crashed:", err)
 
         # crashing script
@@ -2258,10 +2253,9 @@ class T(unittest.TestCase):
         f.close()
         sys.argv = ["ui-test", "-s", "crash"]
         self.ui = TestSuiteUserInterface()
-        sys.stderr = io.StringIO()
+        stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
-        err = sys.stderr.getvalue()
-        sys.stderr = orig_stderr
+        err = stderr_mock.getvalue()
         self.assertIn("crash.py crashed:", err)
         self.assertIn("ZeroDivisionError:", err)
 
@@ -2398,23 +2392,19 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
         self.assertTrue(self.ui.report["Package"].startswith("bash"))
 
-    def test_parse_argv_single_arg(self):
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    def test_parse_argv_single_arg(self, stderr_mock):
         """parse_args() option inference for a single argument"""
 
         def _chk(program_name, arg, expected_opts):
             sys.argv = [program_name]
             if arg:
                 sys.argv.append(arg)
-            orig_stderr = sys.stderr
-            sys.stderr = open("/dev/null", "w")
-            try:
-                ui = apport.ui.UserInterface()
-            finally:
-                sys.stderr.close()
-                sys.stderr = orig_stderr
+            ui = apport.ui.UserInterface()
             expected_opts["version"] = None
             self.assertEqual(ui.args, [])
             self.assertEqual(ui.options, expected_opts)
+            self.assertEqual(stderr_mock.getvalue(), "")
 
         # no arguments -> show pending crashes
         _chk(
@@ -2435,6 +2425,11 @@ class T(unittest.TestCase):
         )
         # updating report not allowed without args
         self.assertRaises(SystemExit, _chk, "apport-collect", None, {})
+        self.assertIn(
+            "error: You need to specify a report number",
+            stderr_mock.getvalue(),
+        )
+        stderr_mock.truncate(0)
 
         # package
         _chk(
@@ -2568,21 +2563,17 @@ class T(unittest.TestCase):
             },
         )
 
-    def test_parse_argv_apport_bug(self):
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    def test_parse_argv_apport_bug(self, stderr_mock):
         """parse_args() option inference when invoked as *-bug"""
 
         def _chk(args, expected_opts):
             sys.argv = ["apport-bug"] + args
-            orig_stderr = sys.stderr
-            sys.stderr = open("/dev/null", "w")
-            try:
-                ui = apport.ui.UserInterface()
-            finally:
-                sys.stderr.close()
-                sys.stderr = orig_stderr
+            ui = apport.ui.UserInterface()
             expected_opts["version"] = None
             self.assertEqual(ui.args, [])
             self.assertEqual(ui.options, expected_opts)
+            self.assertEqual(stderr_mock.getvalue(), "")
 
         #
         # no arguments: default to 'ask for symptom' bug mode

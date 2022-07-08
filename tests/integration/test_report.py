@@ -1555,15 +1555,14 @@ int main() { return f(42); }
             apport.report._common_hook_dir = orig_common_hook_dir
             apport.report._opt_dir = orig_opt_dir
 
-    def test_add_hooks_info_errors(self):
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    def test_add_hooks_info_errors(self, stderr_mock):
         """add_hooks_info() with errors in hooks"""
 
         orig_hook_dir = apport.report._hook_dir
         apport.report._hook_dir = tempfile.mkdtemp()
         orig_common_hook_dir = apport.report._common_hook_dir
         apport.report._common_hook_dir = tempfile.mkdtemp()
-        orig_stderr = sys.stderr
-        sys.stderr = io.StringIO()
         try:
             with open(
                 os.path.join(apport.report._hook_dir, "fooprogs.py"), "w"
@@ -1604,7 +1603,7 @@ int main() { return f(42); }
             self.assertEqual(r["SourceHookBefore"], "1")
 
             # should print the exceptions to stderr
-            err = sys.stderr.getvalue()
+            err = stderr_mock.getvalue()
             self.assertIn("ZeroDivisionError:", err)
             self.assertIn("name 'unknown' is not defined", err)
 
@@ -1617,7 +1616,6 @@ int main() { return f(42); }
             self.assertIn("line 3, in add_info", r["HookError_source_foo"])
             self.assertNotIn("NameError:", r["HookError_fooprogs"])
         finally:
-            sys.stderr = orig_stderr
             shutil.rmtree(apport.report._hook_dir)
             shutil.rmtree(apport.report._common_hook_dir)
             apport.report._hook_dir = orig_hook_dir
