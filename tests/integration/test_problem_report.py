@@ -482,54 +482,34 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(parts[2].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[2].get_filename(), "File1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[2].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         self.assertTrue(not parts[3].is_multipart())
         self.assertEqual(parts[3].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[3].get_filename(), "File1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[3].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[3]), bin_data)
 
         # fifth part should be the Value1: value as gzip'ed attachment
         self.assertTrue(not parts[4].is_multipart())
         self.assertEqual(parts[4].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[4].get_filename(), "Value1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[4].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[4]), bin_data)
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[5].is_multipart())
         self.assertEqual(parts[5].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[5].get_filename(), "Value1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[5].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[5]), bin_data)
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[6].is_multipart())
         self.assertEqual(parts[6].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[6].get_filename(), "ZValue.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[6].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[6]), bin_data)
 
     def test_write_mime_filter(self):
         """write_mime() with key filters."""
@@ -569,8 +549,10 @@ class T(unittest.TestCase):
 
         # third part should be the GoodBin: field as attachment
         self.assertTrue(not parts[2].is_multipart())
-        f = tempfile.TemporaryFile()
-        f.write(parts[2].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
+
+    def decode_gzipped_message(self, message: email.message.Message) -> bytes:
+        with tempfile.TemporaryFile() as payload:
+            payload.write(message.get_payload(decode=True))
+            payload.seek(0)
+            return gzip.GzipFile(mode="rb", fileobj=payload).read()
