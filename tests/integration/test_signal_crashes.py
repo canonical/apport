@@ -123,7 +123,7 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -131,8 +131,8 @@ class T(unittest.TestCase):
             assert app.wait() == 0, app.stderr.read()
             app.stderr.close()
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
@@ -222,7 +222,7 @@ class T(unittest.TestCase):
         test_proc2 = self.create_test_process(False, "/bin/dd", args=[])
         try:
             app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -230,7 +230,7 @@ class T(unittest.TestCase):
             time.sleep(0.5)  # give it some time to grab the lock
 
             app2 = subprocess.Popen(
-                [self.apport_path, str(test_proc2), "42", "0", "1"],
+                [self.apport_path, str(test_proc2.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -261,10 +261,10 @@ class T(unittest.TestCase):
             self.assertEqual(app.wait(), 0, app.stderr.read())
             app.stderr.close()
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
-            os.kill(test_proc2, 9)
-            os.waitpid(test_proc2, 0)
+            test_proc.kill()
+            test_proc2.kill()
+            test_proc.wait()
+            test_proc2.wait()
 
     def test_unpackaged_binary(self):
         """unpackaged binaries do not create a report"""
@@ -553,7 +553,7 @@ class T(unittest.TestCase):
             os.utime(myexe, None)
 
             app = subprocess.run(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 check=False,
                 input=b"foo",
                 stderr=subprocess.PIPE,
@@ -571,8 +571,8 @@ class T(unittest.TestCase):
                     "executable was modified after program start", lines[-1]
                 )
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
@@ -585,7 +585,7 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = log
             app = subprocess.run(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 check=False,
                 env=env,
                 input="hel\x01lo",
@@ -594,8 +594,8 @@ class T(unittest.TestCase):
                 text=True,
             )
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         if app.stdout != "" or app.stderr != "":
             self.fail(
@@ -631,7 +631,7 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = "/not/existing/apport.log"
             app = subprocess.run(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 check=False,
                 encoding="UTF-8",
                 env=env,
@@ -641,8 +641,8 @@ class T(unittest.TestCase):
                 text=True,
             )
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         self.assertEqual(app.stdout, "")
         self.assertEqual(app.returncode, 0, app.stderr)
@@ -772,7 +772,7 @@ class T(unittest.TestCase):
                     fd.write(b"hel\x01lo")
                     fd.flush()
                     fd.seek(0)
-                    args = "%s 11 0 1" % test_proc
+                    args = "%s 11 0 1" % test_proc.pid
                     fd_msg = (
                         socket.SOL_SOCKET,
                         socket.SCM_RIGHTS,
@@ -800,8 +800,8 @@ class T(unittest.TestCase):
             self.assertEqual(app.returncode, 0, app.stderr.decode())
             server.close()
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -825,7 +825,7 @@ class T(unittest.TestCase):
     ):
         """Spawn test executable.
 
-        Wait until it is fully running, and return its PID.
+        Wait until it is fully running, and return its process.
         """
         if command is None:
             command = self.TEST_EXECUTABLE
@@ -856,7 +856,7 @@ class T(unittest.TestCase):
                 break
 
         time.sleep(0.3)  # needs some more setup time
-        return process.pid
+        return process
 
     def do_crash(
         self,

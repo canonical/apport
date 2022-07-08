@@ -145,7 +145,7 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -172,8 +172,8 @@ class T(unittest.TestCase):
             self.assertEqual(app.returncode, 0, err)
             onemb = None
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -212,7 +212,7 @@ class T(unittest.TestCase):
             set(),
             "no running test executable processes",
         )
-        self.create_test_process(
+        system_run = self.create_test_process(
             command="/usr/bin/systemd-run",
             check_running=False,
             args=[
@@ -225,12 +225,16 @@ class T(unittest.TestCase):
             ]
             + self.TEST_ARGS,
         )
-        pids = pidof(self.TEST_EXECUTABLE)
-        self.assertEqual(len(pids), 1)
-        os.kill(pids.pop(), signal.SIGSEGV)
+        try:
+            pids = pidof(self.TEST_EXECUTABLE)
+            self.assertEqual(len(pids), 1)
+            os.kill(pids.pop(), signal.SIGSEGV)
 
-        self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
-        self.wait_for_apport_to_finish()
+            self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
+            self.wait_for_apport_to_finish()
+        finally:
+            system_run.kill()
+            system_run.wait()
 
         # check crash report
         with open("/var/log/apport.log") as logfile:
@@ -247,7 +251,7 @@ class T(unittest.TestCase):
     ):
         """Spawn test executable.
 
-        Wait until it is fully running, and return its PID.
+        Wait until it is fully running, and return its process.
         """
         if command is None:
             command = self.TEST_EXECUTABLE
@@ -278,7 +282,7 @@ class T(unittest.TestCase):
                 break
 
         time.sleep(0.3)  # needs some more setup time
-        return process.pid
+        return process
 
     def wait_for_apport_to_finish(self, timeout_sec=10.0):
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
