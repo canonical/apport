@@ -26,6 +26,22 @@ class T(unittest.TestCase):
     def tearDownClass(cls):
         restore_data_dir(apport.report, cls.orig_data_dir)
 
+    def wait_for_proc_cmdline(self, pid: int, timeout_sec=10.0) -> None:
+        assert pid
+        elapsed_time = 0.0
+        while elapsed_time < timeout_sec:
+            with open(f"/proc/{pid}/cmdline") as fd:
+                if fd.read():
+                    return
+
+            time.sleep(0.1)
+            elapsed_time += 0.1
+
+        self.fail(
+            f"/proc/{pid}/cmdline not readable within"
+            f" {int(elapsed_time)} seconds."
+        )
+
     def test_add_package_info(self):
         """add_package_info()."""
 
@@ -147,13 +163,7 @@ class T(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        assert p.pid
-        # wait until /proc/pid/cmdline exists
-        while True:
-            with open("/proc/%i/cmdline" % p.pid) as fd:
-                if fd.read():
-                    break
-                time.sleep(0.1)
+        self.wait_for_proc_cmdline(p.pid)
         pr = apport.report.Report()
         pr.add_proc_info(pid=p.pid)
         self.assertEqual(pr.pid, p.pid)
@@ -171,13 +181,7 @@ class T(unittest.TestCase):
             "/bin/sh"
         ), "/bin/sh needs to be a symlink for this test"
         p = subprocess.Popen(["sh"], stdin=subprocess.PIPE)
-        assert p.pid
-        # wait until /proc/pid/cmdline exists
-        while True:
-            with open("/proc/%i/cmdline" % p.pid) as fd:
-                if fd.read():
-                    break
-                time.sleep(0.1)
+        self.wait_for_proc_cmdline(p.pid)
         pr = apport.report.Report()
         pr.pid = p.pid
         pr.add_proc_info()
@@ -191,13 +195,7 @@ class T(unittest.TestCase):
 
         # check correct handling of interpreted executables: shell
         p = subprocess.Popen(["zgrep", "foo"], stdin=subprocess.PIPE)
-        assert p.pid
-        # wait until /proc/pid/cmdline exists
-        while True:
-            with open("/proc/%i/cmdline" % p.pid) as fd:
-                if fd.read():
-                    break
-                time.sleep(0.1)
+        self.wait_for_proc_cmdline(p.pid)
         pr = apport.report.Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate(b"\n")
@@ -230,13 +228,7 @@ class T(unittest.TestCase):
         p = subprocess.Popen(
             [testscript], stdin=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        assert p.pid
-        # wait until /proc/pid/cmdline exists
-        while True:
-            with open("/proc/%i/cmdline" % p.pid) as fd:
-                if fd.read():
-                    break
-                time.sleep(0.1)
+        self.wait_for_proc_cmdline(p.pid)
         pr = apport.report.Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate(b"\n")
