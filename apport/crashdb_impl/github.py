@@ -20,6 +20,12 @@ import time
 class Github:
     __last_request: float = time.time()
 
+    def __init__(self, client_id, ui: apport.ui.UserInterface):
+        self.__client_id = client_id
+        self.__authentication_data = None
+        self.__access_token = None
+        self.ui = ui
+
     @staticmethod
     def _stringify(data: dict) -> str:
         "Takes a dict and returns it as a string"
@@ -45,12 +51,7 @@ class Github:
     def api_open_issue(self, owner: str, repo: str, data: dict):
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
         return self.post(url, json.dumps(data))
-
-    def __init__(self, client_id):
-        self.__client_id = client_id
-        self.__authentication_data = None
-        self.__access_token = None
-
+    
     def __enter__(self):
         data = {
             "client_id": self.__client_id,
@@ -59,10 +60,10 @@ class Github:
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
 
-        # TODO: This should use UI!
-        print("Input the following code in your browser:")
-        print(f'URL:  {response["verification_uri"]}')
-        print(f'Code: {response["user_code"]}')
+        prompt = "Open the following URL. When requested, write this code to enable apport to post an issue.\n"
+        prompt += f'URL:  {response["verification_uri"]}\n'
+        prompt += f'Code: {response["user_code"]}'
+        self.ui.ui_info_message("Permissions needed", prompt)
 
         self.__authentication_data = {
             "client_id": self.__client_id,
@@ -129,9 +130,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.app_id = options["github_app_id"]
         self.labels = set(options["labels"])
         self.issue_url = None
+        self.github = None
 
-    def _github_login(self) -> Github:
-        with Github(self.app_id) as github:
+    def _github_login(self, ui: apport.ui.UserInterface) -> Github:
+        with Github(self.app_id, ui) as github:
             while not github.authentication_complete():
                 pass
             return github
@@ -149,6 +151,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "body": body,
             "labels": [l for l in self.labels]
         }
+    
+    def external_login(self, ui: apport.ui.UserInterface) -> None:
+        if self.github is not None:
+            return
+        self.github = self._github_login(ui)
 
     def upload(self, report: apport.Report, progress_callback=None) -> IssueHandle:
         """Upload given problem report return a handle for it.
@@ -157,8 +164,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         assert self.accepts(report)
 
+        if self.github is None:
+            raise apport.crashdb.NeedsExternalLogin()
+
         data = self._format_report(report)
-        response = self._github_login().api_open_issue(self.repository_owner, self.repository_name, data)
+        response = self.github.api_open_issue(self.repository_owner, self.repository_name, data)
         return IssueHandle(url=response["html_url"])
 
     def get_comment_url(self, report: apport.Report, handle: IssueHandle) -> str:

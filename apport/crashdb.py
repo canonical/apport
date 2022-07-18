@@ -784,6 +784,10 @@ class CrashDatabase:
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
+    
+    def external_login(self, ui):
+        """Login to the database via an external resource, such as a web browser."""
+        pass
 
     def get_distro_release(self, id):
         """Get 'DistroRelease: <release>' from the report ID."""
