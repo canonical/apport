@@ -877,7 +877,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def close_duplicate(self, report, id, master):
+    def close_duplicate(self, report, id, master_id):
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.

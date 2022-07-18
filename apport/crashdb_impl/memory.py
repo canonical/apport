@@ -187,12 +187,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         return self.reports[id]["dup_of"]
 
-    def close_duplicate(self, report, id, master):
+    def close_duplicate(self, report, id, master_id):
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.
         """
-        self.reports[id]["dup_of"] = master
+        self.reports[id]["dup_of"] = master_id
 
     def mark_regression(self, id, master):
         """Mark a crash id as reintroducing an earlier crash which is

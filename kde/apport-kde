@@ -564,12 +564,12 @@ class MainUserInterface(apport.ui.UserInterface):
             return None
         return str(response)
 
-    def ui_question_userpass(self, text):
+    def ui_question_userpass(self, message):
         """Show a Username/Password dialog.
 
         Return a tuple (user, pass) or None if cancelled.
         """
-        dialog = UserPassDialog(_("Apport"), text)
+        dialog = UserPassDialog(_("Apport"), message)
         response = dialog.exec_()
 
         if response == QDialog.Rejected:

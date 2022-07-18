@@ -238,7 +238,7 @@ class RPMPackageInfo:
             " RPMPackageInfo subclass"
         )
 
-    def package_name_glob(self, glob):
+    def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
 
         raise NotImplementedError("TODO")
