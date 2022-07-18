@@ -1801,6 +1801,9 @@ class UserInterface:
         upthread = apport.REThread.REThread(
             target=self.crashdb.upload, args=(self.report, progress_callback)
         )
+
+        self.crashdb.external_login(self)
+ 
         upthread.start()
         while upthread.is_alive():
             self.ui_set_upload_progress(self.upload_progress)
