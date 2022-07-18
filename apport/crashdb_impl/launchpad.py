@@ -29,8 +29,6 @@ from httplib2 import FailedToDecompressContent
 try:
     from launchpadlib.errors import HTTPError
     from launchpadlib.launchpad import Launchpad
-
-    Launchpad  # pyflakes
 except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
     Launchpad = None

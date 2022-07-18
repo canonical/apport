@@ -6,8 +6,16 @@ import time
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
-Report  # pyflakes
-packaging  # pyflakes
+__all__ = [
+    "Report",
+    "error",
+    "fatal",
+    "log",
+    "memdbg",
+    "packaging",
+    "unicode_gettext",
+    "warning",
+]
 
 
 def unicode_gettext(str):
