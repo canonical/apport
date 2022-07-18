@@ -235,6 +235,7 @@ class UserInterface:
         self.cur_package = None
         self.offer_restart = False
         self.specified_a_pkg = False
+        self.upload_progress = None
 
         try:
             self.crashdb = apport.crashdb.get_crashdb(None)
@@ -1810,12 +1811,10 @@ class UserInterface:
         except KeyError:
             pass
 
-        global __upload_progress
-        __upload_progress = None
+        self.upload_progress = None
 
         def progress_callback(sent, total):
-            global __upload_progress
-            __upload_progress = float(sent) / total
+            self.upload_progress = float(sent) / total
 
         # drop internal/uninteresting keys, that start with "_"
         for k in list(self.report):
@@ -1828,7 +1827,7 @@ class UserInterface:
         )
         upthread.start()
         while upthread.is_alive():
-            self.ui_set_upload_progress(__upload_progress)
+            self.ui_set_upload_progress(self.upload_progress)
             try:
                 upthread.join(0.1)
                 upthread.exc_raise()
