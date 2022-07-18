@@ -237,6 +237,7 @@ def _run_hook(report, ui, hook):
     symb = {}
     try:
         with open(hook) as fd:
+            # legacy, pylint: disable=exec-used
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
             symb["add_info"](report, ui)

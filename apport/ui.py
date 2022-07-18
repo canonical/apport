@@ -97,6 +97,7 @@ def thread_collect_info(
         symb = {}
         try:
             with open(symptom_script) as f:
+                # legacy, pylint: disable=exec-used
                 exec(compile(f.read(), symptom_script, "exec"), symb)
             package = symb["run"](report, ui)
             if not package:
@@ -785,6 +786,7 @@ class UserInterface:
             symb = {}
             try:
                 with open(script) as f:
+                    # legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
             except Exception:
                 apport.error("symptom script %s is invalid", script)

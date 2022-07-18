@@ -954,6 +954,7 @@ def get_crashdb(auth_file, name=None, conf=None):
         )
     settings = {}
     with open(conf) as f:
+        # legacy, pylint: disable=exec-used
         exec(compile(f.read(), conf, "exec"), settings)
 
     # Load third parties crashdb.conf
@@ -964,6 +965,7 @@ def get_crashdb(auth_file, name=None, conf=None):
             if os.path.isfile(cfpath) and cf.endswith(".conf"):
                 try:
                     with open(cfpath) as f:
+                        # legacy, pylint: disable=exec-used
                         exec(
                             compile(f.read(), cfpath, "exec"),
                             settings["databases"],
