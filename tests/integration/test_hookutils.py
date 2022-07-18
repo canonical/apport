@@ -539,5 +539,5 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             for line in f:
                 if line.startswith("VmSize:"):
                     return int(line.split()[1])
-            else:
-                raise SystemError("did not find VmSize: in /proc/self/status")
+
+        raise SystemError("did not find VmSize: in /proc/self/status")

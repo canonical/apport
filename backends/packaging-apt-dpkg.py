@@ -1432,11 +1432,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                         mirror_idx
                     ].startswith("https://"):
                         return fields[mirror_idx]
-            else:
-                raise SystemError(
-                    "cannot determine default mirror:"
-                    " %s does not contain a valid deb line" % apt_sources
-                )
+
+        raise SystemError(
+            "cannot determine default mirror:"
+            " %s does not contain a valid deb line" % apt_sources
+        )
 
     def _get_mirror(self):
         """Return the distribution mirror URL.
