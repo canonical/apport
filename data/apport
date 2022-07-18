@@ -37,7 +37,8 @@ import sys
 import time
 import traceback
 
-import apport
+# False positive, see https://github.com/PyCQA/pylint/issues/7093
+import apport  # pylint: disable=import-self
 import apport.fileutils
 
 #################################################################
