@@ -434,60 +434,58 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # we want to reuse the knowledge of write_mime() with all its
         # different input types and output formatting; however, we have to
         # dissect the mime ourselves, since we can't just upload it as a blob
-        mime = tempfile.TemporaryFile()
-        report.write_mime(mime, skip_keys=skip_keys)
-        mime.flush()
-        mime.seek(0)
-        msg = email.message_from_binary_file(mime)
-        msg_iter = msg.walk()
+        with tempfile.TemporaryFile() as mime:
+            report.write_mime(mime, skip_keys=skip_keys)
+            mime.flush()
+            mime.seek(0)
+            msg = email.message_from_binary_file(mime)
+            msg_iter = msg.walk()
 
-        # first part is the multipart container
-        part = next(msg_iter)
-        assert part.is_multipart()
+            # first part is the multipart container
+            part = next(msg_iter)
+            assert part.is_multipart()
 
-        # second part should be an inline text/plain attachments with all short
-        # fields
-        part = next(msg_iter)
-        assert not part.is_multipart()
-        assert part.get_content_type() == "text/plain"
+            # second part should be an inline text/plain attachments with
+            # all short fields
+            part = next(msg_iter)
+            assert not part.is_multipart()
+            assert part.get_content_type() == "text/plain"
 
-        if not key_filter:
-            # when we update a complete report, we are updating an existing bug
-            # with apport-collect
-            x = bug.tags[:]  # LP#254901 workaround
-            x.append("apport-collected")
-            # add any tags (like the release) to the bug
-            if "Tags" in report:
-                x += self._filter_tag_names(report["Tags"]).split()
-            bug.tags = x
-            bug.lp_save()
-            # fresh bug object, LP#336866 workaround
-            bug = self.launchpad.bugs[id]
-
-        # short text data
-        text = part.get_payload(decode=True).decode("UTF-8", "replace")
-        # text can be empty if you are only adding an attachment to a bug
-        if text:
-            if change_description:
-                bug.description = bug.description + "\n--- \n" + text
+            if not key_filter:
+                # when we update a complete report, we are updating
+                # an existing bug with apport-collect
+                x = bug.tags[:]  # LP#254901 workaround
+                x.append("apport-collected")
+                # add any tags (like the release) to the bug
+                if "Tags" in report:
+                    x += self._filter_tag_names(report["Tags"]).split()
+                bug.tags = x
                 bug.lp_save()
-            else:
-                if not comment:
-                    comment = bug.title
-                bug.newMessage(content=text, subject=comment)
+                # fresh bug object, LP#336866 workaround
+                bug = self.launchpad.bugs[id]
 
-        # other parts are the attachments:
-        for part in msg_iter:
-            bug.addAttachment(
-                comment=attachment_comment or "",
-                description=part.get_filename(),
-                content_type=None,
-                data=part.get_payload(decode=True),
-                filename=part.get_filename(),
-                is_patch=False,
-            )
+            # short text data
+            text = part.get_payload(decode=True).decode("UTF-8", "replace")
+            # text can be empty if you are only adding an attachment to a bug
+            if text:
+                if change_description:
+                    bug.description = bug.description + "\n--- \n" + text
+                    bug.lp_save()
+                else:
+                    if not comment:
+                        comment = bug.title
+                    bug.newMessage(content=text, subject=comment)
 
-        mime.close()
+            # other parts are the attachments:
+            for part in msg_iter:
+                bug.addAttachment(
+                    comment=attachment_comment or "",
+                    description=part.get_filename(),
+                    content_type=None,
+                    data=part.get_payload(decode=True),
+                    filename=part.get_filename(),
+                    is_patch=False,
+                )
 
     def update_traces(self, id, report, comment=""):
         """Update the given report ID for retracing results.
@@ -1161,6 +1159,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         ]
 
         # write MIME/Multipart version into temporary file
+        # temporary file is returned, pylint: disable=consider-using-with
         mime = tempfile.TemporaryFile()
         report.write_mime(
             mime,

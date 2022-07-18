@@ -122,14 +122,14 @@ class T(unittest.TestCase):
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen(
+            with subprocess.Popen(
                 [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
-            app.stdin.close()
-            assert app.wait() == 0, app.stderr.read()
-            app.stderr.close()
+            ) as app:
+                app.stdin.close()
+                assert app.wait() == 0, app.stderr.read()
+                app.stderr.close()
         finally:
             test_proc.kill()
             test_proc.wait()
@@ -221,45 +221,47 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process(False, "/bin/dd", args=[])
         try:
-            app = subprocess.Popen(
+            with subprocess.Popen(
                 [self.apport_path, str(test_proc.pid), "42", "0", "1"],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
+            ) as app:
 
-            time.sleep(0.5)  # give it some time to grab the lock
+                time.sleep(0.5)  # give it some time to grab the lock
 
-            app2 = subprocess.Popen(
-                [self.apport_path, str(test_proc2.pid), "42", "0", "1"],
-                stdin=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
+                with subprocess.Popen(
+                    [self.apport_path, str(test_proc2.pid), "42", "0", "1"],
+                    stdin=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                ) as app2:
 
-            # app should wait indefinitely for stdin, while app2 should
-            # terminate immediately (give it 5 seconds)
-            timeout = 50
-            while timeout >= 0:
-                if app2.poll():
-                    break
+                    # app should wait indefinitely for stdin, while app2 should
+                    # terminate immediately (give it 5 seconds)
+                    timeout = 50
+                    while timeout >= 0:
+                        if app2.poll():
+                            break
 
-                time.sleep(0.1)
-                timeout -= 1
+                        time.sleep(0.1)
+                        timeout -= 1
 
-            self.assertGreater(
-                timeout, 0, "second apport instance terminates immediately"
-            )
-            self.assertFalse(
-                app.poll(), "first apport instance is still running"
-            )
+                    self.assertGreater(
+                        timeout,
+                        0,
+                        "second apport instance terminates immediately",
+                    )
+                    self.assertFalse(
+                        app.poll(), "first apport instance is still running"
+                    )
 
-            # properly terminate app and app2
-            app2.stdin.close()
-            app2.stderr.close()
-            app.stdin.write(b"boo")
-            app.stdin.close()
+                    # properly terminate app and app2
+                    app2.stdin.close()
+                    app2.stderr.close()
+                    app.stdin.write(b"boo")
+                    app.stdin.close()
 
-            self.assertEqual(app.wait(), 0, app.stderr.read())
-            app.stderr.close()
+                    self.assertEqual(app.wait(), 0, app.stderr.read())
+                    app.stderr.close()
         finally:
             test_proc.kill()
             test_proc2.kill()
@@ -841,6 +843,7 @@ class T(unittest.TestCase):
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
         os.putenv("utf8trap", b"\xc3\xa0\xc3\xa4")
+        # caller needs to call .wait(), pylint: disable=consider-using-with
         # False positive, see https://github.com/PyCQA/pylint/issues/7092
         process = subprocess.Popen(  # pylint: disable=unexpected-keyword-arg
             [command] + args, env=env, stdout=subprocess.DEVNULL, user=uid

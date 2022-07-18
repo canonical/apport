@@ -324,6 +324,7 @@ def _run_with_output_limit_and_timeout(
     stdout = b""
     stderr = b""
 
+    # uses .kill(), pylint: disable=consider-using-with
     process = subprocess.Popen(
         args,
         stdout=subprocess.PIPE,

@@ -466,6 +466,7 @@ class ProblemReport(collections.UserDict):
                 if hasattr(v[0], "read"):
                     f = v[0]  # file-like object
                 else:
+                    # hard to change, pylint: disable=consider-using-with
                     f = open(v[0], "rb")  # file name
                 while True:
                     block = f.read(1048576)
@@ -516,10 +517,9 @@ class ProblemReport(collections.UserDict):
         """
         st = os.stat(reportfile)
         try:
-            f = open(reportfile, "ab")
-            os.chmod(reportfile, 0)
-            self.write(f)
-            f.close()
+            with open(reportfile, "ab") as report:
+                os.chmod(reportfile, 0)
+                self.write(report)
         finally:
             if keep_times:
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
@@ -594,6 +594,7 @@ class ProblemReport(collections.UserDict):
                 if hasattr(v[0], "read"):
                     f = v[0]  # file-like object
                 else:
+                    # hard to change, pylint: disable=consider-using-with
                     f = open(v[0], "rb")  # file name
                 if k.endswith(".gz"):
                     attach_value = f.read()

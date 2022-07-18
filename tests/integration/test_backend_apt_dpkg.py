@@ -598,26 +598,23 @@ deb http://secondary.mirror tuxy extra
         impl.configuration = "/nonexisting"
         self.assertEqual(impl.enabled(), True)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\nenabled = 1".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), True)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\nenabled = 1".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\n  enabled =0  ".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), False)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\n  enabled =0  ".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), False)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\nnothing here".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), True)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\nnothing here".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
 
     def test_get_kernel_package(self):
         """get_kernel_package()."""

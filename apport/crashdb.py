@@ -304,9 +304,8 @@ class CrashDatabase:
 
             # read data file
             try:
-                f = urllib.request.urlopen(url)
-                contents = f.read().decode("UTF-8")
-                f.close()
+                with urllib.request.urlopen(url) as dupdb_url:
+                    contents = dupdb_url.read().decode("UTF-8")
                 if "<title>404 Not Found" in contents:
                     continue
             except (OSError, urllib.error.URLError):
@@ -399,6 +398,7 @@ class CrashDatabase:
         built in a new directory which is the given one with ".new" appended,
         then moved to the given name in an almost atomic way.
         """
+        # hard to change, pylint: disable=consider-using-with
         assert (
             self.duplicate_db
         ), "init_duplicate_db() needs to be called before"

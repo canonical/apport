@@ -484,6 +484,7 @@ def _spawn_pkttyagent():
     except OSError:
         return
 
+    # closed by kill_pkttyagent(), pylint: disable=consider-using-with
     _AGENT = subprocess.Popen(
         ["pkttyagent", "--notify-fd", str(w), "--fallback"],
         close_fds=False,
@@ -573,17 +574,17 @@ def attach_root_command_outputs(report, command_map):
     try:
         # create a shell script with all the commands
         script_path = os.path.join(workdir, ":script:")
-        script = open(script_path, "w")
-        for keyname, command in command_map.items():
-            assert hasattr(
-                command, "strip"
-            ), "command must be a string (shell command)"
-            # use "| cat" here, so that we can end commands with 2>&1
-            # (otherwise it would have the wrong redirection order)
-            script.write(
-                "%s | cat > %s\n" % (command, os.path.join(workdir, keyname))
-            )
-        script.close()
+        with open(script_path, "w") as script:
+            for keyname, command in command_map.items():
+                assert hasattr(
+                    command, "strip"
+                ), "command must be a string (shell command)"
+                # use "| cat" here, so that we can end commands with 2>&1
+                # (otherwise it would have the wrong redirection order)
+                script.write(
+                    "%s | cat > %s\n"
+                    % (command, os.path.join(workdir, keyname))
+                )
 
         # run script
         subprocess.run(
@@ -633,21 +634,15 @@ def recent_syslog(pattern, path=None):
     are read from there instead.
     """
     if path:
-        p = subprocess.Popen(
-            ["tail", "-n", "10000", path], stdout=subprocess.PIPE
-        )
+        command = ["tail", "-n", "10000", path]
     elif os.path.exists("/run/systemd/system"):
-        p = subprocess.Popen(
-            ["journalctl", "--system", "--quiet", "-b", "-a"],
-            stdout=subprocess.PIPE,
-        )
+        command = ["journalctl", "--system", "--quiet", "-b", "-a"]
     elif os.access("/var/log/syslog", os.R_OK):
-        p = subprocess.Popen(
-            ["tail", "-n", "10000", "/var/log/syslog"], stdout=subprocess.PIPE
-        )
+        command = ["tail", "-n", "10000", "/var/log/syslog"]
     else:
         return ""
-    return __filter_re_process(pattern, p)
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+        return __filter_re_process(pattern, process)
 
 
 def xsession_errors(pattern=None):
@@ -765,36 +760,36 @@ def attach_gsettings_schema(report, schema):
     defaults = {}  # schema -> key ->  value
     env = os.environ.copy()
     env["XDG_CONFIG_HOME"] = "/nonexisting"
-    gsettings = subprocess.Popen(
+    with subprocess.Popen(
         ["gsettings", "list-recursively", schema],
         env=env,
         stdout=subprocess.PIPE,
-    )
-    for line in gsettings.stdout:
-        try:
-            (schema_name, key, value) = line.split(None, 2)
-            value = value.rstrip()
-        except ValueError:
-            continue  # invalid line
-        defaults.setdefault(schema_name, {})[key] = value
+    ) as gsettings:
+        for line in gsettings.stdout:
+            try:
+                (schema_name, key, value) = line.split(None, 2)
+                value = value.rstrip()
+            except ValueError:
+                continue  # invalid line
+            defaults.setdefault(schema_name, {})[key] = value
 
-    gsettings = subprocess.Popen(
+    with subprocess.Popen(
         ["gsettings", "list-recursively", schema], stdout=subprocess.PIPE
-    )
-    for line in gsettings.stdout:
-        try:
-            (schema_name, key, value) = line.split(None, 2)
-            value = value.rstrip()
-        except ValueError:
-            continue  # invalid line
+    ) as gsettings:
+        for line in gsettings.stdout:
+            try:
+                (schema_name, key, value) = line.split(None, 2)
+                value = value.rstrip()
+            except ValueError:
+                continue  # invalid line
 
-        if value != defaults.get(schema_name, {}).get(key, ""):
-            if schema_name == b"org.gnome.shell" and key in [
-                b"command-history",
-                b"favorite-apps",
-            ]:
-                value = "redacted by apport"
-            cur_value += "%s %s %s\n" % (schema_name, key, value)
+            if value != defaults.get(schema_name, {}).get(key, ""):
+                if schema_name == b"org.gnome.shell" and key in [
+                    b"command-history",
+                    b"favorite-apps",
+                ]:
+                    value = "redacted by apport"
+                cur_value += "%s %s %s\n" % (schema_name, key, value)
 
     report["GsettingsChanges"] = cur_value
 
@@ -1085,7 +1080,8 @@ def __drm_con_info(con):
         path = os.path.join(con, f)
         if f == "uevent" or not os.path.isfile(path):
             continue
-        val = open(path, "rb").read().strip()
+        with open(path, "rb") as con_info_file:
+            val = con_info_file.read().strip()
         # format some well-known attributes specially
         if f == "modes":
             val = val.replace(b"\n", b" ")

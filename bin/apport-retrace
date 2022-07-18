@@ -731,11 +731,8 @@ Thank you for your understanding, and sorry for the inconvenience!
                         crashdb.mark_retrace_failed(crashid)
 
     else:
-        if options.output is None:
-            out = open(options.report, "wb")
-        elif options.output == "-":
-            out = sys.stdout.detach()
+        if options.output == "-":
+            report.write(sys.stdout.detach())
         else:
-            out = open(options.output, "wb")
-
-        report.write(out)
+            with open(options.report, "wb") as out:
+                report.write(out)

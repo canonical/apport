@@ -380,65 +380,69 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         apport.fileutils.get_config.config = None  # trash cache
 
         # empty
-        f = tempfile.NamedTemporaryFile()
-        apport.fileutils._config_file = f.name
-        self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("main", "foo", "moo"), "moo"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
+        with tempfile.NamedTemporaryFile() as f:
+            apport.fileutils._config_file = f.name
+            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertEqual(
+                apport.fileutils.get_config("main", "foo", "moo"), "moo"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
-        # nonempty
-        f.write(
-            b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n"
-            b"[spethial]\none= 99\n"
-        )
-        f.flush()
-        self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("main", "foo", "moo"), "moo"
-        )
-        self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
-        self.assertEqual(
-            apport.fileutils.get_config("main", "one", default="moo"), "1"
-        )
-        self.assertEqual(apport.fileutils.get_config("main", "two"), "TWO")
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b1", bool=True), True
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b2", bool=True), False
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b3", bool=True), None
-        )
-        self.assertEqual(
-            apport.fileutils.get_config(
-                "main", "b3", default=False, bool=True
-            ),
-            False,
-        )
-        self.assertEqual(apport.fileutils.get_config("spethial", "one"), "99")
-        self.assertEqual(apport.fileutils.get_config("spethial", "two"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("spethial", "one", "moo"), "99"
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("spethial", "nope", "moo"), "moo"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
+            # nonempty
+            f.write(
+                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n"
+                b"[spethial]\none= 99\n"
+            )
+            f.flush()
+            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertEqual(
+                apport.fileutils.get_config("main", "foo", "moo"), "moo"
+            )
+            self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
+            self.assertEqual(
+                apport.fileutils.get_config("main", "one", default="moo"), "1"
+            )
+            self.assertEqual(apport.fileutils.get_config("main", "two"), "TWO")
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b1", bool=True), True
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b2", bool=True), False
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b3", bool=True), None
+            )
+            self.assertEqual(
+                apport.fileutils.get_config(
+                    "main", "b3", default=False, bool=True
+                ),
+                False,
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "one"), "99"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "two"), None
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "one", "moo"), "99"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "nope", "moo"), "moo"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
-        # interpolation
-        f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
-        f.flush()
-        self.assertEqual(apport.fileutils.get_config("inter", "one"), "1")
-        self.assertEqual(apport.fileutils.get_config("inter", "two"), "TWO")
-        self.assertEqual(
-            apport.fileutils.get_config("inter", "test"), "%(two)s"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
-
-        f.close()
+            # interpolation
+            f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
+            f.flush()
+            self.assertEqual(apport.fileutils.get_config("inter", "one"), "1")
+            self.assertEqual(
+                apport.fileutils.get_config("inter", "two"), "TWO"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("inter", "test"), "%(two)s"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
     def test_shared_libraries(self):
         """shared_libraries()"""

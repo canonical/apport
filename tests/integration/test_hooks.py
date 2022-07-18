@@ -177,12 +177,14 @@ class T(unittest.TestCase):
     def test_kernel_crashdump_kexec(self):
         """kernel_crashdump using kexec-tools."""
 
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb")
-        f.write(b"\x01" * 100)
-        f.close()
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore.log"), "w")
-        f.write("vmcore successfully dumped")
-        f.close()
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
+        ) as vmcore:
+            vmcore.write(b"\x01" * 100)
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore.log"), "w"
+        ) as log:
+            log.write("vmcore successfully dumped")
 
         self.assertEqual(
             subprocess.call("%s/kernel_crashdump" % datadir, env=self.env),
@@ -228,9 +230,8 @@ class T(unittest.TestCase):
         os.mkdir(vmcore_dir)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        f = open(dmesgfile, "wt")
-        f.write("1" * 100)
-        f.close()
+        with open(dmesgfile, "wt") as dmesg:
+            dmesg.write("1" * 100)
 
         self.assertEqual(
             subprocess.call("%s/kernel_crashdump" % datadir, env=self.env),
@@ -274,9 +275,10 @@ class T(unittest.TestCase):
         We must only accept plain files, otherwise vmcore.log might be a
         symlink to the .crash file, which would recursively fill itself.
         """
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb")
-        f.write(b"\x01" * 100)
-        f.close()
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
+        ) as vmcore:
+            vmcore.write(b"\x01" * 100)
         os.symlink(
             "vmcore", os.path.join(apport.fileutils.report_dir, "vmcore.log")
         )
@@ -331,9 +333,8 @@ class T(unittest.TestCase):
         os.lchown(vmcore_dir, 65534, 65534)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        f = open(dmesgfile, "wt")
-        f.write("1" * 100)
-        f.close()
+        with open(dmesgfile, "wt") as dmesg:
+            dmesg.write("1" * 100)
 
         self.assertNotEqual(
             subprocess.call(
@@ -375,31 +376,33 @@ class T(unittest.TestCase):
 
         (gcc_version, gcc_path) = self._gcc_version_path()
 
-        test_source = tempfile.NamedTemporaryFile()
-        test_source.write(b"int f(int x);")
-        test_source.flush()
-        test_source.seek(0)
+        with tempfile.NamedTemporaryFile() as test_source:
+            test_source.write(b"int f(int x);")
+            test_source.flush()
+            test_source.seek(0)
 
-        self.assertEqual(
-            subprocess.call(
-                ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
-                env=self.env,
-            ),
-            0,
-            "gcc_ice_hook finished successfully",
-        )
+            self.assertEqual(
+                subprocess.call(
+                    ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
+                    env=self.env,
+                ),
+                0,
+                "gcc_ice_hook finished successfully",
+            )
 
-        reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
+            reps = apport.fileutils.get_new_reports()
+            self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-        r = apport.Report()
-        with open(reps[0], "rb") as f:
-            r.load(f)
-        self.assertEqual(r["ProblemType"], "Crash")
-        self.assertEqual(r["ExecutablePath"], gcc_path)
-        self.assertEqual(r["PreprocessedSource"], test_source.read().decode())
+            r = apport.Report()
+            with open(reps[0], "rb") as f:
+                r.load(f)
+            self.assertEqual(r["ProblemType"], "Crash")
+            self.assertEqual(r["ExecutablePath"], gcc_path)
+            self.assertEqual(
+                r["PreprocessedSource"], test_source.read().decode()
+            )
 
-        r.add_package_info()
+            r.add_package_info()
 
         self.assertEqual(r["Package"].split()[0], "gcc-" + gcc_version)
         self.assertNotEqual(r["Package"].split()[1], "")  # has package version
@@ -410,27 +413,27 @@ class T(unittest.TestCase):
 
         (gcc_version, gcc_path) = self._gcc_version_path()
 
-        test_source = tempfile.NamedTemporaryFile()
-        test_source.write(b"int f(int x); \xFF\xFF")
-        test_source.flush()
-        test_source.seek(0)
+        with tempfile.NamedTemporaryFile() as test_source:
+            test_source.write(b"int f(int x); \xFF\xFF")
+            test_source.flush()
+            test_source.seek(0)
 
-        self.assertEqual(
-            subprocess.call(
-                ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
-                env=self.env,
-            ),
-            0,
-            "gcc_ice_hook finished successfully",
-        )
+            self.assertEqual(
+                subprocess.call(
+                    ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
+                    env=self.env,
+                ),
+                0,
+                "gcc_ice_hook finished successfully",
+            )
 
-        reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
+            reps = apport.fileutils.get_new_reports()
+            self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-        r = apport.Report()
-        with open(reps[0], "rb") as f:
-            r.load(f)
-        self.assertEqual(r["PreprocessedSource"], test_source.read())
+            r = apport.Report()
+            with open(reps[0], "rb") as f:
+                r.load(f)
+            self.assertEqual(r["PreprocessedSource"], test_source.read())
 
     def test_gcc_ide_hook_pipe(self):
         """gcc_ice_hook with piping."""

@@ -23,20 +23,16 @@ class T(unittest.TestCase):
         """module licenses can be validated correctly"""
 
         def _build_ko(license):
-            asm = tempfile.NamedTemporaryFile(
-                prefix="%s-" % (license), suffix=".S"
-            )
-            asm.write(
-                (
-                    '.section .modinfo\n.string "license=%s"\n' % (license)
-                ).encode()
-            )
-            asm.flush()
-            ko = tempfile.NamedTemporaryFile(
-                prefix="%s-" % (license), suffix=".ko"
-            )
-            subprocess.check_call(["/usr/bin/as", asm.name, "-o", ko.name])
-            return ko
+            ko_filename = os.path.join(self.workdir, f"{license}.ko")
+            with tempfile.NamedTemporaryFile(
+                mode="w+", prefix="%s-" % (license), suffix=".S"
+            ) as asm:
+                asm.write(f'.section .modinfo\n.string "license={license}"\n')
+                asm.flush()
+                subprocess.check_call(
+                    ["/usr/bin/as", asm.name, "-o", ko_filename]
+                )
+            return ko_filename
 
         good_ko = _build_ko("GPL")
         bad_ko = _build_ko("BAD")
@@ -50,23 +46,17 @@ class T(unittest.TestCase):
         self.assertEqual(
             apport.hookutils._get_module_license("does-not-exist"), "invalid"
         )
-        self.assertIn(
-            "GPL", apport.hookutils._get_module_license(good_ko.name)
-        )
-        self.assertIn("BAD", apport.hookutils._get_module_license(bad_ko.name))
+        self.assertIn("GPL", apport.hookutils._get_module_license(good_ko))
+        self.assertIn("BAD", apport.hookutils._get_module_license(bad_ko))
 
         # check via nonfree_kernel_modules logic
-        f = tempfile.NamedTemporaryFile()
-        f.write(
-            (
-                "isofs\ndoes-not-exist\n%s\n%s\n" % (good_ko.name, bad_ko.name)
-            ).encode()
-        )
-        f.flush()
-        nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
+        with tempfile.NamedTemporaryFile(mode="w+") as temp:
+            temp.write(f"isofs\ndoes-not-exist\n{good_ko}\n{bad_ko}\n")
+            temp.flush()
+            nonfree = apport.hookutils.nonfree_kernel_modules(temp.name)
         self.assertIn("does-not-exist", nonfree)
-        self.assertNotIn(good_ko.name, nonfree)
-        self.assertIn(bad_ko.name, nonfree)
+        self.assertNotIn(good_ko, nonfree)
+        self.assertIn(bad_ko, nonfree)
 
     def test_real_module_license_evaluation(self):
         """module licenses can be validated correctly for real module"""
@@ -76,10 +66,10 @@ class T(unittest.TestCase):
 
         self.assertIn("GPL", isofs_license)
 
-        f = tempfile.NamedTemporaryFile()
-        f.write(b"isofs\n")
-        f.flush()
-        nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(b"isofs\n")
+            temp.flush()
+            nonfree = apport.hookutils.nonfree_kernel_modules(temp.name)
         self.assertNotIn("isofs", nonfree)
 
     def test_attach_file(self):

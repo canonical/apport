@@ -230,9 +230,8 @@ def mark_report_seen(report):
         # Time out after 1.2 seconds.
         timeout = 12
         while timeout > 0:
-            f = open(report)
-            f.read(1)
-            f.close()
+            with open(report) as report_file:
+                report_file.read(1)
             try:
                 st = os.stat(report)
             except OSError:
@@ -599,29 +598,28 @@ def shared_libraries(path):
     """
     libs = {}
 
-    ldd = subprocess.Popen(
+    with subprocess.Popen(
         ["ldd", path],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         universal_newlines=True,
-    )
-    for line in ldd.stdout:
-        try:
-            name, rest = line.split("=>", 1)
-        except ValueError:
-            continue
+    ) as ldd:
+        for line in ldd.stdout:
+            try:
+                name, rest = line.split("=>", 1)
+            except ValueError:
+                continue
 
-        name = name.strip()
-        # exclude linux-vdso since that is a virtual so
-        if "linux-vdso" in name:
-            continue
-        # this is usually "path (address)"
-        rest = rest.split()[0].strip()
-        if rest.startswith("("):
-            continue
-        libs[name] = rest
-    ldd.stdout.close()
-    ldd.wait()
+            name = name.strip()
+            # exclude linux-vdso since that is a virtual so
+            if "linux-vdso" in name:
+                continue
+            # this is usually "path (address)"
+            rest = rest.split()[0].strip()
+            if rest.startswith("("):
+                continue
+            libs[name] = rest
+        ldd.stdout.close()
 
     if ldd.returncode != 0:
         return {}

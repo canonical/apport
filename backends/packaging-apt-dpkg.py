@@ -330,12 +330,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         desired.
         """
         try:
-            response = urllib.request.urlopen(url)
+            with urllib.request.urlopen(url) as response:
+                content = response.read()
         except (urllib.error.URLError, urllib.error.HTTPError):
             apport.warning("cannot connect to: %s" % urllib.parse.unquote(url))
             return None
-        try:
-            content = response.read()
         except OSError:
             apport.warning(
                 "failure reading data at: %s" % urllib.parse.unquote(url)
@@ -657,6 +656,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # configure apt for sandbox
         env = os.environ.copy()
         if sandbox:
+            # hard to change, pylint: disable=consider-using-with
             f = tempfile.NamedTemporaryFile("w+")
             f.write(
                 f'Dir "{sandbox}";\n'
@@ -1533,6 +1533,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if update:
                     self._contents_update = True
                     try:
+                        # hard to change, pylint: disable=consider-using-with
                         src = urllib.request.urlopen(url)
                     except OSError:
                         # we ignore non-existing pockets, but we do crash

@@ -36,6 +36,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
 
     def __init__(self):
         # use our dummy crashdb
+        # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
         self.crashdb_conf.write(
             textwrap.dedent(
@@ -82,6 +83,9 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         self.present_details_shown = False
 
         self.clear_msg()
+
+    def __del__(self):
+        self.crashdb_conf.close()
 
     def clear_msg(self):
         # last message box
@@ -195,6 +199,7 @@ class T(unittest.TestCase):
         )
 
         # write demo report into temporary file
+        # closed in tearDown, pylint: disable=consider-using-with
         self.report_file = tempfile.NamedTemporaryFile()
         self.update_report_file()
 
@@ -850,7 +855,7 @@ class T(unittest.TestCase):
 
         core_path = os.path.join(self.workdir, "core")
         try:
-            gdb = subprocess.Popen(
+            with subprocess.Popen(
                 [
                     "gdb",
                     "--batch",
@@ -862,34 +867,36 @@ class T(unittest.TestCase):
                 ],
                 env={"HOME": self.workdir},
                 stdout=subprocess.PIPE,
-            )
+            ) as gdb:
+                timeout = 10.0
+                while timeout > 0:
+                    pids = pidof(self.TEST_EXECUTABLE)
+                    if pids:
+                        pid = pids.pop()
+                        break
+                    time.sleep(0.01)
+                    timeout -= 0.01
+                else:
+                    gdb.kill()
+                    self.fail(
+                        f"{self.TEST_EXECUTABLE} not started within 10 seconds"
+                    )
+
+                # generate crash report
+                r = apport.Report()
+                r["ExecutablePath"] = self.TEST_EXECUTABLE
+                r["Signal"] = "11"
+                r.add_proc_info(pid)
+                r.add_user_info()
+                r.add_os_info()
+
+                # generate a core dump
+                os.kill(pid, signal.SIGSEGV)
+                os.waitpid(gdb.pid, 0)
+                assert os.path.exists(core_path)
+                r["CoreDump"] = (core_path,)
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
-
-        timeout = 10.0
-        while timeout > 0:
-            pids = pidof(self.TEST_EXECUTABLE)
-            if pids:
-                pid = pids.pop()
-                break
-            time.sleep(0.01)
-            timeout -= 0.01
-        else:
-            self.fail(f"{self.TEST_EXECUTABLE} not started within 10 seconds")
-
-        # generate crash report
-        r = apport.Report()
-        r["ExecutablePath"] = self.TEST_EXECUTABLE
-        r["Signal"] = "11"
-        r.add_proc_info(pid)
-        r.add_user_info()
-        r.add_os_info()
-
-        # generate a core dump
-        os.kill(pid, signal.SIGSEGV)
-        os.waitpid(gdb.pid, 0)
-        assert os.path.exists(core_path)
-        r["CoreDump"] = (core_path,)
 
         return r
 
@@ -1149,57 +1156,59 @@ class T(unittest.TestCase):
     def test_run_crash_malicious_package(self, *args):
         """Package: path traversal"""
 
-        bad_hook = tempfile.NamedTemporaryFile(suffix=".py")
-        bad_hook.write(
-            b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
-        )
-        bad_hook.flush()
+        with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
+            bad_hook.write(
+                b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
+            )
+            bad_hook.flush()
 
-        self.report["ExecutablePath"] = "/bin/bash"
-        self.report["Package"] = (
-            "../" * 20 + os.path.splitext(bad_hook.name)[0]
-        )
-        self.update_report_file()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+            self.report["ExecutablePath"] = "/bin/bash"
+            self.report["Package"] = (
+                "../" * 20 + os.path.splitext(bad_hook.name)[0]
+            )
+            self.update_report_file()
+            self.ui.present_details_response = {
+                "report": True,
+                "blacklist": False,
+                "examine": False,
+                "restart": False,
+                "remember": False,
+            }
 
-        self.ui.run_crash(self.report_file.name)
+            self.ui.run_crash(self.report_file.name)
 
-        self.assertFalse(os.path.exists("/tmp/pwned"))
-        self.assertIn("invalid Package:", self.ui.msg_text)
+            self.assertFalse(os.path.exists("/tmp/pwned"))
+            self.assertIn("invalid Package:", self.ui.msg_text)
 
     def test_run_crash_malicious_exec_path(self):
         """ExecutablePath: path traversal"""
 
         hook_dir = "/tmp/share/apport/package-hooks"
         os.makedirs(hook_dir, exist_ok=True)
-        bad_hook = tempfile.NamedTemporaryFile(dir=hook_dir, suffix=".py")
-        bad_hook.write(
-            b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
-        )
-        bad_hook.flush()
+        with tempfile.NamedTemporaryFile(
+            dir=hook_dir, suffix=".py"
+        ) as bad_hook:
+            bad_hook.write(
+                b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
+            )
+            bad_hook.flush()
 
-        self.report["ExecutablePath"] = "/opt/../" + hook_dir
-        self.report["Package"] = os.path.splitext(bad_hook.name)[0].replace(
-            hook_dir, ""
-        )
-        self.update_report_file()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+            self.report["ExecutablePath"] = "/opt/../" + hook_dir
+            self.report["Package"] = os.path.splitext(bad_hook.name)[
+                0
+            ].replace(hook_dir, "")
+            self.update_report_file()
+            self.ui.present_details_response = {
+                "report": True,
+                "blacklist": False,
+                "examine": False,
+                "restart": False,
+                "remember": False,
+            }
 
-        self.ui.run_crash(self.report_file.name)
+            self.ui.run_crash(self.report_file.name)
 
-        self.assertFalse(os.path.exists("/tmp/pwned"))
+            self.assertFalse(os.path.exists("/tmp/pwned"))
 
     def test_run_crash_ignore(self):
         """run_crash() on a crash with the Ignore field"""
@@ -1511,16 +1520,17 @@ class T(unittest.TestCase):
             src_pkg = "linux"
 
         # set up hook
-        f = open(os.path.join(self.hookdir, "source_%s.py" % src_pkg), "w")
-        f.write(
-            textwrap.dedent(
-                """\
-                def add_info(report, ui):
-                    report['KernelDebug'] = 'LotsMoreInfo'
-                """
+        with open(
+            os.path.join(self.hookdir, f"source_{src_pkg}.py"), "w"
+        ) as hook:
+            hook.write(
+                textwrap.dedent(
+                    """\
+                    def add_info(report, ui):
+                        report['KernelDebug'] = 'LotsMoreInfo'
+                    """
+                )
             )
-        )
-        f.close()
 
         # generate crash report
         r = apport.Report("KernelCrash")
@@ -2066,12 +2076,11 @@ class T(unittest.TestCase):
         self.assertIn("ProcEnviron", self.ui.report)
 
     def _run_hook(self, code):
-        f = open(os.path.join(self.hookdir, "coreutils.py"), "w")
-        f.write(
-            "def add_info(report, ui):\n%s\n"
-            % "\n".join(["    " + line for line in code.splitlines()])
-        )
-        f.close()
+        with open(os.path.join(self.hookdir, "coreutils.py"), "w") as hook:
+            hook.write(
+                "def add_info(report, ui):\n%s\n"
+                % "\n".join(["    " + line for line in code.splitlines()])
+            )
         self.ui.options.package = "coreutils"
         self.ui.run_report_bug()
 
@@ -2842,102 +2851,102 @@ class T(unittest.TestCase):
     def test_get_desktop_entry(self):
         """parsing of .desktop files"""
 
-        desktop_file = tempfile.NamedTemporaryFile(mode="w+")
-        desktop_file.write(
-            textwrap.dedent(
-                """\
-                [Desktop Entry]
-                Name=gtranslate
-                GenericName=Translator
-                GenericName[de]=Übersetzer
-                Exec=gedit %U
-                Categories=GNOME;GTK;Utility;TextEditor;
-                """
+        with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
+            desktop_file.write(
+                textwrap.dedent(
+                    """\
+                    [Desktop Entry]
+                    Name=gtranslate
+                    GenericName=Translator
+                    GenericName[de]=Übersetzer
+                    Exec=gedit %U
+                    Categories=GNOME;GTK;Utility;TextEditor;
+                    """
+                )
             )
-        )
-        desktop_file.flush()
+            desktop_file.flush()
 
-        self.report["DesktopFile"] = desktop_file.name
-        self.ui.report = self.report
-        info = self.ui.get_desktop_entry()
+            self.report["DesktopFile"] = desktop_file.name
+            self.ui.report = self.report
+            info = self.ui.get_desktop_entry()
 
-        self.assertEqual(
-            info,
-            {
-                "genericname": "Translator",
-                "categories": "GNOME;GTK;Utility;TextEditor;",
-                "name": "gtranslate",
-                "genericname[de]": "Übersetzer",
-                "exec": "gedit %U",
-            },
-        )
+            self.assertEqual(
+                info,
+                {
+                    "genericname": "Translator",
+                    "categories": "GNOME;GTK;Utility;TextEditor;",
+                    "name": "gtranslate",
+                    "genericname[de]": "Übersetzer",
+                    "exec": "gedit %U",
+                },
+            )
 
     def test_get_desktop_entry_broken(self):
         """parsing of broken .desktop files"""
 
         # duplicate key
-        desktop_file = tempfile.NamedTemporaryFile(mode="w+")
-        desktop_file.write(
-            textwrap.dedent(
-                """\
-                [Desktop Entry]
-                Name=gtranslate
-                GenericName=Translator
-                GenericName[de]=Übersetzer
-                Exec=gedit %U
-                Keywords=foo;bar;
-                Categories=GNOME;GTK;Utility;TextEditor;
-                Keywords=baz
-                """
+        with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
+            desktop_file.write(
+                textwrap.dedent(
+                    """\
+                    [Desktop Entry]
+                    Name=gtranslate
+                    GenericName=Translator
+                    GenericName[de]=Übersetzer
+                    Exec=gedit %U
+                    Keywords=foo;bar;
+                    Categories=GNOME;GTK;Utility;TextEditor;
+                    Keywords=baz
+                    """
+                )
             )
-        )
-        desktop_file.flush()
+            desktop_file.flush()
 
-        self.report["DesktopFile"] = desktop_file.name
-        self.ui.report = self.report
-        info = self.ui.get_desktop_entry()
-        self.assertEqual(
-            info,
-            {
-                "genericname": "Translator",
-                "categories": "GNOME;GTK;Utility;TextEditor;",
-                "name": "gtranslate",
-                "genericname[de]": "Übersetzer",
-                "keywords": "baz",
-                "exec": "gedit %U",
-            },
-        )
-
-        # no header
-        desktop_file.seek(0)
-        desktop_file.write(
-            textwrap.dedent(
-                """\
-                Name=gtranslate
-                GenericName=Translator
-                Exec=gedit %U
-                """
+            self.report["DesktopFile"] = desktop_file.name
+            self.ui.report = self.report
+            info = self.ui.get_desktop_entry()
+            self.assertEqual(
+                info,
+                {
+                    "genericname": "Translator",
+                    "categories": "GNOME;GTK;Utility;TextEditor;",
+                    "name": "gtranslate",
+                    "genericname[de]": "Übersetzer",
+                    "keywords": "baz",
+                    "exec": "gedit %U",
+                },
             )
-        )
-        desktop_file.flush()
 
-        self.assertEqual(self.ui.get_desktop_entry(), None)
-
-        # syntax error
-        desktop_file.seek(0)
-        desktop_file.write(
-            textwrap.dedent(
-                """\
-                [Desktop Entry]
-                Name gtranslate
-                GenericName=Translator
-                Exec=gedit %U
-                """
+            # no header
+            desktop_file.seek(0)
+            desktop_file.write(
+                textwrap.dedent(
+                    """\
+                    Name=gtranslate
+                    GenericName=Translator
+                    Exec=gedit %U
+                    """
+                )
             )
-        )
-        desktop_file.flush()
+            desktop_file.flush()
 
-        self.assertEqual(self.ui.get_desktop_entry(), None)
+            self.assertEqual(self.ui.get_desktop_entry(), None)
+
+            # syntax error
+            desktop_file.seek(0)
+            desktop_file.write(
+                textwrap.dedent(
+                    """\
+                    [Desktop Entry]
+                    Name gtranslate
+                    GenericName=Translator
+                    Exec=gedit %U
+                    """
+                )
+            )
+            desktop_file.flush()
+
+            self.assertEqual(self.ui.get_desktop_entry(), None)
 
     def test_wait_for_pid(self):
         # fork a test process

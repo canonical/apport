@@ -157,17 +157,17 @@ class T(unittest.TestCase):
         self.assertNotIn("InterpreterPath", pr)
 
         # check escaping of ProcCmdline
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat", "/foo bar", "\\h", "\\ \\", "-"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        )
-        self.wait_for_proc_cmdline(p.pid)
-        pr = apport.report.Report()
-        pr.add_proc_info(pid=p.pid)
-        self.assertEqual(pr.pid, p.pid)
-        p.communicate(b"\n")
+        ) as cat:
+            self.wait_for_proc_cmdline(cat.pid)
+            pr = apport.report.Report()
+            pr.add_proc_info(pid=cat.pid)
+            self.assertEqual(pr.pid, cat.pid)
+            cat.communicate(b"\n")
         self.assertEqual(
             pr["ProcCmdline"], "cat /foo\\ bar \\\\h \\\\\\ \\\\ -"
         )
@@ -180,12 +180,12 @@ class T(unittest.TestCase):
         assert os.path.islink(
             "/bin/sh"
         ), "/bin/sh needs to be a symlink for this test"
-        p = subprocess.Popen(["sh"], stdin=subprocess.PIPE)
-        self.wait_for_proc_cmdline(p.pid)
-        pr = apport.report.Report()
-        pr.pid = p.pid
-        pr.add_proc_info()
-        p.communicate(b"exit\n")
+        with subprocess.Popen(["sh"], stdin=subprocess.PIPE) as shell:
+            self.wait_for_proc_cmdline(shell.pid)
+            pr = apport.report.Report()
+            pr.pid = shell.pid
+            pr.add_proc_info()
+            shell.communicate(b"exit\n")
         self.assertNotIn("InterpreterPath", pr)
         self.assertEqual(pr["ExecutablePath"], os.path.realpath("/bin/sh"))
         self.assertEqual(
@@ -194,11 +194,13 @@ class T(unittest.TestCase):
         )
 
         # check correct handling of interpreted executables: shell
-        p = subprocess.Popen(["zgrep", "foo"], stdin=subprocess.PIPE)
-        self.wait_for_proc_cmdline(p.pid)
-        pr = apport.report.Report()
-        pr.add_proc_info(pid=p.pid)
-        p.communicate(b"\n")
+        with subprocess.Popen(
+            ["zgrep", "foo"], stdin=subprocess.PIPE
+        ) as zgrep:
+            self.wait_for_proc_cmdline(zgrep.pid)
+            pr = apport.report.Report()
+            pr.add_proc_info(pid=zgrep.pid)
+            zgrep.communicate(b"\n")
         self.assertTrue(pr["ExecutablePath"].endswith("bin/zgrep"))
         with open(pr["ExecutablePath"]) as fd:
             self.assertEqual(
@@ -225,13 +227,13 @@ class T(unittest.TestCase):
         )
         os.close(fd)
         os.chmod(testscript, 0o755)
-        p = subprocess.Popen(
+        with subprocess.Popen(
             [testscript], stdin=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        self.wait_for_proc_cmdline(p.pid)
-        pr = apport.report.Report()
-        pr.add_proc_info(pid=p.pid)
-        p.communicate(b"\n")
+        ) as process:
+            self.wait_for_proc_cmdline(process.pid)
+            pr = apport.report.Report()
+            pr.add_proc_info(pid=process.pid)
+            process.communicate(b"\n")
         self.assertEqual(pr["ExecutablePath"], testscript)
         self.assertEqual(
             int(pr["ExecutableTimestamp"]), int(os.stat(testscript).st_mtime)
@@ -242,7 +244,7 @@ class T(unittest.TestCase):
         self.assertIn("[stack]", pr["ProcMaps"])
 
         # test process is gone, should complain about nonexisting PID
-        self.assertRaises(ValueError, pr.add_proc_info, p.pid)
+        self.assertRaises(ValueError, pr.add_proc_info, process.pid)
 
     def test_add_proc_info_nonascii(self):
         """add_proc_info() for non-ASCII values"""
@@ -250,7 +252,7 @@ class T(unittest.TestCase):
         lang = b"n\xc3\xb6_v\xc3\xb8lid"
 
         # one variable from each category (ignored/filtered/shown)
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"],
             stdin=subprocess.PIPE,
             env={
@@ -258,37 +260,36 @@ class T(unittest.TestCase):
                 "XDG_RUNTIME_DIR": b"/a\xc3\xafb",
                 "LANG": lang,
             },
-        )
-
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_environ(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_environ(pid=cat.pid)
+            cat.communicate(b"")
         self.assertIn(lang, r["ProcEnviron"].encode("UTF-8"))
         self.assertIn("XDG_RUNTIME_DIR=<set>", r["ProcEnviron"])
 
     def test_add_proc_info_current_desktop(self):
         """add_proc_info() CurrentDesktop"""
 
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"], stdin=subprocess.PIPE, env={"LANG": "xx_YY.UTF-8"}
-        )
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_info(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_info(pid=cat.pid)
+            cat.communicate(b"")
         self.assertEqual(r["ProcEnviron"], "LANG=xx_YY.UTF-8")
         self.assertNotIn("CurrentDesktop", r)
 
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"],
             stdin=subprocess.PIPE,
             env={"LANG": "xx_YY.UTF-8", "XDG_CURRENT_DESKTOP": "Pixel Pusher"},
-        )
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_info(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_info(pid=cat.pid)
+            cat.communicate(b"")
         self.assertEqual(r["ProcEnviron"], "LANG=xx_YY.UTF-8")
         self.assertEqual(r["CurrentDesktop"], "Pixel Pusher")
 
@@ -296,42 +297,42 @@ class T(unittest.TestCase):
         """classification of $PATH."""
 
         # system default
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"],
             stdin=subprocess.PIPE,
             env={
                 "PATH": "/usr/local/sbin:/usr/local/bin"
                 ":/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
             },
-        )
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_environ(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_environ(pid=cat.pid)
+            cat.communicate(b"")
         self.assertNotIn("PATH", r["ProcEnviron"])
 
         # no user paths
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"],
             stdin=subprocess.PIPE,
             env={"PATH": "/usr/sbin:/usr/bin:/sbin:/bin"},
-        )
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_environ(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_environ(pid=cat.pid)
+            cat.communicate(b"")
         self.assertIn("PATH=(custom, no user)", r["ProcEnviron"])
 
         # user paths
-        p = subprocess.Popen(
+        with subprocess.Popen(
             ["cat"],
             stdin=subprocess.PIPE,
             env={"PATH": "/home/pitti:/usr/sbin:/usr/bin:/sbin:/bin"},
-        )
-        time.sleep(0.1)
-        r = apport.report.Report()
-        r.add_proc_environ(pid=p.pid)
-        p.communicate(b"")
+        ) as cat:
+            time.sleep(0.1)
+            r = apport.report.Report()
+            r.add_proc_environ(pid=cat.pid)
+            cat.communicate(b"")
         self.assertIn("PATH=(custom, user)", r["ProcEnviron"])
 
     def test_check_interpreted(self):
@@ -345,15 +346,14 @@ class T(unittest.TestCase):
 
         try:
             # standard ELF binary
-            f = tempfile.NamedTemporaryFile()
-            pr = apport.report.Report()
-            pr["ExecutablePath"] = "/usr/bin/gedit"
-            pr["ProcStatus"] = "Name:\tgedit"
-            pr["ProcCmdline"] = "gedit\0/" + f.name
-            pr._check_interpreted()
+            with tempfile.NamedTemporaryFile() as f:
+                pr = apport.report.Report()
+                pr["ExecutablePath"] = "/usr/bin/gedit"
+                pr["ProcStatus"] = "Name:\tgedit"
+                pr["ProcCmdline"] = "gedit\0/" + f.name
+                pr._check_interpreted()
             self.assertEqual(pr["ExecutablePath"], "/usr/bin/gedit")
             self.assertNotIn("InterpreterPath", pr)
-            f.close()
 
             # bogus argv[0]
             pr = apport.report.Report()
@@ -751,13 +751,13 @@ int main() { return f(42); }
     def test_add_gdb_info_load(self):
         """add_gdb_info() with inline core dump."""
 
-        rep = tempfile.NamedTemporaryFile()
-        self._generate_sigsegv_report(rep)
-        rep.seek(0)
+        with tempfile.NamedTemporaryFile() as rep:
+            self._generate_sigsegv_report(rep)
+            rep.seek(0)
 
-        pr = apport.report.Report()
-        with open(rep.name, "rb") as f:
-            pr.load(f)
+            pr = apport.report.Report()
+            with open(rep.name, "rb") as f:
+                pr.load(f)
         pr.add_gdb_info()
 
         self._validate_gdb_fields(pr)
@@ -843,20 +843,20 @@ int main() { return f(42); }
     )
     def test_add_zz_parse_segv_details(self):
         """parse-segv produces sensible results"""
-        rep = tempfile.NamedTemporaryFile()
-        self._generate_sigsegv_report(rep)
-        rep.seek(0)
+        with tempfile.NamedTemporaryFile() as rep:
+            self._generate_sigsegv_report(rep)
+            rep.seek(0)
 
-        pr = apport.report.Report()
-        with open(rep.name, "rb") as f:
-            pr.load(f)
-        pr["Signal"] = "1"
-        pr.add_hooks_info("fake_ui")
-        self.assertNotIn("SegvAnalysis", pr)
+            pr = apport.report.Report()
+            with open(rep.name, "rb") as f:
+                pr.load(f)
+            pr["Signal"] = "1"
+            pr.add_hooks_info("fake_ui")
+            self.assertNotIn("SegvAnalysis", pr)
 
-        pr = apport.report.Report()
-        with open(rep.name, "rb") as f:
-            pr.load(f)
+            pr = apport.report.Report()
+            with open(rep.name, "rb") as f:
+                pr.load(f)
         pr.add_hooks_info("fake_ui")
         self.assertIn(
             'Skipped: missing required field "Architecture"',
@@ -1089,48 +1089,42 @@ int main() { return f(42); }
     def test_search_bug_patterns(self):
         """search_bug_patterns()."""
 
-        patterns = tempfile.NamedTemporaryFile(prefix="apport-")
         # create some test patterns
-        patterns.write(
-            textwrap.dedent(
-                """\
-                <?xml version="1.0"?>
-                <patterns>
-                    <pattern url="http://bugtracker.net/bugs/1">
-                        <re key="Package">^bash </re>
-                        <re key="Foo">ba.*r</re>
-                    </pattern>
-                    <pattern url="http://bugtracker.net/bugs/2">
-                        <re key="Package">^bash 1-2$</re>
-                        <re key="Foo">write_(hello|goodbye)</re>
-                    </pattern>
-                    <pattern url="http://bugtracker.net/bugs/3">
-                        <re key="Package">^coreutils </re>
-                        <re key="Bar">^1$</re>
-                    </pattern>
-                    <pattern url="http://bugtracker.net/bugs/4">
-                        <re key="Package">^coreutils </re>
-                        <re></re>
-                        <re key="Bar">*</re> <!-- invalid RE -->
-                        <re key="broken">+[1^</re>
-                    </pattern>
-                    <pattern url="http://bugtracker.net/bugs/5">
-                        <re key="SourcePackage">^bazaar$</re>
-                        <re key="LogFile">AssertionError</re>
-                    </pattern>
-                    <pattern url="http://bugtracker.net/bugs/6">
-                        <re key="Package">^update-notifier</re>
-                        <re key="LogFile">AssertionError ‽</re>
-                    </pattern>
-                </patterns>"""
-            ).encode()
-        )
-        patterns.flush()
+        patterns = textwrap.dedent(
+            """\
+            <?xml version="1.0"?>
+            <patterns>
+                <pattern url="http://bugtracker.net/bugs/1">
+                    <re key="Package">^bash </re>
+                    <re key="Foo">ba.*r</re>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/2">
+                    <re key="Package">^bash 1-2$</re>
+                    <re key="Foo">write_(hello|goodbye)</re>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/3">
+                    <re key="Package">^coreutils </re>
+                    <re key="Bar">^1$</re>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/4">
+                    <re key="Package">^coreutils </re>
+                    <re></re>
+                    <re key="Bar">*</re> <!-- invalid RE -->
+                    <re key="broken">+[1^</re>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/5">
+                    <re key="SourcePackage">^bazaar$</re>
+                    <re key="LogFile">AssertionError</re>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/6">
+                    <re key="Package">^update-notifier</re>
+                    <re key="LogFile">AssertionError ‽</re>
+                </pattern>
+            </patterns>"""
+        ).encode()
 
         # invalid XML
-        invalid = tempfile.NamedTemporaryFile(prefix="apport-")
-        invalid.write(b'<?xml version="1.0"?>\n</patterns>')
-        invalid.flush()
+        invalid = b'<?xml version="1.0"?>\n</patterns>'
 
         # create some reports
         r_bash = apport.report.Report()
@@ -1153,106 +1147,115 @@ int main() { return f(42); }
         r_unicode["Package"] = "update-notifier"
         r_unicode["LogFile"] = "AssertionError ‽"
 
-        pattern_url = "file://" + patterns.name
+        with tempfile.NamedTemporaryFile(prefix="apport-") as bug_pattern:
+            bug_pattern.write(patterns)
+            bug_pattern.flush()
+            pattern_url = f"file://{bug_pattern.name}"
 
-        # positive match cases
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/1",
-        )
-        r_bash["Foo"] = "write_goodbye"
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/2",
-        )
-        self.assertEqual(
-            r_coreutils.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/3",
-        )
-        self.assertEqual(
-            r_bazaar.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/5",
-        )
-        self.assertEqual(
-            r_unicode.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/6",
-        )
+            # positive match cases
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/1",
+            )
+            r_bash["Foo"] = "write_goodbye"
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/2",
+            )
+            self.assertEqual(
+                r_coreutils.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/3",
+            )
+            self.assertEqual(
+                r_bazaar.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/5",
+            )
+            self.assertEqual(
+                r_unicode.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/6",
+            )
 
-        # also works for CompressedValues
-        r_bash_compressed = r_bash.copy()
-        r_bash_compressed["Foo"] = problem_report.CompressedValue(b"bazaar")
-        self.assertEqual(
-            r_bash_compressed.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/1",
-        )
+            # also works for CompressedValues
+            r_bash_compressed = r_bash.copy()
+            r_bash_compressed["Foo"] = problem_report.CompressedValue(
+                b"bazaar"
+            )
+            self.assertEqual(
+                r_bash_compressed.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/1",
+            )
 
-        # also works for binary values
-        r_bash_utf8 = r_bash.copy()
-        r_bash_utf8["Foo"] = b"bazaar"
-        self.assertEqual(
-            r_bash_utf8.search_bug_patterns(pattern_url),
-            "http://bugtracker.net/bugs/1",
-        )
+            # also works for binary values
+            r_bash_utf8 = r_bash.copy()
+            r_bash_utf8["Foo"] = b"bazaar"
+            self.assertEqual(
+                r_bash_utf8.search_bug_patterns(pattern_url),
+                "http://bugtracker.net/bugs/1",
+            )
 
-        # negative match cases
-        r_bash["Package"] = "bash-static 1-2"
-        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None)
-        r_bash["Package"] = "bash 1-21"
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong bash version",
-        )
-        r_bash["Foo"] = "zz"
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong Foo value",
-        )
-        r_bash["Foo"] = b"zz"
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong Foo UTF-8 value",
-        )
-        r_bash["Foo"] = b"\x01\xFF"
-        self.assertEqual(
-            r_bash.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong Foo binary value",
-        )
-        r_coreutils["Bar"] = "11"
-        self.assertEqual(
-            r_coreutils.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong Bar value",
-        )
-        r_bazaar["SourcePackage"] = "launchpad"
-        self.assertEqual(
-            r_bazaar.search_bug_patterns(pattern_url),
-            None,
-            "does not match on wrong source package",
-        )
-        r_bazaar["LogFile"] = ""
-        self.assertEqual(
-            r_bazaar.search_bug_patterns(pattern_url),
-            None,
-            "does not match on empty attribute",
-        )
+            # negative match cases
+            r_bash["Package"] = "bash-static 1-2"
+            self.assertEqual(r_bash.search_bug_patterns(pattern_url), None)
+            r_bash["Package"] = "bash 1-21"
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong bash version",
+            )
+            r_bash["Foo"] = "zz"
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong Foo value",
+            )
+            r_bash["Foo"] = b"zz"
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong Foo UTF-8 value",
+            )
+            r_bash["Foo"] = b"\x01\xFF"
+            self.assertEqual(
+                r_bash.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong Foo binary value",
+            )
+            r_coreutils["Bar"] = "11"
+            self.assertEqual(
+                r_coreutils.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong Bar value",
+            )
+            r_bazaar["SourcePackage"] = "launchpad"
+            self.assertEqual(
+                r_bazaar.search_bug_patterns(pattern_url),
+                None,
+                "does not match on wrong source package",
+            )
+            r_bazaar["LogFile"] = ""
+            self.assertEqual(
+                r_bazaar.search_bug_patterns(pattern_url),
+                None,
+                "does not match on empty attribute",
+            )
 
-        # various errors to check for robustness (no exceptions, just None
-        # return value)
-        del r_coreutils["Bar"]
-        self.assertEqual(
-            r_coreutils.search_bug_patterns(pattern_url),
-            None,
-            "does not match on nonexisting key",
-        )
-        self.assertEqual(
-            r_invalid.search_bug_patterns("file://" + invalid.name),
-            None,
-            "gracefully handles invalid XML",
-        )
+            # various errors to check for robustness (no exceptions, just None
+            # return value)
+            del r_coreutils["Bar"]
+            self.assertEqual(
+                r_coreutils.search_bug_patterns(pattern_url),
+                None,
+                "does not match on nonexisting key",
+            )
+
+        with tempfile.NamedTemporaryFile(prefix="apport-") as bug_pattern:
+            bug_pattern.write(invalid)
+            bug_pattern.flush()
+            self.assertEqual(
+                r_invalid.search_bug_patterns("file://" + bug_pattern.name),
+                None,
+                "gracefully handles invalid XML",
+            )
         r_coreutils["Package"] = "other 2"
         self.assertEqual(
             r_bash.search_bug_patterns("file:///nonexisting/directory/"),

@@ -291,9 +291,8 @@ class RPMPackageInfo:
         """Internal function to check a file's md5sum"""
 
         m = hashlib.md5()
-        f = open(filename)
-        data = f.read()
-        f.close()
+        with open(filename) as md5_file:
+            data = md5_file.read()
         m.update(data)
         return filemd5 == m.hexdigest()
 

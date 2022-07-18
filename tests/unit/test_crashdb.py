@@ -57,38 +57,40 @@ class T(unittest.TestCase):
         """Dynamic code in crashdb.conf"""
 
         # use our dummy crashdb
-        crashdb_conf = tempfile.NamedTemporaryFile(mode="w+")
-        crashdb_conf.write(
-            textwrap.dedent(
-                """\
-                default = 'testsuite'
+        with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
+            crashdb_conf.write(
+                textwrap.dedent(
+                    """\
+                    default = 'testsuite'
 
-                def get_dyn():
-                    return str(2 + 2)
+                    def get_dyn():
+                        return str(2 + 2)
 
-                def get_dyn_name():
-                    return 'on_the' + 'fly'
+                    def get_dyn_name():
+                        return 'on_the' + 'fly'
 
-                databases = {
-                    'testsuite': {
-                        'impl': 'memory',
-                        'dyn_option': get_dyn(),
-                    },
-                    get_dyn_name(): {
-                        'impl': 'memory',
-                        'whoami': 'dynname',
+                    databases = {
+                        'testsuite': {
+                            'impl': 'memory',
+                            'dyn_option': get_dyn(),
+                        },
+                        get_dyn_name(): {
+                            'impl': 'memory',
+                            'whoami': 'dynname',
+                        }
                     }
-                }
-                """
+                    """
+                )
             )
-        )
-        crashdb_conf.flush()
+            crashdb_conf.flush()
 
-        db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
-        self.assertEqual(db.options["dyn_option"], "4")
-        db = apport.crashdb.get_crashdb(None, "on_thefly", crashdb_conf.name)
-        self.assertNotIn("dyn_opion", db.options)
-        self.assertEqual(db.options["whoami"], "dynname")
+            db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
+            self.assertEqual(db.options["dyn_option"], "4")
+            db = apport.crashdb.get_crashdb(
+                None, "on_thefly", crashdb_conf.name
+            )
+            self.assertNotIn("dyn_opion", db.options)
+            self.assertEqual(db.options["whoami"], "dynname")
 
     def test_accepts_default(self):
         """accepts(): default configuration"""
@@ -102,28 +104,28 @@ class T(unittest.TestCase):
         """accepts(): problem_types option in crashdb.conf"""
 
         # create a crash DB with type limits
-        crashdb_conf = tempfile.NamedTemporaryFile(mode="w+")
-        crashdb_conf.write(
-            textwrap.dedent(
-                """\
-                default = 'testsuite'
+        with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
+            crashdb_conf.write(
+                textwrap.dedent(
+                    """\
+                    default = 'testsuite'
 
-                databases = {
-                    'testsuite': {
-                        'impl': 'memory',
-                        'problem_types': ['Bug', 'Kernel'],
-                    },
-                }
-                """
+                    databases = {
+                        'testsuite': {
+                            'impl': 'memory',
+                            'problem_types': ['Bug', 'Kernel'],
+                        },
+                    }
+                    """
+                )
             )
-        )
-        crashdb_conf.flush()
+            crashdb_conf.flush()
 
-        db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
+            db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
 
-        self.assertTrue(db.accepts(apport.Report("Bug")))
-        self.assertFalse(db.accepts(apport.Report("Crash")))
-        self.assertFalse(db.accepts(apport.Report("weirdtype")))
+            self.assertTrue(db.accepts(apport.Report("Bug")))
+            self.assertFalse(db.accepts(apport.Report("Crash")))
+            self.assertFalse(db.accepts(apport.Report("weirdtype")))
 
     #
     # Test memory.py implementation
@@ -827,9 +829,8 @@ class T(unittest.TestCase):
             del self.crashes
 
             # damage file
-            f = open(db, "r+")
-            f.truncate(int(os.path.getsize(db) * 2 / 3))
-            f.close()
+            with open(db, "r+") as db_file:
+                db_file.truncate(int(os.path.getsize(db) * 2 / 3))
 
             self.crashes = CrashDatabase(None, {})
             self.assertRaises(Exception, self.crashes.init_duplicate_db, db)

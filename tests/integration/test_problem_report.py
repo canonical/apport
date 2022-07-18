@@ -95,15 +95,14 @@ class T(unittest.TestCase):
             ),
         )
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(bin_data)
+            temp.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name,)
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name,)
+            out = io.BytesIO()
+            pr.write(out)
 
         pr.clear()
         pr["Extra"] = "appended"
@@ -186,16 +185,15 @@ class T(unittest.TestCase):
     def test_write_file(self):
         """writing a report with binary file data."""
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(bin_data)
+            temp.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name,)
-        pr["Afile"] = (temp.name,)
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name,)
+            pr["Afile"] = (temp.name,)
+            out = io.BytesIO()
+            pr.write(out)
 
         self.assertEqual(
             out.getvalue().decode(),
@@ -214,42 +212,41 @@ class T(unittest.TestCase):
         )
 
         # force compression/encoding bool
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(b"foo\0bar")
-        temp.flush()
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name, False)
-        out = io.BytesIO()
-        pr.write(out)
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(b"foo\0bar")
+            temp.flush()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name, False)
+            out = io.BytesIO()
+            pr.write(out)
 
-        self.assertEqual(
-            out.getvalue().decode(),
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                File: foo\0bar
-                """
-            ),
-        )
+            self.assertEqual(
+                out.getvalue().decode(),
+                textwrap.dedent(
+                    """\
+                    ProblemType: Crash
+                    Date: now!
+                    File: foo\0bar
+                    """
+                ),
+            )
 
-        pr["File"] = (temp.name, True)
-        out = io.BytesIO()
-        pr.write(out)
+            pr["File"] = (temp.name, True)
+            out = io.BytesIO()
+            pr.write(out)
 
-        self.assertEqual(
-            out.getvalue().decode(),
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                File: base64
-                 H4sICAAAAAAC/0ZpbGUA
-                 S8vPZ0hKLAIACq50HgcAAAA=
-                """
-            ),
-        )
-        temp.close()
+            self.assertEqual(
+                out.getvalue().decode(),
+                textwrap.dedent(
+                    """\
+                    ProblemType: Crash
+                    Date: now!
+                    File: base64
+                     H4sICAAAAAAC/0ZpbGUA
+                     S8vPZ0hKLAIACq50HgcAAAA=
+                    """
+                ),
+            )
 
     def test_write_delayed_fileobj(self):
         """writing a report with file pointers and delayed data."""
@@ -286,19 +283,18 @@ class T(unittest.TestCase):
         """writing and re-decoding a big random file."""
 
         # create 1 MB random file
-        temp = tempfile.NamedTemporaryFile()
-        data = os.urandom(1048576)
-        temp.write(data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            data = os.urandom(1048576)
+            temp.write(data)
+            temp.flush()
 
-        # write it into problem report
-        pr = problem_report.ProblemReport()
-        pr["File"] = (temp.name,)
-        pr["Before"] = "xtestx"
-        pr["ZAfter"] = "ytesty"
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            # write it into problem report
+            pr = problem_report.ProblemReport()
+            pr["File"] = (temp.name,)
+            pr["Before"] = "xtestx"
+            pr["ZAfter"] = "ytesty"
+            out = io.BytesIO()
+            pr.write(out)
 
         # read it again
         out.seek(0)
@@ -324,23 +320,22 @@ class T(unittest.TestCase):
         """writing and a big random file with a size limit key."""
 
         # create 1 MB random file
-        temp = tempfile.NamedTemporaryFile()
-        data = os.urandom(1048576)
-        temp.write(data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            data = os.urandom(1048576)
+            temp.write(data)
+            temp.flush()
 
-        # write it into problem report
-        pr = problem_report.ProblemReport()
-        pr["FileSmallLimit"] = (temp.name, True, 100)
-        pr["FileLimitMinus1"] = (temp.name, True, 1048575)
-        pr["FileExactLimit"] = (temp.name, True, 1048576)
-        pr["FileLimitPlus1"] = (temp.name, True, 1048577)
-        pr["FileLimitNone"] = (temp.name, True, None)
-        pr["Before"] = "xtestx"
-        pr["ZAfter"] = "ytesty"
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            # write it into problem report
+            pr = problem_report.ProblemReport()
+            pr["FileSmallLimit"] = (temp.name, True, 100)
+            pr["FileLimitMinus1"] = (temp.name, True, 1048575)
+            pr["FileExactLimit"] = (temp.name, True, 1048576)
+            pr["FileLimitPlus1"] = (temp.name, True, 1048577)
+            pr["FileLimitNone"] = (temp.name, True, None)
+            pr["Before"] = "xtestx"
+            pr["ZAfter"] = "ytesty"
+            out = io.BytesIO()
+            pr.write(out)
 
         # read it again
         out.seek(0)
@@ -438,27 +433,26 @@ class T(unittest.TestCase):
     def test_write_mime_binary(self):
         """write_mime() for binary values and file references."""
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            with tempfile.NamedTemporaryFile() as tempgz:
+                temp.write(bin_data)
+                temp.flush()
 
-        tempgz = tempfile.NamedTemporaryFile()
-        gz = gzip.GzipFile("File1", "w", fileobj=tempgz)
-        gz.write(bin_data)
-        gz.close()
-        tempgz.flush()
+                with gzip.GzipFile("File1", "w", fileobj=tempgz) as gz:
+                    gz.write(bin_data)
+                tempgz.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["Context"] = "Test suite"
-        pr["File1"] = (temp.name,)
-        pr["File1.gz"] = (tempgz.name,)
-        pr["Value1"] = bin_data
-        with open(tempgz.name, "rb") as f:
-            pr["Value1.gz"] = f.read()
-        pr["ZValue"] = problem_report.CompressedValue(bin_data)
-        out = io.BytesIO()
-        pr.write_mime(out)
-        out.seek(0)
+                pr = problem_report.ProblemReport(date="now!")
+                pr["Context"] = "Test suite"
+                pr["File1"] = (temp.name,)
+                pr["File1.gz"] = (tempgz.name,)
+                pr["Value1"] = bin_data
+                with open(tempgz.name, "rb") as f:
+                    pr["Value1.gz"] = f.read()
+                pr["ZValue"] = problem_report.CompressedValue(bin_data)
+                out = io.BytesIO()
+                pr.write_mime(out)
+                out.seek(0)
 
         msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
