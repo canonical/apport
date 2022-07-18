@@ -202,7 +202,7 @@ class RPMPackageInfo:
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
-    def get_source_tree(self, srcpackage, dir, version=None):
+    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None):
         """Download given source package and unpack it into dir (which should
         be empty).
 
@@ -211,6 +211,9 @@ class RPMPackageInfo:
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
+
+        If sandbox is given, that sandbox is used to download the source
+        package, otherwise it uses the system configuration.
 
         Return the directory that contains the actual source root directory
         (which might be a subdirectory of dir). Return None if the source is

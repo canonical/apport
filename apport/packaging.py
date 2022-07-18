@@ -169,7 +169,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_source_tree(self, srcpackage, dir, version=None):
+    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None):
         """Download a source package and unpack it into dir..
 
         dir should exist and be empty.
@@ -179,6 +179,9 @@ class PackageInfo:
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
+
+        If sandbox is given, that sandbox is used to download the source
+        package, otherwise it uses the system configuration.
 
         Return the directory that contains the actual source root directory
         (which might be a subdirectory of dir). Return None if the source is
