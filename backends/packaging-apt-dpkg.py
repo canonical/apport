@@ -631,9 +631,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def get_source_tree(
-        self, srcpackage, dir, version=None, sandbox=None, apt_update=False
-    ):
+    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None):
         """Download source package and unpack it into dir.
 
         This also has to care about applying patches etc., so that dir will
@@ -666,7 +664,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             f.flush()
             env["APT_CONFIG"] = f.name
 
-        if apt_update:
+        if sandbox and not glob.glob(f"{sandbox}/var/lib/apt/lists/*Sources"):
             subprocess.call(["apt-get", "-qq", "update"], env=env)
 
         # fetch source tree

@@ -792,9 +792,7 @@ class T(unittest.TestCase):
             "jammy",
             origins=None,
         )
-        res = impl.get_source_tree(
-            "base-files", out_dir, sandbox=self.rootdir, apt_update=True
-        )
+        res = impl.get_source_tree("base-files", out_dir, sandbox=self.rootdir)
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
@@ -822,7 +820,6 @@ class T(unittest.TestCase):
             out_dir,
             version=wanted_version,
             sandbox=self.rootdir,
-            apt_update=True,
         )
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
