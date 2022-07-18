@@ -1865,7 +1865,6 @@ class __AptDpkgPackageInfo(PackageInfo):
                     apport.warning(
                         "Unable to import key for %s" % ppa_archive_url
                     )
-                    pass
 
     @classmethod
     def _deb_version(klass, pkg):

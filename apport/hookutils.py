@@ -749,7 +749,6 @@ def attach_gconf(report, package):
     """Obsolete"""
 
     # keeping a no-op function for some time to not break hooks
-    pass
 
 
 def attach_gsettings_schema(report, schema):

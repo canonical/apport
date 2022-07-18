@@ -2125,7 +2125,6 @@ class UserInterface:
 
         This can be used for for cleaning up.
         """
-        pass
 
     def ui_run_terminal(self, command):
         """Run command in, or check for a terminal window.

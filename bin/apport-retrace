@@ -337,7 +337,6 @@ def gen_source_stacktrace(report, sandbox):
         report["StacktraceSource"] = result
     finally:
         shutil.rmtree(workdir)
-        pass
 
 
 def print_traces(report):

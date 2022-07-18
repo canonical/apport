@@ -973,7 +973,6 @@ def get_crashdb(auth_file, name=None, conf=None):
                     sys.stderr.write(
                         "Invalid file %s: %s\n" % (cfpath, str(error))
                     )
-                    pass
 
     if not name:
         name = settings["default"]
@@ -997,5 +996,3 @@ def load_crashdb(auth_file, spec):
 
 class NeedsCredentials(Exception):
     """This may be raised when unable to log in to the crashdb."""
-
-    pass
