@@ -11,13 +11,11 @@
 
 import os
 import shutil
-import signal
 import subprocess
 import tempfile
 import typing
 import unittest
 
-from tests.helper import pidof
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -63,56 +61,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def _get_all_pids():
         return [int(pid) for pid in os.listdir("/proc") if pid.isdigit()]
 
-    def _launch_process_with_different_session_id(
-        self, existing_pids: list
-    ) -> int:
-        """Launch test executable with different session ID.
-
-        getsid() will return a different ID than the current process.
-        """
-        service_manager = "--system" if os.geteuid() == 0 else "--user"
-        try:
-            subprocess.run(
-                ["systemd-run", service_manager, self.TEST_EXECUTABLE]
-                + self.TEST_ARGS,
-                check=True,
-            )
-        except FileNotFoundError as error:  # pragma: no cover
-            self.skipTest(f"{error.filename} not available")
-        test_executable_pids = {
-            pid
-            for pid in pidof(self.TEST_EXECUTABLE)
-            if pid not in existing_pids
-        }
-        self.assertEqual(len(test_executable_pids), 1, test_executable_pids)
-        return test_executable_pids.pop()
-
     def test_omit_all_processes(self):
         """unkillable_shutdown will write no reports."""
         self._call(omit=self._get_all_pids(), expected_stderr="")
         self.assertEqual(os.listdir(self.report_dir), [])
-
-    def test_omit_all_processes_except_one(self):
-        """unkillable_shutdown will write exactly one report."""
-        existing_pids = self._get_all_pids()
-        pid = self._launch_process_with_different_session_id(existing_pids)
-        try:
-            self._call(omit=existing_pids, expected_stderr="")
-        finally:
-            os.kill(pid, signal.SIGHUP)
-        self.assertEqual(
-            os.listdir(self.report_dir),
-            [f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.geteuid()}.crash"],
-        )
-
-    def test_write_reports(self):
-        """unkillable_shutdown will write reports."""
-        # Ensure that at least one process is honoured by unkillable_shutdown.
-        existing_pids = self._get_all_pids()
-        pid = self._launch_process_with_different_session_id(existing_pids)
-        try:
-            self._call()
-        finally:
-            os.kill(pid, signal.SIGHUP)
-        reports = os.listdir(self.report_dir)
-        self.assertGreater(len(reports), 0, reports)
