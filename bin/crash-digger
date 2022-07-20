@@ -9,8 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
 import errno
-import optparse
 import os
 import shutil
 import subprocess
@@ -222,98 +222,96 @@ class CrashDigger:
 
 
 def parse_options():
-    """Parse command line options and return (options, args) tuple."""
+    """Parse command line options and return arguments."""
 
-    optparser = optparse.OptionParser("%prog [options]")
-    optparser.add_option(
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "-c",
         "--config-dir",
         metavar="DIR",
         help="Packaging system configuration base directory.",
     )
-    optparser.add_option(
+    parser.add_argument(
         "--sandbox-dir",
         metavar="DIR",
         help="Directory for unpacked packages. Future runs will assume that"
         " any already downloaded package is also extracted to this sandbox.",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-C",
         "--cache",
         metavar="DIR",
         help="Cache directory for packages downloaded in the sandbox",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-a",
         "--auth",
         dest="auth_file",
         help="Path to a file with the crash database authentication"
         " information.",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-l",
         "--lock",
         dest="lockfile",
         help="Lock file; will be created and removed on successful exit, and "
         "program immediately aborts if it already exists",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-d",
         "--duplicate-db",
         dest="dup_db",
         metavar="PATH",
         help="Path to the duplicate sqlite database (default: disabled)",
     )
-    optparser.add_option(
+    parser.add_argument(
         "--crash-db",
         metavar="NAME",
         help='Use a different crash database than the "default"'
         " in /etc/apport/crashdb.conf",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-D",
         "--dupcheck",
         dest="dupcheck_mode",
-        default=False,
         action="store_true",
         help="Only check duplicates for architecture independent crashes"
         " (like Python exceptions)",
     )
-    optparser.add_option(
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        default=False,
         help="Verbose operation (also passed to apport-retrace)",
     )
-    optparser.add_option(
+    parser.add_argument(
         "--apport-retrace",
         metavar="PATH",
         help="Path to apport-retrace script"
         " (default: directory of crash-digger or $PATH)",
     )
-    optparser.add_option(
+    parser.add_argument(
         "--publish-db",
         metavar="DIR",
         help="After processing all reports, publish duplicate database"
         " to given directory",
     )
 
-    (opts, args) = optparser.parse_args()
+    args = parser.parse_args()
 
-    if not opts.config_dir and not opts.dupcheck_mode:
+    if not args.config_dir and not args.dupcheck_mode:
         apport.fatal("Error: --config-dir or --dupcheck needs to be given")
-    if not opts.auth_file:
+    if not args.auth_file:
         apport.fatal("Error: -a/--auth needs to be given")
 
-    return (opts, args)
+    return args
 
 
 #
 # main
 #
 
-opts, args = parse_options()
+opts = parse_options()
 
 
 # support running from tree, then fall back to $PATH

@@ -11,7 +11,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import optparse
+import argparse
 import os.path
 import sys
 
@@ -19,7 +19,7 @@ import apport
 import apport.crashdb_impl.memory
 
 
-def command_dump(crashdb, opts, args):
+def command_dump(crashdb, _):
     """Print out all entries."""
 
     for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(
@@ -35,80 +35,75 @@ def command_dump(crashdb, opts, args):
         print("last change: %s" % str(lastchange))
 
 
-def command_changeid(crashdb, opts, args):
+def command_changeid(crashdb, args):
     """Change the master ID of a crash."""
-
-    if len(args) != 2:
-        apport.fatal(
-            "changeid needs exactly two arguments"
-            " (use --help for a short help)"
-        )
-    (oldid, newid) = args
-
-    crashdb.duplicate_db_change_master_id(oldid, newid)
+    crashdb.duplicate_db_change_master_id(args.old_id, args.new_id)
 
 
-def command_removeid(crashdb, opts, args):
+def command_removeid(crashdb, args):
     """Remove a crash."""
-
-    if len(args) != 1:
-        apport.fatal(
-            "removeid needs exactly one argument (use --help for a short help)"
-        )
-    crashdb.duplicate_db_remove(args[0])
+    crashdb.duplicate_db_remove(args.id)
 
 
-def command_publish(crashdb, opts, args):
+def command_publish(crashdb, args):
     """Publish crash database to a directory."""
+    crashdb.duplicate_db_publish(args.path)
 
-    if len(args) != 1:
-        apport.fatal(
-            "publish needs exactly one argument (use --help for a short help)"
-        )
-    crashdb.duplicate_db_publish(args[0])
+
+def parse_args():
+    """Parse command line options and return arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-f",
+        "--database-file",
+        dest="db_file",
+        metavar="PATH",
+        default="apport_duplicates.db",
+        help="Location of the database file (default: %(default)s)",
+    )
+    subparsers = parser.add_subparsers(metavar="command", required=True)
+
+    parser_dump = subparsers.add_parser(
+        "dump", help="Print a list of all database entries"
+    )
+    parser_dump.set_defaults(command=command_dump)
+
+    parser_changeid = subparsers.add_parser(
+        "changeid",
+        help="Change the associated crash ID for a particular crash",
+    )
+    parser_changeid.set_defaults(command=command_changeid)
+    parser_changeid.add_argument("old_id")
+    parser_changeid.add_argument("new_id")
+
+    parser_removeid = subparsers.add_parser(
+        "removeid",
+        help="Remove the associated crash ID for a particular crash",
+    )
+    parser_removeid.set_defaults(command=command_removeid)
+    parser_removeid.add_argument("id")
+
+    parser_publish = subparsers.add_parser(
+        "publish",
+        help="Export the duplicate database into a set of text files"
+        " in the given directory which is suitable for WWW publishing",
+    )
+    parser_publish.set_defaults(command=command_publish)
+    parser_publish.add_argument("path")
+
+    return parser.parse_args()
 
 
 #
 # main
 #
 
-# parse command line options
-optparser = optparse.OptionParser(
-    """%prog [options] dump
-%prog [options] changeid <old ID> <new ID>
-%prog [options] removeid <ID>
-%prog [options] publish <path>"""
-)
+args = parse_args()
 
-optparser.add_option(
-    "-f",
-    "--database-file",
-    dest="db_file",
-    metavar="PATH",
-    default="apport_duplicates.db",
-    help="Location of the database file",
-)
-options, args = optparser.parse_args()
-
-if len(args) == 0:
-    optparser.error("No command specified")
-
-if not os.path.exists(options.db_file):
-    apport.fatal("file does not exist: %s", options.db_file)
+if not os.path.exists(args.db_file):
+    apport.fatal("file does not exist: %s", args.db_file)
 
 # pure DB operations don't need a real backend, and thus no crashdb.conf
 crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
-
-# if args[0] in ():
-#     # these commands require a real DB
-#     crashdb = get_crashdb(None, None, {})
-# else:
-
-crashdb.init_duplicate_db(options.db_file)
-
-try:
-    command = globals()["command_" + args.pop(0)]
-except KeyError:
-    apport.fatal("unknown command (use --help for a short help)")
-
-command(crashdb, options, args)
+crashdb.init_duplicate_db(args.db_file)
+args.command(crashdb, args)

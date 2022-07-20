@@ -103,8 +103,8 @@ class TestDupdbAdmin(unittest.TestCase):
 
     def test_changeid_missing_argument(self):
         self.assertEqual(self.crashes.check_duplicate(2), None)
-        stderr = self._call(["changeid", "2"], expected_returncode=1)[1]
-        self.assertIn("changeid needs exactly two arguments", stderr)
+        stderr = self._call(["changeid", "2"], expected_returncode=2)[1]
+        self.assertIn("the following arguments are required: new_id", stderr)
 
     def test_missing_db_file(self):
         os.remove(self.db_file)
@@ -113,7 +113,7 @@ class TestDupdbAdmin(unittest.TestCase):
 
     def test_no_command(self):
         stderr = self._call([], expected_returncode=2)[1]
-        self.assertIn("error: No command specified", stderr)
+        self.assertIn("the following arguments are required: command", stderr)
 
     def test_publish(self):
         self.assertEqual(self.crashes.check_duplicate(1), None)
@@ -124,8 +124,8 @@ class TestDupdbAdmin(unittest.TestCase):
         self.assertEqual(files, ["sig/_bin_crash_11"])
 
     def test_publish_missing_argument(self):
-        stderr = self._call(["publish"], expected_returncode=1)[1]
-        self.assertIn("publish needs exactly one argument", stderr)
+        stderr = self._call(["publish"], expected_returncode=2)[1]
+        self.assertIn("the following arguments are required: path", stderr)
 
     def test_removeid(self):
         self.assertEqual(self.crashes.check_duplicate(1), None)
@@ -134,9 +134,9 @@ class TestDupdbAdmin(unittest.TestCase):
 
     def test_removeid_missing_argument(self):
         self.assertEqual(self.crashes.check_duplicate(1), None)
-        stderr = self._call(["removeid"], expected_returncode=1)[1]
-        self.assertIn("removeid needs exactly one argument", stderr)
+        stderr = self._call(["removeid"], expected_returncode=2)[1]
+        self.assertIn("the following arguments are required: id", stderr)
 
     def test_unknown_command(self):
-        stderr = self._call(["nonexisting"], expected_returncode=1)[1]
-        self.assertIn("unknown command", stderr)
+        stderr = self._call(["nonexisting"], expected_returncode=2)[1]
+        self.assertIn("invalid choice: 'nonexisting'", stderr)

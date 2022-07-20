@@ -572,8 +572,6 @@ class T(unittest.TestCase):
 
     def test_run_nopending(self):
         """running the frontend without any pending reports"""
-
-        sys.argv = []
         self.ui = TestSuiteUserInterface()
         self.assertEqual(self.ui.run_argv(), False)
 
@@ -584,7 +582,6 @@ class T(unittest.TestCase):
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
             r.write(f)
-        sys.argv = []
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {
             "report": False,
@@ -2081,7 +2078,7 @@ class T(unittest.TestCase):
                 "def add_info(report, ui):\n%s\n"
                 % "\n".join(["    " + line for line in code.splitlines()])
             )
-        self.ui.options.package = "coreutils"
+        self.ui.args.package = "coreutils"
         self.ui.run_report_bug()
 
     def test_interactive_hooks_information(self):
@@ -2412,9 +2409,8 @@ class T(unittest.TestCase):
             if arg:
                 sys.argv.append(arg)
             ui = apport.ui.UserInterface()
-            expected_opts["version"] = None
-            self.assertEqual(ui.args, [])
-            self.assertEqual(ui.options, expected_opts)
+            expected_opts["version"] = False
+            self.assertEqual(ui.args.__dict__, expected_opts)
             self.assertEqual(stderr_mock.getvalue(), "")
 
         # no arguments -> show pending crashes
@@ -2437,7 +2433,7 @@ class T(unittest.TestCase):
         # updating report not allowed without args
         self.assertRaises(SystemExit, _chk, "apport-collect", None, {})
         self.assertIn(
-            "error: You need to specify a report number",
+            "error: the following arguments are required: report_number",
             stderr_mock.getvalue(),
         )
         stderr_mock.truncate(0)
@@ -2578,9 +2574,8 @@ class T(unittest.TestCase):
         def _chk(args, expected_opts):
             sys.argv = ["apport-bug"] + args
             ui = apport.ui.UserInterface()
-            expected_opts["version"] = None
-            self.assertEqual(ui.args, [])
-            self.assertEqual(ui.options, expected_opts)
+            expected_opts["version"] = False
+            self.assertEqual(ui.args.__dict__, expected_opts)
             self.assertEqual(stderr_mock.getvalue(), "")
 
         #

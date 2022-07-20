@@ -972,7 +972,7 @@ class T(unittest.TestCase):
             return False
 
         self.app.report_file = None
-        self.app.options.package = "bash"
+        self.app.args.package = "bash"
         GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
@@ -995,7 +995,7 @@ class T(unittest.TestCase):
 
         pkg = apport.packaging.get_uninstalled_package()
         self.app.report_file = None
-        self.app.options.package = pkg
+        self.app.args.package = pkg
         GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
@@ -1024,8 +1024,8 @@ class T(unittest.TestCase):
         # upload empty report
         id = self.app.crashdb.upload({})
         self.assertEqual(id, 0)
-        self.app.options.update_report = 0
-        self.app.options.package = "bash"
+        self.app.args.update_report = 0
+        self.app.args.package = "bash"
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()
@@ -1073,8 +1073,8 @@ class T(unittest.TestCase):
         self.assertEqual(id, 0)
 
         # run in update mode for that bug
-        self.app.options.update_report = 0
-        self.app.options.package = source_pkg
+        self.app.args.update_report = 0
+        self.app.args.package = source_pkg
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()

@@ -595,7 +595,7 @@ class T(unittest.TestCase):
         """Bug report for installed package"""
 
         self.app.report_file = None
-        self.app.options.package = "bash"
+        self.app.args.package = "bash"
 
         def c(*args):
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
@@ -618,7 +618,7 @@ class T(unittest.TestCase):
         pkg = apport.packaging.get_uninstalled_package()
 
         self.app.report_file = None
-        self.app.options.package = pkg
+        self.app.args.package = pkg
 
         def c(*args):
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
@@ -654,8 +654,8 @@ class T(unittest.TestCase):
         # upload empty report
         id = self.app.crashdb.upload({})
         self.assertEqual(id, 0)
-        self.app.options.update_report = 0
-        self.app.options.package = "bash"
+        self.app.args.update_report = 0
+        self.app.args.package = "bash"
 
         QTimer.singleShot(200, cont)
         self.app.run_update_report()
@@ -702,8 +702,8 @@ class T(unittest.TestCase):
         self.assertEqual(id, 0)
 
         # run in update mode for that bug
-        self.app.options.update_report = 0
-        self.app.options.package = source_pkg
+        self.app.args.update_report = 0
+        self.app.args.package = source_pkg
 
         QTimer.singleShot(200, cont)
         self.app.run_update_report()

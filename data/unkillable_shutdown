@@ -13,10 +13,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
 import errno
-import optparse
 import os
-import sys
 
 import apport
 import apport.fileutils
@@ -24,10 +23,9 @@ import apport.hookutils
 
 
 def parse_argv():
-    """Parse command line and return (options, args)."""
-
-    optparser = optparse.OptionParser("%prog [options]")
-    optparser.add_option(
+    """Parse command line and return arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "-o",
         "--omit",
         metavar="PID",
@@ -37,17 +35,7 @@ def parse_argv():
         help="Ignore a particular process ID"
         " (can be specified multiple times)",
     )
-
-    (opts, args) = optparser.parse_args()
-
-    if len(args) != 0:
-        optparser.error(
-            "This program does not take any non-option arguments."
-            "  Please see --help."
-        )
-        sys.exit(1)
-
-    return (opts, args)
+    return parser.parse_args()
 
 
 def orphaned_processes(blacklist):
@@ -127,7 +115,7 @@ def do_report(pid, blacklist):
 # main
 #
 
-(opts, args) = parse_argv()
+args = parse_argv()
 
-for p in orphaned_processes(opts.blacklist):
-    do_report(p, opts.blacklist)
+for p in orphaned_processes(args.blacklist):
+    do_report(p, args.blacklist)

@@ -11,7 +11,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import optparse
+import argparse
 import os
 import sys
 
@@ -31,36 +31,37 @@ def mkattrname(path):
     return name
 
 
+def parse_args():
+    """Parse command line options and return arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--package",
+        required=True,
+        help="Specify the package name which failed to upgrade (mandatory)",
+    )
+    parser.add_argument(
+        "-l",
+        "--log",
+        action="append",
+        dest="logs",
+        help="Append given log file, or, if it is a directory,"
+        " all files in it (can be specified multiple times)",
+    )
+    parser.add_argument(
+        "-t",
+        "--tags",
+        help="Add the following tags to the bug report (comma separated)",
+    )
+    return parser.parse_args()
+
+
 #
 # main
 #
 
 # parse command line arguments
-optparser = optparse.OptionParser("%prog [options]")
-optparser.add_option(
-    "-p",
-    "--package",
-    help="Specify the package name which failed to upgrade (mandatory)",
-)
-optparser.add_option(
-    "-l",
-    "--log",
-    action="append",
-    dest="logs",
-    help="Append given log file, or, if it is a directory,"
-    " all files in it (can be specified multiple times)",
-)
-
-optparser.add_option(
-    "-t",
-    "--tags",
-    help="Add the following tags to the bug report (comma separated)",
-)
-options = optparser.parse_args()[0]
-
-if not options.package:
-    apport.fatal("You need to specify a package name with --package")
-    sys.exit(1)
+options = parse_args()
 
 # create report
 pr = apport.Report("Package")
