@@ -111,6 +111,8 @@ class T(unittest.TestCase):
             f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
+        self.running_test_executables = pidof(self.TEST_EXECUTABLE)
+
     def tearDown(self):
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.workdir)
@@ -207,14 +209,8 @@ class T(unittest.TestCase):
             f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
-        self.assertEqual(
-            pidof(self.TEST_EXECUTABLE),
-            set(),
-            "no running test executable processes",
-        )
         system_run = self.create_test_process(
             command="/usr/bin/systemd-run",
-            check_running=False,
             args=[
                 "-t",
                 "-q",
@@ -226,7 +222,7 @@ class T(unittest.TestCase):
             + self.TEST_ARGS,
         )
         try:
-            pids = pidof(self.TEST_EXECUTABLE)
+            pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
             self.assertEqual(len(pids), 1)
             os.kill(pids.pop(), signal.SIGSEGV)
 
@@ -246,9 +242,7 @@ class T(unittest.TestCase):
             f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash",
         )
 
-    def create_test_process(
-        self, check_running=True, command=None, uid=None, args=None
-    ):
+    def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
         Wait until it is fully running, and return its process.
@@ -259,10 +253,6 @@ class T(unittest.TestCase):
             args = self.TEST_ARGS
 
         assert os.access(command, os.X_OK), command + " is not executable"
-        if check_running:
-            assert (
-                pidof(command) == set()
-            ), "no running test executable processes"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
@@ -290,7 +280,7 @@ class T(unittest.TestCase):
 
     def wait_for_no_instance_running(self, program, timeout_sec=10.0):
         while timeout_sec > 0:
-            if not pidof(program):
+            if not pidof(program) - self.running_test_executables:
                 break
             time.sleep(0.2)
             timeout_sec -= 0.2

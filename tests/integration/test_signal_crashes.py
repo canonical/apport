@@ -25,7 +25,7 @@ import unittest
 import psutil
 
 import apport.fileutils
-from tests.helper import pidof, read_shebang
+from tests.helper import read_shebang
 from tests.paths import get_data_directory, local_test_environment
 
 test_package = "coreutils"
@@ -219,7 +219,7 @@ class T(unittest.TestCase):
         """only one apport instance is ran at a time"""
 
         test_proc = self.create_test_process()
-        test_proc2 = self.create_test_process(False, "/bin/dd", args=[])
+        test_proc2 = self.create_test_process("/bin/dd", args=[])
         try:
             with subprocess.Popen(
                 [self.apport_path, str(test_proc.pid), "42", "0", "1"],
@@ -822,9 +822,7 @@ class T(unittest.TestCase):
     # Helper methods
     #
 
-    def create_test_process(
-        self, check_running=True, command=None, uid=None, args=None
-    ):
+    def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
         Wait until it is fully running, and return its process.
@@ -835,10 +833,6 @@ class T(unittest.TestCase):
             args = self.TEST_ARGS
 
         assert os.access(command, os.X_OK), command + " is not executable"
-        if check_running:
-            assert (
-                pidof(command) == set()
-            ), "no running test executable processes"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport

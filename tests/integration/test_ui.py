@@ -213,6 +213,8 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
+        self.running_test_executables = pidof(self.TEST_EXECUTABLE)
+
     def update_report_file(self):
         self.report_file.seek(0)
         self.report_file.truncate()
@@ -233,7 +235,9 @@ class T(unittest.TestCase):
         self.report_file.close()
 
         self.assertEqual(
-            pidof(self.TEST_EXECUTABLE), set(), "no stray test processes"
+            pidof(self.TEST_EXECUTABLE) - self.running_test_executables,
+            set(),
+            "no stray test processes",
         )
 
         apport.report._hook_dir = self.orig_hook_dir
@@ -867,7 +871,10 @@ class T(unittest.TestCase):
             ) as gdb:
                 timeout = 10.0
                 while timeout > 0:
-                    pids = pidof(self.TEST_EXECUTABLE)
+                    pids = (
+                        pidof(self.TEST_EXECUTABLE)
+                        - self.running_test_executables
+                    )
                     if pids:
                         pid = pids.pop()
                         break
