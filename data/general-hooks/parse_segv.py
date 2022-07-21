@@ -46,10 +46,9 @@ class ParseSegv:
         maps = []
         for line in maps_str.splitlines():
             items = line.strip().split()
-            try:
-                span, perms, bits, dev = items[0:4]
-            except Exception:
-                raise ValueError("Cannot parse maps line: %s" % (line.strip()))
+            if len(items) < 4:
+                raise ValueError(f"Cannot parse maps line: {line.strip()}")
+            span, perms, bits, dev = items[0:4]
             if len(items) == 5:
                 name = None
             else:

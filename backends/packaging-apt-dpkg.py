@@ -157,7 +157,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # We don't need to update this multiple times.
                 self._sandbox_apt_cache.update(fetchProgress)
             except apt.cache.FetchFailedException as error:
-                raise SystemError(str(error))
+                raise SystemError(str(error)) from error
             self._sandbox_apt_cache.open()
         else:
             self._sandbox_apt_cache.clear()
@@ -171,7 +171,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             return self._cache()[package]
         except KeyError:
-            raise ValueError("package %s does not exist" % package)
+            raise ValueError("package %s does not exist" % package) from None
 
     def get_version(self, package):
         """Return the installed version of a package."""
@@ -874,7 +874,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 cache.update(fetchProgress)
             except apt.cache.FetchFailedException as error:
-                raise SystemError(str(error))
+                raise SystemError(str(error)) from error
             cache.open()
 
         archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
@@ -1084,7 +1084,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             # if it can't be found in Launchpad failover to a
                             # code path that'll use -dbgsym packages
                             else:
-                                raise KeyError
+                                raise
                     if not pkg_found:
                         try:
                             dbg.candidate = dbg.versions[candidate.version]

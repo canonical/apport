@@ -155,7 +155,7 @@ def _command_output(command, input=None, env=None):
         raise OSError(
             f"Error: command {str(error.cmd)} timed out"
             f" after {error.timeout} seconds: {out}"
-        )
+        ) from error
     if sp.returncode == 0:
         return sp.stdout
     else:
@@ -658,11 +658,11 @@ class Report(problem_report.ProblemReport):
                 proc_pid_fd = os.open(
                     "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
-            except PermissionError:
-                raise ValueError("not accessible")
+            except PermissionError as error:
+                raise ValueError("not accessible") from error
             except OSError as error:
                 if error.errno == errno.ENOENT:
-                    raise ValueError("invalid process")
+                    raise ValueError("invalid process") from error
                 else:
                     raise
 
@@ -683,11 +683,11 @@ class Report(problem_report.ProblemReport):
                 self["ExecutablePath"] = _read_proc_link(
                     "exe", pid, proc_pid_fd
                 )
-            except PermissionError:
-                raise ValueError("not accessible")
+            except PermissionError as error:
+                raise ValueError("not accessible") from error
             except OSError as error:
                 if error.errno == errno.ENOENT:
-                    raise ValueError("invalid process")
+                    raise ValueError("invalid process") from error
                 else:
                     raise
         for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
@@ -1224,7 +1224,7 @@ class Report(problem_report.ProblemReport):
             except xml.parsers.expat.ExpatError as error:
                 raise ValueError(
                     "%s has invalid format: %s" % (_ignore_file, str(error))
-                )
+                ) from error
 
         # remove whitespace so that writing back the XML does not accumulate
         # whitespace

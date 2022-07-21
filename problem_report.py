@@ -231,10 +231,10 @@ class ProblemReport(collections.UserDict):
                                             out.write(line_value)
                                 else:
                                     break
-                    except OSError:
+                    except OSError as error:
                         raise OSError(
                             "unable to open %s" % (os.path.join(dir, key))
-                        )
+                        ) from error
                 else:
                     break
         if missing_keys:
