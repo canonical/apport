@@ -773,6 +773,40 @@ class T(unittest.TestCase):
         # should not create report on the host
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
+    @unittest.skipUnless(
+        os.path.exists("/bin/ping"), "this test needs /bin/ping"
+    )
+    @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
+    def test_crash_setuid_drop_via_socket(self):
+        """report generation via socket for setuid program which drops root"""
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+        # run ping as user "mail"
+        self.do_crash(
+            command="/bin/ping",
+            args=["127.0.0.1"],
+            uid=8,
+            suid_dumpable=2,
+            via_socket=True,
+        )
+
+        # check crash report
+        reports = apport.fileutils.get_all_reports()
+        self.assertEqual(len(reports), 1)
+        report = apport.Report()
+        with open(reports[0], "rb") as report_file:
+            report.load(report_file)
+        st = os.stat(reports[0])
+        os.unlink(reports[0])
+        self.assertEqual(
+            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
+        )
+        # this must be owned by root as it is a setuid binary
+        self.assertEqual(st.st_uid, 0, "report has correct owner")
+        self.assertEqual(report["Signal"], "11")
+        self.assertEqual(
+            report["ExecutablePath"], os.path.realpath("/bin/ping")
+        )
+
     #
     # Helper methods
     #

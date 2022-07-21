@@ -861,6 +861,8 @@ try:
         options.executable_path
     ):
         info["ExecutablePath"] = options.executable_path
+    else:
+        info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
 
     # Drop privileges temporarily to make sure that we don't
     # include information in the crash report that the user should
