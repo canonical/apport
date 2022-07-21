@@ -842,6 +842,18 @@ class T(unittest.TestCase):
             pass_fds=[3],
         )
 
+    def _check_core_file_is_valid(self, core_path: str, command: str) -> None:
+        st = os.stat(core_path)
+        self.assertGreater(st.st_size, 10000)
+        gdb = subprocess.run(
+            ["gdb", "--batch", "--ex", "bt", command, core_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.assertNotEqual(gdb.stdout.strip(), "")
+
     def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
@@ -982,16 +994,7 @@ class T(unittest.TestCase):
                         "core file has correct owner",
                     )
 
-                # check that core file is valid
-                self.assertGreater(st.st_size, 10000)
-                gdb = subprocess.run(
-                    ["gdb", "--batch", "--ex", "bt", command, core_path],
-                    check=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                self.assertNotEqual(gdb.stdout.strip(), "")
+                self._check_core_file_is_valid(core_path, command)
             finally:
                 os.unlink(core_path)
         else:
