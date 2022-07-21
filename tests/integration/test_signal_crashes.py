@@ -20,6 +20,7 @@ import sys
 import tempfile
 import textwrap
 import time
+import typing
 import unittest
 
 import psutil
@@ -758,52 +759,7 @@ class T(unittest.TestCase):
         This is being used in a container via systemd activation, where the
         core dump gets read from /run/apport.socket.
         """
-        socket_path = os.path.join(self.workdir, "apport.socket")
-        test_proc = self.create_test_process()
-        try:
-            # emulate apport on the host which forwards the crash to the apport
-            # socket in the container
-            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            server.bind(socket_path)
-            server.listen(1)
-
-            if os.fork() == 0:
-                client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-                client.connect(socket_path)
-                with tempfile.TemporaryFile() as fd:
-                    fd.write(b"hel\x01lo")
-                    fd.flush()
-                    fd.seek(0)
-                    args = "%s 11 0 1" % test_proc.pid
-                    fd_msg = (
-                        socket.SOL_SOCKET,
-                        socket.SCM_RIGHTS,
-                        array.array("i", [fd.fileno()]),
-                    )
-                    client.sendmsg([args.encode()], [fd_msg])
-                os._exit(0)
-
-            # call apport like systemd does via socket activation
-            def child_setup():
-                os.environ["LISTEN_FDNAMES"] = "connection"
-                os.environ["LISTEN_FDS"] = "1"
-                os.environ["LISTEN_PID"] = str(os.getpid())
-                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
-                conn = server.accept()[0]
-                os.dup2(conn.fileno(), 3)
-
-            app = subprocess.run(
-                [self.apport_path],
-                check=False,
-                preexec_fn=child_setup,
-                pass_fds=[3],
-                stderr=subprocess.PIPE,
-            )
-            self.assertEqual(app.returncode, 0, app.stderr.decode())
-            server.close()
-        finally:
-            test_proc.kill()
-            test_proc.wait()
+        self.do_crash(via_socket=True)
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
@@ -813,7 +769,6 @@ class T(unittest.TestCase):
         os.unlink(reports[0])
         self.assertEqual(pr["Signal"], "11")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
-        self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
         # should not create report on the host
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
@@ -821,6 +776,71 @@ class T(unittest.TestCase):
     #
     # Helper methods
     #
+
+    def _call_apport(
+        self,
+        process: psutil.Process,
+        sig: int,
+        dump_mode: int,
+        stdin: typing.IO,
+    ) -> None:
+        cmd = [
+            self.apport_path,
+            f"-p{process.pid}",
+            f"-s{sig}",
+            f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
+            f"-d{dump_mode}",
+            f"-P{process.pid}",
+            f"-u{process.uids().real}",
+            f"-g{process.gids().real}",
+            "--",
+            process.exe().replace("/", "!"),
+        ]
+        subprocess.check_call(cmd, stdin=stdin)
+
+    def _call_apport_via_socket(
+        self,
+        process: psutil.Process,
+        sig: int,
+        dump_mode: int,
+        stdin: typing.IO,
+    ) -> None:
+        socket_path = os.path.join(self.workdir, "apport.socket")
+
+        # emulate apport on the host which forwards the crash to the apport
+        # socket in the container
+        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server.bind(socket_path)
+        server.listen(1)
+
+        if os.fork() == 0:
+            client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            client.connect(socket_path)
+            core_ulimit = resource.getrlimit(resource.RLIMIT_CORE)[0]
+            args = f"{process.pid} {sig} {core_ulimit} {dump_mode}"
+            fd_msg = (
+                socket.SOL_SOCKET,
+                socket.SCM_RIGHTS,
+                array.array("i", [stdin.fileno()]),
+            )
+            client.sendmsg([args.encode()], [fd_msg])
+            os._exit(0)
+
+        # call apport like systemd does via socket activation
+        def child_setup():
+            os.environ["LISTEN_FDNAMES"] = "connection"
+            os.environ["LISTEN_FDS"] = "1"
+            os.environ["LISTEN_PID"] = str(os.getpid())
+            # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+            conn = server.accept()[0]
+            os.dup2(conn.fileno(), 3)
+
+        subprocess.run(
+            [self.apport_path],
+            check=True,
+            preexec_fn=child_setup,
+            pass_fds=[3],
+        )
 
     def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
@@ -866,12 +886,17 @@ class T(unittest.TestCase):
         args=None,
         suid_dumpable: int = 1,
         hook_before_apport=None,
+        via_socket: bool = False,
     ):
         """Generate a test crash.
 
         This runs command (by default TEST_EXECUTABLE) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
         file behind if expect_corefile is set, and generating a crash report.
+
+        If via_socket is set to True, Apport will be called via a socket.
+        The socket is being used in a container via systemd activation,
+        where the core dump gets read from /run/apport.socket.
 
         Note: The arguments for the test program must not contain spaces.
         Since there was no need for it, the support was not implemented.
@@ -923,20 +948,12 @@ class T(unittest.TestCase):
             if hook_before_apport:
                 hook_before_apport()
 
-            cmd = [
-                self.apport_path,
-                f"-p{command_process.pid}",
-                f"-s{sig}",
-                f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
-                f"-d{suid_dumpable}",
-                f"-P{command_process.pid}",
-                f"-u{command_process.uids().real}",
-                f"-g{command_process.gids().real}",
-                "--",
-                command.replace("/", "!"),
-            ]
+            if via_socket:
+                call_apport = self._call_apport_via_socket
+            else:
+                call_apport = self._call_apport
             with open(gdb_core_file, "rb") as core_fd:
-                subprocess.check_call(cmd, stdin=core_fd)
+                call_apport(command_process, sig, suid_dumpable, core_fd)
             os.unlink(gdb_core_file)
 
             (core_name, core_path) = apport.fileutils.get_core_path(
