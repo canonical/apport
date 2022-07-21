@@ -585,7 +585,7 @@ def clean_core_directory(uid):
 
     # Subtract a extra one to make room for the new core file
     if len(uid_files) > max_corefiles_per_uid - 1:
-        for x in range(len(uid_files) - max_corefiles_per_uid + 1):
+        for _ in range(len(uid_files) - max_corefiles_per_uid + 1):
             os.remove(os.path.join(core_dir, sorted_files[0][0]))
             sorted_files.remove(sorted_files[0])
 

@@ -498,7 +498,7 @@ def _spawn_pkttyagent():
         while True:
             epoll.register(r, select.EPOLLIN)
             events = epoll.poll()
-            for fd, event_type in events:
+            for _, event_type in events:
                 if event_type & select.EPOLLHUP:
                     os.close(r)
                     return
@@ -1023,10 +1023,7 @@ def package_versions(*packages):
                 version = "N/A"
             versions.append((package, version))
 
-    package_width, version_width = map(
-        max, [map(len, t) for t in zip(*versions)]
-    )
-
+    package_width = max(len(version[0]) for version in versions)
     fmt = "%%-%ds %%s" % package_width
     return "\n".join([fmt % v for v in versions])
 

@@ -407,11 +407,11 @@ class T(unittest.TestCase):
         skip_atime = False
         dir = rep
         while len(dir) > 1:
-            dir, filename = os.path.split(dir)
+            dir = os.path.split(dir)[0]
             if os.path.ismount(dir):
                 with open("/proc/mounts") as f:
                     for line in f:
-                        mount, fs, options = line.split(" ")[1:4]
+                        mount, _, options = line.split(" ")[1:4]
                         if mount == dir and "noatime" in options.split(","):
                             skip_atime = True
                             break

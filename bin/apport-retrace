@@ -258,7 +258,7 @@ def find_file_dir(name, dir, limit=None):
     number of hits."""
 
     result = []
-    for root, dirs, files in os.walk(dir):
+    for root, dirs, files in os.walk(dir):  # pylint: disable=unused-variable
         if name in files:
             result.append(os.path.join(root, name))
             if limit and len(result) >= limit:

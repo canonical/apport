@@ -359,7 +359,7 @@ class T(unittest.TestCase):
 
         disasm = """0x08083540 <main+0>:    mov    $1,%ecx"""
         segv = parse_segv.ParseSegv(regs, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertFalse(understood, details)
 
         # Verify calculations
@@ -394,7 +394,7 @@ class T(unittest.TestCase):
         # Again, but 64bit
         disasm = """0x08083540 <main+0>:    mov    $1,%rcx"""
         segv = parse_segv.ParseSegv(regs64, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertFalse(understood, details)
 
         self.assertEqual(
@@ -580,7 +580,7 @@ class T(unittest.TestCase):
         reg = regs + "esp            0xbfc56ff0   0xbfc56ff0"
         disasm = "0x08083547 <main+7>:    push  %eax"
         segv = parse_segv.ParseSegv(reg, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
             'destination "(%esp)" (0xbfc56ff0) not located'
@@ -592,7 +592,7 @@ class T(unittest.TestCase):
         reg = regs + "esp            0xbfc56fff   0xbfc56fff"
         disasm = "0x08083547 <main+7>:    callq  0x08083540"
         segv = parse_segv.ParseSegv(reg, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
             'destination "(%esp)" (0xbfc56fff) not located'
@@ -605,7 +605,7 @@ class T(unittest.TestCase):
         reg = regs + "esp            0xdfc56000   0xdfc56000"
         disasm = """0x08083540 <main+0>:    mov    $1,%rcx"""
         segv = parse_segv.ParseSegv(reg, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
             "SP (0xdfc56000) not located in a known VMA region"
@@ -620,7 +620,7 @@ class T(unittest.TestCase):
         # Crash in valid code path
         disasm = """0x0056e010: ret"""
         segv = parse_segv.ParseSegv(regs, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertFalse(understood, details)
         self.assertIn("Reason could not be automatically determined.", details)
         self.assertNotIn("(Unhandled exception in kernel code?)", details)
@@ -628,7 +628,7 @@ class T(unittest.TestCase):
         # Crash from kernel code path
         disasm = """0x00b67422 <__kernel_vsyscall+2>: ret"""
         segv = parse_segv.ParseSegv(regs, disasm, maps)
-        understood, reason, details = segv.report()
+        understood, _, details = segv.report()
         self.assertFalse(understood, details)
         self.assertIn(
             "Reason could not be automatically determined."

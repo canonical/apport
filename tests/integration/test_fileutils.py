@@ -549,20 +549,20 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
         # Create some test files
         for x in range(num_core_files):
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 pid=123 + x,
                 exe="/usr/bin/test",
                 uid=fake_uid,
                 timestamp=222222 + x,
-            )
+            )[1]
             with open(core_path, "w") as fd:
                 fd.write("Some stuff")
                 time.sleep(1)
 
         # Create a file with a different uid
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_path = apport.fileutils.get_core_path(
             pid=231, exe="/usr/bin/test", uid=fake_uid + 1, timestamp=333333
-        )
+        )[1]
         with open(core_path, "w") as fd:
             fd.write("Some stuff")
 
@@ -591,10 +591,10 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         # Make sure we deleted the oldest ones
         for x in range(apport.fileutils.max_corefiles_per_uid - 1):
             offset = extra_core_files + x + 1
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 pid=123 + offset,
                 exe="/usr/bin/test",
                 uid=fake_uid,
                 timestamp=222222 + offset,
-            )
+            )[1]
             self.assertTrue(os.path.exists(core_path))

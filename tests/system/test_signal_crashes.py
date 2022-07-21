@@ -170,7 +170,7 @@ class T(unittest.TestCase):
                         else:
                             raise
                     totalmb -= 1
-                (out, err) = app.communicate()
+                err = app.communicate()[1]
             self.assertEqual(app.returncode, 0, err)
             onemb = None
         finally:

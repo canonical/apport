@@ -204,7 +204,7 @@ class T(unittest.TestCase):
         ]
 
         for line in pr["ProcEnviron"].splitlines():
-            (k, v) = line.split("=", 1)
+            k = line.split("=", 1)[0]
             self.assertIn(k, allowed_vars)
 
         # UserGroups only has system groups
@@ -1006,9 +1006,9 @@ class T(unittest.TestCase):
                 call_apport(command_process, sig, suid_dumpable, core_fd)
             os.unlink(gdb_core_file)
 
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 command_process.pid, command, command_process.uids().real
-            )
+            )[1]
         finally:
             gdb.kill()
             gdb.communicate()

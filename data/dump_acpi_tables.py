@@ -38,9 +38,7 @@ def dump_acpi_table(filename, tablename, out):
                 byte = f.read(1)
         finally:
             if (n % 16) != 0:
-                for i in range(n & 15, 16):
-                    hex_str = hex_str + "   "
-
+                hex_str += "   " * (16 - n % 16)
                 out.write("%s %s\n" % (hex_str, ascii_str))
 
     out.write("\n")
