@@ -468,7 +468,7 @@ def command_output(
 
 
 def _spawn_pkttyagent():
-    global _AGENT
+    global _AGENT  # pylint: disable=global-statement
 
     if _AGENT is not None:
         return
@@ -506,7 +506,7 @@ def _spawn_pkttyagent():
 
 
 def kill_pkttyagent():
-    global _AGENT
+    global _AGENT  # pylint: disable=global-statement
 
     if _AGENT is None:
         return

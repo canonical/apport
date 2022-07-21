@@ -98,6 +98,7 @@ def proc_pid_opener(path, flags):
 def get_pid_info(pid):
     """Read /proc information about pid"""
 
+    # pylint: disable=global-statement
     global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
 
     proc_pid_fd = os.open(
@@ -505,7 +506,7 @@ def is_same_ns(pid, ns):
     # check to see if the process is part of the system.slice (LP: #1870060)
     if os.path.exists("/proc/%s/cgroup" % pid):
 
-        global proc_pid_fd
+        global proc_pid_fd  # pylint: disable=global-statement
         proc_pid_fd = os.open(
             "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
         )

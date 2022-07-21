@@ -1250,7 +1250,7 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     ticket = None
     url = "https://%s/+storeblob" % hostname
 
-    global _https_upload_callback
+    global _https_upload_callback  # pylint: disable=global-statement
     _https_upload_callback = progress_callback
 
     # build the form-data multipart/MIME request
@@ -1294,10 +1294,22 @@ if __name__ == "__main__":
     import unittest
     from unittest.mock import patch
 
-    crashdb = None
-    _segv_report = None
-    _python_report = None
-    _uncommon_description_report = None
+    _CACHE = {}
+
+    def cache(func):
+        """Decorator to cache result of function/method call.
+
+        The cache is ignored if force_fresh is set to True.
+        """
+
+        def try_to_get_from_cache(*args, **kwargs):
+            if kwargs.get("force_fresh", False):
+                return func(*args, **kwargs)
+            if func.__name__ not in _CACHE:
+                _CACHE[func.__name__] = func(*args, **kwargs)
+            return _CACHE[func.__name__]
+
+        return try_to_get_from_cache
 
     class _T(unittest.TestCase):
         # this assumes that a source package 'coreutils' exists and builds a
@@ -1310,10 +1322,7 @@ if __name__ == "__main__":
         #
 
         def setUp(self):
-            global crashdb
-            if not crashdb:
-                crashdb = self._get_instance()
-            self.crashdb = crashdb
+            self.crashdb = self._get_instance()
 
             # create a local reference report so that we can compare
             # DistroRelease, Architecture, etc.
@@ -1344,6 +1353,7 @@ if __name__ == "__main__":
 
             return self.crashdb.get_hostname()
 
+        @cache
         def get_segv_report(self, force_fresh=False):
             """Generate SEGV crash report.
 
@@ -1352,10 +1362,6 @@ if __name__ == "__main__":
 
             Return the ID.
             """
-            global _segv_report
-            if not force_fresh and _segv_report is not None:
-                return _segv_report
-
             r = self._generate_sigsegv_report()
             r.add_package_info(self.test_package)
             r.add_os_info()
@@ -1380,19 +1386,14 @@ if __name__ == "__main__":
                 "(Created SEGV report: https://%s/bugs/%i) "
                 % (self.hostname, id)
             )
-            if not force_fresh:
-                _segv_report = id
             return id
 
+        @cache
         def get_python_report(self):
             """Generate Python crash report.
 
             Return the ID.
             """
-            global _python_report
-            if _python_report is not None:
-                return _python_report
-
             r = apport.Report("Crash")
             r["ExecutablePath"] = "/bin/foo"
             r[
@@ -1420,9 +1421,9 @@ NameError: global name 'weird' is not defined"""
                 "(Created Python report: https://%s/bugs/%i) "
                 % (self.hostname, id)
             )
-            _python_report = id
             return id
 
+        @cache
         def get_uncommon_description_report(self, force_fresh=False):
             """File a bug report with an uncommon description.
 
@@ -1435,10 +1436,6 @@ NameError: global name 'weird' is not defined"""
 
             Return the ID.
             """
-            global _uncommon_description_report
-            if not force_fresh and _uncommon_description_report is not None:
-                return _uncommon_description_report
-
             desc = """problem
 
 ProblemType: Package
@@ -1459,8 +1456,6 @@ and more
                 % (self.hostname, bug.id)
             )
 
-            if not force_fresh:
-                _uncommon_description_report = bug.id
             return bug.id
 
         def test_1_download(self):
@@ -2074,6 +2069,7 @@ and more
         #
 
         @classmethod
+        @cache
         def _get_instance(klass):
             """Create a CrashDB instance"""
 

@@ -34,8 +34,6 @@ from apport.crashdb import get_crashdb
 # functions
 #
 
-log_timestamps = False
-
 
 def parse_args():
     """Parse command line options and return args namespace."""
@@ -217,10 +215,6 @@ def parse_args():
     # sandbox)
     if args.cache and not args.sandbox:
         argparser.error(_("You cannot use -C without -S. Stopping."))
-
-    if args.timestamps:
-        global log_timestamps
-        log_timestamps = True
 
     return args
 
@@ -491,7 +485,7 @@ if options.sandbox:
         sandbox_dir,
         options.extra_package,
         options.verbose,
-        log_timestamps,
+        options.timestamps,
         options.dynamic_origins,
     )
 else:
@@ -531,7 +525,7 @@ if options.gdb_sandbox:
             gdb_sandbox_dir,
             gdb_packages,
             options.verbose,
-            log_timestamps,
+            options.timestamps,
             options.dynamic_origins,
         )
     # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path), for
@@ -592,7 +586,7 @@ if options.gdb:
                 cmd += "'" + w + "'"
             else:
                 cmd += w
-        apport.log("Calling gdb command: " + cmd, log_timestamps)
+        apport.log("Calling gdb command: " + cmd, options.timestamps)
     apport.memdbg("before calling gdb")
     subprocess.call(gdb_cmd, env=environ)
 else:
@@ -664,23 +658,23 @@ if modified:
                         apport.log(
                             "Report is a duplicate of #%i (not fixed yet)"
                             % res[0],
-                            log_timestamps,
+                            options.timestamps,
                         )
                     elif res[1] == "":
                         apport.log(
                             "Report is a duplicate of #%i"
                             " (fixed in latest version)" % res[0],
-                            log_timestamps,
+                            options.timestamps,
                         )
                     else:
                         apport.log(
                             "Report is a duplicate of #%i"
                             " (fixed in version %s)" % res,
-                            log_timestamps,
+                            options.timestamps,
                         )
                     update_bug = False
                 else:
-                    apport.log("Duplicate check negative", log_timestamps)
+                    apport.log("Duplicate check negative", options.timestamps)
 
             if update_bug:
                 if "Stacktrace" in report:
@@ -688,12 +682,12 @@ if modified:
                     apport.log(
                         "New attachments uploaded to crash database LP: #"
                         + crashid,
-                        log_timestamps,
+                        options.timestamps,
                     )
                 else:
                     # this happens when gdb crashes
                     apport.log(
-                        "No stack trace, invalid report", log_timestamps
+                        "No stack trace, invalid report", options.timestamps
                     )
 
                 if not report.has_useful_stacktrace():
@@ -718,14 +712,14 @@ Thank you for your understanding, and sorry for the inconvenience!
                         apport.log(
                             "No crash signature and outdated packages,"
                             " invalidating report",
-                            log_timestamps,
+                            options.timestamps,
                         )
                         crashdb.mark_retrace_failed(crashid, invalid_msg)
                     else:
                         apport.log(
                             "Report has no crash signature,"
                             " so retrace is flawed",
-                            log_timestamps,
+                            options.timestamps,
                         )
                         crashdb.mark_retrace_failed(crashid)
 
