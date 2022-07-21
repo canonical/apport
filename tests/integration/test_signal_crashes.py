@@ -868,13 +868,17 @@ class T(unittest.TestCase):
             # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
             conn = server.accept()[0]
             os.dup2(conn.fileno(), 3)
+            conn.close()
 
-        subprocess.run(
-            [self.apport_path],
-            check=True,
-            preexec_fn=child_setup,
-            pass_fds=[3],
-        )
+        try:
+            subprocess.run(
+                [self.apport_path],
+                check=True,
+                preexec_fn=child_setup,
+                pass_fds=[3],
+            )
+        finally:
+            server.close()
 
     def _check_core_file_is_valid(self, core_path: str, command: str) -> None:
         st = os.stat(core_path)
