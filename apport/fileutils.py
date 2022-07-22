@@ -180,7 +180,7 @@ def find_snap(snap):
             response = c.getresponse()
             if response.status == 200:
                 return json.loads(response.read())["result"]
-    except Exception:
+    except (http.client.HTTPException, json.JSONDecodeError, OSError):
         return None
 
 

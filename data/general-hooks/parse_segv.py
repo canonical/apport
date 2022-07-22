@@ -410,7 +410,7 @@ def add_info(report):
         if understood:
             report["SegvReason"] = reason
         report["SegvAnalysis"] = details
-    except BaseException as error:
+    except Exception as error:  # pylint: disable=broad-except
         report["SegvAnalysis"] = "Failure: %s" % (str(error))
 
 

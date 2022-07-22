@@ -198,7 +198,7 @@ def _log_signal_handler(sgn, frame):
         error_log("Got signal %i, aborting; frame:" % sgn)
         for s in inspect.stack():
             error_log(str(s))
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
     sys.exit(1)
 
@@ -709,7 +709,7 @@ if options.global_pid is not None:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
             sock.connect("/proc/self/fd/%s" % sock_fd)
-        except Exception:
+        except OSError:
             error_log(
                 "host pid %s crashed in a container with a broken apport"
                 % options.global_pid
@@ -743,7 +743,7 @@ if options.global_pid is not None:
                 ],
             )
             sock.shutdown(socket.SHUT_RDWR)
-        except Exception:
+        except TimeoutError:
             error_log("Container apport failed to process crash within 30s")
 
         sys.exit(0)
@@ -1021,7 +1021,7 @@ try:
 
 except (SystemExit, KeyboardInterrupt):
     pass
-except Exception:
+except Exception:  # pylint: disable=broad-except
     error_log("Unhandled exception:")
     traceback.print_exc()
     error_log(

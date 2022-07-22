@@ -70,14 +70,10 @@ class T(unittest.TestCase):
         raised = False
         try:
             t.exc_raise()
-        except Exception:
+        except ZeroDivisionError:
             raised = True
             error = sys.exc_info()
             exc = traceback.format_exception(error[0], error[1], error[2])
-            self.assertTrue(
-                exc[-1].startswith("ZeroDivisionError"),
-                "not a ZeroDivisionError:" + str(error),
-            )
             self.assertTrue(exc[-2].endswith("return x / y\n"))
         self.assertTrue(raised)
 

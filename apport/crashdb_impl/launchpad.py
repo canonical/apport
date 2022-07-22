@@ -27,7 +27,7 @@ import urllib.request
 from httplib2 import FailedToDecompressContent
 
 try:
-    from launchpadlib.errors import HTTPError
+    from launchpadlib.errors import HTTPError, RestfulError
     from launchpadlib.launchpad import Launchpad
 except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
@@ -173,7 +173,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 credentials_file=self.auth,
                 version="1.0",
             )
-        except Exception as error:
+        except (RestfulError, OSError, ValueError) as error:
             apport.error(
                 "connecting to Launchpad failed: %s\n"
                 'You can reset the credentials by removing the file "%s"',
@@ -373,7 +373,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # ignore attachments with invalid keys
             try:
                 report[key] = ""
-            except Exception:
+            except (AssertionError, TypeError, ValueError):
                 continue
             if ext == ".txt":
                 report[key] = attachment.read()
@@ -604,7 +604,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 tags=self.arch_tag, created_since="2011-08-01"
             )
             return id_set(bugs)
-        except Exception as error:
+        except HTTPError as error:
             apport.error("connecting to Launchpad failed: %s", str(error))
             sys.exit(99)  # transient error
 
@@ -621,7 +621,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 tags="need-duplicate-check", created_since="2011-08-01"
             )
             return id_set(bugs)
-        except Exception as error:
+        except HTTPError as error:
             apport.error("connecting to Launchpad failed: %s", str(error))
             sys.exit(99)  # transient error
 

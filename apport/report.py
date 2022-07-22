@@ -197,7 +197,7 @@ def _check_bug_pattern(report, pattern):
                     regexp = regexp.encode("UTF-8")
                 try:
                     re_c = re.compile(regexp)
-                except Exception:
+                except (re.error, TypeError, ValueError):
                     continue
                 if not re_c.search(v):
                     return None
@@ -250,7 +250,7 @@ def _run_hook(report, ui, hook):
                 raise
     except StopIteration:
         return True
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         hookname = os.path.splitext(os.path.basename(hook))[0].replace(
             "-", "_"
         )

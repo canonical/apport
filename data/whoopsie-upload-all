@@ -75,7 +75,7 @@ def process_report(report):
                 return None
             r.load(f, binary="compressed")
             report_stat = os.stat(report)
-    except Exception as error:
+    except (OSError, zlib.error) as error:
         sys.stderr.write("ERROR: cannot load %s: %s\n" % (report, str(error)))
         return None
     if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:
@@ -97,7 +97,7 @@ def process_report(report):
         # add information from package specific hooks
         try:
             r.add_hooks_info(None)
-        except Exception as error:
+        except Exception as error:  # pylint: disable=broad-except
             sys.stderr.write(
                 "WARNING: hook failed for processing %s: %s\n"
                 % (report, str(error))

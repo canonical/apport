@@ -101,7 +101,7 @@ def read_file(path, force_unicode=False):
             return contents.decode("UTF-8")
         except UnicodeDecodeError:
             return contents
-    except Exception as error:
+    except OSError as error:
         return "Error: " + str(error)
 
 
@@ -972,7 +972,7 @@ def attach_mac_events(report, profiles=None):
                 profile = bytes.fromhex(match).decode(
                     "UTF-8", errors="replace"
                 )
-        except Exception:
+        except (IndexError, ValueError):
             continue
 
         for search_profile in profiles:

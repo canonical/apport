@@ -26,11 +26,13 @@ import os.path
 import re
 import shutil
 import signal
+import smtplib
 import subprocess
 import sys
 import threading
 import time
 import traceback
+import urllib.error
 import webbrowser
 import zlib
 
@@ -111,7 +113,7 @@ def thread_collect_info(
             )[0]
         except StopIteration:
             sys.exit(0)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             apport.error("symptom script %s crashed:", symptom_script)
             traceback.print_exc()
             sys.exit(0)
@@ -780,7 +782,7 @@ class UserInterface:
                 with open(script) as f:
                     # legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 apport.error("symptom script %s is invalid", script)
                 traceback.print_exc()
                 continue
@@ -1326,7 +1328,7 @@ class UserInterface:
                 spec = ast.literal_eval(self.report["CrashDB"])
                 assert isinstance(spec, dict)
                 assert "impl" in spec
-            except Exception as error:
+            except (AssertionError, SyntaxError, ValueError) as error:
                 self.report["UnreportableReason"] = (
                     "A package hook defines an invalid crash database"
                     " definition:\n%s\n%s" % (self.report["CrashDB"], error)
@@ -1503,7 +1505,7 @@ class UserInterface:
                             " that is not installed."
                         )
                         self.report["_MarkForUpload"] = "False"
-                except Exception as error:
+                except Exception as error:  # pylint: disable=broad-except
                     apport.error(repr(error))
                     self.report["UnreportableReason"] = (
                         _(
@@ -1756,7 +1758,7 @@ class UserInterface:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
                 sys.exit(0)
-        except Exception as error:
+        except Exception as error:  # pylint: disable=broad-except
             os.write(w, str(error))
             sys.exit(1)
         os._exit(0)
@@ -1823,9 +1825,7 @@ class UserInterface:
                         args=(self.report, progress_callback),
                     )
                     upthread.start()
-            except (TypeError, SyntaxError, ValueError):
-                raise
-            except Exception as error:
+            except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
                 self.ui_error_message(
                     _("Network problem"),
                     "%s\n\n%s"
@@ -1945,16 +1945,11 @@ class UserInterface:
         cp = configparser.ConfigParser(interpolation=None, strict=False)
         try:
             cp.read(desktop_file, encoding="UTF-8")
-        except Exception as error:
-            if "onfig" in str(error.__class__) and "arser" in str(
-                error.__class__
-            ):
-                sys.stderr.write(
-                    "Warning! %s is broken: %s\n" % (desktop_file, str(error))
-                )
-                return None
-            else:
-                raise
+        except configparser.Error as error:
+            sys.stderr.write(
+                "Warning! %s is broken: %s\n" % (desktop_file, str(error))
+            )
+            return None
         if not cp.has_section("Desktop Entry"):
             return None
         result = dict(cp.items("Desktop Entry"))

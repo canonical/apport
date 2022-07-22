@@ -970,7 +970,7 @@ def get_crashdb(auth_file, name=None, conf=None):
                             compile(f.read(), cfpath, "exec"),
                             settings["databases"],
                         )
-                except Exception as error:
+                except Exception as error:  # pylint: disable=broad-except
                     # ignore broken files
                     sys.stderr.write(
                         "Invalid file %s: %s\n" % (cfpath, str(error))
