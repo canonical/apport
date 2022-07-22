@@ -119,7 +119,17 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             with subprocess.Popen(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
@@ -209,7 +219,17 @@ class T(unittest.TestCase):
         test_proc2 = self.create_test_process("/bin/dd", args=[])
         try:
             with subprocess.Popen(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
@@ -217,7 +237,17 @@ class T(unittest.TestCase):
                 time.sleep(0.5)  # give it some time to grab the lock
 
                 with subprocess.Popen(
-                    [self.apport_path, str(test_proc2.pid), "42", "0", "1"],
+                    [
+                        self.apport_path,
+                        "-p",
+                        str(test_proc2.pid),
+                        "-s",
+                        "42",
+                        "-c",
+                        "0",
+                        "-d",
+                        "1",
+                    ],
                     stdin=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 ) as app2:
@@ -306,7 +336,7 @@ class T(unittest.TestCase):
         with open(log) as log_file:
             logged = log_file.read()
         self.assertIn("usage", logged)
-        self.assertIn("error: No process ID (PID) provided", logged)
+        self.assertIn("the following arguments are required: -p/--pid", logged)
 
     def test_ignore_sigquit(self):
         """apport ignores SIGQUIT"""
@@ -518,7 +548,17 @@ class T(unittest.TestCase):
             os.utime(myexe, None)
 
             app = subprocess.run(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 check=False,
                 input=b"foo",
                 stderr=subprocess.PIPE,
@@ -550,7 +590,17 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = log
             app = subprocess.run(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 check=False,
                 env=env,
                 input="hel\x01lo",
@@ -593,7 +643,17 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = "/not/existing/apport.log"
             app = subprocess.run(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 check=False,
                 encoding="UTF-8",
                 env=env,

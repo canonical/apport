@@ -147,7 +147,17 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             with subprocess.Popen(
-                [self.apport_path, str(test_proc.pid), "42", "0", "1"],
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
