@@ -107,16 +107,14 @@ class T(unittest.TestCase):
         )
 
     def tearDown(self):
-        shutil.rmtree(self.report_dir)
-        shutil.rmtree(self.workdir)
-
         # permit tests to leave behind test_report, but nothing else
         if os.path.exists(self.test_report):
             apport.fileutils.delete_report(self.test_report)
-        unexpected_reports = apport.fileutils.get_all_reports()
-        for r in unexpected_reports:
-            apport.fileutils.delete_report(r)
-        self.assertEqual(unexpected_reports, [])
+        try:
+            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        finally:
+            shutil.rmtree(self.report_dir)
+            shutil.rmtree(self.workdir)
 
     def test_empty_core_dump(self):
         """empty core dumps do not generate a report"""
