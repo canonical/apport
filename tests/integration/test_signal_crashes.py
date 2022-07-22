@@ -773,6 +773,14 @@ class T(unittest.TestCase):
         # should not create report on the host
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
+    def test_core_dump_packaged_sigquit_via_socket(self):
+        """executable create core files via socket, no report for SIGQUIT"""
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+        self.do_crash(
+            expect_corefile=True, sig=signal.SIGQUIT, via_socket=True
+        )
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
+
     @unittest.skipUnless(
         os.path.exists("/bin/ping"), "this test needs /bin/ping"
     )
@@ -876,6 +884,7 @@ class T(unittest.TestCase):
                 check=True,
                 preexec_fn=child_setup,
                 pass_fds=[3],
+                stdin=subprocess.DEVNULL,
             )
         finally:
             server.close()
