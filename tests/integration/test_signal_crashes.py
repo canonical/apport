@@ -101,10 +101,7 @@ class T(unittest.TestCase):
         os.chdir("/tmp")
 
         # expected report name for test executable report
-        self.test_report = os.path.join(
-            apport.fileutils.report_dir,
-            f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
-        )
+        self.test_report = self._get_report_filename(self.TEST_EXECUTABLE)
 
     def tearDown(self):
         # permit tests to leave behind test_report, but nothing else
@@ -133,22 +130,13 @@ class T(unittest.TestCase):
             test_proc.kill()
             test_proc.wait()
 
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self._check_report(expect_report=False)
 
     def test_crash_apport(self):
         """report generation with apport"""
 
         self.do_crash()
-
-        # check crash report
-        self.assertEqual(
-            apport.fileutils.get_all_reports(), [self.test_report]
-        )
         st = os.stat(self.test_report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        self.assertEqual(st.st_uid, os.geteuid(), "report has correct owner")
 
         # a subsequent crash does not alter unseen report
         self.do_crash()
@@ -275,8 +263,7 @@ class T(unittest.TestCase):
             with open(self.TEST_EXECUTABLE, "rb") as src:
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command=local_exe, expect_report=False)
 
     def test_unpackaged_script(self):
         """unpackaged scripts do not create a report"""
@@ -285,15 +272,13 @@ class T(unittest.TestCase):
         with open(local_exe, "w") as f:
             f.write("#!/usr/bin/perl\nsleep(86400);\n")
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe, args=[])
 
         # absolute path
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command=local_exe, args=[], expect_report=False)
 
         # relative path
         os.chdir(self.workdir)
-        self.do_crash(command="./myscript", args=[])
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command="./myscript", args=[], expect_report=False)
 
     def test_unsupported_arguments_no_stderr(self):
         """Write failure to log file when stderr is missing
@@ -325,9 +310,7 @@ class T(unittest.TestCase):
 
     def test_ignore_sigquit(self):
         """apport ignores SIGQUIT"""
-
-        self.do_crash(sig=signal.SIGQUIT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(sig=signal.SIGQUIT, expect_report=False)
 
     def test_leak_inaccessible_files(self):
         """existence of user-inaccessible files does not leak"""
@@ -398,21 +381,6 @@ class T(unittest.TestCase):
             command=myexe, expect_corefile=False, uid=8, suid_dumpable=2
         )
 
-        # check crash report
-        reports = apport.fileutils.get_new_system_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is an unreadable binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
-
-        # no user reports
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-
     def test_core_dump_packaged(self):
         """packaged executables create core dumps on proper ulimits"""
 
@@ -425,9 +393,6 @@ class T(unittest.TestCase):
                     expect_corefile_owner=os.geteuid(),
                     sig=sig,
                 )
-                self.assertEqual(
-                    apport.fileutils.get_all_reports(), [self.test_report]
-                )
                 self.check_report_coredump(self.test_report)
                 apport.fileutils.delete_report(self.test_report)
 
@@ -438,8 +403,9 @@ class T(unittest.TestCase):
     def test_core_dump_packaged_sigquit(self):
         """packaged executables create core files, no report for SIGQUIT"""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(
+            expect_corefile=True, expect_report=False, sig=signal.SIGQUIT
+        )
 
     def test_core_dump_unpackaged(self):
         """unpackaged executables create core dumps on proper ulimits"""
@@ -456,10 +422,10 @@ class T(unittest.TestCase):
                 self.do_crash(
                     expect_corefile=exp_file,
                     expect_corefile_owner=os.geteuid(),
+                    expect_report=False,
                     command=local_exe,
                     sig=sig,
                 )
-                self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_core_file_injection(self):
         """cannot inject core file"""
@@ -468,7 +434,8 @@ class T(unittest.TestCase):
         # as that allows us to intercept and replace the report and tinker with
         # the core dump
 
-        with open(self.test_report + ".inject", "w") as f:
+        inject_report = self.test_report + ".inject"
+        with open(inject_report, "w") as f:
             # \x01pwned
             f.write(
                 textwrap.dedent(
@@ -480,6 +447,7 @@ class T(unittest.TestCase):
                     """
                 )
             )
+        os.chmod(inject_report, 0o640)
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
@@ -505,7 +473,7 @@ class T(unittest.TestCase):
                     break
                 except OSError:
                     pass
-            os.rename(self.test_report + ".inject", self.test_report)
+            os.rename(inject_report, self.test_report)
             os._exit(os.EX_OK)
 
         # do_crash verifies that we get the original core, not the injected one
@@ -518,18 +486,14 @@ class T(unittest.TestCase):
 
         self.do_crash()
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
+        os.unlink(self.test_report)
 
         pr.mark_ignore()
 
-        self.do_crash()
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(expect_report=False)
 
     def test_modify_after_start(self):
         """ignores executables which got modified after process started"""
@@ -575,7 +539,7 @@ class T(unittest.TestCase):
             test_proc.kill()
             test_proc.wait()
 
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self._check_report(expect_report=False)
 
     def test_logging_file(self):
         """outputs to log file, if available"""
@@ -612,13 +576,10 @@ class T(unittest.TestCase):
         self.assertIn("wrote report", logged)
         self.assertNotIn("Traceback", logged)
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
+        self._check_report()
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
@@ -651,13 +612,10 @@ class T(unittest.TestCase):
         self.assertIn("wrote report", app.stderr)
         self.assertNotIn("Traceback", app.stderr)
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
+        self._check_report()
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
@@ -686,18 +644,6 @@ class T(unittest.TestCase):
         # core files
         self.do_crash(command=myexe, uid=8, suid_dumpable=2)
 
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
-
     @unittest.skipUnless(
         os.path.exists("/bin/ping"), "this test needs /bin/ping"
     )
@@ -713,18 +659,6 @@ class T(unittest.TestCase):
         self.do_crash(
             command="/bin/ping", args=["127.0.0.1"], uid=8, suid_dumpable=2
         )
-
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self):
@@ -745,11 +679,12 @@ class T(unittest.TestCase):
         # if a user can crash a suid root binary, it should not create
         # core files
         self.do_crash(
-            command=myexe, expect_corefile=False, uid=8, suid_dumpable=2
+            command=myexe,
+            expect_corefile=False,
+            expect_report=False,
+            uid=8,
+            suid_dumpable=2,
         )
-
-        # there should not be a crash report
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_coredump_from_socket(self):
         """forwarding of a core dump through socket
@@ -759,25 +694,21 @@ class T(unittest.TestCase):
         """
         self.do_crash(via_socket=True)
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
         self.assertEqual(pr["Signal"], "11")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
-
-        # should not create report on the host
-        self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
     def test_core_dump_packaged_sigquit_via_socket(self):
         """executable create core files via socket, no report for SIGQUIT"""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(
-            expect_corefile=True, sig=signal.SIGQUIT, via_socket=True
+            expect_corefile=True,
+            expect_report=False,
+            sig=signal.SIGQUIT,
+            via_socket=True,
         )
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     @unittest.skipUnless(
         os.path.exists("/bin/ping"), "this test needs /bin/ping"
@@ -796,18 +727,9 @@ class T(unittest.TestCase):
         )
 
         # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
         report = apport.Report()
-        with open(reports[0], "rb") as report_file:
+        with open(self.test_report, "rb") as report_file:
             report.load(report_file)
-        st = os.stat(reports[0])
-        os.unlink(reports[0])
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
         self.assertEqual(report["Signal"], "11")
         self.assertEqual(
             report["ExecutablePath"], os.path.realpath("/bin/ping")
@@ -899,6 +821,31 @@ class T(unittest.TestCase):
         )
         self.assertNotEqual(gdb.stdout.strip(), "")
 
+    def _check_report(
+        self,
+        expect_report: bool = True,
+        expected_owner: typing.Optional[int] = None,
+    ) -> None:
+        if not expect_report:
+            self.assertEqual(apport.fileutils.get_all_reports(), [])
+            return
+
+        if expected_owner is None:
+            expected_owner = os.geteuid()
+
+        self.assertEqual(
+            apport.fileutils.get_all_reports(), [self.test_report]
+        )
+        st = os.stat(self.test_report)
+        self.assertEqual(
+            stat.S_IMODE(st.st_mode),
+            0o640,
+            f"{self.test_report} has correct permissions",
+        )
+        self.assertEqual(
+            st.st_uid, expected_owner, f"{self.test_report} has correct owner"
+        )
+
     def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
@@ -943,6 +890,7 @@ class T(unittest.TestCase):
         args=None,
         suid_dumpable: int = 1,
         hook_before_apport=None,
+        expect_report: bool = True,
         via_socket: bool = False,
     ):
         """Generate a test crash.
@@ -971,6 +919,8 @@ class T(unittest.TestCase):
         if shebang:
             args.insert(0, command)
             command = shebang
+
+        self.test_report = self._get_report_filename(command)
 
         gdb_core_file = os.path.join(self.workdir, "core")
         self.assertFalse(
@@ -1054,6 +1004,11 @@ class T(unittest.TestCase):
 
                 self.fail("leaves unexpected core file behind")
 
+        self._check_report(
+            expect_report=expect_report,
+            expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
+        )
+
     def gdb_command(self, command, args, core_file, uid):
         """Construct GDB arguments to call the test executable.
 
@@ -1085,6 +1040,13 @@ class T(unittest.TestCase):
             command,
         ]
         return gdb_args
+
+    def _get_report_filename(self, command: str) -> str:
+        return os.path.join(
+            apport.fileutils.report_dir,
+            f"{os.path.realpath(command).replace('/', '_')}"
+            f".{os.getuid()}.crash",
+        )
 
     def check_report_coredump(self, report_path):
         """Check that given report file has a valid core dump"""
