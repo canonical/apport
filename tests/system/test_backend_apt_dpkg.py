@@ -84,9 +84,9 @@ class T(unittest.TestCase):
             )
         )
         for library in ("libc6", "libcurl4"):
-            copyright = f"usr/share/doc/{library}/copyright"
+            copyright_filename = f"usr/share/doc/{library}/copyright"
             self.assertTrue(
-                os.path.exists(os.path.join(self.rootdir, copyright))
+                os.path.exists(os.path.join(self.rootdir, copyright_filename))
             )
 
         # their versions are as expected

@@ -169,13 +169,14 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None):
-        """Download a source package and unpack it into dir..
+    def get_source_tree(
+        self, srcpackage, output_dir, version=None, sandbox=None
+    ):
+        """Download source package and unpack it into output_dir.
 
-        dir should exist and be empty.
-
-        This also has to care about applying patches etc., so that dir will
-        eventually contain the actually compiled source.
+        This also has to care about applying patches etc., so that output_dir
+        will eventually contain the actually compiled source. output_dir needs
+        to exist and should be empty.
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
@@ -184,8 +185,8 @@ class PackageInfo:
         package, otherwise it uses the system configuration.
 
         Return the directory that contains the actual source root directory
-        (which might be a subdirectory of dir). Return None if the source is
-        not available.
+        (which might be a subdirectory of output_dir). Return None if the
+        source is not available.
         """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"

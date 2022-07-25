@@ -886,7 +886,7 @@ try:
     # ignore non-package binaries (unless configured otherwise)
     if not apport.fileutils.likely_packaged(info["ExecutablePath"]):
         if not apport.fileutils.get_config(
-            "main", "unpackaged", False, bool=True
+            "main", "unpackaged", False, boolean=True
         ):
             error_log("executable does not belong to a package, ignoring")
             # check if the user wants a core dump

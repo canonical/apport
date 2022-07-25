@@ -404,17 +404,17 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             )
             self.assertEqual(apport.fileutils.get_config("main", "two"), "TWO")
             self.assertEqual(
-                apport.fileutils.get_config("main", "b1", bool=True), True
+                apport.fileutils.get_config("main", "b1", boolean=True), True
             )
             self.assertEqual(
-                apport.fileutils.get_config("main", "b2", bool=True), False
+                apport.fileutils.get_config("main", "b2", boolean=True), False
             )
             self.assertEqual(
-                apport.fileutils.get_config("main", "b3", bool=True), None
+                apport.fileutils.get_config("main", "b3", boolean=True), None
             )
             self.assertEqual(
                 apport.fileutils.get_config(
-                    "main", "b3", default=False, bool=True
+                    "main", "b3", default=False, boolean=True
                 ),
                 False,
             )

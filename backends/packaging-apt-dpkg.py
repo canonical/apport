@@ -390,10 +390,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_files(self, package):
         """Return list of files shipped by a package."""
 
-        list = self._call_dpkg(["-L", package])
-        if list is None:
+        output = self._call_dpkg(["-L", package])
+        if output is None:
             return None
-        return [f for f in list.splitlines() if not f.startswith("diverted")]
+        return [f for f in output.splitlines() if not f.startswith("diverted")]
 
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
@@ -631,12 +631,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None):
-        """Download source package and unpack it into dir.
+    def get_source_tree(
+        self, srcpackage, output_dir, version=None, sandbox=None
+    ):
+        """Download source package and unpack it into output_dir.
 
-        This also has to care about applying patches etc., so that dir will
-        eventually contain the actually compiled source. dir needs to exist and
-        should be empty.
+        This also has to care about applying patches etc., so that output_dir
+        will eventually contain the actually compiled source. output_dir needs
+        to exist and should be empty.
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
@@ -648,8 +650,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         source. This is mostly necessary for freshly created sandboxes.
 
         Return the directory that contains the actual source root directory
-        (which might be a subdirectory of dir). Return None if the source is
-        not available.
+        (which might be a subdirectory of output_dir). Return None if the
+        source is not available.
         """
         # configure apt for sandbox
         env = os.environ.copy()
@@ -672,7 +674,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if version:
             argv[-1] += "=" + version
         try:
-            if subprocess.call(argv, cwd=dir, env=env) != 0:
+            if subprocess.call(argv, cwd=output_dir, env=env) != 0:
                 if not version:
                     return None
                 sf_urls = self.get_lp_source_package(
@@ -688,18 +690,20 @@ class __AptDpkgPackageInfo(PackageInfo):
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
-                            apt.apt_pkg.AcquireFile(fetcher, sf, destdir=dir)
+                            apt.apt_pkg.AcquireFile(
+                                fetcher, sf, destdir=output_dir
+                            )
                         )
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
                         return None
                     if proxy:
                         apt.apt_pkg.config.set("Acquire::http::Proxy", proxy)
-                    for dsc in glob.glob(os.path.join(dir, "*.dsc")):
+                    for dsc in glob.glob(os.path.join(output_dir, "*.dsc")):
                         subprocess.call(
                             ["dpkg-source", "-sn", "-x", dsc],
                             stdout=subprocess.PIPE,
-                            cwd=dir,
+                            cwd=output_dir,
                         )
                 else:
                     return None
@@ -708,7 +712,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # find top level directory
         root = None
-        for d in glob.glob(os.path.join(dir, srcpackage + "-*")):
+        for d in glob.glob(os.path.join(output_dir, srcpackage + "-*")):
             if os.path.isdir(d):
                 root = d
         assert root, "could not determine source tree root directory"
@@ -1469,12 +1473,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _search_contents(self, file, map_cachedir, release, arch):
         """Internal function for searching file in Contents.gz."""
 
-        if map_cachedir:
-            dir = map_cachedir
-        else:
+        if not map_cachedir:
             if not self._contents_dir:
                 self._contents_dir = tempfile.mkdtemp()
-            dir = self._contents_dir
+            map_cachedir = self._contents_dir
 
         if arch is None:
             arch = self.get_system_architecture()
@@ -1487,14 +1489,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         # XXX - maybe we shouldn't check -security and -updates if it is the
         # devel release as they will be old and empty
         for pocket in ["-proposed", "", "-security", "-updates"]:
-            map = os.path.join(
-                dir, "%s%s-Contents-%s.gz" % (release, pocket, arch)
+            contents_filename = os.path.join(
+                map_cachedir, "%s%s-Contents-%s.gz" % (release, pocket, arch)
             )
             # check if map exists and is younger than a day; if not, we need
             # to refresh it
             update = False
             try:
-                st = os.stat(map)
+                st = os.stat(contents_filename)
                 age = int(time.time() - st.st_mtime)
             except OSError:
                 age = None
@@ -1541,23 +1543,25 @@ class __AptDpkgPackageInfo(PackageInfo):
                         else:
                             continue
 
-                    with open(map, "wb") as f:
+                    with open(contents_filename, "wb") as f:
                         while True:
                             data = src.read(1000000)
                             if not data:
                                 break
                             f.write(data)
                     src.close()
-                    assert os.path.exists(map)
+                    assert os.path.exists(contents_filename)
 
-            contents_mapping = self._contents_mapping(dir, release, arch)
+            contents_mapping = self._contents_mapping(
+                map_cachedir, release, arch
+            )
             # if the mapping is empty build it
             if not contents_mapping or len(contents_mapping) == 2:
                 self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
-                with gzip.open("%s" % map, "rb") as contents:
+                with gzip.open("%s" % contents_filename, "rb") as contents:
                     line_num = 0
                     for line in contents:
                         line_num += 1
@@ -1620,7 +1624,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             contents_mapping[path] = package
         # the file only needs to be saved after an update
         if self._contents_update:
-            self._save_contents_mapping(dir, release, arch)
+            self._save_contents_mapping(map_cachedir, release, arch)
             # the update of the mapping only needs to be done once
             self._contents_update = False
         if isinstance(file, bytes):

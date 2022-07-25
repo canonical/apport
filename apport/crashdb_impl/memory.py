@@ -50,12 +50,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 "comment": "",
             }
         )
-        id = len(self.reports) - 1
+        crash_id = len(self.reports) - 1
         if "Traceback" in report:
-            self.dup_unchecked.add(id)
+            self.dup_unchecked.add(crash_id)
         else:
-            self.unretraced.add(id)
-        return id
+            self.unretraced.add(crash_id)
+        return crash_id
 
     def get_comment_url(self, report, handle):
         """Return http://<sourcepackage>.bugs.example.com/<handle> for package
@@ -70,7 +70,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             return "http://bugs.example.com/%i" % handle
 
-    def get_id_url(self, report, id):
+    def get_id_url(self, report, crash_id):
         """Return URL for a given report ID.
 
         The report is passed in case building the URL needs additional
@@ -78,24 +78,24 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         Return None if URL is not available or cannot be determined.
         """
-        return self.get_comment_url(report, id)
+        return self.get_comment_url(report, crash_id)
 
-    def download(self, id):
+    def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
 
-        return self.reports[id]["report"]
+        return self.reports[crash_id]["report"]
 
-    def get_affected_packages(self, id):
+    def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
 
-        return [self.reports[id]["report"]["SourcePackage"]]
+        return [self.reports[crash_id]["report"]["SourcePackage"]]
 
-    def is_reporter(self, id):
+    def is_reporter(self, crash_id):
         """Check whether the user is the reporter of given ID."""
 
         return True
 
-    def can_update(self, id):
+    def can_update(self, crash_id):
         """Check whether the user is eligible to update a report.
 
         A user should add additional information to an existing ID if (s)he is
@@ -103,11 +103,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         exact policy and checks should be done according to  the particular
         implementation.
         """
-        return self.is_reporter(id)
+        return self.is_reporter(crash_id)
 
     def update(
         self,
-        id,
+        crash_id,
         report,
         comment,
         change_description=False,
@@ -129,7 +129,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         If key_filter is a list or set, then only those keys will be added.
         """
-        r = self.reports[id]
+        r = self.reports[crash_id]
         r["comment"] = comment
 
         if key_filter:
@@ -139,11 +139,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             r["report"].update(report)
 
-    def get_distro_release(self, id):
+    def get_distro_release(self, crash_id):
         """Get 'DistroRelease: <release>' from the given report ID and return
         it."""
 
-        return self.reports[id]["report"]["DistroRelease"]
+        return self.reports[crash_id]["report"]["DistroRelease"]
 
     def get_unfixed(self):
         """Return an ID set of all crashes which are not yet fixed.
@@ -161,7 +161,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return result
 
-    def get_fixed_version(self, id):
+    def get_fixed_version(self, crash_id):
         """Return the package version that fixes a given crash.
 
         Return None if the crash is not yet fixed, or an empty string if the
@@ -174,47 +174,47 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         raise an exception (preferably OSError)."""
 
         try:
-            if self.reports[id]["dup_of"] is not None:
+            if self.reports[crash_id]["dup_of"] is not None:
                 return "invalid"
-            return self.reports[id]["fixed_version"]
+            return self.reports[crash_id]["fixed_version"]
         except IndexError:
             return "invalid"
 
-    def duplicate_of(self, id):
+    def duplicate_of(self, crash_id):
         """Return master ID for a duplicate bug.
 
         If the bug is not a duplicate, return None.
         """
-        return self.reports[id]["dup_of"]
+        return self.reports[crash_id]["dup_of"]
 
-    def close_duplicate(self, report, id, master_id):
+    def close_duplicate(self, report, crash_id, master_id):
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.
         """
-        self.reports[id]["dup_of"] = master_id
+        self.reports[crash_id]["dup_of"] = master_id
 
-    def mark_regression(self, id, master):
+    def mark_regression(self, crash_id, master):
         """Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master')."""
 
         assert self.reports[master]["fixed_version"] is not None
-        self.reports[id]["comment"] = (
+        self.reports[crash_id]["comment"] = (
             "regression, already fixed in #%i" % master
         )
 
-    def _mark_dup_checked(self, id, report):
+    def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""
 
         try:
-            self.dup_unchecked.remove(id)
+            self.dup_unchecked.remove(crash_id)
         except KeyError:
             pass  # happens when trying to check for dup twice
 
-    def mark_retraced(self, id):
+    def mark_retraced(self, crash_id):
         """Mark crash id as retraced."""
 
-        self.unretraced.remove(id)
+        self.unretraced.remove(crash_id)
 
     def get_unretraced(self):
         """Return an ID set of all crashes which have not been retraced yet and

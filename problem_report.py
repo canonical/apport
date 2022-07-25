@@ -93,16 +93,16 @@ class CompressedValue:
 
 
 class ProblemReport(collections.UserDict):
-    def __init__(self, type="Crash", date=None):
+    def __init__(self, problem_type="Crash", date=None):
         """Initialize a fresh problem report.
 
-        type can be 'Crash', 'Packaging', 'KernelCrash' or 'KernelOops'.
-        date is the desired date/time string; if None (default), the
-        current local time is used.
+        problem_type can be 'Crash', 'Packaging', 'KernelCrash' or
+        'KernelOops'. date is the desired date/time string; if
+        None (default), the current local time is used.
         """
         if date is None:
             date = time.asctime()
-        super().__init__({"ProblemType": type, "Date": date})
+        super().__init__({"ProblemType": problem_type, "Date": date})
 
         # keeps track of keys which were added since the last ctor or load()
         self.old_keys = set()
@@ -185,7 +185,7 @@ class ProblemReport(collections.UserDict):
 
         self.old_keys = set(self.data.keys())
 
-    def extract_keys(self, file, bin_keys, dir):
+    def extract_keys(self, file, bin_keys, directory):
         """Extract only one binary element from the problem_report
 
         Binary elements like kernel crash dumps can be very big. This method
@@ -214,9 +214,10 @@ class ProblemReport(collections.UserDict):
                 if value == b"base64":
                     value = b""
                     b64_block[key] = True
+                    key_path = os.path.join(directory, key)
                     try:
                         bd = None
-                        with open(os.path.join(dir, key), "wb") as out:
+                        with open(key_path, "wb") as out:
                             for line in file:
                                 # continuation line
                                 if line.startswith(b" "):
@@ -232,9 +233,7 @@ class ProblemReport(collections.UserDict):
                                 else:
                                     break
                     except OSError as error:
-                        raise OSError(
-                            "unable to open %s" % (os.path.join(dir, key))
-                        ) from error
+                        raise OSError(f"unable to open {key_path}") from error
                 else:
                     break
         if missing_keys:

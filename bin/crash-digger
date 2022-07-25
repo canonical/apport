@@ -94,20 +94,20 @@ class CrashDigger:
     def retrace_next(self):
         """Grab an ID from the retrace pool and retrace it."""
 
-        id = self.retrace_pool.pop()
+        crash_id = self.retrace_pool.pop()
         apport.log(
             "retracing %s#%i (left in pool: %i)"
-            % ("LP: " if self.lp else "", id, len(self.retrace_pool)),
+            % ("LP: " if self.lp else "", crash_id, len(self.retrace_pool)),
             True,
         )
 
         try:
-            rel = self.crashdb.get_distro_release(id)
+            rel = self.crashdb.get_distro_release(crash_id)
         except ValueError:
             apport.log(
                 "could not determine release -- no DistroRelease field?", True
             )
-            self.crashdb.mark_retraced(id)
+            self.crashdb.mark_retraced(crash_id)
             return
         if rel not in self.releases:
             apport.log(
@@ -133,7 +133,7 @@ class CrashDigger:
             argv += ["--duplicate-db", self.dup_db]
         if self.verbose:
             argv.append("-v")
-        argv.append(str(id))
+        argv.append(str(crash_id))
 
         result = subprocess.call(
             argv, stdout=sys.stdout, stderr=subprocess.STDOUT
@@ -141,7 +141,7 @@ class CrashDigger:
         if result != 0:
             apport.log(
                 "retracing %s#%i failed with status: %i"
-                % ("LP: " if self.lp else "", id, result),
+                % ("LP: " if self.lp else "", crash_id, result),
                 True,
             )
             if result == 99:
@@ -149,20 +149,20 @@ class CrashDigger:
                 apport.log("transient error reported; halting", True)
                 return
 
-        self.crashdb.mark_retraced(id)
+        self.crashdb.mark_retraced(crash_id)
 
     def dupcheck_next(self):
         """Grab an ID from the dupcheck pool and process it."""
 
-        id = self.dupcheck_pool.pop()
+        crash_id = self.dupcheck_pool.pop()
         apport.log(
             "checking %s#%i for duplicate (left in pool: %i)"
-            % ("LP: " if self.lp else "", id, len(self.dupcheck_pool)),
+            % ("LP: " if self.lp else "", crash_id, len(self.dupcheck_pool)),
             True,
         )
 
         try:
-            report = self.crashdb.download(id)
+            report = self.crashdb.download(crash_id)
         except (
             MemoryError,
             TypeError,
@@ -176,13 +176,13 @@ class CrashDigger:
                 == "bug description must contain standard apport format data"
             ):
                 apport.log("Cannot download report: " + str(error), True)
-                apport.error("Cannot download report %i: %s", id, str(error))
+                apport.error(f"Cannot download report {crash_id}: {error}")
                 return
             apport.log("Cannot download report: " + str(error), True)
-            apport.error("Cannot download report %i: %s", id, str(error))
+            apport.error("Cannot download report %i: %s", crash_id, str(error))
             return
 
-        res = self.crashdb.check_duplicate(id, report)
+        res = self.crashdb.check_duplicate(crash_id, report)
         if res:
             if res[1] is None:
                 apport.log(
@@ -346,8 +346,8 @@ try:
         opts.publish_db,
         opts.crash_db,
     ).run()
-except SystemExit as exit:
-    if exit.code == 99:
+except SystemExit as error:
+    if error.code == 99:
         pass  # fall through lock cleanup
     else:
         raise

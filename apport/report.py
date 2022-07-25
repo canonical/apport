@@ -132,7 +132,9 @@ def _read_maps(proc_pid_fd):
     return maps
 
 
-def _command_output(command, input=None, env=None):
+def _command_output(  # pylint: disable=redefined-builtin
+    command, input=None, env=None
+):
     """Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
@@ -282,7 +284,7 @@ class Report(problem_report.ProblemReport):
     This class wraps a standard ProblemReport and adds methods for collecting
     standard debugging data."""
 
-    def __init__(self, type="Crash", date=None):
+    def __init__(self, problem_type="Crash", date=None):
         """Initialize a fresh problem report.
 
         date is the desired date/time string; if None (default), the current
@@ -291,7 +293,7 @@ class Report(problem_report.ProblemReport):
         If the report is attached to a process ID, this should be set in
         self.pid, so that e. g. hooks can use it to collect additional data.
         """
-        problem_report.ProblemReport.__init__(self, type, date)
+        problem_report.ProblemReport.__init__(self, problem_type, date)
         self.pid = None
         self._proc_maps_cache = None
 

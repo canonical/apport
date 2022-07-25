@@ -18,8 +18,8 @@ __all__ = [
 ]
 
 
-def unicode_gettext(str):
-    trans = gettext.gettext(str)
+def unicode_gettext(message):
+    trans = gettext.gettext(message)
     if isinstance(trans, bytes):
         return trans.decode("UTF-8")
     else:

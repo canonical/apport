@@ -28,7 +28,7 @@ def main(argv=None):
         if not packaging.enabled():
             return -1
 
-        pr = apport.report.Report(type="KernelOops")
+        pr = apport.report.Report(problem_type="KernelOops")
 
         libdir = "/var/lib/pm-utils"
         flagfile = libdir + "/status"

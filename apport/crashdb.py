@@ -20,12 +20,12 @@ import urllib.request
 import apport
 
 
-def _u(str):
+def _u(string):
     """Convert str to an unicode if it isn't already."""
 
-    if isinstance(str, bytes):
-        return str.decode("UTF-8", "ignore")
-    return str
+    if isinstance(string, bytes):
+        return string.decode("UTF-8", "ignore")
+    return string
 
 
 class CrashDatabase:
@@ -136,7 +136,7 @@ class CrashDatabase:
             )
             self._duplicate_db_upgrade(result[0])
 
-    def check_duplicate(self, id, report=None):
+    def check_duplicate(self, crash_id, report=None):
         """Check whether a crash is already known.
 
         If the crash is new, it will be added to the duplicate database and the
@@ -158,9 +158,9 @@ class CrashDatabase:
         ), "init_duplicate_db() needs to be called before"
 
         if not report:
-            report = self.download(id)
+            report = self.download(crash_id)
 
-        self._mark_dup_checked(id, report)
+        self._mark_dup_checked(crash_id, report)
 
         if "DuplicateSignature" in report:
             sig = report["DuplicateSignature"]
@@ -169,13 +169,13 @@ class CrashDatabase:
         existing = []
         if sig:
             # use real duplicate signature
-            existing = self._duplicate_search_signature(sig, id)
+            existing = self._duplicate_search_signature(sig, crash_id)
 
             if existing:
                 # update status of existing master bugs
                 for (ex_id, _) in existing:
                     self._duplicate_db_sync_status(ex_id)
-                existing = self._duplicate_search_signature(sig, id)
+                existing = self._duplicate_search_signature(sig, crash_id)
 
         try:
             report_package_version = report["Package"].split()[1]
@@ -203,7 +203,7 @@ class CrashDatabase:
             # we have a regression of the latest fix. Mark it so, and create a
             # new unfixed ID for it later on
             if existing:
-                self.mark_regression(id, existing[-1][0])
+                self.mark_regression(crash_id, existing[-1][0])
 
         # now query address signatures, they might turn up another duplicate
         # (not necessarily the same, due to Stacktraces sometimes being
@@ -231,10 +231,10 @@ class CrashDatabase:
                         # no version tracking for address signatures yet
                         master_ver = None
 
-        if master_id is not None and master_id != id:
+        if master_id is not None and master_id != crash_id:
             if addr_sig:
                 self._duplicate_db_add_address_signature(addr_sig, master_id)
-            self.close_duplicate(report, id, master_id)
+            self.close_duplicate(report, crash_id, master_id)
             return (master_id, master_ver)
 
         # no duplicate detected; create a new record for the ID
@@ -242,17 +242,17 @@ class CrashDatabase:
         if sig:
             cur = self.duplicate_db.cursor()
             cur.execute(
-                "SELECT count(*) FROM crashes WHERE crash_id == ?", [id]
+                "SELECT count(*) FROM crashes WHERE crash_id == ?", [crash_id]
             )
             count_id = cur.fetchone()[0]
             if count_id == 0:
                 cur.execute(
                     "INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
-                    (_u(sig), id, None),
+                    (_u(sig), crash_id, None),
                 )
                 self.duplicate_db.commit()
         if addr_sig:
-            self._duplicate_db_add_address_signature(addr_sig, id)
+            self._duplicate_db_add_address_signature(addr_sig, crash_id)
 
         return None
 
@@ -315,12 +315,12 @@ class CrashDatabase:
             # now check if we find our signature
             for line in contents.splitlines():
                 try:
-                    id, s = line.split(None, 1)
-                    id = int(id)
+                    crash_id, s = line.split(None, 1)
+                    crash_id = int(crash_id)
                 except ValueError:
                     continue
                 if s == sig:
-                    result = self.get_id_url(report, id)
+                    result = self.get_id_url(report, crash_id)
                     if not result:
                         # if we can't have an URL, just report as "known"
                         result = "1"
@@ -328,7 +328,7 @@ class CrashDatabase:
 
         return None
 
-    def duplicate_db_fixed(self, id, version):
+    def duplicate_db_fixed(self, crash_id, version):
         """Mark given crash ID as fixed in the duplicate database.
 
         version specifies the package version the crash was fixed in (None for
@@ -343,12 +343,12 @@ class CrashDatabase:
             "UPDATE crashes "
             "SET fixed_version = ?, last_change = CURRENT_TIMESTAMP "
             "WHERE crash_id = ?",
-            (version, id),
+            (version, crash_id),
         )
         assert n.rowcount == 1
         self.duplicate_db.commit()
 
-    def duplicate_db_remove(self, id):
+    def duplicate_db_remove(self, crash_id):
         """Remove crash from the duplicate database.
 
         This happens when a report got rejected or manually duplicated.
@@ -358,8 +358,10 @@ class CrashDatabase:
         ), "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
-        cur.execute("DELETE FROM crashes WHERE crash_id = ?", [id])
-        cur.execute("DELETE FROM address_signatures WHERE crash_id = ?", [id])
+        cur.execute("DELETE FROM crashes WHERE crash_id = ?", [crash_id])
+        cur.execute(
+            "DELETE FROM address_signatures WHERE crash_id = ?", [crash_id]
+        )
         self.duplicate_db.commit()
 
     def duplicate_db_change_master_id(self, old_id, new_id):
@@ -382,7 +384,7 @@ class CrashDatabase:
         )
         self.duplicate_db.commit()
 
-    def duplicate_db_publish(self, dir):
+    def duplicate_db_publish(self, publish_dir):
         """Create text files suitable for www publishing.
 
         Create a number of text files in the given directory which Apport
@@ -405,7 +407,7 @@ class CrashDatabase:
 
         # first create the temporary new dir; if that fails, nothing has been
         # changed and we fail early
-        out = dir + ".new"
+        out = publish_dir + ".new"
         os.mkdir(out)
 
         # crash addresses
@@ -417,7 +419,7 @@ class CrashDatabase:
         cur = self.duplicate_db.cursor()
 
         cur.execute("SELECT * from address_signatures ORDER BY signature")
-        for (sig, id) in cur.fetchall():
+        for (sig, crash_id) in cur.fetchall():
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -428,7 +430,7 @@ class CrashDatabase:
                     cur_file.close()
                 cur_file = open(os.path.join(addr_base, cur_hash), "w")
 
-            cur_file.write("%i %s\n" % (id, sig))
+            cur_file.write("%i %s\n" % (crash_id, sig))
 
         if cur_file:
             cur_file.close()
@@ -442,7 +444,7 @@ class CrashDatabase:
         cur.execute(
             "SELECT signature, crash_id from crashes ORDER BY signature"
         )
-        for (sig, id) in cur.fetchall():
+        for (sig, crash_id) in cur.fetchall():
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -453,17 +455,17 @@ class CrashDatabase:
                     cur_file.close()
                 cur_file = open(os.path.join(sig_base, cur_hash), "wb")
 
-            cur_file.write(("%i %s\n" % (id, sig)).encode("UTF-8"))
+            cur_file.write(("%i %s\n" % (crash_id, sig)).encode("UTF-8"))
 
         if cur_file:
             cur_file.close()
 
         # switch over tree; this is as atomic as we can be with directories
-        if os.path.exists(dir):
-            os.rename(dir, dir + ".old")
-        os.rename(out, dir)
-        if os.path.exists(dir + ".old"):
-            shutil.rmtree(dir + ".old")
+        if os.path.exists(publish_dir):
+            os.rename(publish_dir, publish_dir + ".old")
+        os.rename(out, publish_dir)
+        if os.path.exists(publish_dir + ".old"):
+            shutil.rmtree(publish_dir + ".old")
 
     def _duplicate_db_upgrade(self, cur_format):
         """Upgrade database to current format"""
@@ -482,10 +484,10 @@ class CrashDatabase:
 
         assert cur_format == self.format_version
 
-    def _duplicate_search_signature(self, sig, id):
+    def _duplicate_search_signature(self, sig, crash_id):
         """Look up signature in the duplicate db.
 
-        Return [(id, fixed_version)] tuple list.
+        Return [(crash_id, fixed_version)] tuple list.
 
         There might be several matches if a crash has been reintroduced in a
         later version. The results are sorted so that the highest fixed version
@@ -499,7 +501,7 @@ class CrashDatabase:
         cur.execute(
             "SELECT crash_id, fixed_version FROM crashes "
             "WHERE signature = ? AND crash_id <> ?",
-            [_u(sig), id],
+            [_u(sig), crash_id],
         )
         existing = cur.fetchall()
 
@@ -567,14 +569,14 @@ class CrashDatabase:
         dump = {}
         cur = self.duplicate_db.cursor()
         cur.execute("SELECT * FROM crashes")
-        for (sig, id, ver, last_change) in cur:
+        for (sig, crash_id, ver, last_change) in cur:
             if with_timestamps:
-                dump[sig] = (id, ver, last_change)
+                dump[sig] = (crash_id, ver, last_change)
             else:
-                dump[sig] = (id, ver)
+                dump[sig] = (crash_id, ver)
         return dump
 
-    def _duplicate_db_sync_status(self, id):
+    def _duplicate_db_sync_status(self, crash_id):
         """Update the duplicate db to the reality of the report in the
         crash db.
 
@@ -588,28 +590,31 @@ class CrashDatabase:
 
         cur = self.duplicate_db.cursor()
         cur.execute(
-            "SELECT fixed_version FROM crashes WHERE crash_id = ?", [id]
+            "SELECT fixed_version FROM crashes WHERE crash_id = ?", [crash_id]
         )
         db_fixed_version = cur.fetchone()
         if not db_fixed_version:
             return
         db_fixed_version = db_fixed_version[0]
 
-        real_fixed_version = self.get_fixed_version(id)
+        real_fixed_version = self.get_fixed_version(crash_id)
 
         # crash got rejected
         if real_fixed_version == "invalid":
-            print("DEBUG: bug %i was invalidated, removing from database" % id)
-            self.duplicate_db_remove(id)
+            print(
+                "DEBUG: bug %i was invalidated, removing from database"
+                % crash_id
+            )
+            self.duplicate_db_remove(crash_id)
             return
 
         # crash got fixed
         if not db_fixed_version and real_fixed_version:
             print(
                 "DEBUG: bug %i got fixed in version %s, updating database"
-                % (id, real_fixed_version)
+                % (crash_id, real_fixed_version)
             )
-            self.duplicate_db_fixed(id, real_fixed_version)
+            self.duplicate_db_fixed(crash_id, real_fixed_version)
             return
 
         # crash got reopened
@@ -617,25 +622,26 @@ class CrashDatabase:
             print(
                 "DEBUG: bug %i got reopened,"
                 " dropping fixed version %s from database"
-                % (id, db_fixed_version)
+                % (crash_id, db_fixed_version)
             )
-            self.duplicate_db_fixed(id, real_fixed_version)
+            self.duplicate_db_fixed(crash_id, real_fixed_version)
             return
 
-    def _duplicate_db_add_address_signature(self, sig, id):
+    def _duplicate_db_add_address_signature(self, sig, crash_id):
         # sanity check
         existing = self._duplicate_search_address_signature(sig)
         if existing:
-            if existing != id:
+            if existing != crash_id:
                 raise SystemError(
                     "ID %i has signature %s, but database"
                     " already has that signature for ID %i"
-                    % (id, sig, existing)
+                    % (crash_id, sig, existing)
                 )
         else:
             cur = self.duplicate_db.cursor()
             cur.execute(
-                "INSERT INTO address_signatures VALUES (?, ?)", (_u(sig), id)
+                "INSERT INTO address_signatures VALUES (?, ?)",
+                (_u(sig), crash_id),
             )
             self.duplicate_db.commit()
 
@@ -713,7 +719,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_id_url(self, report, id):
+    def get_id_url(self, report, crash_id):
         """Return URL for a given report ID.
 
         The report is passed in case building the URL needs additional
@@ -725,7 +731,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def download(self, id):
+    def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
 
         raise NotImplementedError(
@@ -734,7 +740,7 @@ class CrashDatabase:
 
     def update(
         self,
-        id,
+        crash_id,
         report,
         comment,
         change_description=False,
@@ -760,14 +766,14 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def update_traces(self, id, report, comment=""):
+    def update_traces(self, crash_id, report, comment=""):
         """Update the given report ID for retracing results.
 
         This updates Stacktrace, ThreadStacktrace, StacktraceTop,
         and StacktraceSource. You can also supply an additional comment.
         """
         self.update(
-            id,
+            crash_id,
             report,
             comment,
             key_filter=[
@@ -785,7 +791,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_distro_release(self, id):
+    def get_distro_release(self, crash_id):
         """Get 'DistroRelease: <release>' from the report ID."""
 
         raise NotImplementedError(
@@ -826,7 +832,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_fixed_version(self, id):
+    def get_fixed_version(self, crash_id):
         """Return the package version that fixes a given crash.
 
         Return None if the crash is not yet fixed, or an empty string if the
@@ -842,21 +848,21 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_affected_packages(self, id):
+    def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
 
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def is_reporter(self, id):
+    def is_reporter(self, crash_id):
         """Check whether the user is the reporter of given ID."""
 
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def can_update(self, id):
+    def can_update(self, crash_id):
         """Check whether the user is eligible to update a report.
 
         A user should add additional information to an existing ID if (s)he is
@@ -868,7 +874,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def duplicate_of(self, id):
+    def duplicate_of(self, crash_id):
         """Return master ID for a duplicate bug.
 
         If the bug is not a duplicate, return None.
@@ -877,7 +883,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def close_duplicate(self, report, id, master_id):
+    def close_duplicate(self, report, crash_id, master_id):
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.
@@ -886,7 +892,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_regression(self, id, master):
+    def mark_regression(self, crash_id, master):
         """Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master')."""
 
@@ -894,14 +900,14 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_retraced(self, id):
+    def mark_retraced(self, crash_id):
         """Mark crash id as retraced."""
 
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_retrace_failed(self, id, invalid_msg=None):
+    def mark_retrace_failed(self, crash_id, invalid_msg=None):
         """Mark crash id as 'failed to retrace'.
 
         If invalid_msg is given, the bug should be closed as invalid with given
@@ -913,7 +919,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def _mark_dup_checked(self, id, report):
+    def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate
 
         This is an internal method that should not be called from outside.

@@ -652,8 +652,8 @@ class T(unittest.TestCase):
             QTimer.singleShot(200, cont)
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
         self.app.args.update_report = 0
         self.app.args.package = "bash"
 
@@ -698,8 +698,8 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
 
         # run in update mode for that bug
         self.app.args.update_report = 0

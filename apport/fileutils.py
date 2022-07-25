@@ -157,8 +157,8 @@ def find_file_package(file):
     Return None if no package ships it.
     """
     # resolve symlinks in directories
-    (dir, name) = os.path.split(file)
-    resolved_dir = os.path.realpath(dir)
+    (directory, name) = os.path.split(file)
+    resolved_dir = os.path.realpath(directory)
     if os.path.isdir(resolved_dir):
         file = os.path.join(resolved_dir, name)
 
@@ -404,7 +404,7 @@ def check_files_md5(sumfile):
     return mismatches
 
 
-def get_config(section, setting, default=None, path=None, bool=False):
+def get_config(section, setting, default=None, path=None, boolean=False):
     """Return a setting from user configuration.
 
     This is read from ~/.config/apport/settings or path. If bool is True, the
@@ -445,7 +445,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
         pass
 
     try:
-        if bool:
+        if boolean:
             return get_config.config.getboolean(section, setting)
         else:
             return get_config.config.get(section, setting)

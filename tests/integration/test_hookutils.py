@@ -22,12 +22,14 @@ class T(unittest.TestCase):
     def test_module_license_evaluation(self):
         """module licenses can be validated correctly"""
 
-        def _build_ko(license):
-            ko_filename = os.path.join(self.workdir, f"{license}.ko")
+        def _build_ko(license_name):
+            ko_filename = os.path.join(self.workdir, f"{license_name}.ko")
             with tempfile.NamedTemporaryFile(
-                mode="w+", prefix="%s-" % (license), suffix=".S"
+                mode="w+", prefix="%s-" % (license_name), suffix=".S"
             ) as asm:
-                asm.write(f'.section .modinfo\n.string "license={license}"\n')
+                asm.write(
+                    f'.section .modinfo\n.string "license={license_name}"\n'
+                )
                 asm.flush()
                 subprocess.check_call(
                     ["/usr/bin/as", asm.name, "-o", ko_filename]

@@ -23,11 +23,12 @@ def mkattrname(path):
     """Convert a file path to a problem report attribute name."""
 
     name = ""
-    for dir in path.split(os.sep):
-        if dir:
-            name += "".join(
-                [c for c in dir[0].upper() + dir[1:] if c.isalnum()]
-            )
+    for directory in path.split(os.sep):
+        if not directory:
+            continue
+        name += "".join(
+            [c for c in directory[0].upper() + directory[1:] if c.isalnum()]
+        )
     return name
 
 

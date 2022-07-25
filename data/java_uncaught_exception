@@ -45,7 +45,7 @@ def main():
         d[key] = value
 
     # create report
-    report = apport.report.Report(type="Crash")
+    report = apport.report.Report(problem_type="Crash")
     # assume our parent is the JVM process
     report.pid = os.getppid()
 

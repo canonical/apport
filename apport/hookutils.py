@@ -422,7 +422,7 @@ def command_available(command):
 
 def command_output(
     command,
-    input=None,
+    input=None,  # pylint: disable=redefined-builtin
     stderr=subprocess.STDOUT,
     keep_locale=False,
     decode_utf8=True,
@@ -527,7 +527,7 @@ def _root_command_prefix():
         return []
 
 
-def root_command_output(
+def root_command_output(  # pylint: disable=redefined-builtin
     command, input=None, stderr=subprocess.STDOUT, decode_utf8=True
 ):
     """Try to execute given command (list) as root and return its stdout.

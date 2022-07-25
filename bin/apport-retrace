@@ -250,7 +250,7 @@ def confirm_traces(report):
     return ch == "y"
 
 
-def find_file_dir(name, dir, limit=None):
+def find_file_dir(name, directory, limit=None):
     """Return a path list of all files with given name which are in or below
     dir.
 
@@ -258,7 +258,7 @@ def find_file_dir(name, dir, limit=None):
     number of hits."""
 
     result = []
-    for root, dirs, files in os.walk(dir):  # pylint: disable=unused-variable
+    for root, _unused, files in os.walk(directory):
         if name in files:
             result.append(os.path.join(root, name))
             if limit and len(result) >= limit:
@@ -277,14 +277,14 @@ def get_code(srcdir, filename, line, context=5):
     result = ""
     lineno = 0
     # make enough room for all line numbers
-    format = "  %%%ii: %%s" % len(str(line + context))
+    format_str = "  %%%ii: %%s" % len(str(line + context))
 
     with open(files[0], "rb") as f:
         for ln in f:
             ln = ln.decode("UTF8", errors="replace")
             lineno += 1
             if lineno >= line - context and lineno <= line + context:
-                result += format % (lineno, ln)
+                result += format_str % (lineno, ln)
 
     return result
 

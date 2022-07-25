@@ -22,10 +22,10 @@ import apport.crashdb_impl.memory
 def command_dump(crashdb, _):
     """Print out all entries."""
 
-    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(
+    for (sig, (crash_id, version, lastchange)) in crashdb._duplicate_db_dump(
         True
     ).items():
-        sys.stdout.write("%7i: %s " % (id, sig))
+        sys.stdout.write("%7i: %s " % (crash_id, sig))
         if version == "":
             sys.stdout.write("[fixed] ")
         elif version:

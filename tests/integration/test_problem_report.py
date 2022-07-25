@@ -405,14 +405,16 @@ class T(unittest.TestCase):
         self.assertNotEqual(origstat.st_mtime, newstat.st_mtime)
         # skip atime check if filesystem is mounted noatime
         skip_atime = False
-        dir = rep
-        while len(dir) > 1:
-            dir = os.path.split(dir)[0]
-            if os.path.ismount(dir):
+        directory = rep
+        while len(directory) > 1:
+            directory = os.path.split(directory)[0]
+            if os.path.ismount(directory):
                 with open("/proc/mounts") as f:
                     for line in f:
                         mount, _, options = line.split(" ")[1:4]
-                        if mount == dir and "noatime" in options.split(","):
+                        if mount == directory and "noatime" in options.split(
+                            ","
+                        ):
                             skip_atime = True
                             break
                 break
