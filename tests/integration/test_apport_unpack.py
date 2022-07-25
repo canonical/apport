@@ -69,20 +69,20 @@ class T(unittest.TestCase):
         (ret, out, err) = self._call(["apport-unpack", "--help"])
         self.assertEqual(ret, 0)
         self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertTrue(out.startswith("usage:"), out)
 
     def test_error(self):
         """calling apport-unpack with wrong arguments"""
 
         (ret, out, err) = self._call(["apport-unpack"])
-        self.assertEqual(ret, 1)
-        self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertEqual(ret, 2)
+        self.assertEqual(out, "")
+        self.assertTrue(err.startswith("usage:"), out)
 
         (ret, out, err) = self._call(["apport-unpack", self.report_file])
-        self.assertEqual(ret, 1)
-        self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertEqual(ret, 2)
+        self.assertEqual(out, "")
+        self.assertTrue(err.startswith("usage:"), out)
 
         (ret, out, err) = self._call(
             ["apport-unpack", "/nonexisting.crash", self.unpack_dir]
