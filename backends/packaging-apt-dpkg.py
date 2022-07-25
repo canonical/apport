@@ -51,9 +51,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._virtual_mapping_obj = None
         self._contents_mapping_obj = None
         self._launchpad_base = "https://api.launchpad.net/devel"
-        self._ppa_archive_url = (
-            self._launchpad_base + "/~%(user)s/+archive/%(distro)s/%(ppaname)s"
-        )
         self._contents_update = False
 
     def __del__(self):
@@ -1454,6 +1451,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             )
         return self._mirror
 
+    def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
+        return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
+
     def _distro_release_to_codename(self, release):
         """Map a DistroRelease: field value to a release code name"""
 
@@ -1642,8 +1642,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 pass
         return None
 
-    @classmethod
-    def create_ppa_source_from_origin(klass, origin, distro, release_codename):
+    def create_ppa_source_from_origin(self, origin, distro, release_codename):
         """For an origin from a Launchpad PPA create sources.list content.
 
         distro is the distribution for which content is being created e.g.
@@ -1675,12 +1674,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 try:
                     with contextlib.closing(
                         urllib.request.urlopen(
-                            apport.packaging._ppa_archive_url
-                            % {
-                                "user": user,
-                                "distro": distro,
-                                "ppaname": ppa_name,
-                            }
+                            self._ppa_archive_url(
+                                user=user, distro=distro, ppa_name=ppa_name
+                            )
                         )
                     ) as response:
                         response.read()
@@ -1717,9 +1713,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 return ppa_line + add_debug + "\ndeb-src" + ppa_line[3:] + "\n"
         return None
 
-    @classmethod
     def _build_apt_sandbox(
-        klass, apt_root, apt_sources, distro_name, release_codename, origins
+        self, apt_root, apt_sources, distro_name, release_codename, origins
     ):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
@@ -1780,7 +1775,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     with open(origin_path) as src_ext:
                         source_list_content = src_ext.read()
                 else:
-                    source_list_content = klass.create_ppa_source_from_origin(
+                    source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
                     )
                 if source_list_content:
@@ -1833,11 +1828,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         # install apt keyrings for PPAs
         if origins and source_list_content:
             for origin, (ppa_user, ppa_name) in origin_data.items():
-                ppa_archive_url = apport.packaging._ppa_archive_url % {
-                    "user": urllib.parse.quote(ppa_user),
-                    "distro": distro_name,
-                    "ppaname": urllib.parse.quote(ppa_name),
-                }
+                ppa_archive_url = self._ppa_archive_url(
+                    user=urllib.parse.quote(ppa_user),
+                    distro=distro_name,
+                    ppa_name=urllib.parse.quote(ppa_name),
+                )
                 ppa_info = apport.packaging.json_request(ppa_archive_url)
                 if not ppa_info:
                     continue
