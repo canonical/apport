@@ -154,6 +154,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     unittest.mock.MagicMock(return_value=[]),
 )
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 

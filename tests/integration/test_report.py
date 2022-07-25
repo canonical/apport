@@ -18,6 +18,8 @@ from tests.paths import patch_data_dir, restore_data_dir
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     @classmethod
     def setUpClass(cls):
         cls.orig_data_dir = patch_data_dir(apport.report)

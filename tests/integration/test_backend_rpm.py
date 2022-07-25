@@ -25,12 +25,14 @@ class T(unittest.TestCase):
 
     def test_get_header(self):
         """_get_header()."""
+        # pylint: disable=protected-access
 
         hdr = impl._get_header("alsa-utils")
         self.assertEqual(hdr["n"], "alsa-utils")
 
     def test_get_headers_by_tag(self):
         """_get_headers_by_tag()."""
+        # pylint: disable=protected-access
 
         headersByTag = impl._get_headers_by_tag("basenames", "/bin/bash")
         self.assertEqual(len(headersByTag), 1)

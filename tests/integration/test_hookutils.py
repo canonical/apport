@@ -21,6 +21,7 @@ class T(unittest.TestCase):
 
     def test_module_license_evaluation(self):
         """module licenses can be validated correctly"""
+        # pylint: disable=protected-access
 
         def _build_ko(license_name):
             ko_filename = os.path.join(self.workdir, f"{license_name}.ko")
@@ -62,6 +63,7 @@ class T(unittest.TestCase):
 
     def test_real_module_license_evaluation(self):
         """module licenses can be validated correctly for real module"""
+        # pylint: disable=protected-access
         isofs_license = apport.hookutils._get_module_license("isofs")
         if isofs_license == "invalid":
             self.skipTest("kernel module 'isofs' not available")

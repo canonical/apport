@@ -8,6 +8,8 @@ import apport.report
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def test_has_useful_stacktrace(self):
         """has_useful_stacktrace()."""
 

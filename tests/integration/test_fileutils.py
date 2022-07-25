@@ -13,6 +13,8 @@ import problem_report
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         self.orig_core_dir = apport.fileutils.core_dir
         apport.fileutils.core_dir = tempfile.mkdtemp()

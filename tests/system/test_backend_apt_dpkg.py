@@ -19,6 +19,8 @@ else:
 
 @unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         # save and restore configuration file
         self.orig_conf = impl.configuration

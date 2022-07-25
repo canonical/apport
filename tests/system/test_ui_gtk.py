@@ -97,6 +97,7 @@ class T(unittest.TestCase):
         # disable package hooks, as they might ask for sudo password and other
         # interactive bits; allow tests to install their own hooks
         self.hook_dir = tempfile.mkdtemp()
+        # pylint: disable=protected-access
         apport.report._hook_dir = self.hook_dir
         apport.report._common_hook_dir = self.hook_dir
 

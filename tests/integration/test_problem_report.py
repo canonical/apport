@@ -262,7 +262,7 @@ class T(unittest.TestCase):
             time.sleep(0.3)
             os.write(fin, b" world")
             os.close(fin)
-            os._exit(0)
+            os._exit(0)  # pylint: disable=protected-access
 
         os.close(fin)
 

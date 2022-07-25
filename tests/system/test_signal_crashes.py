@@ -19,6 +19,7 @@ from tests.paths import (
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 

@@ -10,6 +10,8 @@ from apport.crashdb_impl.memory import CrashDatabase
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")
