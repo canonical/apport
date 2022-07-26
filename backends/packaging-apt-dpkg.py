@@ -187,15 +187,15 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_dependencies(self, package):
         """Return a list of packages a package depends on."""
 
-        cur_ver = self._apt_pkg(package)._pkg.current_ver
+        cur_ver = self._apt_pkg(package).installed
         if not cur_ver:
             # happens with virtual packages
             return []
         return [
-            d[0].target_pkg.name
-            for d in cur_ver.depends_list.get("Depends", [])
-            + cur_ver.depends_list.get("PreDepends", [])
-            + cur_ver.depends_list.get("Recommends", [])
+            d[0].name
+            for d in cur_ver.get_dependencies(
+                "Depends", "PreDepends", "Recommends"
+            )
         ]
 
     def get_source(self, package):
