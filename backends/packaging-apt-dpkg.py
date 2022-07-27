@@ -280,7 +280,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return False
 
     @staticmethod
-    def get_lp_binary_package(distro_id, release, package, version, arch):
+    def get_lp_binary_package(release, package, version, arch):
         # allow unauthenticated downloads
         apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
         from launchpadlib.launchpad import Launchpad
@@ -346,7 +346,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return json.loads(content)
 
     @staticmethod
-    def get_lp_source_package(distro_id, package, version):
+    def get_lp_source_package(package, version):
         from launchpadlib.launchpad import Launchpad
 
         launchpad = Launchpad.login_anonymously(
@@ -677,9 +677,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if subprocess.call(argv, cwd=output_dir, env=env) != 0:
                 if not version:
                     return None
-                sf_urls = self.get_lp_source_package(
-                    self.get_distro_name(), srcpackage, version
-                )
+                sf_urls = self.get_lp_source_package(srcpackage, version)
                 if sf_urls:
                     proxy = ""
                     if apt.apt_pkg.config.find("Acquire::http::Proxy") != "":
@@ -965,7 +963,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
                 (lp_url, sha1sum) = self.get_lp_binary_package(
-                    self.get_distro_name(), release, pkg, ver, architecture
+                    release, pkg, ver, architecture
                 )
                 if lp_url:
                     acquire_queue.append(
@@ -1068,11 +1066,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             pkg_found = True
                         except KeyError:
                             (lp_url, sha1sum) = self.get_lp_binary_package(
-                                self.get_distro_name(),
-                                release,
-                                dbg_pkg,
-                                ver,
-                                architecture,
+                                release, dbg_pkg, ver, architecture
                             )
                             if lp_url:
                                 acquire_queue.append(
@@ -1142,11 +1136,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         lp_url,
                                         sha1sum,
                                     ) = self.get_lp_binary_package(
-                                        self.get_distro_name(),
-                                        release,
-                                        p,
-                                        ver,
-                                        architecture,
+                                        release, p, ver, architecture
                                     )
                                     if lp_url:
                                         acquire_queue.append(
@@ -1186,11 +1176,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         lp_url,
                                         sha1sum,
                                     ) = self.get_lp_binary_package(
-                                        self.get_distro_name(),
-                                        release,
-                                        dbgsym_pkg,
-                                        ver,
-                                        architecture,
+                                        release, dbgsym_pkg, ver, architecture
                                     )
                                     if lp_url:
                                         acquire_queue.append(
@@ -1222,11 +1208,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         except KeyError:
                             if ver:
                                 (lp_url, sha1sum) = self.get_lp_binary_package(
-                                    self.get_distro_name(),
-                                    release,
-                                    dbgsym_pkg,
-                                    ver,
-                                    architecture,
+                                    release, dbgsym_pkg, ver, architecture
                                 )
                                 if lp_url:
                                     acquire_queue.append(
@@ -1467,7 +1449,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._current_release_codename
 
         raise NotImplementedError(
-            "Cannot map DistroRelease to a code name"
+            f"Cannot map DistroRelease '{release}' to a code name"
             " without install_packages()"
         )
 

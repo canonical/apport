@@ -108,7 +108,7 @@ class T(unittest.TestCase):
         """Clicking the close button on the window does not report the
         crash."""
 
-        def c(*args):
+        def c():
             self.app.w("dialog_crash_new").destroy()
 
         GLib.idle_add(c)
@@ -555,8 +555,10 @@ class T(unittest.TestCase):
             self.app.w("ignore_future_problems").get_property("visible")
         )
 
-    @unittest.mock.patch.object(GTKUserInterface, "can_examine_locally")
-    def test_examine_button(self, *args):
+    @unittest.mock.patch.object(
+        GTKUserInterface, "can_examine_locally", unittest.mock.MagicMock()
+    )
+    def test_examine_button(self):
         """
         +---------------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.          |
@@ -705,18 +707,26 @@ class T(unittest.TestCase):
         self.assertFalse(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_crash_nodetails(self, *args):
+    def test_crash_nodetails(self):
         """Crash report without showing details"""
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             if not self.app.w("continue_button").get_visible():
@@ -751,18 +761,26 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_crash_details(self, *args):
+    def test_crash_details(self):
         """Crash report with showing details"""
 
-        def show_details(*args):
+        def show_details():
             if Gtk.events_pending():
                 return True
             if not self.app.w("show_details").get_visible():
@@ -771,7 +789,7 @@ class T(unittest.TestCase):
             GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             # wait until data collection is done and tree filled
@@ -809,21 +827,27 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
-    @unittest.mock.patch.object(GTKUserInterface, "ui_stop_upload_progress")
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_broken_crash_details(self, *args):
+    def test_broken_crash_details(self):
         """Broken crash report with showing details"""
 
         # pylint: disable=attribute-defined-outside-init
         self.error_title = None
         self.error_text = None
 
-        def show_details(*args):
+        def show_details():
             if Gtk.events_pending():
                 return True
             if not self.app.w("show_details").get_visible():
@@ -832,7 +856,7 @@ class T(unittest.TestCase):
             GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
 
-        def cont(*args):
+        def cont():
             # wait until data collection is done and tree filled
             if Gtk.events_pending():
                 return True
@@ -844,7 +868,7 @@ class T(unittest.TestCase):
             GLib.timeout_add(self.POLLING_INTERVAL_MS, ack_error)
             return False
 
-        def ack_error(*args):
+        def ack_error():
             # wait until error dialog gets visible
             if Gtk.events_pending():
                 return True
@@ -880,15 +904,17 @@ class T(unittest.TestCase):
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_crash_noaccept(self, *args):
+    def test_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             if not self.app.w("continue_button").get_visible():
@@ -918,15 +944,17 @@ class T(unittest.TestCase):
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertIn("libc", r["Dependencies"])
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_kerneloops_nodetails(self, *args):
+    def test_kerneloops_nodetails(self):
         """Kernel oops report without showing details"""
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             if not self.app.w("continue_button").get_visible():
@@ -963,7 +991,7 @@ class T(unittest.TestCase):
     def test_bug_report_installed_package(self):
         """Bug report for installed package"""
 
-        def c(*args):
+        def c():
             if Gtk.events_pending():
                 return True
             dont_send_button = self.app.w("dont_send_button")
@@ -985,7 +1013,7 @@ class T(unittest.TestCase):
     def test_bug_report_uninstalled_package(self):
         """Bug report for uninstalled package"""
 
-        def c(*args):
+        def c():
             if Gtk.events_pending():
                 return True
             dont_send_button = self.app.w("dont_send_button")
@@ -1008,13 +1036,15 @@ class T(unittest.TestCase):
             self.app.report["Package"], "%s (not installed)" % pkg
         )
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
-    def test_update_report(self, *args):
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    def test_update_report(self):
         """Updating an existing report"""
 
         self.app.report_file = None
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             if self.app.tree_model.get_iter_first() is None:
@@ -1043,14 +1073,16 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url")
-    def test_update_report_different_binary_source(self, *args):
+    @unittest.mock.patch.object(
+        GTKUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    def test_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
 
         self.app.report_file = None
 
-        def cont(*args):
+        def cont():
             if Gtk.events_pending():
                 return True
             if self.app.tree_model.get_iter_first() is None:
@@ -1093,8 +1125,10 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(GTKUserInterface, "get_desktop_entry")
-    def test_missing_icon(self, *args):
+    @unittest.mock.patch.object(
+        GTKUserInterface, "get_desktop_entry", unittest.mock.MagicMock()
+    )
+    def test_missing_icon(self):
         # LP: 937354
         self.app.report["ProblemType"] = "Crash"
         self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
@@ -1191,11 +1225,13 @@ class T(unittest.TestCase):
         GLib.idle_add(Gtk.main_quit)
         self.app.run_crash(self.app.report_file)
 
-    @unittest.mock.patch.object(GTKUserInterface, "ui_start_upload_progress")
-    def test_close_during_collect(self, *args):
+    @unittest.mock.patch.object(
+        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+    )
+    def test_close_during_collect(self):
         """Close details window during information collection"""
 
-        def show_details(*args):
+        def show_details():
             if Gtk.events_pending():
                 return True
             if not self.app.w("show_details").get_visible():
@@ -1204,7 +1240,7 @@ class T(unittest.TestCase):
             GLib.timeout_add(self.POLLING_INTERVAL_MS, close)
             return False
 
-        def close(*args):
+        def close():
             if Gtk.events_pending():
                 return True
             self.app.w("dialog_crash_new").destroy()

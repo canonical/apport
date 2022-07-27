@@ -812,7 +812,7 @@ class Report(problem_report.ProblemReport):
                 elif line.startswith("XDG_CURRENT_DESKTOP="):
                     self["CurrentDesktop"] = line.split("=", 1)[1]
 
-    def add_kernel_crash_info(self, debugdir=None):
+    def add_kernel_crash_info(self):
         """Add information from kernel crash.
 
         This needs a VmCore in the Report.

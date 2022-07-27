@@ -745,7 +745,7 @@ def files_in_package(package, globpat=None):
     return result
 
 
-def attach_gconf(report, package):
+def attach_gconf(report, package):  # pylint: disable=unused-argument
     """Obsolete"""
 
     # keeping a no-op function for some time to not break hooks

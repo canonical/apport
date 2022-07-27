@@ -67,7 +67,7 @@ def check_lock():
         )
         sys.exit(1)
 
-    def error_running(*args):
+    def error_running(*_unused_args):
         error_log("another apport instance is already running, aborting")
         sys.exit(1)
 
@@ -189,7 +189,7 @@ def error_log(msg):
     apport.error("apport (pid %s) %s: %s", os.getpid(), time.asctime(), msg)
 
 
-def _log_signal_handler(sgn, frame):
+def _log_signal_handler(sgn, _unused_frame):
     """Internal apport signal handler. Just log the signal handler and exit."""
 
     # reset handler so that we do not get stuck in loops

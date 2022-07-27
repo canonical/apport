@@ -860,7 +860,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
-    def _gen_test_crash(self, uid=None):
+    def _gen_test_crash(self):
         """Generate a Report with real crash data"""
 
         core_path = os.path.join(self.workdir, "core")
@@ -1060,9 +1060,13 @@ class T(unittest.TestCase):
         self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    @unittest.mock.patch("apport.hookutils.attach_conffiles")
-    def test_run_crash_argv_file(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
+    )
+    def test_run_crash_argv_file(self):
         """run_crash() through a file specified on the command line"""
 
         # valid
@@ -1116,8 +1120,10 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_unreportable(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_unreportable(self):
         """run_crash() on a crash with the UnreportableReason field"""
 
         self.report["UnreportableReason"] = "It stinks."
@@ -1141,8 +1147,10 @@ class T(unittest.TestCase):
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_malicious_crashdb(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_malicious_crashdb(self):
         """run_crash() on a crash with malicious CrashDB"""
 
         self.report["ExecutablePath"] = "/bin/bash"
@@ -1165,8 +1173,10 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists("/tmp/pwned"))
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_malicious_package(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_malicious_package(self):
         """Package: path traversal"""
 
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
@@ -1757,7 +1767,7 @@ class T(unittest.TestCase):
         orig_getpwuid = pwd.getpwuid
         orig_getuid = os.getuid
 
-        def fake_getpwuid(uid):
+        def fake_getpwuid(_unused_uid):
             r = list(orig_getpwuid(orig_getuid()))
             r[4] = "Joe (Hacker,+1 234,,"
             return r
@@ -1766,7 +1776,7 @@ class T(unittest.TestCase):
         os.getuid = lambda: 1234
 
         try:
-            r = self._gen_test_crash(orig_getuid())
+            r = self._gen_test_crash()
             r["ProcInfo1"] = "That was Joe (Hacker and friends"
             r["ProcInfo2"] = "Call +1 234!"
             r["ProcInfo3"] = "(Hacker should stay"

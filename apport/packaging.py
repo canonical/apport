@@ -112,6 +112,8 @@ class PackageInfo:
         official user-facing API for this, which will ask for confirmation and
         allows filtering.
         """
+        # Default implementation does nothing, i.e. no config files modified
+        # pylint: disable=unused-argument
         return {}
 
     def get_file_package(
@@ -307,6 +309,7 @@ class PackageInfo:
         """
         # Default implementation does nothing, i. e. native origins are not
         # supported.
+        # pylint: disable=unused-argument
         return False
 
     def get_uninstalled_package(self):

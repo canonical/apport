@@ -1363,6 +1363,7 @@ if __name__ == "__main__":
 
         @cache
         def get_segv_report(self, force_fresh=False):
+            # force_fresh used by @cache, pylint: disable=unused-argument
             """Generate SEGV crash report.
 
             This is only done once, subsequent calls will return the already
@@ -1433,6 +1434,7 @@ NameError: global name 'weird' is not defined"""
 
         @cache
         def get_uncommon_description_report(self, force_fresh=False):
+            # force_fresh used by @cache, pylint: disable=unused-argument
             """File a bug report with an uncommon description.
 
             This is only done once, subsequent calls will return the already
@@ -2056,8 +2058,10 @@ and more
             r = self.crashdb.download(crash_id)
             self.assertNotIn("CoreDump", r)
 
-        @patch.object(CrashDatabase, "_get_source_version")
-        def test_get_fixed_version(self, *args):
+        @patch.object(
+            CrashDatabase, "_get_source_version", unittest.mock.MagicMock()
+        )
+        def test_get_fixed_version(self):
             """get_fixed_version() for fixed bugs
 
             Other cases are already checked in test_marking_segv() (invalid
