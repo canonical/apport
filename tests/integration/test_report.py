@@ -1280,13 +1280,13 @@ int main() { return f(42); }
     def test_add_hooks_info(self):
         """add_hooks_info()."""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         try:
             with open(
-                os.path.join(apport.report._hook_dir, "foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "foo.py"), "w"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1302,7 +1302,7 @@ int main() { return f(42); }
                 )
 
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo1.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo1.py"), "w"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1315,7 +1315,7 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo2.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo2.py"), "w"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1326,7 +1326,7 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo3.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo3.py"), "w"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1339,7 +1339,7 @@ int main() { return f(42); }
 
             # should only catch .py files
             with open(
-                os.path.join(apport.report._common_hook_dir, "notme"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "notme"), "w"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1445,7 +1445,8 @@ int main() { return f(42); }
 
             # source package hook
             with open(
-                os.path.join(apport.report._hook_dir, "source_foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "source_foo.py"),
+                "w",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1490,18 +1491,18 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info("fake_ui"), True)
 
         finally:
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
     def test_add_hooks_info_opt(self):
         """add_hooks_info() for a package in /opt"""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         orig_opt_dir = apport.report._opt_dir
         apport.report._opt_dir = tempfile.mkdtemp()
         try:
@@ -1543,24 +1544,25 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info("fake_ui"), False)
             self.assertEqual(r["SourceHook"], "1")
         finally:
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
             shutil.rmtree(apport.report._opt_dir)
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
             apport.report._opt_dir = orig_opt_dir
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_add_hooks_info_errors(self, stderr_mock):
         """add_hooks_info() with errors in hooks"""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         try:
             with open(
-                os.path.join(apport.report._hook_dir, "fooprogs.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "fooprogs.py"),
+                "w",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1573,7 +1575,8 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._hook_dir, "source_foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "source_foo.py"),
+                "w",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1611,10 +1614,10 @@ int main() { return f(42); }
             self.assertIn("line 3, in add_info", r["HookError_source_foo"])
             self.assertNotIn("NameError:", r["HookError_fooprogs"])
         finally:
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
     def test_ignoring(self):
         """mark_ignore() and check_ignored()."""

@@ -714,7 +714,9 @@ class UserInterface:
                 apport.packaging.get_version(p)
             except ValueError:
                 if not os.path.exists(
-                    os.path.join(apport.report._hook_dir, "source_%s.py" % p)
+                    os.path.join(
+                        apport.report.PACKAGE_HOOK_DIR, "source_%s.py" % p
+                    )
                 ):
                     print(
                         "Package %s not installed and no hook available,"

@@ -154,7 +154,6 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     unittest.mock.MagicMock(return_value=[]),
 )
 class T(unittest.TestCase):
-    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
@@ -171,6 +170,7 @@ class T(unittest.TestCase):
 
         self.orig_data_dir = patch_data_dir(apport.report)
 
+        # pylint: disable=protected-access
         self.workdir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
@@ -207,8 +207,8 @@ class T(unittest.TestCase):
         # set up our local hook directory
         self.hookdir = os.path.join(self.workdir, "package-hooks")
         os.mkdir(self.hookdir)
-        self.orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = self.hookdir
+        self.orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = self.hookdir
 
         # test suite should not stumble over local packages
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
@@ -229,6 +229,7 @@ class T(unittest.TestCase):
         apport.ui.symptom_script_dir = self.orig_symptom_script_dir
         self.orig_symptom_script_dir = None
 
+        # pylint: disable=protected-access
         os.unlink(apport.report._ignore_file)
         apport.report._ignore_file = self.orig_ignore_file
 
@@ -241,7 +242,7 @@ class T(unittest.TestCase):
             "no stray test processes",
         )
 
-        apport.report._hook_dir = self.orig_hook_dir
+        apport.report.PACKAGE_HOOK_DIR = self.orig_package_hook_dir
         shutil.rmtree(self.workdir)
         os.environ.clear()
         os.environ.update(self.orig_environ)

@@ -39,8 +39,8 @@ from apport.hookutils import kill_pkttyagent
 from apport.packaging_impl import impl as packaging
 
 _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
-_hook_dir = "%s/package-hooks/" % (_data_dir)
-_common_hook_dir = "%s/general-hooks/" % (_data_dir)
+GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"
+PACKAGE_HOOK_DIR = f"{_data_dir}/package-hooks/"
 _opt_dir = "/opt"
 
 # path of the ignore file
@@ -1061,8 +1061,8 @@ class Report(problem_report.ProblemReport):
     def add_hooks_info(self, ui, package=None, srcpackage=None):
         """Run hook script for collecting package specific data.
 
-        A hook script needs to be in _hook_dir/<Package>.py or in
-        _common_hook_dir/*.py and has to contain a function 'add_info(report,
+        A hook script needs to be in PACKAGE_HOOK_DIR/<Package>.py or in
+        GENERAL_HOOK_DIR/*.py and has to contain a function 'add_info(report,
         ui)' that takes and modifies a Report, and gets an UserInterface
         reference for interactivity.
 
@@ -1093,7 +1093,7 @@ class Report(problem_report.ProblemReport):
                 )
                 return
 
-        hook_dirs = [_hook_dir]
+        hook_dirs = [PACKAGE_HOOK_DIR]
         # also search hooks in /opt, when program is from there
         opt_path = None
         exec_path = os.path.realpath(self.get("ExecutablePath", ""))
@@ -1118,7 +1118,7 @@ class Report(problem_report.ProblemReport):
                 opt_path = os.path.dirname(opt_path)
 
         # common hooks
-        for hook in glob.glob(_common_hook_dir + "/*.py"):
+        for hook in glob.glob(GENERAL_HOOK_DIR + "/*.py"):
             if _run_hook(self, ui, hook):
                 return True
 
