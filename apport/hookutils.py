@@ -101,7 +101,7 @@ def read_file(path, force_unicode=False):
             return contents.decode("UTF-8")
         except UnicodeDecodeError:
             return contents
-    except Exception as error:
+    except OSError as error:
         return "Error: " + str(error)
 
 
@@ -422,7 +422,7 @@ def command_available(command):
 
 def command_output(
     command,
-    input=None,
+    input=None,  # pylint: disable=redefined-builtin
     stderr=subprocess.STDOUT,
     keep_locale=False,
     decode_utf8=True,
@@ -439,19 +439,19 @@ def command_output(
     if not keep_locale:
         env["LC_MESSAGES"] = "C"
     try:
-        sp = subprocess.Popen(
+        sp = subprocess.run(
             command,
+            check=False,
+            input=input,
             stdout=subprocess.PIPE,
             stderr=stderr,
-            stdin=(input and subprocess.PIPE or None),
             env=env,
         )
     except OSError as error:
         return "Error: " + str(error)
 
-    out = sp.communicate(input)[0]
     if sp.returncode == 0:
-        res = out.strip()
+        res = sp.stdout.strip()
     else:
         res = (
             b"Error: command "
@@ -459,7 +459,7 @@ def command_output(
             + b" failed with exit code "
             + str(sp.returncode).encode()
             + b": "
-            + out
+            + sp.stdout
         )
 
     if decode_utf8:
@@ -468,7 +468,7 @@ def command_output(
 
 
 def _spawn_pkttyagent():
-    global _AGENT
+    global _AGENT  # pylint: disable=global-statement
 
     if _AGENT is not None:
         return
@@ -484,6 +484,7 @@ def _spawn_pkttyagent():
     except OSError:
         return
 
+    # closed by kill_pkttyagent(), pylint: disable=consider-using-with
     _AGENT = subprocess.Popen(
         ["pkttyagent", "--notify-fd", str(w), "--fallback"],
         close_fds=False,
@@ -497,7 +498,7 @@ def _spawn_pkttyagent():
         while True:
             epoll.register(r, select.EPOLLIN)
             events = epoll.poll()
-            for fd, event_type in events:
+            for _, event_type in events:
                 if event_type & select.EPOLLHUP:
                     os.close(r)
                     return
@@ -505,7 +506,7 @@ def _spawn_pkttyagent():
 
 
 def kill_pkttyagent():
-    global _AGENT
+    global _AGENT  # pylint: disable=global-statement
 
     if _AGENT is None:
         return
@@ -526,7 +527,7 @@ def _root_command_prefix():
         return []
 
 
-def root_command_output(
+def root_command_output(  # pylint: disable=redefined-builtin
     command, input=None, stderr=subprocess.STDOUT, decode_utf8=True
 ):
     """Try to execute given command (list) as root and return its stdout.
@@ -573,23 +574,22 @@ def attach_root_command_outputs(report, command_map):
     try:
         # create a shell script with all the commands
         script_path = os.path.join(workdir, ":script:")
-        script = open(script_path, "w")
-        for keyname, command in command_map.items():
-            assert hasattr(
-                command, "strip"
-            ), "command must be a string (shell command)"
-            # use "| cat" here, so that we can end commands with 2>&1
-            # (otherwise it would have the wrong redirection order)
-            script.write(
-                "%s | cat > %s\n" % (command, os.path.join(workdir, keyname))
-            )
-        script.close()
+        with open(script_path, "w") as script:
+            for keyname, command in command_map.items():
+                assert hasattr(
+                    command, "strip"
+                ), "command must be a string (shell command)"
+                # use "| cat" here, so that we can end commands with 2>&1
+                # (otherwise it would have the wrong redirection order)
+                script.write(
+                    "%s | cat > %s\n"
+                    % (command, os.path.join(workdir, keyname))
+                )
 
         # run script
-        sp = subprocess.Popen(
-            _root_command_prefix() + [wrapper_path, script_path]
+        subprocess.run(
+            _root_command_prefix() + [wrapper_path, script_path], check=False
         )
-        sp.wait()
 
         # now read back the individual outputs
         for keyname in command_map:
@@ -634,21 +634,15 @@ def recent_syslog(pattern, path=None):
     are read from there instead.
     """
     if path:
-        p = subprocess.Popen(
-            ["tail", "-n", "10000", path], stdout=subprocess.PIPE
-        )
+        command = ["tail", "-n", "10000", path]
     elif os.path.exists("/run/systemd/system"):
-        p = subprocess.Popen(
-            ["journalctl", "--system", "--quiet", "-b", "-a"],
-            stdout=subprocess.PIPE,
-        )
+        command = ["journalctl", "--system", "--quiet", "-b", "-a"]
     elif os.access("/var/log/syslog", os.R_OK):
-        p = subprocess.Popen(
-            ["tail", "-n", "10000", "/var/log/syslog"], stdout=subprocess.PIPE
-        )
+        command = ["tail", "-n", "10000", "/var/log/syslog"]
     else:
         return ""
-    return __filter_re_process(pattern, p)
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+        return __filter_re_process(pattern, process)
 
 
 def xsession_errors(pattern=None):
@@ -755,7 +749,6 @@ def attach_gconf(report, package):
     """Obsolete"""
 
     # keeping a no-op function for some time to not break hooks
-    pass
 
 
 def attach_gsettings_schema(report, schema):
@@ -766,36 +759,36 @@ def attach_gsettings_schema(report, schema):
     defaults = {}  # schema -> key ->  value
     env = os.environ.copy()
     env["XDG_CONFIG_HOME"] = "/nonexisting"
-    gsettings = subprocess.Popen(
+    with subprocess.Popen(
         ["gsettings", "list-recursively", schema],
         env=env,
         stdout=subprocess.PIPE,
-    )
-    for line in gsettings.stdout:
-        try:
-            (schema_name, key, value) = line.split(None, 2)
-            value = value.rstrip()
-        except ValueError:
-            continue  # invalid line
-        defaults.setdefault(schema_name, {})[key] = value
+    ) as gsettings:
+        for line in gsettings.stdout:
+            try:
+                (schema_name, key, value) = line.split(None, 2)
+                value = value.rstrip()
+            except ValueError:
+                continue  # invalid line
+            defaults.setdefault(schema_name, {})[key] = value
 
-    gsettings = subprocess.Popen(
+    with subprocess.Popen(
         ["gsettings", "list-recursively", schema], stdout=subprocess.PIPE
-    )
-    for line in gsettings.stdout:
-        try:
-            (schema_name, key, value) = line.split(None, 2)
-            value = value.rstrip()
-        except ValueError:
-            continue  # invalid line
+    ) as gsettings:
+        for line in gsettings.stdout:
+            try:
+                (schema_name, key, value) = line.split(None, 2)
+                value = value.rstrip()
+            except ValueError:
+                continue  # invalid line
 
-        if value != defaults.get(schema_name, {}).get(key, ""):
-            if schema_name == b"org.gnome.shell" and key in [
-                b"command-history",
-                b"favorite-apps",
-            ]:
-                value = "redacted by apport"
-            cur_value += "%s %s %s\n" % (schema_name, key, value)
+            if value != defaults.get(schema_name, {}).get(key, ""):
+                if schema_name == b"org.gnome.shell" and key in [
+                    b"command-history",
+                    b"favorite-apps",
+                ]:
+                    value = "redacted by apport"
+                cur_value += "%s %s %s\n" % (schema_name, key, value)
 
     report["GsettingsChanges"] = cur_value
 
@@ -979,7 +972,7 @@ def attach_mac_events(report, profiles=None):
                 profile = bytes.fromhex(match).decode(
                     "UTF-8", errors="replace"
                 )
-        except Exception:
+        except (IndexError, ValueError):
             continue
 
         for search_profile in profiles:
@@ -1030,10 +1023,7 @@ def package_versions(*packages):
                 version = "N/A"
             versions.append((package, version))
 
-    package_width, version_width = map(
-        max, [map(len, t) for t in zip(*versions)]
-    )
-
+    package_width = max(len(version[0]) for version in versions)
     fmt = "%%-%ds %%s" % package_width
     return "\n".join([fmt % v for v in versions])
 
@@ -1042,17 +1032,17 @@ def _get_module_license(module):
     """Return the license for a given kernel module."""
 
     try:
-        modinfo = subprocess.Popen(
+        modinfo = subprocess.run(
             ["/sbin/modinfo", module],
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        out = modinfo.communicate()[0].decode("UTF-8")
         if modinfo.returncode != 0:
             return "invalid"
     except OSError:
         return None
-    for line in out.splitlines():
+    for line in modinfo.stdout.decode("UTF-8").splitlines():
         fields = line.split(":", 1)
         if len(fields) < 2:
             continue
@@ -1086,7 +1076,8 @@ def __drm_con_info(con):
         path = os.path.join(con, f)
         if f == "uevent" or not os.path.isfile(path):
             continue
-        val = open(path, "rb").read().strip()
+        with open(path, "rb") as con_info_file:
+            val = con_info_file.read().strip()
         # format some well-known attributes specially
         if f == "modes":
             val = val.replace(b"\n", b" ")

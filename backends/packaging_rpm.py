@@ -166,10 +166,13 @@ class RPMPackageInfo:
     def get_system_architecture(self):
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
-        rpmarch = subprocess.Popen(
-            ["rpm", "--eval", "%_target_cpu"], stdout=subprocess.PIPE
+        rpmarch = subprocess.run(
+            ["rpm", "--eval", "%_target_cpu"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        arch = rpmarch.communicate()[0].strip()
+        arch = rpmarch.stdout.strip()
         return arch
 
     def is_distro_package(self, package):
@@ -199,19 +202,25 @@ class RPMPackageInfo:
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
-    def get_source_tree(self, srcpackage, dir, version=None):
-        """Download given source package and unpack it into dir (which should
-        be empty).
+    def get_source_tree(
+        self, srcpackage, output_dir, version=None, sandbox=None
+    ):
+        """Download source package and unpack it into output_dir.
 
-        This also has to care about applying patches etc., so that dir will
-        eventually contain the actually compiled source.
+        This also has to care about applying patches etc., so that output_dir
+        will eventually contain the actually compiled source. output_dir needs
+        to exist and should be empty.
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
 
+        If sandbox is given, that sandbox is used to download the source
+        package, otherwise it uses the system configuration.
+
         Return the directory that contains the actual source root directory
-        (which might be a subdirectory of dir). Return None if the source is
-        not available."""
+        (which might be a subdirectory of output_dir). Return None if the
+        source is not available.
+        """
         # Used only by apport-retrace.
         raise NotImplementedError(
             "method must be implemented by distro-specific"
@@ -232,7 +241,7 @@ class RPMPackageInfo:
             " RPMPackageInfo subclass"
         )
 
-    def package_name_glob(self, glob):
+    def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
 
         raise NotImplementedError("TODO")
@@ -288,9 +297,8 @@ class RPMPackageInfo:
         """Internal function to check a file's md5sum"""
 
         m = hashlib.md5()
-        f = open(filename)
-        data = f.read()
-        f.close()
+        with open(filename) as md5_file:
+            data = md5_file.read()
         m.update(data)
         return filemd5 == m.hexdigest()
 

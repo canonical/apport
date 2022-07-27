@@ -21,22 +21,21 @@ class T(unittest.TestCase):
 
     def test_module_license_evaluation(self):
         """module licenses can be validated correctly"""
+        # pylint: disable=protected-access
 
-        def _build_ko(license):
-            asm = tempfile.NamedTemporaryFile(
-                prefix="%s-" % (license), suffix=".S"
-            )
-            asm.write(
-                (
-                    '.section .modinfo\n.string "license=%s"\n' % (license)
-                ).encode()
-            )
-            asm.flush()
-            ko = tempfile.NamedTemporaryFile(
-                prefix="%s-" % (license), suffix=".ko"
-            )
-            subprocess.check_call(["/usr/bin/as", asm.name, "-o", ko.name])
-            return ko
+        def _build_ko(license_name):
+            ko_filename = os.path.join(self.workdir, f"{license_name}.ko")
+            with tempfile.NamedTemporaryFile(
+                mode="w+", prefix="%s-" % (license_name), suffix=".S"
+            ) as asm:
+                asm.write(
+                    f'.section .modinfo\n.string "license={license_name}"\n'
+                )
+                asm.flush()
+                subprocess.check_call(
+                    ["/usr/bin/as", asm.name, "-o", ko_filename]
+                )
+            return ko_filename
 
         good_ko = _build_ko("GPL")
         bad_ko = _build_ko("BAD")
@@ -50,36 +49,31 @@ class T(unittest.TestCase):
         self.assertEqual(
             apport.hookutils._get_module_license("does-not-exist"), "invalid"
         )
-        self.assertIn(
-            "GPL", apport.hookutils._get_module_license(good_ko.name)
-        )
-        self.assertIn("BAD", apport.hookutils._get_module_license(bad_ko.name))
+        self.assertIn("GPL", apport.hookutils._get_module_license(good_ko))
+        self.assertIn("BAD", apport.hookutils._get_module_license(bad_ko))
 
         # check via nonfree_kernel_modules logic
-        f = tempfile.NamedTemporaryFile()
-        f.write(
-            (
-                "isofs\ndoes-not-exist\n%s\n%s\n" % (good_ko.name, bad_ko.name)
-            ).encode()
-        )
-        f.flush()
-        nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
+        with tempfile.NamedTemporaryFile(mode="w+") as temp:
+            temp.write(f"isofs\ndoes-not-exist\n{good_ko}\n{bad_ko}\n")
+            temp.flush()
+            nonfree = apport.hookutils.nonfree_kernel_modules(temp.name)
         self.assertIn("does-not-exist", nonfree)
-        self.assertNotIn(good_ko.name, nonfree)
-        self.assertIn(bad_ko.name, nonfree)
+        self.assertNotIn(good_ko, nonfree)
+        self.assertIn(bad_ko, nonfree)
 
     def test_real_module_license_evaluation(self):
         """module licenses can be validated correctly for real module"""
+        # pylint: disable=protected-access
         isofs_license = apport.hookutils._get_module_license("isofs")
         if isofs_license == "invalid":
             self.skipTest("kernel module 'isofs' not available")
 
         self.assertIn("GPL", isofs_license)
 
-        f = tempfile.NamedTemporaryFile()
-        f.write(b"isofs\n")
-        f.flush()
-        nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(b"isofs\n")
+            temp.flush()
+            nonfree = apport.hookutils.nonfree_kernel_modules(temp.name)
         self.assertNotIn("isofs", nonfree)
 
     def test_attach_file(self):
@@ -549,5 +543,5 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             for line in f:
                 if line.startswith("VmSize:"):
                     return int(line.split()[1])
-            else:
-                raise SystemError("did not find VmSize: in /proc/self/status")
+
+        raise SystemError("did not find VmSize: in /proc/self/status")

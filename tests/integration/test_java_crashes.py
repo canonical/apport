@@ -55,7 +55,7 @@ class T(unittest.TestCase):
         crash_class = os.path.dirname(self.crash_jar_path) + "/crash.class"
         if not os.path.exists(crash_class):
             self.skipTest(f"{crash_class} missing")
-        p = subprocess.Popen(
+        java = subprocess.run(
             [
                 "java",
                 "-classpath",
@@ -64,15 +64,15 @@ class T(unittest.TestCase):
                 + os.path.dirname(self.crash_jar_path),
                 "crash",
             ],
+            check=False,
             env=self.env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        (out, err) = p.communicate()
         self.assertNotEqual(
-            p.returncode, 0, "crash must exit with nonzero code"
+            java.returncode, 0, "crash must exit with nonzero code"
         )
-        self.assertIn(b"Can't catch this", err)
+        self.assertIn("Can't catch this", java.stderr.decode())
 
         self._check_crash_report(crash_class)
 
@@ -81,22 +81,22 @@ class T(unittest.TestCase):
 
         if not os.path.exists(self.crash_jar_path):
             self.skipTest(f"{self.crash_jar_path} missing")
-        p = subprocess.Popen(
+        java = subprocess.run(
             [
                 "java",
                 "-classpath",
                 self.apport_jar_path + ":" + self.crash_jar_path,
                 "crash",
             ],
+            check=False,
             env=self.env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        (out, err) = p.communicate()
         self.assertNotEqual(
-            p.returncode, 0, "crash must exit with nonzero code"
+            java.returncode, 0, "crash must exit with nonzero code"
         )
-        self.assertIn(b"Can't catch this", err)
+        self.assertIn("Can't catch this", java.stderr.decode())
 
         self._check_crash_report(self.crash_jar_path + "!/crash.class")
 

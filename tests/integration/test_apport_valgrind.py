@@ -40,12 +40,15 @@ class T(unittest.TestCase):
         self.assertIn("tests", out)
 
     def _call(self, argv):
-        p = subprocess.Popen(
-            argv, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        process = subprocess.run(
+            argv,
+            check=False,
+            env=self.env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
-        (out, err) = p.communicate()
-        ret = p.returncode
-        return ret, bytes.decode(out), bytes.decode(err)
+        return (process.returncode, process.stdout, process.stderr)
 
     def test_help_display(self):
         """help display"""

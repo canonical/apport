@@ -13,6 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
 import ast
 import configparser
 import errno
@@ -21,16 +22,17 @@ import glob
 import gzip
 import io
 import locale
-import optparse
 import os.path
 import re
 import shutil
 import signal
+import smtplib
 import subprocess
 import sys
 import threading
 import time
 import traceback
+import urllib.error
 import webbrowser
 import zlib
 
@@ -97,6 +99,7 @@ def thread_collect_info(
         symb = {}
         try:
             with open(symptom_script) as f:
+                # legacy, pylint: disable=exec-used
                 exec(compile(f.read(), symptom_script, "exec"), symb)
             package = symb["run"](report, ui)
             if not package:
@@ -110,7 +113,7 @@ def thread_collect_info(
             )[0]
         except StopIteration:
             sys.exit(0)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             apport.error("symptom script %s crashed:", symptom_script)
             traceback.print_exc()
             sys.exit(0)
@@ -235,6 +238,7 @@ class UserInterface:
         self.cur_package = None
         self.offer_restart = False
         self.specified_a_pkg = False
+        self.upload_progress = None
 
         try:
             self.crashdb = apport.crashdb.get_crashdb(None)
@@ -467,7 +471,7 @@ class UserInterface:
         """
         self.report = apport.Report("Hang")
 
-        if not self.options.pid:
+        if not self.args.pid:
             self.ui_error_message(
                 _("No PID specified"),
                 _(
@@ -537,11 +541,7 @@ class UserInterface:
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         """
-        if (
-            not self.options.package
-            and not self.options.pid
-            and not symptom_script
-        ):
+        if not self.args.package and not self.args.pid and not symptom_script:
             if self.run_symptoms():
                 return True
             else:
@@ -557,10 +557,10 @@ class UserInterface:
         self.report = apport.Report("Bug")
 
         # if PID is given, add info
-        if self.options.pid:
+        if self.args.pid:
             try:
                 proc_pid_fd = os.open(
-                    "/proc/%s" % self.options.pid,
+                    "/proc/%s" % self.args.pid,
                     os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
@@ -569,10 +569,10 @@ class UserInterface:
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
                     # this PID is a kernel thread
-                    self.options.package = "linux"
+                    self.args.package = "linux"
                 else:
                     self.report.add_proc_info(
-                        pid=self.options.pid, proc_pid_fd=proc_pid_fd
+                        pid=self.args.pid, proc_pid_fd=proc_pid_fd
                     )
             except PermissionError:
                 self.ui_error_message(
@@ -599,13 +599,13 @@ class UserInterface:
         else:
             self.report.add_proc_environ()
 
-        if self.options.package:
-            self.options.package = self.options.package.strip()
+        if self.args.package:
+            self.args.package = self.args.package.strip()
         # "Do what I mean" for filing against "linux"
-        if self.options.package == "linux":
+        if self.args.package == "linux":
             self.cur_package = apport.packaging.get_kernel_package()
         else:
-            self.cur_package = self.options.package
+            self.cur_package = self.args.package
 
         try:
             self.collect_info(symptom_script)
@@ -643,16 +643,14 @@ class UserInterface:
         except KeyError:
             pass
 
-        if self.options.save:
+        if self.args.save:
             try:
-                savefile = os.path.expanduser(self.options.save)
+                savefile = os.path.expanduser(self.args.save)
                 if savefile.endswith(".gz"):
                     with gzip.open(savefile, "wb") as f:
                         self.report.write(f)
                 else:
-                    with open(
-                        os.path.expanduser(self.options.save), "wb"
-                    ) as f:
+                    with open(os.path.expanduser(self.args.save), "wb") as f:
                         self.report.write(f)
             except OSError as error:
                 self.ui_error_message(_("Cannot create report"), str(error))
@@ -669,7 +667,7 @@ class UserInterface:
         """Update an existing bug with locally collected information."""
 
         # avoid irrelevant noise
-        if not self.crashdb.can_update(self.options.update_report):
+        if not self.crashdb.can_update(self.args.update_report):
             self.ui_error_message(
                 _("Updating problem report"),
                 _(
@@ -680,7 +678,7 @@ class UserInterface:
             )
             return False
 
-        is_reporter = self.crashdb.is_reporter(self.options.update_report)
+        is_reporter = self.crashdb.is_reporter(self.args.update_report)
 
         if not is_reporter:
             r = self.ui_question_yesno(
@@ -698,12 +696,10 @@ class UserInterface:
 
         # list of affected source packages
         self.report = apport.Report("Bug")
-        if self.options.package:
-            pkgs = [self.options.package.strip()]
+        if self.args.package:
+            pkgs = [self.args.package.strip()]
         else:
-            pkgs = self.crashdb.get_affected_packages(
-                self.options.update_report
-            )
+            pkgs = self.crashdb.get_affected_packages(self.args.update_report)
 
         info_collected = False
         for p in pkgs:
@@ -758,7 +754,7 @@ class UserInterface:
         response = self.ui_present_report_details(allowed_to_report)
         if response["report"]:
             self.crashdb.update(
-                self.options.update_report,
+                self.args.update_report,
                 self.report,
                 "apport information",
                 change_description=is_reporter,
@@ -784,8 +780,9 @@ class UserInterface:
             symb = {}
             try:
                 with open(script) as f:
+                    # legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 apport.error("symptom script %s is invalid", script)
                 traceback.print_exc()
                 continue
@@ -830,11 +827,11 @@ class UserInterface:
     def run_symptom(self):
         """Report a bug with a symptom script."""
 
-        script = os.path.join(symptom_script_dir, self.options.symptom + ".py")
+        script = os.path.join(symptom_script_dir, self.args.symptom + ".py")
         if not os.path.exists(script):
             self.ui_error_message(
                 _("Unknown symptom"),
-                _('The symptom "%s" is not known.') % self.options.symptom,
+                _('The symptom "%s" is not known.') % self.args.symptom,
             )
             return
 
@@ -846,26 +843,26 @@ class UserInterface:
         Return True if at least one report has been processed, and False
         otherwise.
         """
-        if self.options.symptom:
+        if self.args.symptom:
             self.run_symptom()
             return True
-        elif self.options.hanging:
-            self.run_hang(self.options.pid)
+        elif self.args.hanging:
+            self.run_hang(self.args.pid)
             return True
-        elif self.options.filebug:
+        elif self.args.filebug:
             return self.run_report_bug()
-        elif self.options.update_report is not None:
+        elif self.args.update_report is not None:
             return self.run_update_report()
-        elif self.options.version:
+        elif self.args.version:
             print(__version__)
             return True
-        elif self.options.crash_file:
+        elif self.args.crash_file:
             try:
-                self.run_crash(self.options.crash_file, False)
+                self.run_crash(self.args.crash_file, False)
             except OSError as error:
                 self.ui_error_message(_("Invalid problem report"), str(error))
             return True
-        elif self.options.window:
+        elif self.args.window:
             if os.getenv("XDG_SESSION_TYPE") == "wayland":
                 self.ui_error_message(
                     _("Cannot create report"),
@@ -890,15 +887,15 @@ class UserInterface:
                     " application window to report a problem about it."
                 ),
             )
-            xprop = subprocess.Popen(
+            xprop = subprocess.run(
                 ["xprop", "_NET_WM_PID"],
+                check=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            (out, err) = xprop.communicate()
             if xprop.returncode == 0:
                 try:
-                    self.options.pid = int(out.split()[-1])
+                    self.args.pid = int(xprop.stdout.split()[-1])
                 except ValueError:
                     self.ui_error_message(
                         _("Cannot create report"),
@@ -914,7 +911,7 @@ class UserInterface:
                     _("Cannot create report"),
                     _("xprop failed to determine process ID of the window")
                     + "\n\n"
-                    + err,
+                    + xprop.stderr.decode(),
                 )
                 return True
         else:
@@ -925,15 +922,10 @@ class UserInterface:
     #
 
     def parse_argv_update(self):
-        """Parse command line options when being invoked in update mode.
-
-        Return (options, args).
-        """
-        optparser = optparse.OptionParser(_("%prog <report number>"))
-        optparser.add_option(
-            "-p", "--package", help=_("Specify package name.")
-        )
-        optparser.add_option(
+        """Parse command line options when being invoked in update mode."""
+        parser = argparse.ArgumentParser(usage=_("%(prog)s <report number>"))
+        parser.add_argument("-p", "--package", help=_("Specify package name."))
+        parser.add_argument(
             "--tag",
             action="append",
             default=[],
@@ -942,19 +934,14 @@ class UserInterface:
                 " Can be specified multiple times."
             ),
         )
-        (self.options, self.args) = optparser.parse_args()
+        parser.add_argument("update_report", metavar="report_number", type=int)
+        self.args = parser.parse_args()
 
-        if len(self.args) != 1 or not self.args[0].isdigit():
-            optparser.error("You need to specify a report number to update")
-            sys.exit(1)
-
-        self.options.update_report = int(self.args[0])
-        self.options.symptom = None
-        self.options.filebug = False
-        self.options.crash_file = None
-        self.options.version = None
-        self.options.hanging = False
-        self.args = []
+        self.args.symptom = None
+        self.args.filebug = False
+        self.args.crash_file = None
+        self.args.version = False
+        self.args.hanging = False
 
     def parse_argv(self):
         """Parse command line options.
@@ -974,86 +961,94 @@ class UserInterface:
                 self.parse_argv_update()
                 return
 
-        optparser = optparse.OptionParser(
-            _(
-                "%prog [options]"
+        if len(sys.argv) > 0 and cmd.endswith("-bug"):
+            suppress = argparse.SUPPRESS
+        else:
+            suppress = False
+
+        parser = argparse.ArgumentParser(
+            usage=_(
+                "%(prog)s [options]"
                 " [symptom|pid|package|program path|.apport/.crash file]"
             )
         )
-        optparser.add_option(
+        parser.add_argument(
             "-f",
             "--file-bug",
             action="store_true",
             dest="filebug",
-            default=False,
-            help=_(
+            help=suppress
+            or _(
                 "Start in bug filing mode. Requires --package and an optional"
                 " --pid, or just a --pid. If neither is given, display a list"
                 " of known symptoms. (Implied if a single argument is given.)"
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-w",
             "--window",
             action="store_true",
-            default=False,
             help=_("Click a window as a target for filing a problem report."),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-u",
             "--update-bug",
-            type="int",
+            type=int,
             dest="update_report",
-            help=_(
+            help=suppress
+            or _(
                 "Start in bug updating mode. Can take an optional --package."
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-s",
             "--symptom",
             metavar="SYMPTOM",
-            help=_(
+            help=suppress
+            or _(
                 "File a bug report about a symptom. (Implied if symptom name"
                 " is given as only argument.)"
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-p",
             "--package",
-            help=_(
+            help=suppress
+            or _(
                 "Specify package name in --file-bug mode. This is optional"
                 " if a --pid is specified. (Implied if package name"
                 " is given as only argument.)"
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-P",
             "--pid",
-            type="int",
-            help=_(
+            type=int,
+            help=suppress
+            or _(
                 "Specify a running program in --file-bug mode. If this is"
                 " specified, the bug report will contain more information."
                 "  (Implied if pid is given as only argument.)"
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "--hanging",
             action="store_true",
-            default=False,
             help=_("The provided pid is a hanging application."),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-c",
             "--crash-file",
             metavar="PATH",
-            help=_(
+            help=suppress
+            or _(
                 "Report the crash from given .apport or .crash file"
                 " instead of the pending ones in %s."
                 " (Implied if file is given as only argument.)"
             )
             % apport.fileutils.report_dir,
         )
-        optparser.add_option(
+        parser.add_argument(
             "--save",
             metavar="PATH",
             help=_(
@@ -1062,7 +1057,7 @@ class UserInterface:
                 " reported later on from a different machine."
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "--tag",
             action="append",
             default=[],
@@ -1071,113 +1066,97 @@ class UserInterface:
                 " Can be specified multiple times."
             ),
         )
-        optparser.add_option(
+        parser.add_argument(
             "-v",
             "--version",
             action="store_true",
             help=_("Print the Apport version number."),
         )
+        parser.add_argument("issue", nargs="?", help=argparse.SUPPRESS)
 
-        if len(sys.argv) > 0 and cmd.endswith("-bug"):
-            for o in ("-f", "-u", "-s", "-p", "-P", "-c"):
-                optparser.get_option(o).help = optparse.SUPPRESS_HELP
-
-        (self.options, self.args) = optparser.parse_args()
+        self.args = parser.parse_args()
+        issue = self.args.issue
+        del self.args.issue
 
         # mutually exclusive arguments
-        if self.options.update_report:
+        if self.args.update_report:
             if (
-                self.options.filebug
-                or self.options.window
-                or self.options.symptom
-                or self.options.pid
-                or self.options.crash_file
-                or self.options.save
+                self.args.filebug
+                or self.args.window
+                or self.args.symptom
+                or self.args.pid
+                or self.args.crash_file
+                or self.args.save
             ):
-                optparser.error(
+                parser.error(
                     "-u/--update-bug option cannot be used together"
                     " with options for a new report"
                 )
-
-        # "do what I mean" for zero or one arguments
-        if len(sys.argv) == 0:
-            return
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
         # NOTE: uses sys.argv, since self.args if empty for all the options,
         # e.g. "-v" or "-u $BUG"
         if len(sys.argv) == 1 and cmd.endswith("-bug"):
-            self.options.filebug = True
+            self.args.filebug = True
             return
 
         # one argument: guess "file bug" mode by argument type
-        if len(self.args) != 1:
+        if issue is None:
             return
 
         # symptom?
-        if os.path.exists(
-            os.path.join(symptom_script_dir, self.args[0] + ".py")
-        ):
-            self.options.filebug = True
-            self.options.symptom = self.args[0]
-            self.args = []
+        if os.path.exists(os.path.join(symptom_script_dir, issue + ".py")):
+            self.args.filebug = True
+            self.args.symptom = issue
 
         # .crash/.apport file?
-        elif self.args[0].endswith(".crash") or self.args[0].endswith(
-            ".apport"
-        ):
-            self.options.crash_file = self.args[0]
-            self.args = []
+        elif issue.endswith(".crash") or issue.endswith(".apport"):
+            self.args.crash_file = issue
 
         # PID?
-        elif self.args[0].isdigit():
-            self.options.filebug = True
-            self.options.pid = self.args[0]
-            self.args = []
+        elif issue.isdigit():
+            self.args.filebug = True
+            self.args.pid = issue
 
         # executable?
-        elif "/" in self.args[0]:
-            if self.args[0].startswith("/snap/bin"):
+        elif "/" in issue:
+            if issue.startswith("/snap/bin"):
                 # see if the snap has the same name as the executable
-                snap = apport.fileutils.find_snap(self.args[0].split("/")[-1])
+                snap = apport.fileutils.find_snap(issue.split("/")[-1])
                 if not snap:
-                    optparser.error(
+                    parser.error(
                         "%s is provided by a snap. No contact address"
                         " has been provided; visit the forum at"
-                        " https://forum.snapcraft.io/ for help." % self.args[0]
+                        " https://forum.snapcraft.io/ for help." % issue
                     )
                 elif snap.get("contact", ""):
-                    optparser.error(
+                    parser.error(
                         "%s is provided by a snap published by %s."
                         " Contact them via %s for help."
-                        % (self.args[0], snap["developer"], snap["contact"])
+                        % (issue, snap["developer"], snap["contact"])
                     )
                 else:
-                    optparser.error(
+                    parser.error(
                         "%s is provided by a snap published by %s."
                         " No contact address has been provided; visit the"
                         " forum at https://forum.snapcraft.io/ for help."
-                        % (self.args[0], snap["developer"])
+                        % (issue, snap["developer"])
                     )
                 sys.exit(1)
             else:
-                pkg = apport.packaging.get_file_package(self.args[0])
+                pkg = apport.packaging.get_file_package(issue)
                 if not pkg:
-                    optparser.error(
-                        "%s does not belong to a package." % self.args[0]
-                    )
+                    parser.error("%s does not belong to a package." % issue)
                     sys.exit(1)
-            self.args = []
-            self.options.filebug = True
-            self.options.package = pkg
+            self.args.filebug = True
+            self.args.package = pkg
 
         # otherwise: package name
         else:
-            self.options.filebug = True
+            self.args.filebug = True
             self.specified_a_pkg = True
-            self.options.package = self.args[0]
-            self.args = []
+            self.args.package = issue
 
     def format_filesize(self, size):
         """Format the given integer as humanly readable and i18n'ed file
@@ -1349,7 +1328,7 @@ class UserInterface:
                 spec = ast.literal_eval(self.report["CrashDB"])
                 assert isinstance(spec, dict)
                 assert "impl" in spec
-            except Exception as error:
+            except (AssertionError, SyntaxError, ValueError) as error:
                 self.report["UnreportableReason"] = (
                     "A package hook defines an invalid crash database"
                     " definition:\n%s\n%s" % (self.report["CrashDB"], error)
@@ -1526,7 +1505,7 @@ class UserInterface:
                             " that is not installed."
                         )
                         self.report["_MarkForUpload"] = "False"
-                except Exception as error:
+                except Exception as error:  # pylint: disable=broad-except
                     apport.error(repr(error))
                     self.report["UnreportableReason"] = (
                         _(
@@ -1779,7 +1758,7 @@ class UserInterface:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
                 sys.exit(0)
-        except Exception as error:
+        except Exception as error:  # pylint: disable=broad-except
             os.write(w, str(error))
             sys.exit(1)
         os._exit(0)
@@ -1810,12 +1789,10 @@ class UserInterface:
         except KeyError:
             pass
 
-        global __upload_progress
-        __upload_progress = None
+        self.upload_progress = None
 
         def progress_callback(sent, total):
-            global __upload_progress
-            __upload_progress = float(sent) / total
+            self.upload_progress = float(sent) / total
 
         # drop internal/uninteresting keys, that start with "_"
         for k in list(self.report):
@@ -1831,7 +1808,7 @@ class UserInterface:
  
         upthread.start()
         while upthread.is_alive():
-            self.ui_set_upload_progress(__upload_progress)
+            self.ui_set_upload_progress(self.upload_progress)
             try:
                 upthread.join(0.1)
                 upthread.exc_raise()
@@ -1851,9 +1828,7 @@ class UserInterface:
                         args=(self.report, progress_callback),
                     )
                     upthread.start()
-            except (TypeError, SyntaxError, ValueError):
-                raise
-            except Exception as error:
+            except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
                 self.ui_error_message(
                     _("Network problem"),
                     "%s\n\n%s"
@@ -1973,16 +1948,11 @@ class UserInterface:
         cp = configparser.ConfigParser(interpolation=None, strict=False)
         try:
             cp.read(desktop_file, encoding="UTF-8")
-        except Exception as error:
-            if "onfig" in str(error.__class__) and "arser" in str(
-                error.__class__
-            ):
-                sys.stderr.write(
-                    "Warning! %s is broken: %s\n" % (desktop_file, str(error))
-                )
-                return None
-            else:
-                raise
+        except configparser.Error as error:
+            sys.stderr.write(
+                "Warning! %s is broken: %s\n" % (desktop_file, str(error))
+            )
+            return None
         if not cp.has_section("Desktop Entry"):
             return None
         result = dict(cp.items("Desktop Entry"))
@@ -2030,11 +2000,11 @@ class UserInterface:
         """Add extra tags to report specified with --tags on CLI."""
 
         assert self.report
-        if self.options.tag:
+        if self.args.tag:
             tags = self.report.get("Tags", "")
             if tags:
                 tags += " "
-            self.report["Tags"] = tags + " ".join(self.options.tag)
+            self.report["Tags"] = tags + " ".join(self.args.tag)
 
     #
     # abstract UI methods that must be implemented in derived classes
@@ -2128,7 +2098,6 @@ class UserInterface:
 
         This can be used for for cleaning up.
         """
-        pass
 
     def ui_run_terminal(self, command):
         """Run command in, or check for a terminal window.

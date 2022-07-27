@@ -20,12 +20,13 @@ import sys
 import tempfile
 import textwrap
 import time
+import typing
 import unittest
 
 import psutil
 
 import apport.fileutils
-from tests.helper import pidof, read_shebang
+from tests.helper import read_shebang
 from tests.paths import get_data_directory, local_test_environment
 
 test_package = "coreutils"
@@ -48,6 +49,7 @@ required_fields = [
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
@@ -100,56 +102,52 @@ class T(unittest.TestCase):
         os.chdir("/tmp")
 
         # expected report name for test executable report
-        self.test_report = os.path.join(
-            apport.fileutils.report_dir,
-            f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
-        )
+        self.test_report = self._get_report_filename(self.TEST_EXECUTABLE)
 
     def tearDown(self):
-        shutil.rmtree(self.report_dir)
-        shutil.rmtree(self.workdir)
-
         # permit tests to leave behind test_report, but nothing else
         if os.path.exists(self.test_report):
             apport.fileutils.delete_report(self.test_report)
-        unexpected_reports = apport.fileutils.get_all_reports()
-        for r in unexpected_reports:
-            apport.fileutils.delete_report(r)
-        self.assertEqual(unexpected_reports, [])
+        try:
+            self.assertEqual(apport.fileutils.get_all_reports(), [])
+        finally:
+            shutil.rmtree(self.report_dir)
+            shutil.rmtree(self.workdir)
 
     def test_empty_core_dump(self):
         """empty core dumps do not generate a report"""
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+            with subprocess.Popen(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
-            app.stdin.close()
-            assert app.wait() == 0, app.stderr.read()
-            app.stderr.close()
+            ) as app:
+                app.stdin.close()
+                assert app.wait() == 0, app.stderr.read()
+                app.stderr.close()
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self._check_report(expect_report=False)
 
     def test_crash_apport(self):
         """report generation with apport"""
 
         self.do_crash()
-
-        # check crash report
-        self.assertEqual(
-            apport.fileutils.get_all_reports(), [self.test_report]
-        )
         st = os.stat(self.test_report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        self.assertEqual(st.st_uid, os.geteuid(), "report has correct owner")
 
         # a subsequent crash does not alter unseen report
         self.do_crash()
@@ -203,7 +201,7 @@ class T(unittest.TestCase):
         ]
 
         for line in pr["ProcEnviron"].splitlines():
-            (k, v) = line.split("=", 1)
+            k = line.split("=", 1)[0]
             self.assertIn(k, allowed_vars)
 
         # UserGroups only has system groups
@@ -219,52 +217,74 @@ class T(unittest.TestCase):
         """only one apport instance is ran at a time"""
 
         test_proc = self.create_test_process()
-        test_proc2 = self.create_test_process(False, "/bin/dd", args=[])
+        test_proc2 = self.create_test_process("/bin/dd", args=[])
         try:
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+            with subprocess.Popen(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
+            ) as app:
 
-            time.sleep(0.5)  # give it some time to grab the lock
+                time.sleep(0.5)  # give it some time to grab the lock
 
-            app2 = subprocess.Popen(
-                [self.apport_path, str(test_proc2), "42", "0", "1"],
-                stdin=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
+                with subprocess.Popen(
+                    [
+                        self.apport_path,
+                        "-p",
+                        str(test_proc2.pid),
+                        "-s",
+                        "42",
+                        "-c",
+                        "0",
+                        "-d",
+                        "1",
+                    ],
+                    stdin=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                ) as app2:
 
-            # app should wait indefinitely for stdin, while app2 should
-            # terminate immediately (give it 5 seconds)
-            timeout = 50
-            while timeout >= 0:
-                if app2.poll():
-                    break
+                    # app should wait indefinitely for stdin, while app2 should
+                    # terminate immediately (give it 5 seconds)
+                    timeout = 50
+                    while timeout >= 0:
+                        if app2.poll():
+                            break
 
-                time.sleep(0.1)
-                timeout -= 1
+                        time.sleep(0.1)
+                        timeout -= 1
 
-            self.assertGreater(
-                timeout, 0, "second apport instance terminates immediately"
-            )
-            self.assertFalse(
-                app.poll(), "first apport instance is still running"
-            )
+                    self.assertGreater(
+                        timeout,
+                        0,
+                        "second apport instance terminates immediately",
+                    )
+                    self.assertFalse(
+                        app.poll(), "first apport instance is still running"
+                    )
 
-            # properly terminate app and app2
-            app2.stdin.close()
-            app2.stderr.close()
-            app.stdin.write(b"boo")
-            app.stdin.close()
+                    # properly terminate app and app2
+                    app2.stdin.close()
+                    app2.stderr.close()
+                    app.stdin.write(b"boo")
+                    app.stdin.close()
 
-            self.assertEqual(app.wait(), 0, app.stderr.read())
-            app.stderr.close()
+                    self.assertEqual(app.wait(), 0, app.stderr.read())
+                    app.stderr.close()
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
-            os.kill(test_proc2, 9)
-            os.waitpid(test_proc2, 0)
+            test_proc.kill()
+            test_proc2.kill()
+            test_proc.wait()
+            test_proc2.wait()
 
     def test_unpackaged_binary(self):
         """unpackaged binaries do not create a report"""
@@ -274,8 +294,7 @@ class T(unittest.TestCase):
             with open(self.TEST_EXECUTABLE, "rb") as src:
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command=local_exe, expect_report=False)
 
     def test_unpackaged_script(self):
         """unpackaged scripts do not create a report"""
@@ -284,15 +303,13 @@ class T(unittest.TestCase):
         with open(local_exe, "w") as f:
             f.write("#!/usr/bin/perl\nsleep(86400);\n")
         os.chmod(local_exe, 0o755)
-        self.do_crash(command=local_exe, args=[])
 
         # absolute path
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command=local_exe, args=[], expect_report=False)
 
         # relative path
         os.chdir(self.workdir)
-        self.do_crash(command="./myscript", args=[])
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(command="./myscript", args=[], expect_report=False)
 
     def test_unsupported_arguments_no_stderr(self):
         """Write failure to log file when stderr is missing
@@ -320,13 +337,11 @@ class T(unittest.TestCase):
         with open(log) as log_file:
             logged = log_file.read()
         self.assertIn("usage", logged)
-        self.assertIn("error: No process ID (PID) provided", logged)
+        self.assertIn("the following arguments are required: -p/--pid", logged)
 
     def test_ignore_sigquit(self):
         """apport ignores SIGQUIT"""
-
-        self.do_crash(sig=signal.SIGQUIT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(sig=signal.SIGQUIT, expect_report=False)
 
     def test_leak_inaccessible_files(self):
         """existence of user-inaccessible files does not leak"""
@@ -397,21 +412,6 @@ class T(unittest.TestCase):
             command=myexe, expect_corefile=False, uid=8, suid_dumpable=2
         )
 
-        # check crash report
-        reports = apport.fileutils.get_new_system_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is an unreadable binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
-
-        # no user reports
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-
     def test_core_dump_packaged(self):
         """packaged executables create core dumps on proper ulimits"""
 
@@ -424,9 +424,6 @@ class T(unittest.TestCase):
                     expect_corefile_owner=os.geteuid(),
                     sig=sig,
                 )
-                self.assertEqual(
-                    apport.fileutils.get_all_reports(), [self.test_report]
-                )
                 self.check_report_coredump(self.test_report)
                 apport.fileutils.delete_report(self.test_report)
 
@@ -437,8 +434,9 @@ class T(unittest.TestCase):
     def test_core_dump_packaged_sigquit(self):
         """packaged executables create core files, no report for SIGQUIT"""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(
+            expect_corefile=True, expect_report=False, sig=signal.SIGQUIT
+        )
 
     def test_core_dump_unpackaged(self):
         """unpackaged executables create core dumps on proper ulimits"""
@@ -455,10 +453,10 @@ class T(unittest.TestCase):
                 self.do_crash(
                     expect_corefile=exp_file,
                     expect_corefile_owner=os.geteuid(),
+                    expect_report=False,
                     command=local_exe,
                     sig=sig,
                 )
-                self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_core_file_injection(self):
         """cannot inject core file"""
@@ -467,7 +465,8 @@ class T(unittest.TestCase):
         # as that allows us to intercept and replace the report and tinker with
         # the core dump
 
-        with open(self.test_report + ".inject", "w") as f:
+        inject_report = self.test_report + ".inject"
+        with open(inject_report, "w") as f:
             # \x01pwned
             f.write(
                 textwrap.dedent(
@@ -479,6 +478,7 @@ class T(unittest.TestCase):
                     """
                 )
             )
+        os.chmod(inject_report, 0o640)
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
@@ -504,7 +504,7 @@ class T(unittest.TestCase):
                     break
                 except OSError:
                     pass
-            os.rename(self.test_report + ".inject", self.test_report)
+            os.rename(inject_report, self.test_report)
             os._exit(os.EX_OK)
 
         # do_crash verifies that we get the original core, not the injected one
@@ -517,18 +517,14 @@ class T(unittest.TestCase):
 
         self.do_crash()
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
+        os.unlink(self.test_report)
 
         pr.mark_ignore()
 
-        self.do_crash()
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.do_crash(expect_report=False)
 
     def test_modify_after_start(self):
         """ignores executables which got modified after process started"""
@@ -552,16 +548,27 @@ class T(unittest.TestCase):
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+            app = subprocess.run(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
+                check=False,
+                input=b"foo",
                 stderr=subprocess.PIPE,
             )
-            err = app.communicate(b"foo")[1]
+            err = app.stderr.decode()
             self.assertEqual(app.returncode, 0, err)
             if os.getuid() > 0:
                 self.assertIn(
-                    b"executable was modified after program start", err
+                    "executable was modified after program start", err
                 )
             else:
                 with open("/var/log/apport.log") as f:
@@ -570,10 +577,10 @@ class T(unittest.TestCase):
                     "executable was modified after program start", lines[-1]
                 )
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self._check_report(expect_report=False)
 
     def test_logging_file(self):
         """outputs to log file, if available"""
@@ -583,39 +590,47 @@ class T(unittest.TestCase):
         try:
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = log
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+            app = subprocess.run(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
+                check=False,
                 env=env,
+                input="hel\x01lo",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                text=True,
             )
-            (out, err) = app.communicate(b"hel\x01lo")
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
-        if out != b"" or err != b"":
+        if app.stdout != "" or app.stderr != "":
             self.fail(
                 f"Apport wrote to stdout and/or stderr"
                 f" (exit code {app.returncode})."
-                f"\n*** stdout:\n{out.decode().strip()}"
-                f"\n*** stderr:\n{err.decode().strip()}"
+                f"\n*** stdout:\n{app.stdout.strip()}"
+                f"\n*** stderr:\n{app.stderr.strip()}"
             )
-        self.assertEqual(app.returncode, 0, err)
+        self.assertEqual(app.returncode, 0, app.stderr)
         with open(log) as f:
             logged = f.read()
         self.assertIn("called for pid", logged)
         self.assertIn("wrote report", logged)
         self.assertNotIn("Traceback", logged)
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
+        self._check_report()
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
@@ -628,32 +643,40 @@ class T(unittest.TestCase):
         try:
             env = os.environ.copy()
             env["APPORT_LOG_FILE"] = "/not/existing/apport.log"
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
-                stdin=subprocess.PIPE,
+            app = subprocess.run(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
+                check=False,
+                encoding="UTF-8",
                 env=env,
+                input="hel\x01lo",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                text=True,
             )
-            (out, err) = app.communicate(b"hel\x01lo")
-            err = err.decode("UTF-8")
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
-        self.assertEqual(out, b"")
-        self.assertEqual(app.returncode, 0, err)
-        self.assertIn("called for pid", err)
-        self.assertIn("wrote report", err)
-        self.assertNotIn("Traceback", err)
+        self.assertEqual(app.stdout, "")
+        self.assertEqual(app.returncode, 0, app.stderr)
+        self.assertIn("called for pid", app.stderr)
+        self.assertIn("wrote report", app.stderr)
+        self.assertNotIn("Traceback", app.stderr)
 
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-
+        self._check_report()
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
 
         self.assertEqual(pr["Signal"], "42")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
@@ -682,18 +705,6 @@ class T(unittest.TestCase):
         # core files
         self.do_crash(command=myexe, uid=8, suid_dumpable=2)
 
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
-
     @unittest.skipUnless(
         os.path.exists("/bin/ping"), "this test needs /bin/ping"
     )
@@ -709,18 +720,6 @@ class T(unittest.TestCase):
         self.do_crash(
             command="/bin/ping", args=["127.0.0.1"], uid=8, suid_dumpable=2
         )
-
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(
-            stat.S_IMODE(st.st_mode), 0o640, "report has correct permissions"
-        )
-        # this must be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, "report has correct owner")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self):
@@ -741,11 +740,12 @@ class T(unittest.TestCase):
         # if a user can crash a suid root binary, it should not create
         # core files
         self.do_crash(
-            command=myexe, expect_corefile=False, uid=8, suid_dumpable=2
+            command=myexe,
+            expect_corefile=False,
+            expect_report=False,
+            uid=8,
+            suid_dumpable=2,
         )
-
-        # there should not be a crash report
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_coredump_from_socket(self):
         """forwarding of a core dump through socket
@@ -753,76 +753,164 @@ class T(unittest.TestCase):
         This is being used in a container via systemd activation, where the
         core dump gets read from /run/apport.socket.
         """
-        socket_path = os.path.join(self.workdir, "apport.socket")
-        test_proc = self.create_test_process()
-        try:
-            # emulate apport on the host which forwards the crash to the apport
-            # socket in the container
-            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            server.bind(socket_path)
-            server.listen(1)
+        self.do_crash(via_socket=True)
 
-            if os.fork() == 0:
-                client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-                client.connect(socket_path)
-                with tempfile.TemporaryFile() as fd:
-                    fd.write(b"hel\x01lo")
-                    fd.flush()
-                    fd.seek(0)
-                    args = "%s 11 0 1" % test_proc
-                    fd_msg = (
-                        socket.SOL_SOCKET,
-                        socket.SCM_RIGHTS,
-                        array.array("i", [fd.fileno()]),
-                    )
-                    client.sendmsg([args.encode()], [fd_msg])
-                os._exit(0)
-
-            # call apport like systemd does via socket activation
-            def child_setup():
-                os.environ["LISTEN_FDNAMES"] = "connection"
-                os.environ["LISTEN_FDS"] = "1"
-                os.environ["LISTEN_PID"] = str(os.getpid())
-                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
-                conn = server.accept()[0]
-                os.dup2(conn.fileno(), 3)
-
-            app = subprocess.Popen(
-                [self.apport_path],
-                preexec_fn=child_setup,
-                pass_fds=[3],
-                stderr=subprocess.PIPE,
-            )
-            log = app.communicate()[1]
-            self.assertEqual(app.returncode, 0, log)
-            server.close()
-        finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
-
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
         pr = apport.Report()
-        with open(reports[0], "rb") as f:
+        with open(self.test_report, "rb") as f:
             pr.load(f)
-        os.unlink(reports[0])
         self.assertEqual(pr["Signal"], "11")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
-        self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
-        # should not create report on the host
-        self.assertEqual(apport.fileutils.get_all_system_reports(), [])
+    def test_core_dump_packaged_sigquit_via_socket(self):
+        """executable create core files via socket, no report for SIGQUIT"""
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+        self.do_crash(
+            expect_corefile=True,
+            expect_report=False,
+            sig=signal.SIGQUIT,
+            via_socket=True,
+        )
+
+    @unittest.skipUnless(
+        os.path.exists("/bin/ping"), "this test needs /bin/ping"
+    )
+    @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
+    def test_crash_setuid_drop_via_socket(self):
+        """report generation via socket for setuid program which drops root"""
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+        # run ping as user "mail"
+        self.do_crash(
+            command="/bin/ping",
+            args=["127.0.0.1"],
+            uid=8,
+            suid_dumpable=2,
+            via_socket=True,
+        )
+
+        # check crash report
+        report = apport.Report()
+        with open(self.test_report, "rb") as report_file:
+            report.load(report_file)
+        self.assertEqual(report["Signal"], "11")
+        self.assertEqual(
+            report["ExecutablePath"], os.path.realpath("/bin/ping")
+        )
 
     #
     # Helper methods
     #
 
-    def create_test_process(
-        self, check_running=True, command=None, uid=None, args=None
-    ):
+    def _call_apport(
+        self,
+        process: psutil.Process,
+        sig: int,
+        dump_mode: int,
+        stdin: typing.IO,
+    ) -> None:
+        cmd = [
+            self.apport_path,
+            f"-p{process.pid}",
+            f"-s{sig}",
+            f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
+            f"-d{dump_mode}",
+            f"-P{process.pid}",
+            f"-u{process.uids().real}",
+            f"-g{process.gids().real}",
+            "--",
+            process.exe().replace("/", "!"),
+        ]
+        subprocess.check_call(cmd, stdin=stdin)
+
+    def _call_apport_via_socket(
+        self,
+        process: psutil.Process,
+        sig: int,
+        dump_mode: int,
+        stdin: typing.IO,
+    ) -> None:
+        socket_path = os.path.join(self.workdir, "apport.socket")
+
+        # emulate apport on the host which forwards the crash to the apport
+        # socket in the container
+        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server.bind(socket_path)
+        server.listen(1)
+
+        if os.fork() == 0:
+            client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            client.connect(socket_path)
+            core_ulimit = resource.getrlimit(resource.RLIMIT_CORE)[0]
+            args = f"{process.pid} {sig} {core_ulimit} {dump_mode}"
+            fd_msg = (
+                socket.SOL_SOCKET,
+                socket.SCM_RIGHTS,
+                array.array("i", [stdin.fileno()]),
+            )
+            client.sendmsg([args.encode()], [fd_msg])
+            os._exit(0)
+
+        # call apport like systemd does via socket activation
+        def child_setup():
+            os.environ["LISTEN_FDNAMES"] = "connection"
+            os.environ["LISTEN_FDS"] = "1"
+            os.environ["LISTEN_PID"] = str(os.getpid())
+            # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+            conn = server.accept()[0]
+            os.dup2(conn.fileno(), 3)
+            conn.close()
+
+        try:
+            subprocess.run(
+                [self.apport_path],
+                check=True,
+                preexec_fn=child_setup,
+                pass_fds=[3],
+                stdin=subprocess.DEVNULL,
+            )
+        finally:
+            server.close()
+
+    def _check_core_file_is_valid(self, core_path: str, command: str) -> None:
+        st = os.stat(core_path)
+        self.assertGreater(st.st_size, 10000)
+        gdb = subprocess.run(
+            ["gdb", "--batch", "--ex", "bt", command, core_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.assertNotEqual(gdb.stdout.strip(), "")
+
+    def _check_report(
+        self,
+        expect_report: bool = True,
+        expected_owner: typing.Optional[int] = None,
+    ) -> None:
+        if not expect_report:
+            self.assertEqual(apport.fileutils.get_all_reports(), [])
+            return
+
+        if expected_owner is None:
+            expected_owner = os.geteuid()
+
+        self.assertEqual(
+            apport.fileutils.get_all_reports(), [self.test_report]
+        )
+        st = os.stat(self.test_report)
+        self.assertEqual(
+            stat.S_IMODE(st.st_mode),
+            0o640,
+            f"{self.test_report} has correct permissions",
+        )
+        self.assertEqual(
+            st.st_uid, expected_owner, f"{self.test_report} has correct owner"
+        )
+
+    def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
-        Wait until it is fully running, and return its PID.
+        Wait until it is fully running, and return its process.
         """
         if command is None:
             command = self.TEST_EXECUTABLE
@@ -830,14 +918,11 @@ class T(unittest.TestCase):
             args = self.TEST_ARGS
 
         assert os.access(command, os.X_OK), command + " is not executable"
-        if check_running:
-            assert (
-                pidof(command) == set()
-            ), "no running test executable processes"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
         os.putenv("utf8trap", b"\xc3\xa0\xc3\xa4")
+        # caller needs to call .wait(), pylint: disable=consider-using-with
         # False positive, see https://github.com/PyCQA/pylint/issues/7092
         process = subprocess.Popen(  # pylint: disable=unexpected-keyword-arg
             [command] + args, env=env, stdout=subprocess.DEVNULL, user=uid
@@ -853,7 +938,7 @@ class T(unittest.TestCase):
                 break
 
         time.sleep(0.3)  # needs some more setup time
-        return process.pid
+        return process
 
     def do_crash(
         self,
@@ -866,12 +951,18 @@ class T(unittest.TestCase):
         args=None,
         suid_dumpable: int = 1,
         hook_before_apport=None,
+        expect_report: bool = True,
+        via_socket: bool = False,
     ):
         """Generate a test crash.
 
         This runs command (by default TEST_EXECUTABLE) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
         file behind if expect_corefile is set, and generating a crash report.
+
+        If via_socket is set to True, Apport will be called via a socket.
+        The socket is being used in a container via systemd activation,
+        where the core dump gets read from /run/apport.socket.
 
         Note: The arguments for the test program must not contain spaces.
         Since there was no need for it, the support was not implemented.
@@ -889,6 +980,8 @@ class T(unittest.TestCase):
         if shebang:
             args.insert(0, command)
             command = shebang
+
+        self.test_report = self._get_report_filename(command)
 
         gdb_core_file = os.path.join(self.workdir, "core")
         self.assertFalse(
@@ -923,25 +1016,17 @@ class T(unittest.TestCase):
             if hook_before_apport:
                 hook_before_apport()
 
-            cmd = [
-                self.apport_path,
-                f"-p{command_process.pid}",
-                f"-s{sig}",
-                f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
-                f"-d{suid_dumpable}",
-                f"-P{command_process.pid}",
-                f"-u{command_process.uids().real}",
-                f"-g{command_process.gids().real}",
-                "--",
-                command.replace("/", "!"),
-            ]
+            if via_socket:
+                call_apport = self._call_apport_via_socket
+            else:
+                call_apport = self._call_apport
             with open(gdb_core_file, "rb") as core_fd:
-                subprocess.check_call(cmd, stdin=core_fd)
+                call_apport(command_process, sig, suid_dumpable, core_fd)
             os.unlink(gdb_core_file)
 
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 command_process.pid, command, command_process.uids().real
-            )
+            )[1]
         finally:
             gdb.kill()
             gdb.communicate()
@@ -965,17 +1050,7 @@ class T(unittest.TestCase):
                         "core file has correct owner",
                     )
 
-                # check that core file is valid
-                self.assertGreater(st.st_size, 10000)
-                gdb = subprocess.Popen(
-                    ["gdb", "--batch", "--ex", "bt", command, core_path],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-                (out, err) = gdb.communicate()
-                self.assertEqual(gdb.returncode, 0)
-                out = out.decode()
-                err = err.decode().strip()
+                self._check_core_file_is_valid(core_path, command)
             finally:
                 os.unlink(core_path)
         else:
@@ -989,6 +1064,11 @@ class T(unittest.TestCase):
                     )
 
                 self.fail("leaves unexpected core file behind")
+
+        self._check_report(
+            expect_report=expect_report,
+            expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
+        )
 
     def gdb_command(self, command, args, core_file, uid):
         """Construct GDB arguments to call the test executable.
@@ -1021,6 +1101,13 @@ class T(unittest.TestCase):
             command,
         ]
         return gdb_args
+
+    def _get_report_filename(self, command: str) -> str:
+        return os.path.join(
+            apport.fileutils.report_dir,
+            f"{os.path.realpath(command).replace('/', '_')}"
+            f".{os.getuid()}.crash",
+        )
 
     def check_report_coredump(self, report_path):
         """Check that given report file has a valid core dump"""

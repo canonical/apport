@@ -19,6 +19,7 @@ from tests.paths import (
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
@@ -111,6 +112,8 @@ class T(unittest.TestCase):
             f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
+        self.running_test_executables = pidof(self.TEST_EXECUTABLE)
+
     def tearDown(self):
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.workdir)
@@ -144,39 +147,49 @@ class T(unittest.TestCase):
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen(
-                [self.apport_path, str(test_proc), "42", "0", "1"],
+            with subprocess.Popen(
+                [
+                    self.apport_path,
+                    "-p",
+                    str(test_proc.pid),
+                    "-s",
+                    "42",
+                    "-c",
+                    "0",
+                    "-d",
+                    "1",
+                ],
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
-            # pipe an entire total memory size worth of spaces into it, which
-            # must be bigger than the 'usable' memory size. apport should
-            # digest that and the report should not have a core dump; NB that
-            # this should error out with a SIGPIPE when apport aborts reading
-            # from stdin
-            onemb = b" " * 1048576
-            while totalmb > 0:
-                if totalmb & 255 == 0:
-                    # Print a dot every 256 MiB
-                    sys.stderr.write(".")
-                    sys.stderr.flush()
-                try:
-                    app.stdin.write(onemb)
-                except OSError as error:
-                    if error.errno == errno.EPIPE:
-                        break
-                    else:
-                        raise
-                totalmb -= 1
-            (out, err) = app.communicate()
+            ) as app:
+                # pipe an entire total memory size worth of spaces into it,
+                # which must be bigger than the 'usable' memory size. apport
+                # should digest that and the report should not have a core
+                # dump; NB that this should error out with a SIGPIPE when
+                # apport aborts reading from stdin
+                onemb = b" " * 1048576
+                while totalmb > 0:
+                    if totalmb & 255 == 0:
+                        # Print a dot every 256 MiB
+                        sys.stderr.write(".")
+                        sys.stderr.flush()
+                    try:
+                        app.stdin.write(onemb)
+                    except OSError as error:
+                        if error.errno == errno.EPIPE:
+                            break
+                        else:
+                            raise
+                    totalmb -= 1
+                err = app.communicate()[1]
             self.assertEqual(app.returncode, 0, err)
             onemb = None
         finally:
-            os.kill(test_proc, 9)
-            os.waitpid(test_proc, 0)
+            test_proc.kill()
+            test_proc.wait()
 
         reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
+        self.assertEqual(reports, [self.test_report])
 
         pr = apport.Report()
         with open(reports[0], "rb") as f:
@@ -207,14 +220,8 @@ class T(unittest.TestCase):
             f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
-        self.assertEqual(
-            pidof(self.TEST_EXECUTABLE),
-            set(),
-            "no running test executable processes",
-        )
-        self.create_test_process(
+        system_run = self.create_test_process(
             command="/usr/bin/systemd-run",
-            check_running=False,
             args=[
                 "-t",
                 "-q",
@@ -225,29 +232,33 @@ class T(unittest.TestCase):
             ]
             + self.TEST_ARGS,
         )
-        pids = pidof(self.TEST_EXECUTABLE)
-        self.assertEqual(len(pids), 1)
-        os.kill(pids.pop(), signal.SIGSEGV)
+        try:
+            pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
+            self.assertEqual(len(pids), 1)
+            os.kill(pids.pop(), signal.SIGSEGV)
 
-        self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
-        self.wait_for_apport_to_finish()
+            self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
+            self.wait_for_apport_to_finish()
+        finally:
+            system_run.kill()
+            system_run.wait()
 
         # check crash report
         with open("/var/log/apport.log") as logfile:
             apport_log = logfile.read().strip()
         reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1, f"Apport log:\n{apport_log}")
+        self.assertEqual(
+            reports, [self.test_report], f"Apport log:\n{apport_log}"
+        )
         self.assertEqual(
             reports[0],
             f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash",
         )
 
-    def create_test_process(
-        self, check_running=True, command=None, uid=None, args=None
-    ):
+    def create_test_process(self, command=None, uid=None, args=None):
         """Spawn test executable.
 
-        Wait until it is fully running, and return its PID.
+        Wait until it is fully running, and return its process.
         """
         if command is None:
             command = self.TEST_EXECUTABLE
@@ -255,14 +266,11 @@ class T(unittest.TestCase):
             args = self.TEST_ARGS
 
         assert os.access(command, os.X_OK), command + " is not executable"
-        if check_running:
-            assert (
-                pidof(command) == set()
-            ), "no running test executable processes"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
         os.putenv("utf8trap", b"\xc3\xa0\xc3\xa4")
+        # caller needs to call .wait(), pylint: disable=consider-using-with
         # False positive, see https://github.com/PyCQA/pylint/issues/7092
         process = subprocess.Popen(  # pylint: disable=unexpected-keyword-arg
             [command] + args, env=env, stdout=subprocess.DEVNULL, user=uid
@@ -278,14 +286,14 @@ class T(unittest.TestCase):
                 break
 
         time.sleep(0.3)  # needs some more setup time
-        return process.pid
+        return process
 
     def wait_for_apport_to_finish(self, timeout_sec=10.0):
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
     def wait_for_no_instance_running(self, program, timeout_sec=10.0):
         while timeout_sec > 0:
-            if not pidof(program):
+            if not pidof(program) - self.running_test_executables:
                 break
             time.sleep(0.2)
             timeout_sec -= 0.2

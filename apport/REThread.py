@@ -36,7 +36,7 @@ class REThread(threading.Thread):
         if self.__target:
             try:
                 self._retval = self.__target(*self.__args, **self.__kwargs)
-            except BaseException:
+            except BaseException:  # pylint: disable=broad-except
                 if sys:  # pylint: disable=using-constant-test
                     self._exception = sys.exc_info()
 

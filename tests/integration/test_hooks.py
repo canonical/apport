@@ -44,12 +44,12 @@ class T(unittest.TestCase):
     def test_package_hook_nologs(self):
         """package_hook without any log files."""
 
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", "bash"],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -71,12 +71,12 @@ class T(unittest.TestCase):
         """package_hook on an uninstalled package (might fail to install)."""
 
         pkg = apport.packaging.get_uninstalled_package()
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", pkg],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -103,7 +103,7 @@ class T(unittest.TestCase):
         with open(os.path.join(self.workdir, "logsub", "notme.log"), "w") as f:
             f.write("not me!")
 
-        ph = subprocess.Popen(
+        ph = subprocess.run(
             [
                 "%s/package_hook" % datadir,
                 "-p",
@@ -113,10 +113,10 @@ class T(unittest.TestCase):
                 "-l",
                 self.workdir,
             ],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=b"something is wrong",
         )
-        ph.communicate(b"something is wrong")
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -158,8 +158,9 @@ class T(unittest.TestCase):
             "-t",
             "dist-upgrade, verybad",
         ]
-        ph = subprocess.Popen(cmd, env=self.env, stdin=subprocess.PIPE)
-        ph.communicate(b"something is wrong")
+        ph = subprocess.run(
+            cmd, check=False, env=self.env, input=b"something is wrong"
+        )
         self.assertEqual(
             ph.returncode, 0, "package_hook finished successfully"
         )
@@ -176,12 +177,14 @@ class T(unittest.TestCase):
     def test_kernel_crashdump_kexec(self):
         """kernel_crashdump using kexec-tools."""
 
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb")
-        f.write(b"\x01" * 100)
-        f.close()
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore.log"), "w")
-        f.write("vmcore successfully dumped")
-        f.close()
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
+        ) as vmcore:
+            vmcore.write(b"\x01" * 100)
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore.log"), "w"
+        ) as log:
+            log.write("vmcore successfully dumped")
 
         self.assertEqual(
             subprocess.call("%s/kernel_crashdump" % datadir, env=self.env),
@@ -227,9 +230,8 @@ class T(unittest.TestCase):
         os.mkdir(vmcore_dir)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        f = open(dmesgfile, "wt")
-        f.write("1" * 100)
-        f.close()
+        with open(dmesgfile, "wt") as dmesg:
+            dmesg.write("1" * 100)
 
         self.assertEqual(
             subprocess.call("%s/kernel_crashdump" % datadir, env=self.env),
@@ -273,9 +275,10 @@ class T(unittest.TestCase):
         We must only accept plain files, otherwise vmcore.log might be a
         symlink to the .crash file, which would recursively fill itself.
         """
-        f = open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb")
-        f.write(b"\x01" * 100)
-        f.close()
+        with open(
+            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
+        ) as vmcore:
+            vmcore.write(b"\x01" * 100)
         os.symlink(
             "vmcore", os.path.join(apport.fileutils.report_dir, "vmcore.log")
         )
@@ -330,9 +333,8 @@ class T(unittest.TestCase):
         os.lchown(vmcore_dir, 65534, 65534)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        f = open(dmesgfile, "wt")
-        f.write("1" * 100)
-        f.close()
+        with open(dmesgfile, "wt") as dmesg:
+            dmesg.write("1" * 100)
 
         self.assertNotEqual(
             subprocess.call(
@@ -350,13 +352,11 @@ class T(unittest.TestCase):
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
 
-        gcc = subprocess.Popen(["gcc", "--version"], stdout=subprocess.PIPE)
-        out = gcc.communicate()[0].decode()
-        assert (
-            gcc.returncode == 0
-        ), '"gcc --version" must work for this test suite'
+        gcc = subprocess.run(
+            ["gcc", "--version"], check=True, stdout=subprocess.PIPE, text=True
+        )
 
-        ver_fields = out.splitlines()[0].split()[3].split(".")
+        ver_fields = gcc.stdout.splitlines()[0].split()[3].split(".")
         # try major/minor first
         gcc_ver = ".".join(ver_fields[:2])
         gcc_path = "/usr/bin/gcc-" + gcc_ver
@@ -365,10 +365,8 @@ class T(unittest.TestCase):
             gcc_ver = ver_fields[0]
             gcc_path = "/usr/bin/gcc-" + gcc_ver
 
-        gcc = subprocess.Popen([gcc_path, "--version"], stdout=subprocess.PIPE)
-        gcc.communicate()
-        assert gcc.returncode == 0, (
-            gcc_path + " must exist and work for this test suite"
+        subprocess.run(
+            [gcc_path, "--version"], check=True, stdout=subprocess.PIPE
         )
 
         return (gcc_ver, gcc_path)
@@ -378,31 +376,33 @@ class T(unittest.TestCase):
 
         (gcc_version, gcc_path) = self._gcc_version_path()
 
-        test_source = tempfile.NamedTemporaryFile()
-        test_source.write(b"int f(int x);")
-        test_source.flush()
-        test_source.seek(0)
+        with tempfile.NamedTemporaryFile() as test_source:
+            test_source.write(b"int f(int x);")
+            test_source.flush()
+            test_source.seek(0)
 
-        self.assertEqual(
-            subprocess.call(
-                ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
-                env=self.env,
-            ),
-            0,
-            "gcc_ice_hook finished successfully",
-        )
+            self.assertEqual(
+                subprocess.call(
+                    ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
+                    env=self.env,
+                ),
+                0,
+                "gcc_ice_hook finished successfully",
+            )
 
-        reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
+            reps = apport.fileutils.get_new_reports()
+            self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-        r = apport.Report()
-        with open(reps[0], "rb") as f:
-            r.load(f)
-        self.assertEqual(r["ProblemType"], "Crash")
-        self.assertEqual(r["ExecutablePath"], gcc_path)
-        self.assertEqual(r["PreprocessedSource"], test_source.read().decode())
+            r = apport.Report()
+            with open(reps[0], "rb") as f:
+                r.load(f)
+            self.assertEqual(r["ProblemType"], "Crash")
+            self.assertEqual(r["ExecutablePath"], gcc_path)
+            self.assertEqual(
+                r["PreprocessedSource"], test_source.read().decode()
+            )
 
-        r.add_package_info()
+            r.add_package_info()
 
         self.assertEqual(r["Package"].split()[0], "gcc-" + gcc_version)
         self.assertNotEqual(r["Package"].split()[1], "")  # has package version
@@ -411,29 +411,29 @@ class T(unittest.TestCase):
     def test_gcc_ide_hook_file_binary(self):
         """gcc_ice_hook with a temporary file with binary data."""
 
-        (gcc_version, gcc_path) = self._gcc_version_path()
+        gcc_path = self._gcc_version_path()[1]
 
-        test_source = tempfile.NamedTemporaryFile()
-        test_source.write(b"int f(int x); \xFF\xFF")
-        test_source.flush()
-        test_source.seek(0)
+        with tempfile.NamedTemporaryFile() as test_source:
+            test_source.write(b"int f(int x); \xFF\xFF")
+            test_source.flush()
+            test_source.seek(0)
 
-        self.assertEqual(
-            subprocess.call(
-                ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
-                env=self.env,
-            ),
-            0,
-            "gcc_ice_hook finished successfully",
-        )
+            self.assertEqual(
+                subprocess.call(
+                    ["%s/gcc_ice_hook" % datadir, gcc_path, test_source.name],
+                    env=self.env,
+                ),
+                0,
+                "gcc_ice_hook finished successfully",
+            )
 
-        reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
+            reps = apport.fileutils.get_new_reports()
+            self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-        r = apport.Report()
-        with open(reps[0], "rb") as f:
-            r.load(f)
-        self.assertEqual(r["PreprocessedSource"], test_source.read())
+            r = apport.Report()
+            with open(reps[0], "rb") as f:
+                r.load(f)
+            self.assertEqual(r["PreprocessedSource"], test_source.read())
 
     def test_gcc_ide_hook_pipe(self):
         """gcc_ice_hook with piping."""
@@ -442,12 +442,12 @@ class T(unittest.TestCase):
 
         test_source = "int f(int x);"
 
-        hook = subprocess.Popen(
+        hook = subprocess.run(
             ["%s/gcc_ice_hook" % datadir, gcc_path, "-"],
+            check=False,
             env=self.env,
-            stdin=subprocess.PIPE,
+            input=test_source.encode(),
         )
-        hook.communicate(test_source.encode())
         self.assertEqual(
             hook.returncode, 0, "gcc_ice_hook finished successfully"
         )
@@ -479,10 +479,12 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4\
  usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic\
  ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 """
-        hook = subprocess.Popen(
-            ["%s/kernel_oops" % datadir], env=self.env, stdin=subprocess.PIPE
+        hook = subprocess.run(
+            ["%s/kernel_oops" % datadir],
+            check=False,
+            env=self.env,
+            input=test_source.encode(),
         )
-        hook.communicate(test_source.encode())
         self.assertEqual(
             hook.returncode, 0, "kernel_oops finished successfully"
         )

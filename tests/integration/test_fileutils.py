@@ -13,6 +13,8 @@ import problem_report
 
 
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         self.orig_core_dir = apport.fileutils.core_dir
         apport.fileutils.core_dir = tempfile.mkdtemp()
@@ -380,65 +382,69 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         apport.fileutils.get_config.config = None  # trash cache
 
         # empty
-        f = tempfile.NamedTemporaryFile()
-        apport.fileutils._config_file = f.name
-        self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("main", "foo", "moo"), "moo"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
+        with tempfile.NamedTemporaryFile() as f:
+            apport.fileutils._config_file = f.name
+            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertEqual(
+                apport.fileutils.get_config("main", "foo", "moo"), "moo"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
-        # nonempty
-        f.write(
-            b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n"
-            b"[spethial]\none= 99\n"
-        )
-        f.flush()
-        self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("main", "foo", "moo"), "moo"
-        )
-        self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
-        self.assertEqual(
-            apport.fileutils.get_config("main", "one", default="moo"), "1"
-        )
-        self.assertEqual(apport.fileutils.get_config("main", "two"), "TWO")
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b1", bool=True), True
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b2", bool=True), False
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("main", "b3", bool=True), None
-        )
-        self.assertEqual(
-            apport.fileutils.get_config(
-                "main", "b3", default=False, bool=True
-            ),
-            False,
-        )
-        self.assertEqual(apport.fileutils.get_config("spethial", "one"), "99")
-        self.assertEqual(apport.fileutils.get_config("spethial", "two"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("spethial", "one", "moo"), "99"
-        )
-        self.assertEqual(
-            apport.fileutils.get_config("spethial", "nope", "moo"), "moo"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
+            # nonempty
+            f.write(
+                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n"
+                b"[spethial]\none= 99\n"
+            )
+            f.flush()
+            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertEqual(
+                apport.fileutils.get_config("main", "foo", "moo"), "moo"
+            )
+            self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
+            self.assertEqual(
+                apport.fileutils.get_config("main", "one", default="moo"), "1"
+            )
+            self.assertEqual(apport.fileutils.get_config("main", "two"), "TWO")
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b1", boolean=True), True
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b2", boolean=True), False
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("main", "b3", boolean=True), None
+            )
+            self.assertEqual(
+                apport.fileutils.get_config(
+                    "main", "b3", default=False, boolean=True
+                ),
+                False,
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "one"), "99"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "two"), None
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "one", "moo"), "99"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("spethial", "nope", "moo"), "moo"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
-        # interpolation
-        f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
-        f.flush()
-        self.assertEqual(apport.fileutils.get_config("inter", "one"), "1")
-        self.assertEqual(apport.fileutils.get_config("inter", "two"), "TWO")
-        self.assertEqual(
-            apport.fileutils.get_config("inter", "test"), "%(two)s"
-        )
-        apport.fileutils.get_config.config = None  # trash cache
-
-        f.close()
+            # interpolation
+            f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
+            f.flush()
+            self.assertEqual(apport.fileutils.get_config("inter", "one"), "1")
+            self.assertEqual(
+                apport.fileutils.get_config("inter", "two"), "TWO"
+            )
+            self.assertEqual(
+                apport.fileutils.get_config("inter", "test"), "%(two)s"
+            )
+            apport.fileutils.get_config.config = None  # trash cache
 
     def test_shared_libraries(self):
         """shared_libraries()"""
@@ -545,20 +551,20 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
         # Create some test files
         for x in range(num_core_files):
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 pid=123 + x,
                 exe="/usr/bin/test",
                 uid=fake_uid,
                 timestamp=222222 + x,
-            )
+            )[1]
             with open(core_path, "w") as fd:
                 fd.write("Some stuff")
                 time.sleep(1)
 
         # Create a file with a different uid
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_path = apport.fileutils.get_core_path(
             pid=231, exe="/usr/bin/test", uid=fake_uid + 1, timestamp=333333
-        )
+        )[1]
         with open(core_path, "w") as fd:
             fd.write("Some stuff")
 
@@ -587,10 +593,10 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         # Make sure we deleted the oldest ones
         for x in range(apport.fileutils.max_corefiles_per_uid - 1):
             offset = extra_core_files + x + 1
-            (core_name, core_path) = apport.fileutils.get_core_path(
+            core_path = apport.fileutils.get_core_path(
                 pid=123 + offset,
                 exe="/usr/bin/test",
                 uid=fake_uid,
                 timestamp=222222 + offset,
-            )
+            )[1]
             self.assertTrue(os.path.exists(core_path))

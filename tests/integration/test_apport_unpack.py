@@ -69,20 +69,20 @@ class T(unittest.TestCase):
         (ret, out, err) = self._call(["apport-unpack", "--help"])
         self.assertEqual(ret, 0)
         self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertTrue(out.startswith("usage:"), out)
 
     def test_error(self):
         """calling apport-unpack with wrong arguments"""
 
         (ret, out, err) = self._call(["apport-unpack"])
-        self.assertEqual(ret, 1)
-        self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertEqual(ret, 2)
+        self.assertEqual(out, "")
+        self.assertTrue(err.startswith("usage:"), out)
 
         (ret, out, err) = self._call(["apport-unpack", self.report_file])
-        self.assertEqual(ret, 1)
-        self.assertEqual(err, "")
-        self.assertTrue(out.startswith("Usage:"), out)
+        self.assertEqual(ret, 2)
+        self.assertEqual(out, "")
+        self.assertTrue(err.startswith("usage:"), out)
 
         (ret, out, err) = self._call(
             ["apport-unpack", "/nonexisting.crash", self.unpack_dir]
@@ -92,11 +92,15 @@ class T(unittest.TestCase):
         self.assertEqual(out, "")
 
     def _call(self, argv):
-        a = subprocess.Popen(
-            argv, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        process = subprocess.run(
+            argv,
+            check=False,
+            encoding="UTF-8",
+            env=self.env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        (out, err) = a.communicate()
-        return (a.returncode, out.decode("UTF-8"), err.decode("UTF-8"))
+        return (process.returncode, process.stdout, process.stderr)
 
     def _get_unpack(self, fname):
         with open(os.path.join(self.unpack_dir, fname), "rb") as f:

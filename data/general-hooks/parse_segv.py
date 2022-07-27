@@ -46,10 +46,9 @@ class ParseSegv:
         maps = []
         for line in maps_str.splitlines():
             items = line.strip().split()
-            try:
-                span, perms, bits, dev = items[0:4]
-            except Exception:
-                raise ValueError("Cannot parse maps line: %s" % (line.strip()))
+            if len(items) < 4:
+                raise ValueError(f"Cannot parse maps line: {line.strip()}")
+            span, perms = items[0:2]
             if len(items) == 5:
                 name = None
             else:
@@ -411,7 +410,7 @@ def add_info(report):
         if understood:
             report["SegvReason"] = reason
         report["SegvAnalysis"] = details
-    except BaseException as error:
+    except Exception as error:  # pylint: disable=broad-except
         report["SegvAnalysis"] = "Failure: %s" % (str(error))
 
 
@@ -425,11 +424,13 @@ if __name__ == "__main__":
         )
         sys.exit(0)
 
-    segv = ParseSegv(
-        open(sys.argv[1]).read(),
-        open(sys.argv[2]).read(),
-        open(sys.argv[3]).read(),
-    )
+    with open(sys.argv[1]) as registers_file:
+        registers = registers_file.read()
+    with open(sys.argv[2]) as disassembly_file:
+        disassembly = disassembly_file.read()
+    with open(sys.argv[3]) as maps_file:
+        maps = maps_file.read()
+    segv = ParseSegv(registers, disassembly, maps)
     understood, reason, details = segv.report()
     print("%s\n\n%s" % (reason, details))
     rc = 0

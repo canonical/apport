@@ -20,15 +20,13 @@ def has_internet():
     if os.environ.get("SKIP_ONLINE_TESTS"):
         return False
     if has_internet.cache is None:
-        has_internet.cache = False
         try:
-            f = urllib.request.urlopen(
+            with urllib.request.urlopen(
                 "https://api.launchpad.net/devel/ubuntu/", timeout=30
-            )
-            if b"web_link" in f.readline():
-                has_internet.cache = True
+            ) as url:
+                has_internet.cache = b"web_link" in url.readline()
         except urllib.error.URLError:
-            pass
+            has_internet.cache = False
     return has_internet.cache
 
 

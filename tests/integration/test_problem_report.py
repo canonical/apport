@@ -95,15 +95,14 @@ class T(unittest.TestCase):
             ),
         )
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(bin_data)
+            temp.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name,)
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name,)
+            out = io.BytesIO()
+            pr.write(out)
 
         pr.clear()
         pr["Extra"] = "appended"
@@ -186,16 +185,15 @@ class T(unittest.TestCase):
     def test_write_file(self):
         """writing a report with binary file data."""
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(bin_data)
+            temp.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name,)
-        pr["Afile"] = (temp.name,)
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name,)
+            pr["Afile"] = (temp.name,)
+            out = io.BytesIO()
+            pr.write(out)
 
         self.assertEqual(
             out.getvalue().decode(),
@@ -214,42 +212,41 @@ class T(unittest.TestCase):
         )
 
         # force compression/encoding bool
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(b"foo\0bar")
-        temp.flush()
-        pr = problem_report.ProblemReport(date="now!")
-        pr["File"] = (temp.name, False)
-        out = io.BytesIO()
-        pr.write(out)
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(b"foo\0bar")
+            temp.flush()
+            pr = problem_report.ProblemReport(date="now!")
+            pr["File"] = (temp.name, False)
+            out = io.BytesIO()
+            pr.write(out)
 
-        self.assertEqual(
-            out.getvalue().decode(),
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                File: foo\0bar
-                """
-            ),
-        )
+            self.assertEqual(
+                out.getvalue().decode(),
+                textwrap.dedent(
+                    """\
+                    ProblemType: Crash
+                    Date: now!
+                    File: foo\0bar
+                    """
+                ),
+            )
 
-        pr["File"] = (temp.name, True)
-        out = io.BytesIO()
-        pr.write(out)
+            pr["File"] = (temp.name, True)
+            out = io.BytesIO()
+            pr.write(out)
 
-        self.assertEqual(
-            out.getvalue().decode(),
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                File: base64
-                 H4sICAAAAAAC/0ZpbGUA
-                 S8vPZ0hKLAIACq50HgcAAAA=
-                """
-            ),
-        )
-        temp.close()
+            self.assertEqual(
+                out.getvalue().decode(),
+                textwrap.dedent(
+                    """\
+                    ProblemType: Crash
+                    Date: now!
+                    File: base64
+                     H4sICAAAAAAC/0ZpbGUA
+                     S8vPZ0hKLAIACq50HgcAAAA=
+                    """
+                ),
+            )
 
     def test_write_delayed_fileobj(self):
         """writing a report with file pointers and delayed data."""
@@ -265,7 +262,7 @@ class T(unittest.TestCase):
             time.sleep(0.3)
             os.write(fin, b" world")
             os.close(fin)
-            os._exit(0)
+            os._exit(0)  # pylint: disable=protected-access
 
         os.close(fin)
 
@@ -286,19 +283,18 @@ class T(unittest.TestCase):
         """writing and re-decoding a big random file."""
 
         # create 1 MB random file
-        temp = tempfile.NamedTemporaryFile()
-        data = os.urandom(1048576)
-        temp.write(data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            data = os.urandom(1048576)
+            temp.write(data)
+            temp.flush()
 
-        # write it into problem report
-        pr = problem_report.ProblemReport()
-        pr["File"] = (temp.name,)
-        pr["Before"] = "xtestx"
-        pr["ZAfter"] = "ytesty"
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            # write it into problem report
+            pr = problem_report.ProblemReport()
+            pr["File"] = (temp.name,)
+            pr["Before"] = "xtestx"
+            pr["ZAfter"] = "ytesty"
+            out = io.BytesIO()
+            pr.write(out)
 
         # read it again
         out.seek(0)
@@ -324,23 +320,22 @@ class T(unittest.TestCase):
         """writing and a big random file with a size limit key."""
 
         # create 1 MB random file
-        temp = tempfile.NamedTemporaryFile()
-        data = os.urandom(1048576)
-        temp.write(data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            data = os.urandom(1048576)
+            temp.write(data)
+            temp.flush()
 
-        # write it into problem report
-        pr = problem_report.ProblemReport()
-        pr["FileSmallLimit"] = (temp.name, True, 100)
-        pr["FileLimitMinus1"] = (temp.name, True, 1048575)
-        pr["FileExactLimit"] = (temp.name, True, 1048576)
-        pr["FileLimitPlus1"] = (temp.name, True, 1048577)
-        pr["FileLimitNone"] = (temp.name, True, None)
-        pr["Before"] = "xtestx"
-        pr["ZAfter"] = "ytesty"
-        out = io.BytesIO()
-        pr.write(out)
-        temp.close()
+            # write it into problem report
+            pr = problem_report.ProblemReport()
+            pr["FileSmallLimit"] = (temp.name, True, 100)
+            pr["FileLimitMinus1"] = (temp.name, True, 1048575)
+            pr["FileExactLimit"] = (temp.name, True, 1048576)
+            pr["FileLimitPlus1"] = (temp.name, True, 1048577)
+            pr["FileLimitNone"] = (temp.name, True, None)
+            pr["Before"] = "xtestx"
+            pr["ZAfter"] = "ytesty"
+            out = io.BytesIO()
+            pr.write(out)
 
         # read it again
         out.seek(0)
@@ -410,14 +405,16 @@ class T(unittest.TestCase):
         self.assertNotEqual(origstat.st_mtime, newstat.st_mtime)
         # skip atime check if filesystem is mounted noatime
         skip_atime = False
-        dir = rep
-        while len(dir) > 1:
-            dir, filename = os.path.split(dir)
-            if os.path.ismount(dir):
+        directory = rep
+        while len(directory) > 1:
+            directory = os.path.split(directory)[0]
+            if os.path.ismount(directory):
                 with open("/proc/mounts") as f:
                     for line in f:
-                        mount, fs, options = line.split(" ")[1:4]
-                        if mount == dir and "noatime" in options.split(","):
+                        mount, _, options = line.split(" ")[1:4]
+                        if mount == directory and "noatime" in options.split(
+                            ","
+                        ):
                             skip_atime = True
                             break
                 break
@@ -438,27 +435,26 @@ class T(unittest.TestCase):
     def test_write_mime_binary(self):
         """write_mime() for binary values and file references."""
 
-        temp = tempfile.NamedTemporaryFile()
-        temp.write(bin_data)
-        temp.flush()
+        with tempfile.NamedTemporaryFile() as temp:
+            with tempfile.NamedTemporaryFile() as tempgz:
+                temp.write(bin_data)
+                temp.flush()
 
-        tempgz = tempfile.NamedTemporaryFile()
-        gz = gzip.GzipFile("File1", "w", fileobj=tempgz)
-        gz.write(bin_data)
-        gz.close()
-        tempgz.flush()
+                with gzip.GzipFile("File1", "w", fileobj=tempgz) as gz:
+                    gz.write(bin_data)
+                tempgz.flush()
 
-        pr = problem_report.ProblemReport(date="now!")
-        pr["Context"] = "Test suite"
-        pr["File1"] = (temp.name,)
-        pr["File1.gz"] = (tempgz.name,)
-        pr["Value1"] = bin_data
-        with open(tempgz.name, "rb") as f:
-            pr["Value1.gz"] = f.read()
-        pr["ZValue"] = problem_report.CompressedValue(bin_data)
-        out = io.BytesIO()
-        pr.write_mime(out)
-        out.seek(0)
+                pr = problem_report.ProblemReport(date="now!")
+                pr["Context"] = "Test suite"
+                pr["File1"] = (temp.name,)
+                pr["File1.gz"] = (tempgz.name,)
+                pr["Value1"] = bin_data
+                with open(tempgz.name, "rb") as f:
+                    pr["Value1.gz"] = f.read()
+                pr["ZValue"] = problem_report.CompressedValue(bin_data)
+                out = io.BytesIO()
+                pr.write_mime(out)
+                out.seek(0)
 
         msg = email.message_from_binary_file(out)
         parts = [p for p in msg.walk()]
@@ -482,54 +478,34 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(parts[2].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[2].get_filename(), "File1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[2].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         self.assertTrue(not parts[3].is_multipart())
         self.assertEqual(parts[3].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[3].get_filename(), "File1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[3].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[3]), bin_data)
 
         # fifth part should be the Value1: value as gzip'ed attachment
         self.assertTrue(not parts[4].is_multipart())
         self.assertEqual(parts[4].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[4].get_filename(), "Value1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[4].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[4]), bin_data)
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[5].is_multipart())
         self.assertEqual(parts[5].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[5].get_filename(), "Value1.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[5].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[5]), bin_data)
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[6].is_multipart())
         self.assertEqual(parts[6].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[6].get_filename(), "ZValue.gz")
-        f = tempfile.TemporaryFile()
-        f.write(parts[6].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[6]), bin_data)
 
     def test_write_mime_filter(self):
         """write_mime() with key filters."""
@@ -569,8 +545,10 @@ class T(unittest.TestCase):
 
         # third part should be the GoodBin: field as attachment
         self.assertTrue(not parts[2].is_multipart())
-        f = tempfile.TemporaryFile()
-        f.write(parts[2].get_payload(decode=True))
-        f.seek(0)
-        self.assertEqual(gzip.GzipFile(mode="rb", fileobj=f).read(), bin_data)
-        f.close()
+        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
+
+    def decode_gzipped_message(self, message: email.message.Message) -> bytes:
+        with tempfile.TemporaryFile() as payload:
+            payload.write(message.get_payload(decode=True))
+            payload.seek(0)
+            return gzip.GzipFile(mode="rb", fileobj=payload).read()

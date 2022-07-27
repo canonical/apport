@@ -12,6 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import argparse
 import gettext
 import gzip
 import os
@@ -22,44 +23,42 @@ from apport import fatal
 from apport import unicode_gettext as _
 
 
-def help():
-    print(_("Usage: %s <report> <target directory>") % sys.argv[0])
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        usage=_("%(prog)s <report> <target directory>")
+    )
+    parser.add_argument("report", help=_("Report file to unpack"))
+    parser.add_argument(
+        "target_directory", help=_("directory to unpack report to")
+    )
+    return parser.parse_args()
 
 
 gettext.textdomain("apport")
-
-if len(sys.argv) >= 2 and sys.argv[1] == "--help":
-    help()
-    sys.exit(0)
-
-if len(sys.argv) != 3:
-    help()
-    sys.exit(1)
-
-report = sys.argv[1]
-dir = sys.argv[2]
+args = parse_args()
 
 # ensure that the directory does not yet exist or is empty
 try:
-    if os.path.isdir(dir):
-        if os.listdir(dir):
+    if os.path.isdir(args.target_directory):
+        if os.listdir(args.target_directory):
             fatal(_("Destination directory exists and is not empty."))
     else:
-        os.mkdir(dir)
+        os.mkdir(args.target_directory)
 except OSError as error:
     fatal(str(error))
 
 bin_keys = []
 pr = problem_report.ProblemReport()
-if report == "-":
+if args.report == "-":
     pr.load(sys.stdin, binary=False)
 else:
     try:
-        if report.endswith(".gz"):
-            with gzip.open(report, "rb") as f:
+        if args.report.endswith(".gz"):
+            with gzip.open(args.report, "rb") as f:
                 pr.load(f, binary=False)
         else:
-            with open(report, "rb") as f:
+            with open(args.report, "rb") as f:
                 pr.load(f, binary=False)
     except OSError as error:
         fatal(str(error))
@@ -67,17 +66,17 @@ for k in pr:
     if pr[k] == "":
         bin_keys.append(k)
         continue
-    with open(os.path.join(dir, k), "wb") as f:
+    with open(os.path.join(args.target_directory, k), "wb") as f:
         if type(pr[k]) == str:
             f.write(pr[k].encode("UTF-8"))
         else:
             f.write(pr[k])
 try:
-    if report.endswith(".gz"):
-        with gzip.open(report, "rb") as f:
-            pr.extract_keys(f, bin_keys, dir)
+    if args.report.endswith(".gz"):
+        with gzip.open(args.report, "rb") as f:
+            pr.extract_keys(f, bin_keys, args.target_directory)
     else:
-        with open(report, "rb") as f:
-            pr.extract_keys(f, bin_keys, dir)
+        with open(args.report, "rb") as f:
+            pr.extract_keys(f, bin_keys, args.target_directory)
 except OSError as error:
     fatal(str(error))

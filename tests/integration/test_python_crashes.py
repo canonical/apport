@@ -84,21 +84,22 @@ func(42)
         env = self.env.copy()
         env["PYTHONPATH"] = f"{env.get('PYTHONPATH', orig_cwd)}:/my/bogus/path"
         try:
-            p = subprocess.Popen(
+            process = subprocess.run(
                 [binary, "testarg1", "testarg2"],
+                check=False,
                 stderr=subprocess.PIPE,
                 env=env,
+                text=True,
             )
         finally:
             os.chdir(orig_cwd)
-        err = p.communicate()[1].decode()
         self.assertEqual(
-            p.returncode,
+            process.returncode,
             1,
             "crashing test python program exits with failure code",
         )
         if not extracode:
-            self.assertIn("This should happen.", err)
+            self.assertIn("This should happen.", process.stderr)
 
         return script
 
@@ -206,16 +207,19 @@ func(42)
         self.addCleanup(os.unlink, script_link)
 
         # run script through symlink name
-        p = subprocess.Popen(
-            [script_link], env=self.env, stderr=subprocess.PIPE
+        process = subprocess.run(
+            [script_link],
+            check=False,
+            env=self.env,
+            stderr=subprocess.PIPE,
+            text=True,
         )
-        err = p.communicate()[1].decode()
         self.assertEqual(
-            p.returncode,
+            process.returncode,
             1,
             "crashing test python program exits with failure code",
         )
-        self.assertIn("This should happen.", err)
+        self.assertIn("This should happen.", process.stderr)
 
         # get report for symlinked crash
         reports = apport.fileutils.get_new_reports()
@@ -369,23 +373,19 @@ func(42)
                 os.chdir(d)
                 env = os.environ.copy()
                 env["PYTHONPATH"] = orig_cwd
-                p = subprocess.Popen(
+                python = subprocess.run(
                     ["python3"],
+                    check=False,
                     env=env,
-                    stdin=subprocess.PIPE,
+                    input=b"import apport_python_hook\n"
+                    b"apport_python_hook.install()\n"
+                    b"raise ValueError",
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )
-                (out, err) = p.communicate(
-                    b"import apport_python_hook\n"
-                    b"apport_python_hook.install()\n"
-                    b"raise ValueError"
-                )
-                out = out.decode()
-                err = err.decode()
-                assert p.returncode != 0
-                assert out == ""
-                assert "ValueError" in err
+                self.assertNotEqual(python.returncode, 0)
+                self.assertEqual(python.stdout.decode(), "")
+                self.assertIn("ValueError", python.stderr.decode())
                 self._assert_no_reports()
         finally:
             os.chdir(orig_cwd)
@@ -428,15 +428,16 @@ func(42)
                 r.mark_ignore()
                 r = None
 
-                p = subprocess.Popen(
+                process = subprocess.run(
                     [script, "testarg1", "testarg2"],
+                    check=False,
                     env=self.env,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )
-                err = p.communicate()[1].decode()
+                err = process.stderr.decode()
                 self.assertEqual(
-                    p.returncode,
+                    process.returncode,
                     1,
                     "crashing test python program exits with failure code",
                 )

@@ -97,6 +97,7 @@ class T(unittest.TestCase):
         # disable package hooks, as they might ask for sudo password and other
         # interactive bits; allow tests to install their own hooks
         self.hook_dir = tempfile.mkdtemp()
+        # pylint: disable=protected-access
         apport.report._hook_dir = self.hook_dir
         apport.report._common_hook_dir = self.hook_dir
 
@@ -935,11 +936,11 @@ class T(unittest.TestCase):
 
         # remove the crash from setUp() and create a kernel oops
         os.remove(self.app.report_file)
-        kernel_oops = subprocess.Popen(
-            [kernel_oops_path], stdin=subprocess.PIPE
+        subprocess.run(
+            [kernel_oops_path],
+            check=True,
+            input=b"Plasma conduit phase misalignment",
         )
-        kernel_oops.communicate(b"Plasma conduit phase misalignment")
-        self.assertEqual(kernel_oops.returncode, 0)
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_crashes()
@@ -972,7 +973,7 @@ class T(unittest.TestCase):
             return False
 
         self.app.report_file = None
-        self.app.options.package = "bash"
+        self.app.args.package = "bash"
         GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
@@ -995,7 +996,7 @@ class T(unittest.TestCase):
 
         pkg = apport.packaging.get_uninstalled_package()
         self.app.report_file = None
-        self.app.options.package = pkg
+        self.app.args.package = pkg
         GLib.timeout_add(self.POLLING_INTERVAL_MS, c)
         self.app.run_report_bug()
 
@@ -1022,10 +1023,10 @@ class T(unittest.TestCase):
             return False
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
-        self.app.options.update_report = 0
-        self.app.options.package = "bash"
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
+        self.app.args.update_report = 0
+        self.app.args.package = "bash"
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()
@@ -1069,12 +1070,12 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
 
         # run in update mode for that bug
-        self.app.options.update_report = 0
-        self.app.options.package = source_pkg
+        self.app.args.update_report = 0
+        self.app.args.package = source_pkg
 
         GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
         self.app.run_update_report()

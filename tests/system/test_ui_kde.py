@@ -102,6 +102,7 @@ class T(unittest.TestCase):
         # disable package hooks, as they might ask for sudo password and other
         # interactive bits; allow tests to install their own hooks
         self.hook_dir = tempfile.mkdtemp()
+        # pylint: disable=protected-access
         apport.report._hook_dir = self.hook_dir
         apport.report._common_hook_dir = self.hook_dir
 
@@ -595,7 +596,7 @@ class T(unittest.TestCase):
         """Bug report for installed package"""
 
         self.app.report_file = None
-        self.app.options.package = "bash"
+        self.app.args.package = "bash"
 
         def c(*args):
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
@@ -618,7 +619,7 @@ class T(unittest.TestCase):
         pkg = apport.packaging.get_uninstalled_package()
 
         self.app.report_file = None
-        self.app.options.package = pkg
+        self.app.args.package = pkg
 
         def c(*args):
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
@@ -652,10 +653,10 @@ class T(unittest.TestCase):
             QTimer.singleShot(200, cont)
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
-        self.app.options.update_report = 0
-        self.app.options.package = "bash"
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
+        self.app.args.update_report = 0
+        self.app.args.package = "bash"
 
         QTimer.singleShot(200, cont)
         self.app.run_update_report()
@@ -698,12 +699,12 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 
         # upload empty report
-        id = self.app.crashdb.upload({})
-        self.assertEqual(id, 0)
+        crash_id = self.app.crashdb.upload({})
+        self.assertEqual(crash_id, 0)
 
         # run in update mode for that bug
-        self.app.options.update_report = 0
-        self.app.options.package = source_pkg
+        self.app.args.update_report = 0
+        self.app.args.package = source_pkg
 
         QTimer.singleShot(200, cont)
         self.app.run_update_report()

@@ -132,33 +132,36 @@ def _read_maps(proc_pid_fd):
     return maps
 
 
-def _command_output(command, input=None, env=None):
+def _command_output(  # pylint: disable=redefined-builtin
+    command, input=None, env=None
+):
     """Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     """
-    sp = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
-    )
-    # gdb can timeout when trying to retrace some core files, giving it 30
-    # minutes to run should be more than enough.
     try:
-        out = sp.communicate(input=input, timeout=1800)[0]
-    except subprocess.TimeoutExpired:
-        sp.kill()
-        out, errs = sp.communicate()
-        raise OSError(
-            "Error: command %s timedout with exit code %i: %s"
-            % (str(command), sp.returncode, out)
+        # gdb can timeout when trying to retrace some core files, giving it
+        # 30 minutes to run should be more than enough.
+        sp = subprocess.run(
+            command,
+            check=False,
+            env=env,
+            input=input,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=1800,
         )
+    except subprocess.TimeoutExpired as error:
+        out = error.stdout.decode("UTF-8", errors="replace")
+        raise OSError(
+            f"Error: command {str(error.cmd)} timed out"
+            f" after {error.timeout} seconds: {out}"
+        ) from error
     if sp.returncode == 0:
-        return out
+        return sp.stdout
     else:
-        if out:
-            out = out.decode("UTF-8", errors="replace")
-        else:
-            out = ""
+        out = sp.stdout.decode("UTF-8", errors="replace")
         raise OSError(
             "Error: command %s failed with exit code %i: %s"
             % (str(command), sp.returncode, out)
@@ -196,7 +199,7 @@ def _check_bug_pattern(report, pattern):
                     regexp = regexp.encode("UTF-8")
                 try:
                     re_c = re.compile(regexp)
-                except Exception:
+                except (re.error, TypeError, ValueError):
                     continue
                 if not re_c.search(v):
                     return None
@@ -236,6 +239,7 @@ def _run_hook(report, ui, hook):
     symb = {}
     try:
         with open(hook) as fd:
+            # legacy, pylint: disable=exec-used
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
             symb["add_info"](report, ui)
@@ -248,7 +252,7 @@ def _run_hook(report, ui, hook):
                 raise
     except StopIteration:
         return True
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         hookname = os.path.splitext(os.path.basename(hook))[0].replace(
             "-", "_"
         )
@@ -280,7 +284,7 @@ class Report(problem_report.ProblemReport):
     This class wraps a standard ProblemReport and adds methods for collecting
     standard debugging data."""
 
-    def __init__(self, type="Crash", date=None):
+    def __init__(self, problem_type="Crash", date=None):
         """Initialize a fresh problem report.
 
         date is the desired date/time string; if None (default), the current
@@ -289,7 +293,7 @@ class Report(problem_report.ProblemReport):
         If the report is attached to a process ID, this should be set in
         self.pid, so that e. g. hooks can use it to collect additional data.
         """
-        problem_report.ProblemReport.__init__(self, type, date)
+        problem_report.ProblemReport.__init__(self, problem_type, date)
         self.pid = None
         self._proc_maps_cache = None
 
@@ -656,11 +660,11 @@ class Report(problem_report.ProblemReport):
                 proc_pid_fd = os.open(
                     "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
-            except PermissionError:
-                raise ValueError("not accessible")
+            except PermissionError as error:
+                raise ValueError("not accessible") from error
             except OSError as error:
                 if error.errno == errno.ENOENT:
-                    raise ValueError("invalid process")
+                    raise ValueError("invalid process") from error
                 else:
                     raise
 
@@ -681,11 +685,11 @@ class Report(problem_report.ProblemReport):
                 self["ExecutablePath"] = _read_proc_link(
                     "exe", pid, proc_pid_fd
                 )
-            except PermissionError:
-                raise ValueError("not accessible")
+            except PermissionError as error:
+                raise ValueError("not accessible") from error
             except OSError as error:
                 if error.errno == errno.ENOENT:
-                    raise ValueError("invalid process")
+                    raise ValueError("invalid process") from error
                 else:
                     raise
         for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
@@ -825,23 +829,19 @@ class Report(problem_report.ProblemReport):
             kver = self["Uname"].split()[1]
             command = ["crash", "/usr/lib/debug/boot/vmlinux-%s" % kver, core]
             try:
-                p = subprocess.Popen(
+                crash = subprocess.run(
                     command,
-                    stdin=subprocess.PIPE,
+                    check=False,
+                    input=b"bt -a -f\nps\nrunq\nquit\n",
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                 )
             except OSError:
                 return False
-            p.stdin.write("bt -a -f\n")
-            p.stdin.write("ps\n")
-            p.stdin.write("runq\n")
-            p.stdin.write("quit\n")
-            # FIXME: split it up nicely etc
-            out = p.stdout.read()
-            ret = p.wait() == 0
+            ret = crash.returncode == 0
             if ret:
-                self["Stacktrace"] = out
+                # FIXME: split it up nicely etc
+                self["Stacktrace"] = crash.stdout
         finally:
             if unlink_core:
                 os.unlink(core)
@@ -1170,9 +1170,8 @@ class Report(problem_report.ProblemReport):
             return
 
         try:
-            f = urllib.request.urlopen(url)
-            patterns = f.read().decode("UTF-8", errors="replace")
-            f.close()
+            with urllib.request.urlopen(url) as request:
+                patterns = request.read().decode("UTF-8", errors="replace")
         except (OSError, urllib.error.URLError):
             # doesn't exist or failed to load
             return
@@ -1227,7 +1226,7 @@ class Report(problem_report.ProblemReport):
             except xml.parsers.expat.ExpatError as error:
                 raise ValueError(
                     "%s has invalid format: %s" % (_ignore_file, str(error))
-                )
+                ) from error
 
         # remove whitespace so that writing back the XML does not accumulate
         # whitespace

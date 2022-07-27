@@ -1,3 +1,4 @@
+import subprocess
 import time
 import unittest
 import unittest.mock
@@ -25,24 +26,22 @@ class T(unittest.TestCase):
         apport.hookutils.attach_dmesg(report)
         self.assertEqual(report["CurrentDmesg"], "existingcurrent")
 
-    @unittest.mock.patch("subprocess.Popen")
+    @unittest.mock.patch("subprocess.run")
     @unittest.mock.patch(
         "os.path.exists", unittest.mock.MagicMock(return_value=True)
     )
-    def test_attach_journal_errors_with_date(self, popen_mock):
-        popen_mock.return_value.returncode = 0
-        popen_mock.return_value.communicate.return_value = (
-            b"journalctl output",
-            b"",
+    def test_attach_journal_errors_with_date(self, run_mock):
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=None, returncode=0, stdout=b"journalctl output", stderr=b""
         )
 
         report = apport.Report(date="Wed May 18 18:31:08 2022")
         apport.hookutils.attach_journal_errors(report)
 
-        self.assertEqual(popen_mock.call_count, 1)
+        self.assertEqual(run_mock.call_count, 1)
         self.assertEqual(report.get("JournalErrors"), "journalctl output")
         self.assertEqual(
-            popen_mock.call_args[0][0],
+            run_mock.call_args[0][0],
             [
                 "journalctl",
                 "--priority=warning",
@@ -51,25 +50,23 @@ class T(unittest.TestCase):
             ],
         )
 
-    @unittest.mock.patch("subprocess.Popen")
+    @unittest.mock.patch("subprocess.run")
     @unittest.mock.patch(
         "os.path.exists", unittest.mock.MagicMock(return_value=True)
     )
-    def test_attach_journal_errors_without_date(self, popen_mock):
-        popen_mock.return_value.returncode = 0
-        popen_mock.return_value.communicate.return_value = (
-            b"journalctl output",
-            b"",
+    def test_attach_journal_errors_without_date(self, run_mock):
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=None, returncode=0, stdout=b"journalctl output", stderr=b""
         )
 
         report = apport.Report()
         del report["Date"]
         apport.hookutils.attach_journal_errors(report)
 
-        self.assertEqual(popen_mock.call_count, 1)
+        self.assertEqual(run_mock.call_count, 1)
         self.assertEqual(report.get("JournalErrors"), "journalctl output")
         self.assertEqual(
-            popen_mock.call_args[0][0],
+            run_mock.call_args[0][0],
             ["journalctl", "--priority=warning", "-b", "--lines=1000"],
         )
 

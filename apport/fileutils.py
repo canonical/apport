@@ -157,8 +157,8 @@ def find_file_package(file):
     Return None if no package ships it.
     """
     # resolve symlinks in directories
-    (dir, name) = os.path.split(file)
-    resolved_dir = os.path.realpath(dir)
+    (directory, name) = os.path.split(file)
+    resolved_dir = os.path.realpath(directory)
     if os.path.isdir(resolved_dir):
         file = os.path.join(resolved_dir, name)
 
@@ -180,7 +180,7 @@ def find_snap(snap):
             response = c.getresponse()
             if response.status == 200:
                 return json.loads(response.read())["result"]
-    except Exception:
+    except (http.client.HTTPException, json.JSONDecodeError, OSError):
         return None
 
 
@@ -230,9 +230,8 @@ def mark_report_seen(report):
         # Time out after 1.2 seconds.
         timeout = 12
         while timeout > 0:
-            f = open(report)
-            f.read(1)
-            f.close()
+            with open(report) as report_file:
+                report_file.read(1)
             try:
                 st = os.stat(report)
             except OSError:
@@ -384,28 +383,28 @@ def check_files_md5(sumfile):
     Return a list of files that don't match.
     """
     assert os.path.exists(sumfile)
-    m = subprocess.Popen(
+    md5sum = subprocess.run(
         ["/usr/bin/md5sum", "-c", sumfile],
+        check=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd="/",
         env={},
     )
-    out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output
-    if m.returncode == 0:
+    if md5sum.returncode == 0:
         return []
 
     mismatches = []
-    for line in out.splitlines():
+    for line in md5sum.stdout.decode().splitlines():
         if line.endswith("FAILED"):
             mismatches.append(line.rsplit(":", 1)[0])
 
     return mismatches
 
 
-def get_config(section, setting, default=None, path=None, bool=False):
+def get_config(section, setting, default=None, path=None, boolean=False):
     """Return a setting from user configuration.
 
     This is read from ~/.config/apport/settings or path. If bool is True, the
@@ -446,7 +445,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
         pass
 
     try:
-        if bool:
+        if boolean:
             return get_config.config.getboolean(section, setting)
         else:
             return get_config.config.get(section, setting)
@@ -586,7 +585,7 @@ def clean_core_directory(uid):
 
     # Subtract a extra one to make room for the new core file
     if len(uid_files) > max_corefiles_per_uid - 1:
-        for x in range(len(uid_files) - max_corefiles_per_uid + 1):
+        for _ in range(len(uid_files) - max_corefiles_per_uid + 1):
             os.remove(os.path.join(core_dir, sorted_files[0][0]))
             sorted_files.remove(sorted_files[0])
 
@@ -599,29 +598,28 @@ def shared_libraries(path):
     """
     libs = {}
 
-    ldd = subprocess.Popen(
+    with subprocess.Popen(
         ["ldd", path],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         universal_newlines=True,
-    )
-    for line in ldd.stdout:
-        try:
-            name, rest = line.split("=>", 1)
-        except ValueError:
-            continue
+    ) as ldd:
+        for line in ldd.stdout:
+            try:
+                name, rest = line.split("=>", 1)
+            except ValueError:
+                continue
 
-        name = name.strip()
-        # exclude linux-vdso since that is a virtual so
-        if "linux-vdso" in name:
-            continue
-        # this is usually "path (address)"
-        rest = rest.split()[0].strip()
-        if rest.startswith("("):
-            continue
-        libs[name] = rest
-    ldd.stdout.close()
-    ldd.wait()
+            name = name.strip()
+            # exclude linux-vdso since that is a virtual so
+            if "linux-vdso" in name:
+                continue
+            # this is usually "path (address)"
+            rest = rest.split()[0].strip()
+            if rest.startswith("("):
+                continue
+            libs[name] = rest
+        ldd.stdout.close()
 
     if ldd.returncode != 0:
         return {}

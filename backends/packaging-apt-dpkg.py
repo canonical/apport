@@ -51,9 +51,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._virtual_mapping_obj = None
         self._contents_mapping_obj = None
         self._launchpad_base = "https://api.launchpad.net/devel"
-        self._ppa_archive_url = (
-            self._launchpad_base + "/~%(user)s/+archive/%(distro)s/%(ppaname)s"
-        )
         self._contents_update = False
 
     def __del__(self):
@@ -157,7 +154,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # We don't need to update this multiple times.
                 self._sandbox_apt_cache.update(fetchProgress)
             except apt.cache.FetchFailedException as error:
-                raise SystemError(str(error))
+                raise SystemError(str(error)) from error
             self._sandbox_apt_cache.open()
         else:
             self._sandbox_apt_cache.clear()
@@ -171,7 +168,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             return self._cache()[package]
         except KeyError:
-            raise ValueError("package %s does not exist" % package)
+            raise ValueError("package %s does not exist" % package) from None
 
     def get_version(self, package):
         """Return the installed version of a package."""
@@ -190,15 +187,15 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_dependencies(self, package):
         """Return a list of packages a package depends on."""
 
-        cur_ver = self._apt_pkg(package)._pkg.current_ver
+        cur_ver = self._apt_pkg(package).installed
         if not cur_ver:
             # happens with virtual packages
             return []
         return [
-            d[0].target_pkg.name
-            for d in cur_ver.depends_list.get("Depends", [])
-            + cur_ver.depends_list.get("PreDepends", [])
-            + cur_ver.depends_list.get("Recommends", [])
+            d[0].name
+            for d in cur_ver.get_dependencies(
+                "Depends", "PreDepends", "Recommends"
+            )
         ]
 
     def get_source(self, package):
@@ -330,12 +327,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         desired.
         """
         try:
-            response = urllib.request.urlopen(url)
+            with urllib.request.urlopen(url) as response:
+                content = response.read()
         except (urllib.error.URLError, urllib.error.HTTPError):
             apport.warning("cannot connect to: %s" % urllib.parse.unquote(url))
             return None
-        try:
-            content = response.read()
         except OSError:
             apport.warning(
                 "failure reading data at: %s" % urllib.parse.unquote(url)
@@ -391,10 +387,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_files(self, package):
         """Return list of files shipped by a package."""
 
-        list = self._call_dpkg(["-L", package])
-        if list is None:
+        output = self._call_dpkg(["-L", package])
+        if output is None:
             return None
-        return [f for f in list.splitlines() if not f.startswith("diverted")]
+        return [f for f in output.splitlines() if not f.startswith("diverted")]
 
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
@@ -464,17 +460,17 @@ class __AptDpkgPackageInfo(PackageInfo):
         official user-facing API for this, which will ask for confirmation and
         allows filtering.
         """
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-query", "-W", "--showformat=${Conffiles}", "--", package],
+            check=False,
             stdout=subprocess.PIPE,
         )
 
-        out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:
             return {}
 
         modified = {}
-        for line in out.splitlines():
+        for line in dpkg.stdout.decode().splitlines():
             if not line:
                 continue
             # just take the first two fields, to not stumble over obsolete
@@ -507,16 +503,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         i = 0
 
         while not match and i < len(file_list):
-            p = subprocess.Popen(
+            fgrep = subprocess.run(
                 ["fgrep", "-lxm", "1", "--", pattern]
                 + file_list[i : (i + slice_size)],
+                check=False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            out = p.communicate()[0].decode("UTF-8")
-            if p.returncode == 0:
-                match = out
+            if fgrep.returncode == 0:
+                match = fgrep.stdout.decode("UTF-8")
             i += slice_size
 
         return match
@@ -545,12 +541,13 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._search_contents(file, map_cachedir, release, arch)
 
         # check if the file is a diversion
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-divert", "--list", file],
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        out = dpkg.communicate()[0].decode("UTF-8")
+        out = dpkg.stdout.decode("UTF-8")
         if dpkg.returncode == 0 and out:
             pkg = out.split()[-1]
             if pkg != "hardening-wrapper":
@@ -589,11 +586,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
 
-        dpkg = subprocess.Popen(
-            ["dpkg", "--print-architecture"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg", "--print-architecture"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        arch = dpkg.communicate()[0].decode().strip()
-        assert dpkg.returncode == 0
+        arch = dpkg.stdout.decode().strip()
         assert arch
         return arch
 
@@ -604,12 +602,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        dpkg = subprocess.Popen(
+        dpkg = subprocess.run(
             ["dpkg-architecture", "-qDEB_HOST_MULTIARCH"],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        multiarch_triple = dpkg.communicate()[0].decode().strip()
-        assert dpkg.returncode == 0
+        multiarch_triple = dpkg.stdout.decode().strip()
 
         return "/lib/%s:/lib" % multiarch_triple
 
@@ -631,13 +629,13 @@ class __AptDpkgPackageInfo(PackageInfo):
             pass
 
     def get_source_tree(
-        self, srcpackage, dir, version=None, sandbox=None, apt_update=False
+        self, srcpackage, output_dir, version=None, sandbox=None
     ):
-        """Download source package and unpack it into dir.
+        """Download source package and unpack it into output_dir.
 
-        This also has to care about applying patches etc., so that dir will
-        eventually contain the actually compiled source. dir needs to exist and
-        should be empty.
+        This also has to care about applying patches etc., so that output_dir
+        will eventually contain the actually compiled source. output_dir needs
+        to exist and should be empty.
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
@@ -649,12 +647,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         source. This is mostly necessary for freshly created sandboxes.
 
         Return the directory that contains the actual source root directory
-        (which might be a subdirectory of dir). Return None if the source is
-        not available.
+        (which might be a subdirectory of output_dir). Return None if the
+        source is not available.
         """
         # configure apt for sandbox
         env = os.environ.copy()
         if sandbox:
+            # hard to change, pylint: disable=consider-using-with
             f = tempfile.NamedTemporaryFile("w+")
             f.write(
                 f'Dir "{sandbox}";\n'
@@ -664,7 +663,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             f.flush()
             env["APT_CONFIG"] = f.name
 
-        if apt_update:
+        if sandbox and not glob.glob(f"{sandbox}/var/lib/apt/lists/*Sources"):
             subprocess.call(["apt-get", "-qq", "update"], env=env)
 
         # fetch source tree
@@ -672,7 +671,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if version:
             argv[-1] += "=" + version
         try:
-            if subprocess.call(argv, cwd=dir, env=env) != 0:
+            if subprocess.call(argv, cwd=output_dir, env=env) != 0:
                 if not version:
                     return None
                 sf_urls = self.get_lp_source_package(
@@ -688,18 +687,20 @@ class __AptDpkgPackageInfo(PackageInfo):
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
-                            apt.apt_pkg.AcquireFile(fetcher, sf, destdir=dir)
+                            apt.apt_pkg.AcquireFile(
+                                fetcher, sf, destdir=output_dir
+                            )
                         )
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
                         return None
                     if proxy:
                         apt.apt_pkg.config.set("Acquire::http::Proxy", proxy)
-                    for dsc in glob.glob(os.path.join(dir, "*.dsc")):
+                    for dsc in glob.glob(os.path.join(output_dir, "*.dsc")):
                         subprocess.call(
                             ["dpkg-source", "-sn", "-x", dsc],
                             stdout=subprocess.PIPE,
-                            cwd=dir,
+                            cwd=output_dir,
                         )
                 else:
                     return None
@@ -708,7 +709,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # find top level directory
         root = None
-        for d in glob.glob(os.path.join(dir, srcpackage + "-*")):
+        for d in glob.glob(os.path.join(output_dir, srcpackage + "-*")):
             if os.path.isdir(d):
                 root = d
         assert root, "could not determine source tree root directory"
@@ -874,7 +875,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 cache.update(fetchProgress)
             except apt.cache.FetchFailedException as error:
-                raise SystemError(str(error))
+                raise SystemError(str(error)) from error
             cache.open()
 
         archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
@@ -1084,7 +1085,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             # if it can't be found in Launchpad failover to a
                             # code path that'll use -dbgsym packages
                             else:
-                                raise KeyError
+                                raise
                     if not pkg_found:
                         try:
                             dbg.candidate = dbg.versions[candidate.version]
@@ -1367,12 +1368,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Call dpkg with given arguments and return output, or return None on
         error."""
 
-        dpkg = subprocess.Popen(
-            ["dpkg"] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg"] + args,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        out = dpkg.communicate(input)[0].decode("UTF-8")
         if dpkg.returncode == 0:
-            return out
+            return dpkg.stdout.decode("UTF-8")
         else:
             raise ValueError("package does not exist")
 
@@ -1383,31 +1386,28 @@ class __AptDpkgPackageInfo(PackageInfo):
         testable.
         """
         if os.path.exists(sumfile):
-            m = subprocess.Popen(
-                ["/usr/bin/md5sum", "-c", sumfile],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                cwd="/",
-                env={},
-            )
-            out = m.communicate()[0].decode("UTF-8", errors="replace")
+            args = [sumfile]
+            stdin = None
         else:
             assert (
                 type(sumfile) == bytes
             ), "md5sum list value must be a byte array"
-            m = subprocess.Popen(
-                ["/usr/bin/md5sum", "-c"],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                cwd="/",
-                env={},
-            )
-            out = m.communicate(sumfile)[0].decode("UTF-8", errors="replace")
+            args = []
+            stdin = sumfile
+        md5sum = subprocess.run(
+            ["/usr/bin/md5sum", "-c"] + args,
+            check=False,
+            input=stdin,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd="/",
+            env={},
+        )
 
         # if md5sum succeeded, don't bother parsing the output
-        if m.returncode == 0:
+        if md5sum.returncode == 0:
             return []
+        out = md5sum.stdout.decode("UTF-8", errors="replace")
 
         mismatches = []
         for line in out.splitlines():
@@ -1433,11 +1433,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                         mirror_idx
                     ].startswith("https://"):
                         return fields[mirror_idx]
-            else:
-                raise SystemError(
-                    "cannot determine default mirror:"
-                    " %s does not contain a valid deb line" % apt_sources
-                )
+
+        raise SystemError(
+            "cannot determine default mirror:"
+            " %s does not contain a valid deb line" % apt_sources
+        )
 
     def _get_mirror(self):
         """Return the distribution mirror URL.
@@ -1450,6 +1450,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 "/etc/apt/sources.list"
             )
         return self._mirror
+
+    def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
+        return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
 
     def _distro_release_to_codename(self, release):
         """Map a DistroRelease: field value to a release code name"""
@@ -1470,12 +1473,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _search_contents(self, file, map_cachedir, release, arch):
         """Internal function for searching file in Contents.gz."""
 
-        if map_cachedir:
-            dir = map_cachedir
-        else:
+        if not map_cachedir:
             if not self._contents_dir:
                 self._contents_dir = tempfile.mkdtemp()
-            dir = self._contents_dir
+            map_cachedir = self._contents_dir
 
         if arch is None:
             arch = self.get_system_architecture()
@@ -1488,14 +1489,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         # XXX - maybe we shouldn't check -security and -updates if it is the
         # devel release as they will be old and empty
         for pocket in ["-proposed", "", "-security", "-updates"]:
-            map = os.path.join(
-                dir, "%s%s-Contents-%s.gz" % (release, pocket, arch)
+            contents_filename = os.path.join(
+                map_cachedir, "%s%s-Contents-%s.gz" % (release, pocket, arch)
             )
             # check if map exists and is younger than a day; if not, we need
             # to refresh it
             update = False
             try:
-                st = os.stat(map)
+                st = os.stat(contents_filename)
                 age = int(time.time() - st.st_mtime)
             except OSError:
                 age = None
@@ -1532,6 +1533,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if update:
                     self._contents_update = True
                     try:
+                        # hard to change, pylint: disable=consider-using-with
                         src = urllib.request.urlopen(url)
                     except OSError:
                         # we ignore non-existing pockets, but we do crash
@@ -1541,23 +1543,25 @@ class __AptDpkgPackageInfo(PackageInfo):
                         else:
                             continue
 
-                    with open(map, "wb") as f:
+                    with open(contents_filename, "wb") as f:
                         while True:
                             data = src.read(1000000)
                             if not data:
                                 break
                             f.write(data)
                     src.close()
-                    assert os.path.exists(map)
+                    assert os.path.exists(contents_filename)
 
-            contents_mapping = self._contents_mapping(dir, release, arch)
+            contents_mapping = self._contents_mapping(
+                map_cachedir, release, arch
+            )
             # if the mapping is empty build it
             if not contents_mapping or len(contents_mapping) == 2:
                 self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
-                with gzip.open("%s" % map, "rb") as contents:
+                with gzip.open("%s" % contents_filename, "rb") as contents:
                     line_num = 0
                     for line in contents:
                         line_num += 1
@@ -1620,7 +1624,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             contents_mapping[path] = package
         # the file only needs to be saved after an update
         if self._contents_update:
-            self._save_contents_mapping(dir, release, arch)
+            self._save_contents_mapping(map_cachedir, release, arch)
             # the update of the mapping only needs to be done once
             self._contents_update = False
         if isinstance(file, bytes):
@@ -1638,8 +1642,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 pass
         return None
 
-    @classmethod
-    def create_ppa_source_from_origin(klass, origin, distro, release_codename):
+    def create_ppa_source_from_origin(self, origin, distro, release_codename):
         """For an origin from a Launchpad PPA create sources.list content.
 
         distro is the distribution for which content is being created e.g.
@@ -1671,12 +1674,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 try:
                     with contextlib.closing(
                         urllib.request.urlopen(
-                            apport.packaging._ppa_archive_url
-                            % {
-                                "user": user,
-                                "distro": distro,
-                                "ppaname": ppa_name,
-                            }
+                            self._ppa_archive_url(
+                                user=user, distro=distro, ppa_name=ppa_name
+                            )
                         )
                     ) as response:
                         response.read()
@@ -1713,9 +1713,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 return ppa_line + add_debug + "\ndeb-src" + ppa_line[3:] + "\n"
         return None
 
-    @classmethod
     def _build_apt_sandbox(
-        klass, apt_root, apt_sources, distro_name, release_codename, origins
+        self, apt_root, apt_sources, distro_name, release_codename, origins
     ):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
@@ -1776,7 +1775,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     with open(origin_path) as src_ext:
                         source_list_content = src_ext.read()
                 else:
-                    source_list_content = klass.create_ppa_source_from_origin(
+                    source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
                     )
                 if source_list_content:
@@ -1829,11 +1828,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         # install apt keyrings for PPAs
         if origins and source_list_content:
             for origin, (ppa_user, ppa_name) in origin_data.items():
-                ppa_archive_url = apport.packaging._ppa_archive_url % {
-                    "user": urllib.parse.quote(ppa_user),
-                    "distro": distro_name,
-                    "ppaname": urllib.parse.quote(ppa_name),
-                }
+                ppa_archive_url = self._ppa_archive_url(
+                    user=urllib.parse.quote(ppa_user),
+                    distro=distro_name,
+                    ppa_name=urllib.parse.quote(ppa_name),
+                )
                 ppa_info = apport.packaging.json_request(ppa_archive_url)
                 if not ppa_info:
                     continue
@@ -1863,17 +1862,17 @@ class __AptDpkgPackageInfo(PackageInfo):
                     apport.warning(
                         "Unable to import key for %s" % ppa_archive_url
                     )
-                    pass
 
     @classmethod
     def _deb_version(klass, pkg):
         """Return the version of a .deb file"""
 
-        dpkg = subprocess.Popen(
-            ["dpkg-deb", "-f", pkg, "Version"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg-deb", "-f", pkg, "Version"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        out = dpkg.communicate(input)[0].decode("UTF-8").strip()
-        assert dpkg.returncode == 0
+        out = dpkg.stdout.decode("UTF-8").strip()
         assert out
         return out
 
@@ -1891,13 +1890,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Get "lsb_release -sc", cache the result."""
 
         if self._distro_codename is None:
-            lsb_release = subprocess.Popen(
-                ["lsb_release", "-sc"], stdout=subprocess.PIPE
+            lsb_release = subprocess.run(
+                ["lsb_release", "-sc"], check=True, stdout=subprocess.PIPE
             )
-            self._distro_codename = (
-                lsb_release.communicate()[0].decode("UTF-8").strip()
-            )
-            assert lsb_release.returncode == 0
+            self._distro_codename = lsb_release.stdout.decode("UTF-8").strip()
 
         return self._distro_codename
 

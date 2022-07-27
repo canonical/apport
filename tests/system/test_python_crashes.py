@@ -73,18 +73,21 @@ func(42)
         env = self.env.copy()
         env["PYTHONPATH"] = f"{env.get('PYTHONPATH', '.')}:/my/bogus/path"
 
-        p = subprocess.Popen(
-            [script, "testarg1", "testarg2"], stderr=subprocess.PIPE, env=env
+        process = subprocess.run(
+            [script, "testarg1", "testarg2"],
+            check=False,
+            stderr=subprocess.PIPE,
+            env=env,
+            text=True,
         )
-        err = p.communicate()[1].decode()
         self.assertEqual(
-            p.returncode,
+            process.returncode,
             1,
             "crashing test python program exits with failure code",
         )
         if not extracode:
-            self.assertIn("This should happen.", err)
-        self.assertNotIn("OSError", err)
+            self.assertIn("This should happen.", process.stderr)
+        self.assertNotIn("OSError", process.stderr)
 
         return script
 

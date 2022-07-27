@@ -19,6 +19,8 @@ else:
 
 @unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         # save and restore configuration file
         self.orig_conf = impl.configuration
@@ -84,9 +86,9 @@ class T(unittest.TestCase):
             )
         )
         for library in ("libc6", "libcurl4"):
-            copyright = f"usr/share/doc/{library}/copyright"
+            copyright_filename = f"usr/share/doc/{library}/copyright"
             self.assertTrue(
-                os.path.exists(os.path.join(self.rootdir, copyright))
+                os.path.exists(os.path.join(self.rootdir, copyright_filename))
             )
 
         # their versions are as expected
@@ -186,11 +188,12 @@ class T(unittest.TestCase):
         self.assertIn("not exist", result)
 
         # can interleave with other operations
-        dpkg = subprocess.Popen(
-            ["dpkg-query", "-Wf${Version}", "dash"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg-query", "-Wf${Version}", "dash"],
+            check=True,
+            stdout=subprocess.PIPE,
         )
-        dash_version = dpkg.communicate()[0].decode()
-        self.assertEqual(dpkg.returncode, 0)
+        dash_version = dpkg.stdout.decode()
 
         self.assertEqual(impl.get_version("dash"), dash_version)
         self.assertRaises(
@@ -791,9 +794,7 @@ class T(unittest.TestCase):
             "jammy",
             origins=None,
         )
-        res = impl.get_source_tree(
-            "base-files", out_dir, sandbox=self.rootdir, apt_update=True
-        )
+        res = impl.get_source_tree("base-files", out_dir, sandbox=self.rootdir)
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
@@ -821,7 +822,6 @@ class T(unittest.TestCase):
             out_dir,
             version=wanted_version,
             sandbox=self.rootdir,
-            apt_update=True,
         )
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
@@ -861,7 +861,7 @@ class T(unittest.TestCase):
             sources,
         )
 
-        d = subprocess.Popen(
+        gpg = subprocess.run(
             [
                 "gpg",
                 "--no-options",
@@ -880,10 +880,10 @@ class T(unittest.TestCase):
                     "LP-PPA-daisy-pluckers-daisy-seeds.gpg",
                 ),
             ],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        apt_keys = d.communicate()[0].decode()
-        assert d.returncode == 0
+        apt_keys = gpg.stdout.decode()
         self.assertIn("Launchpad PPA for Daisy Pluckers", apt_keys)
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -915,7 +915,7 @@ class T(unittest.TestCase):
             sources,
         )
 
-        d = subprocess.Popen(
+        gpg = subprocess.run(
             [
                 "gpg",
                 "--no-options",
@@ -934,10 +934,10 @@ class T(unittest.TestCase):
                     "LP-PPA-apport-hackers.gpg",
                 ),
             ],
+            check=True,
             stdout=subprocess.PIPE,
         )
-        apt_keys = d.communicate()[0].decode()
-        assert d.returncode == 0
+        apt_keys = gpg.stdout.decode()
         self.assertEqual("", apt_keys)
 
     def test_use_sources_for_a_ppa(self):
@@ -1151,15 +1151,14 @@ class T(unittest.TestCase):
         }
 
         # get ELF machine type
-        readelf = subprocess.Popen(
+        readelf = subprocess.run(
             ["readelf", "-e", path],
+            check=True,
             env={},
             stdout=subprocess.PIPE,
-            universal_newlines=True,
+            text=True,
         )
-        out = readelf.communicate()[0]
-        assert readelf.returncode == 0
-        for line in out.splitlines():
+        for line in readelf.stdout.splitlines():
             if line.startswith("  Machine:"):
                 machine = line.split(None, 1)[1]
                 break

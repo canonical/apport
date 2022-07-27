@@ -37,7 +37,8 @@ import sys
 import time
 import traceback
 
-import apport
+# False positive, see https://github.com/PyCQA/pylint/issues/7093
+import apport  # pylint: disable=import-self
 import apport.fileutils
 
 #################################################################
@@ -97,6 +98,7 @@ def proc_pid_opener(path, flags):
 def get_pid_info(pid):
     """Read /proc information about pid"""
 
+    # pylint: disable=global-statement
     global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
 
     proc_pid_fd = os.open(
@@ -196,7 +198,7 @@ def _log_signal_handler(sgn, frame):
         error_log("Got signal %i, aborting; frame:" % sgn)
         for s in inspect.stack():
             error_log(str(s))
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
     sys.exit(1)
 
@@ -213,7 +215,9 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
-def write_user_coredump(pid, timestamp, limit, from_report=None):
+def write_user_coredump(
+    pid, timestamp, limit, coredump_fd=None, from_report=None
+):
     """Write the core into a directory if ulimit requests it."""
 
     # three cases:
@@ -270,8 +274,7 @@ def write_user_coredump(pid, timestamp, limit, from_report=None):
         error_log("writing core dump %s of size %i" % (core_name, core_size))
         os.write(core_file, r["CoreDump"])
     else:
-        # read from stdin
-        block = os.read(0, 1048576)
+        block = os.read(coredump_fd, 1048576)
 
         while True:
             size = len(block)
@@ -291,7 +294,7 @@ def write_user_coredump(pid, timestamp, limit, from_report=None):
                 os.close(core_file)
                 os.unlink(core_path, dir_fd=cwd)
                 return
-            block = os.read(0, 1048576)
+            block = os.read(coredump_fd, 1048576)
 
     # Make sure the user can read it
     os.fchown(core_file, crash_uid, -1)
@@ -324,6 +327,7 @@ def _run_with_output_limit_and_timeout(
     stdout = b""
     stderr = b""
 
+    # uses .kill(), pylint: disable=consider-using-with
     process = subprocess.Popen(
         args,
         stdout=subprocess.PIPE,
@@ -460,7 +464,7 @@ def is_systemd_watchdog_restart(signum):
             else:
                 return False
 
-        journalctl = subprocess.Popen(
+        journalctl = subprocess.run(
             [
                 "/bin/journalctl",
                 "--output=cat",
@@ -469,10 +473,10 @@ def is_systemd_watchdog_restart(signum):
                 "--unit",
                 unit,
             ],
+            check=False,
             stdout=subprocess.PIPE,
         )
-        out = journalctl.communicate()[0]
-        return b"Watchdog timeout" in out
+        return b"Watchdog timeout" in journalctl.stdout
     except OSError as error:
         error_log(
             "cannot determine if this crash is from systemd watchdog: %s"
@@ -503,7 +507,7 @@ def is_same_ns(pid, ns):
     # check to see if the process is part of the system.slice (LP: #1870060)
     if os.path.exists("/proc/%s/cgroup" % pid):
 
-        global proc_pid_fd
+        global proc_pid_fd  # pylint: disable=global-statement
         proc_pid_fd = os.open(
             "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
         )
@@ -518,14 +522,10 @@ def is_same_ns(pid, ns):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(
-        epilog="Alternatively, the following command line is understood for"
-        " legacy hosts: <pid> <signal number> <core file ulimit> <dump mode>"
-        " [global pid] [exe path]"
-    )
+    parser = argparse.ArgumentParser()
 
     # TODO: Use type=int
-    parser.add_argument("-p", "--pid", help="process id (%%p)")
+    parser.add_argument("-p", "--pid", required=True, help="process id (%%p)")
     parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
     parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
     parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
@@ -538,32 +538,7 @@ def parse_arguments():
         "executable_path", nargs="*", help="path of executable (%%E)"
     )
 
-    options, rest = parser.parse_known_args()
-
-    # Legacy command line needs to remain for the scenario where a more
-    # recent apport is running inside a container with an older apport
-    # running on the host.
-    if options.pid is None and len(sys.argv) == 5:
-        # Translate legacy command line
-        return argparse.Namespace(
-            pid=sys.argv[1],
-            signal_number=sys.argv[2],
-            core_ulimit=sys.argv[3],
-            dump_mode=sys.argv[4],
-            global_pid=None,
-            uid=None,
-            gid=None,
-            executable_path=None,
-        )
-
-    if options.pid is None:
-        parser.error(
-            "No process ID (PID) provided. Please specify PID with -p/--pid."
-        )
-        sys.exit(1)
-
-    for arg in rest:
-        error_log("Unknown argument: %s" % arg)
+    options = parser.parse_args()
 
     # In kernels before 5.3.0, an executable path with spaces may be split
     # into separate arguments. If options.executable_path is a list, join
@@ -643,8 +618,18 @@ if "LISTEN_FDS" in os.environ:
         )
         sys.exit(1)
 
-
-options = parse_arguments()
+    options = argparse.Namespace(
+        pid=sys.argv[1],
+        signal_number=sys.argv[2],
+        core_ulimit=sys.argv[3],
+        dump_mode=sys.argv[4],
+        global_pid=None,
+        uid=None,
+        gid=None,
+        executable_path=None,
+    )
+else:
+    options = parse_arguments()
 
 # Check if we received a valid global PID (kernel >= 3.12). If we do,
 # then compare it with the local PID. If they don't match, it's an
@@ -724,7 +709,7 @@ if options.global_pid is not None:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
             sock.connect("/proc/self/fd/%s" % sock_fd)
-        except Exception:
+        except OSError:
             error_log(
                 "host pid %s crashed in a container with a broken apport"
                 % options.global_pid
@@ -758,7 +743,7 @@ if options.global_pid is not None:
                 ],
             )
             sock.shutdown(socket.SHUT_RDWR)
-        except Exception:
+        except TimeoutError:
             error_log("Container apport failed to process crash within 30s")
 
         sys.exit(0)
@@ -789,6 +774,7 @@ try:
     signum = options.signal_number
     core_ulimit = options.core_ulimit
     dump_mode = options.dump_mode
+    coredump_fd = sys.stdin.fileno()
 
     get_pid_info(pid)
 
@@ -844,7 +830,7 @@ try:
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
     if signum == str(int(signal.SIGQUIT)):
-        write_user_coredump(pid, process_start, core_ulimit)
+        write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
         sys.exit(0)
 
     info = apport.Report("Crash")
@@ -859,6 +845,8 @@ try:
         options.executable_path
     ):
         info["ExecutablePath"] = options.executable_path
+    else:
+        info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
 
     # Drop privileges temporarily to make sure that we don't
     # include information in the crash report that the user should
@@ -898,12 +886,12 @@ try:
     # ignore non-package binaries (unless configured otherwise)
     if not apport.fileutils.likely_packaged(info["ExecutablePath"]):
         if not apport.fileutils.get_config(
-            "main", "unpackaged", False, bool=True
+            "main", "unpackaged", False, boolean=True
         ):
             error_log("executable does not belong to a package, ignoring")
             # check if the user wants a core dump
             recover_privileges()
-            write_user_coredump(pid, process_start, core_ulimit)
+            write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
             sys.exit(0)
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
@@ -913,7 +901,7 @@ try:
             "Ignoring signal %s (caused by exceeding soft RLIMIT)" % signum
         )
         recover_privileges()
-        write_user_coredump(pid, process_start, core_ulimit)
+        write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
         sys.exit(0)
 
     # ignore blacklisted binaries
@@ -958,7 +946,9 @@ try:
                         crash_counter = apport.fileutils.get_recent_crashes(f)
                     crash_counter += 1
                     if crash_counter > 1:
-                        write_user_coredump(pid, process_start, core_ulimit)
+                        write_user_coredump(
+                            pid, process_start, core_ulimit, coredump_fd
+                        )
                         error_log(
                             "this executable already crashed %i times,"
                             " ignoring" % crash_counter
@@ -972,7 +962,9 @@ try:
                     "apport: report %s already exists and unseen,"
                     " skipping to avoid disk usage DoS" % report
                 )
-                write_user_coredump(pid, process_start, core_ulimit)
+                write_user_coredump(
+                    pid, process_start, core_ulimit, coredump_fd
+                )
                 sys.exit(0)
         # we prefer having a file mode of 0 while writing;
         fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0)
@@ -1029,7 +1021,7 @@ try:
 
 except (SystemExit, KeyboardInterrupt):
     pass
-except Exception:
+except Exception:  # pylint: disable=broad-except
     error_log("Unhandled exception:")
     traceback.print_exc()
     error_log(

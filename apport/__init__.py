@@ -6,12 +6,20 @@ import time
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
-Report  # pyflakes
-packaging  # pyflakes
+__all__ = [
+    "Report",
+    "error",
+    "fatal",
+    "log",
+    "memdbg",
+    "packaging",
+    "unicode_gettext",
+    "warning",
+]
 
 
-def unicode_gettext(str):
-    trans = gettext.gettext(str)
+def unicode_gettext(message):
+    trans = gettext.gettext(message)
     if isinstance(trans, bytes):
         return trans.decode("UTF-8")
     else:
@@ -63,7 +71,7 @@ def memdbg(checkpoint):
     with open("/proc/self/status") as f:
         for line in f:
             if line.startswith("Vm"):
-                (field, size, unit) = line.split()
+                (field, size, _) = line.split()
                 memstat[field[:-1]] = int(size) / 1024.0
 
     sys.stderr.write(

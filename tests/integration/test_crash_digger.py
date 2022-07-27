@@ -79,14 +79,15 @@ class T(unittest.TestCase):
 
         Return a pair (stdout, stderr).
         """
-        s = subprocess.Popen(
+        crash_digger = subprocess.run(
             ["crash-digger", "--apport-retrace", self.apport_retrace] + args,
+            check=False,
+            encoding="UTF-8",
             env=self.env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        (out, err) = s.communicate()
-        return (out.decode("UTF-8"), err.decode("UTF-8"))
+        return (crash_digger.stdout, crash_digger.stderr)
 
     def test_crashes(self):
         """Crash retracing"""
@@ -208,7 +209,7 @@ class T(unittest.TestCase):
             )
         os.chmod(self.apport_retrace, 0o755)
 
-        (out, err) = self.call(
+        out = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -219,7 +220,7 @@ class T(unittest.TestCase):
                 "-vl",
                 self.lock_file,
             ]
-        )
+        )[0]
         self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
         self.assertIn("retracing #0", out)
         self.assertIn("retracing #1", out)

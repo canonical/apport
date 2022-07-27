@@ -17,6 +17,8 @@ else:
 
 @unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")
 class T(unittest.TestCase):
+    # pylint: disable=protected-access
+
     def setUp(self):
         # save and restore configuration file
         self.orig_conf = impl.configuration
@@ -160,11 +162,13 @@ class T(unittest.TestCase):
 
         self.assertRaises(ValueError, impl.get_architecture, "nonexisting")
         # just assume that bash uses the native architecture
-        d = subprocess.Popen(
-            ["dpkg", "--print-architecture"], stdout=subprocess.PIPE
+        dpkg = subprocess.run(
+            ["dpkg", "--print-architecture"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
         )
-        system_arch = d.communicate()[0].decode().strip()
-        assert d.returncode == 0
+        system_arch = dpkg.stdout.strip()
         self.assertEqual(impl.get_architecture("bash"), system_arch)
 
     def test_get_files(self):
@@ -596,26 +600,23 @@ deb http://secondary.mirror tuxy extra
         impl.configuration = "/nonexisting"
         self.assertEqual(impl.enabled(), True)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\nenabled = 1".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), True)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\nenabled = 1".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\n  enabled =0  ".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), False)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\n  enabled =0  ".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), False)
 
-        f = tempfile.NamedTemporaryFile()
-        impl.configuration = f.name
-        f.write("# configuration file\nnothing here".encode())
-        f.flush()
-        self.assertEqual(impl.enabled(), True)
-        f.close()
+        with tempfile.NamedTemporaryFile() as f:
+            impl.configuration = f.name
+            f.write("# configuration file\nnothing here".encode())
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
 
     def test_get_kernel_package(self):
         """get_kernel_package()."""
