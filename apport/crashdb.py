@@ -551,7 +551,7 @@ class CrashDatabase:
         else:
             return None
 
-    def _duplicate_db_dump(self, with_timestamps=False):
+    def duplicate_db_dump(self, with_timestamps=False):
         """Return the entire duplicate database as a dictionary.
 
         The returned dictionary maps "signature" to (crash_id, fixed_version)

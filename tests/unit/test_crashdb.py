@@ -10,8 +10,6 @@ from apport.crashdb_impl.memory import CrashDatabase
 
 
 class T(unittest.TestCase):
-    # pylint: disable=protected-access
-
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")
@@ -249,14 +247,14 @@ class T(unittest.TestCase):
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None)},
         )
 
         self.crashes.duplicate_db_fixed(0, "42")
 
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, "42")},
         )
 
@@ -276,7 +274,7 @@ class T(unittest.TestCase):
 
         # nevertheless, this should not change the DB
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -288,7 +286,7 @@ class T(unittest.TestCase):
 
         # check DB consistency
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None)},
         )
 
@@ -306,7 +304,7 @@ class T(unittest.TestCase):
 
         self.crashes.init_duplicate_db(":memory:")
 
-        self.assertEqual(self.crashes._duplicate_db_dump(), {})
+        self.assertEqual(self.crashes.duplicate_db_dump(), {})
 
         # ID#0 -> no dup
         self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
@@ -350,7 +348,7 @@ class T(unittest.TestCase):
 
         # check DB consistency; #1 and #4 are dupes and do not appear
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -375,7 +373,7 @@ class T(unittest.TestCase):
         # check DB consistency; ID#4 is a regression, thus appears as the new
         # master bug for the sig of 3/4
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -409,7 +407,7 @@ class T(unittest.TestCase):
         # check DB consistency; #5 and #6 are dupes of #3 and #4, so no new
         # entries
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -433,7 +431,7 @@ class T(unittest.TestCase):
 
         # final consistency check
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -483,7 +481,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.crashes.check_duplicate(5), None)
 
         self.assertEqual(
-            self.crashes._duplicate_db_dump(), {"Code42Blue": (5, None)}
+            self.crashes.duplicate_db_dump(), {"Code42Blue": (5, None)}
         )
 
         # this one has a standard crash_signature
@@ -495,7 +493,7 @@ class T(unittest.TestCase):
         self.crashes.download(1)["DuplicateSignature"] = "CodeRed"
         self.assertEqual(self.crashes.check_duplicate(1), None)
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 "Code42Blue": (5, None),
                 "CodeRed": (1, None),
@@ -584,11 +582,12 @@ class T(unittest.TestCase):
 
         # sig DB should only have a now
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {"/bin/bash:11:read:main": (5, None)},
         )
 
         # addr DB should have both possible patterns on a
+        # pylint: disable=protected-access
         self.assertEqual(
             self.crashes._duplicate_search_address_signature(
                 b.crash_signature_addresses()
@@ -738,7 +737,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.crashes.known(r), None)
         self.assertEqual(self.crashes.known(r3), None)
 
-        self.assertEqual(self.crashes._duplicate_db_dump(), {})
+        self.assertEqual(self.crashes.duplicate_db_dump(), {})
 
     def test_duplicate_db_publish_long_sigs(self):
         """duplicate_db_publish() with very long signatures"""
@@ -779,7 +778,7 @@ class T(unittest.TestCase):
 
         # check DB consistency
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -791,7 +790,7 @@ class T(unittest.TestCase):
 
         # nevertheless, this should not change the DB
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (2, None),
@@ -803,7 +802,7 @@ class T(unittest.TestCase):
 
         # check DB consistency
         self.assertEqual(
-            self.crashes._duplicate_db_dump(),
+            self.crashes.duplicate_db_dump(),
             {
                 self.crashes.download(0).crash_signature(): (0, None),
                 self.crashes.download(2).crash_signature(): (99, None),
@@ -819,12 +818,12 @@ class T(unittest.TestCase):
             self.crashes.init_duplicate_db(db)
             self.assertEqual(self.crashes.check_duplicate(0), None)
             self.assertEqual(
-                self.crashes._duplicate_db_dump(),
+                self.crashes.duplicate_db_dump(),
                 {self.crashes.download(0).crash_signature(): (0, None)},
             )
             self.crashes.duplicate_db_fixed(0, "42")
             self.assertEqual(
-                self.crashes._duplicate_db_dump(),
+                self.crashes.duplicate_db_dump(),
                 {self.crashes.download(0).crash_signature(): (0, "42")},
             )
 
