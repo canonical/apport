@@ -322,7 +322,7 @@ class UserInterface:
 
         return result
 
-    def run_crash(self, report_file, confirm=True):
+    def run_crash(self, report_file):
         """Present and report a particular crash.
 
         If confirm is True, ask the user what to do about it, and offer to file
@@ -863,7 +863,7 @@ class UserInterface:
             return True
         elif self.args.crash_file:
             try:
-                self.run_crash(self.args.crash_file, False)
+                self.run_crash(self.args.crash_file)
             except OSError as error:
                 self.ui_error_message(_("Invalid problem report"), str(error))
             return True
