@@ -9,12 +9,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-from dataclasses import dataclass
-import apport
-import apport.crashdb
-import requests
 import json
 import time
+from dataclasses import dataclass
+
+import requests
+
+import apport
+import apport.crashdb
 
 
 class Github:
@@ -55,7 +57,8 @@ class Github:
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
 
-        prompt = "Open the following URL. When requested, write this code to enable apport to post an issue.\n"
+        prompt = "Open the following URL. When requested, write this code"
+        prompt += "to enable apport to post an issue.\n"
         prompt += f'URL:  {response["verification_uri"]}\n'
         prompt += f'Code: {response["user_code"]}'
         self.ui.ui_info_message("Permissions needed", prompt)
@@ -150,7 +153,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return {
             "title": "Issue submitted via apport",
             "body": body,
-            "labels": [l for l in self.labels],
+            "labels": [lbl for lbl in self.labels],
         }
 
     def external_login(self, ui) -> None:
