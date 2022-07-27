@@ -791,10 +791,10 @@ class T(unittest.TestCase):
 
         for path in glob.glob("/proc/[0-9]*/stat"):
             with open(path) as f:
-                stat = f.read().split()
-            flags = int(stat[8])
+                proc_stat = f.read().split()
+            flags = int(proc_stat[8])
             if flags & apport.ui.PF_KTHREAD:
-                pid = int(stat[0])
+                pid = int(proc_stat[0])
                 break
         else:
             self.skipTest("no kernel thread found")

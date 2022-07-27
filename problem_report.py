@@ -218,6 +218,7 @@ class ProblemReport(collections.UserDict):
                     try:
                         bd = None
                         with open(key_path, "wb") as out:
+                            # pylint: disable=redefined-outer-name
                             for line in file:
                                 # continuation line
                                 if line.startswith(b" "):

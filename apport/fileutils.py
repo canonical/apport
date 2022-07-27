@@ -569,8 +569,8 @@ def find_core_files_by_uid(uid):
     for f in core_files:
         try:
             if f.split(".")[2] == uid:
-                time = os.path.getmtime(os.path.join(core_dir, f))
-                uid_files.append([f, time])
+                core_file_time = os.path.getmtime(os.path.join(core_dir, f))
+                uid_files.append([f, core_file_time])
         except (IndexError, FileNotFoundError):
             continue
     return uid_files
