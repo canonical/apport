@@ -162,7 +162,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             if (
                 not hasattr(self.report[key], "gzipvalue")
                 and hasattr(self.report[key], "isspace")
-                and not self.report._is_binary(self.report[key])
+                and not self.report.is_binary(self.report[key])
                 and keylen < max_show
             ):
                 s = self.report[key]

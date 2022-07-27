@@ -396,7 +396,7 @@ class MainUserInterface(apport.ui.UserInterface):
             if (
                 not hasattr(self.report[key], "gzipvalue")
                 and hasattr(self.report[key], "isspace")
-                and not self.report._is_binary(self.report[key])
+                and not self.report.is_binary(self.report[key])
             ):
                 lines = self.report[key].splitlines()
                 for line in lines:

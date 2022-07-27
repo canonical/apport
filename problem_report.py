@@ -307,7 +307,7 @@ class ProblemReport(collections.UserDict):
         return decompressor, value
 
     @classmethod
-    def _is_binary(klass, string):
+    def is_binary(klass, string):
         """Check if the given strings contains binary data."""
 
         if type(string) == bytes:
@@ -320,7 +320,7 @@ class ProblemReport(collections.UserDict):
     def _try_unicode(klass, value):
         """Try to convert bytearray value to unicode"""
 
-        if type(value) == bytes and not klass._is_binary(value):
+        if type(value) == bytes and not klass.is_binary(value):
             try:
                 return value.decode("UTF-8")
             except UnicodeDecodeError:
@@ -358,7 +358,7 @@ class ProblemReport(collections.UserDict):
                 continue
             v = self.data[k]
             if hasattr(v, "find"):
-                if self._is_binary(v):
+                if self.is_binary(v):
                     binkeys.append(k)
                 else:
                     asckeys.append(k)
@@ -611,7 +611,7 @@ class ProblemReport(collections.UserDict):
                 f.close()
 
             # binary value
-            elif self._is_binary(v):
+            elif self.is_binary(v):
                 if k.endswith(".gz"):
                     attach_value = v
                 else:
