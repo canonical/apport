@@ -44,6 +44,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def __init__(self):
         self._apt_cache = None
+        self._current_release_codename = None
         self._sandbox_apt_cache = None
         self._sandbox_apt_cache_arch = None
         self._contents_dir = None
@@ -798,7 +799,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             architecture = self.get_system_architecture()
         if not configdir:
             apt_sources = "/etc/apt/sources.list"
-            self.current_release_codename = self.get_distro_codename()
+            self._current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, "sources.list")
@@ -819,7 +820,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             # set current release code name for _distro_release_to_codename
             with open(os.path.join(configdir, release, "codename")) as f:
-                self.current_release_codename = f.read().strip()
+                self._current_release_codename = f.read().strip()
 
         if not os.path.exists(apt_sources):
             raise SystemError("%s does not exist" % apt_sources)
@@ -861,7 +862,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 apt_sources,
                 fetchProgress,
                 self.get_distro_name(),
-                self.current_release_codename,
+                self._current_release_codename,
                 origins,
                 architecture,
             )
@@ -870,7 +871,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 aptroot,
                 apt_sources,
                 self.get_distro_name(),
-                self.current_release_codename,
+                self._current_release_codename,
                 origins,
             )
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
@@ -1462,11 +1463,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # if we called install_packages() with a configdir, we can read the
         # codename from there
-        if (
-            hasattr(self, "current_release_codename")
-            and self.current_release_codename is not None
-        ):
-            return self.current_release_codename
+        if self._current_release_codename is not None:
+            return self._current_release_codename
 
         raise NotImplementedError(
             "Cannot map DistroRelease to a code name"

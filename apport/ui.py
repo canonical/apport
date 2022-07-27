@@ -255,7 +255,7 @@ class UserInterface:
             )
 
         gettext.textdomain(self.gettext_domain)
-        self.parse_argv()
+        self.args = self.parse_argv()
 
     #
     # main entry points
@@ -926,7 +926,8 @@ class UserInterface:
     # methods that implement workflow bits
     #
 
-    def parse_argv_update(self):
+    @staticmethod
+    def parse_argv_update() -> argparse.Namespace:
         """Parse command line options when being invoked in update mode."""
         parser = argparse.ArgumentParser(usage=_("%(prog)s <report number>"))
         parser.add_argument("-p", "--package", help=_("Specify package name."))
@@ -940,15 +941,16 @@ class UserInterface:
             ),
         )
         parser.add_argument("update_report", metavar="report_number", type=int)
-        self.args = parser.parse_args()
+        args = parser.parse_args()
 
-        self.args.symptom = None
-        self.args.filebug = False
-        self.args.crash_file = None
-        self.args.version = False
-        self.args.hanging = False
+        args.symptom = None
+        args.filebug = False
+        args.crash_file = None
+        args.version = False
+        args.hanging = False
+        return args
 
-    def parse_argv(self):
+    def parse_argv(self) -> argparse.Namespace:
         """Parse command line options.
 
         If a single argument is given without any options, this tries to "do
@@ -963,8 +965,7 @@ class UserInterface:
                 )
             cmd = sys.argv[0]
             if cmd.endswith("-update-bug") or cmd.endswith("-collect"):
-                self.parse_argv_update()
-                return
+                return self.parse_argv_update()
 
         if len(sys.argv) > 0 and cmd.endswith("-bug"):
             suppress = argparse.SUPPRESS
@@ -1079,19 +1080,19 @@ class UserInterface:
         )
         parser.add_argument("issue", nargs="?", help=argparse.SUPPRESS)
 
-        self.args = parser.parse_args()
-        issue = self.args.issue
-        del self.args.issue
+        args = parser.parse_args()
+        issue = args.issue
+        del args.issue
 
         # mutually exclusive arguments
-        if self.args.update_report:
+        if args.update_report:
             if (
-                self.args.filebug
-                or self.args.window
-                or self.args.symptom
-                or self.args.pid
-                or self.args.crash_file
-                or self.args.save
+                args.filebug
+                or args.window
+                or args.symptom
+                or args.pid
+                or args.crash_file
+                or args.save
             ):
                 parser.error(
                     "-u/--update-bug option cannot be used together"
@@ -1100,29 +1101,29 @@ class UserInterface:
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
-        # NOTE: uses sys.argv, since self.args if empty for all the options,
+        # NOTE: uses sys.argv, since args if empty for all the options,
         # e.g. "-v" or "-u $BUG"
         if len(sys.argv) == 1 and cmd.endswith("-bug"):
-            self.args.filebug = True
-            return
+            args.filebug = True
+            return args
 
         # one argument: guess "file bug" mode by argument type
         if issue is None:
-            return
+            return args
 
         # symptom?
         if os.path.exists(os.path.join(symptom_script_dir, issue + ".py")):
-            self.args.filebug = True
-            self.args.symptom = issue
+            args.filebug = True
+            args.symptom = issue
 
         # .crash/.apport file?
         elif issue.endswith(".crash") or issue.endswith(".apport"):
-            self.args.crash_file = issue
+            args.crash_file = issue
 
         # PID?
         elif issue.isdigit():
-            self.args.filebug = True
-            self.args.pid = issue
+            args.filebug = True
+            args.pid = issue
 
         # executable?
         elif "/" in issue:
@@ -1154,14 +1155,16 @@ class UserInterface:
                 if not pkg:
                     parser.error("%s does not belong to a package." % issue)
                     sys.exit(1)
-            self.args.filebug = True
-            self.args.package = pkg
+            args.filebug = True
+            args.package = pkg
 
         # otherwise: package name
         else:
-            self.args.filebug = True
+            args.filebug = True
             self.specified_a_pkg = True
-            self.args.package = issue
+            args.package = issue
+
+        return args
 
     @staticmethod
     def format_filesize(size):

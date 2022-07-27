@@ -147,6 +147,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
         self.in_update_view = False
+        self.progress = None
 
     def _get_details(self):
         """Build report string for display."""
@@ -294,6 +295,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.show()
 
     def ui_pulse_info_collection_progress(self):
+        assert self.progress is not None
         self.progress.set()
 
     def ui_stop_info_collection_progress(self):
@@ -311,6 +313,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):
+        assert self.progress is not None
         self.progress.set(progress)
 
     def ui_stop_upload_progress(self):

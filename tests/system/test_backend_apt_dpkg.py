@@ -27,6 +27,9 @@ class T(unittest.TestCase):
         self.orig_environ = os.environ.copy()
         self.workdir = tempfile.mkdtemp()
         os.environ["HOME"] = self.workdir
+        self.cachedir = os.path.join(self.workdir, "cache")
+        self.rootdir = os.path.join(self.workdir, "root")
+        self.configdir = os.path.join(self.workdir, "config")
         # reset internal caches between tests
         impl._apt_cache = None
         impl._sandbox_apt_cache = None
@@ -1030,9 +1033,6 @@ class T(unittest.TestCase):
         """
         versions = {"focal": "20.04", "jammy": "22.04"}
         distro_release = f"Foonux {versions[release]}"
-        self.cachedir = os.path.join(self.workdir, "cache")
-        self.rootdir = os.path.join(self.workdir, "root")
-        self.configdir = os.path.join(self.workdir, "config")
         config_release_dir = os.path.join(self.configdir, distro_release)
         os.mkdir(self.cachedir)
         os.mkdir(self.rootdir)

@@ -42,6 +42,7 @@ class CrashDatabase:
         self.auth_file = auth_file
         self.options = options
         self.duplicate_db = None
+        self.format_version = None
 
     def get_bugpattern_baseurl(self):
         """Return the base URL for bug patterns.

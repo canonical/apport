@@ -819,6 +819,7 @@ class T(unittest.TestCase):
     def test_broken_crash_details(self, *args):
         """Broken crash report with showing details"""
 
+        # pylint: disable=attribute-defined-outside-init
         self.error_title = None
         self.error_text = None
 

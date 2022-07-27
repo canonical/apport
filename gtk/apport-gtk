@@ -83,6 +83,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         self.desktop_info = None
         self.allowed_to_report = True
+        self.collect_called = False
 
     #
     # ui_* implementation of abstract UserInterface classes

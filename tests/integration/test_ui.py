@@ -71,6 +71,12 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         self.upload_progress_active = False
         self.upload_progress_pulses = 0
 
+        # store last message box
+        self.msg_title = None
+        self.msg_text = None
+        self.msg_severity = None
+        self.msg_choices = None
+
         # these store the choices the ui_present_* calls do
         self.present_package_error_response = None
         self.present_kernel_error_response = None
