@@ -498,7 +498,6 @@ if options.gdb_sandbox:
         if sandbox:
             # gdb was installed in the sandbox
             gdb_sandbox = sandbox
-            gdb_cache = cache
     else:
         gdb_packages = ["gdb", "gdb-multiarch"]
         fake_report = apport.Report()
@@ -514,11 +513,7 @@ if options.gdb_sandbox:
             )
         else:
             gdb_sandbox_dir = None
-        (
-            gdb_sandbox,
-            gdb_cache,
-            gdb_outdated_msg,
-        ) = apport.sandboxutils.make_sandbox(
+        gdb_sandbox = apport.sandboxutils.make_sandbox(
             fake_report,
             options.sandbox,
             options.cache,
@@ -527,7 +522,7 @@ if options.gdb_sandbox:
             options.verbose,
             options.timestamps,
             options.dynamic_origins,
-        )
+        )[0]
     # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path), for
     # releases without a fix, by creating a symlink from the host's .dwz
     # directory to the machine specific one in the sandbox.
@@ -570,8 +565,6 @@ if options.gdb_sandbox:
                     sys.exit(0)
 else:
     gdb_sandbox = None
-    gdb_cache = None
-    gdb_outdated_msg = None
 
 # interactive gdb session
 if options.gdb:
