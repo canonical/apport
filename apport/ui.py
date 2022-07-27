@@ -1803,7 +1803,7 @@ class UserInterface:
         )
 
         self.crashdb.external_login(self)
- 
+
         upthread.start()
         while upthread.is_alive():
             self.ui_set_upload_progress(self.upload_progress)
