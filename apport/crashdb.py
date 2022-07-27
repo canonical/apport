@@ -790,7 +790,7 @@ class CrashDatabase:
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
-    
+
     def external_login(self, ui):
         """Login to the database via an external resource, such as a web browser."""
         pass
