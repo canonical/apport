@@ -62,6 +62,8 @@ except ImportError as error:
     )
 
 
+# TODO: Avoid fiddling with internals of Qt to add translation support
+# pylint: disable=protected-access
 def translate(self, prop):
     """Reimplement method from uic to change it to use gettext."""
 
@@ -75,6 +77,7 @@ def translate(self, prop):
 
 
 uic.properties.Properties._string = translate
+# pylint: enable=protected-access
 
 
 class Dialog(QDialog):

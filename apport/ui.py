@@ -1763,7 +1763,7 @@ class UserInterface:
         except Exception as error:  # pylint: disable=broad-except
             os.write(w, str(error))
             sys.exit(1)
-        os._exit(0)
+        os._exit(0)  # pylint: disable=protected-access
 
     def file_report(self):
         """Upload the current report and guide the user to the reporting
