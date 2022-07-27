@@ -1820,20 +1820,6 @@ class UserInterface:
                 upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
-            except apport.crashdb.NeedsCredentials as error:
-                message = _(
-                    "Please enter your account information for the "
-                    "%s bug tracking system"
-                )
-                data = self.ui_question_userpass(message % str(error))
-                if data is not None:
-                    user, password = data
-                    self.crashdb.set_credentials(user, password)
-                    upthread = apport.REThread.REThread(
-                        target=self.crashdb.upload,
-                        args=(self.report, progress_callback),
-                    )
-                    upthread.start()
             except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
                 self.ui_error_message(
                     _("Network problem"),
@@ -2151,18 +2137,6 @@ class UserInterface:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
-        """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
-
-    def ui_question_userpass(self, message):
-        """Request username and password from user.
-
-        message is the text to be presented to the user when requesting for
-        username and password information.
-
-        Return a tuple (username, password), or None if cancelled.
         """
         raise NotImplementedError(
             "this function must be overridden by subclasses"

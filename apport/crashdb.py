@@ -703,8 +703,6 @@ class CrashDatabase:
         Implementations ought to "assert self.accepts(report)". The UI logic
         already prevents uploading a report to a database which does not accept
         it, but for third-party users of the API this should still be checked.
-
-        This method can raise a NeedsCredentials exception in case of failure.
         """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
@@ -785,13 +783,6 @@ class CrashDatabase:
                 "StacktraceSource",
                 "StacktraceTop",
             ],
-        )
-
-    def set_credentials(self, username, password):
-        """Set username and password."""
-
-        raise NotImplementedError(
-            "this method must be implemented by a concrete subclass"
         )
 
     def get_distro_release(self, crash_id):
@@ -1003,7 +994,3 @@ def load_crashdb(auth_file, spec):
         ["CrashDatabase"],
     )
     return m.CrashDatabase(auth_file, spec)
-
-
-class NeedsCredentials(Exception):
-    """This may be raised when unable to log in to the crashdb."""

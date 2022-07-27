@@ -34,7 +34,6 @@ try:
         QDialogButtonBox,
         QFileDialog,
         QLabel,
-        QLineEdit,
         QMessageBox,
         QProgressBar,
         QPushButton,
@@ -565,24 +564,6 @@ class MainUserInterface(apport.ui.UserInterface):
         if response.length() == 0:
             return None
         return str(response)
-
-    def ui_question_userpass(self, message):
-        """Show a Username/Password dialog.
-
-        Return a tuple (user, pass) or None if cancelled.
-        """
-        dialog = UserPassDialog(_("Apport"), message)
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return None
-
-        username = str(dialog.findChild(QLineEdit, "e_username").text())
-        password = str(dialog.findChild(QLineEdit, "e_password").text())
-
-        if len(username) == 0 or len(password) == 0:
-            return None
-        return (username, password)
 
 
 if __name__ == "__main__":
