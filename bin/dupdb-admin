@@ -94,16 +94,17 @@ def parse_args():
     return parser.parse_args()
 
 
-#
-# main
-#
+def main():
+    args = parse_args()
 
-args = parse_args()
+    if not os.path.exists(args.db_file):
+        apport.fatal("file does not exist: %s", args.db_file)
 
-if not os.path.exists(args.db_file):
-    apport.fatal("file does not exist: %s", args.db_file)
+    # pure DB operations don't need a real backend, and thus no crashdb.conf
+    crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+    crashdb.init_duplicate_db(args.db_file)
+    args.command(crashdb, args)
 
-# pure DB operations don't need a real backend, and thus no crashdb.conf
-crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
-crashdb.init_duplicate_db(args.db_file)
-args.command(crashdb, args)
+
+if __name__ == "__main__":
+    main()
