@@ -11,9 +11,9 @@
 
 import json
 import time
-import urllib.error
-import urllib.request
 from dataclasses import dataclass
+
+import requests
 
 import apport
 import apport.crashdb
@@ -37,22 +37,13 @@ class Github:
         return string
 
     def post(self, url: str, data: str):
-        req = urllib.request.Request(url, method="POST")
-
-        req.add_header("Accept", "application/vnd.github.v3+json")
+        headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
-            req.add_header("Authorization", f"token {self.__access_token}")
-
-        response = urllib.request.urlopen(req, data=data.encode("utf-8"))
+            headers["Authorization"] = f"token {self.__access_token}"
+        result = requests.post(url, headers=headers, data=data)
         self.__last_request = time.time()
-
-        try:
-            response = response.read().decode("utf-8")
-        except urllib.error.HTTPError as e:
-            text = e.read().decode()
-            raise RuntimeError(f"Failed to post to Github: {text}") from e
-
-        return json.loads(response)
+        result.raise_for_status()
+        return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
         return self.post(url, self._stringify(data))
