@@ -415,7 +415,7 @@ def add_info(report):
         report["SegvAnalysis"] = "Failure: %s" % (str(error))
 
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
@@ -438,3 +438,7 @@ if __name__ == "__main__":
     if not understood:
         rc = 1
     sys.exit(rc)
+
+
+if __name__ == "__main__":
+    main()
