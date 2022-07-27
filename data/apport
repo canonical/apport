@@ -41,12 +41,6 @@ import traceback
 import apport  # pylint: disable=import-self
 import apport.fileutils
 
-#################################################################
-#
-# functions
-#
-#################################################################
-
 
 def check_lock():
     """Abort if another instance of apport is already running.
@@ -216,7 +210,7 @@ def setup_signals():
 
 
 def write_user_coredump(
-    pid, timestamp, limit, coredump_fd=None, from_report=None
+    executable_path, pid, timestamp, limit, coredump_fd=None, from_report=None
 ):
     """Write the core into a directory if ulimit requests it."""
 
@@ -239,7 +233,7 @@ def write_user_coredump(
         return
 
     (core_name, core_path) = apport.fileutils.get_core_path(
-        pid, options.executable_path, crash_uid, timestamp, proc_pid_fd
+        pid, executable_path, crash_uid, timestamp, proc_pid_fd
     )
 
     try:
@@ -553,479 +547,527 @@ def parse_arguments():
     return options
 
 
-#################################################################
-#
-# main
-#
-#################################################################
+def main():
+    init_error_log()
 
-init_error_log()
-
-# systemd socket activation
-if "LISTEN_FDS" in os.environ:
-    try:
-        from systemd.daemon import listen_fds
-    except ImportError:
-        error_log(
-            "Received a crash via apport-forward.socket,"
-            " but systemd python module is not installed"
-        )
-        sys.exit(0)
-
-    # Extract and validate the fd
-    fds = listen_fds()
-    if len(fds) < 1:
-        error_log("Invalid socket activation, no fd provided")
-        sys.exit(1)
-
-    # Open the socket
-    sock = socket.fromfd(int(fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
-    atexit.register(sock.shutdown, socket.SHUT_RDWR)
-
-    # Replace stdin by the socket activation fd
-    sys.stdin.close()
-
-    fds = array.array("i")
-    ucreds = array.array("i")
-    msg, ancdata, flags, addr = sock.recvmsg(4096, 4096)
-    for cmsg_level, cmsg_type, cmsg_data in ancdata:
-        if cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_RIGHTS:
-            fds.frombytes(
-                cmsg_data[: len(cmsg_data) - (len(cmsg_data) % fds.itemsize)]
-            )
-        elif (
-            cmsg_level == socket.SOL_SOCKET
-            and cmsg_type == socket.SCM_CREDENTIALS
-        ):
-            ucreds.frombytes(
-                cmsg_data[
-                    : len(cmsg_data) - (len(cmsg_data) % ucreds.itemsize)
-                ]
-            )
-
-    sys.stdin = os.fdopen(int(fds[0]), "r")
-
-    # Replace argv by the arguments received over the socket
-    sys.argv = [sys.argv[0]]
-    sys.argv += msg.decode().split()
-    if len(ucreds) >= 3:
-        sys.argv[1] = "%d" % ucreds[0]
-
-    if len(sys.argv) != 5:
-        error_log(
-            "Received a bad number of arguments from forwarder,"
-            " received %d, expected 5, aborting." % len(sys.argv)
-        )
-        sys.exit(1)
-
-    options = argparse.Namespace(
-        pid=sys.argv[1],
-        signal_number=sys.argv[2],
-        core_ulimit=sys.argv[3],
-        dump_mode=sys.argv[4],
-        global_pid=None,
-        uid=None,
-        gid=None,
-        executable_path=None,
-    )
-else:
-    options = parse_arguments()
-
-# Check if we received a valid global PID (kernel >= 3.12). If we do,
-# then compare it with the local PID. If they don't match, it's an
-# indication that the crash originated from another PID namespace.
-# Simply log an entry in the host error log and exit 0.
-if options.global_pid is not None:
-    host_pid = int(options.global_pid)
-
-    if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
-        # If the crash came from a container, don't attempt to handle
-        # locally as that would just result in wrong system information.
-
-        # Instead, attempt to find apport inside the container and
-        # forward the process information there.
-
-        proc_host_pid_fd = os.open(
-            "/proc/%d" % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-        )
-
-        def proc_host_pid_opener(path, flags):
-            return os.open(path, flags, dir_fd=proc_host_pid_fd)
-
-        # Validate that the target socket is owned
-        # by the user namespace of the process
+    # systemd socket activation
+    if "LISTEN_FDS" in os.environ:
         try:
-            sock_fd = os.open(
-                "root/run/apport.socket",
-                os.O_RDONLY | os.O_PATH,
-                dir_fd=proc_host_pid_fd,
-            )
-            socket_uid = os.fstat(sock_fd).st_uid
-        except FileNotFoundError:
+            from systemd.daemon import listen_fds
+        except ImportError:
             error_log(
-                "host pid %s crashed in a container without apport support"
-                % options.global_pid
+                "Received a crash via apport-forward.socket,"
+                " but systemd python module is not installed"
             )
             sys.exit(0)
 
-        try:
-            with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
-                if not apport.fileutils.search_map(fd, socket_uid):
-                    error_log(
-                        "user is trying to trick apport into accessing"
-                        " a socket that doesn't belong to the container"
-                    )
-                    sys.exit(0)
-        except FileNotFoundError:
-            pass
+        # Extract and validate the fd
+        fds = listen_fds()
+        if len(fds) < 1:
+            error_log("Invalid socket activation, no fd provided")
+            sys.exit(1)
 
-        # Validate that the crashed binary is owned
-        # by the user namespace of the process
-        task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
-        try:
-            with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
-                if not apport.fileutils.search_map(fd, task_uid):
-                    error_log(
-                        "host pid %s crashed in a container"
-                        " with no access to the binary" % options.global_pid
-                    )
-                    sys.exit(0)
-        except FileNotFoundError:
-            pass
+        # Open the socket
+        sock = socket.fromfd(int(fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
+        atexit.register(sock.shutdown, socket.SHUT_RDWR)
 
-        task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
-        try:
-            with open("gid_map", "r", opener=proc_host_pid_opener) as fd:
-                if not apport.fileutils.search_map(fd, task_gid):
-                    error_log(
-                        "host pid %s crashed in a container"
-                        " with no access to the binary" % options.global_pid
-                    )
-                    sys.exit(0)
-        except FileNotFoundError:
-            pass
+        # Replace stdin by the socket activation fd
+        sys.stdin.close()
 
-        # Now open the socket
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        try:
-            sock.connect("/proc/self/fd/%s" % sock_fd)
-        except OSError:
-            error_log(
-                "host pid %s crashed in a container with a broken apport"
-                % options.global_pid
-            )
-            sys.exit(0)
-
-        # Send main arguments only
-        # Older apport in containers doesn't support positional arguments
-        args = "%s %s %s %s" % (
-            options.pid,
-            options.signal_number,
-            options.core_ulimit,
-            options.dump_mode,
-        )
-        try:
-            sock.sendmsg(
-                [args.encode()],
-                [
-                    # Send a ucred containing the global pid
-                    (
-                        socket.SOL_SOCKET,
-                        socket.SCM_CREDENTIALS,
-                        struct.pack("3i", host_pid, 0, 0),
-                    ),
-                    # Send fd 0 (the coredump)
-                    (
-                        socket.SOL_SOCKET,
-                        socket.SCM_RIGHTS,
-                        array.array("i", [0]),
-                    ),
-                ],
-            )
-            sock.shutdown(socket.SHUT_RDWR)
-        except TimeoutError:
-            error_log("Container apport failed to process crash within 30s")
-
-        sys.exit(0)
-    elif not is_same_ns(host_pid, "mnt"):
-        error_log(
-            "host pid %s crashed in a separate mount namespace, ignoring"
-            % host_pid
-        )
-        sys.exit(0)
-    else:
-        # If it doesn't look like the crash originated from within a
-        # full container or if the is_same_ns() function fails open (returning
-        # True), then take the global pid and replace the local pid with it,
-        # then move on to normal handling.
-
-        # This bit is needed because some software like the chrome
-        # sandbox will use container namespaces as a security measure but are
-        # still otherwise host processes. When that's the case, we need to keep
-        # handling those crashes locally using the global pid.
-        options.pid = str(host_pid)
-
-check_lock()
-
-try:
-    setup_signals()
-
-    pid = options.pid
-    signum = options.signal_number
-    core_ulimit = options.core_ulimit
-    dump_mode = options.dump_mode
-    coredump_fd = sys.stdin.fileno()
-
-    get_pid_info(pid)
-
-    # Sanity check to make sure the process wasn't replaced after the crash
-    # happened. The start time isn't fine-grained enough to be an adequate
-    # security check.
-    apport_start = get_apport_starttime()
-    process_start = get_process_starttime()
-    if process_start > apport_start:
-        error_log("process was replaced after Apport started, ignoring")
-        sys.exit(0)
-
-    # Make sure the process uid/gid match the ones provided by the kernel
-    # if available, if not, it may have been replaced
-    if (options.uid is not None) and (options.gid is not None):
-        if (options.uid != crash_uid) or (options.gid != crash_gid):
-            error_log("process uid/gid doesn't match expected, ignoring")
-            sys.exit(0)
-
-    # check if the executable was modified after the process started (e. g.
-    # package got upgraded in between).
-    exe_mtime = os.stat("exe", dir_fd=proc_pid_fd).st_mtime
-    process_mtime = os.lstat("cmdline", dir_fd=proc_pid_fd).st_mtime
-    if (
-        not os.path.exists(os.readlink("exe", dir_fd=proc_pid_fd))
-        or exe_mtime > process_mtime
-    ):
-        error_log("executable was modified after program start, ignoring")
-        sys.exit(0)
-
-    error_log(
-        "called for pid %s, signal %s, core limit %s, dump mode %s"
-        % (pid, signum, core_ulimit, dump_mode)
-    )
-
-    try:
-        core_ulimit = int(core_ulimit)
-    except ValueError:
-        error_log("core limit is invalid, disabling core files")
-        core_ulimit = 0
-    # clamp core_ulimit to a sensible size, for -1 the kernel reports something
-    # absurdly big
-    if core_ulimit > 9223372036854775807:
-        error_log("ignoring implausibly big core limit, treating as unlimited")
-        core_ulimit = -1
-
-    if dump_mode == "2":
-        error_log(
-            "not creating core for pid with dump mode of %s" % (dump_mode)
-        )
-        # a report should be created but not a core file
-        core_ulimit = 0
-
-    # ignore SIGQUIT (it's usually deliberately generated by users)
-    if signum == str(int(signal.SIGQUIT)):
-        write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
-        sys.exit(0)
-
-    info = apport.Report("Crash")
-    info["Signal"] = signum
-    core_size_limit = usable_ram() * 3 / 4
-    # read binary data from stdio
-    info["CoreDump"] = (sys.stdin.detach(), True, core_size_limit, True)
-
-    # We already need this here to figure out the ExecutableName (for scripts,
-    # etc).
-    if options.executable_path is not None and os.path.exists(
-        options.executable_path
-    ):
-        info["ExecutablePath"] = options.executable_path
-    else:
-        info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
-
-    # Drop privileges temporarily to make sure that we don't
-    # include information in the crash report that the user should
-    # not be allowed to access.
-    drop_privileges()
-
-    info.add_proc_info(proc_pid_fd=proc_pid_fd)
-
-    if "ExecutablePath" not in info:
-        error_log("could not determine ExecutablePath, aborting")
-        sys.exit(1)
-
-    subject = info["ExecutablePath"].replace("/", "_")
-    base = "%s.%s.%s.hanging" % (subject, str(pidstat.st_uid), pid)
-    hanging = os.path.join(apport.fileutils.report_dir, base)
-
-    if os.path.exists(hanging):
-        if os.stat("/proc/uptime").st_ctime < os.stat(hanging).st_mtime:
-            info["ProblemType"] = "Hang"
-        os.unlink(hanging)
-
-    if "InterpreterPath" in info:
-        error_log(
-            'script: %s, interpreted by %s (command line "%s")'
-            % (
-                info["ExecutablePath"],
-                info["InterpreterPath"],
-                info["ProcCmdline"],
-            )
-        )
-    else:
-        error_log(
-            'executable: %s (command line "%s")'
-            % (info["ExecutablePath"], info["ProcCmdline"])
-        )
-
-    # ignore non-package binaries (unless configured otherwise)
-    if not apport.fileutils.likely_packaged(info["ExecutablePath"]):
-        if not apport.fileutils.get_config(
-            "main", "unpackaged", False, boolean=True
-        ):
-            error_log("executable does not belong to a package, ignoring")
-            # check if the user wants a core dump
-            recover_privileges()
-            write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
-            sys.exit(0)
-
-    # ignore SIGXCPU and SIGXFSZ since this indicates some external
-    # influence changing soft RLIMIT values when running programs.
-    if signum in [str(signal.SIGXCPU), str(signal.SIGXFSZ)]:
-        error_log(
-            "Ignoring signal %s (caused by exceeding soft RLIMIT)" % signum
-        )
-        recover_privileges()
-        write_user_coredump(pid, process_start, core_ulimit, coredump_fd)
-        sys.exit(0)
-
-    # ignore blacklisted binaries
-    if info.check_ignored():
-        error_log("executable version is blacklisted, ignoring")
-        sys.exit(0)
-
-    # We can now recover privileges to create the crash report file and
-    # write out the user coredumps
-    recover_privileges()
-
-    if is_closing_session():
-        error_log("happens for shutting down session, ignoring")
-        sys.exit(0)
-
-    # ignore systemd watchdog kills; most often they don't tell us the actual
-    # reason (kernel hang, etc.), LP #1433320
-    if is_systemd_watchdog_restart(signum):
-        error_log("Ignoring systemd watchdog restart")
-        sys.exit(0)
-
-    crash_counter = 0
-
-    # Create crash report file descriptor for writing the report into
-    # report_dir
-    try:
-        report = "%s/%s.%i.crash" % (
-            apport.fileutils.report_dir,
-            info["ExecutablePath"].replace("/", "_"),
-            pidstat.st_uid,
-        )
-        if os.path.exists(report):
-            if apport.fileutils.seen_report(report):
-                # do not flood the logs and the user with repeated crashes
-                # and make sure the file isn't a FIFO or symlink
-                fd = os.open(
-                    report, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK
+        fds = array.array("i")
+        ucreds = array.array("i")
+        msg, ancdata, _unused_flags, _unused_addr = sock.recvmsg(4096, 4096)
+        for cmsg_level, cmsg_type, cmsg_data in ancdata:
+            if (
+                cmsg_level == socket.SOL_SOCKET
+                and cmsg_type == socket.SCM_RIGHTS
+            ):
+                fds.frombytes(
+                    cmsg_data[
+                        : len(cmsg_data) - (len(cmsg_data) % fds.itemsize)
+                    ]
                 )
-                st = os.fstat(fd)
-                if stat.S_ISREG(st.st_mode):
-                    with os.fdopen(fd, "rb") as f:
-                        crash_counter = apport.fileutils.get_recent_crashes(f)
-                    crash_counter += 1
-                    if crash_counter > 1:
-                        write_user_coredump(
-                            pid, process_start, core_ulimit, coredump_fd
-                        )
-                        error_log(
-                            "this executable already crashed %i times,"
-                            " ignoring" % crash_counter
-                        )
-                        sys.exit(0)
-                # remove the old file, so that we can create the new one with
-                # os.O_CREAT|os.O_EXCL
-                os.unlink(report)
-            else:
+            elif (
+                cmsg_level == socket.SOL_SOCKET
+                and cmsg_type == socket.SCM_CREDENTIALS
+            ):
+                ucreds.frombytes(
+                    cmsg_data[
+                        : len(cmsg_data) - (len(cmsg_data) % ucreds.itemsize)
+                    ]
+                )
+
+        sys.stdin = os.fdopen(int(fds[0]), "r")
+
+        # Replace argv by the arguments received over the socket
+        sys.argv = [sys.argv[0]]
+        sys.argv += msg.decode().split()
+        if len(ucreds) >= 3:
+            sys.argv[1] = "%d" % ucreds[0]
+
+        if len(sys.argv) != 5:
+            error_log(
+                "Received a bad number of arguments from forwarder,"
+                " received %d, expected 5, aborting." % len(sys.argv)
+            )
+            sys.exit(1)
+
+        options = argparse.Namespace(
+            pid=sys.argv[1],
+            signal_number=sys.argv[2],
+            core_ulimit=sys.argv[3],
+            dump_mode=sys.argv[4],
+            global_pid=None,
+            uid=None,
+            gid=None,
+            executable_path=None,
+        )
+    else:
+        options = parse_arguments()
+
+    # Check if we received a valid global PID (kernel >= 3.12). If we do,
+    # then compare it with the local PID. If they don't match, it's an
+    # indication that the crash originated from another PID namespace.
+    # Simply log an entry in the host error log and exit 0.
+    if options.global_pid is not None:
+        host_pid = int(options.global_pid)
+
+        if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
+            # If the crash came from a container, don't attempt to handle
+            # locally as that would just result in wrong system information.
+
+            # Instead, attempt to find apport inside the container and
+            # forward the process information there.
+
+            proc_host_pid_fd = os.open(
+                "/proc/%d" % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            )
+
+            def proc_host_pid_opener(path, flags):
+                return os.open(path, flags, dir_fd=proc_host_pid_fd)
+
+            # Validate that the target socket is owned
+            # by the user namespace of the process
+            try:
+                sock_fd = os.open(
+                    "root/run/apport.socket",
+                    os.O_RDONLY | os.O_PATH,
+                    dir_fd=proc_host_pid_fd,
+                )
+                socket_uid = os.fstat(sock_fd).st_uid
+            except FileNotFoundError:
                 error_log(
-                    "apport: report %s already exists and unseen,"
-                    " skipping to avoid disk usage DoS" % report
-                )
-                write_user_coredump(
-                    pid, process_start, core_ulimit, coredump_fd
+                    "host pid %s crashed in a container without apport support"
+                    % options.global_pid
                 )
                 sys.exit(0)
-        # we prefer having a file mode of 0 while writing;
-        fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0)
-        reportfile = os.fdopen(fd, "w+b")
-        assert reportfile.fileno() > sys.stderr.fileno()
 
-        # Make sure the crash reporting daemon can read this report
-        try:
-            gid = pwd.getpwnam("whoopsie").pw_gid
-            os.fchown(fd, pidstat.st_uid, gid)
-        except (OSError, KeyError):
-            os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
-    except OSError as error:
-        error_log("Could not create report file: %s" % str(error))
-        sys.exit(1)
+            try:
+                with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                    if not apport.fileutils.search_map(fd, socket_uid):
+                        error_log(
+                            "user is trying to trick apport into accessing"
+                            " a socket that doesn't belong to the container"
+                        )
+                        sys.exit(0)
+            except FileNotFoundError:
+                pass
 
-    # Drop privileges before writing out the reportfile.
-    drop_privileges()
+            # Validate that the crashed binary is owned
+            # by the user namespace of the process
+            task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
+            try:
+                with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                    if not apport.fileutils.search_map(fd, task_uid):
+                        error_log(
+                            "host pid %s crashed in a container"
+                            " with no access to the binary"
+                            % options.global_pid
+                        )
+                        sys.exit(0)
+            except FileNotFoundError:
+                pass
 
-    info.add_user_info()
-    info.add_os_info()
+            task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
+            try:
+                with open("gid_map", "r", opener=proc_host_pid_opener) as fd:
+                    if not apport.fileutils.search_map(fd, task_gid):
+                        error_log(
+                            "host pid %s crashed in a container"
+                            " with no access to the binary"
+                            % options.global_pid
+                        )
+                        sys.exit(0)
+            except FileNotFoundError:
+                pass
 
-    if crash_counter > 0:
-        info["CrashCounter"] = "%i" % crash_counter
+            # Now open the socket
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            try:
+                sock.connect("/proc/self/fd/%s" % sock_fd)
+            except OSError:
+                error_log(
+                    "host pid %s crashed in a container with a broken apport"
+                    % options.global_pid
+                )
+                sys.exit(0)
+
+            # Send main arguments only
+            # Older apport in containers doesn't support positional arguments
+            args = "%s %s %s %s" % (
+                options.pid,
+                options.signal_number,
+                options.core_ulimit,
+                options.dump_mode,
+            )
+            try:
+                sock.sendmsg(
+                    [args.encode()],
+                    [
+                        # Send a ucred containing the global pid
+                        (
+                            socket.SOL_SOCKET,
+                            socket.SCM_CREDENTIALS,
+                            struct.pack("3i", host_pid, 0, 0),
+                        ),
+                        # Send fd 0 (the coredump)
+                        (
+                            socket.SOL_SOCKET,
+                            socket.SCM_RIGHTS,
+                            array.array("i", [0]),
+                        ),
+                    ],
+                )
+                sock.shutdown(socket.SHUT_RDWR)
+            except TimeoutError:
+                error_log(
+                    "Container apport failed to process crash within 30s"
+                )
+
+            sys.exit(0)
+        elif not is_same_ns(host_pid, "mnt"):
+            error_log(
+                "host pid %s crashed in a separate mount namespace, ignoring"
+                % host_pid
+            )
+            sys.exit(0)
+        else:
+            # If it doesn't look like the crash originated from within a full
+            # container or if the is_same_ns() function fails open (returning
+            # True), then take the global pid and replace the local pid with
+            # it, then move on to normal handling.
+
+            # This bit is needed because some software like the chrome sandbox
+            # will use container namespaces as a security measure but are still
+            # otherwise host processes. When that's the case, we need to keep
+            # handling those crashes locally using the global pid.
+            options.pid = str(host_pid)
+
+    check_lock()
 
     try:
-        info.write(reportfile)
-    except OSError:
-        os.unlink(report)
-        raise
-    if "CoreDump" not in info:
+        setup_signals()
+
+        pid = options.pid
+        signum = options.signal_number
+        core_ulimit = options.core_ulimit
+        dump_mode = options.dump_mode
+        coredump_fd = sys.stdin.fileno()
+
+        get_pid_info(pid)
+
+        # Sanity check to make sure the process wasn't replaced after the crash
+        # happened. The start time isn't fine-grained enough to be an adequate
+        # security check.
+        apport_start = get_apport_starttime()
+        process_start = get_process_starttime()
+        if process_start > apport_start:
+            error_log("process was replaced after Apport started, ignoring")
+            sys.exit(0)
+
+        # Make sure the process uid/gid match the ones provided by the kernel
+        # if available, if not, it may have been replaced
+        if (options.uid is not None) and (options.gid is not None):
+            if (options.uid != crash_uid) or (options.gid != crash_gid):
+                error_log("process uid/gid doesn't match expected, ignoring")
+                sys.exit(0)
+
+        # check if the executable was modified after the process started (e. g.
+        # package got upgraded in between).
+        exe_mtime = os.stat("exe", dir_fd=proc_pid_fd).st_mtime
+        process_mtime = os.lstat("cmdline", dir_fd=proc_pid_fd).st_mtime
+        if (
+            not os.path.exists(os.readlink("exe", dir_fd=proc_pid_fd))
+            or exe_mtime > process_mtime
+        ):
+            error_log("executable was modified after program start, ignoring")
+            sys.exit(0)
+
         error_log(
-            "core dump exceeded %i MiB,"
-            " dropped from %s to avoid memory overflow"
-            % (core_size_limit / 1048576, report)
+            "called for pid %s, signal %s, core limit %s, dump mode %s"
+            % (pid, signum, core_ulimit, dump_mode)
         )
 
-    # Get privileges back so the core file can be written to root-owned
-    # corefile directory
-    recover_privileges()
+        try:
+            core_ulimit = int(core_ulimit)
+        except ValueError:
+            error_log("core limit is invalid, disabling core files")
+            core_ulimit = 0
+        # clamp core_ulimit to a sensible size, for -1 the kernel reports
+        # something absurdly big
+        if core_ulimit > 9223372036854775807:
+            error_log(
+                "ignoring implausibly big core limit, treating as unlimited"
+            )
+            core_ulimit = -1
 
-    # make the report writable now, when it's completely written
-    os.fchmod(fd, 0o640)
-    error_log("wrote report %s" % report)
+        if dump_mode == "2":
+            error_log(
+                "not creating core for pid with dump mode of %s" % (dump_mode)
+            )
+            # a report should be created but not a core file
+            core_ulimit = 0
 
-    # Check if the user wants a core file. We need to create that from the
-    # written report, as we can only read stdin once and write_user_coredump()
-    # might abort reading from stdin and remove the written core file when
-    # core_ulimit is > 0 and smaller than the core size.
-    reportfile.seek(0)
-    write_user_coredump(
-        pid, process_start, core_ulimit, from_report=reportfile
-    )
+        # ignore SIGQUIT (it's usually deliberately generated by users)
+        if signum == str(int(signal.SIGQUIT)):
+            write_user_coredump(
+                options.executable_path,
+                pid,
+                process_start,
+                core_ulimit,
+                coredump_fd,
+            )
+            sys.exit(0)
 
-except (SystemExit, KeyboardInterrupt):
-    pass
-except Exception:  # pylint: disable=broad-except
-    error_log("Unhandled exception:")
-    traceback.print_exc()
-    error_log(
-        "pid: %i, uid: %i, gid: %i, euid: %i, egid: %i"
-        % (os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid())
-    )
-    error_log("environment: %s" % str(os.environ))
+        info = apport.Report("Crash")
+        info["Signal"] = signum
+        core_size_limit = usable_ram() * 3 / 4
+        # read binary data from stdio
+        info["CoreDump"] = (sys.stdin.detach(), True, core_size_limit, True)
+
+        # We already need this here to figure out the ExecutableName (for
+        # scripts, etc).
+        if options.executable_path is not None and os.path.exists(
+            options.executable_path
+        ):
+            info["ExecutablePath"] = options.executable_path
+        else:
+            info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
+
+        # Drop privileges temporarily to make sure that we don't
+        # include information in the crash report that the user should
+        # not be allowed to access.
+        drop_privileges()
+
+        info.add_proc_info(proc_pid_fd=proc_pid_fd)
+
+        if "ExecutablePath" not in info:
+            error_log("could not determine ExecutablePath, aborting")
+            sys.exit(1)
+
+        subject = info["ExecutablePath"].replace("/", "_")
+        base = "%s.%s.%s.hanging" % (subject, str(pidstat.st_uid), pid)
+        hanging = os.path.join(apport.fileutils.report_dir, base)
+
+        if os.path.exists(hanging):
+            if os.stat("/proc/uptime").st_ctime < os.stat(hanging).st_mtime:
+                info["ProblemType"] = "Hang"
+            os.unlink(hanging)
+
+        if "InterpreterPath" in info:
+            error_log(
+                'script: %s, interpreted by %s (command line "%s")'
+                % (
+                    info["ExecutablePath"],
+                    info["InterpreterPath"],
+                    info["ProcCmdline"],
+                )
+            )
+        else:
+            error_log(
+                'executable: %s (command line "%s")'
+                % (info["ExecutablePath"], info["ProcCmdline"])
+            )
+
+        # ignore non-package binaries (unless configured otherwise)
+        if not apport.fileutils.likely_packaged(info["ExecutablePath"]):
+            if not apport.fileutils.get_config(
+                "main", "unpackaged", False, boolean=True
+            ):
+                error_log("executable does not belong to a package, ignoring")
+                # check if the user wants a core dump
+                recover_privileges()
+                write_user_coredump(
+                    options.executable_path,
+                    pid,
+                    process_start,
+                    core_ulimit,
+                    coredump_fd,
+                )
+                sys.exit(0)
+
+        # ignore SIGXCPU and SIGXFSZ since this indicates some external
+        # influence changing soft RLIMIT values when running programs.
+        if signum in [str(signal.SIGXCPU), str(signal.SIGXFSZ)]:
+            error_log(
+                "Ignoring signal %s (caused by exceeding soft RLIMIT)" % signum
+            )
+            recover_privileges()
+            write_user_coredump(
+                options.executable_path,
+                pid,
+                process_start,
+                core_ulimit,
+                coredump_fd,
+            )
+            sys.exit(0)
+
+        # ignore blacklisted binaries
+        if info.check_ignored():
+            error_log("executable version is blacklisted, ignoring")
+            sys.exit(0)
+
+        # We can now recover privileges to create the crash report file and
+        # write out the user coredumps
+        recover_privileges()
+
+        if is_closing_session():
+            error_log("happens for shutting down session, ignoring")
+            sys.exit(0)
+
+        # ignore systemd watchdog kills; most often they don't tell us the
+        # actual reason (kernel hang, etc.), LP #1433320
+        if is_systemd_watchdog_restart(signum):
+            error_log("Ignoring systemd watchdog restart")
+            sys.exit(0)
+
+        crash_counter = 0
+
+        # Create crash report file descriptor for writing the report into
+        # report_dir
+        try:
+            report = "%s/%s.%i.crash" % (
+                apport.fileutils.report_dir,
+                info["ExecutablePath"].replace("/", "_"),
+                pidstat.st_uid,
+            )
+            if os.path.exists(report):
+                if apport.fileutils.seen_report(report):
+                    # do not flood the logs and the user with repeated crashes
+                    # and make sure the file isn't a FIFO or symlink
+                    fd = os.open(
+                        report, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK
+                    )
+                    st = os.fstat(fd)
+                    if stat.S_ISREG(st.st_mode):
+                        with os.fdopen(fd, "rb") as f:
+                            crash_counter = (
+                                apport.fileutils.get_recent_crashes(f)
+                            )
+                        crash_counter += 1
+                        if crash_counter > 1:
+                            write_user_coredump(
+                                options.executable_path,
+                                pid,
+                                process_start,
+                                core_ulimit,
+                                coredump_fd,
+                            )
+                            error_log(
+                                "this executable already crashed %i times,"
+                                " ignoring" % crash_counter
+                            )
+                            sys.exit(0)
+                    # remove the old file, so that we can create the new one
+                    # with os.O_CREAT|os.O_EXCL
+                    os.unlink(report)
+                else:
+                    error_log(
+                        "apport: report %s already exists and unseen,"
+                        " skipping to avoid disk usage DoS" % report
+                    )
+                    write_user_coredump(
+                        options.executable_path,
+                        pid,
+                        process_start,
+                        core_ulimit,
+                        coredump_fd,
+                    )
+                    sys.exit(0)
+            # we prefer having a file mode of 0 while writing;
+            fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0)
+            reportfile = os.fdopen(fd, "w+b")
+            assert reportfile.fileno() > sys.stderr.fileno()
+
+            # Make sure the crash reporting daemon can read this report
+            try:
+                gid = pwd.getpwnam("whoopsie").pw_gid
+                os.fchown(fd, pidstat.st_uid, gid)
+            except (OSError, KeyError):
+                os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
+        except OSError as error:
+            error_log("Could not create report file: %s" % str(error))
+            sys.exit(1)
+
+        # Drop privileges before writing out the reportfile.
+        drop_privileges()
+
+        info.add_user_info()
+        info.add_os_info()
+
+        if crash_counter > 0:
+            info["CrashCounter"] = "%i" % crash_counter
+
+        try:
+            info.write(reportfile)
+        except OSError:
+            os.unlink(report)
+            raise
+        if "CoreDump" not in info:
+            error_log(
+                "core dump exceeded %i MiB,"
+                " dropped from %s to avoid memory overflow"
+                % (core_size_limit / 1048576, report)
+            )
+
+        # Get privileges back so the core file can be written to root-owned
+        # corefile directory
+        recover_privileges()
+
+        # make the report writable now, when it's completely written
+        os.fchmod(fd, 0o640)
+        error_log("wrote report %s" % report)
+
+        # Check if the user wants a core file. We need to create that
+        # from the written report, as we can only read stdin once and
+        # write_user_coredump() might abort reading from stdin and remove
+        # the written core file when core_ulimit is > 0 and smaller
+        # than the core size.
+        reportfile.seek(0)
+        write_user_coredump(
+            options.executable_path,
+            pid,
+            process_start,
+            core_ulimit,
+            from_report=reportfile,
+        )
+    except (SystemExit, KeyboardInterrupt):
+        pass
+    except Exception:  # pylint: disable=broad-except
+        error_log("Unhandled exception:")
+        traceback.print_exc()
+        error_log(
+            "pid: %i, uid: %i, gid: %i, euid: %i, egid: %i"
+            % (
+                os.getpid(),
+                os.getuid(),
+                os.getgid(),
+                os.geteuid(),
+                os.getegid(),
+            )
+        )
+        error_log("environment: %s" % str(os.environ))
+
+
+if __name__ == "__main__":
+    main()
