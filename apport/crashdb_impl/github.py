@@ -1,7 +1,7 @@
 """Crash database implementation for Github."""
 
 # Copyright (C) 2022 - 2022 Canonical Ltd.
-# Author: Eduard Gómez Escanell <eduard.gomez.escandell@canonical.com>
+# Author: Eduard Gómez Escanell <edu.gomez.escandell@canonical.com>
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
