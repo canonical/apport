@@ -35,11 +35,9 @@ class Github:
         return string
 
     def post(self, url: str, data: str):
-        headers = {
-            'Accept': 'application/vnd.github.v3+json'
-        }
+        headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
-            headers['Authorization'] = f'token {self.__access_token}'
+            headers["Authorization"] = f"token {self.__access_token}"
         result = requests.post(url, headers=headers, data=data)
         self.__last_request = time.time()
         result.raise_for_status()
@@ -51,12 +49,9 @@ class Github:
     def api_open_issue(self, owner: str, repo: str, data: dict):
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
         return self.post(url, json.dumps(data))
-    
+
     def __enter__(self):
-        data = {
-            "client_id": self.__client_id,
-            "scope": "public_repo"
-        }
+        data = {"client_id": self.__client_id, "scope": "public_repo"}
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
 
@@ -86,12 +81,16 @@ class Github:
         It respects the wait-time requested by Github.
         """
         if not self.__authentication_data:
-            raise RuntimeError("Authentication not started. Use a with statement to do so")
+            raise RuntimeError(
+                "Authentication not started. Use a with statement to do so"
+            )
 
         t = time.time()
         waittime = self.__cooldown - (t - self.__last_request)
         if t + waittime > self.__expiry:
-            raise RuntimeError("Failed to log into Github: too much time elapsed.")
+            raise RuntimeError(
+                "Failed to log into Github: too much time elapsed."
+            )
         if waittime > 0:
             time.sleep(waittime)
 
@@ -110,9 +109,11 @@ class Github:
             return True
         raise RuntimeError(f"Unknown response from Github: {response}")
 
+
 @dataclass(frozen=True)
 class IssueHandle:
     url: str
+
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
     """
@@ -149,15 +150,17 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return {
             "title": "Issue submitted via apport",
             "body": body,
-            "labels": [l for l in self.labels]
+            "labels": [l for l in self.labels],
         }
-    
+
     def external_login(self, ui: apport.ui.UserInterface) -> None:
         if self.github is not None:
             return
         self.github = self._github_login(ui)
 
-    def upload(self, report: apport.Report, progress_callback=None) -> IssueHandle:
+    def upload(
+        self, report: apport.Report, progress_callback=None
+    ) -> IssueHandle:
         """Upload given problem report return a handle for it.
 
         In Github, we open an issue.
@@ -168,13 +171,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             raise apport.crashdb.NeedsExternalLogin()
 
         data = self._format_report(report)
-        response = self.github.api_open_issue(self.repository_owner, self.repository_name, data)
+        response = self.github.api_open_issue(
+            self.repository_owner, self.repository_name, data
+        )
         return IssueHandle(url=response["html_url"])
 
-    def get_comment_url(self, report: apport.Report, handle: IssueHandle) -> str:
+    def get_comment_url(
+        self, report: apport.Report, handle: IssueHandle
+    ) -> str:
         """
         Return an URL that should be opened after report has been uploaded
         and upload() returned handle.
         """
         return handle.url
-
