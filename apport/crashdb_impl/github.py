@@ -20,7 +20,7 @@ import time
 class Github:
     __last_request: float = time.time()
 
-    def __init__(self, client_id, ui: apport.ui.UserInterface):
+    def __init__(self, client_id, ui):
         self.__client_id = client_id
         self.__authentication_data = None
         self.__access_token = None
@@ -133,7 +133,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.issue_url = None
         self.github = None
 
-    def _github_login(self, ui: apport.ui.UserInterface) -> Github:
+    def _github_login(self, ui) -> Github:
         with Github(self.app_id, ui) as github:
             while not github.authentication_complete():
                 pass
@@ -153,7 +153,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "labels": [l for l in self.labels],
         }
 
-    def external_login(self, ui: apport.ui.UserInterface) -> None:
+    def external_login(self, ui) -> None:
         if self.github is not None:
             return
         self.github = self._github_login(ui)
@@ -168,7 +168,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert self.accepts(report)
 
         if self.github is None:
-            raise apport.crashdb.NeedsExternalLogin()
+            raise RuntimeError("Failed to login to Github")
 
         data = self._format_report(report)
         response = self.github.api_open_issue(
