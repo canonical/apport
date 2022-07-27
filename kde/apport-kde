@@ -94,7 +94,6 @@ class Dialog(QDialog):
         self.findChild(QLabel, "text").setText(text)
 
     def on_buttons_clicked(self, button):
-        self.actionbutton = button
         if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
             button.window().done(2)
 
