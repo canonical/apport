@@ -2092,7 +2092,8 @@ and more
                 {"distro": "ubuntu", "launchpad_instance": launchpad_instance},
             )
 
-        def _get_bug_target(self, db, report):
+        @staticmethod
+        def _get_bug_target(db, report):
             """Return the bug_target for this report."""
 
             project = db.options.get("project")

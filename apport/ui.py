@@ -448,7 +448,8 @@ class UserInterface:
                 sys.exit(1)
             raise
 
-    def finish_hang(self, f):
+    @staticmethod
+    def finish_hang(f):
         """Finish processing a hanging application after the core pipe handler
         has handed the report back.
 
@@ -514,7 +515,8 @@ class UserInterface:
             self.wait_for_pid(pid)
             self.restart()
 
-    def wait_for_pid(self, pid):
+    @staticmethod
+    def wait_for_pid(pid):
         """waitpid() does not work for non-child processes. Query the process
         state in a loop, waiting for "no such process."
         """
@@ -528,7 +530,8 @@ class UserInterface:
                     raise
             time.sleep(1)
 
-    def kill_segv(self, pid):
+    @staticmethod
+    def kill_segv(pid):
         os.kill(int(pid), signal.SIGSEGV)
 
     def run_report_bug(self, symptom_script=None):
@@ -1160,7 +1163,8 @@ class UserInterface:
             self.specified_a_pkg = True
             self.args.package = issue
 
-    def format_filesize(self, size):
+    @staticmethod
+    def format_filesize(size):
         """Format the given integer as humanly readable and i18n'ed file
         size."""
 

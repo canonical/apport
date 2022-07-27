@@ -297,7 +297,8 @@ class Report(problem_report.ProblemReport):
         self.pid = None
         self._proc_maps_cache = None
 
-    def _customized_package_suffix(self, package):
+    @staticmethod
+    def _customized_package_suffix(package):
         """Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
@@ -1185,7 +1186,8 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    def _get_ignore_dom(self):
+    @staticmethod
+    def _get_ignore_dom():
         """Read ignore list XML file and return a DOM tree.
 
         Return an empty DOM tree if file does not exist.
@@ -1690,7 +1692,8 @@ class Report(problem_report.ProblemReport):
                 return ":".join(parts)
         return None
 
-    def _extract_function_and_address(self, line):
+    @staticmethod
+    def _extract_function_and_address(line):
         parsed = re.search(r"\[.*\] (.*)$", line)
         if parsed:
             match = parsed.group(1)

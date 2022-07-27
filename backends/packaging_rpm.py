@@ -163,7 +163,8 @@ class RPMPackageInfo:
             " RPMPackageInfo subclass"
         )
 
-    def get_system_architecture(self):
+    @staticmethod
+    def get_system_architecture():
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
         rpmarch = subprocess.run(
@@ -259,7 +260,8 @@ class RPMPackageInfo:
             raise ValueError("Could not find package with %s: %s" % (tag, arg))
         return [m for m in matches]
 
-    def _get_header(self, envra):
+    @staticmethod
+    def _get_header(envra):
         """Get the RPM header that matches the given ENVRA."""
 
         querystr = envra
@@ -283,7 +285,8 @@ class RPMPackageInfo:
             raise ValueError("No headers found for this envra: %s" % envra)
         return h
 
-    def _make_envra_from_header(self, h):
+    @staticmethod
+    def _make_envra_from_header(h):
         """Generate an ENVRA string from an rpm header"""
 
         nvra = "%s-%s-%s.%s" % (h["n"], h["v"], h["r"], h["arch"])
@@ -293,7 +296,8 @@ class RPMPackageInfo:
             envra = nvra
         return envra
 
-    def _checkmd5(self, filename, filemd5):
+    @staticmethod
+    def _checkmd5(filename, filemd5):
         """Internal function to check a file's md5sum"""
 
         m = hashlib.md5()

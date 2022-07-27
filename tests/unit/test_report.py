@@ -1066,7 +1066,8 @@ No symbol table info available.
 """
         self.assertEqual(pr.crash_signature_addresses(), None)
 
-    def test_missing_uid(self):
+    @staticmethod
+    def test_missing_uid():
         """check_ignored() works for removed user"""
 
         orig_getuid = os.getuid

@@ -547,7 +547,8 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
 
-    def decode_gzipped_message(self, message: email.message.Message) -> bytes:
+    @staticmethod
+    def decode_gzipped_message(message: email.message.Message) -> bytes:
         with tempfile.TemporaryFile() as payload:
             payload.write(message.get_payload(decode=True))
             payload.seek(0)

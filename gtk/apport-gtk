@@ -88,7 +88,8 @@ class GTKUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def add_spinner_over_treeview(self, overlay):
+    @staticmethod
+    def add_spinner_over_treeview(overlay):
         """Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
         centered on top."""
         # TODO handle the expose event of the spinner so that we can draw on

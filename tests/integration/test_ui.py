@@ -257,7 +257,8 @@ class T(unittest.TestCase):
         os.execv(exename, [exename] + self.TEST_ARGS)
         assert False, "Could not execute " + exename
 
-    def _write_symptom_script(self, script_name: str, content: str) -> None:
+    @staticmethod
+    def _write_symptom_script(script_name: str, content: str) -> None:
         path = os.path.join(apport.ui.symptom_script_dir, script_name)
         with open(path, "w") as symptom_script:
             symptom_script.write(content)

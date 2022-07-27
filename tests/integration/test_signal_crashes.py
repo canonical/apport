@@ -1070,7 +1070,8 @@ class T(unittest.TestCase):
             expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
         )
 
-    def gdb_command(self, command, args, core_file, uid):
+    @staticmethod
+    def gdb_command(command, args, core_file, uid):
         """Construct GDB arguments to call the test executable.
 
         GDB must be executed as root for test executables that use setuid.
@@ -1102,7 +1103,8 @@ class T(unittest.TestCase):
         ]
         return gdb_args
 
-    def _get_report_filename(self, command: str) -> str:
+    @staticmethod
+    def _get_report_filename(command: str) -> str:
         return os.path.join(
             apport.fileutils.report_dir,
             f"{os.path.realpath(command).replace('/', '_')}"

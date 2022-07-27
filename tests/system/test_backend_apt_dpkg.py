@@ -1009,7 +1009,8 @@ class T(unittest.TestCase):
         )
         return libraries[0]
 
-    def _ubuntu_archive_uri(self, arch=None):
+    @staticmethod
+    def _ubuntu_archive_uri(arch=None):
         """Return archive URI for the given architecture."""
         if arch is None:
             arch = impl.get_system_architecture()
@@ -1119,8 +1120,9 @@ class T(unittest.TestCase):
         except FileNotFoundError as error:  # pragma: no cover
             self.skipTest(f"{error.filename} not available")
 
+    @staticmethod
     def _write_source_file(
-        self, sources_filename: str, uri: str, release: str, updates: bool
+        sources_filename: str, uri: str, release: str, updates: bool
     ) -> None:
         """Write sources.list file."""
         with open(sources_filename, "w") as sources_file:

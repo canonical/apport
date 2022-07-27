@@ -488,11 +488,12 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             else:
                 os.unsetenv("HOME")
 
+    @staticmethod
     @unittest.mock.patch(
         "apport.hookutils._root_command_prefix",
         unittest.mock.MagicMock(return_value=[]),
     )
-    def test_no_crashes(self):
+    def test_no_crashes():
         """functions do not crash (very shallow)"""
 
         report = {}

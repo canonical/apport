@@ -68,7 +68,8 @@ class ParseSegv:
             )
         return maps
 
-    def parse_regs(self, reg_str):
+    @staticmethod
+    def parse_regs(reg_str):
         regs = {}
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]

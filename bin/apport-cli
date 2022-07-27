@@ -37,7 +37,8 @@ class CLIDialog:
         self.buttons = []
         self.visible = False
 
-    def raw_input_char(self, prompt, multi_char=False):
+    @staticmethod
+    def raw_input_char(prompt, multi_char=False):
         """raw_input, but read a single character unless multi_char is True.
 
         @param: prompt: the text presented to the user to solict a response.

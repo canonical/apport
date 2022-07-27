@@ -30,7 +30,8 @@ class T(unittest.TestCase):
         self.orig_report_dir = None
         apport.fileutils._config_file = self.orig_config_file
 
-    def _create_reports(self, create_inaccessible=False):
+    @staticmethod
+    def _create_reports(create_inaccessible=False):
         """Create some test reports"""
 
         r1 = os.path.join(apport.fileutils.report_dir, "rep1.crash")

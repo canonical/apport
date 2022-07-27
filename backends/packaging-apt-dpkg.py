@@ -278,9 +278,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
-    def get_lp_binary_package(
-        self, distro_id, release, package, version, arch
-    ):
+    @staticmethod
+    def get_lp_binary_package(distro_id, release, package, version, arch):
         # allow unauthenticated downloads
         apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
         from launchpadlib.launchpad import Launchpad
@@ -319,7 +318,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             # is theoretical
             return (bf["url"], bf["sha1"])
 
-    def json_request(self, url, entries=False):
+    @staticmethod
+    def json_request(url, entries=False):
         """Open, read and parse the json of a url
 
         Set entries to True when the json data returned by Launchpad
@@ -344,7 +344,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             return json.loads(content)
 
-    def get_lp_source_package(self, distro_id, package, version):
+    @staticmethod
+    def get_lp_source_package(distro_id, package, version):
         from launchpadlib.launchpad import Launchpad
 
         launchpad = Launchpad.login_anonymously(
@@ -494,7 +495,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return modified
 
-    def __fgrep_files(self, pattern, file_list):
+    @staticmethod
+    def __fgrep_files(pattern, file_list):
         """Call fgrep for a pattern on given file list and return the first
         matching file, or None if no file matches."""
 
@@ -1363,8 +1365,8 @@ class __AptDpkgPackageInfo(PackageInfo):
     # Internal helper methods
     #
 
-    @classmethod
-    def _call_dpkg(klass, args):
+    @staticmethod
+    def _call_dpkg(args):
         """Call dpkg with given arguments and return output, or return None on
         error."""
 
@@ -1379,7 +1381,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             raise ValueError("package does not exist")
 
-    def _check_files_md5(self, sumfile):
+    @staticmethod
+    def _check_files_md5(sumfile):
         """Internal function for calling md5sum.
 
         This is separate from get_modified_files so that it is automatically

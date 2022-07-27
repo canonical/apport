@@ -103,7 +103,8 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_modified_conffiles(self, package):
+    @staticmethod
+    def get_modified_conffiles(package):
         """Return modified configuration files of a package.
 
         Return a file name -> file contents map of all configuration files of
@@ -146,7 +147,8 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_library_paths(self):
+    @staticmethod
+    def get_library_paths():
         """Return a list of default library search paths.
 
         The entries should be separated with a colon ':', like for
@@ -296,7 +298,8 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def is_native_origin_package(self, package):
+    @staticmethod
+    def is_native_origin_package(package):
         """Check if a package is one which has been white listed.
 
         Return True for a package which came from an origin which is listed in
