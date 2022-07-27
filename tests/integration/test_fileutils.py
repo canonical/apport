@@ -37,9 +37,9 @@ class T(unittest.TestCase):
         r1 = os.path.join(apport.fileutils.report_dir, "rep1.crash")
         r2 = os.path.join(apport.fileutils.report_dir, "rep2.crash")
 
-        with open(r1, "w") as fd:
+        with open(r1, "w", encoding="utf-8") as fd:
             fd.write("report 1")
-        with open(r2, "w") as fd:
+        with open(r2, "w", encoding="utf-8") as fd:
             fd.write("report 2")
         os.chmod(r1, 0o600)
         os.chmod(r2, 0o600)
@@ -47,7 +47,7 @@ class T(unittest.TestCase):
             ri = os.path.join(
                 apport.fileutils.report_dir, "inaccessible.crash"
             )
-            with open(ri, "w") as fd:
+            with open(ri, "w", encoding="utf-8") as fd:
                 fd.write("inaccessible")
             os.chmod(ri, 0)
             return [r1, r2, ri]
@@ -190,14 +190,14 @@ class T(unittest.TestCase):
     def test_mark_2nd_report_upload(self):
         """mark_report_upload() for a previously uploaded report"""
         upload = os.path.join(apport.fileutils.report_dir, "report.upload")
-        with open(upload, "w"):
+        with open(upload, "w", encoding="utf-8"):
             pass
         uploaded = os.path.join(apport.fileutils.report_dir, "report.uploaded")
-        with open(uploaded, "w"):
+        with open(uploaded, "w", encoding="utf-8"):
             pass
         time.sleep(1)
         report = os.path.join(apport.fileutils.report_dir, "report.crash")
-        with open(report, "w"):
+        with open(report, "w", encoding="utf-8"):
             pass
         time.sleep(1)
         apport.fileutils.mark_report_upload(report)
@@ -281,7 +281,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
         r = os.path.join(apport.fileutils.report_dir, "unwritable.crash")
-        with open(r, "w") as fd:
+        with open(r, "w", encoding="utf-8") as fd:
             fd.write("unwritable")
         os.chmod(r, 0o444)
 
@@ -337,12 +337,12 @@ class T(unittest.TestCase):
         f1 = os.path.join(apport.fileutils.report_dir, "test 1.txt")
         f2 = os.path.join(apport.fileutils.report_dir, "test:2.txt")
         sumfile = os.path.join(apport.fileutils.report_dir, "sums.txt")
-        with open(f1, "w") as fd:
+        with open(f1, "w", encoding="utf-8") as fd:
             fd.write("Some stuff")
-        with open(f2, "w") as fd:
+        with open(f2, "w", encoding="utf-8") as fd:
             fd.write("More stuff")
         # use one relative and one absolute path in checksums file
-        with open(sumfile, "w") as fd:
+        with open(sumfile, "w", encoding="utf-8") as fd:
             fd.write(
                 """2e41290da2fa3f68bd3313174467e3b5  %s
 f6423dfbc4faf022e58b4d3f5ff71a70  %s
@@ -353,19 +353,19 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             apport.fileutils.check_files_md5(sumfile), [], "correct md5sums"
         )
 
-        with open(f1, "w") as fd:
+        with open(f1, "w", encoding="utf-8") as fd:
             fd.write("Some stuff!")
         self.assertEqual(
             apport.fileutils.check_files_md5(sumfile), [f1[1:]], "file 1 wrong"
         )
-        with open(f2, "w") as fd:
+        with open(f2, "w", encoding="utf-8") as fd:
             fd.write("More stuff!")
         self.assertEqual(
             apport.fileutils.check_files_md5(sumfile),
             [f1[1:], f2],
             "files 1 and 2 wrong",
         )
-        with open(f1, "w") as fd:
+        with open(f1, "w", encoding="utf-8") as fd:
             fd.write("Some stuff")
         self.assertEqual(
             apport.fileutils.check_files_md5(sumfile), [f2], "file 2 wrong"
@@ -558,7 +558,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
                 uid=fake_uid,
                 timestamp=222222 + x,
             )[1]
-            with open(core_path, "w") as fd:
+            with open(core_path, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff")
                 time.sleep(1)
 
@@ -566,7 +566,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         core_path = apport.fileutils.get_core_path(
             pid=231, exe="/usr/bin/test", uid=fake_uid + 1, timestamp=333333
         )[1]
-        with open(core_path, "w") as fd:
+        with open(core_path, "w", encoding="utf-8") as fd:
             fd.write("Some stuff")
 
         # Make sure we have the proper number of test files

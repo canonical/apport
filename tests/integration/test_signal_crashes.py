@@ -300,7 +300,7 @@ class T(unittest.TestCase):
         """unpackaged scripts do not create a report"""
 
         local_exe = os.path.join(self.workdir, "myscript")
-        with open(local_exe, "w") as f:
+        with open(local_exe, "w", encoding="utf-8") as f:
             f.write("#!/usr/bin/perl\nsleep(86400);\n")
         os.chmod(local_exe, 0o755)
 
@@ -334,7 +334,7 @@ class T(unittest.TestCase):
         )
 
         self.assertEqual(app.returncode, 2)
-        with open(log) as log_file:
+        with open(log, encoding="utf-8") as log_file:
             logged = log_file.read()
         self.assertIn("usage", logged)
         self.assertIn("the following arguments are required: -p/--pid", logged)
@@ -347,7 +347,7 @@ class T(unittest.TestCase):
         """existence of user-inaccessible files does not leak"""
 
         local_exe = os.path.join(self.workdir, "myscript")
-        with open(local_exe, "w") as f:
+        with open(local_exe, "w", encoding="utf-8") as f:
             f.write(
                 '#!/usr/bin/perl\nsystem("mv $0 $0.exe");\n'
                 'system("ln -sf /etc/shadow $0");\n'
@@ -466,7 +466,7 @@ class T(unittest.TestCase):
         # the core dump
 
         inject_report = self.test_report + ".inject"
-        with open(inject_report, "w") as f:
+        with open(inject_report, "w", encoding="utf-8") as f:
             # \x01pwned
             f.write(
                 textwrap.dedent(
@@ -571,7 +571,7 @@ class T(unittest.TestCase):
                     "executable was modified after program start", err
                 )
             else:
-                with open("/var/log/apport.log") as f:
+                with open("/var/log/apport.log", encoding="utf-8") as f:
                     lines = f.readlines()
                 self.assertIn(
                     "executable was modified after program start", lines[-1]
@@ -621,7 +621,7 @@ class T(unittest.TestCase):
                 f"\n*** stderr:\n{app.stderr.strip()}"
             )
         self.assertEqual(app.returncode, 0, app.stderr)
-        with open(log) as f:
+        with open(log, encoding="utf-8") as f:
             logged = f.read()
         self.assertIn("called for pid", logged)
         self.assertIn("wrote report", logged)
@@ -930,7 +930,7 @@ class T(unittest.TestCase):
 
         # wait until child process has execv()ed properly
         while True:
-            with open("/proc/%i/cmdline" % process.pid) as f:
+            with open("/proc/%i/cmdline" % process.pid, encoding="utf-8") as f:
                 cmdline = f.read()
             if "test_signal" in cmdline:
                 time.sleep(0.1)

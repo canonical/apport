@@ -125,6 +125,7 @@ def _read_maps(proc_pid_fd):
         with open(
             "maps",
             opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd),
+            encoding="utf-8",
         ) as fd:
             maps = fd.read().strip()
     except OSError as error:
@@ -238,7 +239,7 @@ def _run_hook(report, ui, hook):
 
     symb = {}
     try:
-        with open(hook) as fd:
+        with open(hook, encoding="utf-8") as fd:
             # legacy, pylint: disable=exec-used
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
@@ -428,7 +429,9 @@ class Report(problem_report.ProblemReport):
         )
         import yaml
 
-        with open("/snap/%s/current/meta/snap.yaml" % snapname) as f:
+        with open(
+            "/snap/%s/current/meta/snap.yaml" % snapname, encoding="utf-8"
+        ) as f:
             snap_meta = yaml.safe_load(f)
         if "base" in snap_meta:
             base = snap_meta["base"]
@@ -1258,7 +1261,9 @@ class Report(problem_report.ProblemReport):
         try:
             for f in os.listdir(_blacklist_dir):
                 try:
-                    with open(os.path.join(_blacklist_dir, f)) as fd:
+                    with open(
+                        os.path.join(_blacklist_dir, f), encoding="utf-8"
+                    ) as fd:
                         for line in fd:
                             if line.strip() == self["ExecutablePath"]:
                                 return True
@@ -1272,7 +1277,9 @@ class Report(problem_report.ProblemReport):
             whitelist = set()
             for f in os.listdir(_whitelist_dir):
                 try:
-                    with open(os.path.join(_whitelist_dir, f)) as fd:
+                    with open(
+                        os.path.join(_whitelist_dir, f), encoding="utf-8"
+                    ) as fd:
                         for line in fd:
                             whitelist.add(line.strip())
                 except OSError:
@@ -1348,7 +1355,7 @@ class Report(problem_report.ProblemReport):
         homedir = pwd.getpwuid(os.geteuid())[5]
         ignore_file_path = _ignore_file.replace("~", homedir)
 
-        with open(ignore_file_path, "w") as fd:
+        with open(ignore_file_path, "w", encoding="utf-8") as fd:
             dom.writexml(fd, addindent="  ", newl="\n")
 
         dom.unlink()
@@ -2016,7 +2023,7 @@ class Report(problem_report.ProblemReport):
 
         # determine cgroup
         try:
-            with io.open(cgroup_file) as f:
+            with io.open(cgroup_file, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if (

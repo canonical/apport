@@ -106,7 +106,9 @@ def get_pid_info(pid):
     # determine UID and GID of the target process; do *not* use the owner of
     # /proc/pid/stat, as that will be root for setuid or unreadable programs!
     # (this matters when suid_dumpable is enabled)
-    with open("status", opener=proc_pid_opener) as status_file:
+    with open(
+        "status", opener=proc_pid_opener, encoding="utf-8"
+    ) as status_file:
         contents = status_file.read()
     (crash_uid, crash_gid) = apport.fileutils.get_uid_and_gid(contents)
 
@@ -121,7 +123,7 @@ def get_pid_info(pid):
 def get_process_starttime():
     """Get the starttime of the process using proc_pid_fd"""
 
-    with open("stat", opener=proc_pid_opener) as stat_file:
+    with open("stat", opener=proc_pid_opener, encoding="utf-8") as stat_file:
         contents = stat_file.read()
     return apport.fileutils.get_starttime(contents)
 
@@ -129,7 +131,7 @@ def get_process_starttime():
 def get_apport_starttime():
     """Get the Apport process starttime"""
 
-    with open("/proc/%s/stat" % os.getpid()) as stat_file:
+    with open("/proc/%s/stat" % os.getpid(), encoding="utf-8") as stat_file:
         contents = stat_file.read()
     return apport.fileutils.get_starttime(contents)
 
@@ -450,7 +452,7 @@ def is_systemd_watchdog_restart(signum):
         return False
 
     try:
-        with open("cgroup", opener=proc_pid_opener) as f:
+        with open("cgroup", opener=proc_pid_opener, encoding="utf-8") as f:
             for line in f:
                 if "name=systemd:" in line:
                     unit = line.split("/")[-1].strip()
@@ -506,7 +508,9 @@ def is_same_ns(pid, ns):
             "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
         )
 
-        with open("cgroup", opener=proc_pid_opener) as cgroup:
+        with open(
+            "cgroup", opener=proc_pid_opener, encoding="utf-8"
+        ) as cgroup:
             for line in cgroup:
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
@@ -663,7 +667,12 @@ def main():
                 sys.exit(0)
 
             try:
-                with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                with open(
+                    "uid_map",
+                    "r",
+                    encoding="utf-8",
+                    opener=proc_host_pid_opener,
+                ) as fd:
                     if not apport.fileutils.search_map(fd, socket_uid):
                         error_log(
                             "user is trying to trick apport into accessing"
@@ -677,7 +686,12 @@ def main():
             # by the user namespace of the process
             task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
             try:
-                with open("uid_map", "r", opener=proc_host_pid_opener) as fd:
+                with open(
+                    "uid_map",
+                    "r",
+                    encoding="utf-8",
+                    opener=proc_host_pid_opener,
+                ) as fd:
                     if not apport.fileutils.search_map(fd, task_uid):
                         error_log(
                             "host pid %s crashed in a container"
@@ -690,7 +704,12 @@ def main():
 
             task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
             try:
-                with open("gid_map", "r", opener=proc_host_pid_opener) as fd:
+                with open(
+                    "gid_map",
+                    "r",
+                    encoding="utf-8",
+                    opener=proc_host_pid_opener,
+                ) as fd:
                     if not apport.fileutils.search_map(fd, task_gid):
                         error_log(
                             "host pid %s crashed in a container"

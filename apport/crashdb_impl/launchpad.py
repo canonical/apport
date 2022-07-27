@@ -2397,7 +2397,7 @@ NameError: global name 'weird' is not defined"""
                 os.chdir(workdir)
 
                 # create a test executable
-                with open("crash.c", "w") as fd:
+                with open("crash.c", "w", encoding="utf-8") as fd:
                     fd.write(
                         """
 int f(x) {

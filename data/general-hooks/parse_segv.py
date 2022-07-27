@@ -425,11 +425,11 @@ def main():
         )
         sys.exit(0)
 
-    with open(sys.argv[1]) as registers_file:
+    with open(sys.argv[1], encoding="utf-8") as registers_file:
         registers = registers_file.read()
-    with open(sys.argv[2]) as disassembly_file:
+    with open(sys.argv[2], encoding="utf-8") as disassembly_file:
         disassembly = disassembly_file.read()
-    with open(sys.argv[3]) as maps_file:
+    with open(sys.argv[3], encoding="utf-8") as maps_file:
         maps = maps_file.read()
     segv = ParseSegv(registers, disassembly, maps)
     understood, reason, details = segv.report()

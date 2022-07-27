@@ -347,7 +347,7 @@ def attach_alsa_old(report):
 
     cards = []
     if os.path.exists("/proc/asound/cards"):
-        with open("/proc/asound/cards") as fd:
+        with open("/proc/asound/cards", encoding="utf-8") as fd:
             for line in fd:
                 if "]:" in line:
                     fields = line.lstrip().split()
@@ -574,7 +574,7 @@ def attach_root_command_outputs(report, command_map):
     try:
         # create a shell script with all the commands
         script_path = os.path.join(workdir, ":script:")
-        with open(script_path, "w") as script:
+        with open(script_path, "w", encoding="utf-8") as script:
             for keyname, command in command_map.items():
                 assert hasattr(
                     command, "strip"
@@ -1056,7 +1056,7 @@ def nonfree_kernel_modules(module_list="/proc/modules"):
     """Check loaded modules and return a list of those which are not free."""
 
     try:
-        with open(module_list) as f:
+        with open(module_list, encoding="utf-8") as f:
             mods = [line.split()[0] for line in f]
     except OSError:
         return []
@@ -1114,7 +1114,7 @@ def in_session_of_problem(report):
     session_id = os.environ.get("XDG_SESSION_ID")
     if not session_id:
         # fall back to reading cgroup
-        with open("/proc/self/cgroup") as f:
+        with open("/proc/self/cgroup", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if (
@@ -1153,7 +1153,7 @@ def attach_default_grub(report, key=None):
         key = path_to_key(path)
 
     if os.path.exists(path):
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             filtered = [
                 line
                 if not line.startswith("password")

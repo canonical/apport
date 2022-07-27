@@ -389,7 +389,7 @@ class T(unittest.TestCase):
         # create a another new one and add it, but make sure mtime must be
         # different
         time.sleep(1)
-        with open(rep) as f:
+        with open(rep, encoding="utf-8") as f:
             f.read()  # bump atime
         time.sleep(1)
 
@@ -409,7 +409,7 @@ class T(unittest.TestCase):
         while len(directory) > 1:
             directory = os.path.split(directory)[0]
             if os.path.ismount(directory):
-                with open("/proc/mounts") as f:
+                with open("/proc/mounts", encoding="utf-8") as f:
                     for line in f:
                         mount, _, options = line.split(" ")[1:4]
                         if mount == directory and "noatime" in options.split(

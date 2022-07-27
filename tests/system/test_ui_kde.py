@@ -709,7 +709,9 @@ class T(unittest.TestCase):
 
         # create source package hook, as otherwise there is nothing to collect
         with open(
-            os.path.join(self.hook_dir, "source_%s.py" % source_pkg), "w"
+            os.path.join(self.hook_dir, "source_%s.py" % source_pkg),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 

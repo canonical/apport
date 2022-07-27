@@ -429,7 +429,9 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                cur_file = open(os.path.join(addr_base, cur_hash), "w")
+                cur_file = open(
+                    os.path.join(addr_base, cur_hash), "w", encoding="utf-8"
+                )
 
             cur_file.write("%i %s\n" % (crash_id, sig))
 
@@ -960,7 +962,7 @@ def get_crashdb(auth_file, name=None, conf=None):
             "APPORT_CRASHDB_CONF", "/etc/apport/crashdb.conf"
         )
     settings = {}
-    with open(conf) as f:
+    with open(conf, encoding="utf-8") as f:
         # legacy, pylint: disable=exec-used
         exec(compile(f.read(), conf, "exec"), settings)
 
@@ -971,7 +973,7 @@ def get_crashdb(auth_file, name=None, conf=None):
             cfpath = os.path.join(confdDir, cf)
             if os.path.isfile(cfpath) and cf.endswith(".conf"):
                 try:
-                    with open(cfpath) as f:
+                    with open(cfpath, encoding="utf-8") as f:
                         # legacy, pylint: disable=exec-used
                         exec(
                             compile(f.read(), cfpath, "exec"),

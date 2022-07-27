@@ -880,10 +880,10 @@ class T(unittest.TestCase):
             return False
 
         # damage core dump in report file
-        with open(self.app.report_file) as f:
+        with open(self.app.report_file, encoding="utf-8") as f:
             lines = f.readlines()
         lines[-1] = " iiiiiiiiiiiiAAAA\n"
-        with open(self.app.report_file, "w") as f:
+        with open(self.app.report_file, "w", encoding="utf-8") as f:
             f.write("".join(lines))
         self.app.report = None
         GLib.timeout_add(self.POLLING_INTERVAL_MS, show_details)
@@ -1097,7 +1097,9 @@ class T(unittest.TestCase):
 
         # create source package hook, as otherwise there is nothing to collect
         with open(
-            os.path.join(self.hook_dir, "source_%s.py" % source_pkg), "w"
+            os.path.join(self.hook_dir, "source_%s.py" % source_pkg),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 

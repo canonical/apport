@@ -830,7 +830,7 @@ class T(unittest.TestCase):
             del self.crashes
 
             # damage file
-            with open(db, "r+") as db_file:
+            with open(db, "r+", encoding="utf-8") as db_file:
                 db_file.truncate(int(os.path.getsize(db) * 2 / 3))
 
             self.crashes = CrashDatabase(None, {})

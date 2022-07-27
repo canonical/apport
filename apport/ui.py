@@ -98,7 +98,7 @@ def thread_collect_info(
     if symptom_script:
         symb = {}
         try:
-            with open(symptom_script) as f:
+            with open(symptom_script, encoding="utf-8") as f:
                 # legacy, pylint: disable=exec-used
                 exec(compile(f.read(), symptom_script, "exec"), symb)
             package = symb["run"](report, ui)
@@ -567,7 +567,7 @@ class UserInterface:
                     os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
-                with io.open(stat_file) as f:
+                with io.open(stat_file, encoding="utf-8") as f:
                     stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
@@ -784,7 +784,7 @@ class UserInterface:
                 continue
             symb = {}
             try:
-                with open(script) as f:
+                with open(script, encoding="utf-8") as f:
                     # legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
             except Exception:  # pylint: disable=broad-except

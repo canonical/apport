@@ -95,12 +95,20 @@ class T(unittest.TestCase):
     def test_package_hook_logs(self):
         """package_hook with a log dir and a log file."""
 
-        with open(os.path.join(self.workdir, "log_1.log"), "w") as f:
+        with open(
+            os.path.join(self.workdir, "log_1.log"), "w", encoding="utf-8"
+        ) as f:
             f.write("Log 1\nbla")
-        with open(os.path.join(self.workdir, "log2"), "w") as f:
+        with open(
+            os.path.join(self.workdir, "log2"), "w", encoding="utf-8"
+        ) as f:
             f.write("Yet\nanother\nlog")
         os.mkdir(os.path.join(self.workdir, "logsub"))
-        with open(os.path.join(self.workdir, "logsub", "notme.log"), "w") as f:
+        with open(
+            os.path.join(self.workdir, "logsub", "notme.log"),
+            "w",
+            encoding="utf-8",
+        ) as f:
             f.write("not me!")
 
         ph = subprocess.run(
@@ -182,7 +190,9 @@ class T(unittest.TestCase):
         ) as vmcore:
             vmcore.write(b"\x01" * 100)
         with open(
-            os.path.join(apport.fileutils.report_dir, "vmcore.log"), "w"
+            os.path.join(apport.fileutils.report_dir, "vmcore.log"),
+            "w",
+            encoding="utf-8",
         ) as log:
             log.write("vmcore successfully dumped")
 
@@ -230,7 +240,7 @@ class T(unittest.TestCase):
         os.mkdir(vmcore_dir)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        with open(dmesgfile, "wt") as dmesg:
+        with open(dmesgfile, "wt", encoding="utf-8") as dmesg:
             dmesg.write("1" * 100)
 
         self.assertEqual(
@@ -333,7 +343,7 @@ class T(unittest.TestCase):
         os.lchown(vmcore_dir, 65534, 65534)
 
         dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
-        with open(dmesgfile, "wt") as dmesg:
+        with open(dmesgfile, "wt", encoding="utf-8") as dmesg:
             dmesg.write("1" * 100)
 
         self.assertNotEqual(

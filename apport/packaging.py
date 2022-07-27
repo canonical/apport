@@ -217,7 +217,7 @@ class PackageInfo:
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         """
         try:
-            with open(self.configuration) as f:
+            with open(self.configuration, encoding="utf-8") as f:
                 conf = f.read()
         except OSError:
             # if the file does not exist, assume it's enabled
@@ -342,7 +342,7 @@ class PackageInfo:
         if os.path.exists("/etc/os-release"):
             name = None
             version = None
-            with open("/etc/os-release") as f:
+            with open("/etc/os-release", encoding="utf-8") as f:
                 for line in f:
                     if line.startswith("NAME="):
                         name = line.split("=", 1)[1]

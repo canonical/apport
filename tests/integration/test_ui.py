@@ -266,7 +266,7 @@ class T(unittest.TestCase):
     @staticmethod
     def _write_symptom_script(script_name: str, content: str) -> None:
         path = os.path.join(apport.ui.symptom_script_dir, script_name)
-        with open(path, "w") as symptom_script:
+        with open(path, "w", encoding="utf-8") as symptom_script:
             symptom_script.write(content)
 
     def test_format_filesize(self):
@@ -486,7 +486,9 @@ class T(unittest.TestCase):
 
     def _write_crashdb_config_hook(self, crashdb: str, bash_hook: str = None):
         """Write source_bash.py hook that sets CrashDB"""
-        with open(os.path.join(self.hookdir, "source_bash.py"), "w") as f:
+        with open(
+            os.path.join(self.hookdir, "source_bash.py"), "w", encoding="utf-8"
+        ) as f:
             f.write(
                 textwrap.dedent(
                     f'''\
@@ -790,7 +792,7 @@ class T(unittest.TestCase):
         get_version_mock.return_value = "5.15.0-33.34"
 
         for path in glob.glob("/proc/[0-9]*/stat"):
-            with open(path) as f:
+            with open(path, encoding="utf-8") as f:
                 proc_stat = f.read().split()
             flags = int(proc_stat[8])
             if flags & apport.ui.PF_KTHREAD:
@@ -1544,7 +1546,9 @@ class T(unittest.TestCase):
 
         # set up hook
         with open(
-            os.path.join(self.hookdir, f"source_{src_pkg}.py"), "w"
+            os.path.join(self.hookdir, f"source_{src_pkg}.py"),
+            "w",
+            encoding="utf-8",
         ) as hook:
             hook.write(
                 textwrap.dedent(
@@ -2048,7 +2052,9 @@ class T(unittest.TestCase):
             "remember": False,
         }
 
-        with open(os.path.join(self.hookdir, "source_foo.py"), "w") as f:
+        with open(
+            os.path.join(self.hookdir, "source_foo.py"), "w", encoding="utf-8"
+        ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
         self.assertEqual(self.ui.run_argv(), True, self.ui.report)
@@ -2081,7 +2087,9 @@ class T(unittest.TestCase):
         }
 
         with open(
-            os.path.join(self.hookdir, "source_%s.py" % source_pkg), "w"
+            os.path.join(self.hookdir, "source_%s.py" % source_pkg),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
@@ -2099,7 +2107,9 @@ class T(unittest.TestCase):
         self.assertIn("ProcEnviron", self.ui.report)
 
     def _run_hook(self, code):
-        with open(os.path.join(self.hookdir, "coreutils.py"), "w") as hook:
+        with open(
+            os.path.join(self.hookdir, "coreutils.py"), "w", encoding="utf-8"
+        ) as hook:
             hook.write(
                 "def add_info(report, ui):\n%s\n"
                 % "\n".join(["    " + line for line in code.splitlines()])

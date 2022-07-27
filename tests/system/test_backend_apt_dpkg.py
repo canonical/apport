@@ -101,7 +101,9 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver("libcurl4"), wanted["libcurl4"])
         self.assertGreater(sandbox_ver("tzdata"), "2022a")
 
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"coreutils {wanted['coreutils']}", pkglist)
         self.assertIn(f"coreutils-dbgsym {wanted['coreutils']}", pkglist)
@@ -269,7 +271,9 @@ class T(unittest.TestCase):
         self.assertEqual(os.listdir(self.cachedir), [])
 
         # keeps track of package versions
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
         self.assertIn("coreutils-dbgsym 8.32-4.1ubuntu1", pkglist)
@@ -293,7 +297,9 @@ class T(unittest.TestCase):
         )
 
         # check packages.txt for a dependency
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
         self.assertIn("libc6 2.35-0ubuntu3", pkglist)
@@ -369,7 +375,9 @@ class T(unittest.TestCase):
         # sources.list with invalid format
         release = self._setup_foonux_config()
         with open(
-            os.path.join(self.configdir, release, "sources.list"), "w"
+            os.path.join(self.configdir, release, "sources.list"),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write("bogus format")
 
@@ -392,7 +400,9 @@ class T(unittest.TestCase):
 
         # sources.list with wrong server
         with open(
-            os.path.join(self.configdir, release, "sources.list"), "w"
+            os.path.join(self.configdir, release, "sources.list"),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write("deb http://archive.ubuntu.com/nosuchdistro/ jammy main\n")
 
@@ -690,7 +700,9 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver("libc6-dbg"), wanted["libc6"])
 
         # keeps track of package versions
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn(
             f"distro-info-data {wanted['distro-info-data']}", pkglist
@@ -761,7 +773,9 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # keeps track of package version
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
@@ -781,7 +795,9 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # the old versions is tracked
-        with open(os.path.join(self.rootdir, "packages.txt")) as f:
+        with open(
+            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
+        ) as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
@@ -850,7 +866,8 @@ class T(unittest.TestCase):
         with open(
             os.path.join(
                 self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
-            )
+            ),
+            encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
         self.assertIn(
@@ -904,7 +921,8 @@ class T(unittest.TestCase):
         with open(
             os.path.join(
                 self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
-            )
+            ),
+            encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
         self.assertIn(
@@ -957,7 +975,8 @@ class T(unittest.TestCase):
         with open(
             os.path.join(
                 self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
-            )
+            ),
+            encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
         self.assertIn(
@@ -1051,6 +1070,7 @@ class T(unittest.TestCase):
                     config_release_dir, "sources.list.d", "fooser-bar-ppa.list"
                 ),
                 "w",
+                encoding="utf-8",
             ) as f:
                 f.write(
                     f"deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
@@ -1065,7 +1085,9 @@ class T(unittest.TestCase):
             release,
             updates,
         )
-        with open(os.path.join(config_release_dir, "codename"), "w") as f:
+        with open(
+            os.path.join(config_release_dir, "codename"), "w", encoding="utf-8"
+        ) as f:
             f.write("%s" % release)
 
         # install GPG key for ddebs
@@ -1125,7 +1147,7 @@ class T(unittest.TestCase):
         sources_filename: str, uri: str, release: str, updates: bool
     ) -> None:
         """Write sources.list file."""
-        with open(sources_filename, "w") as sources_file:
+        with open(sources_filename, "w", encoding="utf-8") as sources_file:
             sources_file.write(
                 f"deb {uri} {release} main\n"
                 f"deb-src {uri} {release} main\n"

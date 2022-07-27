@@ -265,7 +265,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         native_origins = []
         for f in glob.glob("/etc/apport/native-origins.d/*"):
             try:
-                with open(f) as fd:
+                with open(f, encoding="utf-8") as fd:
                     for line in fd:
                         line = line.strip()
                         if line:
@@ -817,7 +817,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 apport.warning("cannot determine mirror: %s" % str(error))
 
             # set current release code name for _distro_release_to_codename
-            with open(os.path.join(configdir, release, "codename")) as f:
+            with open(
+                os.path.join(configdir, release, "codename"), encoding="utf-8"
+            ) as f:
                 self._current_release_codename = f.read().strip()
 
         if not os.path.exists(apt_sources):
@@ -889,7 +891,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         pkg_list = os.path.join(rootdir, "packages.txt")
         pkg_versions = {}
         if os.path.exists(pkg_list):
-            with open(pkg_list) as f:
+            with open(pkg_list, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -1319,7 +1321,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # update package list
         pkgs = list(pkg_versions.keys())
         pkgs.sort()
-        with open(pkg_list, "w") as f:
+        with open(pkg_list, "w", encoding="utf-8") as f:
             for p in pkgs:
                 f.write(p)
                 f.write(" ")
@@ -1406,7 +1408,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _get_primary_mirror_from_apt_sources(klass, apt_sources):
         """Heuristically determine primary mirror from an apt sources.list"""
 
-        with open(apt_sources) as f:
+        with open(apt_sources, encoding="utf-8") as f:
             for line in f:
                 fields = line.split()
                 if len(fields) >= 3 and fields[0] == "deb":
@@ -1722,9 +1724,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             shutil.copytree(apt_sources + ".d", list_d)
         else:
             os.makedirs(list_d)
-        with open(apt_sources) as src:
+        with open(apt_sources, encoding="utf-8") as src:
             with open(
-                os.path.join(apt_root, "etc", "apt", "sources.list"), "w"
+                os.path.join(apt_root, "etc", "apt", "sources.list"),
+                "w",
+                encoding="utf-8",
             ) as dest:
                 dest.write(src.read())
 
@@ -1755,7 +1759,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     elif not os.path.exists(origin_path):
                         origin_path = None
                 if origin_path:
-                    with open(origin_path) as src_ext:
+                    with open(origin_path, encoding="utf-8") as src_ext:
                         source_list_content = src_ext.read()
                 else:
                     source_list_content = self.create_ppa_source_from_origin(
@@ -1771,6 +1775,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             origin + ".list",
                         ),
                         "a",
+                        encoding="utf-8",
                     ) as dest:
                         dest.write(source_list_content)
                     for line in source_list_content.splitlines():

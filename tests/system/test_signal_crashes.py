@@ -28,7 +28,7 @@ class T(unittest.TestCase):
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
 
-        with open("/proc/sys/kernel/core_pattern") as f:
+        with open("/proc/sys/kernel/core_pattern", encoding="utf-8") as f:
             core_pattern = f.read().strip()
         if core_pattern[0] == "|":
             cls.apport_path = core_pattern[1:].split()[0]
@@ -244,7 +244,7 @@ class T(unittest.TestCase):
             system_run.wait()
 
         # check crash report
-        with open("/var/log/apport.log") as logfile:
+        with open("/var/log/apport.log", encoding="utf-8") as logfile:
             apport_log = logfile.read().strip()
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(
@@ -278,7 +278,7 @@ class T(unittest.TestCase):
 
         # wait until child process has execv()ed properly
         while True:
-            with open("/proc/%i/cmdline" % process.pid) as f:
+            with open("/proc/%i/cmdline" % process.pid, encoding="utf-8") as f:
                 cmdline = f.read()
             if "test_signal" in cmdline:
                 time.sleep(0.1)

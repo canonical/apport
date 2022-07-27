@@ -79,9 +79,9 @@ class T(unittest.TestCase):
     def test_attach_file(self):
         """attach_file()"""
 
-        with open("/etc/passwd") as f:
+        with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
-        with open("/etc/issue") as f:
+        with open("/etc/issue", encoding="utf-8") as f:
             issue_contents = f.read().strip()
 
         # default key name
@@ -163,7 +163,7 @@ class T(unittest.TestCase):
     def test_attach_file_if_exists(self):
         """attach_file_if_exists()"""
 
-        with open("/etc/passwd") as f:
+        with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
 
         # default key name
@@ -368,7 +368,7 @@ class T(unittest.TestCase):
         """recent_syslog on a huge file"""
 
         log = os.path.join(self.workdir, "syslog")
-        with open(log, "w") as f:
+        with open(log, "w", encoding="utf-8") as f:
             lines = 1000000
             while lines >= 0:
                 f.write("Apr 20 11:30:00 komputer kernel: bogus message\n")
@@ -540,7 +540,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
     def _get_mem_usage(klass):
         """Get current memory usage in kB"""
 
-        with open("/proc/self/status") as f:
+        with open("/proc/self/status", encoding="utf-8") as f:
             for line in f:
                 if line.startswith("VmSize:"):
                     return int(line.split()[1])

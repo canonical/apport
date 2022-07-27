@@ -321,7 +321,9 @@ func(42)
                 os.chdir(deleted_dir)
                 os.rmdir(deleted_dir)
 
-                with open(os.path.join(tmpdir, "script.py"), "w") as script:
+                with open(
+                    os.path.join(tmpdir, "script.py"), "w", encoding="utf-8"
+                ) as script:
                     script.write(
                         "import apport_python_hook\n"
                         "apport_python_hook.install()\n"

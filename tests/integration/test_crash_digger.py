@@ -28,7 +28,7 @@ class T(unittest.TestCase):
         self.workdir = tempfile.mkdtemp()
 
         crashdb_conf = os.path.join(self.workdir, "crashdb.conf")
-        with open(crashdb_conf, "w") as f:
+        with open(crashdb_conf, "w", encoding="utf-8") as f:
             f.write(
                 textwrap.dedent(
                     """\
@@ -57,7 +57,7 @@ class T(unittest.TestCase):
         )
 
         self.apport_retrace = os.path.join(self.workdir, "apport-retrace")
-        with open(self.apport_retrace, "w") as f:
+        with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write(f'#!/bin/sh\necho "$@" >> "{self.apport_retrace_log}"')
         os.chmod(self.apport_retrace, 0o755)
 
@@ -118,7 +118,7 @@ class T(unittest.TestCase):
         self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
         self.assertNotIn("#4", out, "dupcheck crashes are not retraced")
 
-        with open(self.apport_retrace_log) as f:
+        with open(self.apport_retrace_log, encoding="utf-8") as f:
             retrace_log = f.read()
         self.assertEqual(len(retrace_log.splitlines()), 2)
         self.assertNotIn("dup.db -v 0\n", retrace_log)
@@ -135,7 +135,7 @@ class T(unittest.TestCase):
 
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, self.apport_retrace + ".bak")
-        with open(self.apport_retrace, "w") as f:
+        with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write(
                 textwrap.dedent(
                     f"""\
@@ -178,7 +178,7 @@ class T(unittest.TestCase):
         self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
         self.assertNotIn("#4", out, "dupcheck crashes are not retraced")
 
-        with open(self.apport_retrace_log) as f:
+        with open(self.apport_retrace_log, encoding="utf-8") as f:
             retrace_log = f.read()
         self.assertEqual(len(retrace_log.splitlines()), 2)
         self.assertNotIn("dup.db -v 0\n", retrace_log)
@@ -193,7 +193,7 @@ class T(unittest.TestCase):
 
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, self.apport_retrace + ".bak")
-        with open(self.apport_retrace, "w") as f:
+        with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write(
                 textwrap.dedent(
                     f"""\
@@ -229,7 +229,7 @@ class T(unittest.TestCase):
         )
         self.assertIn("transient error reported; halting", out)
 
-        with open(self.apport_retrace_log) as f:
+        with open(self.apport_retrace_log, encoding="utf-8") as f:
             retrace_log = f.read()
         self.assertIn("dup.db -v 1\n", retrace_log)
         # stops after failing #1
@@ -262,7 +262,7 @@ class T(unittest.TestCase):
     def test_stderr_redirection(self):
         """apport-retrace's stderr is redirected to stdout"""
 
-        with open(self.apport_retrace, "w") as f:
+        with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write("#!/bin/sh\necho ApportRetraceError >&2\n")
         (out, err) = self.call(
             [

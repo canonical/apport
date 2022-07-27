@@ -68,7 +68,7 @@ def memdbg(checkpoint):
         return
 
     memstat = {}
-    with open("/proc/self/status") as f:
+    with open("/proc/self/status", encoding="utf-8") as f:
         for line in f:
             if line.startswith("Vm"):
                 (field, size, _) = line.split()

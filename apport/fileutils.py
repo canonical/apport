@@ -200,7 +200,7 @@ def mark_report_upload(report):
         upload_st = os.stat(upload)
         if upload_st.st_mtime < report_st.st_mtime:
             os.unlink(upload)
-    with open(upload, "a"):
+    with open(upload, "a", encoding="utf-8"):
         pass
 
 
@@ -213,7 +213,7 @@ def mark_hanging_process(report, pid):
     uid = os.geteuid()
     base = "%s.%s.%s.hanging" % (subject, str(uid), pid)
     path = os.path.join(report_dir, base)
-    with open(path, "a"):
+    with open(path, "a", encoding="utf-8"):
         pass
 
 
@@ -230,7 +230,7 @@ def mark_report_seen(report):
         # Time out after 1.2 seconds.
         timeout = 12
         while timeout > 0:
-            with open(report) as report_file:
+            with open(report, encoding="utf-8") as report_file:
                 report_file.read(1)
             try:
                 st = os.stat(report)
@@ -326,7 +326,7 @@ def delete_report(report):
     try:
         os.unlink(report)
     except OSError:
-        with open(report, "w") as f:
+        with open(report, "w", encoding="utf-8") as f:
             f.truncate(0)
 
 
@@ -503,7 +503,7 @@ def search_map(mapfd, uid):
 def get_boot_id():
     """Gets the kernel boot id"""
 
-    with open("/proc/sys/kernel/random/boot_id") as f:
+    with open("/proc/sys/kernel/random/boot_id", encoding="utf-8") as f:
         boot_id = f.read().strip()
     return boot_id
 
@@ -529,7 +529,7 @@ def get_core_path(
         timestamp = "unknown"
     else:
         if timestamp is None:
-            with open("/proc/%s/stat" % pid) as stat_file:
+            with open("/proc/%s/stat" % pid, encoding="utf-8") as stat_file:
                 stat_contents = stat_file.read()
             timestamp = get_starttime(stat_contents)
 
