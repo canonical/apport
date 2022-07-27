@@ -30,10 +30,6 @@ import apport.sandboxutils
 from apport import unicode_gettext as _
 from apport.crashdb import get_crashdb
 
-#
-# functions
-#
-
 
 def parse_args():
     """Parse command line options and return args namespace."""
@@ -346,56 +342,61 @@ def print_traces(report):
         print(report["StacktraceSource"])
 
 
-#
-# main
-#
+def main():
+    apport.memdbg("start")
 
-apport.memdbg("start")
+    gettext.textdomain("apport")
 
-gettext.textdomain("apport")
+    options = parse_args()
 
-options = parse_args()
+    crashdb = get_crashdb(options.auth)
+    apport.memdbg("got crash DB")
 
-crashdb = get_crashdb(options.auth)
-apport.memdbg("got crash DB")
-
-# load the report
-if os.path.exists(options.report):
-    try:
-        report = apport.Report()
-        with open(options.report, "rb") as f:
-            report.load(f, binary="compressed")
-        apport.memdbg("loaded report from file")
-    except (MemoryError, TypeError, ValueError, OSError, zlib.error) as error:
-        apport.fatal("Cannot open report file: %s", str(error))
-elif options.report.isdigit():
-    # crash ID
-    try:
-        report = crashdb.download(int(options.report))
-        apport.memdbg("downloaded report from crash DB")
-    except AssertionError as error:
-        if "apport format data" in str(error):
-            apport.error("Broken report: %s", str(error))
-            sys.exit(0)
-        else:
-            raise
-    except (
-        MemoryError,
-        TypeError,
-        ValueError,
-        OSError,
-        SystemError,
-        OverflowError,
-        zlib.error,
-    ) as error:
-        # if we process the report automatically, and it is invalid,
-        # close it with an informative message and exit cleanly
-        # to not break crash-digger
-        if options.auth and not options.output and not options.stdout:
-            apport.error("Broken report: %s, closing as invalid", str(error))
-            crashdb.mark_retrace_failed(
-                options.report,
-                """Thank you for your report!
+    # load the report
+    if os.path.exists(options.report):
+        try:
+            report = apport.Report()
+            with open(options.report, "rb") as f:
+                report.load(f, binary="compressed")
+            apport.memdbg("loaded report from file")
+        except (
+            MemoryError,
+            TypeError,
+            ValueError,
+            OSError,
+            zlib.error,
+        ) as error:
+            apport.fatal("Cannot open report file: %s", str(error))
+    elif options.report.isdigit():
+        # crash ID
+        try:
+            report = crashdb.download(int(options.report))
+            apport.memdbg("downloaded report from crash DB")
+        except AssertionError as error:
+            if "apport format data" in str(error):
+                apport.error("Broken report: %s", str(error))
+                sys.exit(0)
+            else:
+                raise
+        except (
+            MemoryError,
+            TypeError,
+            ValueError,
+            OSError,
+            SystemError,
+            OverflowError,
+            zlib.error,
+        ) as error:
+            # if we process the report automatically, and it is invalid,
+            # close it with an informative message and exit cleanly
+            # to not break crash-digger
+            if options.auth and not options.output and not options.stdout:
+                apport.error(
+                    "Broken report: %s, closing as invalid", str(error)
+                )
+                crashdb.mark_retrace_failed(
+                    options.report,
+                    """Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed, since the report is ill-formed. Perhaps the report data got
@@ -407,141 +408,165 @@ If you encounter the crash again, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                % str(error),
-            )
-            sys.exit(0)
-        else:
-            raise
+                    % str(error),
+                )
+                sys.exit(0)
+            else:
+                raise
 
-    crashid = options.report
-    options.report = None
-else:
-    apport.fatal(
-        '"%s" is neither an existing report file nor a crash ID',
-        options.report,
-    )
-
-if options.core_file:
-    report["CoreDump"] = (os.path.abspath(options.core_file),)
-if options.executable:
-    report["ExecutablePath"] = options.executable
-if options.procmaps:
-    with open(options.procmaps, "r") as f:
-        report["ProcMaps"] = f.read()
-if options.rebuild_package_info and "ExecutablePath" in report:
-    report.add_package_info()
-
-apport.memdbg("processed extra options from command line")
-
-
-# sanity checks
-required_fields = set(
-    ["CoreDump", "ExecutablePath", "Package", "DistroRelease", "Architecture"]
-)
-if report["ProblemType"] == "KernelCrash":
-    if not set(["Package", "VmCore"]).issubset(set(report.keys())):
-        apport.error("report file does not contain the required fields")
-        sys.exit(0)
-    apport.error("KernelCrash processing not implemented yet")
-    sys.exit(0)
-elif not required_fields.issubset(set(report.keys())):
-    missing_fields = []
-    for required_field in required_fields:
-        if required_field not in set(report.keys()):
-            missing_fields.append(required_field)
-    apport.error(
-        "report file does not contain one of the required fields: "
-        + " ".join(missing_fields)
-    )
-    sys.exit(0)
-
-apport.memdbg("sanity checks passed")
-
-if options.gdb_sandbox:
-    system_arch = apport.packaging.get_system_architecture()
-    if system_arch != "amd64":
-        apport.error("gdb sandboxes are only implemented for amd64 hosts")
-        sys.exit(0)
-    # Create a .dwz directory if it doesn't exist
-    if not os.path.exists("/usr/lib/debug/.dwz"):
-        os.mkdir("/usr/lib/debug/.dwz")
-
-if options.sandbox:
-    if options.sandbox_dir:
-        sandbox_dir = "%s/%s/%s/report-sandbox/" % (
-            options.sandbox_dir,
-            report["DistroRelease"],
-            report["Architecture"],
+        crashid = options.report
+        options.report = None
+    else:
+        apport.fatal(
+            '"%s" is neither an existing report file nor a crash ID',
+            options.report,
         )
-    else:
-        sandbox_dir = None
-    if options.gdb_sandbox:
-        if report["Architecture"] == system_arch:
-            options.extra_package.append("gdb")
-    sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
-        report,
-        options.sandbox,
-        options.cache,
-        sandbox_dir,
-        options.extra_package,
-        options.verbose,
-        options.timestamps,
-        options.dynamic_origins,
-    )
-else:
-    sandbox = None
-    cache = None
-    outdated_msg = None
 
-if options.gdb_sandbox:
-    if report["Architecture"] == system_arch:
-        if sandbox:
-            # gdb was installed in the sandbox
-            gdb_sandbox = sandbox
-    else:
-        gdb_packages = ["gdb", "gdb-multiarch"]
-        fake_report = apport.Report()
-        # if the report has no Architecture the host one will be used
-        fake_report["DistroRelease"] = report["DistroRelease"]
-        # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
-        fake_report["ProcMaps"] = "\n\n"
+    if options.core_file:
+        report["CoreDump"] = (os.path.abspath(options.core_file),)
+    if options.executable:
+        report["ExecutablePath"] = options.executable
+    if options.procmaps:
+        with open(options.procmaps, "r") as f:
+            report["ProcMaps"] = f.read()
+    if options.rebuild_package_info and "ExecutablePath" in report:
+        report.add_package_info()
+
+    apport.memdbg("processed extra options from command line")
+
+    # sanity checks
+    required_fields = set(
+        [
+            "CoreDump",
+            "ExecutablePath",
+            "Package",
+            "DistroRelease",
+            "Architecture",
+        ]
+    )
+    if report["ProblemType"] == "KernelCrash":
+        if not set(["Package", "VmCore"]).issubset(set(report.keys())):
+            apport.error("report file does not contain the required fields")
+            sys.exit(0)
+        apport.error("KernelCrash processing not implemented yet")
+        sys.exit(0)
+    elif not required_fields.issubset(set(report.keys())):
+        missing_fields = []
+        for required_field in required_fields:
+            if required_field not in set(report.keys()):
+                missing_fields.append(required_field)
+        apport.error(
+            "report file does not contain one of the required fields: "
+            + " ".join(missing_fields)
+        )
+        sys.exit(0)
+
+    apport.memdbg("sanity checks passed")
+
+    if options.gdb_sandbox:
+        system_arch = apport.packaging.get_system_architecture()
+        if system_arch != "amd64":
+            apport.error("gdb sandboxes are only implemented for amd64 hosts")
+            sys.exit(0)
+        # Create a .dwz directory if it doesn't exist
+        if not os.path.exists("/usr/lib/debug/.dwz"):
+            os.mkdir("/usr/lib/debug/.dwz")
+
+    if options.sandbox:
         if options.sandbox_dir:
-            gdb_sandbox_dir = "%s/%s/%s/gdb-sandbox/" % (
+            sandbox_dir = "%s/%s/%s/report-sandbox/" % (
                 options.sandbox_dir,
                 report["DistroRelease"],
-                system_arch,
+                report["Architecture"],
             )
         else:
-            gdb_sandbox_dir = None
-        gdb_sandbox = apport.sandboxutils.make_sandbox(
-            fake_report,
+            sandbox_dir = None
+        if options.gdb_sandbox:
+            if report["Architecture"] == system_arch:
+                options.extra_package.append("gdb")
+        sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
+            report,
             options.sandbox,
             options.cache,
-            gdb_sandbox_dir,
-            gdb_packages,
+            sandbox_dir,
+            options.extra_package,
             options.verbose,
             options.timestamps,
             options.dynamic_origins,
-        )[0]
-    # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path), for
-    # releases without a fix, by creating a symlink from the host's .dwz
-    # directory to the machine specific one in the sandbox.
-    target = ""
-    if report["DistroRelease"][-5:] in ("18.04", "20.04"):
-        if gdb_sandbox and sandbox:
-            machine = report["Uname"].split()[-1]
-            target = "%s-linux-gnu" % machine
-            if not os.path.exists("/usr/lib/debug/.dwz/%s" % target):
-                # don't create a broken symlink
-                if os.path.exists(
-                    "%s/usr/lib/debug/.dwz/%s" % (sandbox, target)
-                ):
-                    try:
-                        os.symlink(
-                            "%s/usr/lib/debug/.dwz/%s" % (sandbox, target),
-                            "/usr/lib/debug/.dwz/%s" % target,
-                        )
-                    except PermissionError:
+        )
+    else:
+        sandbox = None
+        cache = None
+        outdated_msg = None
+
+    if options.gdb_sandbox:
+        if report["Architecture"] == system_arch:
+            if sandbox:
+                # gdb was installed in the sandbox
+                gdb_sandbox = sandbox
+        else:
+            gdb_packages = ["gdb", "gdb-multiarch"]
+            fake_report = apport.Report()
+            # if the report has no Architecture the host one will be used
+            fake_report["DistroRelease"] = report["DistroRelease"]
+            # use a empty ProcMaps so needed_runtimes packages won't want
+            # ExecPath
+            fake_report["ProcMaps"] = "\n\n"
+            if options.sandbox_dir:
+                gdb_sandbox_dir = "%s/%s/%s/gdb-sandbox/" % (
+                    options.sandbox_dir,
+                    report["DistroRelease"],
+                    system_arch,
+                )
+            else:
+                gdb_sandbox_dir = None
+            gdb_sandbox = apport.sandboxutils.make_sandbox(
+                fake_report,
+                options.sandbox,
+                options.cache,
+                gdb_sandbox_dir,
+                gdb_packages,
+                options.verbose,
+                options.timestamps,
+                options.dynamic_origins,
+            )[0]
+        # Workaround LP: #1818918 (.gnu_debugaltlink being an absolute path),
+        # for releases without a fix, by creating a symlink from the host's
+        # .dwz directory to the machine specific one in the sandbox.
+        target = ""
+        if report["DistroRelease"][-5:] in ("18.04", "20.04"):
+            if gdb_sandbox and sandbox:
+                machine = report["Uname"].split()[-1]
+                target = "%s-linux-gnu" % machine
+                if not os.path.exists("/usr/lib/debug/.dwz/%s" % target):
+                    # don't create a broken symlink
+                    if os.path.exists(
+                        "%s/usr/lib/debug/.dwz/%s" % (sandbox, target)
+                    ):
+                        try:
+                            os.symlink(
+                                "%s/usr/lib/debug/.dwz/%s" % (sandbox, target),
+                                "/usr/lib/debug/.dwz/%s" % target,
+                            )
+                        except PermissionError:
+                            print(
+                                "apport is unlikely to produce a quality"
+                                " retrace if it can not create a symlink in"
+                                " the host system's /usr/lib/debug/.dwz"
+                                " directory to the gdb sandbox's."
+                                " See LP: #1818918 for details."
+                            )
+                            sys.exit(0)
+                        except FileExistsError:
+                            if os.readlink(
+                                "/usr/lib/debug/.dwz/%s" % target
+                            ) == "%s/usr/lib/debug/.dwz/%s" % (
+                                sandbox,
+                                target,
+                            ):
+                                pass
+                else:
+                    if not os.path.islink("/usr/lib/debug/.dwz/%s" % target):
                         print(
                             "apport is unlikely to produce a quality retrace"
                             " if it can not create a symlink in the host"
@@ -549,49 +574,35 @@ if options.gdb_sandbox:
                             " gdb sandbox's. See LP: #1818918 for details."
                         )
                         sys.exit(0)
-                    except FileExistsError:
-                        if os.readlink(
-                            "/usr/lib/debug/.dwz/%s" % target
-                        ) == "%s/usr/lib/debug/.dwz/%s" % (sandbox, target):
-                            pass
-            else:
-                if not os.path.islink("/usr/lib/debug/.dwz/%s" % target):
-                    print(
-                        "apport is unlikely to produce a quality retrace if"
-                        " it can not create a symlink in the host system's"
-                        " /usr/lib/debug/.dwz directory to the gdb sandbox's."
-                        " See LP: #1818918 for details."
-                    )
-                    sys.exit(0)
-else:
-    gdb_sandbox = None
+    else:
+        gdb_sandbox = None
 
-# interactive gdb session
-if options.gdb:
-    gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
-    if options.verbose:
-        # build a shell-style command
-        cmd = ""
-        for w in gdb_cmd:
-            if cmd:
-                cmd += " "
-            if " " in w:
-                cmd += "'" + w + "'"
-            else:
-                cmd += w
-        apport.log("Calling gdb command: " + cmd, options.timestamps)
-    apport.memdbg("before calling gdb")
-    subprocess.call(gdb_cmd, env=environ)
-else:
-    # regenerate gdb info
-    apport.memdbg("before collecting gdb info")
-    try:
-        report.add_gdb_info(sandbox, gdb_sandbox)
-    except OSError as error:
-        if not options.auth:
-            apport.fatal(str(error))
-        if not options.confirm or confirm_traces(report):
-            invalid_msg = """Thank you for your report!
+    # interactive gdb session
+    if options.gdb:
+        gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
+        if options.verbose:
+            # build a shell-style command
+            cmd = ""
+            for w in gdb_cmd:
+                if cmd:
+                    cmd += " "
+                if " " in w:
+                    cmd += "'" + w + "'"
+                else:
+                    cmd += w
+            apport.log("Calling gdb command: " + cmd, options.timestamps)
+        apport.memdbg("before calling gdb")
+        subprocess.call(gdb_cmd, env=environ)
+    else:
+        # regenerate gdb info
+        apport.memdbg("before collecting gdb info")
+        try:
+            report.add_gdb_info(sandbox, gdb_sandbox)
+        except OSError as error:
+            if not options.auth:
+                apport.fatal(str(error))
+            if not options.confirm or confirm_traces(report):
+                invalid_msg = """Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed as the report has a core dump which is invalid. The
@@ -600,93 +611,96 @@ transit.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-            crashdb.mark_retrace_failed(crashid, invalid_msg)
-        apport.fatal(str(error))
-    if options.sandbox == "system":
-        apt_root = os.path.join(cache, "system", "apt")
-    elif options.sandbox:
-        apt_root = os.path.join(cache, report["DistroRelease"], "apt")
-    else:
-        apt_root = None
-    if options.stacktrace_source:
-        gen_source_stacktrace(report, apt_root)
-    report.add_kernel_crash_info()
+                crashdb.mark_retrace_failed(crashid, invalid_msg)
+            apport.fatal(str(error))
+        if options.sandbox == "system":
+            apt_root = os.path.join(cache, "system", "apt")
+        elif options.sandbox:
+            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
+        else:
+            apt_root = None
+        if options.stacktrace_source:
+            gen_source_stacktrace(report, apt_root)
+        report.add_kernel_crash_info()
 
-# Cleanup the .dwz machine symlink for LP: #1818918
-if gdb_sandbox and sandbox and target:
-    if os.path.exists("/usr/lib/debug/.dwz/%s" % target) and os.path.islink(
-        "/usr/lib/debug/.dwz/%s" % target
-    ):
-        os.unlink("/usr/lib/debug/.dwz/%s" % target)
+    # Cleanup the .dwz machine symlink for LP: #1818918
+    if gdb_sandbox and sandbox and target:
+        if os.path.exists(
+            "/usr/lib/debug/.dwz/%s" % target
+        ) and os.path.islink("/usr/lib/debug/.dwz/%s" % target):
+            os.unlink("/usr/lib/debug/.dwz/%s" % target)
 
-modified = False
+    modified = False
 
-apport.memdbg("information collection done")
+    apport.memdbg("information collection done")
 
-if options.remove_core:
-    del report["CoreDump"]
-    modified = True
-
-if options.stdout:
-    print_traces(report)
-else:
-    if not options.gdb:
+    if options.remove_core:
+        del report["CoreDump"]
         modified = True
 
-if modified:
-    if not options.report and not options.output:
-        if not options.auth:
-            apport.fatal(
-                "You need to specify --auth for uploading retraced results"
-                " back to the crash database."
-            )
-        if not options.confirm or confirm_traces(report):
-            # check for duplicates
-            update_bug = True
-            if options.duplicate_db:
-                crashdb.init_duplicate_db(options.duplicate_db)
-                res = crashdb.check_duplicate(int(crashid), report)
-                if res:
-                    if res[1] is None:
+    if options.stdout:
+        print_traces(report)
+    else:
+        if not options.gdb:
+            modified = True
+
+    if modified:
+        if not options.report and not options.output:
+            if not options.auth:
+                apport.fatal(
+                    "You need to specify --auth for uploading retraced results"
+                    " back to the crash database."
+                )
+            if not options.confirm or confirm_traces(report):
+                # check for duplicates
+                update_bug = True
+                if options.duplicate_db:
+                    crashdb.init_duplicate_db(options.duplicate_db)
+                    res = crashdb.check_duplicate(int(crashid), report)
+                    if res:
+                        if res[1] is None:
+                            apport.log(
+                                "Report is a duplicate of #%i (not fixed yet)"
+                                % res[0],
+                                options.timestamps,
+                            )
+                        elif res[1] == "":
+                            apport.log(
+                                "Report is a duplicate of #%i"
+                                " (fixed in latest version)" % res[0],
+                                options.timestamps,
+                            )
+                        else:
+                            apport.log(
+                                "Report is a duplicate of #%i"
+                                " (fixed in version %s)" % res,
+                                options.timestamps,
+                            )
+                        update_bug = False
+                    else:
                         apport.log(
-                            "Report is a duplicate of #%i (not fixed yet)"
-                            % res[0],
-                            options.timestamps,
+                            "Duplicate check negative", options.timestamps
                         )
-                    elif res[1] == "":
+
+                if update_bug:
+                    if "Stacktrace" in report:
+                        crashdb.update_traces(crashid, report)
                         apport.log(
-                            "Report is a duplicate of #%i"
-                            " (fixed in latest version)" % res[0],
+                            "New attachments uploaded to crash database LP: #"
+                            + crashid,
                             options.timestamps,
                         )
                     else:
+                        # this happens when gdb crashes
                         apport.log(
-                            "Report is a duplicate of #%i"
-                            " (fixed in version %s)" % res,
+                            "No stack trace, invalid report",
                             options.timestamps,
                         )
-                    update_bug = False
-                else:
-                    apport.log("Duplicate check negative", options.timestamps)
 
-            if update_bug:
-                if "Stacktrace" in report:
-                    crashdb.update_traces(crashid, report)
-                    apport.log(
-                        "New attachments uploaded to crash database LP: #"
-                        + crashid,
-                        options.timestamps,
-                    )
-                else:
-                    # this happens when gdb crashes
-                    apport.log(
-                        "No stack trace, invalid report", options.timestamps
-                    )
-
-                if not report.has_useful_stacktrace():
-                    if outdated_msg:
-                        invalid_msg = (
-                            """Thank you for your report!
+                    if not report.has_useful_stacktrace():
+                        if outdated_msg:
+                            invalid_msg = (
+                                """Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed (it does not generate a useful symbolic stack trace). This
@@ -700,25 +714,29 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                            % outdated_msg
-                        )
-                        apport.log(
-                            "No crash signature and outdated packages,"
-                            " invalidating report",
-                            options.timestamps,
-                        )
-                        crashdb.mark_retrace_failed(crashid, invalid_msg)
-                    else:
-                        apport.log(
-                            "Report has no crash signature,"
-                            " so retrace is flawed",
-                            options.timestamps,
-                        )
-                        crashdb.mark_retrace_failed(crashid)
+                                % outdated_msg
+                            )
+                            apport.log(
+                                "No crash signature and outdated packages,"
+                                " invalidating report",
+                                options.timestamps,
+                            )
+                            crashdb.mark_retrace_failed(crashid, invalid_msg)
+                        else:
+                            apport.log(
+                                "Report has no crash signature,"
+                                " so retrace is flawed",
+                                options.timestamps,
+                            )
+                            crashdb.mark_retrace_failed(crashid)
 
-    else:
-        if options.output == "-":
-            report.write(sys.stdout.detach())
         else:
-            with open(options.report, "wb") as out:
-                report.write(out)
+            if options.output == "-":
+                report.write(sys.stdout.detach())
+            else:
+                with open(options.report, "wb") as out:
+                    report.write(out)
+
+
+if __name__ == "__main__":
+    main()
