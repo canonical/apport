@@ -57,35 +57,36 @@ def parse_args():
     return parser.parse_args()
 
 
-#
-# main
-#
+def main():
+    # parse command line arguments
+    options = parse_args()
 
-# parse command line arguments
-options = parse_args()
+    # create report
+    pr = apport.Report("Package")
+    pr.add_package(options.package)
+    pr["SourcePackage"] = apport.packaging.get_source(options.package)
+    pr["ErrorMessage"] = (sys.stdin, False)
 
-# create report
-pr = apport.Report("Package")
-pr.add_package(options.package)
-pr["SourcePackage"] = apport.packaging.get_source(options.package)
-pr["ErrorMessage"] = (sys.stdin, False)
+    if options.tags:
+        tags = options.tags.replace(",", "")
+        pr["Tags"] = tags
 
-if options.tags:
-    tags = options.tags.replace(",", "")
-    pr["Tags"] = tags
+    for line in options.logs or []:
+        if os.path.isfile(line):
+            pr[mkattrname(line)] = (line,)
+        elif os.path.isdir(line):
+            for f in os.listdir(line):
+                path = os.path.join(line, f)
+                if os.path.isfile(path):
+                    pr[mkattrname(path)] = (path,)
 
-for line in options.logs or []:
-    if os.path.isfile(line):
-        pr[mkattrname(line)] = (line,)
-    elif os.path.isdir(line):
-        for f in os.listdir(line):
-            path = os.path.join(line, f)
-            if os.path.isfile(path):
-                pr[mkattrname(path)] = (path,)
+    # write report
+    try:
+        with apport.fileutils.make_report_file(pr) as f:
+            pr.write(f)
+    except OSError as error:
+        apport.fatal("Cannot create report: " + str(error))
 
-# write report
-try:
-    with apport.fileutils.make_report_file(pr) as f:
-        pr.write(f)
-except OSError as error:
-    apport.fatal("Cannot create report: " + str(error))
+
+if __name__ == "__main__":
+    main()
