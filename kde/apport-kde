@@ -13,6 +13,8 @@
 # the full text of the license.
 
 import os
+import shutil
+import subprocess
 import sys
 
 try:
@@ -477,6 +479,21 @@ class MainUserInterface(apport.ui.UserInterface):
             self.progress.set()
         # for a spinner we just need to handle events
         QApplication.processEvents()
+
+    def ui_run_terminal(self, command):
+        terminals = ["x-terminal-emulator", "konsole", "xterm"]
+
+        program = None
+        for terminal in terminals:
+            program = shutil.which(terminal)
+            if program:
+                break
+
+        if not command:
+            # test mode
+            return program is not None
+
+        subprocess.call([program, "-e", command])
 
     def ui_stop_info_collection_progress(self):
         if self.progress:

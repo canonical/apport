@@ -138,6 +138,12 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     def ui_stop_upload_progress(self):
         self.upload_progress_active = False
 
+    def ui_run_terminal(self, command):
+        # The tests are already running in a terminal
+        if not command:
+            return True
+        subprocess.call(command, shell=True)
+
     def open_url(self, url):
         self.opened_url = url
 

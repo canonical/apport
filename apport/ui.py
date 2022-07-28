@@ -1220,10 +1220,7 @@ class UserInterface:
         if shutil.which("apport-retrace") is None:
             return False
 
-        try:
-            return self.ui_run_terminal(None)
-        except NotImplementedError:
-            return False
+        return self.ui_run_terminal(None)
 
     def restart(self):
         """Reopen the crashed application."""
