@@ -20,6 +20,8 @@ import apport.crashdb
 
 
 class Github:
+    """Wrapper around Github API, used to log in and post issues."""
+    
     __last_request: float = time.time()
 
     def __init__(self, client_id, ui):
@@ -30,13 +32,14 @@ class Github:
 
     @staticmethod
     def _stringify(data: dict) -> str:
-        "Takes a dict and returns it as a string"
+        "Takes a dict and returns it as a string for POSTing."
         string = ""
         for key, value in data.items():
             string = f"{string}&{key}={value}"
         return string
 
-    def post(self, url: str, data: str):
+    def _post(self, url: str, data: str):
+        """POSTs the given data to the given URL. Uses auth token if available"""
         headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
@@ -46,13 +49,14 @@ class Github:
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
-        return self.post(url, self._stringify(data))
+        return self._post(url, self._stringify(data))
 
     def api_open_issue(self, owner: str, repo: str, data: dict):
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
-        return self.post(url, json.dumps(data))
+        return self._post(url, json.dumps(data))
 
     def __enter__(self):
+        """Enters login process. At exit, login process ends (session doesn't)."""
         data = {"client_id": self.__client_id, "scope": "public_repo"}
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
@@ -80,7 +84,7 @@ class Github:
 
     def authentication_complete(self) -> bool:
         """
-        Asks Github if the user has introduced the code already.
+        Asks Github if the user has logged in already.
         It respects the wait-time requested by Github.
         """
         if not self.__authentication_data:
@@ -95,7 +99,7 @@ class Github:
                 "Failed to log into Github: too much time elapsed."
             )
         if waittime > 0:
-            time.sleep(waittime)
+            time.sleep(waittime) # Avoids spamming the API
 
         url = "https://github.com/login/oauth/access_token"
         response = self.api_authentication(url, self.__authentication_data)
@@ -136,30 +140,25 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.issue_url = None
         self.github = None
 
-    def _github_login(self, ui) -> Github:
-        with Github(self.app_id, ui) as github:
-            while not github.authentication_complete():
-                pass
-            return github
-
     def _format_report(self, report: apport.Report) -> dict:
         """
         Formats report info as markdown and creates Github issue JSON.
         """
-        body = ""
+        body_markdown = ""
         for key, value in report.items():
-            body += f"**{key}**\n{value}\n\n"
+            body_markdown += f"**{key}**\n{value}\n\n"
 
         return {
             "title": "Issue submitted via apport",
-            "body": body,
+            "body": body_markdown,
             "labels": [lbl for lbl in self.labels],
         }
 
     def external_login(self, ui) -> None:
-        if self.github is not None:
-            return
-        self.github = self._github_login(ui)
+        with Github(self.app_id, ui) as github:
+            while not github.authentication_complete():
+                pass
+            self.github = github
 
     def upload(
         self, report: apport.Report, progress_callback=None
