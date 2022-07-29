@@ -216,6 +216,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.unretraced.remove(crash_id)
 
+    def mark_retrace_failed(self, crash_id, invalid_msg=None):
+        """Mark crash id as 'failed to retrace'.
+
+        This is a no-op since this crash DB is not interested in it.
+        """
+
     def get_unretraced(self):
         """Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture."""

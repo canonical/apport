@@ -23,6 +23,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     This is a Apport CrashDB implementation for interacting with Debian BTS
     """
 
+    # TODO: Implement several missing abstract methods from parent class
+    # pylint: disable=abstract-method
+
     def __init__(self, auth_file, options):
         """
         Initialize crash database connection.
