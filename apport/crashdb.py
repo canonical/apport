@@ -42,6 +42,7 @@ class CrashDatabase:
         self.auth_file = auth_file
         self.options = options
         self.duplicate_db = None
+        self.format_version = None
 
     def get_bugpattern_baseurl(self):
         """Return the base URL for bug patterns.
@@ -428,7 +429,9 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                cur_file = open(os.path.join(addr_base, cur_hash), "w")
+                cur_file = open(
+                    os.path.join(addr_base, cur_hash), "w", encoding="utf-8"
+                )
 
             cur_file.write("%i %s\n" % (crash_id, sig))
 
@@ -551,7 +554,7 @@ class CrashDatabase:
         else:
             return None
 
-    def _duplicate_db_dump(self, with_timestamps=False):
+    def duplicate_db_dump(self, with_timestamps=False):
         """Return the entire duplicate database as a dictionary.
 
         The returned dictionary maps "signature" to (crash_id, fixed_version)
@@ -700,8 +703,6 @@ class CrashDatabase:
         Implementations ought to "assert self.accepts(report)". The UI logic
         already prevents uploading a report to a database which does not accept
         it, but for third-party users of the API this should still be checked.
-
-        This method can raise a NeedsCredentials exception in case of failure.
         """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
@@ -963,7 +964,7 @@ def get_crashdb(auth_file, name=None, conf=None):
             "APPORT_CRASHDB_CONF", "/etc/apport/crashdb.conf"
         )
     settings = {}
-    with open(conf) as f:
+    with open(conf, encoding="utf-8") as f:
         # legacy, pylint: disable=exec-used
         exec(compile(f.read(), conf, "exec"), settings)
 
@@ -974,7 +975,7 @@ def get_crashdb(auth_file, name=None, conf=None):
             cfpath = os.path.join(confdDir, cf)
             if os.path.isfile(cfpath) and cf.endswith(".conf"):
                 try:
-                    with open(cfpath) as f:
+                    with open(cfpath, encoding="utf-8") as f:
                         # legacy, pylint: disable=exec-used
                         exec(
                             compile(f.read(), cfpath, "exec"),
@@ -1004,7 +1005,3 @@ def load_crashdb(auth_file, spec):
         ["CrashDatabase"],
     )
     return m.CrashDatabase(auth_file, spec)
-
-
-class NeedsCredentials(Exception):
-    """This may be raised when unable to log in to the crashdb."""

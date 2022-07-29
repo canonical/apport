@@ -37,7 +37,8 @@ class CLIDialog:
         self.buttons = []
         self.visible = False
 
-    def raw_input_char(self, prompt, multi_char=False):
+    @staticmethod
+    def raw_input_char(prompt, multi_char=False):
         """raw_input, but read a single character unless multi_char is True.
 
         @param: prompt: the text presented to the user to solict a response.
@@ -146,6 +147,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
         self.in_update_view = False
+        self.progress = None
 
     def _get_details(self):
         """Build report string for display."""
@@ -162,7 +164,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             if (
                 not hasattr(self.report[key], "gzipvalue")
                 and hasattr(self.report[key], "isspace")
-                and not self.report._is_binary(self.report[key])
+                and not self.report.is_binary(self.report[key])
                 and keylen < max_show
             ):
                 s = self.report[key]
@@ -293,6 +295,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.show()
 
     def ui_pulse_info_collection_progress(self):
+        assert self.progress is not None
         self.progress.set()
 
     def ui_stop_info_collection_progress(self):
@@ -310,6 +313,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):
+        assert self.progress is not None
         self.progress.set(progress)
 
     def ui_stop_upload_progress(self):

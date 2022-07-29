@@ -52,14 +52,14 @@ def patch_data_dir(report) -> typing.Optional[typing.Mapping[str, str]]:
     # pylint: disable=protected-access
     orig = {
         "data_dir": report._data_dir,
-        "hook_dir": report._hook_dir,
-        "common_hook_dir": report._common_hook_dir,
+        "general_hook_dir": report.GENERAL_HOOK_DIR,
+        "package_hook_dir": report.PACKAGE_HOOK_DIR,
     }
 
     data_dir = get_data_directory()
     report._data_dir = data_dir
-    report._hook_dir = f"{data_dir}/package-hooks/"
-    report._common_hook_dir = f"{data_dir}/general-hooks/"
+    report.GENERAL_HOOK_DIR = f"{data_dir}/general-hooks/"
+    report.PACKAGE_HOOK_DIR = f"{data_dir}/package-hooks/"
 
     return orig
 
@@ -76,5 +76,5 @@ def restore_data_dir(
 
     # pylint: disable=protected-access
     report._data_dir = orig["data_dir"]
-    report._hook_dir = orig["hook_dir"]
-    report._common_hook_dir = orig["common_hook_dir"]
+    report.GENERAL_HOOK_DIR = orig["general_hook_dir"]
+    report.PACKAGE_HOOK_DIR = orig["package_hook_dir"]

@@ -71,6 +71,12 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         self.upload_progress_active = False
         self.upload_progress_pulses = 0
 
+        # store last message box
+        self.msg_title = None
+        self.msg_text = None
+        self.msg_severity = None
+        self.msg_choices = None
+
         # these store the choices the ui_present_* calls do
         self.present_package_error_response = None
         self.present_kernel_error_response = None
@@ -154,7 +160,6 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     unittest.mock.MagicMock(return_value=[]),
 )
 class T(unittest.TestCase):
-    # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
@@ -171,6 +176,7 @@ class T(unittest.TestCase):
 
         self.orig_data_dir = patch_data_dir(apport.report)
 
+        # pylint: disable=protected-access
         self.workdir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
@@ -207,8 +213,8 @@ class T(unittest.TestCase):
         # set up our local hook directory
         self.hookdir = os.path.join(self.workdir, "package-hooks")
         os.mkdir(self.hookdir)
-        self.orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = self.hookdir
+        self.orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = self.hookdir
 
         # test suite should not stumble over local packages
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
@@ -229,6 +235,7 @@ class T(unittest.TestCase):
         apport.ui.symptom_script_dir = self.orig_symptom_script_dir
         self.orig_symptom_script_dir = None
 
+        # pylint: disable=protected-access
         os.unlink(apport.report._ignore_file)
         apport.report._ignore_file = self.orig_ignore_file
 
@@ -241,7 +248,7 @@ class T(unittest.TestCase):
             "no stray test processes",
         )
 
-        apport.report._hook_dir = self.orig_hook_dir
+        apport.report.PACKAGE_HOOK_DIR = self.orig_package_hook_dir
         shutil.rmtree(self.workdir)
         os.environ.clear()
         os.environ.update(self.orig_environ)
@@ -256,9 +263,10 @@ class T(unittest.TestCase):
         os.execv(exename, [exename] + self.TEST_ARGS)
         assert False, "Could not execute " + exename
 
-    def _write_symptom_script(self, script_name: str, content: str) -> None:
+    @staticmethod
+    def _write_symptom_script(script_name: str, content: str) -> None:
         path = os.path.join(apport.ui.symptom_script_dir, script_name)
-        with open(path, "w") as symptom_script:
+        with open(path, "w", encoding="utf-8") as symptom_script:
             symptom_script.write(content)
 
     def test_format_filesize(self):
@@ -478,7 +486,9 @@ class T(unittest.TestCase):
 
     def _write_crashdb_config_hook(self, crashdb: str, bash_hook: str = None):
         """Write source_bash.py hook that sets CrashDB"""
-        with open(os.path.join(self.hookdir, "source_bash.py"), "w") as f:
+        with open(
+            os.path.join(self.hookdir, "source_bash.py"), "w", encoding="utf-8"
+        ) as f:
             f.write(
                 textwrap.dedent(
                     f'''\
@@ -782,11 +792,11 @@ class T(unittest.TestCase):
         get_version_mock.return_value = "5.15.0-33.34"
 
         for path in glob.glob("/proc/[0-9]*/stat"):
-            with open(path) as f:
-                stat = f.read().split()
-            flags = int(stat[8])
+            with open(path, encoding="utf-8") as f:
+                proc_stat = f.read().split()
+            flags = int(proc_stat[8])
             if flags & apport.ui.PF_KTHREAD:
-                pid = int(stat[0])
+                pid = int(proc_stat[0])
                 break
         else:
             self.skipTest("no kernel thread found")
@@ -852,7 +862,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
-    def _gen_test_crash(self, uid=None):
+    def _gen_test_crash(self):
         """Generate a Report with real crash data"""
 
         core_path = os.path.join(self.workdir, "core")
@@ -1052,9 +1062,13 @@ class T(unittest.TestCase):
         self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    @unittest.mock.patch("apport.hookutils.attach_conffiles")
-    def test_run_crash_argv_file(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
+    )
+    def test_run_crash_argv_file(self):
         """run_crash() through a file specified on the command line"""
 
         # valid
@@ -1108,8 +1122,10 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_unreportable(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_unreportable(self):
         """run_crash() on a crash with the UnreportableReason field"""
 
         self.report["UnreportableReason"] = "It stinks."
@@ -1133,8 +1149,10 @@ class T(unittest.TestCase):
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_malicious_crashdb(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_malicious_crashdb(self):
         """run_crash() on a crash with malicious CrashDB"""
 
         self.report["ExecutablePath"] = "/bin/bash"
@@ -1157,8 +1175,10 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists("/tmp/pwned"))
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
-    def test_run_crash_malicious_package(self, *args):
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
+    def test_run_crash_malicious_package(self):
         """Package: path traversal"""
 
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
@@ -1526,7 +1546,9 @@ class T(unittest.TestCase):
 
         # set up hook
         with open(
-            os.path.join(self.hookdir, f"source_{src_pkg}.py"), "w"
+            os.path.join(self.hookdir, f"source_{src_pkg}.py"),
+            "w",
+            encoding="utf-8",
         ) as hook:
             hook.write(
                 textwrap.dedent(
@@ -1749,7 +1771,7 @@ class T(unittest.TestCase):
         orig_getpwuid = pwd.getpwuid
         orig_getuid = os.getuid
 
-        def fake_getpwuid(uid):
+        def fake_getpwuid(_unused_uid):
             r = list(orig_getpwuid(orig_getuid()))
             r[4] = "Joe (Hacker,+1 234,,"
             return r
@@ -1758,7 +1780,7 @@ class T(unittest.TestCase):
         os.getuid = lambda: 1234
 
         try:
-            r = self._gen_test_crash(orig_getuid())
+            r = self._gen_test_crash()
             r["ProcInfo1"] = "That was Joe (Hacker and friends"
             r["ProcInfo2"] = "Call +1 234!"
             r["ProcInfo3"] = "(Hacker should stay"
@@ -2030,7 +2052,9 @@ class T(unittest.TestCase):
             "remember": False,
         }
 
-        with open(os.path.join(self.hookdir, "source_foo.py"), "w") as f:
+        with open(
+            os.path.join(self.hookdir, "source_foo.py"), "w", encoding="utf-8"
+        ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
         self.assertEqual(self.ui.run_argv(), True, self.ui.report)
@@ -2063,7 +2087,9 @@ class T(unittest.TestCase):
         }
 
         with open(
-            os.path.join(self.hookdir, "source_%s.py" % source_pkg), "w"
+            os.path.join(self.hookdir, "source_%s.py" % source_pkg),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
@@ -2081,7 +2107,9 @@ class T(unittest.TestCase):
         self.assertIn("ProcEnviron", self.ui.report)
 
     def _run_hook(self, code):
-        with open(os.path.join(self.hookdir, "coreutils.py"), "w") as hook:
+        with open(
+            os.path.join(self.hookdir, "coreutils.py"), "w", encoding="utf-8"
+        ) as hook:
             hook.write(
                 "def add_info(report, ui):\n%s\n"
                 % "\n".join(["    " + line for line in code.splitlines()])

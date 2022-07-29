@@ -81,7 +81,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
             for (path, _, files) in os.walk(d):
                 for fname in files:
                     f = os.path.join(path, fname)
-                    with open(f) as fd:
+                    with open(f, encoding="utf-8") as fd:
                         try:
                             lines = fd.readlines()
                         except UnicodeDecodeError:
@@ -90,7 +90,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
                     if lines[0].startswith("#!") and "python" in lines[0]:
                         distutils.log.info("Updating hashbang of %s", f)
                         lines[0] = new_hashbang
-                        with open(f, "w") as fd:
+                        with open(f, "w", encoding="utf-8") as fd:
                             for line in lines:
                                 fd.write(line)
 

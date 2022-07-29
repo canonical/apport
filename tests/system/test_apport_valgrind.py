@@ -15,7 +15,7 @@ import unittest
 
 from tests.paths import local_test_environment
 
-with open("/proc/meminfo") as f:
+with open("/proc/meminfo", encoding="utf-8") as f:
     for line in f.readlines():
         if line.startswith("MemTotal"):
             MEM_TOTAL_MiB = int(line.split()[1]) // 1024

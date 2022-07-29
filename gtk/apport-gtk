@@ -83,12 +83,14 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         self.desktop_info = None
         self.allowed_to_report = True
+        self.collect_called = False
 
     #
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def add_spinner_over_treeview(self, overlay):
+    @staticmethod
+    def add_spinner_over_treeview(overlay):
         """Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
         centered on top."""
         # TODO handle the expose event of the spinner so that we can draw on
@@ -142,7 +144,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if (
                 not hasattr(self.report[key], "gzipvalue")
                 and hasattr(self.report[key], "isspace")
-                and not self.report._is_binary(self.report[key])
+                and not self.report.is_binary(self.report[key])
             ):
                 v = self.report[key]
                 if len(v) > 4000:
@@ -672,6 +674,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
     def on_progress_window_close_event(self, widget, event=None):
+        # pylint: disable=unused-argument
         self.w("window_information_collection").hide()
         self.w("window_report_upload").hide()
         sys.exit(0)

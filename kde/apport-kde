@@ -34,7 +34,6 @@ try:
         QDialogButtonBox,
         QFileDialog,
         QLabel,
-        QLineEdit,
         QMessageBox,
         QProgressBar,
         QPushButton,
@@ -62,6 +61,8 @@ except ImportError as error:
     )
 
 
+# TODO: Avoid fiddling with internals of Qt to add translation support
+# pylint: disable=protected-access
 def translate(self, prop):
     """Reimplement method from uic to change it to use gettext."""
 
@@ -75,6 +76,7 @@ def translate(self, prop):
 
 
 uic.properties.Properties._string = translate
+# pylint: enable=protected-access
 
 
 class Dialog(QDialog):
@@ -91,7 +93,6 @@ class Dialog(QDialog):
         self.findChild(QLabel, "text").setText(text)
 
     def on_buttons_clicked(self, button):
-        self.actionbutton = button
         if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
             button.window().done(2)
 
@@ -396,7 +397,7 @@ class MainUserInterface(apport.ui.UserInterface):
             if (
                 not hasattr(self.report[key], "gzipvalue")
                 and hasattr(self.report[key], "isspace")
-                and not self.report._is_binary(self.report[key])
+                and not self.report.is_binary(self.report[key])
             ):
                 lines = self.report[key].splitlines()
                 for line in lines:
@@ -563,24 +564,6 @@ class MainUserInterface(apport.ui.UserInterface):
         if response.length() == 0:
             return None
         return str(response)
-
-    def ui_question_userpass(self, message):
-        """Show a Username/Password dialog.
-
-        Return a tuple (user, pass) or None if cancelled.
-        """
-        dialog = UserPassDialog(_("Apport"), message)
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return None
-
-        username = str(dialog.findChild(QLineEdit, "e_username").text())
-        password = str(dialog.findChild(QLineEdit, "e_password").text())
-
-        if len(username) == 0 or len(password) == 0:
-            return None
-        return (username, password)
 
 
 if __name__ == "__main__":

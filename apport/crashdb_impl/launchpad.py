@@ -923,6 +923,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if bug.duplicate_of:
                 bug.duplicate_of = None
 
+        # pylint: disable=protected-access
         if bug._dirty_attributes:  # LP#336866 workaround
             bug.lp_save()
 
@@ -1091,6 +1092,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return  # only Ubuntu bugs are filed private
 
         # use a url hack here, it is faster
+        # pylint: disable=protected-access
         person = "%s~%s" % (
             self.launchpad._root_uri,
             self.options.get("triaging_team", "ubuntu-crashes-universe"),
@@ -1316,6 +1318,8 @@ if __name__ == "__main__":
         return try_to_get_from_cache
 
     class _T(unittest.TestCase):
+        # pylint: disable=protected-access
+
         # this assumes that a source package 'coreutils' exists and builds a
         # binary package 'coreutils'
         test_package = "coreutils"
@@ -1359,6 +1363,7 @@ if __name__ == "__main__":
 
         @cache
         def get_segv_report(self, force_fresh=False):
+            # force_fresh used by @cache, pylint: disable=unused-argument
             """Generate SEGV crash report.
 
             This is only done once, subsequent calls will return the already
@@ -1429,6 +1434,7 @@ NameError: global name 'weird' is not defined"""
 
         @cache
         def get_uncommon_description_report(self, force_fresh=False):
+            # force_fresh used by @cache, pylint: disable=unused-argument
             """File a bug report with an uncommon description.
 
             This is only done once, subsequent calls will return the already
@@ -2052,8 +2058,10 @@ and more
             r = self.crashdb.download(crash_id)
             self.assertNotIn("CoreDump", r)
 
-        @patch.object(CrashDatabase, "_get_source_version")
-        def test_get_fixed_version(self, *args):
+        @patch.object(
+            CrashDatabase, "_get_source_version", unittest.mock.MagicMock()
+        )
+        def test_get_fixed_version(self):
             """get_fixed_version() for fixed bugs
 
             Other cases are already checked in test_marking_segv() (invalid
@@ -2088,7 +2096,8 @@ and more
                 {"distro": "ubuntu", "launchpad_instance": launchpad_instance},
             )
 
-        def _get_bug_target(self, db, report):
+        @staticmethod
+        def _get_bug_target(db, report):
             """Return the bug_target for this report."""
 
             project = db.options.get("project")
@@ -2388,7 +2397,7 @@ NameError: global name 'weird' is not defined"""
                 os.chdir(workdir)
 
                 # create a test executable
-                with open("crash.c", "w") as fd:
+                with open("crash.c", "w", encoding="utf-8") as fd:
                     fd.write(
                         """
 int f(x) {

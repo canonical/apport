@@ -39,8 +39,8 @@ from apport.hookutils import kill_pkttyagent
 from apport.packaging_impl import impl as packaging
 
 _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
-_hook_dir = "%s/package-hooks/" % (_data_dir)
-_common_hook_dir = "%s/general-hooks/" % (_data_dir)
+GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"
+PACKAGE_HOOK_DIR = f"{_data_dir}/package-hooks/"
 _opt_dir = "/opt"
 
 # path of the ignore file
@@ -125,6 +125,7 @@ def _read_maps(proc_pid_fd):
         with open(
             "maps",
             opener=lambda path, mode: os.open(path, mode, dir_fd=proc_pid_fd),
+            encoding="utf-8",
         ) as fd:
             maps = fd.read().strip()
     except OSError as error:
@@ -238,7 +239,7 @@ def _run_hook(report, ui, hook):
 
     symb = {}
     try:
-        with open(hook) as fd:
+        with open(hook, encoding="utf-8") as fd:
             # legacy, pylint: disable=exec-used
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
@@ -297,7 +298,8 @@ class Report(problem_report.ProblemReport):
         self.pid = None
         self._proc_maps_cache = None
 
-    def _customized_package_suffix(self, package):
+    @staticmethod
+    def _customized_package_suffix(package):
         """Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
@@ -427,7 +429,9 @@ class Report(problem_report.ProblemReport):
         )
         import yaml
 
-        with open("/snap/%s/current/meta/snap.yaml" % snapname) as f:
+        with open(
+            "/snap/%s/current/meta/snap.yaml" % snapname, encoding="utf-8"
+        ) as f:
             snap_meta = yaml.safe_load(f)
         if "base" in snap_meta:
             base = snap_meta["base"]
@@ -811,7 +815,7 @@ class Report(problem_report.ProblemReport):
                 elif line.startswith("XDG_CURRENT_DESKTOP="):
                     self["CurrentDesktop"] = line.split("=", 1)[1]
 
-    def add_kernel_crash_info(self, debugdir=None):
+    def add_kernel_crash_info(self):
         """Add information from kernel crash.
 
         This needs a VmCore in the Report.
@@ -1061,8 +1065,8 @@ class Report(problem_report.ProblemReport):
     def add_hooks_info(self, ui, package=None, srcpackage=None):
         """Run hook script for collecting package specific data.
 
-        A hook script needs to be in _hook_dir/<Package>.py or in
-        _common_hook_dir/*.py and has to contain a function 'add_info(report,
+        A hook script needs to be in PACKAGE_HOOK_DIR/<Package>.py or in
+        GENERAL_HOOK_DIR/*.py and has to contain a function 'add_info(report,
         ui)' that takes and modifies a Report, and gets an UserInterface
         reference for interactivity.
 
@@ -1093,7 +1097,7 @@ class Report(problem_report.ProblemReport):
                 )
                 return
 
-        hook_dirs = [_hook_dir]
+        hook_dirs = [PACKAGE_HOOK_DIR]
         # also search hooks in /opt, when program is from there
         opt_path = None
         exec_path = os.path.realpath(self.get("ExecutablePath", ""))
@@ -1118,7 +1122,7 @@ class Report(problem_report.ProblemReport):
                 opt_path = os.path.dirname(opt_path)
 
         # common hooks
-        for hook in glob.glob(_common_hook_dir + "/*.py"):
+        for hook in glob.glob(GENERAL_HOOK_DIR + "/*.py"):
             if _run_hook(self, ui, hook):
                 return True
 
@@ -1185,7 +1189,8 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    def _get_ignore_dom(self):
+    @staticmethod
+    def _get_ignore_dom():
         """Read ignore list XML file and return a DOM tree.
 
         Return an empty DOM tree if file does not exist.
@@ -1256,7 +1261,9 @@ class Report(problem_report.ProblemReport):
         try:
             for f in os.listdir(_blacklist_dir):
                 try:
-                    with open(os.path.join(_blacklist_dir, f)) as fd:
+                    with open(
+                        os.path.join(_blacklist_dir, f), encoding="utf-8"
+                    ) as fd:
                         for line in fd:
                             if line.strip() == self["ExecutablePath"]:
                                 return True
@@ -1270,7 +1277,9 @@ class Report(problem_report.ProblemReport):
             whitelist = set()
             for f in os.listdir(_whitelist_dir):
                 try:
-                    with open(os.path.join(_whitelist_dir, f)) as fd:
+                    with open(
+                        os.path.join(_whitelist_dir, f), encoding="utf-8"
+                    ) as fd:
                         for line in fd:
                             whitelist.add(line.strip())
                 except OSError:
@@ -1346,7 +1355,7 @@ class Report(problem_report.ProblemReport):
         homedir = pwd.getpwuid(os.geteuid())[5]
         ignore_file_path = _ignore_file.replace("~", homedir)
 
-        with open(ignore_file_path, "w") as fd:
+        with open(ignore_file_path, "w", encoding="utf-8") as fd:
             dom.writexml(fd, addindent="  ", newl="\n")
 
         dom.unlink()
@@ -1690,7 +1699,8 @@ class Report(problem_report.ProblemReport):
                 return ":".join(parts)
         return None
 
-    def _extract_function_and_address(self, line):
+    @staticmethod
+    def _extract_function_and_address(line):
         parsed = re.search(r"\[.*\] (.*)$", line)
         if parsed:
             match = parsed.group(1)
@@ -2013,7 +2023,7 @@ class Report(problem_report.ProblemReport):
 
         # determine cgroup
         try:
-            with io.open(cgroup_file) as f:
+            with io.open(cgroup_file, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if (

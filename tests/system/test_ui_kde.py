@@ -102,9 +102,8 @@ class T(unittest.TestCase):
         # disable package hooks, as they might ask for sudo password and other
         # interactive bits; allow tests to install their own hooks
         self.hook_dir = tempfile.mkdtemp()
-        # pylint: disable=protected-access
-        apport.report._hook_dir = self.hook_dir
-        apport.report._common_hook_dir = self.hook_dir
+        apport.report.GENERAL_HOOK_DIR = self.hook_dir
+        apport.report.PACKAGE_HOOK_DIR = self.hook_dir
 
         # test report
         self.app.report_file = os.path.join(self.report_dir, "bash.crash")
@@ -130,7 +129,7 @@ class T(unittest.TestCase):
         """Clicking the close button on the window does not report the
         crash."""
 
-        def c(*args):
+        def c():
             self.app.dialog.reject()
 
         QTimer.singleShot(0, c)
@@ -462,16 +461,20 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
-    @unittest.mock.patch.object(MainUserInterface, "open_url")
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch.object(
+        MainUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_1_crash_nodetails(self, *args):
+    def test_1_crash_nodetails(self):
         """Crash report without showing details"""
 
-        def cont(*args):
+        def cont():
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
                 return
@@ -502,16 +505,20 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(MainUserInterface, "open_url")
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch.object(
+        MainUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_1_crash_details(self, *args):
+    def test_1_crash_details(self):
         """Crash report with showing details"""
 
-        def show_details(*args):
+        def show_details():
             if self.app.dialog and self.app.dialog.show_details.isVisible():
                 self.app.dialog.show_details.click()
                 QTimer.singleShot(1000, cont)
@@ -520,7 +527,7 @@ class T(unittest.TestCase):
             # try again
             QTimer.singleShot(200, show_details)
 
-        def cont(*args):
+        def cont():
             # wait until data collection is done and tree filled
             details = self.app.dialog.findChild(QTreeWidget, "details")
             if details.topLevelItemCount() == 0:
@@ -555,16 +562,20 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(MainUserInterface, "open_url")
-    @unittest.mock.patch("apport.report.Report.add_gdb_info")
+    @unittest.mock.patch.object(
+        MainUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch(
+        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report",
         unittest.mock.MagicMock(return_value=True),
     )
-    def test_1_crash_noaccept(self, *args):
+    def test_1_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
 
-        def cont(*args):
+        def cont():
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
                 return
@@ -598,7 +609,7 @@ class T(unittest.TestCase):
         self.app.report_file = None
         self.app.args.package = "bash"
 
-        def c(*args):
+        def c():
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
                 self.app.dialog.cancel_button.click()
                 return
@@ -621,7 +632,7 @@ class T(unittest.TestCase):
         self.app.report_file = None
         self.app.args.package = pkg
 
-        def c(*args):
+        def c():
             if self.app.dialog and self.app.dialog.cancel_button.isVisible():
                 self.app.dialog.cancel_button.click()
                 return
@@ -639,13 +650,15 @@ class T(unittest.TestCase):
             self.app.report["Package"], "%s (not installed)" % pkg
         )
 
-    @unittest.mock.patch.object(MainUserInterface, "open_url")
-    def test_1_update_report(self, *args):
+    @unittest.mock.patch.object(
+        MainUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    def test_1_update_report(self):
         """Updating an existing report"""
 
         self.app.report_file = None
 
-        def cont(*args):
+        def cont():
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
                 return
@@ -673,14 +686,16 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(MainUserInterface, "open_url")
-    def test_1_update_report_different_binary_source(self, *args):
+    @unittest.mock.patch.object(
+        MainUserInterface, "open_url", unittest.mock.MagicMock()
+    )
+    def test_1_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
 
         self.app.report_file = None
 
-        def cont(*args):
+        def cont():
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
                 return
@@ -694,7 +709,9 @@ class T(unittest.TestCase):
 
         # create source package hook, as otherwise there is nothing to collect
         with open(
-            os.path.join(self.hook_dir, "source_%s.py" % source_pkg), "w"
+            os.path.join(self.hook_dir, "source_%s.py" % source_pkg),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 

@@ -44,6 +44,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def __init__(self):
         self._apt_cache = None
+        self._current_release_codename = None
         self._sandbox_apt_cache = None
         self._sandbox_apt_cache_arch = None
         self._contents_dir = None
@@ -264,7 +265,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         native_origins = []
         for f in glob.glob("/etc/apport/native-origins.d/*"):
             try:
-                with open(f) as fd:
+                with open(f, encoding="utf-8") as fd:
                     for line in fd:
                         line = line.strip()
                         if line:
@@ -278,9 +279,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
-    def get_lp_binary_package(
-        self, distro_id, release, package, version, arch
-    ):
+    @staticmethod
+    def get_lp_binary_package(release, package, version, arch):
         # allow unauthenticated downloads
         apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
         from launchpadlib.launchpad import Launchpad
@@ -319,7 +319,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             # is theoretical
             return (bf["url"], bf["sha1"])
 
-    def json_request(self, url, entries=False):
+    @staticmethod
+    def json_request(url, entries=False):
         """Open, read and parse the json of a url
 
         Set entries to True when the json data returned by Launchpad
@@ -344,7 +345,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             return json.loads(content)
 
-    def get_lp_source_package(self, distro_id, package, version):
+    @staticmethod
+    def get_lp_source_package(package, version):
         from launchpadlib.launchpad import Launchpad
 
         launchpad = Launchpad.login_anonymously(
@@ -494,7 +496,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return modified
 
-    def __fgrep_files(self, pattern, file_list):
+    @staticmethod
+    def __fgrep_files(pattern, file_list):
         """Call fgrep for a pattern on given file list and return the first
         matching file, or None if no file matches."""
 
@@ -674,9 +677,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if subprocess.call(argv, cwd=output_dir, env=env) != 0:
                 if not version:
                     return None
-                sf_urls = self.get_lp_source_package(
-                    self.get_distro_name(), srcpackage, version
-                )
+                sf_urls = self.get_lp_source_package(srcpackage, version)
                 if sf_urls:
                     proxy = ""
                     if apt.apt_pkg.config.find("Acquire::http::Proxy") != "":
@@ -796,7 +797,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             architecture = self.get_system_architecture()
         if not configdir:
             apt_sources = "/etc/apt/sources.list"
-            self.current_release_codename = self.get_distro_codename()
+            self._current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, "sources.list")
@@ -816,8 +817,10 @@ class __AptDpkgPackageInfo(PackageInfo):
                 apport.warning("cannot determine mirror: %s" % str(error))
 
             # set current release code name for _distro_release_to_codename
-            with open(os.path.join(configdir, release, "codename")) as f:
-                self.current_release_codename = f.read().strip()
+            with open(
+                os.path.join(configdir, release, "codename"), encoding="utf-8"
+            ) as f:
+                self._current_release_codename = f.read().strip()
 
         if not os.path.exists(apt_sources):
             raise SystemError("%s does not exist" % apt_sources)
@@ -859,7 +862,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 apt_sources,
                 fetchProgress,
                 self.get_distro_name(),
-                self.current_release_codename,
+                self._current_release_codename,
                 origins,
                 architecture,
             )
@@ -868,7 +871,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 aptroot,
                 apt_sources,
                 self.get_distro_name(),
-                self.current_release_codename,
+                self._current_release_codename,
                 origins,
             )
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
@@ -888,7 +891,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         pkg_list = os.path.join(rootdir, "packages.txt")
         pkg_versions = {}
         if os.path.exists(pkg_list):
-            with open(pkg_list) as f:
+            with open(pkg_list, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -962,7 +965,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
                 (lp_url, sha1sum) = self.get_lp_binary_package(
-                    self.get_distro_name(), release, pkg, ver, architecture
+                    release, pkg, ver, architecture
                 )
                 if lp_url:
                     acquire_queue.append(
@@ -1065,11 +1068,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             pkg_found = True
                         except KeyError:
                             (lp_url, sha1sum) = self.get_lp_binary_package(
-                                self.get_distro_name(),
-                                release,
-                                dbg_pkg,
-                                ver,
-                                architecture,
+                                release, dbg_pkg, ver, architecture
                             )
                             if lp_url:
                                 acquire_queue.append(
@@ -1139,11 +1138,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         lp_url,
                                         sha1sum,
                                     ) = self.get_lp_binary_package(
-                                        self.get_distro_name(),
-                                        release,
-                                        p,
-                                        ver,
-                                        architecture,
+                                        release, p, ver, architecture
                                     )
                                     if lp_url:
                                         acquire_queue.append(
@@ -1183,11 +1178,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         lp_url,
                                         sha1sum,
                                     ) = self.get_lp_binary_package(
-                                        self.get_distro_name(),
-                                        release,
-                                        dbgsym_pkg,
-                                        ver,
-                                        architecture,
+                                        release, dbgsym_pkg, ver, architecture
                                     )
                                     if lp_url:
                                         acquire_queue.append(
@@ -1219,11 +1210,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         except KeyError:
                             if ver:
                                 (lp_url, sha1sum) = self.get_lp_binary_package(
-                                    self.get_distro_name(),
-                                    release,
-                                    dbgsym_pkg,
-                                    ver,
-                                    architecture,
+                                    release, dbgsym_pkg, ver, architecture
                                 )
                                 if lp_url:
                                     acquire_queue.append(
@@ -1334,7 +1321,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # update package list
         pkgs = list(pkg_versions.keys())
         pkgs.sort()
-        with open(pkg_list, "w") as f:
+        with open(pkg_list, "w", encoding="utf-8") as f:
             for p in pkgs:
                 f.write(p)
                 f.write(" ")
@@ -1363,8 +1350,8 @@ class __AptDpkgPackageInfo(PackageInfo):
     # Internal helper methods
     #
 
-    @classmethod
-    def _call_dpkg(klass, args):
+    @staticmethod
+    def _call_dpkg(args):
         """Call dpkg with given arguments and return output, or return None on
         error."""
 
@@ -1379,7 +1366,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             raise ValueError("package does not exist")
 
-    def _check_files_md5(self, sumfile):
+    @staticmethod
+    def _check_files_md5(sumfile):
         """Internal function for calling md5sum.
 
         This is separate from get_modified_files so that it is automatically
@@ -1420,7 +1408,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _get_primary_mirror_from_apt_sources(klass, apt_sources):
         """Heuristically determine primary mirror from an apt sources.list"""
 
-        with open(apt_sources) as f:
+        with open(apt_sources, encoding="utf-8") as f:
             for line in f:
                 fields = line.split()
                 if len(fields) >= 3 and fields[0] == "deb":
@@ -1459,14 +1447,11 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # if we called install_packages() with a configdir, we can read the
         # codename from there
-        if (
-            hasattr(self, "current_release_codename")
-            and self.current_release_codename is not None
-        ):
-            return self.current_release_codename
+        if self._current_release_codename is not None:
+            return self._current_release_codename
 
         raise NotImplementedError(
-            "Cannot map DistroRelease to a code name"
+            f"Cannot map DistroRelease '{release}' to a code name"
             " without install_packages()"
         )
 
@@ -1739,9 +1724,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             shutil.copytree(apt_sources + ".d", list_d)
         else:
             os.makedirs(list_d)
-        with open(apt_sources) as src:
+        with open(apt_sources, encoding="utf-8") as src:
             with open(
-                os.path.join(apt_root, "etc", "apt", "sources.list"), "w"
+                os.path.join(apt_root, "etc", "apt", "sources.list"),
+                "w",
+                encoding="utf-8",
             ) as dest:
                 dest.write(src.read())
 
@@ -1772,7 +1759,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     elif not os.path.exists(origin_path):
                         origin_path = None
                 if origin_path:
-                    with open(origin_path) as src_ext:
+                    with open(origin_path, encoding="utf-8") as src_ext:
                         source_list_content = src_ext.read()
                 else:
                     source_list_content = self.create_ppa_source_from_origin(
@@ -1788,6 +1775,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             origin + ".list",
                         ),
                         "a",
+                        encoding="utf-8",
                     ) as dest:
                         dest.write(source_list_content)
                     for line in source_list_content.splitlines():

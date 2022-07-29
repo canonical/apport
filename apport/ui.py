@@ -98,7 +98,7 @@ def thread_collect_info(
     if symptom_script:
         symb = {}
         try:
-            with open(symptom_script) as f:
+            with open(symptom_script, encoding="utf-8") as f:
                 # legacy, pylint: disable=exec-used
                 exec(compile(f.read(), symptom_script, "exec"), symb)
             package = symb["run"](report, ui)
@@ -255,7 +255,7 @@ class UserInterface:
             )
 
         gettext.textdomain(self.gettext_domain)
-        self.parse_argv()
+        self.args = self.parse_argv()
 
     #
     # main entry points
@@ -322,7 +322,7 @@ class UserInterface:
 
         return result
 
-    def run_crash(self, report_file, confirm=True):
+    def run_crash(self, report_file):
         """Present and report a particular crash.
 
         If confirm is True, ask the user what to do about it, and offer to file
@@ -448,7 +448,8 @@ class UserInterface:
                 sys.exit(1)
             raise
 
-    def finish_hang(self, f):
+    @staticmethod
+    def finish_hang(f):
         """Finish processing a hanging application after the core pipe handler
         has handed the report back.
 
@@ -514,7 +515,8 @@ class UserInterface:
             self.wait_for_pid(pid)
             self.restart()
 
-    def wait_for_pid(self, pid):
+    @staticmethod
+    def wait_for_pid(pid):
         """waitpid() does not work for non-child processes. Query the process
         state in a loop, waiting for "no such process."
         """
@@ -528,7 +530,8 @@ class UserInterface:
                     raise
             time.sleep(1)
 
-    def kill_segv(self, pid):
+    @staticmethod
+    def kill_segv(pid):
         os.kill(int(pid), signal.SIGSEGV)
 
     def run_report_bug(self, symptom_script=None):
@@ -564,7 +567,7 @@ class UserInterface:
                     os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
-                with io.open(stat_file) as f:
+                with io.open(stat_file, encoding="utf-8") as f:
                     stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
@@ -714,7 +717,9 @@ class UserInterface:
                 apport.packaging.get_version(p)
             except ValueError:
                 if not os.path.exists(
-                    os.path.join(apport.report._hook_dir, "source_%s.py" % p)
+                    os.path.join(
+                        apport.report.PACKAGE_HOOK_DIR, "source_%s.py" % p
+                    )
                 ):
                     print(
                         "Package %s not installed and no hook available,"
@@ -779,7 +784,7 @@ class UserInterface:
                 continue
             symb = {}
             try:
-                with open(script) as f:
+                with open(script, encoding="utf-8") as f:
                     # legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
             except Exception:  # pylint: disable=broad-except
@@ -858,7 +863,7 @@ class UserInterface:
             return True
         elif self.args.crash_file:
             try:
-                self.run_crash(self.args.crash_file, False)
+                self.run_crash(self.args.crash_file)
             except OSError as error:
                 self.ui_error_message(_("Invalid problem report"), str(error))
             return True
@@ -921,7 +926,8 @@ class UserInterface:
     # methods that implement workflow bits
     #
 
-    def parse_argv_update(self):
+    @staticmethod
+    def parse_argv_update() -> argparse.Namespace:
         """Parse command line options when being invoked in update mode."""
         parser = argparse.ArgumentParser(usage=_("%(prog)s <report number>"))
         parser.add_argument("-p", "--package", help=_("Specify package name."))
@@ -935,15 +941,16 @@ class UserInterface:
             ),
         )
         parser.add_argument("update_report", metavar="report_number", type=int)
-        self.args = parser.parse_args()
+        args = parser.parse_args()
 
-        self.args.symptom = None
-        self.args.filebug = False
-        self.args.crash_file = None
-        self.args.version = False
-        self.args.hanging = False
+        args.symptom = None
+        args.filebug = False
+        args.crash_file = None
+        args.version = False
+        args.hanging = False
+        return args
 
-    def parse_argv(self):
+    def parse_argv(self) -> argparse.Namespace:
         """Parse command line options.
 
         If a single argument is given without any options, this tries to "do
@@ -958,8 +965,7 @@ class UserInterface:
                 )
             cmd = sys.argv[0]
             if cmd.endswith("-update-bug") or cmd.endswith("-collect"):
-                self.parse_argv_update()
-                return
+                return self.parse_argv_update()
 
         if len(sys.argv) > 0 and cmd.endswith("-bug"):
             suppress = argparse.SUPPRESS
@@ -1074,19 +1080,19 @@ class UserInterface:
         )
         parser.add_argument("issue", nargs="?", help=argparse.SUPPRESS)
 
-        self.args = parser.parse_args()
-        issue = self.args.issue
-        del self.args.issue
+        args = parser.parse_args()
+        issue = args.issue
+        del args.issue
 
         # mutually exclusive arguments
-        if self.args.update_report:
+        if args.update_report:
             if (
-                self.args.filebug
-                or self.args.window
-                or self.args.symptom
-                or self.args.pid
-                or self.args.crash_file
-                or self.args.save
+                args.filebug
+                or args.window
+                or args.symptom
+                or args.pid
+                or args.crash_file
+                or args.save
             ):
                 parser.error(
                     "-u/--update-bug option cannot be used together"
@@ -1095,29 +1101,29 @@ class UserInterface:
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
-        # NOTE: uses sys.argv, since self.args if empty for all the options,
+        # NOTE: uses sys.argv, since args if empty for all the options,
         # e.g. "-v" or "-u $BUG"
         if len(sys.argv) == 1 and cmd.endswith("-bug"):
-            self.args.filebug = True
-            return
+            args.filebug = True
+            return args
 
         # one argument: guess "file bug" mode by argument type
         if issue is None:
-            return
+            return args
 
         # symptom?
         if os.path.exists(os.path.join(symptom_script_dir, issue + ".py")):
-            self.args.filebug = True
-            self.args.symptom = issue
+            args.filebug = True
+            args.symptom = issue
 
         # .crash/.apport file?
         elif issue.endswith(".crash") or issue.endswith(".apport"):
-            self.args.crash_file = issue
+            args.crash_file = issue
 
         # PID?
         elif issue.isdigit():
-            self.args.filebug = True
-            self.args.pid = issue
+            args.filebug = True
+            args.pid = issue
 
         # executable?
         elif "/" in issue:
@@ -1149,16 +1155,19 @@ class UserInterface:
                 if not pkg:
                     parser.error("%s does not belong to a package." % issue)
                     sys.exit(1)
-            self.args.filebug = True
-            self.args.package = pkg
+            args.filebug = True
+            args.package = pkg
 
         # otherwise: package name
         else:
-            self.args.filebug = True
+            args.filebug = True
             self.specified_a_pkg = True
-            self.args.package = issue
+            args.package = issue
 
-    def format_filesize(self, size):
+        return args
+
+    @staticmethod
+    def format_filesize(size):
         """Format the given integer as humanly readable and i18n'ed file
         size."""
 
@@ -1761,7 +1770,7 @@ class UserInterface:
         except Exception as error:  # pylint: disable=broad-except
             os.write(w, str(error))
             sys.exit(1)
-        os._exit(0)
+        os._exit(0)  # pylint: disable=protected-access
 
     def file_report(self):
         """Upload the current report and guide the user to the reporting
@@ -1814,20 +1823,6 @@ class UserInterface:
                 upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
-            except apport.crashdb.NeedsCredentials as error:
-                message = _(
-                    "Please enter your account information for the "
-                    "%s bug tracking system"
-                )
-                data = self.ui_question_userpass(message % str(error))
-                if data is not None:
-                    user, password = data
-                    self.crashdb.set_credentials(user, password)
-                    upthread = apport.REThread.REThread(
-                        target=self.crashdb.upload,
-                        args=(self.report, progress_callback),
-                    )
-                    upthread.start()
             except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
                 self.ui_error_message(
                     _("Network problem"),
@@ -2145,18 +2140,6 @@ class UserInterface:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
-        """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
-
-    def ui_question_userpass(self, message):
-        """Request username and password from user.
-
-        message is the text to be presented to the user when requesting for
-        username and password information.
-
-        Return a tuple (username, password), or None if cancelled.
         """
         raise NotImplementedError(
             "this function must be overridden by subclasses"

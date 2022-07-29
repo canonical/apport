@@ -43,9 +43,9 @@ class T(unittest.TestCase):
             f1 = os.path.join(td, "test 1.txt")
             f2 = os.path.join(td, "test:2.txt")
             sumfile = os.path.join(td, "sums.txt")
-            with open(f1, "w") as fd:
+            with open(f1, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff")
-            with open(f2, "w") as fd:
+            with open(f2, "w", encoding="utf-8") as fd:
                 fd.write("More stuff")
             # use one relative and one absolute path in checksums file
             with open(sumfile, "wb") as fd:
@@ -62,19 +62,19 @@ class T(unittest.TestCase):
                 impl._check_files_md5(sumfile), [], "correct md5sums"
             )
 
-            with open(f1, "w") as fd:
+            with open(f1, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff!")
             self.assertEqual(
                 impl._check_files_md5(sumfile), [f1[1:]], "file 1 wrong"
             )
-            with open(f2, "w") as fd:
+            with open(f2, "w", encoding="utf-8") as fd:
                 fd.write("More stuff!")
             self.assertEqual(
                 impl._check_files_md5(sumfile),
                 [f1[1:], f2],
                 "files 1 and 2 wrong",
             )
-            with open(f1, "w") as fd:
+            with open(f1, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff")
             self.assertEqual(
                 impl._check_files_md5(sumfile), [f2], "file 2 wrong"
@@ -514,7 +514,7 @@ usr/bin/frob                                            foo/frob
         s = os.path.join(self.workdir, "sources.list")
 
         # valid file, should grab the first mirror
-        with open(s, "w") as f:
+        with open(s, "w", encoding="utf-8") as f:
             f.write(
                 """# some comment
 deb-src http://source.mirror/foo tuxy main
@@ -529,7 +529,7 @@ deb http://secondary.mirror tuxy extra
             )
 
         # valid file with options
-        with open(s, "w") as f:
+        with open(s, "w", encoding="utf-8") as f:
             f.write(
                 """# some comment
 deb-src http://source.mirror/foo tuxy main
@@ -544,7 +544,7 @@ deb http://secondary.mirror tuxy extra
             )
 
         # empty file
-        with open(s, "w") as f:
+        with open(s, "w", encoding="utf-8") as f:
             f.flush()
         self.assertRaises(
             SystemError, impl._get_primary_mirror_from_apt_sources, s

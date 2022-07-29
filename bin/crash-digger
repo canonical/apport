@@ -20,10 +20,6 @@ import zlib
 import apport
 from apport.crashdb import get_crashdb
 
-#
-# classes
-#
-
 
 class CrashDigger:
     def __init__(
@@ -216,11 +212,6 @@ class CrashDigger:
             self.crashdb.duplicate_db_publish(self.publish_dir)
 
 
-#
-# functions
-#
-
-
 def parse_options():
     """Parse command line options and return arguments."""
 
@@ -307,50 +298,52 @@ def parse_options():
     return args
 
 
-#
-# main
-#
+def main():
+    opts = parse_options()
 
-opts = parse_options()
+    # support running from tree, then fall back to $PATH
+    if not opts.apport_retrace:
+        opts.apport_retrace = os.path.join(
+            os.path.dirname(sys.argv[0]), "apport-retrace"
+        )
+        if not os.access(opts.apport_retrace, os.X_OK):
+            opts.apport_retrace = "apport-retrace"
 
+    if opts.lockfile:
+        try:
+            f = os.open(
+                opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666
+            )
+            os.write(f, ("%u\n" % os.getpid()).encode())
+            os.close(f)
+        except OSError as error:
+            if error.errno == errno.EEXIST:
+                sys.exit(0)
+            else:
+                raise
 
-# support running from tree, then fall back to $PATH
-if not opts.apport_retrace:
-    opts.apport_retrace = os.path.join(
-        os.path.dirname(sys.argv[0]), "apport-retrace"
-    )
-    if not os.access(opts.apport_retrace, os.X_OK):
-        opts.apport_retrace = "apport-retrace"
-
-if opts.lockfile:
     try:
-        f = os.open(opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
-        os.write(f, ("%u\n" % os.getpid()).encode())
-        os.close(f)
-    except OSError as error:
-        if error.errno == errno.EEXIST:
-            sys.exit(0)
+        CrashDigger(
+            opts.config_dir,
+            opts.auth_file,
+            opts.cache,
+            opts.sandbox_dir,
+            opts.apport_retrace,
+            opts.verbose,
+            opts.dup_db,
+            opts.dupcheck_mode,
+            opts.publish_db,
+            opts.crash_db,
+        ).run()
+    except SystemExit as error:
+        if error.code == 99:
+            pass  # fall through lock cleanup
         else:
             raise
 
-try:
-    CrashDigger(
-        opts.config_dir,
-        opts.auth_file,
-        opts.cache,
-        opts.sandbox_dir,
-        opts.apport_retrace,
-        opts.verbose,
-        opts.dup_db,
-        opts.dupcheck_mode,
-        opts.publish_db,
-        opts.crash_db,
-    ).run()
-except SystemExit as error:
-    if error.code == 99:
-        pass  # fall through lock cleanup
-    else:
-        raise
+    if opts.lockfile:
+        os.unlink(opts.lockfile)
 
-if opts.lockfile:
-    os.unlink(opts.lockfile)
+
+if __name__ == "__main__":
+    main()

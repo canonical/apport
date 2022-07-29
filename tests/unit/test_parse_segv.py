@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(get_data_directory(), "general-hooks"))
 import parse_segv  # noqa: E402, pylint: disable=C0411,C0413
 
 # Default global registers, maps, and disassembly for testing
-regs = """\
+REGS = """\
 eax            0xffffffff -1
 ecx            0xbfc6af40   -1077498048
 edx            0x1  1
@@ -27,7 +27,7 @@ es             0x7b 123
 fs             0x4  4
 gs             0x33 51
 """
-regs64 = """\
+REGS64 = """\
 rax            0xffffffffffffffff   -1
 rbx            0x26eff4 2551796
 rcx            0xffffffffffffffff   -1
@@ -62,7 +62,7 @@ fooff          0x0  0
 fop            0x5d8    1496
 mxcsr          0x1f80   [ IM DM ZM OM UM PM ]
 """
-maps = """\
+MAPS = """\
 00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026c000-0026d000 ---p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026d000-0026f000 r--p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
@@ -107,7 +107,7 @@ b8077000-b807a000 rw-p 00000000 00:00 0
 b8096000-b8098000 rw-p 00000000 00:00 0
 bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
 """
-disasm = """\
+DISASM = """\
 0x08083540 <main+0>:    lea    0x4(%esp),%ecx
 0x08083544 <main+4>:    and    $0xfffffff0,%esp
 0x08083547 <main+7>:    pushl  -0x4(%ecx)
@@ -343,7 +343,7 @@ class T(unittest.TestCase):
         """Sub-register parsing"""
 
         disasm = """0x08083540 <main+0>:    mov    $1,%ecx"""
-        segv = parse_segv.ParseSegv(regs64, disasm, "")
+        segv = parse_segv.ParseSegv(REGS64, disasm, "")
 
         val = segv.register_value("%rdx")
         self.assertEqual(val, 0xFFFFFFFFFF600180, hex(val))
@@ -358,7 +358,7 @@ class T(unittest.TestCase):
         """Handles unknown segfaults"""
 
         disasm = """0x08083540 <main+0>:    mov    $1,%ecx"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertFalse(understood, details)
 
@@ -393,7 +393,7 @@ class T(unittest.TestCase):
 
         # Again, but 64bit
         disasm = """0x08083540 <main+0>:    mov    $1,%rcx"""
-        segv = parse_segv.ParseSegv(regs64, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS64, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertFalse(understood, details)
 
@@ -405,7 +405,7 @@ class T(unittest.TestCase):
         """Handles PC in missing VMA"""
 
         disasm = """0x00083540 <main+0>:    lea    0x4(%esp),%ecx"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -414,7 +414,7 @@ class T(unittest.TestCase):
         self.assertIn("executing unknown VMA", reason)
 
         disasm = """0x00083544:"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -426,7 +426,7 @@ class T(unittest.TestCase):
         """Handles PC in NULL VMA"""
 
         disasm = """0x00000540 <main+0>:    lea    0x4(%esp),%ecx"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -438,7 +438,7 @@ class T(unittest.TestCase):
         """Handles PC in writable NX VMA"""
 
         disasm = """0x005a3000 <main+0>:    lea    0x4(%esp),%ecx"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn("PC (0x005a3000) in non-executable VMA region:", details)
@@ -448,7 +448,7 @@ class T(unittest.TestCase):
         """Handles PC in non-writable NX VMA"""
 
         disasm = """0x00dfb000 <main+0>:    lea    0x4(%esp),%ecx"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn("PC (0x00dfb000) in non-executable VMA region:", details)
@@ -459,11 +459,11 @@ class T(unittest.TestCase):
     def test_segv_src_missing(self):
         """Handles source in missing VMA"""
 
-        reg = regs + "ecx            0x0006af24   0xbfc6af24"
+        reg = REGS + "ecx            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
         # Valid crash
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -475,7 +475,7 @@ class T(unittest.TestCase):
 
         # Valid crash
         disasm = "0x08083547 <main+7>:    callq  *%ecx"
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -487,10 +487,10 @@ class T(unittest.TestCase):
     def test_segv_src_null(self):
         """Handles source in NULL VMA"""
 
-        reg = regs + "ecx            0x00000024   0xbfc6af24"
+        reg = REGS + "ecx            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -503,9 +503,9 @@ class T(unittest.TestCase):
     def test_segv_src_not_readable(self):
         """Handles source not in readable VMA"""
 
-        reg = regs + "ecx            0x0026c080   0xbfc6af24"
+        reg = REGS + "ecx            0x0026c080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -519,10 +519,10 @@ class T(unittest.TestCase):
     def test_segv_dest_missing(self):
         """Handles destintation in missing VMA"""
 
-        reg = regs + "esp            0x0006af24   0xbfc6af24"
+        reg = REGS + "esp            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -535,10 +535,10 @@ class T(unittest.TestCase):
     def test_segv_dest_null(self):
         """Handles destintation in NULL VMA"""
 
-        reg = regs + "esp            0x00000024   0xbfc6af24"
+        reg = REGS + "esp            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -551,9 +551,9 @@ class T(unittest.TestCase):
     def test_segv_dest_not_writable(self):
         """Handles destination not in writable VMA"""
 
-        reg = regs + "esp            0x08048080   0xbfc6af24"
+        reg = REGS + "esp            0x08048080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -566,20 +566,20 @@ class T(unittest.TestCase):
         """Rejects insane disassemblies"""
 
         disasm = "0x08083547 <main+7>:    pushl  -0x4(blah)"
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         self.assertRaises(ValueError, segv.report)
 
         disasm = "0x08083547 <main+7>:    pushl  -04(%ecx)"
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         self.assertRaises(ValueError, segv.report)
 
     def test_segv_stack_failure(self):
         """Handles walking off the stack"""
 
         # Triggered via "push"
-        reg = regs + "esp            0xbfc56ff0   0xbfc56ff0"
+        reg = REGS + "esp            0xbfc56ff0   0xbfc56ff0"
         disasm = "0x08083547 <main+7>:    push  %eax"
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -589,9 +589,9 @@ class T(unittest.TestCase):
         )
 
         # Triggered via "call"
-        reg = regs + "esp            0xbfc56fff   0xbfc56fff"
+        reg = REGS + "esp            0xbfc56fff   0xbfc56fff"
         disasm = "0x08083547 <main+7>:    callq  0x08083540"
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -602,9 +602,9 @@ class T(unittest.TestCase):
         self.assertIn("Stack memory exhausted", details)
 
         # Triggered via unknown reason
-        reg = regs + "esp            0xdfc56000   0xdfc56000"
+        reg = REGS + "esp            0xdfc56000   0xdfc56000"
         disasm = """0x08083540 <main+0>:    mov    $1,%rcx"""
-        segv = parse_segv.ParseSegv(reg, disasm, maps)
+        segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
@@ -619,7 +619,7 @@ class T(unittest.TestCase):
 
         # Crash in valid code path
         disasm = """0x0056e010: ret"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertFalse(understood, details)
         self.assertIn("Reason could not be automatically determined.", details)
@@ -627,7 +627,7 @@ class T(unittest.TestCase):
 
         # Crash from kernel code path
         disasm = """0x00b67422 <__kernel_vsyscall+2>: ret"""
-        segv = parse_segv.ParseSegv(regs, disasm, maps)
+        segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, _, details = segv.report()
         self.assertFalse(understood, details)
         self.assertIn(

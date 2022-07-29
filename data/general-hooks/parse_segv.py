@@ -68,7 +68,8 @@ class ParseSegv:
             )
         return maps
 
-    def parse_regs(self, reg_str):
+    @staticmethod
+    def parse_regs(reg_str):
         regs = {}
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]
@@ -414,7 +415,7 @@ def add_info(report):
         report["SegvAnalysis"] = "Failure: %s" % (str(error))
 
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
@@ -424,11 +425,11 @@ if __name__ == "__main__":
         )
         sys.exit(0)
 
-    with open(sys.argv[1]) as registers_file:
+    with open(sys.argv[1], encoding="utf-8") as registers_file:
         registers = registers_file.read()
-    with open(sys.argv[2]) as disassembly_file:
+    with open(sys.argv[2], encoding="utf-8") as disassembly_file:
         disassembly = disassembly_file.read()
-    with open(sys.argv[3]) as maps_file:
+    with open(sys.argv[3], encoding="utf-8") as maps_file:
         maps = maps_file.read()
     segv = ParseSegv(registers, disassembly, maps)
     understood, reason, details = segv.report()
@@ -437,3 +438,7 @@ if __name__ == "__main__":
     if not understood:
         rc = 1
     sys.exit(rc)
+
+
+if __name__ == "__main__":
+    main()

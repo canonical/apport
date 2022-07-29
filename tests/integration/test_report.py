@@ -32,7 +32,7 @@ class T(unittest.TestCase):
         assert pid
         elapsed_time = 0.0
         while elapsed_time < timeout_sec:
-            with open(f"/proc/{pid}/cmdline") as fd:
+            with open(f"/proc/{pid}/cmdline", encoding="utf-8") as fd:
                 if fd.read():
                     return
 
@@ -204,7 +204,7 @@ class T(unittest.TestCase):
             pr.add_proc_info(pid=zgrep.pid)
             zgrep.communicate(b"\n")
         self.assertTrue(pr["ExecutablePath"].endswith("bin/zgrep"))
-        with open(pr["ExecutablePath"]) as fd:
+        with open(pr["ExecutablePath"], encoding="utf-8") as fd:
             self.assertEqual(
                 pr["InterpreterPath"],
                 os.path.realpath(fd.readline().strip()[2:]),
@@ -647,7 +647,7 @@ int main() { return f(42); }
             os.chdir(workdir)
 
             # create a test executable
-            with open("crash.c", "w") as fd:
+            with open("crash.c", "w", encoding="utf-8") as fd:
                 fd.write(code)
             assert (
                 subprocess.call(
@@ -890,7 +890,7 @@ int main() { return f(42); }
             script = os.path.join(workdir, "self-killing-script")
 
             # create a test script which produces a core dump for us
-            with open(script, "w") as fd:
+            with open(script, "w", encoding="utf-8") as fd:
                 fd.write(
                     textwrap.dedent(
                         f"""\
@@ -1010,7 +1010,7 @@ int main() { return f(42); }
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            with open(script, "w") as fd:
+            with open(script, "w", encoding="utf-8") as fd:
                 fd.write(
                     textwrap.dedent(
                         """\
@@ -1055,7 +1055,7 @@ int main() { return f(42); }
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            with open(script, "w") as fd:
+            with open(script, "w", encoding="utf-8") as fd:
                 fd.write(
                     textwrap.dedent(
                         """\
@@ -1280,13 +1280,15 @@ int main() { return f(42); }
     def test_add_hooks_info(self):
         """add_hooks_info()."""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         try:
             with open(
-                os.path.join(apport.report._hook_dir, "foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "foo.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1302,7 +1304,9 @@ int main() { return f(42); }
                 )
 
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo1.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo1.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1315,7 +1319,9 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo2.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo2.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1326,7 +1332,9 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._common_hook_dir, "foo3.py"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "foo3.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1339,7 +1347,9 @@ int main() { return f(42); }
 
             # should only catch .py files
             with open(
-                os.path.join(apport.report._common_hook_dir, "notme"), "w"
+                os.path.join(apport.report.GENERAL_HOOK_DIR, "notme"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1445,7 +1455,9 @@ int main() { return f(42); }
 
             # source package hook
             with open(
-                os.path.join(apport.report._hook_dir, "source_foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "source_foo.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1490,18 +1502,18 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info("fake_ui"), True)
 
         finally:
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
     def test_add_hooks_info_opt(self):
         """add_hooks_info() for a package in /opt"""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         orig_opt_dir = apport.report._opt_dir
         apport.report._opt_dir = tempfile.mkdtemp()
         try:
@@ -1514,7 +1526,11 @@ int main() { return f(42); }
                 "package-hooks",
             )
             os.makedirs(opt_hook_dir)
-            with open(os.path.join(opt_hook_dir, "source_foo.py"), "w") as fd:
+            with open(
+                os.path.join(opt_hook_dir, "source_foo.py"),
+                "w",
+                encoding="utf-8",
+            ) as fd:
                 fd.write(
                     textwrap.dedent(
                         """\
@@ -1523,7 +1539,9 @@ int main() { return f(42); }
                         """
                     )
                 )
-            with open(os.path.join(opt_hook_dir, "foo-bin.py"), "w") as fd:
+            with open(
+                os.path.join(opt_hook_dir, "foo-bin.py"), "w", encoding="utf-8"
+            ) as fd:
                 fd.write(
                     textwrap.dedent(
                         """\
@@ -1543,24 +1561,26 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info("fake_ui"), False)
             self.assertEqual(r["SourceHook"], "1")
         finally:
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
             shutil.rmtree(apport.report._opt_dir)
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
             apport.report._opt_dir = orig_opt_dir
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_add_hooks_info_errors(self, stderr_mock):
         """add_hooks_info() with errors in hooks"""
 
-        orig_hook_dir = apport.report._hook_dir
-        apport.report._hook_dir = tempfile.mkdtemp()
-        orig_common_hook_dir = apport.report._common_hook_dir
-        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
         try:
             with open(
-                os.path.join(apport.report._hook_dir, "fooprogs.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "fooprogs.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1573,7 +1593,9 @@ int main() { return f(42); }
                     )
                 )
             with open(
-                os.path.join(apport.report._hook_dir, "source_foo.py"), "w"
+                os.path.join(apport.report.PACKAGE_HOOK_DIR, "source_foo.py"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1611,10 +1633,10 @@ int main() { return f(42); }
             self.assertIn("line 3, in add_info", r["HookError_source_foo"])
             self.assertNotIn("NameError:", r["HookError_fooprogs"])
         finally:
-            shutil.rmtree(apport.report._hook_dir)
-            shutil.rmtree(apport.report._common_hook_dir)
-            apport.report._hook_dir = orig_hook_dir
-            apport.report._common_hook_dir = orig_common_hook_dir
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
     def test_ignoring(self):
         """mark_ignore() and check_ignored()."""
@@ -1625,9 +1647,13 @@ int main() { return f(42); }
             workdir, "ignore.xml"
         )
         try:
-            with open(os.path.join(workdir, "bash"), "w") as fd:
+            with open(
+                os.path.join(workdir, "bash"), "w", encoding="utf-8"
+            ) as fd:
                 fd.write("bash")
-            with open(os.path.join(workdir, "crap"), "w") as fd:
+            with open(
+                os.path.join(workdir, "crap"), "w", encoding="utf-8"
+            ) as fd:
                 fd.write("crap")
 
             bash_rep = apport.report.Report()
@@ -1657,14 +1683,18 @@ int main() { return f(42); }
 
             # poke crap so that it has a newer timestamp
             time.sleep(1)
-            with open(os.path.join(workdir, "crap"), "w") as fd:
+            with open(
+                os.path.join(workdir, "crap"), "w", encoding="utf-8"
+            ) as fd:
                 fd.write("crapnew")
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), False)
             self.assertEqual(cp_rep.check_ignored(), False)
 
             # do not complain about an empty ignore file
-            with open(apport.report.apport.report._ignore_file, "w") as fd:
+            with open(
+                apport.report.apport.report._ignore_file, "w", encoding="utf-8"
+            ) as fd:
                 fd.write("")
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
@@ -1699,13 +1729,17 @@ int main() { return f(42); }
 
             # should not stumble over comments
             with open(
-                os.path.join(apport.report._blacklist_dir, "README"), "w"
+                os.path.join(apport.report._blacklist_dir, "README"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("# Ignore file\n#/bin/bash\n")
 
             # no ignores on nonmatching paths
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl1"), "w"
+                os.path.join(apport.report._blacklist_dir, "bl1"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/bas\n/bin/bashh\nbash\nbin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1713,7 +1747,9 @@ int main() { return f(42); }
 
             # ignore crap now
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl_2"), "w"
+                os.path.join(apport.report._blacklist_dir, "bl_2"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/crap\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1721,7 +1757,9 @@ int main() { return f(42); }
 
             # ignore bash now
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl1"), "a"
+                os.path.join(apport.report._blacklist_dir, "bl1"),
+                "a",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
@@ -1750,13 +1788,17 @@ int main() { return f(42); }
 
             # should not stumble over comments
             with open(
-                os.path.join(apport.report._whitelist_dir, "README"), "w"
+                os.path.join(apport.report._whitelist_dir, "README"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("# Ignore file\n#/bin/bash\n")
 
             # accepts matching paths
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl1"), "w"
+                os.path.join(apport.report._whitelist_dir, "wl1"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1764,7 +1806,9 @@ int main() { return f(42); }
 
             # also accept crap now
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl_2"), "w"
+                os.path.join(apport.report._whitelist_dir, "wl_2"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/crap\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1772,7 +1816,9 @@ int main() { return f(42); }
 
             # only complete matches accepted
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl1"), "w"
+                os.path.join(apport.report._whitelist_dir, "wl1"),
+                "w",
+                encoding="utf-8",
             ) as fd:
                 fd.write("/bin/bas\n/bin/bashh\nbash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
@@ -1832,7 +1878,7 @@ int main() { return f(42); }
         if ret is None:
             # ensure that we don't run under logind, and thus the None is
             # justified
-            with open("/proc/self/cgroup") as f:
+            with open("/proc/self/cgroup", encoding="utf-8") as f:
                 contents = f.read()
             sys.stdout.write("[not running under logind] ")
             sys.stdout.flush()
@@ -1856,7 +1902,7 @@ int main() { return f(42); }
         if ret is None:
             # ensure that we don't run under logind, and thus the None is
             # justified
-            with open("/proc/self/cgroup") as f:
+            with open("/proc/self/cgroup", encoding="utf-8") as f:
                 contents = f.read()
             sys.stdout.write("[not running under logind] ")
             sys.stdout.flush()

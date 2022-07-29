@@ -105,7 +105,7 @@ void makeleak(void){
     /*free(leak);*/
 }"""
 
-        with open("memleak.c", "w") as fd:
+        with open("memleak.c", "w", encoding="utf-8") as fd:
             fd.write(code)
         cmd = ["gcc", "-Wall", "-Werror", "-g", "memleak.c", "-o", "memleak"]
         self.assertEqual(
@@ -152,6 +152,6 @@ void makeleak(void){
             "A log file %s should exist but does not" % logpath,
         )
 
-        with open(logpath) as f:
+        with open(logpath, encoding="utf-8") as f:
             log = f.read()
             self.assertIn(exepath, log)

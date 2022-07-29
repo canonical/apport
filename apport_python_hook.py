@@ -24,7 +24,7 @@ def enabled():
         # pylint: disable=import-outside-toplevel; for Python starup time
         import re
 
-        with open(CONFIG) as f:
+        with open(CONFIG, encoding="utf-8") as f:
             conf = f.read()
         return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
     except OSError:

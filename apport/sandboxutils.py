@@ -65,7 +65,7 @@ def report_package_versions(report):
 
 
 def needed_runtime_packages(
-    report, sandbox, pkgmap_cache_dir, pkg_versions, verbose=False
+    report, pkgmap_cache_dir, pkg_versions, verbose=False
 ):
     """Determine necessary runtime packages for given report.
 
@@ -262,7 +262,7 @@ def make_sandbox(
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(
-        report, sandbox_dir, pkgmap_cache_dir, pkg_versions, verbose
+        report, pkgmap_cache_dir, pkg_versions, verbose
     )
 
     # package hooks might reassign Package:, check that we have the originally
