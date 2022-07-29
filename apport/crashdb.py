@@ -785,13 +785,6 @@ class CrashDatabase:
             ],
         )
 
-    def set_credentials(self, username, password):
-        """Set username and password."""
-
-        raise NotImplementedError(
-            "this method must be implemented by a concrete subclass"
-        )
-
     def external_login(self, ui):
         """Login to the database via an external resource, e.g. web browser."""
         pass
