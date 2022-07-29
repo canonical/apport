@@ -22,7 +22,7 @@ import apport.crashdb
 
 class Github:
     """Wrapper around Github API, used to log in and post issues."""
-    
+
     __last_request: float = time.time()
 
     def __init__(self, client_id, ui):
@@ -45,16 +45,19 @@ class Github:
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
         try:
-            result = requests.post(url, headers=headers, data=data, timeout=5.0)
+            result = requests.post(
+                url, headers=headers, data=data, timeout=5.0
+            )
         except requests.RequestException as err:
-            self.ui.ui_info_message("Failed connection", 
-                f"Failed connection to {url}.\nPlease check your internet connection and try again."
+            self.ui.ui_info_message(
+                "Failed connection",
+                f"Failed connection to {url}.\nPlease check your internet connection and try again.",
             )
             raise err
         finally:
             self.__last_request = time.time()
 
-        result.raise_for_status() # Not using UI as the user has little control over this
+        result.raise_for_status()  # Not using UI as the user has little control over this
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
@@ -90,7 +93,7 @@ class Github:
         self.__authentication_data = None
         self.__cooldown = 0
         self.__expiry = 0
-    
+
     def authentication_complete(self) -> bool:
         """
         Asks Github if the user has logged in already.
@@ -104,10 +107,13 @@ class Github:
         t = time.time()
         waittime = self.__cooldown - (t - self.__last_request)
         if t + waittime > self.__expiry:
-            self.ui.info_message("Failed login", "Github authentication expired. Please try again.")
+            self.ui.info_message(
+                "Failed login",
+                "Github authentication expired. Please try again.",
+            )
             raise RuntimeError("Github authentication expired")
         if waittime > 0:
-            time.sleep(waittime) # Avoids spamming the API
+            time.sleep(waittime)  # Avoids spamming the API
 
         url = "https://github.com/login/oauth/access_token"
         response = self.api_authentication(url, self.__authentication_data)
