@@ -557,7 +557,7 @@ class MainUserInterface(apport.ui.UserInterface):
                 b = QCheckBox(option)
             else:
                 b = QRadioButton(option)
-            dialog.vbox_choices.insertWidget(0, b)
+            dialog.vbox_choices.addWidget(b)
 
         response = dialog.exec_()
 
