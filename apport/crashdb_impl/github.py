@@ -12,7 +12,6 @@
 import json
 import time
 from dataclasses import dataclass
-from typing import final
 
 import requests
 
@@ -40,7 +39,7 @@ class Github:
         return string
 
     def _post(self, url: str, data: str):
-        """POSTs the given data to the given URL. Uses auth token if available"""
+        "POSTs the given data to the given URL. Uses auth token if available"
         headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
@@ -51,13 +50,14 @@ class Github:
         except requests.RequestException as err:
             self.ui.ui_info_message(
                 "Failed connection",
-                f"Failed connection to {url}.\nPlease check your internet connection and try again.",
+                f"Failed connection to {url}.\n"
+                + "Please check your internet connection and try again.",
             )
             raise err
         finally:
             self.__last_request = time.time()
 
-        result.raise_for_status()  # Not using UI as the user has little control over this
+        result.raise_for_status()  # Not using UI: the user can't do much here
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
@@ -68,7 +68,7 @@ class Github:
         return self._post(url, json.dumps(data))
 
     def __enter__(self):
-        """Enters login process. At exit, login process ends (session doesn't)."""
+        "Enters login process. At exit, login process ends (session doesn't)."
         data = {"client_id": self.__client_id, "scope": "public_repo"}
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
