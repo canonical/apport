@@ -45,7 +45,14 @@ class Github:
             headers["Authorization"] = f"token {self.__access_token}"
         result = requests.post(url, headers=headers, data=data)
         self.__last_request = time.time()
-        result.raise_for_status()
+        try:
+            result.raise_for_status()
+        except requests.HTTPError as err:
+            self.ui.ui_info_message("Failed connection", 
+                f"Failed connection to {url}.\nPlease check your internet connection and try again."
+            )
+            raise err
+
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
@@ -81,7 +88,7 @@ class Github:
         self.__authentication_data = None
         self.__cooldown = 0
         self.__expiry = 0
-
+    
     def authentication_complete(self) -> bool:
         """
         Asks Github if the user has logged in already.
@@ -95,9 +102,8 @@ class Github:
         t = time.time()
         waittime = self.__cooldown - (t - self.__last_request)
         if t + waittime > self.__expiry:
-            raise RuntimeError(
-                "Failed to log into Github: too much time elapsed."
-            )
+            self.ui.info_message("Failed login", "Github authentication expired. Please try again.")
+            raise RuntimeError("Github authentication expired")
         if waittime > 0:
             time.sleep(waittime) # Avoids spamming the API
 
