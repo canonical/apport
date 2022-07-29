@@ -12,6 +12,7 @@
 import json
 import time
 from dataclasses import dataclass
+from typing import final
 
 import requests
 
@@ -43,16 +44,17 @@ class Github:
         headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
-        result = requests.post(url, headers=headers, data=data)
-        self.__last_request = time.time()
         try:
-            result.raise_for_status()
-        except requests.HTTPError as err:
+            result = requests.post(url, headers=headers, data=data, timeout=5.0)
+        except requests.RequestException as err:
             self.ui.ui_info_message("Failed connection", 
                 f"Failed connection to {url}.\nPlease check your internet connection and try again."
             )
             raise err
+        finally:
+            self.__last_request = time.time()
 
+        result.raise_for_status() # Not using UI as the user has little control over this
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict):
