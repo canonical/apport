@@ -151,7 +151,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if Launchpad is None:
             sys.stderr.write(
                 "ERROR: The launchpadlib Python %s module is not installed."
-                " This functionality is not available.\n" % sys.version[0]
+                " Please install the python3-launchpadlib package!\n"
+                % sys.version[0]
             )
             sys.exit(1)
 
