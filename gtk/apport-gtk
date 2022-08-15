@@ -28,7 +28,7 @@ try:
     gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
     from gi.repository import GdkX11, GLib, Gtk, Wnck
-except (ImportError, RuntimeError) as error:
+except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
     sys.stderr.write("Cannot start: %s\n" % str(error))
     sys.exit(1)
