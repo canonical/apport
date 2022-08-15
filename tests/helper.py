@@ -11,6 +11,12 @@ import urllib.error
 import urllib.request
 
 
+def get_init_system() -> str:
+    """Return the name of the running init system (PID 1)."""
+    with open("/proc/1/comm", encoding="utf-8") as comm:
+        return comm.read().rstrip()
+
+
 def has_internet():
     """Return if there is sufficient network connection for the tests.
 

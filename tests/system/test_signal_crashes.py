@@ -10,7 +10,7 @@ import time
 import unittest
 
 import apport.fileutils
-from tests.helper import pidof
+from tests.helper import get_init_system, pidof
 from tests.paths import (
     get_data_directory,
     is_local_source_directory,
@@ -207,6 +207,9 @@ class T(unittest.TestCase):
                 f"{os.path.basename(self.TEST_EXECUTABLE)}\\..*\\.crash",
             )
 
+    @unittest.skipIf(
+        get_init_system() != "systemd", "running init system is not systemd"
+    )
     @unittest.skipIf(
         shutil.which("systemd-run") is None, "systemd-run not installed"
     )

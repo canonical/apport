@@ -2,7 +2,7 @@
 
 import unittest
 
-from tests.helper import wrap_object
+from tests.helper import get_init_system, wrap_object
 
 
 class Multiply:
@@ -16,6 +16,12 @@ class Multiply:
 
 
 class T(unittest.TestCase):
+    def test_get_init_systemd(self):
+        open_mock = unittest.mock.mock_open(read_data="systemd\n")
+        with unittest.mock.patch("builtins.open", open_mock):
+            self.assertEqual(get_init_system(), "systemd")
+        open_mock.assert_called_once_with("/proc/1/comm", encoding="utf-8")
+
     def test_wrap_object_with_statement(self):
         with wrap_object(Multiply, "__init__") as mock:
             m = Multiply(7)

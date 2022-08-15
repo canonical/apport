@@ -17,7 +17,7 @@ import tempfile
 import typing
 import unittest
 
-from tests.helper import pidof
+from tests.helper import get_init_system, pidof
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -63,6 +63,9 @@ class TestUnkillableShutdown(unittest.TestCase):
     def _get_all_pids():
         return [int(pid) for pid in os.listdir("/proc") if pid.isdigit()]
 
+    @unittest.skipIf(
+        get_init_system() != "systemd", "running init system is not systemd"
+    )
     def _launch_process_with_different_session_id(
         self, existing_pids: list
     ) -> int:
