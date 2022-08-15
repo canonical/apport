@@ -17,6 +17,10 @@ import shutil
 import subprocess
 import sys
 
+import apport
+import apport.ui
+from apport import unicode_gettext as _
+
 try:
     from PyQt5 import uic
     from PyQt5.QtCore import (
@@ -42,11 +46,6 @@ try:
         QTreeWidget,
         QTreeWidgetItem,
     )
-
-    import apport
-    import apport.ui
-    from apport import unicode_gettext as _
-
 except ImportError as error:
     # this can happen while upgrading python packages
     apport.fatal(
