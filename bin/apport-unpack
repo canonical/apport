@@ -62,15 +62,15 @@ else:
                 pr.load(f, binary=False)
     except OSError as error:
         fatal(str(error))
-for k in pr:
-    if pr[k] == "":
-        bin_keys.append(k)
+for key, value in pr.items():
+    if value == "":
+        bin_keys.append(key)
         continue
-    with open(os.path.join(args.target_directory, k), "wb") as f:
-        if isinstance(pr[k], str):
-            f.write(pr[k].encode("UTF-8"))
+    with open(os.path.join(args.target_directory, key), "wb") as f:
+        if isinstance(value, str):
+            f.write(value.encode("UTF-8"))
         else:
-            f.write(pr[k])
+            f.write(value)
 try:
     if args.report.endswith(".gz"):
         with gzip.open(args.report, "rb") as f:
