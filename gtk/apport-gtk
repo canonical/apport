@@ -365,6 +365,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                     self.w("subtitle_label").set_label(body[:1024])
 
         if icon:
+            # pylint: disable=import-outside-toplevel
             from gi.repository import GdkPixbuf
 
             builtin = Gtk.IconLookupFlags.USE_BUILTIN

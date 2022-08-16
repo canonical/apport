@@ -283,6 +283,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_lp_binary_package(release, package, version, arch):
         # allow unauthenticated downloads
         apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
+        # pylint: disable=import-outside-toplevel
         from launchpadlib.launchpad import Launchpad
 
         launchpad = Launchpad.login_anonymously(
@@ -347,6 +348,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def get_lp_source_package(package, version):
+        # pylint: disable=import-outside-toplevel
         from launchpadlib.launchpad import Launchpad
 
         launchpad = Launchpad.login_anonymously(

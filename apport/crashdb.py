@@ -74,7 +74,7 @@ class CrashDatabase:
         path specifies an SQLite database. It will be created if it does not
         exist yet.
         """
-        import sqlite3 as dbapi2
+        import sqlite3 as dbapi2  # pylint: disable=import-outside-toplevel
 
         assert (
             dbapi2.paramstyle == "qmark"

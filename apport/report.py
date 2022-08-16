@@ -427,7 +427,7 @@ class Report(problem_report.ProblemReport):
         self["Snap.Info.%s" % snapname] = _command_output(
             ["snap", "info", "--abs-time", snapname]
         )
-        import yaml
+        import yaml  # pylint: disable=import-outside-toplevel
 
         with open(
             "/snap/%s/current/meta/snap.yaml" % snapname, encoding="utf-8"
