@@ -5,7 +5,7 @@ import unittest
 from tests.helper import get_init_system, wrap_object
 
 
-class Multiply:
+class Multiply:  # pylint: disable=too-few-public-methods
     """Test class for wrap_object test cases."""
 
     def __init__(self, multiplier):
