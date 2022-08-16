@@ -63,7 +63,7 @@ else:
     except OSError as error:
         fatal(str(error))
 for key, value in pr.items():
-    if value == "":
+    if value is None:
         bin_keys.append(key)
         continue
     with open(os.path.join(args.target_directory, key), "wb") as f:

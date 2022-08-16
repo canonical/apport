@@ -267,7 +267,7 @@ class T(unittest.TestCase):
 
         # test with skipping binary data
         pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertEqual(pr["File"], "")
+        self.assertEqual(pr["File"], None)
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping compressed binary data
@@ -301,7 +301,7 @@ class T(unittest.TestCase):
 
         # test with skipping binary data
         pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertEqual(pr["File"], "")
+        self.assertEqual(pr["File"], None)
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping CompressedValues

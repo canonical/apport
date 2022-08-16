@@ -138,6 +138,7 @@ class ProblemReport(collections.UserDict):
             # continuation line
             if line.startswith(b" "):
                 if b64_block and not binary:
+                    value = None
                     continue
                 assert key is not None and value is not None
                 if b64_block:
@@ -156,7 +157,6 @@ class ProblemReport(collections.UserDict):
                     b64_block = False
                     bd = None
                 if key:
-                    assert value is not None
                     if remaining_keys is not None:
                         try:
                             remaining_keys.remove(key)
@@ -274,7 +274,7 @@ class ProblemReport(collections.UserDict):
 
         This could happen when using binary=False in load().
         """
-        return "" in self.values()
+        return None in self.values()
 
     @classmethod
     def _decompress_line(cls, line, decompressor, value=b""):

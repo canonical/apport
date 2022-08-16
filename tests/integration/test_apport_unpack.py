@@ -35,6 +35,7 @@ class T(unittest.TestCase):
         r["unicode"] = klass.utf8_str.decode("UTF-8")
         r["binary"] = klass.bindata
         r["compressed"] = problem_report.CompressedValue(b"FooFoo!")
+        r["separator"] = ""
 
         klass.report_file = os.path.join(klass.workdir, "test.apport")
         with open(klass.report_file, "wb") as f:
