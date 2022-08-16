@@ -63,20 +63,20 @@ class T(unittest.TestCase):
     )
 
     @classmethod
-    def setUpClass(klass):
-        klass.orig_environ = os.environ.copy()
+    def setUpClass(cls):
+        cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
 
-        klass.argv = [apport_kde_path]
-        klass.app = QApplication(klass.argv)
-        klass.app.applicationName = "apport-kde"
-        klass.app.applicationDisplayName = _("Apport")
-        klass.app.windowIcon = QIcon.fromTheme("apport")
+        cls.argv = [apport_kde_path]
+        cls.app = QApplication(cls.argv)
+        cls.app.applicationName = "apport-kde"
+        cls.app.applicationDisplayName = _("Apport")
+        cls.app.windowIcon = QIcon.fromTheme("apport")
 
         r = apport.Report()
         r.add_os_info()
-        klass.distro = r["DistroRelease"]
+        cls.distro = r["DistroRelease"]
 
     @classmethod
     def tearDownClass(cls):

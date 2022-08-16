@@ -307,8 +307,8 @@ class ProblemReport(collections.UserDict):
 
         return decompressor, value
 
-    @classmethod
-    def is_binary(klass, string):
+    @staticmethod
+    def is_binary(string):
         """Check if the given strings contains binary data."""
 
         if isinstance(string, bytes):
@@ -318,10 +318,10 @@ class ProblemReport(collections.UserDict):
         return False
 
     @classmethod
-    def _try_unicode(klass, value):
+    def _try_unicode(cls, value):
         """Try to convert bytearray value to unicode"""
 
-        if isinstance(value, bytes) and not klass.is_binary(value):
+        if isinstance(value, bytes) and not cls.is_binary(value):
             try:
                 return value.decode("UTF-8")
             except UnicodeDecodeError:
@@ -712,8 +712,8 @@ class ProblemReport(collections.UserDict):
         """
         return set(self.data.keys()) - self.old_keys
 
-    @classmethod
-    def _strip_gzip_header(klass, line):
+    @staticmethod
+    def _strip_gzip_header(line):
         """Strip gzip header from line and return the rest."""
 
         flags = line[3]
@@ -733,8 +733,8 @@ class ProblemReport(collections.UserDict):
 
         return line[offset:]
 
-    @classmethod
-    def _assert_bin_mode(klass, file):
+    @staticmethod
+    def _assert_bin_mode(file):
         """Assert that given file object is in binary mode"""
 
         assert not hasattr(

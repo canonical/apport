@@ -2009,8 +2009,8 @@ class Report(problem_report.ProblemReport):
                 (int(m.group(1), 16), int(m.group(2), 16), m.group(3))
             )
 
-    @classmethod
-    def get_logind_session(klass, pid=None, proc_pid_fd=None):
+    @staticmethod
+    def get_logind_session(pid=None, proc_pid_fd=None):
         """Get logind session path and start time.
 
         Return (session_id, session_start_timestamp) if process is in a logind

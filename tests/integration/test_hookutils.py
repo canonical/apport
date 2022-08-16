@@ -536,8 +536,8 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         out = apport.hookutils.command_output(["cat"], input=b"hello")
         self.assertEqual(out, "hello")
 
-    @classmethod
-    def _get_mem_usage(klass):
+    @staticmethod
+    def _get_mem_usage():
         """Get current memory usage in kB"""
 
         with open("/proc/self/status", encoding="utf-8") as f:

@@ -666,8 +666,8 @@ class CrashDatabase:
         )
         self.duplicate_db.commit()
 
-    @classmethod
-    def duplicate_sig_hash(klass, sig):
+    @staticmethod
+    def duplicate_sig_hash(sig):
         """Create a www/URL proof hash for a duplicate signature"""
 
         # cannot hash multi-line custom duplicate signatures

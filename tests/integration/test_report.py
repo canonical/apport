@@ -615,7 +615,7 @@ class T(unittest.TestCase):
 
     @classmethod
     def _generate_sigsegv_report(
-        klass,
+        cls,
         file=None,
         signal="11",
         code="""
@@ -672,7 +672,7 @@ int main() { return f(42); }
                 env={"HOME": workdir},
                 stdout=subprocess.PIPE,
             )
-            klass._validate_core("core")
+            cls._validate_core("core")
 
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
             pr["CoreDump"] = (os.path.join(workdir, "core"),)
@@ -687,8 +687,8 @@ int main() { return f(42); }
 
         return pr
 
-    @classmethod
-    def _validate_core(klass, core_path):
+    @staticmethod
+    def _validate_core(core_path):
         subprocess.check_call(["sync"])
         count = 0
         while count < 21:

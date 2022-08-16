@@ -584,8 +584,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return None
 
-    @classmethod
-    def get_system_architecture(klass):
+    @staticmethod
+    def get_system_architecture():
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
 
@@ -1404,8 +1404,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return mismatches
 
-    @classmethod
-    def _get_primary_mirror_from_apt_sources(klass, apt_sources):
+    @staticmethod
+    def _get_primary_mirror_from_apt_sources(apt_sources):
         """Heuristically determine primary mirror from an apt sources.list"""
 
         with open(apt_sources, encoding="utf-8") as f:
@@ -1851,8 +1851,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "Unable to import key for %s" % ppa_archive_url
                     )
 
-    @classmethod
-    def _deb_version(klass, pkg):
+    @staticmethod
+    def _deb_version(pkg):
         """Return the version of a .deb file"""
 
         dpkg = subprocess.run(

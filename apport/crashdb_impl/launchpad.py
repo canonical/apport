@@ -1177,8 +1177,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return mime
 
-    @classmethod
-    def _filter_tag_names(klass, tags):
+    @staticmethod
+    def _filter_tag_names(tags):
         """Replace characters from tags which are not palatable to Launchpad"""
 
         res = ""
@@ -2083,9 +2083,9 @@ and more
         # Launchpad specific implementation and tests
         #
 
-        @classmethod
+        @staticmethod
         @cache
-        def _get_instance(klass):
+        def _get_instance():
             """Create a CrashDB instance"""
 
             launchpad_instance = (
@@ -2381,8 +2381,8 @@ NameError: global name 'weird' is not defined"""
                 self.crashdb.get_fixed_version(self.get_python_report()), None
             )
 
-        @classmethod
-        def _generate_sigsegv_report(klass, signal="11"):
+        @staticmethod
+        def _generate_sigsegv_report(signal="11"):
             """Create a test executable which will die with a SIGSEGV, generate
             a core dump for it, create a problem report with those two
             arguments (ExecutablePath and CoreDump) and call add_gdb_info().

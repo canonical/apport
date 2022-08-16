@@ -21,31 +21,31 @@ from tests.paths import local_test_environment
 
 class T(unittest.TestCase):
     @classmethod
-    def setUpClass(klass):
-        klass.env = (
+    def setUpClass(cls):
+        cls.env = (
             os.environ | local_test_environment() | {"LANGUAGE": "C.UTF-8"}
         )
-        klass.workdir = tempfile.mkdtemp()
+        cls.workdir = tempfile.mkdtemp()
 
         # create problem report file with all possible data types
         r = problem_report.ProblemReport()
-        klass.utf8_str = b"a\xe2\x99\xa5b"
-        klass.bindata = b"\x00\x01\xFF\x40"
-        r["utf8"] = klass.utf8_str
-        r["unicode"] = klass.utf8_str.decode("UTF-8")
-        r["binary"] = klass.bindata
+        cls.utf8_str = b"a\xe2\x99\xa5b"
+        cls.bindata = b"\x00\x01\xFF\x40"
+        r["utf8"] = cls.utf8_str
+        r["unicode"] = cls.utf8_str.decode("UTF-8")
+        r["binary"] = cls.bindata
         r["compressed"] = problem_report.CompressedValue(b"FooFoo!")
         r["separator"] = ""
 
-        klass.report_file = os.path.join(klass.workdir, "test.apport")
-        with open(klass.report_file, "wb") as f:
+        cls.report_file = os.path.join(cls.workdir, "test.apport")
+        with open(cls.report_file, "wb") as f:
             r.write(f)
 
-        klass.unpack_dir = os.path.join(klass.workdir, "un pack")
+        cls.unpack_dir = os.path.join(cls.workdir, "un pack")
 
     @classmethod
-    def tearDownClass(klass):
-        shutil.rmtree(klass.workdir)
+    def tearDownClass(cls):
+        shutil.rmtree(cls.workdir)
 
     def tearDown(self):
         if os.path.isdir(self.unpack_dir):

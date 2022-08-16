@@ -357,8 +357,8 @@ class T(unittest.TestCase):
         )
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
-    @classmethod
-    def _gcc_version_path(klass):
+    @staticmethod
+    def _gcc_version_path():
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
 

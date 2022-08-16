@@ -14,11 +14,9 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):
-    @classmethod
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
 
-    @classmethod
     def tearDown(self):
         shutil.rmtree(self.workdir)
 

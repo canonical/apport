@@ -52,13 +52,13 @@ class T(unittest.TestCase):
     POLLING_INTERVAL_MS = 10
 
     @classmethod
-    def setUpClass(klass):
-        klass.orig_environ = os.environ.copy()
+    def setUpClass(cls):
+        cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
         r = apport.Report()
         r.add_os_info()
-        klass.distro = r["DistroRelease"].split()[0]
+        cls.distro = r["DistroRelease"].split()[0]
 
     @classmethod
     def tearDownClass(cls):

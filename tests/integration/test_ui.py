@@ -718,8 +718,8 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
         self.assertTrue(self.ui.ic_progress_pulses > 0)
 
-    @classmethod
-    def _find_unused_pid(klass):
+    @staticmethod
+    def _find_unused_pid():
         """Find and return an unused PID"""
 
         pid = 1
