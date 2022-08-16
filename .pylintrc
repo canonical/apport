@@ -21,8 +21,13 @@ persistent=no
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-# TODO: Fix refactor and convention!
-disable=R,C,bad-option-value,fixme
+disable=bad-option-value,fixme,
+  # TODO: Fix all following disabled checks!
+  R,
+  consider-using-f-string,
+  invalid-name,
+  missing-docstring,
+  too-many-lines,
 
 
 [REPORTS]
