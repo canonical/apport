@@ -1621,9 +1621,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         files = [file.encode()]
         if file.startswith("usr/"):
             files.append(file[4:].encode())
-        for file in files:
+        for filename in files:
             try:
-                pkg = contents_mapping[file].decode()
+                pkg = contents_mapping[filename].decode()
                 return pkg
             except KeyError:
                 pass
