@@ -67,7 +67,7 @@ for k in pr:
         bin_keys.append(k)
         continue
     with open(os.path.join(args.target_directory, k), "wb") as f:
-        if type(pr[k]) == str:
+        if isinstance(pr[k], str):
             f.write(pr[k].encode("UTF-8"))
         else:
             f.write(pr[k])

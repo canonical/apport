@@ -1377,8 +1377,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             args = [sumfile]
             stdin = None
         else:
-            assert (
-                type(sumfile) == bytes
+            assert isinstance(
+                sumfile, bytes
             ), "md5sum list value must be a byte array"
             args = []
             stdin = sumfile

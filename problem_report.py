@@ -311,7 +311,7 @@ class ProblemReport(collections.UserDict):
     def is_binary(klass, string):
         """Check if the given strings contains binary data."""
 
-        if type(string) == bytes:
+        if isinstance(string, bytes):
             for c in string:
                 if c < 32 and not chr(c).isspace():
                     return True
@@ -321,7 +321,7 @@ class ProblemReport(collections.UserDict):
     def _try_unicode(klass, value):
         """Try to convert bytearray value to unicode"""
 
-        if type(value) == bytes and not klass.is_binary(value):
+        if isinstance(value, bytes) and not klass.is_binary(value):
             try:
                 return value.decode("UTF-8")
             except UnicodeDecodeError:
@@ -637,7 +637,7 @@ class ProblemReport(collections.UserDict):
                 size = len(v)
 
                 # ensure that byte arrays are valid UTF-8
-                if type(v) == bytes:
+                if isinstance(v, bytes):
                     v = v.decode("UTF-8", "replace")
                 # convert unicode to UTF-8 str
                 assert isinstance(v, str)

@@ -1898,7 +1898,7 @@ class UserInterface:
         if not self.crashdb.accepts(self.report):
             return False
         if "UnreportableReason" in self.report:
-            if type(self.report["UnreportableReason"]) == bytes:
+            if isinstance(self.report["UnreportableReason"], bytes):
                 self.report["UnreportableReason"] = self.report[
                     "UnreportableReason"
                 ].decode("UTF-8")

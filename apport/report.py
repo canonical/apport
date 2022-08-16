@@ -1834,7 +1834,7 @@ class Report(problem_report.ProblemReport):
                 if not hasattr(self[k], "isspace"):
                     continue
                 for (pattern, repl) in replacements:
-                    if type(self[k]) == bytes:
+                    if isinstance(self[k], bytes):
                         self[k] = pattern.sub(
                             repl, self[k].decode("UTF-8", errors="replace")
                         ).encode("UTF-8")

@@ -149,11 +149,11 @@ class GTKUserInterface(apport.ui.UserInterface):
                 v = self.report[key]
                 if len(v) > 4000:
                     v = v[:4000]
-                    if type(v) == bytes:
+                    if isinstance(v, bytes):
                         v += b"\n[...]"
                     else:
                         v += "\n[...]"
-                if type(v) == bytes:
+                if isinstance(v, bytes):
                     v = v.decode("UTF-8", errors="replace")
                 self.tree_model.set_value(valiter, 0, v)
                 # expand the row if the value has less than 5 lines
