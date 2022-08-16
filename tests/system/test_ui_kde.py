@@ -461,6 +461,38 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
+    def test_ui_question_choice_hide_dialog(self):
+        """Test hiding/closing a UI question choice dialog.
+
+        +---------------------+
+        | Ultimate Question   |
+        |                     |
+        |   ( ) 7             |
+        |   ( ) 42            |
+        |   ( ) 69            |
+        |                     |
+        | [ Cancel ]   [ OK ] |
+        +---------------------+
+        """
+        with wrap_object(
+            apport_kde.Dialog, "__init__", include_instance=True
+        ) as dialog_mock:
+
+            def hide_dialog():
+                if dialog_mock.call_count >= 1:
+                    dialog = dialog_mock.call_args[0][0]
+                    if dialog.isVisible():
+                        dialog.hide()
+                        return
+                # try again
+                QTimer.singleShot(200, hide_dialog)
+
+            QTimer.singleShot(200, hide_dialog)
+            answer = self.app.ui_question_choice(
+                "Ultimate Question", ["7", "42", "69"], False
+            )
+        self.assertEqual(answer, None)
+
     @unittest.mock.patch.object(
         MainUserInterface, "open_url", unittest.mock.MagicMock()
     )

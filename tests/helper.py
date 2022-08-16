@@ -81,7 +81,7 @@ def read_shebang(command: str) -> typing.Optional[str]:
 
 @contextlib.contextmanager
 def wrap_object(
-    target: object, attribute: str
+    target: object, attribute: str, include_instance: bool = False
 ) -> typing.Generator[unittest.mock.MagicMock, None, None]:
     """Wrap the named member on an object with a mock object.
 
@@ -90,10 +90,10 @@ def wrap_object(
     wrapped with a :class:`unittest.mock.MagicMock` object. When
     the with statement exits the patch is undone.
 
-    The instance argument 'self' of the wrapped attribute is
-    intentionally not logged in the MagicMock call. Therefore
-    wrap_object() can be used to check all calls to the object,
-    but not differentiate between different instances.
+    The instance argument 'self' of the wrapped attribute will
+    not be logged in the MagicMock call if include_instance is
+    set to False. This allows using the assert calls on the mock
+    without differentiating between different instances.
 
     See also https://stackoverflow.com/questions/44768483 for
     the use case.
@@ -102,7 +102,10 @@ def wrap_object(
     real_attribute = getattr(target, attribute)
 
     def mocked_attribute(self, *args, **kwargs):
-        mock.__call__(*args, **kwargs)
+        if include_instance:
+            mock.__call__(self, *args, **kwargs)
+        else:
+            mock.__call__(*args, **kwargs)
         return real_attribute(self, *args, **kwargs)
 
     with unittest.mock.patch.object(target, attribute, mocked_attribute):

@@ -554,7 +554,7 @@ class MainUserInterface(apport.ui.UserInterface):
         response = dialog.exec_()
 
         if response == QDialog.Rejected:
-            return "cancel"
+            return None
 
         response = [
             c
