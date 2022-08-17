@@ -310,7 +310,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # include_meta is required to get the sha1
                 bf_urls = bp.binaryFileUrls(include_meta=True)
                 break
-            elif bp.distro_arch_series_link.endswith(arch):
+            if bp.distro_arch_series_link.endswith(arch):
                 bf_urls = bp.binaryFileUrls(include_meta=True)
                 break
         if not bf_urls:

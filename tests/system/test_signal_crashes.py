@@ -178,8 +178,7 @@ class T(unittest.TestCase):
                     except OSError as error:
                         if error.errno == errno.EPIPE:
                             break
-                        else:
-                            raise
+                        raise
                     totalmb -= 1
                 err = app.communicate()[1]
             self.assertEqual(app.returncode, 0, err)

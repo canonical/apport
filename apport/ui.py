@@ -527,8 +527,7 @@ class UserInterface:
             except OSError as error:
                 if error.errno == errno.ESRCH:
                     break
-                else:
-                    raise
+                raise
             time.sleep(1)
 
     @staticmethod
