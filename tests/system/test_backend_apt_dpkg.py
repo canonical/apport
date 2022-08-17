@@ -316,15 +316,14 @@ class T(unittest.TestCase):
         # reset properly
         impl.get_version("dash")
 
-        lsb_output = subprocess.check_output(["lsb_release", "-sir"]).decode()
-        system_version = lsb_output.replace("\n", " ").strip()
+        release = " ".join(impl.get_os_version())
         cachedir = os.path.join(self.workdir, "cache")
         rootdir = os.path.join(self.workdir, "root")
 
         result = impl.install_packages(
             rootdir,
             None,
-            system_version,
+            release,
             [("coreutils", impl.get_version("coreutils")), ("tzdata", "1.1")],
             False,
             cachedir,

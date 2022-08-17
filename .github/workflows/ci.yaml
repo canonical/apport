@@ -87,9 +87,9 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
-          libc6-dev lsb-release pkg-config python3 python3-apt
-          python3-distutils-extra python3-launchpadlib python3-psutil
-          python3-pytest python3-pytest-cov python3-systemd valgrind
+          libc6-dev pkg-config python3 python3-apt python3-distutils-extra
+          python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
+          python3-systemd valgrind
       - name: Build
         run: ./setup.py build
       - name: Build Java subdir
@@ -127,8 +127,8 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           dbus dbus-x11 dirmngr dpkg-dev gcc gdb gir1.2-gtk-3.0 gir1.2-wnck-3.0
-          gnome-icon-theme gpg gvfs-daemons lsb-release pkg-config psmisc
-          python3 python3-apt python3-dbus python3-distutils-extra python3-gi
+          gnome-icon-theme gpg gvfs-daemons pkg-config psmisc python3
+          python3-apt python3-dbus python3-distutils-extra python3-gi
           python3-launchpadlib python3-pyqt5 python3-pytest python3-pytest-cov
           ubuntu-dbgsym-keyring ubuntu-keyring valgrind xvfb
       - name: Start D-Bus daemon
@@ -166,8 +166,8 @@ jobs:
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
           dbus dbus-x11 dirmngr dpkg-dev gcc gdb gir1.2-gtk-3.0 gir1.2-wnck-3.0
-          gnome-icon-theme gpg gvfs-daemons lsb-release pkg-config psmisc
-          python3 python3-apt python3-dbus python3-distutils-extra python3-gi
+          gnome-icon-theme gpg gvfs-daemons pkg-config psmisc python3
+          python3-apt python3-dbus python3-distutils-extra python3-gi
           python3-launchpadlib python3-pyqt5 python3-pytest python3-pytest-cov
           ubuntu-dbgsym-keyring ubuntu-keyring valgrind xvfb
       - name: Build
