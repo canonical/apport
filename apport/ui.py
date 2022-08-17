@@ -1087,14 +1087,15 @@ class UserInterface:
 
         # mutually exclusive arguments
         if args.update_report:
-            if (
-                args.filebug
-                or args.window
-                or args.symptom
-                or args.pid
-                or args.crash_file
-                or args.save
-            ):
+            args_only_for_new_reports = [
+                args.filebug,
+                args.window,
+                args.symptom,
+                args.pid,
+                args.crash_file,
+                args.save,
+            ]
+            if any(args_only_for_new_reports):
                 parser.error(
                     "-u/--update-bug option cannot be used together"
                     " with options for a new report"
@@ -1679,10 +1680,7 @@ class UserInterface:
                         )
                         and "Package" not in self.report
                     )
-                ) and (
-                    "SnapSource" not in self.report
-                    and "Snap" not in self.report
-                ):
+                ) and not self._is_snap():
                     self.ui_error_message(
                         _("Invalid problem report"),
                         _(
@@ -1697,6 +1695,9 @@ class UserInterface:
 
         if on_finished:
             on_finished()
+
+    def _is_snap(self):
+        return "SnapSource" in self.report or "Snap" in self.report
 
     def open_url(self, url):
         """Open the given URL in a new browser window.
