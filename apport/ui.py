@@ -87,6 +87,7 @@ def thread_collect_info(
 
     If symptom_script is given, it will be run first (for run_symptom()).
     """
+    assert isinstance(ui, HookUI)
     try:
         report.add_gdb_info()
     except OSError:
@@ -1460,7 +1461,7 @@ class UserInterface:
             if self.crashdb.accepts(self.report):
                 hookui = HookUI(self)
             else:
-                hookui = None
+                hookui = NoninteractiveHookUI()
 
             if "Stacktrace" not in self.report:
                 # save original environment, in case hooks change it
@@ -1480,11 +1481,10 @@ class UserInterface:
                 icthread.start()
                 while icthread.is_alive():
                     self.ui_pulse_info_collection_progress()
-                    if hookui:
-                        try:
-                            hookui.process_event()
-                        except KeyboardInterrupt:
-                            sys.exit(1)
+                    try:
+                        hookui.process_event()
+                    except KeyboardInterrupt:
+                        sys.exit(1)
 
                 icthread.join()
 
@@ -2241,3 +2241,26 @@ class HookUI:
             *self._request_args
         )
         self._response_event.set()
+
+
+class NoninteractiveHookUI(HookUI):
+    """HookUI variant that does not ask the user any questions."""
+
+    def __init__(self):
+        super().__init__(None)
+
+    def information(self, text):
+        return None
+
+    def yesno(self, text):
+        return None
+
+    def choice(self, text, options, multiple=False):
+        return None
+
+    def file(self, text):
+        return None
+
+    def process_event(self):
+        # Give other threads some chance to run
+        time.sleep(0.1)

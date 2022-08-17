@@ -2242,6 +2242,29 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["answer"], "None")
         self.assertEqual(self.ui.report["end"], "1")
 
+    def test_hooks_choices_db_no_accept(self):
+        """HookUI.choice() but DB does not accept report."""
+        self.ui.crashdb.accepts = lambda r: False
+        self.ui.present_details_response = {
+            "report": False,
+            "blacklist": False,
+            "examine": False,
+            "restart": False,
+            "remember": False,
+        }
+        self.ui.question_choice_response = [1]
+        self._run_hook(
+            textwrap.dedent(
+                """\
+                report['begin'] = '1'
+                answer = ui.choice('YourChoice?', ['foo', 'bar'])
+                report['answer'] = str(answer)
+                report['end'] = '1'
+                """
+            )
+        )
+        self.assertEqual(self.ui.report["answer"], "None")
+
     def test_interactive_hooks_cancel(self):
         """interactive hooks: user cancels"""
 

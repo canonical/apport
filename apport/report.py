@@ -1073,6 +1073,7 @@ class Report(problem_report.ProblemReport):
         return True if the hook requested to stop the report filing process,
         False otherwise.
         """
+        assert ui is not None
         ret = self._add_hooks_info(ui, package, srcpackage)
         kill_pkttyagent()
         return ret
