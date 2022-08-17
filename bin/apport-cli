@@ -428,11 +428,12 @@ class CLIUserInterface(apport.ui.UserInterface):
         if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
 
-    def ui_run_terminal(self, command):
+    @staticmethod
+    def ui_has_terminal():
         # we are already running in a terminal, so this works by definition
-        if not command:
-            return True
+        return True
 
+    def ui_run_terminal(self, command):
         subprocess.call(command, shell=True)
 
 

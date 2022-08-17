@@ -630,7 +630,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             return md.get_filenames()[0]
         return None
 
-    def ui_run_terminal(self, command):
+    @staticmethod
+    def _get_terminal():
         terminals = [
             "x-terminal-emulator",
             "gnome-terminal",
@@ -639,16 +640,17 @@ class GTKUserInterface(apport.ui.UserInterface):
             "xterm",
         ]
 
-        program = None
         for t in terminals:
             program = GLib.find_program_in_path(t)
             if program:
-                break
+                return program
+        return None
 
-        if not command:
-            # test mode
-            return have_display and program is not None
+    def ui_has_terminal(self):
+        return have_display and self._get_terminal() is not None
 
+    def ui_run_terminal(self, command):
+        program = self._get_terminal()
         subprocess.call([program, "-e", command])
 
     #

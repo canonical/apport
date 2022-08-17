@@ -1213,7 +1213,7 @@ class UserInterface:
         """Check whether to offer the "Examine locally" button.
 
         This will be true if the report has a core dump, apport-retrace is
-        installed and a terminal is available (see ui_run_terminal()).
+        installed and a terminal is available (see ui_has_terminal()).
         """
         if not self.report or "CoreDump" not in self.report:
             return False
@@ -1221,7 +1221,7 @@ class UserInterface:
         if shutil.which("apport-retrace") is None:
             return False
 
-        return self.ui_run_terminal(None)
+        return self.ui_has_terminal()
 
     def restart(self):
         """Reopen the crashed application."""
@@ -2088,14 +2088,20 @@ class UserInterface:
         This can be used for for cleaning up.
         """
 
+    def ui_has_terminal(self):
+        """Check for a terminal window.
+
+        Check if a terminal application is available and can be launched.
+        """
+        raise NotImplementedError(
+            "this function must be overridden by subclasses"
+        )
+
     def ui_run_terminal(self, command):
-        """Run command in, or check for a terminal window.
+        """Run command in a terminal window.
 
-        If command is given, run command in a terminal window; raise an
+        Run given command in a terminal window; raise an
         exception if terminal cannot be opened.
-
-        If command is None, merely check if a terminal application is available
-        and can be launched.
         """
         raise NotImplementedError(
             "this function must be overridden by subclasses"

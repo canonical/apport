@@ -138,10 +138,11 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     def ui_stop_upload_progress(self):
         self.upload_progress_active = False
 
-    def ui_run_terminal(self, command):
+    def ui_has_terminal(self):
         # The tests are already running in a terminal
-        if not command:
-            return True
+        return True
+
+    def ui_run_terminal(self, command):
         subprocess.call(command, shell=True)
 
     def open_url(self, url):
@@ -2827,9 +2828,9 @@ class T(unittest.TestCase):
         self.ui.load_report(self.report_file.name)
 
         orig_path = os.environ["PATH"]
-        orig_fn = self.ui.ui_run_terminal
+        orig_fn = self.ui.ui_has_terminal
         try:
-            self.ui.ui_run_terminal = lambda command: True
+            self.ui.ui_has_terminal = lambda command: True
             os.environ["PATH"] = ""
             self.assertEqual(self.ui.can_examine_locally(), False)
 
@@ -2846,16 +2847,16 @@ class T(unittest.TestCase):
                 # it doesn't crash
                 self.assertIn(self.ui.can_examine_locally(), [False, True])
 
-            self.ui.ui_run_terminal = lambda command: False
+            self.ui.ui_has_terminal = lambda command: False
             self.assertEqual(self.ui.can_examine_locally(), False)
 
             # does not crash on NotImplementedError
-            self.ui.ui_run_terminal = orig_fn
+            self.ui.ui_has_terminal = orig_fn
             self.assertEqual(self.ui.can_examine_locally(), False)
 
         finally:
             os.environ["PATH"] = orig_path
-            self.ui.ui_run_terminal = orig_fn
+            self.ui.ui_has_terminal = orig_fn
 
     def test_can_examine_locally_nocrash(self):
         """can_examine_locally() for a non-crash report"""
@@ -2863,12 +2864,12 @@ class T(unittest.TestCase):
         self.ui.load_report(self.report_file.name)
         del self.ui.report["CoreDump"]
 
-        orig_fn = self.ui.ui_run_terminal
+        orig_fn = self.ui.ui_has_terminal
         try:
-            self.ui.ui_run_terminal = lambda command: True
+            self.ui.ui_has_terminal = lambda command: True
             self.assertEqual(self.ui.can_examine_locally(), False)
         finally:
-            self.ui.ui_run_terminal = orig_fn
+            self.ui.ui_has_terminal = orig_fn
 
     def test_db_no_accept(self):
         """crash database does not accept report"""

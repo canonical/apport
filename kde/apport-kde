@@ -471,19 +471,21 @@ class MainUserInterface(apport.ui.UserInterface):
         # for a spinner we just need to handle events
         QApplication.processEvents()
 
-    def ui_run_terminal(self, command):
+    @staticmethod
+    def _get_terminal():
         terminals = ["x-terminal-emulator", "konsole", "xterm"]
 
-        program = None
         for terminal in terminals:
             program = shutil.which(terminal)
             if program:
-                break
+                return program
+        return None
 
-        if not command:
-            # test mode
-            return program is not None
+    def ui_has_terminal(self):
+        return self._get_terminal() is not None
 
+    def ui_run_terminal(self, command):
+        program = self._get_terminal()
         subprocess.call([program, "-e", command])
 
     def ui_stop_info_collection_progress(self):
