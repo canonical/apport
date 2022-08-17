@@ -2118,6 +2118,7 @@ and more
                 )
             if project:
                 return db.launchpad.projects[project]
+            return None
 
         def _file_bug(self, bug_target, report, description=None):
             """File a bug report for a report.

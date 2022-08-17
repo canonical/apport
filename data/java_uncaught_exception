@@ -31,7 +31,7 @@ def make_title(report):
 
 def main():
     if not packaging.enabled():
-        return -1
+        return 1
 
     # read from the JVM process a sequence of key, value delimited by null
     # bytes
@@ -76,7 +76,7 @@ def main():
             report["ExecutablePath"] = path
         else:
             # Program at some non-file URL crashed. Give up.
-            return
+            return 1
 
     report["Title"] = make_title(report)
 
@@ -85,7 +85,8 @@ def main():
             report.write(f)
     except OSError as error:
         apport.fatal("Cannot create report: " + str(error))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

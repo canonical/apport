@@ -123,6 +123,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             msg.as_string().encode("UTF-8"),
         )
         s.quit()
+        return True
 
     def get_comment_url(self, report, handle):
         """

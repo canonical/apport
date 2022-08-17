@@ -182,6 +182,7 @@ def find_snap(snap):
                 return json.loads(response.read())["result"]
     except (http.client.HTTPException, json.JSONDecodeError, OSError):
         return None
+    return None
 
 
 def seen_report(report):

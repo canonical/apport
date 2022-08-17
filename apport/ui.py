@@ -516,6 +516,7 @@ class UserInterface:
         if response["restart"]:
             self.wait_for_pid(pid)
             self.restart()
+        return True
 
     @staticmethod
     def wait_for_pid(pid):
@@ -633,7 +634,7 @@ class UserInterface:
             raise
 
         if self.check_unreportable():
-            return
+            return False
 
         self.add_extra_tags()
 

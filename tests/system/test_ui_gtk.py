@@ -1179,6 +1179,7 @@ class T(unittest.TestCase):
                 "dialog_crash_new"
             ).get_resizable()
             Gtk.main_quit()
+            return False
 
         data = {}
         GLib.timeout_add(200, show_details, data)

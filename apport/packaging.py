@@ -327,6 +327,7 @@ class PackageInfo:
                 continue
             except ValueError:
                 return p
+        return None
 
     _os_version = None
 

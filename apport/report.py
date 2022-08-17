@@ -817,7 +817,7 @@ class Report(problem_report.ProblemReport):
         This needs a VmCore in the Report.
         """
         if "VmCore" not in self:
-            return
+            return False
         unlink_core = False
         ret = False
         try:
@@ -1081,7 +1081,7 @@ class Report(problem_report.ProblemReport):
             package = package.split()[0]
             if "/" in package:
                 self["UnreportableReason"] = "invalid Package: %s" % package
-                return
+                return None
         if not srcpackage:
             srcpackage = self.get("SourcePackage")
         if srcpackage:
@@ -1090,7 +1090,7 @@ class Report(problem_report.ProblemReport):
                 self["UnreportableReason"] = (
                     "invalid SourcePackage: %s" % package
                 )
-                return
+                return None
 
         hook_dirs = [PACKAGE_HOOK_DIR]
         # also search hooks in /opt, when program is from there
@@ -1166,17 +1166,17 @@ class Report(problem_report.ProblemReport):
         """
         # some distros might not want to support these
         if not url:
-            return
+            return None
 
         try:
             with urllib.request.urlopen(url) as request:
                 patterns = request.read().decode("UTF-8", errors="replace")
         except (OSError, urllib.error.URLError):
             # doesn't exist or failed to load
-            return
+            return None
 
         if "<title>404 Not Found" in patterns:
-            return
+            return None
 
         url = _check_bug_patterns(self, patterns)
         if url:
