@@ -249,15 +249,15 @@ class CLIUserInterface(apport.ui.UserInterface):
             if response == examine:
                 return_value["examine"] = True
                 return return_value
-            elif response == complete:
+            if response == complete:
                 return_value["report"] = True
-            elif response == ignore:
+            if response == ignore:
                 return_value["blacklist"] = True
-            elif response == view:
+            if response == view:
                 self.collect_info()
                 self.ui_update_view()
                 continue
-            elif response == save:
+            if response == save:
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
                     prefix = "apport."

@@ -22,8 +22,7 @@ def unicode_gettext(message):
     trans = gettext.gettext(message)
     if isinstance(trans, bytes):
         return trans.decode("UTF-8")
-    else:
-        return trans
+    return trans
 
 
 def log(message, timestamp=False):

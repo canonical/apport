@@ -519,12 +519,11 @@ def kill_pkttyagent():
 def _root_command_prefix():
     if os.getuid() == 0:
         return []
-    elif os.path.exists("/usr/bin/pkexec"):
+    if os.path.exists("/usr/bin/pkexec"):
         _spawn_pkttyagent()
         return ["pkexec"]
     # the package hook won't have everything it wanted but that's okay
-    else:
-        return []
+    return []
 
 
 def root_command_output(  # pylint: disable=redefined-builtin

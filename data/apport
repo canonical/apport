@@ -497,8 +497,7 @@ def is_same_ns(pid, ns):
     except OSError as error:
         if error.errno == errno.ENOENT:
             return True
-        else:
-            raise
+        raise
 
     # check to see if the process is part of the system.slice (LP: #1870060)
     if os.path.exists("/proc/%s/cgroup" % pid):

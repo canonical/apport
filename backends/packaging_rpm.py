@@ -54,8 +54,7 @@ class RPMPackageInfo:
             return hdr["v"] + "-" + hdr["r"]
         if not hdr["v"] or not hdr["r"]:
             return None
-        else:
-            return hdr["e"] + ":" + hdr["v"] + "-" + hdr["r"]
+        return hdr["e"] + ":" + hdr["v"] + "-" + hdr["r"]
 
     def get_available_version(self, package):
         """Return the latest available version of a package."""

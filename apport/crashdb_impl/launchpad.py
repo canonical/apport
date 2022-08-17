@@ -267,29 +267,29 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             project = self.options.get("project")
 
-        if not project:
-            if "SourcePackage" in report:
-                return "https://bugs.%s/%s/+source/%s/+filebug/%s?%s" % (
-                    hostname,
-                    self.distro,
-                    report["SourcePackage"],
-                    handle,
-                    urllib.parse.urlencode(args),
-                )
-            else:
-                return "https://bugs.%s/%s/+filebug/%s?%s" % (
-                    hostname,
-                    self.distro,
-                    handle,
-                    urllib.parse.urlencode(args),
-                )
-        else:
+        if project:
             return "https://bugs.%s/%s/+filebug/%s?%s" % (
                 hostname,
                 project,
                 handle,
                 urllib.parse.urlencode(args),
             )
+
+        if "SourcePackage" in report:
+            return "https://bugs.%s/%s/+source/%s/+filebug/%s?%s" % (
+                hostname,
+                self.distro,
+                report["SourcePackage"],
+                handle,
+                urllib.parse.urlencode(args),
+            )
+
+        return "https://bugs.%s/%s/+filebug/%s?%s" % (
+            hostname,
+            self.distro,
+            handle,
+            urllib.parse.urlencode(args),
+        )
 
     def get_id_url(self, report, crash_id):
         """Return URL for a given report ID.
@@ -766,8 +766,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         b = self.launchpad.bugs[crash_id].duplicate_of
         if b:
             return b.id
-        else:
-            return None
+        return None
 
     def close_duplicate(self, report, crash_id, master_id):
         """Mark a crash id as duplicate of given master ID.
@@ -1067,8 +1066,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                             or b"apport-request-retrace" in line
                         ):
                             return None
-                        else:
-                            break
+                        break
 
                     # stop at the first task, tags are in the first block
                     if not line.strip():
@@ -2106,7 +2104,7 @@ and more
                 return db.lp_distro.getSourcePackage(
                     name=report["SourcePackage"]
                 )
-            elif project:
+            if project:
                 return db.launchpad.projects[project]
 
         def _file_bug(self, bug_target, report, description=None):

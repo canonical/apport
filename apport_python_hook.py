@@ -86,7 +86,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
                 # was trying to call; needs actual crash from D-BUS backend
                 # (LP #914220)
                 return
-            elif name == "org.freedesktop.DBus.Error.ServiceUnknown":
+            if name == "org.freedesktop.DBus.Error.ServiceUnknown":
                 dbus_service_unknown_analysis(exc_obj, pr)
             else:
                 pr["_PythonExceptionQualifier"] = name

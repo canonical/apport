@@ -67,8 +67,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 report["SourcePackage"],
                 handle,
             )
-        else:
-            return "http://bugs.example.com/%i" % handle
+        return "http://bugs.example.com/%i" % handle
 
     def get_id_url(self, report, crash_id):
         """Return URL for a given report ID.

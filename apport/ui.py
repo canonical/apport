@@ -547,14 +547,14 @@ class UserInterface:
         if not self.args.package and not self.args.pid and not symptom_script:
             if self.run_symptoms():
                 return True
-            else:
-                self.ui_error_message(
-                    _("No package specified"),
-                    _(
-                        "You need to specify a package or a PID."
-                        " See --help for more information."
-                    ),
-                )
+
+            self.ui_error_message(
+                _("No package specified"),
+                _(
+                    "You need to specify a package or a PID."
+                    " See --help for more information."
+                ),
+            )
             return False
 
         self.report = apport.Report("Bug")
@@ -629,8 +629,7 @@ class UserInterface:
                         _("Package %s does not exist") % self.cur_package,
                     )
                 return False
-            else:
-                raise
+            raise
 
         if self.check_unreportable():
             return
@@ -851,23 +850,23 @@ class UserInterface:
         if self.args.symptom:
             self.run_symptom()
             return True
-        elif self.args.hanging:
+        if self.args.hanging:
             self.run_hang(self.args.pid)
             return True
-        elif self.args.filebug:
+        if self.args.filebug:
             return self.run_report_bug()
-        elif self.args.update_report is not None:
+        if self.args.update_report is not None:
             return self.run_update_report()
-        elif self.args.version:
+        if self.args.version:
             print(__version__)
             return True
-        elif self.args.crash_file:
+        if self.args.crash_file:
             try:
                 self.run_crash(self.args.crash_file)
             except OSError as error:
                 self.ui_error_message(_("Invalid problem report"), str(error))
             return True
-        elif self.args.window:
+        if self.args.window:
             if os.getenv("XDG_SESSION_TYPE") == "wayland":
                 self.ui_error_message(
                     _("Cannot create report"),
@@ -911,16 +910,16 @@ class UserInterface:
                     )
                     return True
                 return self.run_report_bug()
-            else:
-                self.ui_error_message(
-                    _("Cannot create report"),
-                    _("xprop failed to determine process ID of the window")
-                    + "\n\n"
-                    + xprop.stderr.decode(),
-                )
-                return True
-        else:
-            return self.run_crashes()
+
+            self.ui_error_message(
+                _("Cannot create report"),
+                _("xprop failed to determine process ID of the window")
+                + "\n\n"
+                + xprop.stderr.decode(),
+            )
+            return True
+
+        return self.run_crashes()
 
     #
     # methods that implement workflow bits

@@ -109,11 +109,11 @@ def find_package_desktopfile(package):
 
             if desktopfile:
                 return None  # more than one
-            else:
-                # only consider visible ones
-                with open(line, "rb") as f:
-                    if b"NoDisplay=true" not in f.read():
-                        desktopfile = line
+
+            # only consider visible ones
+            with open(line, "rb") as f:
+                if b"NoDisplay=true" not in f.read():
+                    desktopfile = line
 
     return desktopfile
 
@@ -447,8 +447,7 @@ def get_config(section, setting, default=None, path=None, boolean=False):
     try:
         if boolean:
             return get_config.config.getboolean(section, setting)
-        else:
-            return get_config.config.get(section, setting)
+        return get_config.config.get(section, setting)
     except (configparser.NoOptionError, configparser.NoSectionError):
         return default
 

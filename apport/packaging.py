@@ -359,11 +359,10 @@ class PackageInfo:
             if name and version:
                 self._os_version = (name, version)
                 return self._os_version
-            else:
-                sys.stderr.write(
-                    "invalid /etc/os-release:"
-                    " Does not contain NAME and VERSION_ID\n"
-                )
+            sys.stderr.write(
+                "invalid /etc/os-release:"
+                " Does not contain NAME and VERSION_ID\n"
+            )
 
         # fall back to lsb_release
         lsb_release = subprocess.run(

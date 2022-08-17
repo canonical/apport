@@ -62,11 +62,10 @@ def translate(self, prop):
 
     if prop.get("notr", None) == "true":
         return self._cstring(prop)
-    else:
-        if prop.text is None:
-            return ""
-        text = prop.text.encode("UTF-8")
-        return _(text)
+    if prop.text is None:
+        return ""
+    text = prop.text.encode("UTF-8")
+    return _(text)
 
 
 uic.properties.Properties._string = translate
@@ -420,7 +419,7 @@ class MainUserInterface(apport.ui.UserInterface):
         }
         if response == QDialog.Rejected:
             return return_value
-        elif response == 3:
+        if response == 3:
             return_value["examine"] = True
             return return_value
 

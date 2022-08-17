@@ -516,13 +516,11 @@ class CrashDatabase:
             if x == "":
                 if y is None:
                     return -1
-                else:
-                    return 1
+                return 1
             if y == "":
                 if x is None:
                     return 1
-                else:
-                    return -1
+                return -1
             if x is None:
                 return 1
             if y is None:
@@ -551,8 +549,7 @@ class CrashDatabase:
         assert len(existing_ids) <= 1
         if existing_ids:
             return existing_ids[0][0]
-        else:
-            return None
+        return None
 
     def duplicate_db_dump(self, with_timestamps=False):
         """Return the entire duplicate database as a dictionary.

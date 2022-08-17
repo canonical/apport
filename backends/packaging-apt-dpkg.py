@@ -204,10 +204,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if self._apt_pkg(package).installed:
             return self._apt_pkg(package).installed.source_name
-        elif self._apt_pkg(package).candidate:
+        if self._apt_pkg(package).candidate:
             return self._apt_pkg(package).candidate.source_name
-        else:
-            raise ValueError("package %s does not exist" % package)
+        raise ValueError("package %s does not exist" % package)
 
     def get_package_origin(self, package):
         """Return package origin.
@@ -343,8 +342,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             content = content.decode("utf-8")
         if entries:
             return json.loads(content)["entries"]
-        else:
-            return json.loads(content)
+        return json.loads(content)
 
     @staticmethod
     def get_lp_source_package(package, version):
@@ -383,10 +381,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if self._apt_pkg(package).installed:
             return self._apt_pkg(package).installed.architecture or "unknown"
-        elif self._apt_pkg(package).candidate:
+        if self._apt_pkg(package).candidate:
             return self._apt_pkg(package).candidate.architecture or "unknown"
-        else:
-            raise ValueError("package %s does not exist" % package)
+        raise ValueError("package %s does not exist" % package)
 
     def get_files(self, package):
         """Return list of files shipped by a package."""
@@ -453,8 +450,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if sums:
             return self._check_files_md5(sums)
-        else:
-            return []
+        return []
 
     def get_modified_conffiles(self, package):
         """Return modified configuration files of a package.
@@ -1365,8 +1361,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         )
         if dpkg.returncode == 0:
             return dpkg.stdout.decode("UTF-8")
-        else:
-            raise ValueError("package does not exist")
+        raise ValueError("package does not exist")
 
     @staticmethod
     def _check_files_md5(sumfile):

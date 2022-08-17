@@ -161,12 +161,11 @@ def _command_output(  # pylint: disable=redefined-builtin
         ) from error
     if sp.returncode == 0:
         return sp.stdout
-    else:
-        out = sp.stdout.decode("UTF-8", errors="replace")
-        raise OSError(
-            "Error: command %s failed with exit code %i: %s"
-            % (str(command), sp.returncode, out)
-        )
+    out = sp.stdout.decode("UTF-8", errors="replace")
+    raise OSError(
+        "Error: command %s failed with exit code %i: %s"
+        % (str(command), sp.returncode, out)
+    )
 
 
 def _check_bug_pattern(report, pattern):
@@ -608,9 +607,8 @@ class Report(problem_report.ProblemReport):
             ):
                 if len(arg) == 2:
                     return arg[1]
-                else:
-                    return args[1]
-            elif len(arg[0]) > 1 and arg[0][0] == "-" and arg[0][1] != "-":
+                return args[1]
+            if len(arg[0]) > 1 and arg[0][0] == "-" and arg[0][1] != "-":
                 opts = arg[0][1:]
                 if "f" in opts or "y" in opts or "s" in opts:
                     return args[1]
@@ -1332,8 +1330,7 @@ class Report(problem_report.ProblemReport):
             # file went away underneath us, ignore
             if error.errno == errno.ENOENT:
                 return
-            else:
-                raise
+            raise
 
         # search for existing entry and update it
         for ignore in dom.getElementsByTagName("ignore"):
@@ -1621,11 +1618,10 @@ class Report(problem_report.ProblemReport):
             if len(trace) == 1:
                 # sometimes, Python exceptions do not have file references
                 m = re.match(r"(\w+): ", trace[0])
-                if m:
-                    return self["ExecutablePath"] + ":" + m.group(1)
-                else:
+                if not m:
                     return None
-            elif len(trace) < 3:
+                return self["ExecutablePath"] + ":" + m.group(1)
+            if len(trace) < 3:
                 return None
 
             loc_re = re.compile(r'^\s+File "([^"]+).*line (\d+).*\sin (.*)$')

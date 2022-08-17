@@ -179,7 +179,7 @@ class ParseSegv:
                 " (needed %s region)!" % (name, addr, perm_name[perm][0]),
                 "%s %s VMA" % (perm_name[perm][1], alarmist),
             )
-        elif perm not in vma["perms"]:
+        if perm not in vma["perms"]:
             alarmist = ""
             if perm == "x":
                 if "w" in vma["perms"]:
@@ -202,12 +202,12 @@ class ParseSegv:
                 ),
                 short,
             )
-        else:
-            return (
-                True,
-                "%s (0x%08x) ok" % (name, addr),
-                "%s ok" % (perm_name[perm][1]),
-            )
+
+        return (
+            True,
+            "%s (0x%08x) ok" % (name, addr),
+            "%s ok" % (perm_name[perm][1]),
+        )
 
     def register_value(self, reg):
         reg_orig = reg
@@ -297,9 +297,8 @@ class ParseSegv:
         if "esp" in self.regs:
             # 32bit
             return value % 0x100000000
-        else:
-            # 64bit
-            return value % 0x10000000000000000
+        # 64bit
+        return value % 0x10000000000000000
 
     def report(self):
         understood = False

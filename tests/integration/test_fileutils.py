@@ -51,8 +51,7 @@ class T(unittest.TestCase):
                 fd.write("inaccessible")
             os.chmod(ri, 0)
             return [r1, r2, ri]
-        else:
-            return [r1, r2]
+        return [r1, r2]
 
     def test_find_package_desktopfile(self):
         """find_package_desktopfile()"""
