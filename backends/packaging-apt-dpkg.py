@@ -35,7 +35,7 @@ import urllib.request
 import apt
 
 import apport.logging
-from apport.packaging import PackageInfo
+from apport.packaging import PackageInfo, freedesktop_os_release
 
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -1875,10 +1875,18 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Get "lsb_release -sc", cache the result."""
 
         if self._distro_codename is None:
-            lsb_release = subprocess.run(
-                ["lsb_release", "-sc"], check=True, stdout=subprocess.PIPE
-            )
-            self._distro_codename = lsb_release.stdout.decode("UTF-8").strip()
+            try:
+                info = freedesktop_os_release()
+                self._distro_codename = info["VERSION_CODENAME"]
+            except (KeyError, OSError):
+                # Fall back to query lsb_release
+                lsb_release = subprocess.run(
+                    ["lsb_release", "-sc"],
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    text=True,
+                )
+                self._distro_codename = lsb_release.stdout.strip()
 
         return self._distro_codename
 
