@@ -95,6 +95,14 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
                                 fd.write(line)
 
 
+def has_apt_sources():
+    return (
+        os.path.exists("/etc/apt/sources.list")
+        or glob.glob("/etc/apt/sources.list.d/*.list")
+        or glob.glob("/etc/apt/sources.list.d/*.sources")
+    )
+
+
 #
 # main
 #
@@ -105,7 +113,7 @@ if (
     and sys.argv[1] != "sdist"
     and not os.path.exists("apport/packaging_impl.py")
 ):
-    if os.path.exists("/etc/apt/sources.list"):
+    if has_apt_sources():
         print("Installing apt/dpkg packaging backend.")
         shutil.copy(
             "backends/packaging-apt-dpkg.py", "apport/packaging_impl.py"
