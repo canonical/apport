@@ -331,6 +331,13 @@ class PackageInfo:
 
     _os_version = None
 
+    @staticmethod
+    def _sanitize_operating_system_name(name):
+        # Strip GNU/Linux from e.g. "Debian GNU/Linux"
+        if name.endswith(" GNU/Linux"):
+            name = name.rsplit(maxsplit=1)[0]
+        return name
+
     def get_os_version(self):
         """Return (osname, osversion) tuple.
 
@@ -349,10 +356,7 @@ class PackageInfo:
                         name = line.split("=", 1)[1]
                         if name.startswith('"'):
                             name = name[1:-2].strip()
-                        # work around inconsistent "Debian GNU/Linux"
-                        # in os-release
-                        if name.endswith("GNU/Linux"):
-                            name = name.split()[0:-1]
+                        name = self._sanitize_operating_system_name(name)
                     elif line.startswith("VERSION_ID="):
                         version = line.split("=", 1)[1]
                         if version.startswith('"'):
