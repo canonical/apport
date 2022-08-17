@@ -299,7 +299,7 @@ class T(unittest.TestCase):
 
         fsize = os.path.getsize(self.report_file.name)
         complete_ratio = float(self.ui.get_complete_size()) / fsize
-        self.assertTrue(complete_ratio >= 0.9 and complete_ratio <= 1.1)
+        self.assertAlmostEqual(complete_ratio, 1.0, delta=0.1)
 
         rs = self.ui.get_reduced_size()
         self.assertTrue(rs > 1000)

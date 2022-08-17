@@ -259,7 +259,7 @@ def write_user_coredump(
         r = apport.Report()
         r.load(from_report)
         core_size = len(r["CoreDump"])
-        if limit > 0 and core_size > limit:
+        if 0 < limit < core_size:
             error_log(
                 "aborting core dump writing, size %i exceeds current limit"
                 % core_size
@@ -277,7 +277,7 @@ def write_user_coredump(
             if size == 0:
                 break
             written += size
-            if limit > 0 and written > limit:
+            if 0 < limit < written:
                 error_log(
                     "aborting core dump writing, size exceeds current limit %i"
                     % limit

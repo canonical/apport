@@ -38,7 +38,7 @@ class ParseSegv:
 
     def find_vma(self, addr):
         for vma in self.maps:
-            if addr >= vma["start"] and addr < vma["end"]:
+            if vma["start"] <= addr < vma["end"]:
                 return vma
         return None
 

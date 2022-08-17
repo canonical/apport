@@ -1968,7 +1968,7 @@ class Report(problem_report.ProblemReport):
         self._build_proc_maps_cache()
 
         for (start, end, elf) in self._proc_maps_cache:
-            if start <= addr and end >= addr:
+            if start <= addr <= end:
                 return "%s+%x" % (elf, addr - start)
 
         return None

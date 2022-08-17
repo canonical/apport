@@ -279,7 +279,7 @@ def get_code(srcdir, filename, line, context=5):
         for ln in f:
             ln = ln.decode("UTF8", errors="replace")
             lineno += 1
-            if lineno >= line - context and lineno <= line + context:
+            if line - context <= lineno <= line + context:
                 result += format_str % (lineno, ln)
 
     return result

@@ -494,7 +494,7 @@ def search_map(mapfd, uid):
         host_start = int(fields[1])
         host_end = host_start + int(fields[2])
 
-        if uid >= host_start and uid <= host_end:
+        if host_start <= uid <= host_end:
             return True
 
     return False
