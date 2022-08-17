@@ -13,8 +13,8 @@ import subprocess
 import tempfile
 import unittest
 
-import apport
 import apport.fileutils
+import apport.report
 from tests.paths import (
     SRCDIR,
     get_data_directory,
@@ -105,7 +105,7 @@ class T(unittest.TestCase):
 
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "did not create a crash report")
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reports[0], "rb") as f:
             r.load(f)
         self.assertEqual(r["ProblemType"], "Crash")

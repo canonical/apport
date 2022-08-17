@@ -16,7 +16,9 @@ import re
 import shutil
 import tempfile
 
-import apport
+import apport.fileutils
+import apport.logging
+from apport.packaging_impl import impl as packaging
 
 
 def needed_packages(report):
@@ -36,7 +38,9 @@ def needed_packages(report):
         try:
             (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.warning("invalid Package/Dependencies line: %s", line)
+            apport.logging.warning(
+                "invalid Package/Dependencies line: %s", line
+            )
             # invalid line, ignore
             continue
         pkgs[pkg] = version
@@ -56,7 +60,9 @@ def report_package_versions(report):
         try:
             (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.warning("invalid Package/Dependencies line: %s", line)
+            apport.logging.warning(
+                "invalid Package/Dependencies line: %s", line
+            )
             # invalid line, ignore
             continue
         pkg_vers[pkg] = version
@@ -102,7 +108,7 @@ def needed_runtime_packages(
 
     # grab as much as we can
     for line in libs:
-        pkg = apport.packaging.get_file_package(
+        pkg = packaging.get_file_package(
             line,
             True,
             pkgmap_cache_dir,
@@ -111,13 +117,13 @@ def needed_runtime_packages(
         )
         if pkg:
             if verbose:
-                apport.log(
+                apport.logging.log(
                     "dynamically loaded %s needs package %s, queueing"
                     % (line, pkg)
                 )
             pkgs.add(pkg)
         else:
-            apport.warning(
+            apport.logging.warning(
                 "%s is needed, but cannot be mapped to a package", line
             )
 
@@ -223,11 +229,11 @@ def make_sandbox(
         m = re.compile(r"\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]")
         origins = set(m.findall(pkg_list))
         if origins:
-            apport.log("Origins: %s" % origins)
+            apport.logging.log("Origins: %s" % origins)
 
     # unpack packages, if any, using cache and sandbox
     try:
-        outdated_msg = apport.packaging.install_packages(
+        outdated_msg = packaging.install_packages(
             sandbox_dir,
             config_dir,
             report["DistroRelease"],
@@ -239,12 +245,12 @@ def make_sandbox(
             origins=origins,
         )
     except SystemError as error:
-        apport.fatal(str(error))
+        apport.logging.fatal(str(error))
 
     # install the extra packages and their deps
     if extra_packages:
         try:
-            outdated_msg += apport.packaging.install_packages(
+            outdated_msg += packaging.install_packages(
                 sandbox_dir,
                 config_dir,
                 report["DistroRelease"],
@@ -258,7 +264,7 @@ def make_sandbox(
                 install_deps=True,
             )
         except SystemError as error:
-            apport.fatal(str(error))
+            apport.logging.fatal(str(error))
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(
@@ -269,7 +275,7 @@ def make_sandbox(
     # crashing binary
     for path in ("InterpreterPath", "ExecutablePath"):
         if path in report:
-            pkg = apport.packaging.get_file_package(
+            pkg = packaging.get_file_package(
                 report[path],
                 True,
                 pkgmap_cache_dir,
@@ -285,20 +291,20 @@ def make_sandbox(
                     report["ExecutablePath"] = "/bin/systemctl"
                     pkg = "systemd"
             if pkg:
-                apport.log(
+                apport.logging.log(
                     "Installing extra package %s to get %s" % (pkg, path),
                     log_timestamps,
                 )
                 pkgs.append((pkg, pkg_versions.get(pkg)))
             else:
-                apport.fatal(
+                apport.logging.fatal(
                     "Cannot find package which ships %s %s", path, report[path]
                 )
 
     # unpack packages for executable using cache and sandbox
     if pkgs:
         try:
-            outdated_msg += apport.packaging.install_packages(
+            outdated_msg += packaging.install_packages(
                 sandbox_dir,
                 config_dir,
                 report["DistroRelease"],
@@ -310,7 +316,7 @@ def make_sandbox(
                 origins=origins,
             )
         except SystemError as error:
-            apport.fatal(str(error))
+            apport.logging.fatal(str(error))
 
     # sanity check: for a packaged binary we require having the executable in
     # the sandbox; TODO: for an unpackage binary we don't currently copy its
@@ -325,7 +331,7 @@ def make_sandbox(
                     if os.path.exists(sandbox_dir + report[path][4:]):
                         report[path] = report[path][4:]
                     else:
-                        apport.fatal(
+                        apport.logging.fatal(
                             "%s %s does not exist"
                             " (report specified package %s)",
                             path,
@@ -333,7 +339,7 @@ def make_sandbox(
                             report["Package"],
                         )
                 else:
-                    apport.fatal(
+                    apport.logging.fatal(
                         "%s %s does not exist (report specified package %s)",
                         path,
                         sandbox_dir + report[path],
@@ -343,6 +349,6 @@ def make_sandbox(
     if outdated_msg:
         report["RetraceOutdatedPackages"] = outdated_msg
 
-    apport.memdbg("built sandbox")
+    apport.logging.memdbg("built sandbox")
 
     return sandbox_dir, cache_dir, outdated_msg

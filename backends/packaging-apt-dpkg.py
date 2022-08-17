@@ -34,13 +34,13 @@ import urllib.request
 
 import apt
 
-import apport
+import apport.logging
 from apport.packaging import PackageInfo
 
 
 class __AptDpkgPackageInfo(PackageInfo):
-    """Concrete apport.PackageInfo class implementation for python-apt and
-    dpkg, as found on Debian and derivatives such as Ubuntu."""
+    """Concrete apport.packaging.PackageInfo class implementation for
+    python-apt and dpkg, as found on Debian and derivatives such as Ubuntu."""
 
     def __init__(self):
         self._apt_cache = None
@@ -331,10 +331,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             with urllib.request.urlopen(url) as response:
                 content = response.read()
         except (urllib.error.URLError, urllib.error.HTTPError):
-            apport.warning("cannot connect to: %s" % urllib.parse.unquote(url))
+            apport.logging.warning(
+                "cannot connect to: %s" % urllib.parse.unquote(url)
+            )
             return None
         except OSError:
-            apport.warning(
+            apport.logging.warning(
                 "failure reading data at: %s" % urllib.parse.unquote(url)
             )
             return None
@@ -428,13 +430,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                 try:
                     # ignore lines with NUL bytes (happens, LP#96050)
                     if b"\0" in line:
-                        apport.warning(
+                        apport.logging.warning(
                             "%s contains NUL character, ignoring line", sumfile
                         )
                         continue
                     words = line.split()
                     if not words:
-                        apport.warning(
+                        apport.logging.warning(
                             "%s contains empty line, ignoring line", sumfile
                         )
                         continue
@@ -812,7 +814,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                     self._get_primary_mirror_from_apt_sources(apt_sources)
                 )
             except SystemError as error:
-                apport.warning("cannot determine mirror: %s" % str(error))
+                apport.logging.warning(
+                    "cannot determine mirror: %s" % str(error)
+                )
 
             # set current release code name for _distro_release_to_codename
             with open(
@@ -914,7 +918,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "%", "%%"
                     )
                     obsolete += m + "\n"
-                    apport.warning(m)
+                    apport.logging.warning(m)
                     continue
                 for dep in cache_pkg.candidate.dependencies:
                     # the dependency may be satisfied by a different package
@@ -954,7 +958,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     "%", "%%"
                 )
                 obsolete += m + "\n"
-                apport.warning(m)
+                apport.logging.warning(m)
                 continue
 
             # try to select matching version
@@ -1281,7 +1285,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as error:
-            apport.error(
+            apport.logging.error(
                 "Package download error, try again later: %s", str(error)
             )
             sys.exit(1)  # transient error
@@ -1780,7 +1784,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         ppa = line.split()[1].split("/")[4]
                         origin_data[origin] = (user, ppa)
                 else:
-                    apport.warning(
+                    apport.logging.warning(
                         "Could not find or create source config for %s"
                         % origin
                     )
@@ -1814,7 +1818,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     distro=distro_name,
                     ppa_name=urllib.parse.quote(ppa_name),
                 )
-                ppa_info = apport.packaging.json_request(ppa_archive_url)
+                ppa_info = self.json_request(ppa_archive_url)
                 if not ppa_info:
                     continue
                 try:
@@ -1822,7 +1826,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "signing_key_fingerprint"
                     ]
                 except IndexError:
-                    apport.warning(
+                    apport.logging.warning(
                         "Error: can't find signing_key_fingerprint at %s"
                         % ppa_archive_url
                     )
@@ -1840,7 +1844,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 ]
 
                 if subprocess.call(argv) != 0:
-                    apport.warning(
+                    apport.logging.warning(
                         "Unable to import key for %s" % ppa_archive_url
                     )
 

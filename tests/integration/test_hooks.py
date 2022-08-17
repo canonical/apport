@@ -16,8 +16,8 @@ import subprocess
 import tempfile
 import unittest
 
-import apport
 import apport.fileutils
+import apport.report
 from tests.paths import get_data_directory, local_test_environment
 
 datadir = get_data_directory()
@@ -57,7 +57,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -84,7 +84,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -132,7 +132,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -176,7 +176,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -205,7 +205,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "kernel_crashdump created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -252,7 +252,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "kernel_crashdump created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -403,7 +403,7 @@ class T(unittest.TestCase):
             reps = apport.fileutils.get_new_reports()
             self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-            r = apport.Report()
+            r = apport.report.Report()
             with open(reps[0], "rb") as f:
                 r.load(f)
             self.assertEqual(r["ProblemType"], "Crash")
@@ -440,7 +440,7 @@ class T(unittest.TestCase):
             reps = apport.fileutils.get_new_reports()
             self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-            r = apport.Report()
+            r = apport.report.Report()
             with open(reps[0], "rb") as f:
                 r.load(f)
             self.assertEqual(r["PreprocessedSource"], test_source.read())
@@ -465,7 +465,7 @@ class T(unittest.TestCase):
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 
@@ -502,7 +502,7 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4\
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "kernel_oops created a report")
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reps[0], "rb") as f:
             r.load(f)
 

@@ -33,8 +33,10 @@ except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
     Launchpad = None
 
-import apport
 import apport.crashdb
+import apport.logging
+import apport.report
+from apport.packaging_impl import impl as packaging
 
 default_credentials_path = os.path.expanduser(
     "~/.cache/apport/launchpad.credentials"
@@ -46,7 +48,7 @@ def filter_filename(attachments):
         try:
             f = attachment.data.open()
         except (HTTPError, FailedToDecompressContent):
-            apport.error("Broken attachment on bug, ignoring")
+            apport.logging.error("Broken attachment on bug, ignoring")
             continue
         name = f.filename
         if name.endswith(".txt") or name.endswith(".gz"):
@@ -125,7 +127,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             self.arch_tag = "need-%s-retrace" % options["architecture"]
         else:
             self.arch_tag = (
-                "need-%s-retrace" % apport.packaging.get_system_architecture()
+                "need-%s-retrace" % packaging.get_system_architecture()
             )
         self.options = options
         self.auth = auth
@@ -175,7 +177,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 version="1.0",
             )
         except (RestfulError, OSError, ValueError) as error:
-            apport.error(
+            apport.logging.error(
                 "connecting to Launchpad failed: %s\n"
                 'You can reset the credentials by removing the file "%s"',
                 getattr(error, "content", str(error)),
@@ -304,7 +306,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
 
-        report = apport.Report()
+        report = apport.report.Report()
         b = self.launchpad.bugs[crash_id]
 
         # parse out fields from summary
@@ -608,7 +610,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             )
             return id_set(bugs)
         except HTTPError as error:
-            apport.error("connecting to Launchpad failed: %s", str(error))
+            apport.logging.error(
+                "connecting to Launchpad failed: %s", str(error)
+            )
             sys.exit(99)  # transient error
 
     def get_dup_unchecked(self):
@@ -625,7 +629,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             )
             return id_set(bugs)
         except HTTPError as error:
-            apport.error("connecting to Launchpad failed: %s", str(error))
+            apport.logging.error(
+                "connecting to Launchpad failed: %s", str(error)
+            )
             sys.exit(99)  # transient error
 
     def get_unfixed(self):
@@ -705,7 +711,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return ""
 
             if len(fixed_tasks) > 1:
-                apport.warning(
+                apport.logging.warning(
                     "There is more than one task fixed in %s %s,"
                     " using first one to determine fixed version",
                     self.distro,
@@ -787,7 +793,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 master_id = master.id
                 if master.id == crash_id:
                     # this happens if the bug was manually duped to a newer one
-                    apport.warning(
+                    apport.logging.warning(
                         "Bug %i was manually marked as a dupe of newer bug %i,"
                         " not closing as duplicate",
                         crash_id,
@@ -1333,7 +1339,7 @@ if __name__ == "__main__":
 
             # create a local reference report so that we can compare
             # DistroRelease, Architecture, etc.
-            self.ref_report = apport.Report()
+            self.ref_report = apport.report.Report()
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
             self.ref_report["SourcePackage"] = "coreutils"
@@ -1402,7 +1408,7 @@ if __name__ == "__main__":
 
             Return the ID.
             """
-            r = apport.Report("Crash")
+            r = apport.report.Report("Crash")
             r["ExecutablePath"] = "/bin/foo"
             r[
                 "Traceback"
@@ -1494,7 +1500,7 @@ and more
                     [
                         self.crashdb.arch_tag,
                         "apport-crash",
-                        apport.packaging.get_system_architecture(),
+                        packaging.get_system_architecture(),
                     ]
                 ),
             )
@@ -1522,7 +1528,7 @@ and more
                         "boogus",
                         "pybogus",
                         "need-duplicate-check",
-                        apport.packaging.get_system_architecture(),
+                        packaging.get_system_architecture(),
                     ]
                 ),
             )
@@ -1639,7 +1645,7 @@ and more
             title = b"1\xc3\xa4\xe2\x99\xa52"
 
             # distro, UTF-8 bytestring
-            r = apport.Report("Bug")
+            r = apport.report.Report("Bug")
             r["Title"] = title
             url = self.crashdb.get_comment_url(r, 42)
             self.assertTrue(
@@ -1680,7 +1686,7 @@ and more
             self.assertTrue(crash_id > 0)
             sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-            r = apport.Report("Bug")
+            r = apport.report.Report("Bug")
 
             r["OneLiner"] = b"bogus\xe2\x86\x92".decode("UTF-8")
             r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -1721,7 +1727,7 @@ and more
             self.assertTrue(crash_id > 0)
             sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-            r = apport.Report("Bug")
+            r = apport.report.Report("Bug")
 
             r["OneLiner"] = "bogus→"
             r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -1759,7 +1765,7 @@ and more
             self.assertTrue(crash_id > 0)
             sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-            r = apport.Report("Bug")
+            r = apport.report.Report("Bug")
 
             r["OneLiner"] = "bogus→"
             r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -1861,19 +1867,25 @@ and more
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
             self.crashdb.close_duplicate(
-                apport.Report(), known_test_id, known_test_id2
+                apport.report.Report(), known_test_id, known_test_id2
             )
             self.crashdb.close_duplicate(r, segv_id, known_test_id)
             self.assertEqual(
                 self.crashdb.duplicate_of(segv_id), known_test_id2
             )
 
-            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
-            self.crashdb.close_duplicate(apport.Report(), known_test_id2, None)
+            self.crashdb.close_duplicate(
+                apport.report.Report(), known_test_id, None
+            )
+            self.crashdb.close_duplicate(
+                apport.report.Report(), known_test_id2, None
+            )
             self.crashdb.close_duplicate(r, segv_id, None)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
+            self.crashdb.close_duplicate(
+                apport.report.Report(), known_test_id, None
+            )
             self.assertEqual(self.crashdb.duplicate_of(known_test_id), None)
 
             self.crashdb.mark_regression(segv_id, known_test_id)
@@ -2228,7 +2240,7 @@ and more
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
-            r = apport.Report("Crash")
+            r = apport.report.Report("Crash")
             r["ExecutablePath"] = "/bin/foo"
             r[
                 "Traceback"
@@ -2313,7 +2325,7 @@ NameError: global name 'weird' is not defined"""
                     count += 1
                     sys.stderr.write("%i " % b)
                     db.close_duplicate(
-                        apport.Report(), b, self.get_segv_report()
+                        apport.report.Report(), b, self.get_segv_report()
                     )
                     b = db.launchpad.bugs[self.get_segv_report()]
                     has_escalation_tag = db.options["escalation_tag"] in b.tags
@@ -2329,7 +2341,7 @@ NameError: global name 'weird' is not defined"""
             finally:
                 for b in range(first_dup, first_dup + count):
                     sys.stderr.write("R%i " % b)
-                    db.close_duplicate(apport.Report(), b, None)
+                    db.close_duplicate(apport.report.Report(), b, None)
             sys.stderr.write("\n")
 
         def test_marking_python_task_mangle(self):

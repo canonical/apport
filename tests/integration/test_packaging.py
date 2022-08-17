@@ -1,6 +1,6 @@
 import unittest
 
-import apport
+import apport.packaging
 
 
 class T(unittest.TestCase):

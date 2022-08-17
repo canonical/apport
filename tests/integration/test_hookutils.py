@@ -8,8 +8,8 @@ import tempfile
 import unittest
 import unittest.mock
 
-import apport
 import apport.hookutils
+import apport.report
 
 
 class T(unittest.TestCase):
@@ -389,20 +389,20 @@ class T(unittest.TestCase):
 
     @unittest.skipIf(
         apport.hookutils.apport.hookutils.in_session_of_problem(
-            apport.Report()
+            apport.report.Report()
         )
         is None,
         "no logind session",
     )
     def test_in_session_of_problem(self):
         """in_session_of_problem()"""
-        report = apport.Report(date="Sat Jan  1 12:00:00 2011")
+        report = apport.report.Report(date="Sat Jan  1 12:00:00 2011")
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-        report = apport.Report(date="Mon Oct 10 21:06:03 2009")
+        report = apport.report.Report(date="Mon Oct 10 21:06:03 2009")
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-        report = apport.Report()
+        report = apport.report.Report()
         self.assertTrue(apport.hookutils.in_session_of_problem(report))
 
         self.assertEqual(apport.hookutils.in_session_of_problem({}), None)
@@ -411,13 +411,13 @@ class T(unittest.TestCase):
         try:
             locale.setlocale(locale.LC_TIME, "C")
 
-            report = apport.Report(date="Sat Jan  1 12:00:00 2011")
+            report = apport.report.Report(date="Sat Jan  1 12:00:00 2011")
             self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-            report = apport.Report(date="Mon Oct 10 21:06:03 2009")
+            report = apport.report.Report(date="Mon Oct 10 21:06:03 2009")
             self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-            report = apport.Report(date="Tue Jan  1 12:00:00 2038")
+            report = apport.report.Report(date="Tue Jan  1 12:00:00 2038")
             self.assertTrue(apport.hookutils.in_session_of_problem(report))
         finally:
             locale.setlocale(locale.LC_TIME, orig_ctime)

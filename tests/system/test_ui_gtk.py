@@ -23,8 +23,8 @@ import gi
 gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
 from gi.repository import GLib, GObject, Gtk
 
-import apport
 import apport.crashdb_impl.memory
+import apport.report
 from apport import unicode_gettext as _
 from tests.helper import import_module_from_file
 from tests.paths import is_local_source_directory, local_test_environment
@@ -56,7 +56,7 @@ class T(unittest.TestCase):
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
-        r = apport.Report()
+        r = apport.report.Report()
         r.add_os_info()
         cls.distro = r["DistroRelease"].split()[0]
 
@@ -86,7 +86,7 @@ class T(unittest.TestCase):
         # test report
         self.app.report_file = os.path.join(self.report_dir, "bash.crash")
 
-        self.app.report = apport.Report()
+        self.app.report = apport.report.Report()
         self.app.report["ExecutablePath"] = "/bin/bash"
         self.app.report["Signal"] = "11"
         self.app.report["CoreDump"] = b"\x01\x02"
@@ -623,7 +623,7 @@ class T(unittest.TestCase):
         """bug layout from a loaded report"""
 
         self.app.report_file = "/tmp/foo.apport"
-        self.app.report = apport.Report("Bug")
+        self.app.report = apport.report.Report("Bug")
         self.app.report["Package"] = "libfoo1"
         self.app.report["SourcePackage"] = "foo"
 

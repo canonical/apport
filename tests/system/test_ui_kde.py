@@ -26,8 +26,8 @@ try:
 except ImportError as error:
     PYQT5_IMPORT_ERROR = error
 
-import apport
 import apport.crashdb_impl.memory
+import apport.report
 from apport import unicode_gettext as _
 from tests.helper import import_module_from_file, wrap_object
 from tests.paths import is_local_source_directory, local_test_environment
@@ -74,7 +74,7 @@ class T(unittest.TestCase):
         cls.app.applicationDisplayName = _("Apport")
         cls.app.windowIcon = QIcon.fromTheme("apport")
 
-        r = apport.Report()
+        r = apport.report.Report()
         r.add_os_info()
         cls.distro = r["DistroRelease"]
 
@@ -108,7 +108,7 @@ class T(unittest.TestCase):
         # test report
         self.app.report_file = os.path.join(self.report_dir, "bash.crash")
 
-        self.app.report = apport.Report()
+        self.app.report = apport.report.Report()
         self.app.report["ExecutablePath"] = "/bin/bash"
         self.app.report["Signal"] = "11"
         self.app.report["CoreDump"] = b"\x01\x02"

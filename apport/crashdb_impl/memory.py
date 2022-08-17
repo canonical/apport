@@ -9,8 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import apport
 import apport.crashdb
+import apport.report
 
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
@@ -248,7 +248,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         This is mostly useful for test suites."""
 
         # signal crash with source package and complete stack trace
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "libfoo1 1.2-3"
         r["SourcePackage"] = "foo"
         r["DistroRelease"] = "FooLinux Pi/2"
@@ -266,7 +266,7 @@ __frob (x=1) at crash.c:30"""
 
         # duplicate of above crash (slightly different arguments and
         # package version)
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "libfoo1 1.2-4"
         r["SourcePackage"] = "foo"
         r["DistroRelease"] = "Testux 1.0"
@@ -283,7 +283,7 @@ __frob (x=4) at crash.c:30"""
         self.upload(r)
 
         # unrelated signal crash
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "bar 42-4"
         r["SourcePackage"] = "bar"
         r["DistroRelease"] = "Testux 1.0"
@@ -300,7 +300,7 @@ d (x=1) at crash.c:29"""
         self.upload(r)
 
         # Python crash
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "python-goo 3epsilon1"
         r["SourcePackage"] = "pygoo"
         r["DistroRelease"] = "Testux 2.2"
@@ -319,7 +319,7 @@ ZeroDivisionError: integer division or modulo by zero"""
 
         # Python crash reoccurs in a later version
         # (used for regression detection)
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "python-goo 5"
         r["SourcePackage"] = "pygoo"
         r["DistroRelease"] = "Testux 2.2"

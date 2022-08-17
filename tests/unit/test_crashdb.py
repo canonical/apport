@@ -5,7 +5,7 @@ import tempfile
 import textwrap
 import unittest
 
-import apport
+import apport.report
 from apport.crashdb_impl.memory import CrashDatabase
 
 
@@ -96,9 +96,11 @@ class T(unittest.TestCase):
         """accepts(): default configuration"""
 
         # by default crash DBs accept any type
-        self.assertTrue(self.crashes.accepts(apport.Report("Crash")))
-        self.assertTrue(self.crashes.accepts(apport.Report("Bug")))
-        self.assertTrue(self.crashes.accepts(apport.Report("weirdtype")))
+        self.assertTrue(self.crashes.accepts(apport.report.Report("Crash")))
+        self.assertTrue(self.crashes.accepts(apport.report.Report("Bug")))
+        self.assertTrue(
+            self.crashes.accepts(apport.report.Report("weirdtype"))
+        )
 
     def test_accepts_problem_types(self):
         """accepts(): problem_types option in crashdb.conf"""
@@ -123,9 +125,9 @@ class T(unittest.TestCase):
 
             db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
 
-            self.assertTrue(db.accepts(apport.Report("Bug")))
-            self.assertFalse(db.accepts(apport.Report("Crash")))
-            self.assertFalse(db.accepts(apport.Report("weirdtype")))
+            self.assertTrue(db.accepts(apport.report.Report("Bug")))
+            self.assertFalse(db.accepts(apport.report.Report("Crash")))
+            self.assertFalse(db.accepts(apport.report.Report("weirdtype")))
 
     #
     # Test memory.py implementation
@@ -151,7 +153,7 @@ class T(unittest.TestCase):
     def test_update(self):
         """update()"""
 
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
         r["StacktraceTop"] = "Fresh!"
@@ -167,7 +169,7 @@ class T(unittest.TestCase):
     def test_update_filter(self):
         """update() with key_filter"""
 
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
         r["StacktraceTop"] = "Fresh!"
@@ -185,7 +187,7 @@ class T(unittest.TestCase):
     def test_update_traces(self):
         """update_traces()"""
 
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
         r["StacktraceTop"] = "Fresh!"
@@ -443,7 +445,7 @@ class T(unittest.TestCase):
         """check_duplicate() with UTF-8 strings"""
 
         # assertion failure, with UTF-8 strings
-        r = apport.Report()
+        r = apport.report.Report()
         r["Package"] = "bash 5"
         r["SourcePackage"] = "bash"
         r["DistroRelease"] = "Testux 2.2"
@@ -468,7 +470,7 @@ class T(unittest.TestCase):
     def test_check_duplicate_custom_signature(self):
         """check_duplicate() with custom DuplicateSignature: field"""
 
-        r = apport.Report()
+        r = apport.report.Report()
         r["SourcePackage"] = "bash"
         r["Package"] = "bash 5"
         r["DuplicateSignature"] = "Code42Blue"
@@ -528,7 +530,7 @@ class T(unittest.TestCase):
         that case we want the lowest ID to become the new master bug, and the
         other two duplicates.
         """
-        a = apport.Report()
+        a = apport.report.Report()
         a["SourcePackage"] = "bash"
         a["Package"] = "bash 5"
         a.crash_signature = lambda: "/bin/bash:11:read:main"
@@ -540,7 +542,7 @@ class T(unittest.TestCase):
             "http://bash.bugs.example.com/5",
         )
 
-        s = apport.Report()
+        s = apport.report.Report()
         s["SourcePackage"] = "bash"
         s["Package"] = "bash 5"
         s.crash_signature = lambda: "/bin/bash:11:__getch:read:main"
@@ -554,7 +556,7 @@ class T(unittest.TestCase):
         )
 
         # same addr sig as a, same symbolic sig as s
-        b = apport.Report()
+        b = apport.report.Report()
         b["SourcePackage"] = "bash"
         b["Package"] = "bash 5"
         b.crash_signature = lambda: "/bin/bash:11:__getch:read:main"
@@ -606,7 +608,7 @@ class T(unittest.TestCase):
 
         self.crashes.init_duplicate_db(":memory:")
 
-        r = apport.Report()
+        r = apport.report.Report()
         r["SourcePackage"] = "bash"
         r["Package"] = "bash 5"
         r["ExecutablePath"] = "/bin/bash"
@@ -638,7 +640,7 @@ class T(unittest.TestCase):
         )
 
         # another report with same address signature
-        r2 = apport.Report()
+        r2 = apport.report.Report()
         r2["SourcePackage"] = "bash"
         r2["Package"] = "bash 5"
         r2["ExecutablePath"] = "/bin/bash"
@@ -674,7 +676,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.crashes.check_duplicate(r2_id), (r_id, None))
 
         # different address signature
-        r3 = apport.Report()
+        r3 = apport.report.Report()
         r3["SourcePackage"] = "bash"
         r3["Package"] = "bash 5"
         r3["ExecutablePath"] = "/bin/bash"

@@ -13,7 +13,6 @@ import email.mime.text
 import smtplib
 import tempfile
 
-import apport
 import apport.crashdb
 
 

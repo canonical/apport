@@ -24,7 +24,6 @@ import subprocess
 import sys
 import tempfile
 
-import apport
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
 
@@ -168,7 +167,7 @@ def attach_upstart_overrides(report, package):
     """Attach information about any Upstart override files"""
 
     try:
-        files = apport.packaging.get_files(package)
+        files = packaging.get_files(package)
     except ValueError:
         return
 
@@ -183,7 +182,7 @@ def attach_upstart_logs(report, package):
     """Attach information about a package's session upstart logs"""
 
     try:
-        files = apport.packaging.get_files(package)
+        files = packaging.get_files(package)
     except ValueError:
         return
 

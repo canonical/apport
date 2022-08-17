@@ -17,7 +17,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-import apport
+import apport.report
 
 
 def _u(string):

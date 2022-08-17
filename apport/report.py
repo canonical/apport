@@ -32,8 +32,8 @@ import xml.dom
 import xml.dom.minidom
 import xml.parsers.expat
 
-import apport
 import apport.fileutils
+import apport.logging
 import problem_report
 from apport.hookutils import kill_pkttyagent
 from apport.packaging_impl import impl as packaging
@@ -257,7 +257,7 @@ def _run_hook(report, ui, hook):
             "-", "_"
         )
         report["HookError_" + hookname] = traceback.format_exc()
-        apport.error("hook %s crashed:", hook)
+        apport.logging.error("hook %s crashed:", hook)
         traceback.print_exc()
 
     return False
@@ -1288,7 +1288,7 @@ class Report(problem_report.ProblemReport):
         try:
             dom = self._get_ignore_dom()
         except (ValueError, KeyError):
-            apport.error("Could not get ignore file:")
+            apport.logging.error("Could not get ignore file:")
             traceback.print_exc()
             return False
 
