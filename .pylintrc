@@ -23,11 +23,20 @@ persistent=no
 # --disable=W".
 disable=bad-option-value,fixme,
   # TODO: Fix all following disabled checks!
-  R,
   consider-using-f-string,
+  duplicate-code,
   invalid-name,
   missing-docstring,
+  too-many-ancestors,
+  too-many-arguments,
+  too-many-branches,
+  too-many-instance-attributes,
   too-many-lines,
+  too-many-locals,
+  too-many-nested-blocks,
+  too-many-public-methods,
+  too-many-return-statements,
+  too-many-statements,
 
 
 [REPORTS]
