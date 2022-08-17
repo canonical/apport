@@ -1527,8 +1527,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         # if the release pocket doesn't exist
                         if pocket == "":
                             raise
-                        else:
-                            continue
+                        continue
 
                     with open(contents_filename, "wb") as f:
                         while True:

@@ -669,8 +669,7 @@ class Report(problem_report.ProblemReport):
             except OSError as error:
                 if error.errno == errno.ENOENT:
                     raise ValueError("invalid process") from error
-                else:
-                    raise
+                raise
 
         try:
             self["ProcCwd"] = _read_proc_link("cwd", pid, proc_pid_fd)
@@ -694,8 +693,7 @@ class Report(problem_report.ProblemReport):
             except OSError as error:
                 if error.errno == errno.ENOENT:
                     raise ValueError("invalid process") from error
-                else:
-                    raise
+                raise
         for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
             if self["ExecutablePath"].startswith("/%s/" % p):
                 self["ExecutablePath"] = self["ExecutablePath"][
@@ -928,14 +926,14 @@ class Report(problem_report.ProblemReport):
             reason = "Invalid core dump: " + warnings.strip()
             self["UnreportableReason"] = reason
             raise OSError(reason)
-        else:
-            first_line = out.split("\n", maxsplit=1)[0]
-            if first_line.endswith("No such file or directory."):
-                raise FileNotFoundError(
-                    errno.ENOENT,
-                    os.strerror(errno.ENOENT),
-                    "executable file for coredump not found",
-                )
+
+        first_line = out.split("\n", maxsplit=1)[0]
+        if first_line.endswith("No such file or directory."):
+            raise FileNotFoundError(
+                errno.ENOENT,
+                os.strerror(errno.ENOENT),
+                "executable file for coredump not found",
+            )
 
         # split the output into the various fields
         part_re = re.compile(r"^\$\d+\s*=\s*-99$", re.MULTILINE)
