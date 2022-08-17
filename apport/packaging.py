@@ -9,10 +9,56 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os
 import re
 import subprocess
 import sys
+
+try:
+    from platform import freedesktop_os_release
+except ImportError:  # Python < 3.10
+
+    def _parse_os_release(*os_release_files):
+        """
+        Parse os-release and return a parameter dictionary
+
+        This function will behave identical to
+        platform.freedesktop_os_release() from Python >= 3.10, if
+        called with ("/etc/os-release", "/usr/lib/os-release").
+
+        See http://www.freedesktop.org/software/systemd/man/os-release.html
+        for specification of the file format.
+        """
+        # These fields are mandatory fields with well-known defaults
+        # in practice all Linux distributions override NAME, ID, and
+        # PRETTY_NAME.
+        ret = {"NAME": "Linux", "ID": "linux", "PRETTY_NAME": "Linux"}
+
+        errno = None
+        for filename in os_release_files:
+            try:
+                with open(filename, encoding="utf-8") as release_file:
+                    regex = re.compile("^([\\w]+)=(?:'|\")?(.*?)(?:'|\")?$")
+                    for line in release_file:
+                        match = regex.match(line.strip())
+                        if match:
+                            # Shell special characters ("$", quotes, backslash,
+                            # backtick) are escaped with backslashes
+                            ret[match.group(1)] = re.sub(
+                                r'\\([$"\'\\`])', r"\1", match.group(2)
+                            )
+                break
+            except OSError as error:
+                errno = error.errno
+        else:
+            raise OSError(
+                errno,
+                "Unable to read files {}".format(", ".join(os_release_files)),
+            )
+
+        return ret
+
+    def freedesktop_os_release():
+        return _parse_os_release("/etc/os-release", "/usr/lib/os-release")
 
 
 class PackageInfo:
@@ -347,26 +393,16 @@ class PackageInfo:
         if self._os_version:
             return self._os_version
 
-        if os.path.exists("/etc/os-release"):
-            name = None
-            version = None
-            with open("/etc/os-release", encoding="utf-8") as f:
-                for line in f:
-                    if line.startswith("NAME="):
-                        name = line.split("=", 1)[1]
-                        if name.startswith('"'):
-                            name = name[1:-2].strip()
-                        name = self._sanitize_operating_system_name(name)
-                    elif line.startswith("VERSION_ID="):
-                        version = line.split("=", 1)[1]
-                        if version.startswith('"'):
-                            version = version[1:-2].strip()
+        try:
+            info = freedesktop_os_release()
+            name = self._sanitize_operating_system_name(info["NAME"])
+            version = info.get("VERSION_ID")
             if name and version:
                 self._os_version = (name, version)
                 return self._os_version
+        except OSError as error:
             sys.stderr.write(
-                "invalid /etc/os-release:"
-                " Does not contain NAME and VERSION_ID\n"
+                f"{error}. Falling back to calling 'lsb_release -sir'."
             )
 
         # fall back to lsb_release
