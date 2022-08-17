@@ -1034,8 +1034,7 @@ class Report(problem_report.ProblemReport):
                         "XWindowEvent",
                     ]:
                         continue
-                    else:
-                        unwinding_xerror = False
+                    unwinding_xerror = False
 
                 if m.group(3) or fn in unwind_functions:
                     unwinding = True
@@ -1050,8 +1049,7 @@ class Report(problem_report.ProblemReport):
                     if fn == "_XError":
                         unwinding_xerror = True
                     continue
-                else:
-                    unwinding = False
+                unwinding = False
 
             frame = m.group(2) or m.group(3)
             function = frame.split()[0]

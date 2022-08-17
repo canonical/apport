@@ -1602,13 +1602,10 @@ class __AptDpkgPackageInfo(PackageInfo):
                         if path in contents_mapping:
                             if package == contents_mapping[path]:
                                 continue
-                            else:
-                                # if the package was updated use the update
-                                # b/c everyone should have packages from
-                                # -updates and -security installed
-                                contents_mapping[path] = package
-                        else:
-                            contents_mapping[path] = package
+                            # if the package was updated use the update
+                            # b/c everyone should have packages from
+                            # -updates and -security installed
+                        contents_mapping[path] = package
         # the file only needs to be saved after an update
         if self._contents_update:
             self._save_contents_mapping(map_cachedir, release, arch)
