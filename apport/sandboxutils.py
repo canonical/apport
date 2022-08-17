@@ -45,7 +45,7 @@ def needed_packages(report):
             continue
         pkgs[pkg] = version
 
-    return [(p, v) for (p, v) in pkgs.items()]
+    return list(pkgs.items())
 
 
 def report_package_versions(report):

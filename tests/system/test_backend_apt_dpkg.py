@@ -55,7 +55,7 @@ class T(unittest.TestCase):
             self.rootdir,
             self.configdir,
             release,
-            [(package, version) for package, version in wanted.items()],
+            list(wanted.items()),
             False,
             self.cachedir,
         )
@@ -659,7 +659,7 @@ class T(unittest.TestCase):
             self.rootdir,
             self.configdir,
             release,
-            [(package, version) for package, version in wanted.items()],
+            list(wanted.items()),
             False,
             self.cachedir,
         )

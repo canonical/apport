@@ -257,7 +257,7 @@ class RPMPackageInfo:
         matches = self.ts.dbMatch(tag, arg)
         if matches.count() == 0:
             raise ValueError("Could not find package with %s: %s" % (tag, arg))
-        return [m for m in matches]
+        return matches
 
     @staticmethod
     def _get_header(envra):
@@ -267,7 +267,7 @@ class RPMPackageInfo:
         qlen = len(envra)
         while qlen > 0:
             mi = impl.ts.dbMatch("name", querystr)
-            hdrs = [m for m in mi]
+            hdrs = list(mi)
             if len(hdrs) > 0:
                 # yay! we found something
                 # Unless there's some rpmdb breakage, you should have one

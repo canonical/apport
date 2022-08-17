@@ -407,7 +407,7 @@ class T(unittest.TestCase):
         out.seek(0)
 
         msg = email.message_from_binary_file(out)
-        parts = [p for p in msg.walk()]
+        parts = list(msg.walk())
         self.assertEqual(len(parts), 5)
 
         # first part is the multipart container
@@ -500,7 +500,7 @@ class T(unittest.TestCase):
         msg = email.message_from_binary_file(out)
         self.assertEqual(msg["Greeting"], "hello world")
         self.assertEqual(msg["Foo"], "Bar")
-        parts = [p for p in msg.walk()]
+        parts = list(msg.walk())
         self.assertEqual(len(parts), 2)
 
         # first part is the multipart container
@@ -534,7 +534,7 @@ class T(unittest.TestCase):
         out.seek(0)
 
         msg = email.message_from_binary_file(out)
-        parts = [p for p in msg.walk()]
+        parts = list(msg.walk())
         self.assertEqual(len(parts), 2)
 
         # first part is the multipart container

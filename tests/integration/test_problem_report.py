@@ -455,7 +455,7 @@ class T(unittest.TestCase):
                 out.seek(0)
 
         msg = email.message_from_binary_file(out)
-        parts = [p for p in msg.walk()]
+        parts = list(msg.walk())
         self.assertEqual(len(parts), 7)
 
         # first part is the multipart container
@@ -518,7 +518,7 @@ class T(unittest.TestCase):
         out.seek(0)
 
         msg = email.message_from_binary_file(out)
-        parts = [p for p in msg.walk()]
+        parts = list(msg.walk())
         self.assertEqual(len(parts), 3)
 
         # first part is the multipart container
