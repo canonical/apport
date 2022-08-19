@@ -54,7 +54,7 @@ else
 fi
 
 # assert that there are no hardcoded "Ubuntu" names
-out=$(grep -rw Ubuntu tests/*/*.py tests/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
+out=$(grep -rw Ubuntu apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
 if [ -n "$out" ]; then
     echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
     exit 1
