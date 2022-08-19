@@ -7,25 +7,30 @@ detailed list of changes, please see ChangeLog.
 * Fix several pycodestyle warnings
 * Sort Python imports with isort
 * Replace `ProblemReport.get_date` by `ProblemReport.get_timestamp`, fixes
-  regression in 2.21.0 (LP: #1978487)
+  regression in 2.21.0 ([LP: #1978487](https://launchpad.net/bugs/1978487))
 * Format Python code with black
-* apport-gtk: Exclude trailing dot from URL links (LP: #1978301)
+* apport-gtk: Exclude trailing dot from URL links
+  ([LP: #1978301](https://launchpad.net/bugs/1978301))
 * Fix `AttributeError`: 'NoneType' object has no attribute 'write', fixes
-  regression in 2.21.0 (LP: #1979211)
+  regression in 2.21.0 ([LP: #1979211](https://launchpad.net/bugs/1979211))
 * `apport_python_hook`:
-  * Properly handle missing modules (LP: #1774843)
-  * Fix `FileNotFoundError` if the current directory was deleted (LP: #1979637)
-  * Fix crash if `os.getcwd()` fails (LP: #1977954)
-* Replace deprecated `imp` module (LP: #1947425)
+  * Properly handle missing modules
+    ([LP: #1774843](https://launchpad.net/bugs/1774843))
+  * Fix `FileNotFoundError` if the current directory was deleted
+    ([LP: #1979637](https://launchpad.net/bugs/1979637))
+  * Fix crash if `os.getcwd()` fails
+    ([LP: #1977954](https://launchpad.net/bugs/1977954))
+* Replace deprecated `imp` module
+  ([LP: #1947425](https://launchpad.net/bugs/1947425))
 * tests: Replace deprecated `load_module()`
 * `whoopsie-upload-all`: Fix 'EOFError' object has no attribute 'errno', fixes
-  regression in 2.21.0 (LP: #1979681)
+  regression in 2.21.0 ([LP: #1979681](https://launchpad.net/bugs/1979681))
 * Convert documentation to Markdown
 
 2.21.0 (2022-06-09)
 -------------------
   * SECURITY UPDATE: TOCTOU issue allows local user to read arbitrary
-    files (LP: #1830858)
+    files ([LP: #1830858](https://launchpad.net/bugs/1830858))
     - apport/report.py: Avoid TOCTOU issue on users ignore file by
       dropping privileges and then opening the file both test for access and
       open the file in a single operation, instead of using access() before
@@ -33,60 +38,66 @@ detailed list of changes, please see ChangeLog.
       read and embed an arbitrary file in the resulting crash dump.
     - CVE-2019-7307
   * SECURITY UPDATE: apport reads arbitrary files if ~/.config/apport/settings
-    is a symlink (LP: #1830862)
+    is a symlink ([LP: #1830862](https://launchpad.net/bugs/1830862))
     - apport/fileutils.py: drop permissions before reading user settings file.
     - CVE-2019-11481
   * SECURITY UPDATE: TOCTTOU race conditions and following symbolic
-    links when creating a core file (LP: #1839413)
+    links when creating a core file
+    ([LP: #1839413](https://launchpad.net/bugs/1839413))
     - data/apport: use file descriptor to reference to cwd instead
       of strings.
     - CVE-2019-11482
   * SECURITY UPDATE: fully user controllable lock file due to lock file
-    being located in world-writable directory (LP: #1839415)
+    being located in world-writable directory
+    ([LP: #1839415](https://launchpad.net/bugs/1839415))
     - data/apport: create and use lock file from /var/lock/apport.
     - CVE-2019-11485
   * SECURITY UPDATE: per-process user controllable Apport socket file
-    (LP: #1839420)
+    ([LP: #1839420](https://launchpad.net/bugs/1839420))
     - data/apport: forward crashes only under a valid uid and gid,
       thanks Stéphane Graber for the patch.
     - CVE-2019-11483
   * SECURITY UPDATE: PID recycling enables an unprivileged user to
-    generate and read a crash report for a privileged process (LP: #1839795)
+    generate and read a crash report for a privileged process
+    ([LP: #1839795](https://launchpad.net/bugs/1839795))
     - data/apport: drop permissions before adding proc info (special thanks
       to Kevin Backhouse for the patch)
     - data/apport, apport/report.py, apport/ui.py: only access or open
       /proc/[pid] through a file descriptor for that directory.
     - CVE-2019-15790
   * SECURITY REGRESSION: 'module' object has no attribute 'O_PATH'
-    (LP: #1851806)
+    ([LP: #1851806](https://launchpad.net/bugs/1851806))
     - apport/report.py, apport/ui.py: use file descriptors for /proc/pid
       directory access only when running under python 3; prevent reading /proc
       maps under python 2 as it does not provide a secure way to do so; use
       io.open for better compatibility between python 2 and 3.
   * SECURITY UPDATE: World writable root owned lock file created in user
-    controllable location (LP: #1862348)
+    controllable location ([LP: #1862348](https://launchpad.net/bugs/1862348))
     - data/apport: Change location of lock file to be directly under
       /var/run so that regular users can not directly access it or perform
       symlink attacks.
     - CVE-2020-8831
   * SECURITY UPDATE: Race condition between report creation and ownership
-    (LP: #1862933)
+    ([LP: #1862933](https://launchpad.net/bugs/1862933))
     - data/apport: When setting owner of report file use a file-descriptor
       to the report file instead of its path name to ensure that users can
       not cause Apport to change the ownership of other files via a
       symlink attack.
     - CVE-2020-8833
-  * SECURITY UPDATE: information disclosure issue (LP: #1885633)
+  * SECURITY UPDATE: information disclosure issue
+    ([LP: #1885633](https://launchpad.net/bugs/1885633))
     - data/apport: also drop gid when checking if user session is closing.
     - CVE-2020-11936
-  * SECURITY UPDATE: crash via malformed ignore file (LP: #1877023)
+  * SECURITY UPDATE: crash via malformed ignore file
+    ([LP: #1877023](https://launchpad.net/bugs/1877023))
     - apport/report.py: don't crash on malformed mtime values.
     - CVE-2020-15701
   * SECURITY UPDATE: TOCTOU in core file location
     - data/apport: make sure the process hasn't been replaced after Apport
       has started.
     - CVE-2020-15702
-  * SECURITY UPDATE: multiple security issues (LP: #1912326)
+  * SECURITY UPDATE: multiple security issues
+    ([LP: #1912326](https://launchpad.net/bugs/1912326))
     - CVE-2021-25682: error parsing /proc/pid/status
     - CVE-2021-25683: error parsing /proc/pid/stat
     - CVE-2021-25684: stuck reading fifo
@@ -94,7 +105,8 @@ detailed list of changes, please see ChangeLog.
     - apport/fileutils.py: move some logic here to skip over manipulated
       process names and filenames.
     - test/test_fileutils.py: added some parsing tests.
-  * SECURITY UPDATE: Multiple arbitrary file reads (LP: #1917904)
+  * SECURITY UPDATE: Multiple arbitrary file reads
+    ([LP: #1917904](https://launchpad.net/bugs/1917904))
     - apport/hookutils.py: don't follow symlinks and make sure the file
       isn't a FIFO in read_file().
     - test/test_hookutils.py: added symlink tests.
@@ -102,20 +114,23 @@ detailed list of changes, please see ChangeLog.
       CVE-2021-32551, CVE-2021-32552, CVE-2021-32553, CVE-2021-32554,
       CVE-2021-32555
   * SECURITY UPDATE: info disclosure via modified config files spoofing
-    (LP: #1917904)
+    ([LP: #1917904](https://launchpad.net/bugs/1917904))
     - backends/packaging-apt-dpkg.py: properly terminate arguments in
       get_modified_conffiles.
     - CVE-2021-32556
-  * SECURITY UPDATE: arbitrary file write (LP: #1917904)
+  * SECURITY UPDATE: arbitrary file write
+    ([LP: #1917904](https://launchpad.net/bugs/1917904))
     - data/whoopsie-upload-all: don't follow symlinks and make sure the
       file isn't a FIFO in process_report().
     - CVE-2021-32557
-  * SECURITY UPDATE: Arbitrary file read (LP: #1934308)
+  * SECURITY UPDATE: Arbitrary file read
+    ([LP: #1934308](https://launchpad.net/bugs/1934308))
     - data/general-hooks/ubuntu.py: don't attempt to include emacs
       byte-compilation logs, they haven't been generated by the emacs
       packages in a long time.
     - CVE-2021-3709
-  * SECURITY UPDATE: Info disclosure via path traversal (LP: #1933832)
+  * SECURITY UPDATE: Info disclosure via path traversal
+    ([LP: #1933832](https://launchpad.net/bugs/1933832))
     - apport/hookutils.py, test/test_hookutils.py: detect path traversal
       attacks, and directory symlinks.
     - CVE-2021-3710
@@ -132,19 +147,22 @@ detailed list of changes, please see ChangeLog.
     mapping.
   * test/test_report.py: remove unused import of gzip.
   * apport/ui.py: Write an UnreportableReason for snaps and provide information
-    on how to contact a snap developer. (LP: #1729491)
+    on how to contact a snap developer.
+    ([LP: #1729491](https://launchpad.net/bugs/1729491))
   * problem_report.py, bin/apport-unpack: restore some python2 code because the
     Error Tracker retracers need it.
   * backends/packaging-apt-dpkg.py: add in /usr/games and /usr/libexec as paths
     for executables in the contents mapping.
   * apport/ui.py: When saving a report for later processing if the filename
     to save it to ends with .gz then gzip the report file. Thanks to Yuan-Chen
-    Cheng for the patch. (LP: #1837174)
-  * Catch zlib.error when decoding CoreDump from crash file (LP: #1947800)
+    Cheng for the patch. ([LP: #1837174](https://launchpad.net/bugs/1837174))
+  * Catch zlib.error when decoding CoreDump from crash file
+    ([LP: #1947800](https://launchpad.net/bugs/1947800))
   * whoopsie-upload-all: Catch FileNotFoundError during process_report
-    (LP: #1867204)
+    ([LP: #1867204](https://launchpad.net/bugs/1867204))
   * Drop Python 2 support
-  * Grab a slice of JournalErrors around the crash time (LP: #1962454)
+  * Grab a slice of JournalErrors around the crash time
+    ([LP: #1962454](https://launchpad.net/bugs/1962454))
   * Fix several race conditions in test cases
   * Make test cases more robust against running in specific environments
   * Split the test suite into unit, integration, and system tests
@@ -153,25 +171,29 @@ detailed list of changes, please see ChangeLog.
 --------------------
   * SECURITY UPDATE: Ensure that we propely handle crashes that originate from
     a PID namespace. Thanks to Sander Bos for discovering this issue.
-    (CVE-2018-6552, LP: #1746668)
+    (CVE-2018-6552, [LP: #1746668](https://launchpad.net/bugs/1746668))
   * backends/packaging-apt-dpkg.py: switch to using python3-launchpadlib to
     communicate with Launchpad thereby gaining retry capabilities and using its
     cache.
   * backends/packaging-apt-dpkg.py: utilize a global mapping of files to
     packages instead of searching a Contents.gz file multiple times,
     additionally write this mapping to disk so subsequent lookups and retraces
-    are quicker. (LP: #1370230)
+    are quicker. ([LP: #1370230](https://launchpad.net/bugs/1370230))
   * apport/ui.py: Handle old reports generated pre-apport with "remember"
-    option. If the option isn't there, consider as false. (LP: #1791324)
+    option. If the option isn't there, consider as false.
+    ([LP: #1791324](https://launchpad.net/bugs/1791324))
   * apport/report.py: End our gdb batch script with a separator, to accomodate
     new exit codes from gdb 8.2.50. Thanks Steve Langasek!
   * data/apport: Introduce support for non-positional arguments so we
-    can easily extend core_pattern in the future (LP: #1732962)
+    can easily extend core_pattern in the future
+    ([LP: #1732962](https://launchpad.net/bugs/1732962))
   * apport/report.py: Have add_gdb_info return a FileNotFoundError if gdb or
     the crashing executable are not found and modify whoopsie-upload-all to
-    upload crashes in that situation. (LP: #1820132)
+    upload crashes in that situation.
+    ([LP: #1820132](https://launchpad.net/bugs/1820132))
   * apport/report.py, apport/ui.py: raise ValueError if the pid is not
-    accessible, display an error message for that or an invalid pid. (LP: #1396160)
+    accessible, display an error message for that or an invalid pid.
+    ([LP: #1396160](https://launchpad.net/bugs/1396160))
   * switch from pyflakes to pyflakes3, drop some python2 code
   * backends/packaging-apt-dpkg.py: strip /usr from binary names so the .list
     file will match.
@@ -180,23 +202,24 @@ detailed list of changes, please see ChangeLog.
   * apport/report.py: reorder directories check for binaries so /usr is
     checked first.
   * data/whoopsie-upload-all: confirm the exception has an errno before using
-    it in a comparison. (LP: #1824152)
+    it in a comparison. ([LP: #1824152](https://launchpad.net/bugs/1824152))
   * test/test_report.py: update test_add_proc_info for function raising a
     ValueError.
   * apport/REThread.py, apport/ui.py: Avoid deprecation warnings by switching
     from isAlive() to is_alive().
   * apport/ui.py: if report.get_timestamp() returns None don't try and use it
-    in a comparison. (LP: #1658188)
+    in a comparison. ([LP: #1658188](https://launchpad.net/bugs/1658188))
   * test/test_apport_valgrind.py: specify the location for true.
   * apport/ui.py: when using ubuntu-bug properly handle executables which
-    start with /snap/bin. (LP: #1760220)
+    start with /snap/bin. ([LP: #1760220](https://launchpad.net/bugs/1760220))
   * Fix PEP8 605 warnings and ignore 503,504 ones.
   * tests/test_ui_gtk.py: Increase the timeout so that when the autopkgtest
-    infrastructure is busy the tests should not fail. (LP: #1780767)
+    infrastructure is busy the tests should not fail.
+    ([LP: #1780767](https://launchpad.net/bugs/1780767))
   * problem_report.py: Decrease zlib compression level from 9 to 6.  After
     a crash, this reduces the time Apport spends compressing the core dump
     by an order of magnitude. Thanks to Anders Kaseorg for the analysis and
-    initial patch. (LP: #1537635)
+    initial patch. ([LP: #1537635](https://launchpad.net/bugs/1537635))
 
 2.20.10 (2018-05-09)
 --------------------
@@ -207,14 +230,17 @@ detailed list of changes, please see ChangeLog.
     files.
   * data/apport: Fix PEP8 issues
   * apport/ui.py: Include ProblemType in reports which are updated as package
-    hooks may expect the report to have a ProblemType. (LP: #1766794)
+    hooks may expect the report to have a ProblemType.
+    ([LP: #1766794](https://launchpad.net/bugs/1766794))
   * test/test_ui.py: modify run_crash_kernel test to account for the fact that
     linux-image-$kvers-$flavor is now built from the linux-signed source
-    package on amd64 and ppc64el. (LP: #1766740)
+    package on amd64 and ppc64el.
+    ([LP: #1766740](https://launchpad.net/bugs/1766740))
 
 2.20.9 (2018-02-14)
 -------------------
-  * Re-enable container support. Thanks to Stéphane Graber! (LP: #1732518)
+  * Re-enable container support. Thanks to Stéphane Graber!
+    ([LP: #1732518](https://launchpad.net/bugs/1732518))
   * Add code preventing a user from confusing apport by using
     a manually crafted filesystem inside a combination of a user and mount
     namespace. Thanks to Stéphane Graber!
@@ -222,7 +248,8 @@ detailed list of changes, please see ChangeLog.
     should another argument be added later, the receiver will simply ignore
     the crash until it itself gets updated. Thanks to Stéphane Graber!
   * data/apport: add a second os.path.exists check to ensure we do not
-    receive a Traceback in is_container_id(). (LP: #1733366)
+    receive a Traceback in is_container_id().
+    ([LP: #1733366](https://launchpad.net/bugs/1733366))
   * apport/sandboxutils.py: when installing extra packages do not install the
     debug versions of them as this was installing gdb-dbg. If debug versions of
     a package are specifically required they can be passed as an extra-package.
@@ -238,8 +265,9 @@ detailed list of changes, please see ChangeLog.
   * data/apport: add an exception handler in case either name space can not be
     found.
   * data/general-hooks/generic.py: change JournalErrors to contain errors not
-    warnings. (LP: #1738581)
-  * data/apport: wait for lock, with 30s timeout (LP: #1746874)
+    warnings. ([LP: #1738581](https://launchpad.net/bugs/1738581))
+  * data/apport: wait for lock, with 30s timeout
+    ([LP: #1746874](https://launchpad.net/bugs/1746874))
 
 2.20.8 (2017-11-15)
 -------------------
@@ -250,7 +278,7 @@ detailed list of changes, please see ChangeLog.
       owner and group that started the process. Rather check the dump
       mode of the crashed process and do not write a core file if its
       value is 2. Thanks to Sander Bos for discovering this issue!
-    (CVE-2017-14177, LP: #1726372)
+    (CVE-2017-14177, [LP: #1726372](https://launchpad.net/bugs/1726372))
   * SECURITY UPDATE: Denial of service via resource exhaustion,
     privilege escalation, and possible container escape when handling
     crashes of processes inside PID namespaces.
@@ -260,12 +288,12 @@ detailed list of changes, please see ChangeLog.
       ignoring crashes that occur in a PID namespace. This functionality
       may be re-enabled in a future update. Thanks to Sander Bos for
       discovering this issue!
-    (CVE-2017-14180, LP: #1726372)
+    (CVE-2017-14180, [LP: #1726372](https://launchpad.net/bugs/1726372))
  * apport/hookutils.py: modify package_versions to return an empty string if
-   packages is empty. (LP: #1723822)
+   packages is empty. ([LP: #1723822](https://launchpad.net/bugs/1723822))
  * bin/apport-cli: read until <enter> instead of a single character when # of
    apport options is non-unique with a single character. Thanks to Chad Smith
-   for the patch. (LP: #1722564)
+   for the patch. ([LP: #1722564](https://launchpad.net/bugs/1722564))
 
 2.20.7 (2017-08-29)
 -------------------
@@ -290,7 +318,7 @@ detailed list of changes, please see ChangeLog.
    ```
    which would execute /some/dir/foo.py with arbitrary code.  Thanks to Felix
    Wilhelm for discovering this!
-   (CVE-2017-10708, LP: #1700573)
+   (CVE-2017-10708, [LP: #1700573](https://launchpad.net/bugs/1700573))
  * Stop installing a MIME handler for crash files as it ends up causing more
    trouble than it is worth.
  * bin/crash-digger: Set self.lp if the crashdb is Launchpad.
@@ -308,20 +336,22 @@ detailed list of changes, please see ChangeLog.
 2.20.5 (2017-05-12)
 -------------------
  * bin/apport-retrace: Comment on bug reports when an invalid core file is
-   encountered. (LP: #1647635)
+   encountered. ([LP: #1647635](https://launchpad.net/bugs/1647635))
  * Switch to using HxW directory names for app icons instead of just one
    number. Thanks to Jeremy Bicha for the patch.
  * apport/ui.py: Ensure the Date field exists in a report before using it in a
-   comparison. (LP: #1658188)
+   comparison. ([LP: #1658188](https://launchpad.net/bugs/1658188))
  * bin/apport-retrace: Add in a --gdb-sandbox switch which creates or utilizes
    a sandbox with the report's distribution release and the host system's
-   architecture for installing and running gdb. (LP: #1517257)
+   architecture for installing and running gdb.
+   ([LP: #1517257](https://launchpad.net/bugs/1517257))
  * apport/hookutils.py: Don't crash if .xsession-errors is not readable by the
-   user. (LP: #1675928)
+   user. ([LP: #1675928](https://launchpad.net/bugs/1675928))
  * bin/apport-retrace: Be specific about which required field is missing from a
    report and not retracing it.
  * Disable report.test_add_gdb_info_abort_glib test case for now, as the
-   glib assertion message is broken under current Ubuntu (LP: #1689344)
+   glib assertion message is broken under current Ubuntu
+   ([LP: #1689344](https://launchpad.net/bugs/1689344))
 
 2.20.4 (2016-12-14)
 -------------------
@@ -331,7 +361,7 @@ detailed list of changes, please see ChangeLog.
    opening a crash file whose CrashDB field contains an exec(), open(), or
    similar commands; this is fairly easy as we install a MIME handler for
    these. Thanks to Donncha O'Cearbhaill for discovering this!
-   (CVE-2016-9949, LP: #1648806)
+   (CVE-2016-9949, [LP: #1648806](https://launchpad.net/bugs/1648806))
  * SECURITY FIX: Fix path traversal vulnerability with hooks execution.
    Ensure that Package: and SourcePackage: fields loaded from reports do not
    contain directories. Until now, an attacker could trick a user into opening a
@@ -341,7 +371,7 @@ detailed list of changes, please see ChangeLog.
    ```
    which would execute /some/dir/foo.py with arbitrary code.
    Thanks to Donncha O'Cearbhaill for discovering this!
-   (CVE-2016-9950, LP: #1648806)
+   (CVE-2016-9950, [LP: #1648806](https://launchpad.net/bugs/1648806))
  * SECURITY FIX: apport-{gtk,kde}: Only offer "Relaunch" for recent /var/crash
    crashes.
    It only makes sense to offer relaunching for crashes that just happened and
@@ -349,7 +379,7 @@ detailed list of changes, please see ChangeLog.
    somewhere else or after the crash happened, this is even actively dangerous
    as a malicious crash file can specify any arbitrary command to run.
    Thanks to Donncha O'Cearbhaill for discovering this!
-   (CVE-2016-9951, LP: #1648806)
+   (CVE-2016-9951, [LP: #1648806](https://launchpad.net/bugs/1648806))
  * test_backend_apt_dpkg.py: Move tests from Ubuntu 15.10 "wily" (which is EOL
    now) to 16.04 LTS "xenial".
  * packaging-apt-dpkg.py: Explicitly set Dir::State::Status to the host
@@ -363,7 +393,7 @@ detailed list of changes, please see ChangeLog.
  * test/test_report.py: Slightly relax stack trace checks to also work with
    glibc 2.24.
  * apport-gtk: Specify module version with GI imports to avoid warnings. Thanks
-   Anatoly Techtonik. (LP: #1502173)
+   Anatoly Techtonik. ([LP: #1502173](https://launchpad.net/bugs/1502173))
  * test/run: Prefer pycodestyle over pep8.
  * backends/packaging-apt-dpkg.py: provide a fallback method if using zgrep to
    search for a file in Contents.gz fails due to a lack of memory.  Thanks
@@ -375,7 +405,7 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * problem_report.py: Fail with proper exception when trying to assign a list
    to a report key, or when trying to assing a tuple with more than 4 entries.
-   (LP: #1596713)
+   ([LP: #1596713](https://launchpad.net/bugs/1596713))
  * test_backend_apt_dpkg.py: Install GPG key for ddebs.ubuntu.com to avoid apt
    authentication errors.
 
@@ -384,22 +414,24 @@ detailed list of changes, please see ChangeLog.
  * problem_report.py: Make assertion of invalid key names more verbose.
  * hookutils.py: Fix generation of valid report key names from arbitrary paths
    in attach_file() and related functions. This will now replace all invalid
-   characters with dots, not just a few known invalid ones. (LP: #1566975)
+   characters with dots, not just a few known invalid ones.
+   ([LP: #1566975](https://launchpad.net/bugs/1566975))
  * problem_report.py: Instead of AssertionError, raise a ValueError for invalid
    key names and TypeError for invalid kinds of values. Thanks Barry Warsaw.
  * Don't ignore OSError in Report.add_gdb_info(), as we do want to fail with an
    useful error message if gdb cannot be called in apport-retrace. Move the
    catching to the UI as not having gdb installed is still fine for reporting
-   clients. (LP: #1579949)
+   clients. ([LP: #1579949](https://launchpad.net/bugs/1579949))
  * Show gdb error messages in Report.add_gdb_info() OSError exception when gdb
-   fails. (LP: #1579897)
+   fails. ([LP: #1579897](https://launchpad.net/bugs/1579897))
  * hookutils, attach_root_command_outputs(): Return str again, like before
-   2.15.2. (LP: #1370259)
+   2.15.2. ([LP: #1370259](https://launchpad.net/bugs/1370259))
  * Stop issuing "set architecture" gdb commands on ARM and Power; these only
    applied to 32 bit platforms and are apparently not needed any more with
-   recent gdb versions. (LP: #1585702)
+   recent gdb versions. ([LP: #1585702](https://launchpad.net/bugs/1585702))
  * Disable report.test_add_gdb_info_abort_libnih test case for now, as libnih
-   is broken under current Ubuntu (LP: #1580601)
+   is broken under current Ubuntu
+   ([LP: #1580601](https://launchpad.net/bugs/1580601))
  * do-release: Drop generation of ChangeLog. Interesting changes are already
    documented here, and the details can be seen in the bzr log.
 
@@ -415,14 +447,14 @@ detailed list of changes, please see ChangeLog.
    computation: dbus-glib's DBusException wraps a "real" server-side exception,
    so add the class of that to disambiguate different crashes; for OSError
    that is not a known subclass like FileNotFoundError, add the errno.
-   (LP: #989819)
+   ([LP: #989819](https://launchpad.net/bugs/989819))
 
 2.20 (2016-02-12)
 -----------------
  * Reimplement forwarding crashes into a container, via activating the new
    apport-forward.socket in the container and handing over the core dump fd.
    This is a much safer way than the original implementation with nsexec.
-   Thanks Stéphane Graber! (LP: #1445064)
+   Thanks Stéphane Graber! ([LP: #1445064](https://launchpad.net/bugs/1445064))
  * Drop obsolete signal_crashes.test_ns_forward_privilege() test case. This
    code was dropped long ago.
 
@@ -436,7 +468,7 @@ detailed list of changes, please see ChangeLog.
    --version format.
  * hookutils.py, attach_hardware(): Stop attaching /var/log/udev. This was an
    upstart-ism, mostly redundant with the udev db and is not being written
-   under systemd. (LP: #1537211)
+   under systemd. ([LP: #1537211](https://launchpad.net/bugs/1537211))
 
 2.19.3 (2015-12-08)
 -------------------
@@ -445,7 +477,8 @@ detailed list of changes, please see ChangeLog.
  * hookutils.py, attach_gsettings_schema(): Don't replace the schema variable;
    fixes attaching relocatable schemas. Thanks Sébastien Bacher!
  * generic hook: Limit JournalErrors to the 1.000 last lines. This avoids long
-   report load times when processes cause massive log spew. (LP: #1516947)
+   report load times when processes cause massive log spew.
+   ([LP: #1516947](https://launchpad.net/bugs/1516947))
  * Add key filtering to ProblemReport.load().
  * Don't read the entire report when determining the CrashCounter. This avoids
    long delays for existing large reports.
@@ -460,7 +493,7 @@ detailed list of changes, please see ChangeLog.
    like "python -m module_name", avoid actually importing and running the
    module; this could lead to local root privilege escalation. Thanks to
    Gabriel Campana for discovering this and the fix!
-   (CVE-2015-1341, LP: #1507480)
+   (CVE-2015-1341, [LP: #1507480](https://launchpad.net/bugs/1507480))
  * apt/dpkg: Don't mark packages downloaded from Launchpad for installation by
    apt. Thanks Brian Murray.
  * Fix backend_apt_dpkg.test_install_packages_system for recent "Fall back to
@@ -473,9 +506,11 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * Consistently intercept "report file already exists" errors in all writers of
    report files (package_hook, kernel_crashdump, and similar) to avoid
-   unhandled exceptions on those. (LP: #1500450)
+   unhandled exceptions on those.
+   ([LP: #1500450](https://launchpad.net/bugs/1500450))
  * apt/dpkg: Fall back to direct Launchpad ddeb download if we can't find it in
-   the apt cache. Thanks Brian Murray! (LP: #1500557)
+   the apt cache. Thanks Brian Murray!
+   ([LP: #1500557](https://launchpad.net/bugs/1500557))
  * doc/data-format.tex: Clarify that key names are being treated as case
    sensitive (unlike RFC822).
 
@@ -483,22 +518,22 @@ detailed list of changes, please see ChangeLog.
 -----------------
  * apport: Drop re-nicing. This might decrease the time a user has to wait for
    apport to finish the core dump for a crashed/hanging foreground process.
-   (See LP #1278780)
+   (See [LP: #1278780](https://launchpad.net/bugs/1278780))
  * kernel_crashdump: Enforce that the log/dmesg files are not a symlink. This
    prevents normal users from pre-creating a symlink to the predictable .crash
    file, and thus triggering a "fill up disk" DoS attack when the .crash report
    tries to include itself. Thanks to halfdog for discovering this!
-   (CVE-2015-1338, part of LP #1492570)
+   (CVE-2015-1338, part of [LP: #1492570](https://launchpad.net/bugs/1492570))
  * SECURITY FIX: Fix all writers of report files (package_hook,
    kernel_crashdump, and similar) to open the report file exclusively, i. e.
    fail if they already exist. This prevents privilege escalation through
    symlink attacks. Note that this will also prevent overwriting previous
    reports with the same same. Thanks to halfdog for discovering this!
-   (CVE-2015-1338, LP: #1492570)
+   (CVE-2015-1338, [LP: #1492570](https://launchpad.net/bugs/1492570))
  * apport: Ignore process restarts from systemd's watchdog. Their traces are
    usually useless as they don't have any information about the actual reasaon
    why processes hang (like VM suspends or kernel lockups with bad hardware)
-   (LP: #1433320)
+   ([LP: #1433320](https://launchpad.net/bugs/1433320))
  * Switch all executables to use Python 3 by default.
 
 2.18.1 (2015-09-10)
@@ -508,19 +543,20 @@ detailed list of changes, please see ChangeLog.
  * When determinining the logind session and $XDG_SESSION_ID is not set, fall
    back to reading it from /proc/pid/cgroup.
  * whoopsie-upload-all: Intercept OSError too (e. g. "No space left on
-   device"). (LP: #1476258)
+   device"). ([LP: #1476258](https://launchpad.net/bugs/1476258))
  * apport-retrace: Only consider the file name of a source file, not its path;
    the latter often contains parts like "../" or directories which are specific
    to a build machine. This fixes most broken StacktraceSource results.
-   (LP: #1462491)
+   ([LP: #1462491](https://launchpad.net/bugs/1462491))
  * packaging.py: Only consider first word in /etc/os-release's NAME value. This
-   works around Debian's inconsistent value. (LP: #1408245)
+   works around Debian's inconsistent value.
+   ([LP: #1408245](https://launchpad.net/bugs/1408245))
  * Unify and simplify Package: field generation in kernel_crashdump,
    kernel_oops, and package_hook by using the new Report.add_package() method.
-   (LP: #1485787)
+   ([LP: #1485787](https://launchpad.net/bugs/1485787))
  * sandboxutils.py, make_sandbox(): Make "Cannot find package which ships
    Executable/InterpreterPath" fatal, to save some unnecessary package unpack
-   cycles. (LP: #1487174)
+   cycles. ([LP: #1487174](https://launchpad.net/bugs/1487174))
 
 2.18 (2015-07-17)
 -----------------
@@ -533,26 +569,27 @@ detailed list of changes, please see ChangeLog.
  * apport-gtk: Use GtkWidget::valign property instead of GtkMisc::yalign which
    is deprecated in GTK 3.16. Thanks Iain Lane.
  * sandboxutils, make_sandbox(): Don't exit with 0 (success) if the
-   ExecutablePath does not exist. (LP: #1462469)
+   ExecutablePath does not exist.
+   ([LP: #1462469](https://launchpad.net/bugs/1462469))
  * sandboxutils, make_sandbox(): Fix second round of package installs to go
    into permanent root dir as well.
  * apt/dpkg install_packages(): If a requested package version is not available
    from apt in the given archive, try to download it from Launchpad. Thanks to
    Brian Murray!
  * kerneloops: Fix crash when determining the version of a custom kernel.
-   Thanks Brian Murray. (LP: #1468154)
+   Thanks Brian Murray. ([LP: #1468154](https://launchpad.net/bugs/1468154))
  * apt/dpkg install_packages(): Ignore -dbg packages whose descriptions contain
-   "transitional". (LP: #1469635)
+   "transitional". ([LP: #1469635](https://launchpad.net/bugs/1469635))
  * Keep "[origin: ...]" information in Package: and Dependencies: fields for
    native-origins.d/ origins, so that it's possible to retrace them. Thanks
-   Brian Murray! (LP: #1470572)
+   Brian Murray! ([LP: #1470572](https://launchpad.net/bugs/1470572))
  * Add support for retracing with discovering and enabling foreign Launchpad
    PPA origins, as specified in reports' Package:/Dependencies: fields. Thanks
    Brian Murray!
  * hookutils.attach_wifi(): Shorten value of CRDA if iw isn't available on the
    system. Thanks Brian Murray.
  * Fix wrong assertion in crashdb.test_check_duplicate() which surfaces under
-   Python 3.5. (LP: #1474539)
+   Python 3.5. ([LP: #1474539](https://launchpad.net/bugs/1474539))
 
 2.17.3 (2015-05-20)
 -------------------
@@ -564,7 +601,7 @@ detailed list of changes, please see ChangeLog.
    Now core files do not get written for these kinds of programs, in accordance
    with the intention of core(5).
    Thanks to Sander Bos for discovering this issue!
-   (CVE-2015-1324, LP: #1452239)
+   (CVE-2015-1324, [LP: #1452239](https://launchpad.net/bugs/1452239))
  * SECURITY UPDATE: When writing a core dump file for a crashed packaged
    program, don't close and reopen the .crash report file but just rewind and
    re-read it. This prevents the user from modifying the .crash report file
@@ -573,9 +610,9 @@ detailed list of changes, please see ChangeLog.
    dump files to arbitrary directories this could be exploited to gain root
    privileges.
    Thanks to Philip Pettersson for discovering this issue!
-   (CVE-2015-1325, LP: #1453900)
+   (CVE-2015-1325, [LP: #1453900](https://launchpad.net/bugs/1453900))
  * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
-   (LP: #1448636)
+   ([LP: #1448636](https://launchpad.net/bugs/1448636))
  * signal_crashes test: Fix test_crash_setuid_* to look at whether
    suid_dumpable was enabled.
  * test/run: Run UI tests under dbus-launch, newer GTK versions require this
@@ -588,12 +625,13 @@ detailed list of changes, please see ChangeLog.
    specially crafted sockes, a normal user program could forge arbitrary
    entries in /proc/net/unix. We cannot currently rely on a kernel-side
    solution for this; this feature will be re-enabled once it gets re-done to
-   be secure. (LP: #1444518)
+   be secure. ([LP: #1444518](https://launchpad.net/bugs/1444518))
  * do-release: Force UTC timezone for upstream changelog generation.
  * apport-kde: Fix crash when showing byte array values. Thanks Jonathan
-   Riddell. (LP: #1443659)
+   Riddell. ([LP: #1443659](https://launchpad.net/bugs/1443659))
  * Really create a better duplicate signature for recoverable problems, using
-   ExecutablePath. Thanks Brian Murray. (LP: #1316763)
+   ExecutablePath. Thanks Brian Murray.
+   ([LP: #1316763](https://launchpad.net/bugs/1316763))
 
 2.17.1 (2015-04-14)
 -------------------
@@ -604,11 +642,11 @@ detailed list of changes, please see ChangeLog.
    ("container"), and crashing something in it, a local user could access
    arbitrary files on the host system with root privileges.
    Thanks to Stéphane Graber for discovering and fixing this!
-   (CVE-2015-1318, LP: #1438758)
+   (CVE-2015-1318, [LP: #1438758](https://launchpad.net/bugs/1438758))
  * apport-kde tests: Fix imports to make tests work again.
  * Fix UnicodeDecodeError on parsing non-ASCII environment variables.
  * apport: use the proper pid when calling apport in another PID namespace.
-   Thanks Brian Murray. (LP: #1300235)
+   Thanks Brian Murray. ([LP: #1300235](https://launchpad.net/bugs/1300235))
 
 2.17 (2015-03-31)
 -------------------
@@ -629,11 +667,13 @@ detailed list of changes, please see ChangeLog.
  * launchpad backend download(): Try to convert textual values from byte arrays
    into into strings.
  * ui.py, collect_info(): Fix crash on bug pattern checking with broken gzipped
-   values. (LP: #1345653)
+   values. ([LP: #1345653](https://launchpad.net/bugs/1345653))
  * hookutils, attach_drm_info(): Avoid UnicodeDecodeErrors in Python 3 when
-   reading binary files. Thanks Chad Miller. (LP: #1425254)
+   reading binary files. Thanks Chad Miller.
+   ([LP: #1425254](https://launchpad.net/bugs/1425254))
  * apport-gtk: Update legacy icon names to modern GTK ones, to fix icons under
-   GNOME. Thanks Scott Sanbar. (LP: #1422176)
+   GNOME. Thanks Scott Sanbar.
+   ([LP: #1422176](https://launchpad.net/bugs/1422176))
  * Move backend_apt_dpkg testsuite to use Ubuntu 14.04 LTS.
  * hookutils, attach_dmesg(): Only attach dmesg as CurrentDmesg, drop BootDmesg
    as /var/log/dmesg is upstart specific and thus not reliably correct any
@@ -648,7 +688,7 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * Set gettext translation domain in setup.cfg, so that tools like
    dh_translations pick it up and show correct polkit translations.
-   Thanks to Aron Xu! (LP: #1306857)
+   Thanks to Aron Xu! ([LP: #1306857](https://launchpad.net/bugs/1306857))
  * Report.get_logind_session(): Check $XDG_SESSION_ID and /run/systemd/sessions
    instead of the cgroup, as the latter does not work under cgmanager.
 
@@ -658,11 +698,12 @@ Improvements/behaviour changes:
  * Add a new method ProblemReport.extract_keys() which writes binary keys
    (which can be very large) directly to files without loading them all into
    memory first. Use that in apport-unpack. Thanks Louis Bouchard!
-   (LP: #1307413)
+   ([LP: #1307413](https://launchpad.net/bugs/1307413))
  * launchpad backend: Work with Python 3, now that launchpadlib exists for
-   Python 3. (LP: #1153671)
+   Python 3. ([LP: #1153671](https://launchpad.net/bugs/1153671))
  * apport-bug, apport-gtk: Also check for $WAYLAND_DISPLAY, to use apport-gtk
-   instead of apport-cli under Wayland. Thanks Tim Lunn. (LP: #1418766)
+   instead of apport-cli under Wayland. Thanks Tim Lunn.
+   ([LP: #1418766](https://launchpad.net/bugs/1418766))
  * apport-gtk: When running under Wayland, avoid Gdk/Wnck operation for setting
    crash window modal to the PID of the crashed window; these only work under
    X11.
@@ -672,10 +713,11 @@ Improvements/behaviour changes:
 
 Bug fixes:
  * hookutils, attach_root_command_outputs(): Fix UnicodeDecodeError crash for
-   non-textual values. (LP: #1370259)
+   non-textual values. ([LP: #1370259](https://launchpad.net/bugs/1370259))
  * ui.py: Only provide a UI to hooks if the crash db will accept the report.
    This avoids asking questions if the report is merely sent to whoopsie for
-   Ubuntu stable releases. Thanks Brian Murrary. (LP: #1084979)
+   Ubuntu stable releases. Thanks Brian Murrary.
+   ([LP: #1084979](https://launchpad.net/bugs/1084979))
  * whoopsie-upload-all: Add package information to the report before calling
    package hooks. Thanks Brian Murray.
  * Fix check for available terminal when checking whether to display the
@@ -694,84 +736,96 @@ Bug fixes:
 2.15 (2014-12-02)
 -----------------
  * ui.py: Robustify check if apport-retrace is installed. This brings back the
-   "Examine locally" UI option. (LP: #1358734)
+   "Examine locally" UI option.
+   ([LP: #1358734](https://launchpad.net/bugs/1358734))
  * recoverable_problem: Handle the parent process going away while we're
    attempting to read from proc.
  * apport-retrace: Stop considering a package download error as transient; it
    can too easily lead to unnoticed eternal retry loops.
  * whoopsie-upload-all: Refactor to behave more reliably in case of overlapping
-   crash processing. Thanks Steve Langasek and Brian Murray. (LP: #1354318)
+   crash processing. Thanks Steve Langasek and Brian Murray.
+   ([LP: #1354318](https://launchpad.net/bugs/1354318))
  * whoopsie-upload-all: Remove crash reports that have a core dump which is
-   broken and cannot be processed by gdb. Thanks Brian Murray. (LP: #1376374)
+   broken and cannot be processed by gdb. Thanks Brian Murray.
+   ([LP: #1376374](https://launchpad.net/bugs/1376374))
  * Stop setting $PATH in the init.d script. It breaks assumptions from
    /lib/lsb/init-functions.d/ which might call other tools which are not in
    /bin; also, we generally shouldn't meddle with $PATH in individual scripts.
-   (LP: #1372665)
+   ([LP: #1372665](https://launchpad.net/bugs/1372665))
  * When core size exceeds the limit (3/4 of available memory) and thus the core
-   dump is skipped, log this to /var/log/apport.log. (LP: #1387835)
+   dump is skipped, log this to /var/log/apport.log.
+   ([LP: #1387835](https://launchpad.net/bugs/1387835))
  * apport-gtk: Fix jump-to-top on first click of the details treeview. Thanks
-   Marius Gedminas. (LP: #1387328)
+   Marius Gedminas. ([LP: #1387328](https://launchpad.net/bugs/1387328))
  * apport-retrace: Fix location of cached Contents.gz when using --sandbox-dir.
-   (LP: #1394798)
+   ([LP: #1394798](https://launchpad.net/bugs/1394798))
  * Fix backend_apt_dpkg.test_install_packages_permanent_sandbox test case with
    proxy env variables with latest apt.
  * data/whoopsie-upload-all: confirm that the crash file exists before trying
-   to remove it. (LP: #1384358)
+   to remove it. ([LP: #1384358](https://launchpad.net/bugs/1384358))
 
 2.14.7 (2014-08-29)
 -------------------
  * Adjust backend_apt_dpkg.test_get_file_package() test: newer util-linux
    versions do not provide /etc/blkid.tab any more.
  * Fix interpretation of core dump ulimits: they are in bytes, not kB.
-   (LP: #1346497)
+   ([LP: #1346497](https://launchpad.net/bugs/1346497))
  * apport-retrace: Don't require specifying an operation; default to updating
-   the given .crash file. (LP: #1361242)
+   the given .crash file. ([LP: #1361242](https://launchpad.net/bugs/1361242))
  * Write report even on UnreportableReasons, so that whoopsie can still upload
-   them. (LP: #1360417)
+   them. ([LP: #1360417](https://launchpad.net/bugs/1360417))
  * apt/dpkg install_packages(): Write a "packages.txt" into sandbox root
    directory to keep track of installed packages and their versions.
-   Prerequisite for LP #1352591.
+   Prerequisite for [LP: #1352591](https://launchpad.net/bugs/1352591).
  * apt/dpkg install_packages(): Avoid re-downloading/installing packages which
-   are already installed into a permanent sandbox. Prerequisite for LP #1352591.
+   are already installed into a permanent sandbox. Prerequisite for
+   [LP: #1352591](https://launchpad.net/bugs/1352591).
  * sandboxutils.py, make_sandbox(): Drop check for already existing files when
    dynamically resolving libraries and ExecutablePaths; with that, these
    packages would never get updated in a permanent sandbox. The new version
-   tracking from above now takes care of that. (LP: #1352591)
+   tracking from above now takes care of that.
+   ([LP: #1352591](https://launchpad.net/bugs/1352591))
  * Fix report.test_add_proc_info test to stop assuming that pid 1 is named
    "init", as one can specify a different one on the kernel command line.
  * report.py, add_gdb_info(): Check for truncated core dumps, and set
    UnreportableReason and raise an IOError on them. Handle this in
    apport-retrace and whoopsie-upload-all to fail properly instead of silently
-   producing broken Stacktraces. (LP: #1354571)
+   producing broken Stacktraces.
+   ([LP: #1354571](https://launchpad.net/bugs/1354571))
 
 2.14.6 (2014-08-18)
 -------------------
  * general-hooks/generic.py: Fix hook crash if there are non-distro libraries
    and no user interface.
  * collect_info(): Don't assume that reports have a ProblemType. Fixes crashes
-   with apport-collect. (LP: #1325729)
+   with apport-collect. ([LP: #1325729](https://launchpad.net/bugs/1325729))
  * apport-retrace: Declare -s/-g/-o as mutually exclusive, to get proper error
-   messages instead of silent misbehaviour. (LP: #1352450)
- * apport-gtk: Drop usage of deprecated GTK stock items. (LP: #1348116)
+   messages instead of silent misbehaviour.
+   ([LP: #1352450](https://launchpad.net/bugs/1352450))
+ * apport-gtk: Drop usage of deprecated GTK stock items.
+   ([LP: #1348116](https://launchpad.net/bugs/1348116))
 
 2.14.5 (2014-07-29)
 -------------------
  * apport-bug: Stop checking the autoreport flag and calling
    whoopsie-upload-all; these two are different tasks, and that breaks bug
-   reporting. (LP: #1339663)
+   reporting. ([LP: #1339663](https://launchpad.net/bugs/1339663))
  * apt/dpkg get_file_package(): If checking for uninstalled packages, don't
    use package information from the host system, but always look it up in the
    correct indexes. Otherwise this returns wrong results when files move to a
-   different package between releases. Thanks Brian Murray! (LP: #1336062)
+   different package between releases. Thanks Brian Murray!
+   ([LP: #1336062](https://launchpad.net/bugs/1336062))
  * apt/dpkg install_packages(): Disable fetching apt translation indexes, to
    save some bandwidth.
  * whoopsie-upload-all: Ignore crash reports with incomplete core dumps instead
-   of crashing on them. Thanks Brian Murray. (LP: #1329520)
+   of crashing on them. Thanks Brian Murray.
+   ([LP: #1329520](https://launchpad.net/bugs/1329520))
  * etc/default/apport: Fix comment to use "service" instead of calling the
    init.d script directly.
  * whoopsie-upload-all: Collect hooks information to gather ApportVersion,
    NonfreeKernelModules, and SystemImageInfo. Do this before collecting package
-   data to minimize hook run time. (LP: #1349579)
+   data to minimize hook run time.
+   ([LP: #1349579](https://launchpad.net/bugs/1349579))
  * Adjust report.test_get_logind_session test to work with systemd >= 205.
  * Fix report.test_check_interpreted_twistd test to skip instead of fail if
    twisted is not installed.
@@ -783,26 +837,27 @@ Bug fixes:
    StacktraceAddressSignature field. It isn't useful there (at most the ELF
    architecture, but we don't really need that either). This makes it easier to
    regenerate broken signatures from existing reports on different
-   architectures. (LP: #1336565)
+   architectures. ([LP: #1336565](https://launchpad.net/bugs/1336565))
 
 2.14.3 (2014-05-30)
 -------------------
  * Add kernel package version to the various kernel-related hooks. Thanks Brian
-   Murray. (LP: #1316845)
- * Use package name in duplicate signature for recoverable problems. Thanks Brian
-   Murray. (LP: #1316763)
+   Murray. ([LP: #1316845](https://launchpad.net/bugs/1316845))
+ * Use package name in duplicate signature for recoverable problems. Thanks
+   Brian Murray. ([LP: #1316763](https://launchpad.net/bugs/1316763))
  * Have whoopsie-upload-all upload recoverable problems. Thanks Brian Murray.
-   (LP: #1319099)
+   ([LP: #1319099](https://launchpad.net/bugs/1319099))
 
 2.14.2 (2014-04-30)
 -------------------
  * Delay the import of the glob and re modules in the python apport hook,
    and only import them when needed. Speeds up interpreter startup time
-   by 50%. Thanks Matthias Klose! (LP: #1307684)
+   by 50%. Thanks Matthias Klose!
+   ([LP: #1307684](https://launchpad.net/bugs/1307684))
  * Move error handling for invalid .crash files into collect_info(), so that it
    also applies when using the "Show Details..." button in the UI. Otherwise
    the UI just hangs eternally at this point when encountering broken core
-   dumps. (LP: #1282349)
+   dumps. ([LP: #1282349](https://launchpad.net/bugs/1282349))
  * apt/dpkg install_packages(): Try to install the requested package version
    instead of always picking the most recent one. This should improve retracing
    results for older crash reports. Thanks to Brian Murray for inspiring this.
@@ -810,7 +865,7 @@ Bug fixes:
    ProcMaps, look up and use the package versions from the reporter, to improve
    retracing results. Thanks Brian Murray for the initial patch!
  * iwlwifi_error_dump: Make reports private, and subscribe canonical-kernel-team.
-   Thanks Seth Forshee. (LP: #1313818)
+   Thanks Seth Forshee. ([LP: #1313818](https://launchpad.net/bugs/1313818))
  * signal_crashes test: Time out after 5 seconds if the test process does not
    terminate on the specified signal, to avoid eternal hangs.
  * signal_crashes test: Ensure that we don't inherit an ignored SIGQUIT from
@@ -819,12 +874,14 @@ Bug fixes:
 2.14.1 (2014-04-04)
 -------------------
  * Fix FileNotFoundError from temporary launchpadlib cache dir cleanup.
-   (LP: #1300474)
+   ([LP: #1300474](https://launchpad.net/bugs/1300474))
  * ui.py, open_url(): Skip any Python cleanup/atexit handlers in the forked
-   xdg-open child, to avoid calling them twice. (Side issue of LP #1300474 and
-   #1282713)
+   xdg-open child, to avoid calling them twice. (Side issue of
+   [LP: #1300474](https://launchpad.net/bugs/1300474) and
+   [LP: #1282713](https://launchpad.net/bugs/1282713))
  * apport-kde: Work around crash in sip by skipping the destructors of SIP
-   objects. Thanks Rohan Garg! (LP: #1282713)
+   objects. Thanks Rohan Garg!
+   ([LP: #1282713](https://launchpad.net/bugs/1282713))
 
 2.14 (2014-03-31)
 -----------------
@@ -834,7 +891,8 @@ Bug fixes:
  * launchpad: Really use a temporary launchpadlib cache dir by default. This
    avoids piling up gigabytes of useless cached data over time, which also
    tends to break every now and then.
- * Fix crash in logind session detection. Thanks Dimitri Ledkov! (LP: #1296026)
+ * Fix crash in logind session detection. Thanks Dimitri Ledkov!
+   ([LP: #1296026](https://launchpad.net/bugs/1296026))
 
 2.13.3 (2014-03-07)
 -------------------
@@ -843,22 +901,25 @@ Bug fixes:
  * etc/cron.daily/apport: Cleanup .drkonqi files after 7 days. Thanks Harald
    Sitter.
  * ui.py: Try to grab session D-BUS address from user's session when being
-   called through pkexec. (LP: #1287460)
+   called through pkexec. ([LP: #1287460](https://launchpad.net/bugs/1287460))
 
 2.13.2 (2014-01-27)
 -------------------
  * Fix crash if systemd cgroup is unreadable in /sys, such as in containers.
-   (LP: #1270783)
+   ([LP: #1270783](https://launchpad.net/bugs/1270783))
  * apt/dpkg: Also consider Contents.gz from updates/security/proposed pockets,
    so that e. g. apport-retrace works for crash reports with files that are new
-   in those. Thanks to Brian Murray for the initial patch. (LP: #1271258)
+   in those. Thanks to Brian Murray for the initial patch.
+   ([LP: #1271258](https://launchpad.net/bugs/1271258))
  * Only drop internal/private keys (starting with '_') from uploading to the
    crash DB and from the UI report views, but not already when updating the
-   report. (LP: #1272505)
+   report. ([LP: #1272505](https://launchpad.net/bugs/1272505))
  * data/apport: Fix stdout/stderr initialization of the error log, don't close
    the original fd after dup2'ing as it is usually already fd 1. This makes
-   Apport work with Python 3.4. (LP: #1272355)
- * Adjust report tests to work with Python 3.4 (LP: #1272355)
+   Apport work with Python 3.4.
+   ([LP: #1272355](https://launchpad.net/bugs/1272355))
+ * Adjust report tests to work with Python 3.4
+   ([LP: #1272355](https://launchpad.net/bugs/1272355))
 
 2.13.1 (2014-01-10)
 -------------------
@@ -878,10 +939,11 @@ Improvements:
    to store data between hooks etc., without cluttering reports.
  * UI: In "run all pending crashes" mode, skip reports that happened during
    logout in a desktop (specifically, logind) session; they are uninteresting
-   and confusing to see at the next login. (LP: #1033932) They can still be
+   and confusing to see at the next login.
+   ([LP: #1033932](https://launchpad.net/bugs/1033932)) They can still be
    reported manually with running the .crash file directly, but this
    sufficiently reduces the need to explicitly flag whether the report concerns
-   a logout crash. (LP: #1067646)
+   a logout crash. ([LP: #1067646](https://launchpad.net/bugs/1067646))
  * Add support for PID namespaces (Linux containers): Crashes originating from
    a container on a system running a >= 3.12 kernel will be automatically
    redirected to apport inside the container, or ignored if apport is not
@@ -895,17 +957,21 @@ Bug fixes:
  * setup.py: Make updating of hashbangs work when building without Java, and
    also apply it on bin/.
  * Print a warning when trying to retrace a report from a foreign architecture
-   and gdb-multiarch is not installed. (LP: #1239395)
+   and gdb-multiarch is not installed.
+   ([LP: #1239395](https://launchpad.net/bugs/1239395))
  * etc/init.d/apport: Don't change core_pattern when running in a container, as
-   this influences the host and other containers, too. (LP: #1267728)
+   this influences the host and other containers, too.
+   ([LP: #1267728](https://launchpad.net/bugs/1267728))
 
 2.12.7 (2013-11-19)
 -------------------
  * Properly fall back to lsb_release if /etc/os-release is invalid.
  * report.py, add_proc_info(): Add "CurrentDesktop" field with the value of
-   $XDG_CURRENT_DESKTOP, if present. (LP: #1247904)
+   $XDG_CURRENT_DESKTOP, if present.
+   ([LP: #1247904](https://launchpad.net/bugs/1247904))
  * fileutils.py, get_all_system_reports(): Filter out "guest..." users, they
-   might have a system UID. (LP: #1250679)
+   might have a system UID.
+   ([LP: #1250679](https://launchpad.net/bugs/1250679))
  * apt/dpkg: Don't call dpkg-divert with full path, it moved in Ubuntu 14.04.
 
 2.12.6 (2013-10-25)
@@ -914,47 +980,50 @@ Bug fixes:
    startup, make the report and core dumps owned by root, to avoid possible
    data disclosure. Also, change core dump files to permissions "0600".
    Thanks to Martin Carpenter for discovering this!
-   (CVE-2013-1067, LP: #1242435)
+   (CVE-2013-1067, [LP: #1242435](https://launchpad.net/bugs/1242435))
  * sandboxutils.needed_runtime_packages(): Create cache directory for
-   Contents.gz if missing. (LP: #933199)
- * apt/dpkg: Recognize options in apt sources.list. (LP: #1238620)
+   Contents.gz if missing. ([LP: #933199](https://launchpad.net/bugs/933199))
+ * apt/dpkg: Recognize options in apt sources.list.
+   ([LP: #1238620](https://launchpad.net/bugs/1238620))
 
 2.12.5 (2013-09-27)
 -------------------
  * Report.add_os_info(): Do not overwrite already existing data.
-   (LP: #1226776)
+   ([LP: #1226776](https://launchpad.net/bugs/1226776))
  * kernel_oops hook: Collect uname at the time of invoking the hook, instead of
-   at data collection time. (LP: #1226776)
+   at data collection time. ([LP: #1226776](https://launchpad.net/bugs/1226776))
  * Replace fixed size icons with PNGs, which are more efficient and avoid
-   rendering artifacts. (LP: #1231763)
+   rendering artifacts. ([LP: #1231763](https://launchpad.net/bugs/1231763))
 
 2.12.4 (2013-09-19)
 -------------------
  * Update icons to new design from Vishnoo Charan Reddy, many thanks!
-   (LP: #1079639)
+   ([LP: #1079639](https://launchpad.net/bugs/1079639))
 
 2.12.3 (2013-09-19)
 -------------------
  * ProblemReport.write_mime(): Adjust MIMEText handling to latest Python 3.3
    upstream changes which now don't tolerate passing bytes any more.
-   (LP: #1227381)
+   ([LP: #1227381](https://launchpad.net/bugs/1227381))
  * apport-gtk: Don't use obsolete add_with_viewport() method any more.
  * Fix ui_present_report_details() "modal_for" keyword for all UI
    implementations, so that --hanging works for -cli and -kde, too.
-   (LP: #1213790)
+   ([LP: #1213790](https://launchpad.net/bugs/1213790))
 
 2.12.2 (2013-09-17)
 -------------------
  * fileutils.py, get_{new,all}_reports(): Don't consider reports which are
-   readable, but not writable. (LP: #1098844)
+   readable, but not writable.
+   ([LP: #1098844](https://launchpad.net/bugs/1098844))
  * test_ui_kde.py: Cleanly skip the test if PyQt/PyKDE are not installed,
    instead of failing.
  * crash-digger: Write pid into lock file. Thanks Steve Langasek.
  * apport-gtk: When loading a Bug report from a file, properly set up for bug
-   reporting mode. (LP: #1226140)
+   reporting mode. ([LP: #1226140](https://launchpad.net/bugs/1226140))
  * Move "program is not installed any more" check from report loading into data
    collection, so that crash reports can be moved and reported on machines
-   without that program installed. (LP: #1226030)
+   without that program installed.
+   ([LP: #1226030](https://launchpad.net/bugs/1226030))
 
 2.12.1 (2013-08-19)
 -------------------
@@ -969,7 +1038,7 @@ Bug fixes:
    report is not due to a bug in Ubuntu. whoopsie-upload-all skips these hooks.
  * apport/report.py: Gracefully handle being unable to get the source package
    for a binary package, as when the latter does not exist in the cache.
-   (LP: #1097773)
+   ([LP: #1097773](https://launchpad.net/bugs/1097773))
 
 2.12 (2013-08-02)
 -----------------
@@ -980,26 +1049,31 @@ Improvements:
    until whoopsie is done uploading.
  * Eliminate multiple calls to lsb_release by caching the result. On systems
    which provide /etc/os-release, use that instead of lsb_release.
-   (LP: #1164742)
+   ([LP: #1164742](https://launchpad.net/bugs/1164742))
 
 Bug fixes:
  * launchpad.py: Show the Python major version in the error message about
    missing launchpadlib.
  * ui.py: Check if options for updating and reporting a new bug get used
-   together, and give a proper error message in this case. (LP: #1071905)
+   together, and give a proper error message in this case.
+   ([LP: #1071905](https://launchpad.net/bugs/1071905))
  * apport: Fix "Exectuable" typo, leading to reports not being synced on
-   upstart crashes. Thanks James Hunt. (LP: #1203744)
+   upstart crashes. Thanks James Hunt.
+   ([LP: #1203744](https://launchpad.net/bugs/1203744))
  * Rename apport-gtk-mime.desktop to apport-gtk.desktop and drop the
    old apport-gtk.desktop that wasn't even being installed. With that, the
    window will be shown as "Report a problem..." instead of "Apport-gtk" in
-   GNOME shell and other DEs. Thanks Jeremy Bicha. (LP: #1207496)
+   GNOME shell and other DEs. Thanks Jeremy Bicha.
+   ([LP: #1207496](https://launchpad.net/bugs/1207496))
  * report.py, add_gdb_info(): Fix crash if gdb cannot load the symbol map.
-   (LP: #1171484)
+   ([LP: #1171484](https://launchpad.net/bugs/1171484))
  * apport-retrace: Fix crash when using --sandbox without --cache.
-   (LP: #1197034)
- * Fix error message when PID is inaccessible. (LP: #1204718)
+   ([LP: #1197034](https://launchpad.net/bugs/1197034))
+ * Fix error message when PID is inaccessible.
+   ([LP: #1204718](https://launchpad.net/bugs/1204718))
  * doc/data-format.tex: Drop unused "OS" and "OSRelease" fields, replace with
-   "DistroRelease" which is actually being used. (LP: #1018387)
+   "DistroRelease" which is actually being used.
+   ([LP: #1018387](https://launchpad.net/bugs/1018387))
 
 2.11 (2013-07-17)
 -----------------
@@ -1013,16 +1087,17 @@ Improvements:
 
 Bug fixes:
  * hookutils.py, attach_conffiles(): Fix check for inaccessible or modified
-   conffiles. (LP: #1192899)
+   conffiles. ([LP: #1192899](https://launchpad.net/bugs/1192899))
 
 2.10.2 (2013-05-22)
 -------------------
 Bug fixes:
  * Resolve symlinks in file references in Python crash signatures.
-   (LP: #1179979)
- * Fix endless loop of EOFErrors with broken core dumps. (LP: #1168849)
+   ([LP: #1179979](https://launchpad.net/bugs/1179979))
+ * Fix endless loop of EOFErrors with broken core dumps.
+   ([LP: #1168849](https://launchpad.net/bugs/1168849))
  * report.py, add_gdb_info(): Fix crash if gdb did not determine an assertion
-   message. (LP: #1171484)
+   message. ([LP: #1171484](https://launchpad.net/bugs/1171484))
  * apt/dpkg: Fix get_file_package()'s "release" field to actually mean
    DistroRelease:, not a distro code name. This now requires a previous call to
    install_packages() with a configdir, which needs to have a file
@@ -1039,7 +1114,7 @@ Bug fixes:
    bug also already has a distropackage task.
  * apt/dpkg: When there is no -dbg package, install all -dbg packages of the
    corresponding source package, and only then fall back to -dbgsym.
-   (LP: #1003234)
+   ([LP: #1003234](https://launchpad.net/bugs/1003234))
 
 2.10 (2013-04-30):
 ------------------
@@ -1051,48 +1126,54 @@ Improvements:
 
 Bug fixes:
  * hookutils.attach_conffiles(): Fix IOError crash on inaccessible conffiles;
-   mark them as '[inaccessible: <reason>]' instead. (LP: #1154536)
+   mark them as '[inaccessible: <reason>]' instead.
+   ([LP: #1154536](https://launchpad.net/bugs/1154536))
  * hookutils.in_session_of_problem(): Fix crash when the current locale is
-   invalid. (LP: #1154896) 
+   invalid. ([LP: #1154896](https://launchpad.net/bugs/1154896))
  * data/gcc_ice_hook: Fix crash with source files that have non-UTF8 data.
-   (LP: #1045283)
+   ([LP: #1045283](https://launchpad.net/bugs/1045283))
  * apport/report.py: Handle the case where the user has been removed from the
-   system, but one of its still-running binaries crashes (LP: #1163453).
+   system, but one of its still-running binaries crashes
+   ([LP: #1163453](https://launchpad.net/bugs/1163453)).
  * Fix anonymization of user/GECOS fields with regexp control characters like
-   '+'. (LP: #985049)
+   '+'. ([LP: #985049](https://launchpad.net/bugs/985049))
  * Run tests under LC_CTYPE=C and unset LANG as well, to discover assumptions
    about UTF-8 locales. Fix the two failing tests.
  * Fix UnicodeDecodeError when apport encounters non-ASCII environment
-   variables. (LP: #1172638)
+   variables. ([LP: #1172638](https://launchpad.net/bugs/1172638))
 
 2.9.2 (2013-03-19):
 -------------------
 Improvements:
  * report.py, add_package_info(): Add "[origin: unknown]" tag to
    Package/Dependencies fields for non-distro package whose origin cannot be
-   determined. (LP: #1148116)
+   determined. ([LP: #1148116](https://launchpad.net/bugs/1148116))
  * Adjust kernel_crashdump to the format kdump-tools produces. Thanks Louis
    Bouchard.
 
 Bug fixes:
  * Write core dumps on SIGQUIT if ulimit allows. Thanks Graeme Hewson.
-   (LP: #1153662)
+   ([LP: #1153662](https://launchpad.net/bugs/1153662))
 
 2.9.1 (2013-03-07):
 -------------------
 Improvements:
  * launchpad.py: Add support for filing bugs as private. Document this in
-   doc/crashdb-conf.txt. (LP: #1144647)
+   doc/crashdb-conf.txt. ([LP: #1144647](https://launchpad.net/bugs/1144647))
 
 Bug fixes:
  * test_signal_crashes.py: Fix test_crash_apport() when being run under
    LD_PRELOAD.
- * Fix crash in error() and warning() if there is no sys.stderr. (LP: #1012445)
- * Fix Turkish translation to add missing keyboard accelerator. (LP: #648750)
+ * Fix crash in error() and warning() if there is no sys.stderr.
+   ([LP: #1012445](https://launchpad.net/bugs/1012445))
+ * Fix Turkish translation to add missing keyboard accelerator.
+   ([LP: #648750](https://launchpad.net/bugs/648750))
  * fileutils.py, find_package_desktopfile(): Restrict to autostart and
-   application .desktop files. (LP: #1147528)
+   application .desktop files.
+   ([LP: #1147528](https://launchpad.net/bugs/1147528))
  * apt/dpkg get_modified_files(): Fix crash when encountering non-ASCII file
-   names in an ASCII locale. (LP: #1044014)
+   names in an ASCII locale.
+   ([LP: #1044014](https://launchpad.net/bugs/1044014))
 
 2.9 (2013-03-01):
 -----------------
@@ -1132,11 +1213,12 @@ Improvements:
    and Kyle Nitzsche!
 
 Bug fixes:
- * Fix StacktraceAddressSignature generation on ARM. (LP: #1089778)
+ * Fix StacktraceAddressSignature generation on ARM.
+   ([LP: #1089778](https://launchpad.net/bugs/1089778))
  * debian.py: Fix TypeError crash in payload generation. Thanks Ritesh Raj
    Sarraf.
  * apport_python_hook.py: Update "ExecutableTimestamp" field when mangling
-   "ExecutablePath". (LP: #1077253)
+   "ExecutablePath". ([LP: #1077253](https://launchpad.net/bugs/1077253))
 
 2.7 (2012-12-10):
 -----------------
@@ -1151,12 +1233,13 @@ Improvements:
    use gdb-multiarch (if available, as packaged on Debian/Ubuntu), and set
    architecture and gnutarget accordingly in gdb. This supports x86, x86_64,
    and ARM for now, so that reports from all these architectures can be
-   retraced on an x86_84 machine. (LP: #1044437)
+   retraced on an x86_84 machine.
+   ([LP: #1044437](https://launchpad.net/bugs/1044437))
  * launchpad.py: Add "architecture" option to process reports for a foreign
    architecture.
  * Add exceptions from package hooks to new HookError_<filename> report field,
    to make them more visible. Until now they were only written to stderr.
-   (LP: #1086309)
+   ([LP: #1086309](https://launchpad.net/bugs/1086309))
 
 Bug fixes:
  * Fix test_find_package_desktopfile test to not consider packages with only
@@ -1182,18 +1265,22 @@ Bug fixes:
    Debian/Ubuntu dkms package.
  * data/apport: Call fsync when writing upstart crash reports.
  * report.py, add_gdb_info(): Handle libnih's assertion messages.
-   (LP: #997359)
+   ([LP: #997359](https://launchpad.net/bugs/997359))
  * apport-gtk, apport-kde: Don't provide an option to restart a crashed
-   application when the crash occurred in a thread (LP: #1033902).
+   application when the crash occurred in a thread
+   ([LP: #1033902](https://launchpad.net/bugs/1033902)).
  * apport-retrace: Disallow option -C without option -S. Thanks Kyle Nitzsche.
  * fileutils.py, mark_report_upload(): Refresh the .upload stamps if a previous
    version of the report was already uploaded, but another instance of the
-   problem happened since then. Thanks Brian Murray. (LP: #1084296)
+   problem happened since then. Thanks Brian Murray.
+   ([LP: #1084296](https://launchpad.net/bugs/1084296))
  * Ignore implausibly low addresses when computing StacktraceAddressSignature.
    These are usually artifacts from gdb when not having debug symbols, and
    having too many of them prevents proper client-side duplicate detection and
-   proper bucketing in daisy. (LP: #1084996)
- * fileutils.py: Ignore .desktop files with NoDisplay=true. (LP: #1048524)
+   proper bucketing in daisy.
+   ([LP: #1084996](https://launchpad.net/bugs/1084996))
+ * fileutils.py: Ignore .desktop files with NoDisplay=true.
+   ([LP: #1048524](https://launchpad.net/bugs/1048524))
 
 2.6.2 (2012-11-06):
 -------------------
@@ -1203,7 +1290,8 @@ Bug fixes:
    Ritesh Raj Sarraf.
  * bin/apport-retrace: Fix crash when not using --sandbox mode.
  * report.py, add_proc_info(): Throw correct exception if the executable path
-   does not exist, to provide a more appropriate error message. (LP: #1065129)
+   does not exist, to provide a more appropriate error message.
+   ([LP: #1065129](https://launchpad.net/bugs/1065129))
  * report.py, add_gdb_info(): Check __glib_assert_msg for assertion messages,
    too.
  * REThread.py: Fix for Python 3.3.
@@ -1225,17 +1313,18 @@ Bug fixes:
 
 2.5.3 (2012-09-28):
 -------------------
- * data/apportcheckresume: Open report file in binary mode. (LP: #1040353)
+ * data/apportcheckresume: Open report file in binary mode.
+   ([LP: #1040353](https://launchpad.net/bugs/1040353))
  * packaging-apt-dpkg.py: When throwing ValueErrors, show the non-existing
    package name. This makes it easier to debug such crashes.
  * launchpad.py: Replace characters from tags which are not allowed by
-   Launchpad with '.' (LP: #1029479)
+   Launchpad with '.' ([LP: #1029479](https://launchpad.net/bugs/1029479))
  * launchpad.py: Temporarily disable filing private bugs in the test suite, to
    work around the SSLHandshakeError error when downloading private attachments
    from staging.
  * hookutils.py, attach_root_command_outputs(): Ignore IOError crash about
    nonexisting files, which can happen if the user dismisses authorization.
-   (LP: #1051222)
+   ([LP: #1051222](https://launchpad.net/bugs/1051222))
  * report.py, search_bug_patterns(): Fix bug patterns containing non-ASCII
    characters. Thanks Brian Murray.
  * apport_python_hook.py: Capture $PYTHONPATH and $PYTHONHOME environment
@@ -1245,21 +1334,23 @@ Bug fixes:
 -------------------
  * test/run: Ignore root_info_wrapper with pyflakes.
  * packaging-apt-dpkg.py: Add recommended packages to "Dependencies:" field.
-   (LP: #1014428)
+   ([LP: #1014428](https://launchpad.net/bugs/1014428))
  * test_hookutils.py, test_in_session_of_problem(): Use year 2038 for a future
    date instead of 2211, as current Python 3.2 now crashes with an
    OverflowError on 32 bit machines with later years.
- * Fix crash on broken .desktop files. (LP: #1039889)
+ * Fix crash on broken .desktop files.
+   ([LP: #1039889](https://launchpad.net/bugs/1039889))
  * apport-gtk: For console program crashes, say "stopped" instead of "closed".
    Add a subtitle label with a hint about hanging programs. Thanks Matt Price
    and Matthew Paul Thomas!
  * report.py: Fix crash on determination of Python module path when examining a
    crash of "python -m ...".
  * apport-kde: Fix crash with undefined QString under Python 3. Thanks Jonathan
-   Riddell! (LP: #1028984)
+   Riddell! ([LP: #1028984](https://launchpad.net/bugs/1028984))
  * launchpad.py: Add missing "Pre-release Freeze" status. Thanks Brian Murray!
  * report.py, _check_bug_pattern(): Fix bug pattern matching against binary
-   values. Thanks Brian Murray for the original patch. (LP: #1016380)
+   values. Thanks Brian Murray for the original patch.
+   ([LP: #1016380](https://launchpad.net/bugs/1016380))
 
 2.5.1 (2012-08-22):
 -------------------
@@ -1274,10 +1365,10 @@ Bug fixes:
  * packaging-apt-dpkg.py: Fix crash on writing virtual_mapping.db when running
    with --sandbox-dir and -S system or giving no --cache.
  * REThread.py: Fix re-raising of exceptions in Python 3. Thanks Martin
-   Packman! (LP: #1024836)
+   Packman! ([LP: #1024836](https://launchpad.net/bugs/1024836))
  * apport-retrace: Keep compressed CoreDump from .crash files instead of
    uncompressing them into memory. This dramatically reduces memory usage.
-   (LP: #981155)
+   ([LP: #981155](https://launchpad.net/bugs/981155))
 
 Improvements:
  * Add an apport.memdbg() function which prints out current memory usage if
@@ -1294,12 +1385,13 @@ Improvements:
    than "default" can now also give the database specification itself in the
    "CrashDB" field, not just the DB name. With this, packages do not need to
    ship a separate /etc/apport/crashdb.conf.d/ file. Please see
-   doc/package-hooks.txt for details. (LP: #551330)
+   doc/package-hooks.txt for details.
+   ([LP: #551330](https://launchpad.net/bugs/551330))
  * report.py, add_hooks_info(): If reporting against a package/program in /opt,
    also search for package hooks in the corresponding /opt directory. This
    allows such hooks to define a custom crash database and thus report bugs
    against their own project instead of against the distribution.
-   (LP: #1020503)
+   ([LP: #1020503](https://launchpad.net/bugs/1020503))
 
 2.4 (2012-07-18):
 -----------------
@@ -1309,7 +1401,8 @@ Improvements:
    whether any .service file provides the service it tried to talk to, and
    whether the processes for those are running. This helps to determine the
    root cause for such errors (missing dependencies, broken .service files,
-   talking to the wrong bus, etc.) (LP: #1020572)
+   talking to the wrong bus, etc.)
+   ([LP: #1020572](https://launchpad.net/bugs/1020572))
  * hookutils.py, attach_alsa(): Use alsa-info.sh when available. Thanks David
    Henningson.
  * Add new "RecoverableProblem" report type for problems which the application
@@ -1341,7 +1434,7 @@ Improvements:
    attachments ourselves, and just assume that storeblob works on production.
    Also change the structure to allow running every test individually.
  * crash-digger: Add --crash-db option to specify a non-default crash databae
-   name. (LP: #1003506)
+   name. ([LP: #1003506](https://launchpad.net/bugs/1003506))
  * apport-gtk: Add --hanging option to specify the process ID of a hanging
    application. If the user chooses to report this error, apport will terminate
    the pid with SIGABRT, otherwise it will send SIGKILL. The normal core pipe
@@ -1350,28 +1443,34 @@ Improvements:
 
 Bug fixes:
  * apport: Also treat a binary as modified if the /proc/pid/exe symlink does
-   not point to an existing file any more. (LP: #984944)
+   not point to an existing file any more.
+   ([LP: #984944](https://launchpad.net/bugs/984944))
  * Fix PEP-8 violations picked up by latest pep8 checker.
  * ui.py: Do not ignore certain exceptions during upload which are not likely
    to be a network error.
  * launchpad.py: Recongize Launchpad projects for bug query and marking
-   operations. (LP: #1003506)
+   operations. ([LP: #1003506](https://launchpad.net/bugs/1003506))
  * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
  * apport-retrace: Turn StacktraceSource generation back on, now that it works
    with the current sandboxing.
- * launchpad.py: Ensure that upload chunk size does not underrun. (LP: #1013334)
+ * launchpad.py: Ensure that upload chunk size does not underrun.
+   ([LP: #1013334](https://launchpad.net/bugs/1013334))
  * apport_python_hook: Fix UnicodeEncodeError crash with Python 2 for
-   exceptions with non-ASCII characters. (LP: #972436)
+   exceptions with non-ASCII characters.
+   ([LP: #972436](https://launchpad.net/bugs/972436))
  * test_ui_kde.py: Fix occasional test failure in test_1_crash_details if the
    application ends before the "is progress bar visible" check is done.
 
 2.2.5 (2012-06-21):
 -------------------
- * launchpad.py: Fix str vs. bytes crash for already known bugs, take 2. (LP: #1015788)
+ * launchpad.py: Fix str vs. bytes crash for already known bugs, take 2.
+   ([LP: #1015788](https://launchpad.net/bugs/1015788))
  * apport/ui.py, get_desktop_entry(): Disable interpolation, to correctly read
-   desktop files with % signs. (LP: #1014341)
+   desktop files with % signs.
+   ([LP: #1014341](https://launchpad.net/bugs/1014341))
  * apport/ui.py: Fix rare crash if a report is already being updated in the
-   background when the UI tries to update a previous version. (LP: #949196)
+   background when the UI tries to update a previous version.
+   ([LP: #949196](https://launchpad.net/bugs/949196))
  * GTK and KDE UI tests: Avoid eternal hangs due to "this is not a distro
    package" error messages.
 
@@ -1387,8 +1486,10 @@ Bug fixes:
  * test/run: Wait for a previous xvfb server to finish before trying to start
    one. This fixes a race condition in the KDE UI tests which often failed to
    start up xvfb.
- * apport-cli: Unbreak "keep" option. (LP: #1007826)
- * launchpad.py: Fix str vs. bytes crash for already known bugs. (LP: #1015788)
+ * apport-cli: Unbreak "keep" option.
+   ([LP: #1007826](https://launchpad.net/bugs/1007826))
+ * launchpad.py: Fix str vs. bytes crash for already known bugs.
+   ([LP: #1015788](https://launchpad.net/bugs/1015788))
 
 2.2.3 (2012-06-15):
 -------------------
@@ -1479,16 +1580,18 @@ Improvements:
  * launchpad.py: Make Launchpad bug subscription user/team configurable: The
    initial subscriber after filing a bug can be set with the
    "initial_subscriber" crashdb option, and the team which gets subscribed
-   after retracing with "triaging_team". (LP: #980726)
+   after retracing with "triaging_team".
+   ([LP: #980726](https://launchpad.net/bugs/980726))
 
 Bug fixes:
  * report.py: Do not change the SourcePackage: field if the binary package is
    not installed and does not exist. This fixes source package hooks to
    actually work in some cases where source and binary package names overlap.
-   (part of LP: #993810)
+   (part of [LP: #993810](https://launchpad.net/bugs/993810))
  * apport-gtk, apport-kde: Avoid collecting information twice in "bug update"
    mode. This caused a crash in cases where the source package in a bug report
-   does not correspond to an installed binary package. (LP: #993810)
+   does not correspond to an installed binary package.
+   ([LP: #993810](https://launchpad.net/bugs/993810))
 
 2.1 (2012-05-18)
 ----------------
@@ -1509,7 +1612,8 @@ Improvements:
    object now require the file stream to be opened in binary mode.
  * data/apport: Ignore a crash if the executable was modified after the process
    started. This often happens if the package is upgraded and a long-running
-   process is not stopped before. (LP: #984944)
+   process is not stopped before.
+   ([LP: #984944](https://launchpad.net/bugs/984944))
  * Add test cases for apport-unpack.
  * apport-retrace: Add information about outdated packages to the
    "RetraceOutdatedPackages" field.
@@ -1518,29 +1622,31 @@ Improvements:
 
 Bug fixes:
  * apport-gtk: Work around GTK crash when trying to set pixmap on an already
-   destroyed parent window. (LP: #938090)
+   destroyed parent window. ([LP: #938090](https://launchpad.net/bugs/938090))
  * data/dump_acpi_tables.py: Fix crash on undefined variable with non-standard
-   tables. (LP: #982267)
+   tables. ([LP: #982267](https://launchpad.net/bugs/982267))
  * backends/packaging-apt-dpkg.py: Fix crash if a package is installed, but has
-   no candidates in apt. (LP: #980094)
+   no candidates in apt. ([LP: #980094](https://launchpad.net/bugs/980094))
  * data/general-hooks/generic.py: Bump minimum free space requirement from 10
-   to 50 MB. 10 is not nearly enough particularly for /tmp. (LP: #979928)
+   to 50 MB. 10 is not nearly enough particularly for /tmp.
+   ([LP: #979928](https://launchpad.net/bugs/979928))
  * hookutils.py, recent_logfile(): Use a default limit of 10000 lines and call
    "tail" instead of reading the whole file. This protects against using up all
-   memory when there are massive repeated log messages. (LP: #984256)
+   memory when there are massive repeated log messages.
+   ([LP: #984256](https://launchpad.net/bugs/984256))
  * apport-gtk: Do not assume that an icon requested for size 42 actually
    delivers size 42; some themes do not have this available and deliver a
    smaller one instead, causing overflows. Also, copy the image as
    gtk_icon_theme_load_icon() returns a readonly result which we must not
-   modify. (LP: #937249)
+   modify. ([LP: #937249](https://launchpad.net/bugs/937249))
  * ui.py: Don't show the duplicate warning when the crash database does not
    accept the problem type, and they are just being sent to whoopsie. Thanks
-   Evan Dandrea. (LP: #989779)
+   Evan Dandrea. ([LP: #989779](https://launchpad.net/bugs/989779))
  * report.py: Correctly escape the file path passed to gdb.
  * apport-gtk, apport-kde: Do not show the information collection progress
    dialog if the crash database does not accept this kind of report. In that
    case whoopsie will upload it in the background and the dialog is not
-   necessary.  (LP: #989698)
+   necessary.  ([LP: #989698](https://launchpad.net/bugs/989698))
 
 2.0.1 (2012-04-10)
 ------------------
@@ -1554,15 +1660,15 @@ Bug fixes:
  * test_report.py: Sleep a bit after calling our test crash script, to ensure
    the kernel has time to finish writing the core file.
  * generic package hook: Also check /tmp for enough space. Thanks Brian Murray.
-   (LP: #972933)
+   ([LP: #972933](https://launchpad.net/bugs/972933))
  * problem_report.py, write_mime(): Fix regression from version 1.95: Add a
    value as attachment if it is bigger than 1000 bytes, not if it is bigger
-   than 100. (LP: #977882)
+   than 100. ([LP: #977882](https://launchpad.net/bugs/977882))
 
 Improvements:
  * packaging-apt-dpkg.py: Avoid constructing and updating the apt.Cache()
    objects multiple times, to speed up retracing. Thanks Evan Dandrea.
-   (LP: #973494)
+   ([LP: #973494](https://launchpad.net/bugs/973494))
 
 2.0 (2012-03-30)
 ----------------
@@ -1571,15 +1677,15 @@ support for whoopsie-daemon, and client-side duplicate checking.
 
 Bug fixes:
  - report.py, anonymize(): Only replace whole words, not substrings.
-   (LP: #966562)
+   ([LP: #966562](https://launchpad.net/bugs/966562))
  - apport_python_hook.py: Fix filtering of org.freedesktop.DBus.Error.NoReply
-   exceptions. (LP: #958575)
+   exceptions. ([LP: #958575](https://launchpad.net/bugs/958575))
  - crashdb.py: When publishing the crash database, cut hash file names after
    quoting, to avoid that the quoting causes them to become too long.
-   (LP: #968070) This also uncovered that known() did not actually find any
-   signature which contained an URL-quoted character, therefore breaking
-   client-side duplicate checking in a lot of cases. Double-quote the file name
-   now, as urlopen() unquotes it.
+   ([LP: #968070](https://launchpad.net/bugs/968070)) This also uncovered that
+   known() did not actually find any signature which contained an URL-quoted
+   character, therefore breaking client-side duplicate checking in a lot of
+   cases. Double-quote the file name now, as urlopen() unquotes it.
  - Add a new crash database option "problem_types" and a CrashDatabase method
    "accepts(report)". This can be used to stop uploading particular problem
    report types to that database. E. g. a distribution might decide to not get
@@ -1589,11 +1695,13 @@ Bug fixes:
    report's type. This behaviour is not really correct, but necessary as long
    as we only support a single crashdb and have whoopsie hardcoded.  Once we
    have multiple crash dbs, we need to not even present the data if none of the
-   DBs wants the report. See LP #957177 for details. (LP: #968121)
+   DBs wants the report. See [LP: #957177](https://launchpad.net/bugs/957177)
+   for details. ([LP: #968121](https://launchpad.net/bugs/968121))
  - ui.py: Do not short-circuit information collection if report already has a
    "DistroRelease" field, as the GUIs add that in some cases. Check for
    "Dependencies" instead. This fixes information collection for kernel
-   problems (which now has a full GTK GUI test case). (LP: #968488)
+   problems (which now has a full GTK GUI test case).
+   ([LP: #968488](https://launchpad.net/bugs/968488))
 
 1.95 (2012-03-22)
 -----------------
@@ -1602,23 +1710,25 @@ Bug fixes:
    after running through collect_info(). Thanks Evan Dandrea.
  - apport-gtk, apport-kde: Set the window title to the distribution name, as
    per http://wiki.ubuntu.com/ErrorTracker#error . Thanks Evan Dandrea.
-   (LP: #948015)
+   ([LP: #948015](https://launchpad.net/bugs/948015))
  - test/run: Ignore obsolete packages on the system, to avoid breaking the GUI
    tests due to them.
  - apport-gtk, apport-kde: When reporting a "system crash", don't say "... of
    this program version", but "...of this type", as we don't show a program
    version in the initial dialog (https://wiki.ubuntu.com/ErrorTracker#error)
-   (LP: #961065)
+   ([LP: #961065](https://launchpad.net/bugs/961065))
  - problem_report.py, write_mime(): Do not put a key inline if it is bigger
-   than 1 kB, to guard against very long lines. (LP: #957326)
+   than 1 kB, to guard against very long lines.
+   ([LP: #957326](https://launchpad.net/bugs/957326))
  - etc/cron.daily/apport: Do not remove whoopsie's *.upload* stamps every day,
    only if they are older than a week. whoopsie comes with its own cron job
-   which deals with them. Thanks Steve Langasek. (LP: #957102)
+   which deals with them. Thanks Steve Langasek.
+   ([LP: #957102](https://launchpad.net/bugs/957102))
  - report.py, mark_ignore(): Fix crash if executable went away underneath us.
-   (LP: #961410)
+   ([LP: #961410](https://launchpad.net/bugs/961410))
  - apport-gtk: Do not compare current continue button label against a
    translated string.  Instead just remember whether or not we can restart the
-   application. (LP: #960439)
+   application. ([LP: #960439](https://launchpad.net/bugs/960439))
  - hookutils.py, command_output(): Add option to keep the locale instead of
    disabling it.
  - hookutils.py, command_output(): Actually make the "input" parameter work,
@@ -1627,30 +1737,35 @@ Bug fixes:
  - hooktuils.py: Change root_command_output() and attach_root_command_outputs()
    to disable translated messages (LC_MESSAGES=C) only as part of the command
    to be run, not already for the root prefix command. This will keep the
-   latter (gksu, kdesudo, etc.) translated. (LP: #961659)
+   latter (gksu, kdesudo, etc.) translated.
+   ([LP: #961659](https://launchpad.net/bugs/961659))
  - apport-gtk: Cut off text values after 4000 characters, as Gtk's TreeView
    does not get along well with huge values. KDE's copes fine, so continue to
-   display the complete value there. (LP: #957062)
+   display the complete value there.
+   ([LP: #957062](https://launchpad.net/bugs/957062))
  - apport-gtk: Make details window resizable in bug reporting mode.
  - crashdb.py, known(): Check the address signature duplicate database if the
-   symbolic signature exists, but did not find any result. (LP: #103083)
+   symbolic signature exists, but did not find any result.
+   ([LP: #103083](https://launchpad.net/bugs/103083))
  - ui.py: Run anonymization after checking for duplicates, to prevent host or
    user names which look like hex numbers to corrupt the stack trace.
-   (LP: #953104)
+   ([LP: #953104](https://launchpad.net/bugs/953104))
  - apport-gtk: Require an application to both have TERM and SHELL in its
    environment to consider it a command line application that was started by
-   the user. (LP: #962130)
+   the user. ([LP: #962130](https://launchpad.net/bugs/962130))
  - backends/packaging-apt-dpkg.py, _check_files_md5(): Fix double encoding,
    which caused UnicodeDecodeErrors on non-ASCII characters in an md5sum file.
-   (LP: #953682)
+   ([LP: #953682](https://launchpad.net/bugs/953682))
  - apport-kde, apport-gtk: Only show "Relaunch" if the report has a
-   ProcCmdline, otherwise we cannot restart it. (LP: #956173)
+   ProcCmdline, otherwise we cannot restart it.
+   ([LP: #956173](https://launchpad.net/bugs/956173))
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
    just sinks and sources. Thanks David Henningsson.
  - apport-gtk, apport-kde: Show the ExecutablePath while we're collecting data
-   for the crash report. Thanks Evan Dandrea. (LP: #938707).
+   for the crash report. Thanks Evan Dandrea.
+   ([LP: #938707](https://launchpad.net/bugs/938707)).
 
 1.94.1 (2012-03-07)
 -------------------
@@ -1658,14 +1773,16 @@ Bug fixes:
  - test_ui_kde.py: Re-enable inadvertently disabled "bug report for uninstalled
    package" test.
  - ui.py, collect_info(): Do not assume that reports have a "ProblemType"
-   field. This is not the case when updating a bug. (LP: #947519)
- - apport-cli: Consistently handle unicode vs. byte arrays. (LP: #946207)
+   field. This is not the case when updating a bug.
+   ([LP: #947519](https://launchpad.net/bugs/947519))
+ - apport-cli: Consistently handle unicode vs. byte arrays.
+   ([LP: #946207](https://launchpad.net/bugs/946207))
  - report.py, anonymize(): Fix crash when the hostname or user name contain
-   non-ASCII characters. (LP: #945230)
+   non-ASCII characters. ([LP: #945230](https://launchpad.net/bugs/945230))
  - packaging-apt-dpkg.py: Fix UnicodeDecodeError on unexpected md5sum output.
-   (LP: #921037)
+   ([LP: #921037](https://launchpad.net/bugs/921037))
  - apport-gtk: Fix handling of non-ASCII strings in message dialogs.
-   (LP: #865394)
+   ([LP: #865394](https://launchpad.net/bugs/865394))
 
 1.94 (2012-03-02)
 -----------------
@@ -1677,37 +1794,48 @@ Bug fixes:
  - general-hooks/generic.py: Also attach xsession-errors for programs that link
    to libgtk-3.
  - launchpad.py: Properly handle "Expired" status, to avoid marking new bugs as
-   duplicates of expired ones. (LP: #941854)
- - apport: Fix crash if the "whoopsie" group does not exist. (LP: #942326)
+   duplicates of expired ones.
+   ([LP: #941854](https://launchpad.net/bugs/941854))
+ - apport: Fix crash if the "whoopsie" group does not exist.
+   ([LP: #942326](https://launchpad.net/bugs/942326))
  - report.py, crash_signature(): Do not put "<module>" frames into Python crash
    signatures that happen outside of function/method calls. Fall back to the
    file/line number as a frame description instead. This will do a much better
-   job at disambiguating e. g. different ImportError crashes. (LP: #920403)
+   job at disambiguating e. g. different ImportError crashes.
+   ([LP: #920403](https://launchpad.net/bugs/920403))
  - Make "binary changed since the time of the crash" error message more
-   comprehensible, thanks Paolo Rotolo. (LP: #942830)
+   comprehensible, thanks Paolo Rotolo.
+   ([LP: #942830](https://launchpad.net/bugs/942830))
  - crashdb.py, check_duplicate(): It can happen that a bug gets identified as
    being a duplicate of bug S by symbolic signatures and a duplicate of bug A
    by address signatures. Empirical evidence shows that this is due to the
    unavoidable jitter in stack traces (A and S not being identified as
    duplicates as their signatures differ slightly) and not a logic error. So
    instead of erroring out, duplicate all three bugs and keep the lowest number
-   as the master ID. (LP: #943117)
+   as the master ID. ([LP: #943117](https://launchpad.net/bugs/943117))
  - Revert the usage of multiple nested threads during data collection, and
    switch back to only using one UI thread. The UI implementations can, and now
    do, decide between showing a spinner and showing a progress dialog in the
    ui_*_info_collection_progress() methods. This fixes libX11 crashes when
-   multiple UI threads do changes concurrently (LP: #901675), and also avoids
-   multi-thread induced crashes in Pango (LP: #943661). The removal of the
-   collect() method also fixes the new crashes in it. (LP: #942098, #939803)
- - ui.py, get_desktop_entry(): Fix crash on uninstalled package. (LP: #940984)
+   multiple UI threads do changes concurrently
+   ([LP: #901675](https://launchpad.net/bugs/901675)), and also avoids
+   multi-thread induced crashes in Pango
+   ([LP: #943661](https://launchpad.net/bugs/943661)). The removal of the
+   collect() method also fixes the new crashes in it.
+   ([LP: #942098](https://launchpad.net/bugs/942098),
+   [#939803](https://launchpad.net/bugs/939803))
+ - ui.py, get_desktop_entry(): Fix crash on uninstalled package.
+   ([LP: #940984](https://launchpad.net/bugs/940984))
  - data/unkillable_shutdown: Fix crash on race condition when PID goes away
-   while the report is created. (LP: #546369)
+   while the report is created.
+   ([LP: #546369](https://launchpad.net/bugs/546369))
  - apport/hookutils.py, pci_devices(): Fix crash on unexpected lines from
-   lspci. (LP: #904489)
+   lspci. ([LP: #904489](https://launchpad.net/bugs/904489))
  - Drop hardcoded "Ubuntu" words again which crept in with the whoopsie support
    merge. Use the DistroRelease: field.
  - apport-kde: Fix Home page URL in KApplication metadata.
- - apport-gtk: Fix resizability and size after hiding details. (LP: #405418)
+ - apport-gtk: Fix resizability and size after hiding details.
+   ([LP: #405418](https://launchpad.net/bugs/405418))
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
@@ -1720,20 +1848,23 @@ Improvements:
  - hookutils.py, xsession_errors(): Add a reasonable default pattern which
    matches glib-style warnings, errors, criticals etc. and X window errors.
    In data/general-hooks/generic.py, call it with that default instead of the
-   rather incomplete custom pattern. (LP: #932660)
+   rather incomplete custom pattern.
+   ([LP: #932660](https://launchpad.net/bugs/932660))
  - packaging.py: Add get_package_origin() method, and implement it for
    apt-dpkg.
  - report.py, add_package_info(): Add "[origin: ...]" tag to "Package" and
    "Dependencies" fields for any package which is not native to the
    distribution. If any such package is present, tag the report with
-   "third-party-packages" in data/general-hooks/generic.py. (LP: #927912)
+   "third-party-packages" in data/general-hooks/generic.py.
+   ([LP: #927912](https://launchpad.net/bugs/927912))
  - apport/packaging.py: Add get_uninstalled_package() method as a helper method
    for the test suite. Use it instead of a hardcoded Debian/Ubuntu specific
    name in test/test_hooks.py.
  - test/test_ui_{gtk,kde}.py: Add test cases for complete UI workflow runs for
    reporting a bug against an installed/uninstalled package, and reporting a
    crash with and without showing details. This reproduces the recent crashes
-   like LP #901675 or LP #943661.
+   like [LP: #901675](https://launchpad.net/bugs/901675) or
+   [LP: #943661](https://launchpad.net/bugs/943661).
  - test_ui.py: Add a test case for reporting a complete report on uninstalled
    package. This happens when reporting a problem from a different machine
    through copying a .crash file.
@@ -1744,15 +1875,15 @@ Improvements:
 ------------------
 Bug fixes:
  - apport-gtk: Fix crash on nonexisting icon. Thanks Evan Dandrea.
-   (LP: #937354)
+   ([LP: #937354](https://launchpad.net/bugs/937354))
  - ui.py, open_url(): Revert back to calling sudo instead of dropping
    privileges ourselves; with the latter, calling firefox as the sudo'ing user
-   fails. (LP: #916810, #938128)
+   fails. ([LP: #916810](https://launchpad.net/bugs/916810), #938128)
  - ui.py: Fix aborting with "AssertionError" if the report is already known,
-   but without an URL. (LP: #938778)
+   but without an URL. ([LP: #938778](https://launchpad.net/bugs/938778))
  - launchpad.py: If a bug is already known, but the report is private, do not
    send the report. There is little sense piling up lots of duplicates.
-   (LP: #938700)
+   ([LP: #938700](https://launchpad.net/bugs/938700))
  - test/crash: Fix regression of test_crash_apport(), consider $TERM a
    non-sensitive variable.
  - ui.py: Fix test failures for data collection progress, they are not expected
@@ -1763,8 +1894,10 @@ Bug fixes:
  - test/python: Do not assume that /var/crash/ exists. Use /var/tmp/ for the
    fake binaries instead.
  - data/general-hooks/parse_segv.py: Fix test case name.
- - ui.py: Fix crash on invalid core dumps. (LP: #937215)
- - launchpad.py: Fix crash on unicode report titles. (LP: #896626)
+ - ui.py: Fix crash on invalid core dumps.
+   ([LP: #937215](https://launchpad.net/bugs/937215))
+ - launchpad.py: Fix crash on unicode report titles.
+   ([LP: #896626](https://launchpad.net/bugs/896626))
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
@@ -1779,14 +1912,16 @@ Improvements:
 ------------------
 Bug fixes:
  - ui.py: Fix wrong creation of "~" folder instead of expanding it to home
-   directory when using "Examine locally". Thanks Jason Conti! (LP: #909149)
+   directory when using "Examine locally". Thanks Jason Conti!
+   ([LP: #909149](https://launchpad.net/bugs/909149))
  - Replace file() calls with open() for Python 3 compatibility. Thanks Colin
    Watson!
- - launchpad.py: Avoid sending tag names with upper case. (LP: #924181)
+ - launchpad.py: Avoid sending tag names with upper case.
+   ([LP: #924181](https://launchpad.net/bugs/924181))
  - report.py, crash_signature_addresses(): Fix crash if report does not have
    "Signal".
  - apport-gtk: Fix resize handling of expander in details window. Thanks Thomas
-   Bechtold! (LP: #930562)
+   Bechtold! ([LP: #930562](https://launchpad.net/bugs/930562))
  - Clean up unnecessary imports. Thanks Evan Dandrea!
 
 Improvements:
@@ -1816,9 +1951,11 @@ Bug fixes:
    to "3". Existing databases need to be migrated manually as SQLite does not
    allow adding a "PRIMARY KEY" constraint to existing tables.
  - crashdb.py: Do not add a new address signature entry if one already exists.
- - apport-cli: Fix UnicodeDecodeError on unicode report values. (LP: #275972)
+ - apport-cli: Fix UnicodeDecodeError on unicode report values.
+   ([LP: #275972](https://launchpad.net/bugs/275972))
  - launchpad.py: Only set bug task importance if it is undecided.
- - apport-retrace: Fix "an useful" typo. (LP: #911437)
+ - apport-retrace: Fix "an useful" typo.
+   ([LP: #911437](https://launchpad.net/bugs/911437))
  - report.py: Filter out frames which are internal kernel/glibc implementation
    details and not stable across duplicates. In particular, filter out
    __kernel-syscall() and the SSE stubs.
@@ -1832,7 +1969,8 @@ Improvements:
    be made g+s and crash handling daemons can access those.
  - Python exceptions: Blacklist DBus.Error.NoReply. It does not help to get
    these traces from the client-side application, you need the actual exception
-   in the D-Bus server backend instead. (LP: #914220)
+   in the D-Bus server backend instead.
+   ([LP: #914220](https://launchpad.net/bugs/914220))
  - Support /etc/apport/whitelist.d/ similarly to /etc/apport/blacklist.d/, for
    cases like installer environments where only crashes of a few selected
    programs should be reported.
@@ -1847,7 +1985,8 @@ Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix handling of explicit cache directory
    name when it is a relative path.
  - launchpad.py: Only query for bugs after 2011-08-01, to avoid timeouts.
- - ui.py: Also anonymize standard bug title. (LP: #893863)
+ - ui.py: Also anonymize standard bug title.
+   ([LP: #893863](https://launchpad.net/bugs/893863))
  - launchpad.py: Current Launchpad cannot have private bugs which affect
    multiple projects. Fix test suite accordingly.
 
@@ -1855,7 +1994,8 @@ Improvements:
  - report.py: Break out new method stacktrace_top_function() from
    standard_title(), so that other parts of the code can use this as well.
  - launchpad.net: When sending retraced results back to the bug report, update
-   the topmost function in the bug title. (LP: #869970)
+   the topmost function in the bug title.
+   ([LP: #869970](https://launchpad.net/bugs/869970))
  - report.py, add_gdb_info(): Add a new field "StacktraceAddressSignature"
    which is a heuristic signature for signal crashes. This should be used if
    crash_signature() fails, i. e. the Stacktrace field does not have enough
@@ -1884,10 +2024,10 @@ Improvements:
    publication (similar to dupdb-admin publish) into retracer setups.
  - launchpad.py: Attach updated stack traces from a duplicate to the master bug
    if it failed retracing previously or has an "apport-request-retrace" tag.
-   (LP: #869982)
+   ([LP: #869982](https://launchpad.net/bugs/869982))
  - apport-kde, apport-gtk: Support the "Annotation" field for custom dialog
    titles for "Crash" and "Package" problem types as well, not just for
-   "Kernel". (LP: #664378)
+   "Kernel". ([LP: #664378](https://launchpad.net/bugs/664378))
 
 1.26 (2011-11-11):
 ------------------
@@ -1920,7 +2060,7 @@ Improvements:
  - Ignore a crash if gnome-session is running and says that the session is
    being shut down. These often die because X.org or other services are going
    away, are usually harmless, and just cause a lot of clutter in bug trackers.
-   (LP: #460932)
+   ([LP: #460932](https://launchpad.net/bugs/460932))
  - test/crash: Rewrite using Python's unittest, to be in line with other tests,
    and be easier to maintain and extend.
 
@@ -1930,7 +2070,8 @@ Improvements:
  - Add new response "Examine locally" to presenting the report details, which
    runs apport-retrace in the chosen mode in a terminal. This should be made
    available for crash reports if apport-retrace and a Terminal application are
-   installed; add an abstrace UI method for this. (LP: #75901)
+   installed; add an abstrace UI method for this.
+   ([LP: #75901](https://launchpad.net/bugs/75901))
  - apport-gtk: Add "Examine locally..." button, and implement
    ui_run_terminal().
  - apport-cli: Add "Examine locally..." responses, and implement
@@ -1949,14 +2090,15 @@ Improvements:
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
-   (LP: #883234)
+   ([LP: #883234](https://launchpad.net/bugs/883234))
  - apport-kde: Rearrange order of imports to get intended error message if
    PyKDE is not installed.
  - packaging-apt-dpkg.py: Ignore hardening-wrapper diversions, to make
    gcc_ice_hook work if hardening-wrapper is installed.
  - apport_python_hook: Respect $APPORT_REPORT_DIR.
  - apport_python_hook: Limit successive crashes per program and user to 3 per
-   day, just like signal crashes. (LP: #603503)
+   day, just like signal crashes.
+   ([LP: #603503](https://launchpad.net/bugs/603503))
  - packaging-apt-dpkg.py: Skip online tests when there is no default route.
  - ui.py: Fix test suite to not fail if system has some obsolete or non-distro
    packages.
@@ -1967,16 +2109,18 @@ Bug fixes:
  - backends/packaging-apt-dpkg.py, install_packages(): Also copy
    apt/sources.list.d/ into sandbox.
  - backends/packaging-apt-dpkg.py, install_packages(): Install apt keyrings
-   from config dir or from system into sandbox. (LP: #856216)
+   from config dir or from system into sandbox.
+   ([LP: #856216](https://launchpad.net/bugs/856216))
  - packaging.py, backends/packaging-apt-dpkg.py: Define that install_packages()
    should return a SystemError for broken configs/unreachable servers etc., and
    fix the apt/dpkg implementation accordingly.
  - apport-retrace: Don't crash, just give a proper error message if servers are
-   unreachable, or configuration files are broken. (LP: #859248)
+   unreachable, or configuration files are broken.
+   ([LP: #859248](https://launchpad.net/bugs/859248))
  - backends/packaging-apt-dpkg.py: Fix crash when /etc/apport/native-origins.d
-   contains any files. (LP: #865199)
+   contains any files. ([LP: #865199](https://launchpad.net/bugs/865199))
  - hookutils, recent_logfile(): Fix invalid return value if log file is not
-   readable. (LP: #819357)
+   readable. ([LP: #819357](https://launchpad.net/bugs/819357))
  - test/crash: Fix race condition in the "second instance terminates
    immediately" check.
  - hookutils.py: Replace attach_gconf() with a no-op stub. It used static
@@ -1984,24 +2128,28 @@ Bug fixes:
    gconf is rather obsolete these days.
  - ui.py, open_url(): Greatly simply and robustify by just using xdg-open. This
    already does the right thing wrt. reading the default browser from GNOME,
-   KDE, XCE, and other desktops. (LP: #198449)
+   KDE, XCE, and other desktops.
+   ([LP: #198449](https://launchpad.net/bugs/198449))
  - data/general-hooks/generic.py: Only attach ~/.xsession_errors if the bug is
-   reported in the same XDG session as the crash happened. (LP: #869974)
+   reported in the same XDG session as the crash happened.
+   ([LP: #869974](https://launchpad.net/bugs/869974))
  - Ignore crashes for programs which got updated in between the crash and
-   reporting. (LP: #132904)
+   reporting. ([LP: #132904](https://launchpad.net/bugs/132904))
  - Special-case crashes of 'twistd': Try to determine the client program and
-   assign the report to that, or fail with an UnreportableReason. (LP: #755025)
+   assign the report to that, or fail with an UnreportableReason.
+   ([LP: #755025](https://launchpad.net/bugs/755025))
  - apport-gtk: In bug update mode, make details dialog resizable and fix
-   default size. (LP: #865754)
- - apport-gtk: Fix crash if report does not have ProcCmdline. (LP: #854452)
+   default size. ([LP: #865754](https://launchpad.net/bugs/865754))
+ - apport-gtk: Fix crash if report does not have ProcCmdline.
+   ([LP: #854452](https://launchpad.net/bugs/854452))
  - hookutils.py, attach_wifi(): Anonymize ESSID and AP MAC from "iwconfig"
-   output. (LP: #746900)
+   output. ([LP: #746900](https://launchpad.net/bugs/746900))
  - test/crash: Fix test failure if user is not in any system groups.
  - test/crash: Change to /tmp/ for test crash process, to fix failure if the
    user that runs the test suite cannot write into the current directory.
-   (LP: #868695)
+   ([LP: #868695](https://launchpad.net/bugs/868695))
  - ui.py: Improve error message if package is not a genuine distro package.
-   Thanks to Ronan Jouchet. (LP: #559345)
+   Thanks to Ronan Jouchet. ([LP: #559345](https://launchpad.net/bugs/559345))
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
@@ -2010,7 +2158,7 @@ Improvements:
    timestamps in log output.
  - hookutils.py: Add two new functions attach_gsettings_package() and
    attach_gsettings_schema() for adding user-modified gsettings keys to a
-   report. (LP: #836489)
+   report. ([LP: #836489](https://launchpad.net/bugs/836489))
  - hookutils.py: Add new function in_session_of_problem() which returns whether
    the given report happened in the currently running XDG session. This can be
    used to determine if e. g. ~/.xsession-errors is relevant and should be
@@ -2049,15 +2197,18 @@ Bug fixes:
  - apport-retrace: If the user did not specify a --cache directory, create a
    shared one instead of letting the two install_packages() calls create their
    own. This ensures that the apt and dpkg status is up to date, and avoids
-   downloading the package indexes multiple times. (LP: #847951)
+   downloading the package indexes multiple times.
+   ([LP: #847951](https://launchpad.net/bugs/847951))
  - apport-retrace: Give proper error mesage instead of AssertionError crash if
-   a report does not contain standard Apport format data. (LP: #843221)
+   a report does not contain standard Apport format data.
+   ([LP: #843221](https://launchpad.net/bugs/843221))
  - fileutils.py, get_new_reports(): Fix crash if report file disappears in the
-   middle of the operation. (LP: #640216)
+   middle of the operation. ([LP: #640216](https://launchpad.net/bugs/640216))
  - apport/ui.py, load_report(): Intercept another case of broken report files.
-   (LP: #445142)
+   ([LP: #445142](https://launchpad.net/bugs/445142))
  - apport/report.py, standard_title(): Escape regular expression control
-   characters in custom exception names. (LP: #762998)
+   characters in custom exception names.
+   ([LP: #762998](https://launchpad.net/bugs/762998))
 
 1.22.1 (2011-09-06)
 -------------------
@@ -2071,8 +2222,10 @@ Bug fixes:
  - dupdb-admin: Fix UnicodeEncodeError crash.
  - launchpad.py: Fix crash if a crash report does not have a DistroRelease.
  - Set the default "Apport" title for choice dialogs instead of the default
-   apport-gtk title. Thanks Robert Roth. (LP: #608222)
- - apport-gtk: Update markup_escape_text() call to current glib. (LP: #829635)
+   apport-gtk title. Thanks Robert Roth.
+   ([LP: #608222](https://launchpad.net/bugs/608222))
+ - apport-gtk: Update markup_escape_text() call to current glib.
+   ([LP: #829635](https://launchpad.net/bugs/829635))
 
 1.22 (2011-08-25)
 -----------------
@@ -2093,7 +2246,7 @@ Improvements:
 
 Bug fixes:
  - apport-gtk: Fix crash in GLib.markup_escape_text() call, regression from
-   1.21.3. (LP: #828010)
+   1.21.3. ([LP: #828010](https://launchpad.net/bugs/828010))
  - launchpad.py: When searchTasks() times out, exit with 99 as this is a
    transient error.
  - crash-digger: Intercept OverflowError from downloaded compressed
@@ -2102,13 +2255,14 @@ Bug fixes:
 1.21.3 (2011-08-17)
 -------------------
 Bug fixes:
- - gtk/apport-gtk.desktop.in: Also show in Unity. (LP: #803519)
+ - gtk/apport-gtk.desktop.in: Also show in Unity.
+   ([LP: #803519](https://launchpad.net/bugs/803519))
  - apport-unpack: Fix crash on file errors.
  - Add apport.packaging.get_library_paths() interface and implement it for
    backends/packaging-apt-dpkg.py using dpkg multiarch directories. Use it in
    chroot.py.
  - hookutils.py: Don't attach empty values. Thanks Bryce Harrington.
-   (LP: #813798)
+   ([LP: #813798](https://launchpad.net/bugs/813798))
  - apport-gtk: Correctly pass message dialog type.
  - apport-gtk: Fix GLib and GObject imports to be compatible with the future
    pygobject 3.0.
@@ -2172,13 +2326,14 @@ Improvements:
    code. Inspired by original patch from Michael Vogt, thanks!
 
 Bug fixes:
- - apport-gtk: HTML-escape text for dialogs with URLs. (LP: #750870)
+ - apport-gtk: HTML-escape text for dialogs with URLs.
+   ([LP: #750870](https://launchpad.net/bugs/750870))
  - dump_acpi_tables.py: Check to see if acpi/tables dir is mounted first.
-   Thanks Brian Murray. (LP: #729622)
+   Thanks Brian Murray. ([LP: #729622](https://launchpad.net/bugs/729622))
  - man/apport-cli.1: Document recently added -w/--window option. Thanks Abhinav
-   Upadhyay! (LP: #765600)
+   Upadhyay! ([LP: #765600](https://launchpad.net/bugs/765600))
  - Use kde-open instead of kfmclient to open URLs under KDE. Thanks Philip
-   Muškovac. (LP: #765808)
+   Muškovac. ([LP: #765808](https://launchpad.net/bugs/765808))
 
 1.20.1 (2011-03-31)
 -------------------
@@ -2186,26 +2341,28 @@ Bug fixes:
  - Add bash completion support for new -w/--window option that was introduced
    in 1.20. Thanks Philip Muškovac.
  - apport-unpack: Fix crash if target directory already exists.
- - Fix crash if UnreportableReason is a non-ASCII string. (LP: #738632)
+ - Fix crash if UnreportableReason is a non-ASCII string.
+   ([LP: #738632](https://launchpad.net/bugs/738632))
  - Fix crash if application from desktop name is a non-ASCII string.
-   (LP: #737799)
+   ([LP: #737799](https://launchpad.net/bugs/737799))
  - unkillable_shutdown: Fix rare crash if ExecutablePath does not exist (any
-   more). (LP: #537904)
+   more). ([LP: #537904](https://launchpad.net/bugs/537904))
  - kernel_crashdump: Fix crash if the vmcore file disappeared underneath us.
-   (LP: #450295)
+   ([LP: #450295](https://launchpad.net/bugs/450295))
  - unkillable_shutdown: Fix crash if the checked process terminated underneath
-   us. (LP: #540436)
+   us. ([LP: #540436](https://launchpad.net/bugs/540436))
  - ui.py: Properly raise exceptions from the upload thread that happen at its
-   very end. (LP: #469943)
+   very end. ([LP: #469943](https://launchpad.net/bugs/469943))
 
 1.20 (2011-03-17)
 -----------------
 Improvements:
  - Add support for -w/--window option which will enable user to select a
    window as a target for filing a problem report. Thanks Abhinav Upadhyay for
-   the patch! (LP: #357847)
+   the patch! ([LP: #357847](https://launchpad.net/bugs/357847))
  - Disable the filtering on SIGABRT without assertion messages. Turns out that
-   developers want these crash reports after all. (LP: #729223)
+   developers want these crash reports after all.
+   ([LP: #729223](https://launchpad.net/bugs/729223))
  - Add support for a "DuplicateSignature" report fields. This allows package
    hooks to implement custom duplicate problem handling which doesn't need to
    be hardcoded in Apport itself. Update the launchpad backend to tag such bugs
@@ -2216,13 +2373,17 @@ Bug fixes:
  - apport-retrace: Intercept SystemErrors from ill-formed gzip attachments as
    well.
  - Fix crash if crash database configuration does not specify a
-   bug_pattern_url. Just assume None. (LP: #731526)
+   bug_pattern_url. Just assume None.
+   ([LP: #731526](https://launchpad.net/bugs/731526))
  - If a custom crash database does not specify a bug_pattern_url, fall back to
-   using the default database's. (LP: #731526)
+   using the default database's.
+   ([LP: #731526](https://launchpad.net/bugs/731526))
  - hookutils.py Update WifiSyslog regex to correctly catch application log
-   messages in syslog. Thanks Mathieu Trudel-Lapierre. (LP: #732917)
+   messages in syslog. Thanks Mathieu Trudel-Lapierre.
+   ([LP: #732917](https://launchpad.net/bugs/732917))
  - hookutils.py, attach_hardware(): Avoid error message if machine does not
-   have a PCI bus. Thanks Marcin Juszkiewicz! (LP: #608449)
+   have a PCI bus. Thanks Marcin Juszkiewicz!
+   ([LP: #608449](https://launchpad.net/bugs/608449))
  - backends/packaging-apt-dpkg.py: Replace deprecated getChanges() call with
    get_changes().
  - apport-gtk: Fix broken dialog heading if the name of the crashed program
@@ -2230,13 +2391,15 @@ Bug fixes:
  - apport-gtk: Don't crash if GTK cannot be initialized. This usually happens
    without a $DISPLAY or when the session is being shut down. Just print an
    error message. If there are pending crashes, they will be shown again the
-   next time a session starts. (LP: #730569)
+   next time a session starts.
+   ([LP: #730569](https://launchpad.net/bugs/730569))
 
 1.19 (2011-02-28)
 -----------------
 Bug fixes:
  - Update stack unwind patterns for current glib (slightly changed function
-   names), and also ignore a preceding '*'. (LP: #716251)
+   names), and also ignore a preceding '*'.
+   ([LP: #716251](https://launchpad.net/bugs/716251))
  - Fix crash_signature() to fail if there is an empty or too short
    StacktraceTop.
  - apt backend: Do not generate a warning if the opportunistically added -dbg
@@ -2269,26 +2432,30 @@ Bug fixes:
  - Do not show symptom scripts which start with an underscore. These can be
    used for private libraries for the actual symptom scripts.
  - Update bash completion. Thanks Philip Muškovac.
- - etc/default/apport: Remove obsolete "maxsize" setting. (LP: #719564)
+ - etc/default/apport: Remove obsolete "maxsize" setting.
+   ([LP: #719564](https://launchpad.net/bugs/719564))
 
 Improvements:
  - Remove explicit handling of KDE *.ui files in setup.py, as
    python-distutils-extra 2.24 fixes this. Bump version check.
  - hookutils.py: Add attach_root_command_outputs() to run several commands
-   at once. This avoids asking for the password several times. (LP: #716595)
+   at once. This avoids asking for the password several times.
+   ([LP: #716595](https://launchpad.net/bugs/716595))
 
 1.17.2 (2011-02-04)
 -------------------
 Improvements:
  - Be more Python 3 compatible (not fully working with Python 3 yet, though).
  - apt/dpkg backend: Drop support for pre-0.7.9 python-apt API.
- - Add --tag option to add extra tags to reports. (LP: #572504)
+ - Add --tag option to add extra tags to reports.
+   ([LP: #572504](https://launchpad.net/bugs/572504))
 
 Bug fixes:
  - hookutils.py, attach_dmesg(): Do not overwrite already existing dmesg.
- - hookutils.py: Be more robust against file permission errors. (LP: #444678)
+ - hookutils.py: Be more robust against file permission errors.
+   ([LP: #444678](https://launchpad.net/bugs/444678))
  - ui.py: Do not show all the options in --help when invoked as *-bug.
-   (LP: #665953)
+   ([LP: #665953](https://launchpad.net/bugs/665953))
  - launchpad.py: Adapt test cases to current standard_title() behaviour.
 
 1.17.1 (2011-01-10)
@@ -2300,22 +2467,23 @@ Bug fixes:
 -----------------
 Improvements:
  - Better standard bug titles for Python crashes. Thanks Matt Zimmerman!
-   (LP: #681574)
+   ([LP: #681574](https://launchpad.net/bugs/681574))
  - Add handler for uncaught Java exceptions. There is no integration for
    automatically intercepting all Java crashes yet, see java/README.
-   Thanks Matt Zimmerman! (LP: #548877)
+   Thanks Matt Zimmerman! ([LP: #548877](https://launchpad.net/bugs/548877))
 
 Bug fixes:
  - GTK frontend: Require GTK 3.0.
  - launchpad.py: Default to "production" instance, not "edge", since edge is
    obsolete now.
  - hookutils.py, attach_alsa(): Fix crash if /proc/asound/cards does not exist.
-   (LP: #626215)
+   ([LP: #626215](https://launchpad.net/bugs/626215))
  - ui.py, format_filesize(): Fix to work with stricter locale.format() in
-   Python 2.7. (LP: #688535). While we are at it, also change it to use base-10
+   Python 2.7. ([LP: #688535](https://launchpad.net/bugs/688535)). While we are at it, also change it to use base-10
    units.
  - hookutils.py, package_versions(): Always include all requested package names
-   even if they're unknown to us. Thanks Matt Zimmerman! (LP: #695188)
+   even if they're unknown to us. Thanks Matt Zimmerman!
+   ([LP: #695188](https://launchpad.net/bugs/695188))
  - launchpad.py: When updating a bug, also add new tags. Thanks Brian Murray!
 
 1.16 (2010-11-19)
@@ -2345,9 +2513,10 @@ Bug fixes:
    dump itself, instead of using gdb to do it. The latter fails in ptrace
    restricted environments, such as Ubuntu 10.10.
  - packaging-apt-dpkg.py: Fix handling of /etc/apport/native-origins.d to
-   actually work. Thanks Steve Langasek. (LP: #627777)
+   actually work. Thanks Steve Langasek.
+   ([LP: #627777](https://launchpad.net/bugs/627777))
  - apport-kde: Load correct translation catalogue. Thanks Jonathan Riddell.
-   (LP: #633483)
+   ([LP: #633483](https://launchpad.net/bugs/633483))
  - launchpad.py: Use launchpadlib to file a bug instead of screen scraping.
    The latter was completely broken with current Launchpad, so this makes the
    test suite actually work again. Thanks to Diogo Matsubara!
@@ -2356,12 +2525,15 @@ Bug fixes:
    http://launchpad.dev installation). Thanks to Diogo Matsubara!
  - backends/packaging-apt-dpkg.py: Fix crash on empty lines in ProcMaps
    attachment.
- - doc/symptoms.txt: Fix typo, thanks Philip Muskovac. (LP: #590521)
+ - doc/symptoms.txt: Fix typo, thanks Philip Muskovac.
+   ([LP: #590521](https://launchpad.net/bugs/590521))
  - apport/hookutils.py: rename ProcCmdLine to ProcKernelCmdLine to not wipe
-   wipe out /proc/$pid/cmdline information. (LP: #657091)
+   wipe out /proc/$pid/cmdline information.
+   ([LP: #657091](https://launchpad.net/bugs/657091))
  - apport/hookutils.py: attach_file() will not overwrite existing report
    keys, instead appending "_" until the key is unique.
- - Fix --save option to recognise ~, thanks Philip Muškovac. (LP: #657278)
+ - Fix --save option to recognise ~, thanks Philip Muškovac.
+   ([LP: #657278](https://launchpad.net/bugs/657278))
  - Remove escalation_subscription from Ubuntu bug DB definition, turned out to
    not be useful; thanks Brian Murray.
  - launchpad.py: Fix APPORT_LAUNCHPAD_INSTANCE values with a https:// prefix.
@@ -2373,7 +2545,7 @@ Bug fixes:
 -------------------
 Bug fixes:
  - hookutils.py, attach_drm_info(): Sanitize connector names. Thanks Chris
-   Halse Rogers! (LP: #597558)
+   Halse Rogers! ([LP: #597558](https://launchpad.net/bugs/597558))
  - bash completion: Complete all path names, apport-bug can be invoked with a
    path to a program. Thanks Philip Muskovac.
 
@@ -2385,38 +2557,41 @@ New features:
 
 Bug fixes:
  - packaging-apt-dpkg.py: Fix deprecated python-apt variables, thanks David
-   Stansby. (LP: #591695)
+   Stansby. ([LP: #591695](https://launchpad.net/bugs/591695))
  - launchpad.py: Fix crash on attachments which are named *.gz, but
-   uncompressed. (LP: #574360)
+   uncompressed. ([LP: #574360](https://launchpad.net/bugs/574360))
  - hookutils.py, attach_gconf(): Fix defaults parsing for boolean keys.
-   (LP: #583109)
+   ([LP: #583109](https://launchpad.net/bugs/583109))
 
 1.13.4 (2010-05-04)
 -------------------
  - bash completion: Fix error message if /usr/share/apport/symptoms does not
-   exist. Thanks Philip Muškovac! (LP: #562118)
+   exist. Thanks Philip Muškovac!
+   ([LP: #562118](https://launchpad.net/bugs/562118))
  - general-hooks/parse_segv.py: Report stack exhaustion more clearly and
    correctly handle register dereferencing calls.
  - Save/restore environment when calling hooks, in case they change the locale,
-   etc. (LP: #564422)
+   etc. ([LP: #564422](https://launchpad.net/bugs/564422))
  - hookutils.py, command_output(): Do not set $LC_MESSAGES for the calling
    process/hook, just for the command to be called.
  - ui.py: When displaying strings from system exceptions, decode them into an
-   unicode string, to avoid crashing the KDE UI. (LP: #567253)
+   unicode string, to avoid crashing the KDE UI.
+   ([LP: #567253](https://launchpad.net/bugs/567253))
  - apport-retrace: Fix crash for retracing kernel vmcores, which do not have an
    ExecutablePath.
  - apport-bug manpage: Clarify when apport-collect may be used. Thanks Brian
-   Murray! (LP: #537273)
+   Murray! ([LP: #537273](https://launchpad.net/bugs/537273))
  - generic hook: Check ProcMaps for unpackaged libraries, and ask the user if
    he really wants to continue. If he does, tag the report as "local-libs" and
    add a "LocalLibraries" field to the report with a list of them.
-   (LP: #545227)
+   ([LP: #545227](https://launchpad.net/bugs/545227))
 
 1.13.3 (2010-04-14)
 -------------------
  - data/general-hooks/parse_segv.py: suggest segv-in-kernel possibility.
  - ui.py: When running as root, only show system crash reports, to avoid
-   restarting user programs as root. (LP: #445017)
+   restarting user programs as root.
+   ([LP: #445017](https://launchpad.net/bugs/445017))
 
 1.13.2 (2010-03-31)
 -------------------
@@ -2425,34 +2600,40 @@ Bug fixes:
  - launchpad.py: Put some interesting fields first in the report, with the new
    priority_fields argument. Patch by Brian Murray, thanks!
  - packaging-apt-dpkg.py, _install_debug_kernel(): Do not crash on an outdated
-   kernel, just return that it is outdated. (LP: #532923)
+   kernel, just return that it is outdated.
+   ([LP: #532923](https://launchpad.net/bugs/532923))
  - launchpad.py test suite: Add "Referer" HTTP header, now required by
    launchpad.
  - launchpad.py: Fix crash if configuration does not have an "escalated_tag"
    option.
  - launchpad.py: Port to launchpadlib 1.0 API, thanks Michael Bienia for the
-   initial patch! (LP: #545009)
+   initial patch! ([LP: #545009](https://launchpad.net/bugs/545009))
  - gtk/apport-gtk-mime.desktop.in, kde/apport-kde-mime.desktop.in: Change
-   categories so that these do not ever appear in menu editors. (LP: #449215)
+   categories so that these do not ever appear in menu editors.
+   ([LP: #449215](https://launchpad.net/bugs/449215))
  - launchpad.py: Some LP bugs have broken attachments (this is a bug in
    Launchpad itself). Ignore those instead of crashing.
  - apport-gtk: Turn http:// and https:// links into clickable hyperlinks in
-   information and error dialogs. (LP: #516323)
+   information and error dialogs.
+   ([LP: #516323](https://launchpad.net/bugs/516323))
  - apport-retrace: Fix crash when trying to rebuild package info for reports
-   without an ExecutablePath. (LP: #436157)
+   without an ExecutablePath. ([LP: #436157](https://launchpad.net/bugs/436157))
  - ui.py: Fix crash when package information cannot be determined due to broken
-   apt status. (LP: #362743)
+   apt status. ([LP: #362743](https://launchpad.net/bugs/362743))
  - ui.py: Fix crash when /etc/apport/crashdb.conf is damaged; print an
-   appropriate error message instead. (LP: #528327)
+   appropriate error message instead.
+   ([LP: #528327](https://launchpad.net/bugs/528327))
  - data/kernel_crashdump: Fix crash if log file disappeared underneath us.
-   (LP: #510327)
+   ([LP: #510327](https://launchpad.net/bugs/510327))
  - data/apport: Fix IOError when apport is called with invalid number of
-   arguments, and stderr is not a valid fd. (LP: #467363)
+   arguments, and stderr is not a valid fd.
+   ([LP: #467363](https://launchpad.net/bugs/467363))
  - hookutils.py: Factor out the DMI collection code from attach_hardware()
    into attach_dmi(), and call that in attach_alsa() as well. Thanks to Brad
-   Figg for the patch! (LP: #552091)
+   Figg for the patch! ([LP: #552091](https://launchpad.net/bugs/552091))
  - apport/ui.py: Fix the help output if Apport is invoked under an alternative
-   name (like apport-collect). (LP: #539427)
+   name (like apport-collect).
+   ([LP: #539427](https://launchpad.net/bugs/539427))
 
 1.13.1 (2010-03-20)
 -------------------
@@ -2462,20 +2643,24 @@ Bug fixes:
  - UI: Add exception string to the "network error" dialog, to better tell what
    the problem is.
  - UI: Add back -p option to apport-collect/apport-update-bug (regression from
-   1.13). (LP: #538944)
- - launchpad.py: Add yet another workaround for LP#336866. (LP: #516381)
+   1.13). ([LP: #538944](https://launchpad.net/bugs/538944))
+ - launchpad.py: Add yet another workaround for LP#336866.
+   ([LP: #516381](https://launchpad.net/bugs/516381))
  - launchpad.py, download(): Ignore attachments with invalid key names.
  - Fix regression from 1.10 which made it impossible for a package hook to set
-   a third-party crash database for non-native packages. (LP: #517272)
+   a third-party crash database for non-native packages.
+   ([LP: #517272](https://launchpad.net/bugs/517272))
  - apport-cli: Create the 'details' string only if user wants to view details,
-   and do not show files larger than 1MB. Thanks Scott Moser! (LP: #486122)
+   and do not show files larger than 1MB. Thanks Scott Moser!
+   ([LP: #486122](https://launchpad.net/bugs/486122))
  - packaging-apt-dpkg.py: Silence apt.Cache() spewage to stdout with newer
-   python-apt versions. (LP: #531518)
+   python-apt versions. ([LP: #531518](https://launchpad.net/bugs/531518))
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to
-   report. (LP: #537262)
- - Sort the report by key in the details view. (LP: #519416)
+   report. ([LP: #537262](https://launchpad.net/bugs/537262))
+ - Sort the report by key in the details view.
+   ([LP: #519416](https://launchpad.net/bugs/519416))
 
 1.13 (2010-03-10)
 -----------------
@@ -2487,16 +2672,17 @@ New features:
 Improvements:
  - apport_python_hook.py: Directly check /etc/default/apport instead of
    querying packaging.enabled(), to avoid importing lots of modules for
-   non-packaged scripts. Thanks Stuart Colville! (LP: #528355)
+   non-packaged scripts. Thanks Stuart Colville!
+   ([LP: #528355](https://launchpad.net/bugs/528355))
 
 Bug fixes:
  - Fix SegV parser to notice walking off the stack during "call" or "ret"
-   (LP: #531672).
+   ([LP: #531672](https://launchpad.net/bugs/531672)).
  - Fix --help output for bug updating mode (invocation as apport-collect or
-   apport-update-bug). (LP: #504116)
+   apport-update-bug). ([LP: #504116](https://launchpad.net/bugs/504116))
  - Fix bug escalation tagging, thanks to Brian Murray.
  - Fix option processing when being invoked as apport-bug. Thanks to Daniel
-   Hahler for the patch! (LP: #532944)
+   Hahler for the patch! ([LP: #532944](https://launchpad.net/bugs/532944))
 
 1.12.1 (2010-02-22)
 -------------------
@@ -2504,13 +2690,13 @@ Bug fixes:
  - launchpad.py: Do not keep escalating bugs, just escalate at the 10th
    duplicate.
  - Improve error message if a symptom script did not determine a package name.
-   (LP: #503834)
+   ([LP: #503834](https://launchpad.net/bugs/503834))
  - general-hooks/generic.py: Fix crash on libGL check with empty StacktraceTop.
  - Review and clean up usage of chmod(). This fixes a small race condition in the
    Python exception hook where a local attacker could read the information from
-   another user's crash report. (LP: #516029)
+   another user's crash report. ([LP: #516029](https://launchpad.net/bugs/516029))
  - hookutils, package_versions(): Ignore "None" packages, for more robust
-   package hooks. (LP: #518295)
+   package hooks. ([LP: #518295](https://launchpad.net/bugs/518295))
 
 1.12 (2010-01-20)
 -----------------
@@ -2518,17 +2704,20 @@ Improvements:
  - launchpad.py: Add options 'escalation_subscription' and 'escalation_tag' for
    handling bugs with more than 10 duplicates.
  - crashdb.conf: For Ubuntu, escalate bugs with >= 10 duplicates to
-   "ubuntu-bugcontrol" and tag them with "bugpattern-needed". (LP: #487900)
- - general-hooks/generic.py: Filter out crashes on missing GLX (LP: #327673)
- - Add bash completion script. Thanks to Philip Muškovac. (LP: #218933)
+   "ubuntu-bugcontrol" and tag them with "bugpattern-needed".
+   ([LP: #487900](https://launchpad.net/bugs/487900))
+ - general-hooks/generic.py: Filter out crashes on missing GLX
+   ([LP: #327673](https://launchpad.net/bugs/327673))
+ - Add bash completion script. Thanks to Philip Muškovac.
+   ([LP: #218933](https://launchpad.net/bugs/218933))
 
 Bug fixes:
  - launchpad.py: Drop APPORT_FILES whitelist for download() and instead just
    filter out file extensions that we know about (*.txt and *.gz).
-   (LP: #444975)
+   ([LP: #444975](https://launchpad.net/bugs/444975))
  - launchpad.py: Do not put the Tags: field into the bug description, since
    they are already proper tags. In download(), convert the real tags back to
-   the Tags: field. (LP: #505671)
+   the Tags: field. ([LP: #505671](https://launchpad.net/bugs/505671))
  - test/crash: Update expected core dump flags for changed rlimit behaviour in
    Linux 2.6.32.
  - launchpad.py: Fix marking of 'checked for duplicate' for bugs with upstream
@@ -2573,8 +2762,10 @@ New features:
  - Add a mode for updating an existing problem report to ui.py (-u/--update).
    This is similar to the Ubuntu specific "apport-collect" tool, but
    implemented the right way now: In particular, this has access to the UI and
-   thus can use interactive hooks (LP: #385811) and show you what is being sent
-   for confirmation/cancelling (LP: #371827)
+   thus can use interactive hooks
+   ([LP: #385811](https://launchpad.net/bugs/385811)) and show you what is being
+   sent for confirmation/cancelling
+   ([LP: #371827](https://launchpad.net/bugs/371827))
  - apport-bug: If invoked as "apport-collect" or "apport-update-bug" (i. e.
    through a symlink), run apport in update mode (-u <number>). This provides a
    convenient no-options command line program. Please note that setup.py does
@@ -2583,7 +2774,8 @@ New features:
 
 Improvements:
  - launchpad.py: Use new login_with() to clean up code, and specify allowed
-   access levels (WRITE_PRIVATE is the only sensible one anyway). (LP: #410205)
+   access levels (WRITE_PRIVATE is the only sensible one anyway).
+   ([LP: #410205](https://launchpad.net/bugs/410205))
  - New hookutils functions:
    xsession_errors (match lines from ~/.xsession-errors)
    shared_libraries (determine which libraries a binary links with)
@@ -2594,14 +2786,16 @@ Improvements:
    primarily useful for collecting local standard and package hook data for an
    already existing bug report which was not filed through Apport. This checks
    can_update()/is_reporter() if the user is eligible for updating that
-   particular bug. (LP: #485880)
+   particular bug. ([LP: #485880](https://launchpad.net/bugs/485880))
 
 Bug fixes:
- - Ignore SIGXCPU and SIGXFSZ; thanks to Kees Cook. (LP: #498074)
+ - Ignore SIGXCPU and SIGXFSZ; thanks to Kees Cook.
+   ([LP: #498074](https://launchpad.net/bugs/498074))
  - launchpad.py: Do not mark non-Ubuntu bugs as needs-retrace, since there is
-   no retracer right now. (LP: #489794)
+   no retracer right now. ([LP: #489794](https://launchpad.net/bugs/489794))
  - packaging-apt-dpkg.py, install_retracing_packages(): Do not crash on
-   malformed Dependencies.txt lines. (LP: #441709)
+   malformed Dependencies.txt lines.
+   ([LP: #441709](https://launchpad.net/bugs/441709))
  - use-local: Fix for new source tree location of "apport" binary.
 
 1.9.6 (2009-12-01)
@@ -2610,11 +2804,11 @@ Improvements:
  - Add pm-utils hook to record current operation, so that apportcheckresume can
    check it. Before this was kept in Ubuntu's pm-utils package.
  - general-hooks/generic.py: Check if using ecryptfs, and which directory.
-   (LP: #444656)
+   ([LP: #444656](https://launchpad.net/bugs/444656))
 
 Bug fixes:
  - launchpad.py: Ensure that text attachments on initial bug filing are valid
-   UTF-8. (LP: #453203)
+   UTF-8. ([LP: #453203](https://launchpad.net/bugs/453203))
  - man/apport-retrace.1: Document -R option.
 
 1.9.5 (2009-11-20)
@@ -2623,26 +2817,31 @@ Bug fixes:
  - apport-retrace: Fix crash if InterpreterPath/ExecutablePath do not exist.
  - hookutils.py, attach_alsa(): Attach /proc/cpuinfo too, for CPU flags.
  - Fix crash if InterpreterPath does not exist any more at the time of
-   reporting. (LP: #428289)
+   reporting. ([LP: #428289](https://launchpad.net/bugs/428289))
  - apport-gtk: Connect signals properly, to repair cancel/window close buttons.
-   (LP: #427814)
- - Update German translations and fix "konnre" typo. (LP: #484119)
+   ([LP: #427814](https://launchpad.net/bugs/427814))
+ - Update German translations and fix "konnre" typo.
+   ([LP: #484119](https://launchpad.net/bugs/484119))
 
 1.9.4 (2009-11-06)
 ------------------
 Bug fixes:
- - Fix crash when ExecutablePath isn't part of a package. (LP: #424965)
+ - Fix crash when ExecutablePath isn't part of a package.
+   ([LP: #424965](https://launchpad.net/bugs/424965))
  - hookutils.py, attach_hardware(): Anonymize disk labels. Thanks to Marco
-   Rodrigues. (LP: #394411)
+   Rodrigues. ([LP: #394411](https://launchpad.net/bugs/394411))
  - hookutils.py, attach_wifi(): Anonymize encryption key (which appeared in hex
-   when being called as root). Thanks to Marco Rodrigues. (LP: #446299)
+   when being called as root). Thanks to Marco Rodrigues.
+   ([LP: #446299](https://launchpad.net/bugs/446299))
  - launchpad.py: If unset, set bug task source package also for interpreter
    crashes.
  - apport-gtk: Give details window a minimize/maximize button, which were
-   missing in some window managers. Thanks to Marien Zwart. (LP: #447749)
+   missing in some window managers. Thanks to Marien Zwart.
+   ([LP: #447749](https://launchpad.net/bugs/447749))
  - apport-kde: Properly terminate program after closing the last dialog.
-   (LP: #458662)
- - hookutils.py, attach_alsa(): Attach /proc/asound/version. (LP: #467233)
+   ([LP: #458662](https://launchpad.net/bugs/458662))
+ - hookutils.py, attach_alsa(): Attach /proc/asound/version.
+   ([LP: #467233](https://launchpad.net/bugs/467233))
  - general-hooks/generic.py: Only collect ~/.xsession-errors bits when we have
    an ExecutablePath linked to libgtk.
 
@@ -2656,12 +2855,13 @@ Changes:
 
 Bug fixes:
  - hookutils.py: Fix error codes from "comm", thanks to Brian Murray.
- - general-hooks/generic.py: Catch xkbcomp error messages. (LP: #431807)
+ - general-hooks/generic.py: Catch xkbcomp error messages.
+   ([LP: #431807](https://launchpad.net/bugs/431807))
  - launchpad.py: Assert that we have exactly one of "distro" or "project"
    option.
  - doc/crashdb-conf.txt: Improve documentation of crash database options.
  - apport-gtk: Make Cancel/Send buttons focusable. Thanks to Marco Rodrigues.
-   (LP: #447780)
+   ([LP: #447780](https://launchpad.net/bugs/447780))
 
 1.9.2 (2009-10-02)
 ------------------
@@ -2669,16 +2869,19 @@ Improvements:
  - apport-cli: Print the URL and ask whether to open a browser. In many
    situations (such as usage on a server through ssh), it's preferable to not
    open the browser on the reporting computer. Thanks to Matt Zimmerman for the
-   initial patch! (LP: #286415)
+   initial patch! ([LP: #286415](https://launchpad.net/bugs/286415))
  - general-hooks/generic.py: Collect important glib errors/assertions (which
-   should not have private data) from ~/.xsession-errors (LP: #431807)
- - launchpad.py: Link hardware data submission key if it exists. (LP: #424382)
+   should not have private data) from ~/.xsession-errors
+   ([LP: #431807](https://launchpad.net/bugs/431807))
+ - launchpad.py: Link hardware data submission key if it exists.
+   ([LP: #424382](https://launchpad.net/bugs/424382))
 
 Bug fixes:
  - apport-cli: Fix crash with non-ASCII characters in prompts.
  - Fix "apport-bug symptomname" to actually work.
  - launchpad.py: Fix crash on invalid credentials file. Thanks to Marco
-   Rodrigues for the initial patch! (LP: #414055)
+   Rodrigues for the initial patch!
+   ([LP: #414055](https://launchpad.net/bugs/414055))
 
 1.9.1 (2009-09-22)
 ------------------
@@ -2690,9 +2893,10 @@ Bug fixes:
    + Handle empty base, scale, or index registers in disassembly.
    + Handle in/out ioport faults.
  - Various improvements to user-visible strings, thanks to Marco Rodrigues!
-   (LP: #178507)
+   ([LP: #178507](https://launchpad.net/bugs/178507))
  - Various apport-retrace robustifications.
- - setup.py: Fix DistUtilsExtra version check. (LP: #428337)
+ - setup.py: Fix DistUtilsExtra version check.
+   ([LP: #428337](https://launchpad.net/bugs/428337))
  - hookutils.py, attach_gconf(): Do not overwrite previous values from other
    packages, thanks Loïc Minier!
  - hookutils.py, attach_gconf(): Fix crash with nonexisting <applyto> tags.
@@ -2802,7 +3006,7 @@ Bug fixes:
 - Drop "UnsupportableReason" field, it is too similar to UnreportableReason and
   just confusing.
 - Report key names can now contain dashes ('-') and underscores ('_').
-  (LP #380811)
+  ([LP: #380811](https://launchpad.net/bugs/380811))
 
 1.2.1 (2009-05-15)
 ------------------
@@ -2835,17 +3039,19 @@ Security fix:
   race condition between find traversing a huge directory tree, changing an
   existing subdir into a symlink to e. g. /etc/, and finally getting that piped
   to rm. This also changes the find command to not use GNU extensions.  Thanks
-  to Stephane Chazelas for discovering this! (LP #357024, CVE-2009-1295)
+  to Stephane Chazelas for discovering this!
+  ([LP: #357024](https://launchpad.net/bugs/357024), CVE-2009-1295)
 
 Bug fixes:
 - launchpad.py: Send and read Date: field again, reverting r1128; it is useful
-  after all. (LP #349139)
+  after all. ([LP: #349139](https://launchpad.net/bugs/349139))
 - Only add ProcAttrCurrent to reports if it is not "unconfined", to remove some
   noise from reports.
 - Detect invalid PIDs in the UI (such as for kernel processes) and give a
-  friendly error message instead of silently doing nothing. (LP #360608)
+  friendly error message instead of silently doing nothing.
+  ([LP: #360608](https://launchpad.net/bugs/360608))
 - Always run common hooks, and run source package hooks if we do not have a
-  binary package name. (LP #350131)
+  binary package name. ([LP: #350131](https://launchpad.net/bugs/350131))
 - launchpad.py: Consider socket errors when connecting as transient, so
   that crash-digger doesn't stop completely on them.
 
@@ -2853,7 +3059,7 @@ Bug fixes:
 ----------------
 New features:
 - Add hookutils methods for attaching relevant packages, greatly improve
-  attach_alsa() for sound problem debugging. 
+  attach_alsa() for sound problem debugging.
 - Move launchpad crash database implementation from ever-breaking
   python-launchpad-bugs (screenscraping) to launchpadlib (official and stable
   Launchpad API).
