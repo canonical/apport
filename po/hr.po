@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:45+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -44,14 +44,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Izgleda da ovaj paket nije ispravno instaliran"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Ovo nije službeni %s paket. Uklonite sve pakete treće strane i pokušajte "
-"ponovno."
+"Izgleda da ovo nije službeni %s paket. Pokušajte ponovno nakon nadopune "
+"sadržaja dostupnih paketa, ako to ne uspije tada uklonite povezane pakete "
+"treće strane i pokušajte ponovno."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -107,14 +108,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Nema dovoljno prostora na disku za obradu ovog izvještaja."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nema određenih paketa"
+msgstr "PID nije naveden"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Morate odrediti paket ili PID. Pogledajte --help za više informacija."
+msgstr "Morate navesti PID. Pogledajte --help za više informacija."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -234,6 +233,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Mogućnost prozora se ne može koristiti na Waylandu.\n"
+"\n"
+"Potražite ID procesa prozora i pokrenite 'ubuntu-bug <ID procesa>'.\n"
+"\n"
+"ID procesa se može potražiti i u aplikaciji Nadgledatelj sustava. U kartici "
+"Procesi, potražite odgovarajuću aplikaciju. ID procesa je broj prikazan u "
+"stupcu Identifikacija."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -401,32 +407,34 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Imate instalirane dvije inačice ove aplikacije, za koju želite prijaviti "
+"grešku?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap paket"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb paket"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Ovaj izvještaj je o snap paketu objavljenom od strane %s. Kontaktirajte ga "
+"%s je omogućen putem snap paketa objavljen od strane %s. Kontaktirajte ih "
 "putem %s za pomoć."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Ovaj izvještaj je o snap paketu objavljenom od strane %s. Nema adrese za "
-"kontakt; posjetite forum na https://forum.snapcraft.io/ za pomoć."
+"%s je omogućen putem snap paketa objavljen od strane %s. Nema adrese za "
+"kontakt, posjetite forum https://forum.snapcraft.io/ za pomoć."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -835,13 +843,10 @@ msgstr ""
 "sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"izvršna datoteka koja se pokreće pod valgrindovim alatom provjere memorije "
-"zbog otkrivanja problema s memorijom"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1056,28 +1061,6 @@ msgid "Uploading Problem Information"
 msgstr "Prenos Informacija o Problemu"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Imate izvještaj o deb paketu, ali imate instaliran i snap paket objavljen "
-#~ "od strane %s. Možete ih kontaktirati putem %s za pomoć. Želite li "
-#~ "nastaviti s prijavom greške deb paketa?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Imate izvještaj o deb paketu, ali imate instaliran i snap paket objavljen "
-#~ "od strane %s. Za snap paket, nema adrese za kontakt; posjetite forum na "
-#~ "https://forum.snapcraft.io/ za pomoć. Želite li nastaviti s prijavom "
-#~ "greške deb paketa?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr ""
 #~ "Upišite informacije vašeg korisničkog računa za %s sustav praćenja grešaka"
@@ -1202,8 +1185,23 @@ msgstr "Prenos Informacija o Problemu"
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Pošaljite izvješće greške kako bi pomogli popraviti ovaj problem"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Ovo nije službeni %s paket. Uklonite sve pakete treće strane i pokušajte "
+#~ "ponovno."
+
 #~ msgid "Force Closed"
 #~ msgstr "Prisilno zatvoreno"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "izvršna datoteka koja se pokreće pod valgrindovim alatom provjere "
+#~ "memorije zbog otkrivanja problema s memorijom"
 
 #~ msgid ""
 #~ "This occured during a previous suspend and prevented it from resuming "
@@ -1227,3 +1225,40 @@ msgstr "Prenos Informacija o Problemu"
 #, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Nažalost, aplikacija %s se neočekivano zatvorila."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Imate izvještaj o deb paketu, ali imate instaliran i snap paket objavljen "
+#~ "od strane %s. Za snap paket, nema adrese za kontakt; posjetite forum na "
+#~ "https://forum.snapcraft.io/ za pomoć. Želite li nastaviti s prijavom "
+#~ "greške deb paketa?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Ovaj izvještaj je o snap paketu objavljenom od strane %s. Nema adrese za "
+#~ "kontakt; posjetite forum na https://forum.snapcraft.io/ za pomoć."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Imate izvještaj o deb paketu, ali imate instaliran i snap paket objavljen "
+#~ "od strane %s. Možete ih kontaktirati putem %s za pomoć. Želite li "
+#~ "nastaviti s prijavom greške deb paketa?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Ovaj izvještaj je o snap paketu objavljenom od strane %s. Kontaktirajte "
+#~ "ga putem %s za pomoć."

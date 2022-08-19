@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2020-04-03 16:38+0000\n"
 "Last-Translator: Úr Balázs <balazs@urbalazs.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -43,14 +43,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Úgy tűnik, ez a csomag nincs megfelelően telepítve"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Ez nem egy hivatalos %s csomag. Távolítson el minden harmadik féltől "
-"származó csomagot és próbálja újra."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -106,16 +104,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Nincs elegendő lemezterület a hiba feldolgozásához."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nincs megadva csomag"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Meg kell adnia egy csomagot vagy PID azonosítót. További információkért "
-"tekintse meg a --help kapcsoló kimenetét."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -419,21 +413,16 @@ msgid "%s deb package"
 msgstr ""
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Ez a jelentés egy %s által közzétett snap csomagról szól. A segítségért "
-"lépjen velük kapcsolatba a(z) %s használatával."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Ez a jelentés egy %s által közzétett snap csomagról szól. Nem lett "
-"kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://forum."
-"snapcraft.io/ címen elérhető fórumot."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -844,11 +833,10 @@ msgstr ""
 "Letöltési/telepítési folyamat jelentése csomagok telepítésekor a homokozóba"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
-msgstr "A végrehajtható, amelynek a memóriaszivárgását figyeli a Valgrind"
+msgstr ""
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1064,30 +1052,6 @@ msgid "Uploading Problem Information"
 msgstr "A hibával kapcsolatos információk feltöltése"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
-#~ "közzétett snap csomagot is telepítette. A segítségért kapcsolatba léphet "
-#~ "velük a(z) %s használatával. Szeretné folytatni a deb csomaggal "
-#~ "kapcsolatos hibajelentést?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
-#~ "közzétett snap csomagot is telepítette. A snap csomaghoz nem lett "
-#~ "kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://"
-#~ "forum.snapcraft.io/ címen elérhető fórumot. Szeretné folytatni a deb "
-#~ "csomaggal kapcsolatos hibajelentést?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr "Adja meg fiókadatait a(z) %s hibakövető rendszerhez"
 
@@ -1278,6 +1242,14 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 #~ msgid "Content of the report"
 #~ msgstr "Jelentés tartalma"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Ez nem egy hivatalos %s csomag. Távolítson el minden harmadik féltől "
+#~ "származó csomagot és próbálja újra."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Hibajelentés küldése a probléma megoldásának elősegítéséhez"
 
@@ -1288,5 +1260,50 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 #~ msgid "Force Closed"
 #~ msgstr "Kényszerítve a bezárásra"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr "A végrehajtható, amelynek a memóriaszivárgását figyeli a Valgrind"
+
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr "A rendszer instabillá válhat, szükség lehet az újraindítására."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Ez a jelentés egy %s által közzétett snap csomagról szól. A segítségért "
+#~ "lépjen velük kapcsolatba a(z) %s használatával."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Ez a jelentés egy %s által közzétett snap csomagról szól. Nem lett "
+#~ "kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://"
+#~ "forum.snapcraft.io/ címen elérhető fórumot."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
+#~ "közzétett snap csomagot is telepítette. A snap csomaghoz nem lett "
+#~ "kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://"
+#~ "forum.snapcraft.io/ címen elérhető fórumot. Szeretné folytatni a deb "
+#~ "csomaggal kapcsolatos hibajelentést?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
+#~ "közzétett snap csomagot is telepítette. A segítségért kapcsolatba léphet "
+#~ "velük a(z) %s használatával. Szeretné folytatni a deb csomaggal "
+#~ "kapcsolatos hibajelentést?"

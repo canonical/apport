@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-06-09 06:52+0000\n"
-"X-Generator: Launchpad (build 0f209dcba08bdd5fd387de120244a7b387be6615)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -41,12 +41,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "该软件包似乎没有被正确安装"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
-msgstr "这不是官方的 %s 软件包。请删除所有第三方软件包，然后重试。"
+msgstr ""
 
 #: ../apport/ui.py:204
 #, python-format
@@ -99,14 +99,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "没有足够的磁盘空间来处理报告。"
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "没有指定软件包"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "您需要指定一个软件包或者 PID。使用 --help 选项来获取更多信息。"
+msgstr ""
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -762,11 +760,10 @@ msgid "report download/install progress when installing packages into sandbox"
 msgstr "安装包进入沙盒时报告下载/安装进度"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
-msgstr "该可执行文件运行 Valgrind MemCheck 工具下的内存泄漏检测"
+msgstr ""
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1110,11 +1107,22 @@ msgstr "上传问题信息"
 #~ msgstr "请发送错误报告，以帮助修复此问题"
 
 #, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr "这不是官方的 %s 软件包。请删除所有第三方软件包，然后重试。"
+
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "对不起，应用程序 %s 意外关闭。"
 
 #~ msgid "Force Closed"
 #~ msgstr "强制关闭"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr "该可执行文件运行 Valgrind MemCheck 工具下的内存泄漏检测"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr "现在您的系统可能变得不稳定，并且可能需要重新启动。"

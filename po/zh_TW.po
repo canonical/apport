@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:29+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -41,12 +41,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "這個軟體包似乎尚未正確安裝"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
-msgstr "這不是官方的 %s 軟體包。請移除任何第三方軟體包並重試。"
+msgstr ""
 
 #: ../apport/ui.py:204
 #, python-format
@@ -99,14 +99,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "沒有足夠的磁碟空間以處理此份報告。"
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "未指定軟體包"
+msgstr "沒有指定 PID"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "您需要指定一個套件或一個 PID。更多資訊請參考 --help。"
+msgstr "您需要指定一個 PID。更多說明請見 --help。"
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -361,17 +359,17 @@ msgstr "試圖處理問題回報時遭遇錯誤："
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
-msgstr ""
+msgstr "此應用程式您安裝了兩個版本，您想對哪一個版本回報臭蟲？"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb 套件包"
 
 #: ../apport/ui.py:1574
 #, python-format
@@ -384,6 +382,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s 是由 %s 所發布的 snap 。開發者沒有提供聯絡地址；請前往論壇 https://forum."
+"snapcraft.io/ 尋求協助。"
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -756,11 +756,10 @@ msgid "report download/install progress when installing packages into sandbox"
 msgstr "當軟體包安裝至沙箱時回報下載/安裝進度"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
-msgstr "可執行的文件下運作記憶體洩漏檢測工具"
+msgstr ""
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1129,5 +1128,16 @@ msgstr "正上傳問題資訊"
 #~ msgid "Force Closed"
 #~ msgstr "強制關閉"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr "可執行的文件下運作記憶體洩漏檢測工具"
+
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr "現在您的系統可能變得不穩定，並且可能需要重新啟動。"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr "這不是官方的 %s 軟體包。請移除任何第三方軟體包並重試。"

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Aputsiak Niels Janussen <aj@isit.gl>\n"
+"Last-Translator: Aputsiak Niels Janussen <aputtu@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:27+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Denne pakke synes ikke at være korrekt installeret"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Dette er ikke en officiel %s-pakke. Fjern venligst tredjepartspakken, hvis "
-"der er en, og prøv igen."
+"Dette lader ikke til at være en officiel %s-pakke. Opdatér indekserne over "
+"tilgængelige pakker og prøv igen. Virker det ikke, så fjern relaterede "
+"tredjepartspakker og prøv igen."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -107,14 +108,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Der er ikke nok diskplads til rådighed til at behandle denne rapport."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Ingen pakke angivet"
+msgstr "Ingen PID angivet"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Du skal angive en pakke eller en PID. Se --help for mere information."
+msgstr "Du skal angive en PID. Se --help for flere oplysninger."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -223,6 +222,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Muligheden for et vindue kan ikke bruges på Wayland.\n"
+"\n"
+"Find vinduets proces-id og kør så \"ubuntu-bug <proces-id>\".\n"
+"\n"
+"Proces-id'et kan findes ved at køre programmet Systemovervågning. I "
+"fanebladet Processer ruller du ned, indtil du finder det rigtige program. "
+"Proces-id'et er nummeret vist i id-kolonnen."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -389,33 +395,33 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Du har to versioner af programmet installeret. Hvilken en vil du rapportere "
+"en fejl i?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb-pakke"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Denne rapport handler om en snap udgivet af %s. Kontakt dem via %s for at få "
-"hjælp."
+"%s leveres af en snap som er udgivet af %s. Kontakt dem via %s for hjælp."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Denne rapport handler om en snap udgivet af %s. Der er ikke angivet nogen "
-"kontaktadresse. Besøg forummet på https://forum.snapcraft.io/ for at få "
-"hjælp."
+"%s leveres af en snap som er udgivet af %s. Der er ikke leveret nogen "
+"kontaktadresse. Besøg forummet på https://forum.snapcraft.io/ for hjælp."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -810,13 +816,10 @@ msgstr ""
 "sandkassen"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"den eksekvérbare fil, der køres under memcheck, valgrinds værktøj til "
-"hukommelsestjek for registrering af læk i hukommelsen"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1033,28 +1036,6 @@ msgid "Uploading Problem Information"
 msgstr "Afsender probleminformation"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Du er ved at rapportere en fejl mod deb-pakken, men der er også "
-#~ "installeret en snap udgivet af %s. Du kan kontakte dem via %s for at få "
-#~ "hjælp. Vil du fortsætte med fejlrapporten mod deb-pakken?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Du er ved at rapportere en fejl mod deb-pakken, men der er også "
-#~ "installeret en snap udgivet af %s. Der er ikke angivet nogen "
-#~ "kontaktadresse for snappen. Besøg forummet på https://forum.snapcraft.io/ "
-#~ "for at få hjælp. Vil du fortsætte med fejlrapporten mod deb-pakken?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr ""
 #~ "Indtast venligst dine kontoinformationer til %s-fejlregistreringssystemet"
@@ -1212,10 +1193,63 @@ msgstr "Afsender probleminformation"
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Beklager, men programmet %s lukkede ned uventet."
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Dette er ikke en officiel %s-pakke. Fjern venligst tredjepartspakken, "
+#~ "hvis der er en, og prøv igen."
+
 #~ msgid "Force Closed"
 #~ msgstr "Gennemtving lukning"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "den eksekvérbare fil, der køres under memcheck, valgrinds værktøj til "
+#~ "hukommelsestjek for registrering af læk i hukommelsen"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""
 #~ "Dit system vil muligvis blive ustabilt nu, og det kan blive nødvendigt "
 #~ "med en genstart."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Denne rapport handler om en snap udgivet af %s. Kontakt dem via %s for at "
+#~ "få hjælp."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Du er ved at rapportere en fejl mod deb-pakken, men der er også "
+#~ "installeret en snap udgivet af %s. Du kan kontakte dem via %s for at få "
+#~ "hjælp. Vil du fortsætte med fejlrapporten mod deb-pakken?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Denne rapport handler om en snap udgivet af %s. Der er ikke angivet nogen "
+#~ "kontaktadresse. Besøg forummet på https://forum.snapcraft.io/ for at få "
+#~ "hjælp."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Du er ved at rapportere en fejl mod deb-pakken, men der er også "
+#~ "installeret en snap udgivet af %s. Der er ikke angivet nogen "
+#~ "kontaktadresse for snappen. Besøg forummet på https://forum.snapcraft.io/ "
+#~ "for at få hjælp. Vil du fortsætte med fejlrapporten mod deb-pakken?"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2019-06-04 16:41+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Silesian <szl@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:29+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -41,14 +41,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Tyn paket niy wyglōndo na zainstalowany noleżnie"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"To niyma ôficjalny paket %s. Skasuj wszyjske pakety ôd inkszych zdrzōdeł "
-"aniżeli ôficjalne i sprōbuj zaś."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -104,16 +102,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Na dysku niy styko wolnego placu, coby przetworzić to zgłoszynie."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Niy ôkryślōno paketu"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Trzeba ôkryślić paket abo idyntyfikatōr procesu. Użyj ôpcyje --help, coby "
-"dostać wiyncyj informacyji."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -411,20 +405,16 @@ msgid "%s deb package"
 msgstr ""
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Tyn report je ô snapie ôpublikowanym ôd %s. Skōntaktuj sie z niymi bez %s, "
-"żeby pōmogli."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Tyn report je ô snapie ôpublikowanym ôd %s. Niy była podano żodno adresa "
-"kōntaktowo, tōż nawiydź https://forum.snapcraft.io/, żeby dostać pōmoc."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -832,13 +822,10 @@ msgstr ""
 "do zandkastle"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"elymynt wykōnalny sztartowany bez noczynie memcheck programu valgrind, co "
-"wykrywo wycieki pamiyńci"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1053,6 +1040,33 @@ msgid "Uploading Problem Information"
 msgstr "Wysyłanie informacyje ô problymie"
 
 #, python-format
+#~ msgid "Please enter your account information for the %s bug tracking system"
+#~ msgstr "Wkludź dane swojigo kōnta w systymie śledzynio felerōw %s"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "To niyma ôficjalny paket %s. Skasuj wszyjske pakety ôd inkszych zdrzōdeł "
+#~ "aniżeli ôficjalne i sprōbuj zaś."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Tyn report je ô snapie ôpublikowanym ôd %s. Skōntaktuj sie z niymi bez "
+#~ "%s, żeby pōmogli."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Tyn report je ô snapie ôpublikowanym ôd %s. Niy była podano żodno adresa "
+#~ "kōntaktowo, tōż nawiydź https://forum.snapcraft.io/, żeby dostać pōmoc."
+
+#, python-format
 #~ msgid ""
 #~ "You are about to report a bug against the deb package, but you also a "
 #~ "have snap published by %s installed. You can contact them via %s for "
@@ -1074,6 +1088,9 @@ msgstr "Wysyłanie informacyje ô problymie"
 #~ "tōż nawiydź forum na https://forum.snapcraft.io/, żeby dostać pōmoc. "
 #~ "Chcesz kōntynuować ze reportym feleru tego paketu deb?"
 
-#, python-format
-#~ msgid "Please enter your account information for the %s bug tracking system"
-#~ msgstr "Wkludź dane swojigo kōnta w systymie śledzynio felerōw %s"
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "elymynt wykōnalny sztartowany bez noczynie memcheck programu valgrind, co "
+#~ "wykrywo wycieki pamiyńci"

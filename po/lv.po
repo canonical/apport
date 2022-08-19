@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Latvian <lv@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Šī pakotne šķiet instalēta nekorekti"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Šī nav oficiāla %s pakotne. Lūdzu, noņemiet jebkuras trešās puses pakotnes "
-"un mēģiniet vēlreiz."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -378,20 +376,16 @@ msgid "%s deb package"
 msgstr ""
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Šis ziņojums ir par snap, ko publicēja %s. Lai saņemtu palīdzību, "
-"sazinieties ar viņiem caur %s."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Šis ziņojums ir par snap, ko publicēja %s. Netika dota kontaktu adrese; lai "
-"saņemtu palīdzību apmeklējiet forumu https://forum.snapcraft.io/."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -759,13 +753,10 @@ msgstr ""
 "ziņot lejupielādes/instalēšanas progresu, kad pakotnes instalē smilšu kastē"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"izpildāmā datne, kas ir palaista ar valgrind memcheck rīku, atmiņas noplūdes "
-"atklāšanai"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -973,6 +964,35 @@ msgstr ""
 
 #, python-format
 #~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Šī nav oficiāla %s pakotne. Lūdzu, noņemiet jebkuras trešās puses "
+#~ "pakotnes un mēģiniet vēlreiz."
+
+#~ msgid "Send an error report to help fix this problem"
+#~ msgstr "Sūtīt kļūdu ziņojumu, lai palīdzētu atrisināt šo problēmu"
+
+#, python-format
+#~ msgid "Sorry, the application %s has closed unexpectedly."
+#~ msgstr "Atvainojiet, lietotne %s aizvērās negaidīti."
+
+#~ msgid "Force Closed"
+#~ msgstr "Aizvērt piespiedu kārtā"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "izpildāmā datne, kas ir palaista ar valgrind memcheck rīku, atmiņas "
+#~ "noplūdes atklāšanai"
+
+#~ msgid "Your system might become unstablenow and might need to be restarted."
+#~ msgstr ""
+#~ "Šī sistēma varētu palikt nestabila un, iespējams, to vajadzētu pārstartēt."
+
+#, python-format
+#~ msgid ""
 #~ "You are about to report a bug against the deb package, but you also a "
 #~ "have snap published by %s installed. You can contact them via %s for "
 #~ "help. Do you want to continue with the bug report against the deb?"
@@ -993,16 +1013,17 @@ msgstr ""
 #~ "forumu https://forum.snapcraft.io/. Vai vēlaties turpināt ziņot par kļūdu "
 #~ "pret deb pakotni?"
 
-#~ msgid "Send an error report to help fix this problem"
-#~ msgstr "Sūtīt kļūdu ziņojumu, lai palīdzētu atrisināt šo problēmu"
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Šis ziņojums ir par snap, ko publicēja %s. Netika dota kontaktu adrese; "
+#~ "lai saņemtu palīdzību apmeklējiet forumu https://forum.snapcraft.io/."
 
 #, python-format
-#~ msgid "Sorry, the application %s has closed unexpectedly."
-#~ msgstr "Atvainojiet, lietotne %s aizvērās negaidīti."
-
-#~ msgid "Force Closed"
-#~ msgstr "Aizvērt piespiedu kārtā"
-
-#~ msgid "Your system might become unstablenow and might need to be restarted."
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
 #~ msgstr ""
-#~ "Šī sistēma varētu palikt nestabila un, iespējams, to vajadzētu pārstartēt."
+#~ "Šis ziņojums ir par snap, ko publicēja %s. Lai saņemtu palīdzību, "
+#~ "sazinieties ar viņiem caur %s."

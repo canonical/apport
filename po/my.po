@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2012-09-04 12:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Burmese <my@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-06-09 06:52+0000\n"
-"X-Generator: Launchpad (build 0f209dcba08bdd5fd387de120244a7b387be6615)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -47,6 +47,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"၎င်းမှာ တရားဝင် %s ပက်ကေ့ဂျ်ဖြစ်ပုံမရပါ။ ကျေးဇူးပြု၍ ရရှိနိုင်သော ပက်ကေ့ဂျ်များ၏အညွှန်းများကို "
+"အပ်ဒိတ်လုပ်ပြီးနောက် ထပ်စမ်းကြည့်ပါ၊ ၎င်းသည် အလုပ်မလုပ်ပါက သက်ဆိုင်ရာ third party "
+"ပက်ကေ့ဂျ်များကိုဖယ်ရှားပြီး ထပ်စမ်းကြည့်ပါ။"
 
 #: ../apport/ui.py:204
 #, python-format
@@ -102,15 +105,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "ဤအစီရင်ခံစာလုပ်ဆောင်ရန်အတွက် ဒစ်ခ်နေရာမှာ မလုံလောက်ပါ။"
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "ပက်ကေ့ဂျ် သတ်မှတ်ထားခြင်း မရှိပါ။"
+msgstr "PID မသတ်မှတ်ထားပါ။"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
-"ပက်ကေ့ဂျ်တစ်ခု သို့မဟုတ် PID တစ်ခု သတ်မှတ်ရန် လိုအပ်ပါသည်။ နောက်ထပ်အချက်အလက်များအတွက် --help ကိုကြည့်ပါ။"
+msgstr "PID သတ်မှတ်ရန် လိုအပ်ပါသည်။ နောက်ထပ်အချက်အလက်များအတွက် --help ကို ကြည့်ပါ။"
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -230,6 +230,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Wayland တွင် Window Option ကို အသုံးမပြုနိုင်ပါ။\n"
+"\n"
+"ကျေးဇူးပြု၍ Window ၏ လုပ်ငန်းစဉ် ID ကို ရှာပြီး 'ubuntu-bug <process ID>' ကို ဖွင့်ပါ။\n"
+"\n"
+"System Monitor အက်ပလီကေးရှင်းကို ဖွင့်ခြင်းဖြင့် လုပ်ငန်းစဉ် ID ကို ရှာတွေ့နိုင်ပါသည်။ Processes "
+"တက်ဘ်တွင် မှန်ကန်သောအက်ပလီကေးရှင်းကို သင်ရှာတွေ့သည်အထိ ရွှေ့ပါ။ လုပ်ငန်းစဉ် ID မှာ ID ကော်လံတွင်ရှိသော "
+"စာရင်းပြုစုထားသည့်နံပါတ်ဖြစ်သည်။"
 
 #: ../apport/ui.py:889
 msgid ""
@@ -388,21 +395,22 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"သင့်တွင် ဤအက်ပလီကေးရှင်း၏ ဗားရှင်းနှစ်မျိုးကိုထည့်သွင်းထားပြီး မည်သည့်တစ်ခုမှ bug တစ်ခုကို အစီရင်ခံလိုပါသလဲ။"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb package"
 
 #: ../apport/ui.py:1574
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
-msgstr ""
+msgstr "%s ကို %s မှ ထုတ်ဝေသော snap မှ ပံ့ပိုးပေးပါသည်။ အကူအညီအတွက် %s မှတစ်ဆင့် ၎င်းတို့ထံ ဆက်သွယ်ပါ။"
 
 #: ../apport/ui.py:1579
 #, python-format
@@ -410,6 +418,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s ကို %s မှ ထုတ်ဝေသော snap မှ ပံ့ပိုးပေးပါသည်။ ဆက်သွယ်ရန်လိပ်စာ ပေးမထားပါ။ အကူအညီအတွက် ဖိုရမ် "
+"https://forum.snapcraft.io/ တွင် ဝင်ရောက်ကြည့်ရှုပါ။"
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -795,13 +805,10 @@ msgstr ""
 "ပက်ကေ့ဂျ်များကို sandbox တွင် ထည့်သွင်းသည့်အခါ ဒေါင်းလုဒ်လုပ်ခြင်း/ထည့်သွင်းခြင်းတိုးတက်မှုကို အစီရင်ခံပါ။"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"memory leak detection အတွက် valgrind ၏ memcheck tool အောက်တွင် လုပ်ဆောင်နိုင်သော "
-"executable ဖြစ်သည်။"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1024,3 +1031,10 @@ msgstr "ပြဿနာ အချက်အလက် အပ်လုဒ်တင�
 
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "ဤပြဿနာကိုဖြေရှင်းကူညီဆိုတဲ့ error အစီရင်ခံစာ Send"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "memory leak detection အတွက် valgrind ၏ memcheck tool အောက်တွင် လုပ်ဆောင်နိုင်သော "
+#~ "executable ဖြစ်သည်။"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2020-07-10 14:15+0000\n"
 "Last-Translator: Marc Deslauriers <marc.deslauriers@canonical.com>\n"
 "Language-Team: English (Canada) <en_CA@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:29+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -44,14 +44,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "This package does not seem to be installed correctly"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"This is not an official %s package. Please remove any third party package "
-"and try again."
+"This does not seem to be an official %s package. Please retry after updating "
+"the indexes of available packages, if that does not work then remove related "
+"third party packages and try again."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -107,15 +108,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "There is not enough disk space available to process this report."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "No package specified"
+msgstr "No PID specified"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
-"You need to specify a package or a PID. See --help for more information."
+msgstr "You need to specify a PID. See --help for more information."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -123,15 +121,15 @@ msgstr "Invalid PID"
 
 #: ../apport/ui.py:492
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "The specified process ID does not exist."
 
 #: ../apport/ui.py:497
 msgid "Not your PID"
-msgstr ""
+msgstr "Not your PID"
 
 #: ../apport/ui.py:498
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "The specified process ID does not belong to you."
 
 #: ../apport/ui.py:553
 msgid "No package specified"
@@ -237,6 +235,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"The window option cannot be used on Wayland.\n"
+"\n"
+"Please find the window's process ID and then run 'ubuntu-bug <process ID>'.\n"
+"\n"
+"The process ID can be found by running the System Monitor application. In "
+"the Processes tab, scroll until you find the correct application. The "
+"process ID is the number listed in the ID column."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -362,12 +367,13 @@ msgstr "Update %s with fully symbolic stack trace"
 
 #: ../apport/ui.py:1308
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Can't remember send report status settings"
 
 #: ../apport/ui.py:1312
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Saving crash reporting state failed. Can't set auto or never reporting mode."
 
 #: ../apport/ui.py:1395 ../apport/ui.py:1408
 msgid ""
@@ -390,7 +396,7 @@ msgstr "This problem report is damaged and cannot be processed."
 
 #: ../apport/ui.py:1502
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "This report is about a package that is not installed."
 
 #: ../apport/ui.py:1510
 msgid "An error occurred while attempting to process this problem report:"
@@ -401,21 +407,24 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"You have two versions of this application installed, which one do you want "
+"to report a bug against?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb package"
 
 #: ../apport/ui.py:1574
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s is provided by a snap published by %s. Contact them via %s for help."
 
 #: ../apport/ui.py:1579
 #, python-format
@@ -423,6 +432,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s is provided by a snap published by %s. No contact address has been "
+"provided; visit the forum at https://forum.snapcraft.io/ for help."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -691,6 +702,9 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Build another temporary sandbox for installing gdb and its dependencies "
+"using the same release as the report rather than whatever version of gdb you "
+"have installed."
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
@@ -704,6 +718,7 @@ msgstr "Prepend timestamps to log messages, for batch operation"
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
+"Create and use third-party repositories from origins specified in reports"
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -747,7 +762,7 @@ msgstr "Path to the duplicate sqlite database (default: no duplicate checking)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Do not add StacktraceSource to the report."
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
@@ -813,12 +828,11 @@ msgid "report download/install progress when installing packages into sandbox"
 msgstr "report download/install progress when installing packages into sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"the executable that is run under valgrind's memcheck tool  for memory leak "
+"the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 
 #: ../bin/apport-valgrind.py:129
@@ -831,12 +845,16 @@ msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
+"This occurred during a previous suspend, and prevented the system from "
+"resuming properly."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
+"This occurred during a previous hibernation, and prevented the system from "
+"resuming properly."
 
 #: ../data/apportcheckresume.py:81
 msgid ""
@@ -935,11 +953,11 @@ msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -951,7 +969,7 @@ msgstr "<big><b>Sorry, an internal error happened.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Remember this in future"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -959,7 +977,7 @@ msgstr "Ignore future problems of this program version"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Relaunch this application"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -967,7 +985,7 @@ msgstr "_Examine locally"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Don't send"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
@@ -1221,6 +1239,21 @@ msgstr "Uploading Problem Information"
 
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Send an error report to help fix this problem"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
 
 #~ msgid "Force Closed"
 #~ msgstr "Force Closed"

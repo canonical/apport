@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Thai <th@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -41,12 +41,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "ดูเหมือนว่าแพคเกจนี้จะไม่ได้ถูกติดตั้งอย่างถูกต้อง"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
-msgstr "นี่ไม่ใช่แพกเกจ %s ทางการ โปรดลบแพกเกจบุคคลที่สามใด ๆ ออกและลองอีกครั้ง"
+msgstr ""
 
 #: ../apport/ui.py:204
 #, python-format
@@ -100,9 +100,8 @@ msgid "No PID specified"
 msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "ไม่มีรายงานปัญหาที่รออยู่ ลองเรียกคำสั่ง --help เพื่อดูข้อมูลเพิ่มเติม"
+msgstr ""
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -776,13 +775,10 @@ msgid "report download/install progress when installing packages into sandbox"
 msgstr "รายงานความคืบหน้าของการดาวน์โหลด/ติดตั้งระหว่างติดตั้งแพกเกจไปที่ Sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"แฟ้มปฏิบัติการที่ทำงานภายใต้เครื่องมือตรวจสอบหน่วยความจำของ valgrind "
-"สำหรับตรวจหาการรั่วไหลของหน่วยความจำ"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1036,3 +1032,16 @@ msgstr ""
 
 #~ msgid "Force Closed"
 #~ msgstr "บังคับให้ปิดไป"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr "นี่ไม่ใช่แพกเกจ %s ทางการ โปรดลบแพกเกจบุคคลที่สามใด ๆ ออกและลองอีกครั้ง"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "แฟ้มปฏิบัติการที่ทำงานภายใต้เครื่องมือตรวจสอบหน่วยความจำของ valgrind "
+#~ "สำหรับตรวจหาการรั่วไหลของหน่วยความจำ"

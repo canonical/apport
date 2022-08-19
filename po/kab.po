@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: yugurten <yugurten1@hotmail.fr>\n"
 "Language-Team: Kabyle <kab@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Akemmus ur d-ittban ara yettwasbedd akken ilaq"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Wagi mačči d akemmus %s unṣib. Ttxil-k m kkes akemmus n wis kraḍ sakin eɛreḍ "
-"tikkelt-nniḍen."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -108,14 +106,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Ulac ddeqs n tallunt n uḍebsi iwejden akken ad yekker uneqqis-agi."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Ulac akemmus i d-ittunefken"
+msgstr "Ulac PID i d-ittunefken"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Teḥwaǧed ad d-tefkeḍ akemmus neɣ ID. Ẓer --help i wugar n telɣut."
+msgstr "Teḥwaǧeḍ ad d-tefkeḍ PID. Ẓer --help i wugar n telɣut."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -371,16 +367,18 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Tesɛiḍ sin n yileqman i snas-a yettwasbedden, anwa i tebɣiḍ ad temleḍ abug "
+"fell-as?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "snap %s"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "Akemmus deb %s"
 
 #: ../apport/ui.py:1574
 #, python-format
@@ -982,3 +980,11 @@ msgstr "Asali n telɣut n wuguren"
 #, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr "Ttxil sekcem talɣut n umiḍan-ik i %s unagraw n uḍfar n yibugen"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Wagi mačči d akemmus %s unṣib. Ttxil-k m kkes akemmus n wis kraḍ sakin "
+#~ "eɛreḍ tikkelt-nniḍen."

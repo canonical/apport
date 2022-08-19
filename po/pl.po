@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2021-01-07 22:33+0000\n"
 "Last-Translator: Marek Adamski <Unknown>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -42,14 +42,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Prawdopobnie pakiet został zainstalowany nieprawidłowo"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"To nie jest oficjalny pakiet %s. Proszę usunąć wszystkie pakiety pochodzące "
-"z innych źródeł niż oficjalne i spróbować ponownie."
+"To nie wygląda na oficjalny pakiet %s. Należy spróbować ponownie po "
+"zaktualizowaniu indeksów dostępnych pakietów, jeśli to nie zadziała, usunąć "
+"powiązane pakiety dostawców zewnętrznych i spróbować ponownie."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -107,16 +108,14 @@ msgstr ""
 "zgłoszenie."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nie określono pakietu"
+msgstr "Nie określono PID"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Należy określić pakiet lub identyfikator procesu. Proszę użyć opcji --help, "
-"aby uzyskać więcej informacji."
+"Należy podać PID. Więcej informacji dostępnych po wpisaniu --help w "
+"terminalu."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -240,6 +239,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Opcji okna nie można używać z Wayland.\n"
+"\n"
+"Znajdź identyfikator procesu okna, a następnie uruchom 'ubuntu-bug "
+"<identyfikator procesu>'.\n"
+"\n"
+"Identyfikator procesu można znaleźć, uruchamiając program Monitor systemu. "
+"Na karcie Procesy przewiń, aż znajdziesz odpowiedni program. Identyfikator "
+"procesu to numer podany w kolumnie Identyfikator."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -405,32 +412,35 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Zainstalowane są dwie wersje tego programu. Której wersji użyć do zgłoszenia "
+"błędu?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "Snap %s"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "Pakiet deb %s"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"To zgłoszenie dotyczące snapa opublikowanego przez %s. Skontaktuj się z nimi "
-"przez %s, aby uzyskać pomoc."
+"%s dostarczono przez snap opublikowany przez %s. Należy skontakować się za "
+"pomocą %s, aby uzyskać pomoc."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"To zgłoszenie dotyczące snapa opublikowanego przez %s. Nie podano adresu "
-"kontaktowego, odwiedź forum https://forum.snapcraft.io/, aby uzyskać pomoc."
+"%s dostarczono przez snap opublikowany przez %s. Nie podano adresu "
+"kontaktowego; należy odwiedzić forum pod adresem https://forum.snapcraft."
+"io/, aby uzyskać pomoc."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -840,13 +850,12 @@ msgstr ""
 "sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"Element wykonalny uruchamiany poprzez narzędzie memcheck programu Valgrind, "
-"mające za zadanie detekcję wycieków pamięci"
+"plik wykonywalny, który jest uruchamiany przez narzędzie memcheck programu "
+"valgrind do wykrywania wycieków pamięci"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1064,30 +1073,6 @@ msgid "Uploading Problem Information"
 msgstr "Wysyłanie informacji o błędzie"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Dokonujesz zgłoszenia dotyczącego pakietu deb, ale masz również "
-#~ "zainstalowany pakiet snap opublikowany przez %s. Możesz skontaktować się "
-#~ "z nimi przez %s, aby uzyskać pomoc. Czy nadal chcesz zgłosić błąd "
-#~ "dotyczący pakietu deb?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Zamierzasz zgłosić błąd dotyczący pakietu deb, ale masz również "
-#~ "zainstalowanego snapa opublikowanego przez %s. Do snapa nie podano adresu "
-#~ "kontaktowego; odwiedź forum pod adresem https://forum.snapcraft.io/, aby "
-#~ "uzyskać pomoc. Czy chcesz kontynuować zgłaszanie błędu dotyczącego "
-#~ "pakietu deb?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr "Proszę wprowadzić dane swojego konta w systemie śledzenia błędów %s"
 
@@ -1248,6 +1233,14 @@ msgstr "Wysyłanie informacji o błędzie"
 #~ "zainstalować lub zaktualizować pakietu \"%s\".</span>"
 
 #, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "To nie jest oficjalny pakiet %s. Proszę usunąć wszystkie pakiety "
+#~ "pochodzące z innych źródeł niż oficjalne i spróbować ponownie."
+
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Przepraszamy, program \"%s\" został niespodziewanie zakończony."
 
@@ -1276,5 +1269,52 @@ msgstr "Wysyłanie informacji o błędzie"
 #~ msgid "Force Closed"
 #~ msgstr "Wymuś zakończenie"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "Element wykonalny uruchamiany poprzez narzędzie memcheck programu "
+#~ "Valgrind, mające za zadanie detekcję wycieków pamięci"
+
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr "System może stać się niestabilny i wymagać ponownego uruchomienia."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Dokonujesz zgłoszenia dotyczącego pakietu deb, ale masz również "
+#~ "zainstalowany pakiet snap opublikowany przez %s. Możesz skontaktować się "
+#~ "z nimi przez %s, aby uzyskać pomoc. Czy nadal chcesz zgłosić błąd "
+#~ "dotyczący pakietu deb?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "To zgłoszenie dotyczące snapa opublikowanego przez %s. Nie podano adresu "
+#~ "kontaktowego, odwiedź forum https://forum.snapcraft.io/, aby uzyskać "
+#~ "pomoc."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "To zgłoszenie dotyczące snapa opublikowanego przez %s. Skontaktuj się z "
+#~ "nimi przez %s, aby uzyskać pomoc."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Zamierzasz zgłosić błąd dotyczący pakietu deb, ale masz również "
+#~ "zainstalowanego snapa opublikowanego przez %s. Do snapa nie podano adresu "
+#~ "kontaktowego; odwiedź forum pod adresem https://forum.snapcraft.io/, aby "
+#~ "uzyskać pomoc. Czy chcesz kontynuować zgłaszanie błędu dotyczącego "
+#~ "pakietu deb?"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Ev pakêt wekî ku bi awayekî rast bar bûbe nayê xuyan"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Ev ne pakêteke fermî ya %s (y)e. Xêra xwe yek ji pakêtên kesên sêyem rake û "
-"dîsa bicerribîne."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -108,16 +106,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Ji bo kirina vê raporê têr valahiya dîskê tune."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Pakêt nehatiye diyarkirin"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Divê tu pakêtekê yan jî PID'ekî dîyarbikî. Ji bo agahiya zêdetir li --help "
-"binêre."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -424,21 +418,16 @@ msgid "%s deb package"
 msgstr ""
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Ev rapor derbarê snap'eke ku ji aliyê %s ve hatiye weşandin. Ji bo alîkariyê "
-"bi riya %s bikeve îrtîbatê."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Ev rapor derbarê snap'eke ku ji aliyê %s ve hatiye weşandin. Ji bo îrtîbatê "
-"adrês nehatiye dayîn; ji bo alîkariyê serî li https://forum.snapcraft.io/ "
-"bide."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -844,13 +833,10 @@ msgstr ""
 "gava ku pakêt li sandboxê bar bibin pêşdeçûna daxistin/sazkirinê rapor bike"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"ji bo tesbîtkirina çizirînê ya bîrkanê sepana ku di bin aleta memcheck a "
-"valgrind de dişixule"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1069,30 +1055,6 @@ msgid "Uploading Problem Information"
 msgstr "Agahiyên Pirsgirêkê Têne Şandin"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Hema bêje tu yê xetayeke pakêta deb'ê rapor bikî, lê tu ji xeynî vê "
-#~ "xwediyê snap'eke ku ji aliyê %s ve hatiye weşandin î. Ji bo alîkariyê bi "
-#~ "riya %s dikarî pê re têkiliyê deynî. Gelo tu dixwazî dewam bikî "
-#~ "raporkirina pakêta deb'ê?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Hema bêje tu yê xetayeke pakêta deb'ê rapor bikî, lê tu ji xeynî vê "
-#~ "xwediyê snap'eke ku ji aliyê %s ve hatiye weşandin î. Ji bo vê snap'ê "
-#~ "adrêsa îrtîbatê nehatiye diyarkirin. Ji bo alîkariyê serî li https://"
-#~ "forum.snapcraft.io/ bide. Gelo tu dixwazî dewam bikî raporkirina pakêta "
-#~ "deb'ê?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr ""
 #~ "Agahiyên hesabê xwe têkevinê ji bo pergala %s ya şopandina çewtiyan."
@@ -1156,5 +1118,60 @@ msgstr "Agahiyên Pirsgirêkê Têne Şandin"
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Hemû raporê bişîne(Tê pêşniyarkirin; %s)"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "ji bo tesbîtkirina çizirînê ya bîrkanê sepana ku di bin aleta memcheck a "
+#~ "valgrind de dişixule"
+
 #~ msgid "Force Closed"
 #~ msgstr "Zorê Bide ku Bigire"
+
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Ev ne pakêteke fermî ya %s (y)e. Xêra xwe yek ji pakêtên kesên sêyem rake "
+#~ "û dîsa bicerribîne."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Ev rapor derbarê snap'eke ku ji aliyê %s ve hatiye weşandin. Ji bo "
+#~ "alîkariyê bi riya %s bikeve îrtîbatê."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Ev rapor derbarê snap'eke ku ji aliyê %s ve hatiye weşandin. Ji bo "
+#~ "îrtîbatê adrês nehatiye dayîn; ji bo alîkariyê serî li https://forum."
+#~ "snapcraft.io/ bide."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Hema bêje tu yê xetayeke pakêta deb'ê rapor bikî, lê tu ji xeynî vê "
+#~ "xwediyê snap'eke ku ji aliyê %s ve hatiye weşandin î. Ji bo alîkariyê bi "
+#~ "riya %s dikarî pê re têkiliyê deynî. Gelo tu dixwazî dewam bikî "
+#~ "raporkirina pakêta deb'ê?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Hema bêje tu yê xetayeke pakêta deb'ê rapor bikî, lê tu ji xeynî vê "
+#~ "xwediyê snap'eke ku ji aliyê %s ve hatiye weşandin î. Ji bo vê snap'ê "
+#~ "adrêsa îrtîbatê nehatiye diyarkirin. Ji bo alîkariyê serî li https://"
+#~ "forum.snapcraft.io/ bide. Gelo tu dixwazî dewam bikî raporkirina pakêta "
+#~ "deb'ê?"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Timo Jyrinki <Unknown>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:27+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -43,14 +43,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Tätä pakettia ei ole asennettu oikein"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Tämä ei ole virallinen %s-paketti. Poista kolmansien osapuolten paketit ja "
-"yritä sitten uudelleen."
+"Tämä ei näytä olevan virallinen %s paketti. Yritä uudelleen saatavilla "
+"olevan pakettiluettelon päivittämisen jälkeen. Jos se ei auta, poista asiaan "
+"liittyvät kolmannen osapuolen paketit ja yritä uudelleen."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -106,16 +107,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Levyllä ei ole tarpeeksi tilaa raportin käsittelyyn."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Pakettia ei ole määritelty"
+msgstr "PID:iä ei määritetty"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
-"Paketti tai PID-tunniste on annettava. Katso lisätietoja käyttämällä "
-"valitsinta --help."
+msgstr "Sinun tulee määrittää PID. Katso --help saadaksesi lisätietoja."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -239,6 +236,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"ikkunavaihtoehtoa ei voi käyttää Waylandissa.\n"
+"\n"
+"Etsi ikkunan prosessitunnus ja suorita sitten \"ubuntu-bug "
+"<prosessitunnus>\".\n"
+"\n"
+"Prosessitunnus löytyy suorittamalla System Monitor -sovellus. Vieritä "
+"Prosessit-välilehteä, kunnes löydät oikean sovelluksen. Prosessin tunnus on "
+"ID-sarakkeessa oleva numero."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -406,33 +411,35 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Sinulla on tästä sovelluksesta kaksi versiota asennettuna. Kummasta haluat "
+"tehdä vikailmoituksen?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb paketti"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Tämä raportti koskee snap-pakettia, jonka on julkaissut %s. Ohjeita saat "
-"olemalla yhteydessä julkaisijaan: %s."
+"%s tarjotaan snap-muodossa, ja sen julkaisija on %s. Ole yhteydessä käyttäen "
+"%s saadaksesi apua."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Tämä raportti koskee snap-pakettia, jonka on julkaissut %s. Yhteydenotto-"
-"osoitetta ei ole määritetty; käy keskustelupalstalla https://forum.snapcraft."
-"io/ saadaksesi ohjeita."
+"%s tarjotaan snap-muodossa, ja sen julkaisija on %s. Yhteystieto-osoitetta "
+"ei ole määritetty; käy keskustelualueella osoitteessa https://forum."
+"snapcraft.io/ saadaksesi apua."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -839,13 +846,10 @@ msgstr ""
 "hiekkalaatikkoon"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"suoritettava, joka suoritetaan valgrind:n muistin tarkastustyökalulla "
-"muistivuotojen havaitsemiseksi"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1060,30 +1064,6 @@ msgid "Uploading Problem Information"
 msgstr "Lähetetään tiedot ongelmasta"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Olet lähettämässä deb–pakettia koskevaa virheraporttia, mutta sinulla on "
-#~ "myös asennettuna %s julkaisema snap–paketti. Voit ottaa heihin yhteyttä "
-#~ "käyttäen %s apuna. Haluatko jatkaa deb–pakettia koskevan virheraportin "
-#~ "lähettämistä?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Olet lähettämässä deb–pakettia koskevaa virheraporttia, mutta sinulla on "
-#~ "myös asennettuna %s julkaisema snap–paketti. Yhteystietoja ei ole "
-#~ "tarjottu snap–paketille; vieraile foorumilla osoitteessa https://forum."
-#~ "snapcraft.io/ saadaksesi apua. Haluatko jatkaa deb–pakettia koskevan "
-#~ "virheraportin lähettämistä?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr ""
 #~ "Ole hyvä ja syötä %s bugi raportointi järjestelmän kirjautumistiedot"
@@ -1284,9 +1264,64 @@ msgstr "Lähetetään tiedot ongelmasta"
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Auta kehittäjiä korjaamaan tämä ongelma lähettämällä vikailmoitus"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Tämä ei ole virallinen %s-paketti. Poista kolmansien osapuolten paketit "
+#~ "ja yritä sitten uudelleen."
+
 #~ msgid "Force Closed"
 #~ msgstr "Suljettu väkisin"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""
 #~ "Järjestelmäsi saattaa tulla epävakaaksi ja vaatia uudelleenkäynnistystä."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Tämä raportti koskee snap-pakettia, jonka on julkaissut %s. Yhteydenotto-"
+#~ "osoitetta ei ole määritetty; käy keskustelupalstalla https://forum."
+#~ "snapcraft.io/ saadaksesi ohjeita."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Tämä raportti koskee snap-pakettia, jonka on julkaissut %s. Ohjeita saat "
+#~ "olemalla yhteydessä julkaisijaan: %s."
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "suoritettava, joka suoritetaan valgrind:n muistin tarkastustyökalulla "
+#~ "muistivuotojen havaitsemiseksi"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Olet lähettämässä deb–pakettia koskevaa virheraporttia, mutta sinulla on "
+#~ "myös asennettuna %s julkaisema snap–paketti. Voit ottaa heihin yhteyttä "
+#~ "käyttäen %s apuna. Haluatko jatkaa deb–pakettia koskevan virheraportin "
+#~ "lähettämistä?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Olet lähettämässä deb–pakettia koskevaa virheraporttia, mutta sinulla on "
+#~ "myös asennettuna %s julkaisema snap–paketti. Yhteystietoja ei ole "
+#~ "tarjottu snap–paketille; vieraile foorumilla osoitteessa https://forum."
+#~ "snapcraft.io/ saadaksesi apua. Haluatko jatkaa deb–pakettia koskevan "
+#~ "virheraportin lähettämistä?"

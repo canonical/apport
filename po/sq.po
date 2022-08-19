@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Vilson Gjeci <vilsongjeci@gmail.com>\n"
 "Language-Team: Albanian <sq@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:27+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Kjo paketë duket se nuk është instaluar në mënyrë korrekte"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Kjo nuk është një paketë zyrtare %s. Ju lutemi të hqini çdo paketë të palëve "
-"të treta dhe ta provoni përsëri."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -110,16 +108,12 @@ msgstr ""
 "Nuk ka hapësirë të disponueshme disku sa duhet për të përpunuar këtë raport."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nuk është përcaktuar asnjë paketë"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Juve ju nevojitet të specifikoni një paketë apo një PID. Shikoni --help për "
-"më tepër informacion."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -840,13 +834,10 @@ msgstr ""
 "trego progresin e shkarkimit/instalimit kur instalohen paketa në sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"elementi i ekzekutueshëm që perdoret nën valgrind's memcheck tool për "
-"zbulimin e rrjedhjes së memorjes"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1219,6 +1210,14 @@ msgstr "Duke Ngarkuar Informacionin e Problemit"
 #~ msgstr ""
 #~ "numër apo argumenta të gaburar; përdor --help për një ndihmë të shkurëtr"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Kjo nuk është një paketë zyrtare %s. Ju lutemi të hqini çdo paketë të "
+#~ "palëve të treta dhe ta provoni përsëri."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr ""
 #~ "Dërgoni një raport gabimi për të ndihmuar në rregullimin e këtij problemi"
@@ -1229,6 +1228,13 @@ msgstr "Duke Ngarkuar Informacionin e Problemit"
 
 #~ msgid "Force Closed"
 #~ msgstr "Detyro Mbylljen"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "elementi i ekzekutueshëm që perdoret nën valgrind's memcheck tool për "
+#~ "zbulimin e rrjedhjes së memorjes"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""

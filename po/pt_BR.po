@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Neliton Pereira Jr. <nelitonpjr@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:29+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Este pacote não parece estar instalado corretamente"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Este não é um pacote oficial do %s. Por favor, remova qualquer pacote de "
-"terceiros e tente novamente."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -108,16 +106,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Não há espaço suficiente em disco para processar este relatório."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nenhum pacote especificado"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Você precisa especificar o pacote ou o PID. Veja --help para mais "
-"informações."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -839,13 +833,10 @@ msgstr ""
 "reportar download/progresso de instalação ao instalar pacotes na área local"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"o executável sendo executado pela ferramenta de checagem de memória do "
-"valgrind para detecção de vazamento de memória"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1251,6 +1242,14 @@ msgstr "Enviando Informações sobre o Problema"
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Deseja enviar estes dados para os desenvolvedores?"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Este não é um pacote oficial do %s. Por favor, remova qualquer pacote de "
+#~ "terceiros e tente novamente."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Envie um relatório de erros para ajudar a corrigir este problema"
 
@@ -1260,6 +1259,13 @@ msgstr "Enviando Informações sobre o Problema"
 
 #~ msgid "Force Closed"
 #~ msgstr "Forçar fechamento"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "o executável sendo executado pela ferramenta de checagem de memória do "
+#~ "valgrind para detecção de vazamento de memória"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""

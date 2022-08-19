@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2019-11-10 11:57+0000\n"
 "Last-Translator: Ľuboš Mudrák <lubosmudrak@azet.sk>\n"
 "Language-Team: Slovak <sk@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -45,14 +45,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Vyzerá to tak, že tento balík nie je nainštalovaný korektne"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Toto nie je oficiálny %s balík. Prosím, odstráňte všetky balíky tretích "
-"strán a skúste to znovu."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -108,15 +106,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Nie je dostatok voľného miesta na disku na spracovanie tohto hlásenia."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nebol špecifikovaný žiadny balík"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Je potrebné špecifikovať balík alebo PID. Pozrite --help pre viac informácií."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -413,19 +408,16 @@ msgid "%s deb package"
 msgstr ""
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Toto hlásenie je o snape od %s. Pre pomoc kontaktujte autorov snapu cez %s."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Toto hlásenie je o snape od %s. Nebola poskytnutá žiadna kontaktná adresa; "
-"pre pomoc navštívte fórum na https://forum.snapcraft.io/."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -817,12 +809,10 @@ msgstr ""
 "hlásiť postup sťahovania/inštalácie pri inštalácii balíčkov do sandboxu"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"spustiteľný súbor, ktorý beží pod testom pamäti valgrind na únik pamäti"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1170,5 +1160,34 @@ msgstr "Odosielajú sa informácie o probléme"
 #~ "V prípade, že nerobíte nič dôverné (zadávanie hesla alebo iných osobných "
 #~ "údajov), môžete pomôcť vylepšiť aplikáciu nahlásením problému."
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Toto nie je oficiálny %s balík. Prosím, odstráňte všetky balíky tretích "
+#~ "strán a skúste to znovu."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Odoslať chybové hlásenie. Pomôžete tým vyriešiť tento problém."
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "spustiteľný súbor, ktorý beží pod testom pamäti valgrind na únik pamäti"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Toto hlásenie je o snape od %s. Nebola poskytnutá žiadna kontaktná "
+#~ "adresa; pre pomoc navštívte fórum na https://forum.snapcraft.io/."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Toto hlásenie je o snape od %s. Pre pomoc kontaktujte autorov snapu cez "
+#~ "%s."

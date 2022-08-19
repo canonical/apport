@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -43,14 +43,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Videti je, da ta paket ni nameščen pravilno"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"To ni uradni paket %s. Odstranite morebitni paket tretjih oseb in poskusite "
-"znova."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -106,14 +104,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Na disku ni dovolj prostora za obdelavo tega poročila."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Naveden ni noben paket"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Navesti morate paket ali PID. Oglejte si --help za več podrobnosti."
+msgstr ""
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -815,13 +811,10 @@ msgid "report download/install progress when installing packages into sandbox"
 msgstr "poroča napredek prejema /namestitve ob namestitvi paketa v sandbox"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"izvedljiva datoteka, ki teče pod orodjem pregledovalnikom pomnilnika "
-"valgrind za zaznavanje puščanja pomnilnika"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1185,6 +1178,14 @@ msgstr "Pošiljanje podrobnosti o težavah"
 #~ "nadaljevanje."
 
 #, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "To ni uradni paket %s. Odstranite morebitni paket tretjih oseb in "
+#~ "poskusite znova."
+
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Oprostite, program %s se je nepričakovano zaprl."
 
@@ -1209,6 +1210,13 @@ msgstr "Pošiljanje podrobnosti o težavah"
 
 #~ msgid "Force Closed"
 #~ msgstr "Prisili končanje"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "izvedljiva datoteka, ki teče pod orodjem pregledovalnikom pomnilnika "
+#~ "valgrind za zaznavanje puščanja pomnilnika"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""

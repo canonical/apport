@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: ivarela <ivarela@ubuntu.com>\n"
 "Language-Team: Asturian <alministradores@softastur.org>\n"
@@ -10,8 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:27+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -40,14 +40,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Esti paquete nun paez tar instaláu correcho"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Esti nun ye un paquete oficial de %s. Desinstala cualquier paquete de "
-"terceros ya inténtalo de nueves."
+"Esto nun abulta que seya un paquete oficial de %s. Vuelvi intentalo darréu "
+"d'anova los índices de paquetes disponibles; si nun furrula esto, desistala "
+"los paquetes de terceros venceyaos y reinténtalo."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -104,16 +105,12 @@ msgstr ""
 "Nun hai suficiente espaciu de discu disponible pa procesar esti informe."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nun s'especificó dengún paquete"
+msgstr "Nun s'especificó dengún PID"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
-"Necesites especificar un paquete o un PID. Consulta --help pa más "
-"información."
+msgstr "Hai qu'especificar un PID. Mira --help pa obtener más información."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -382,31 +379,35 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Instaleste dos versiones d'esta aplicación. ¿De cuála ye l'informe del fallu "
+"que vas crear?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "«Snap» de %s"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "Paquete .deb de %s"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Esti reporte ye por un snap publicáu por %s. Contacta per %s pa obtener aida."
+"%s ufiértase como «snap», qu'espubliza %s. Ponte en contautu con ellos per "
+"aciu de %s (n'inglés) pa obtener ayuda."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Esti reporte ye por un snap publicáu por %s. Nun s'apurrió una direición de "
-"contautu; visita'l foru en https://forum.snapcraft.io/ pa obtener aida."
+"%s ufiértase como «snap», qu'espubliza %s. Nun s'apurrió denguna direición "
+"de contautu; visita'l foru en https://forum.snapcraft.io (n'inglés) pa "
+"obtener ayuda."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -811,13 +812,10 @@ msgstr ""
 "de pruebes"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"l'executable que cuerre baxo'l complementu memcheck valgrind na deteición de "
-"fugues de memoria"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1031,28 +1029,6 @@ msgid "Uploading Problem Information"
 msgstr ""
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Tas a piques de reportar un fallu d'un paquete deb, pero tamién tienes "
-#~ "instaláu un snap publicáu por %s. Puedes contactar per %s pa obtener "
-#~ "aida. ¿Quies siguir col reporte de fallu que cinca al deb?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Tas a piques de reportar un fallu d'un paquete deb, pero tamién tienes "
-#~ "instaláu un snap publicáu por %s. Nun s'apurrió una direición de contautu "
-#~ "pal snap; visita'l foru en https://forum.snapcraft.io/ pa obtener aida. "
-#~ "¿Quies siguir col reporte de fallu que cinca al deb?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr ""
 #~ "Introduza la información de la so cuenta pal sistema de seguimientu de "
@@ -1203,6 +1179,14 @@ msgstr ""
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr "númberu incorreutu d'argumentos use --help pa una pequeña aida"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Esti nun ye un paquete oficial de %s. Desinstala cualquier paquete de "
+#~ "terceros ya inténtalo de nueves."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Unviar un informe de fallu p'ayudar a iguar esti problema"
 
@@ -1213,6 +1197,50 @@ msgstr ""
 #~ msgid "Force Closed"
 #~ msgstr "Forciar zarru"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "l'executable que cuerre baxo'l complementu memcheck valgrind na deteición "
+#~ "de fugues de memoria"
+
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""
 #~ "El sistema agora podría volvese inestable y pue necesitar un reaniciu."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Tas a piques de reportar un fallu d'un paquete deb, pero tamién tienes "
+#~ "instaláu un snap publicáu por %s. Puedes contactar per %s pa obtener "
+#~ "aida. ¿Quies siguir col reporte de fallu que cinca al deb?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Tas a piques de reportar un fallu d'un paquete deb, pero tamién tienes "
+#~ "instaláu un snap publicáu por %s. Nun s'apurrió una direición de contautu "
+#~ "pal snap; visita'l foru en https://forum.snapcraft.io/ pa obtener aida. "
+#~ "¿Quies siguir col reporte de fallu que cinca al deb?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Esti reporte ye por un snap publicáu por %s. Nun s'apurrió una direición "
+#~ "de contautu; visita'l foru en https://forum.snapcraft.io/ pa obtener aida."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Esti reporte ye por un snap publicáu por %s. Contacta per %s pa obtener "
+#~ "aida."

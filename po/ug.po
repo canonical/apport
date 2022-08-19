@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: bilgeturghun <bilgeks@gmail.com>\n"
 "Language-Team: Uighur <ug@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -43,13 +43,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "مەزكۇر بوغچا توغرا ئورنىتىلمىغاندەك قىلىدۇ"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"بۇ رەسمىي %s بوغچىسى ئەمەس. ئۈچىنچى تەرەپ بوغچىسىنى چىقىرىۋېتىپ، قايتا سىناڭ."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -105,14 +104,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "مەزكۇر مەلۇماتنى بىر تەرەپ قىلىشقا كېرەكلىك دىسكا بوشلۇقى يوق."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "بوغچا كۆرسىتىلمىگەن."
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "بوغچا ياكى بىر PID نى كۆرسىتىڭ. تەپسىلاتلار ئۈچۈن --help نى ئىشلىتىڭ."
+msgstr ""
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -830,13 +827,10 @@ msgstr ""
 "ئورنىتىش بوغچىسى sandbox قا كىرسە چۈشۈرۈش/ئورنىتىش جەريانىنى دوكلات قىلىدۇ"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"ئەسلەك ھالقىشنى بايقاش ئۈچۈن ئىجراچان پىروگراممىلار valgrind ئەسلەك تەكشۈرۈش "
-"قورالىنىڭ ئاستىدا ئىجرا قىلىنىدۇ"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1127,6 +1121,14 @@ msgstr "چاتاق ھەققىدىكى ئۇچۇرلارنى يۈكلەۋاتىد�
 #~ "ئۈچۈن --help نى ئىشلىتىڭ."
 
 #, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "بۇ رەسمىي %s بوغچىسى ئەمەس. ئۈچىنچى تەرەپ بوغچىسىنى چىقىرىۋېتىپ، قايتا "
+#~ "سىناڭ."
+
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "كەچۈرۈڭ بۇ %s ئەپ تاسادىپىي تاقالدى."
 
@@ -1136,6 +1138,13 @@ msgstr "چاتاق ھەققىدىكى ئۇچۇرلارنى يۈكلەۋاتىد�
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr ""
 #~ "بۇ مەسىلىنى ئوڭلاشقا ياردەم قىلىش ئۈچۈن خاتالىق دوكلاتىدىن بىرنى يوللاڭ"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "ئەسلەك ھالقىشنى بايقاش ئۈچۈن ئىجراچان پىروگراممىلار valgrind ئەسلەك "
+#~ "تەكشۈرۈش قورالىنىڭ ئاستىدا ئىجرا قىلىنىدۇ"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""

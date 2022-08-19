@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-09-13 13:17+0000\n"
 "Last-Translator: Meriuță Cornel <meriutacornel@neacornel.eu>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 "100 > 19) || ((n % 100 == 0) && (n != 0))) ? 2: 1))\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
@@ -46,14 +46,12 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Se pare că acest pachet nu este instalat corect"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Acesta nu este un pachet oficial %s. Ștergeți toate pachetele de la terți și "
-"încercați din nou."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -110,16 +108,12 @@ msgstr ""
 "Nu există suficient spațiu disponibil pe disc pentru a procesa acest raport."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Nu s-a specificat nici un pachet"
+msgstr ""
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Trebuie să specificați un pachet sau un PID. Pentru mai multe informații "
-"consultați --help."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -848,13 +842,10 @@ msgstr ""
 "dosarul izolat"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"executabilul care este rulat sub utilitarul valgrind pentru verificarea "
-"pierderilor de memorie"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1220,6 +1211,14 @@ msgstr "Se încarcă informațiile problemei"
 #~ msgid "The report belongs to a package that is not installed."
 #~ msgstr "Raportul aparține de un pachet care nu este instalat."
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Acesta nu este un pachet oficial %s. Ștergeți toate pachetele de la terți "
+#~ "și încercați din nou."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr ""
 #~ "Trimiteți un raport de eroare pentru a ajuta la rezolvarea acestei "
@@ -1231,6 +1230,13 @@ msgstr "Se încarcă informațiile problemei"
 
 #~ msgid "Force Closed"
 #~ msgstr "Închidere forțată"
+
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "executabilul care este rulat sub utilitarul valgrind pentru verificarea "
+#~ "pierderilor de memorie"
 
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""

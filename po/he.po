@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Ofir Klinger <klinger.ofir@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:27+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -41,13 +41,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "מסתבר כי חבילה זו אינה מותקנת כראוי"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"זוהי אינה חבילה רשמית של %s. נא להסיר כל חבילת צד־שלישי שהיא ולנסות שוב."
+"זאת לא נראית כמו חבילה רשמית של %s. נא לנסות שוב לאחר עדכון האינדקסים של "
+"החבילות הזמינות, אם זה לא עובד אז יש להסיר את החבילות מגורמי צד־שלישי ולנסות "
+"שוב."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -102,14 +104,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "אין די שטח פנוי בכונן כדי לעבד דוח זה."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "לא צויינה כל חבילה"
+msgstr "לא צוין מזהה תהליך"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr "עליך לציין חבילה או מזהה תהליך. עיין ב --help לקבלת מידע נוסף."
+msgstr "עליך לציין מזהה תהליך. פרטים נוספים עם ‎--help."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -375,32 +375,29 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"מותקנות אצלך שתי גרסאות של היישום הזה, מול איזו מהן ברצונך לדווח על תקלה?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "חבילת deb %s"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"דיווח זה מתייחס ל־snap שפורסם על ידי %s. יש ליצור קשר עם המפרסם ישירות דרך "
-"%s לקבלת עזרה."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"דיווח זה מתייחס ל־snap שפורסם על ידי %s. לא סופקה כתובת ליצירת קשר, מומלץ "
-"לבקר בפורום בכתובת https://forum.snapcraft.io/ ‎לקבלת עזרה."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -986,27 +983,6 @@ msgid "Uploading Problem Information"
 msgstr "נתוני התקלה נשלחים"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "פעולה זו תדווח על תקלה כנגדר חבילת ה־deb, אך מותקן אצל גם snap שפורסם על "
-#~ "ידי %s. ניתן ליצור קשר עם המפרסם דרך %s לקבלת עזרה. להמשיך בדיווח על "
-#~ "התקלה כנגד ה־deb?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "פעולה זו תדווח על תקלה כנגדר חבילת ה־deb, אך מותקן אצל גם snap שפורסם על "
-#~ "ידי %s. עבור ה־snap לא פורסמו כתובת ליצירת קשר, נא לבקר ב־https://forum."
-#~ "snapcraft.io/ ‎ לקבלת עזרה. להמשיך בדיווח על התקלה כנגד ה־deb?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr "נא להזין את נתוני החשבון שלך עבור מערכת דיווח התקלות %s."
 
@@ -1125,6 +1101,13 @@ msgstr "נתוני התקלה נשלחים"
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [options] <apport problem report | crash ID>"
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "זוהי אינה חבילה רשמית של %s. נא להסיר כל חבילת צד־שלישי שהיא ולנסות שוב."
+
 #~ msgid ""
 #~ "This occured during a previous suspend and prevented it from resuming "
 #~ "properly."
@@ -1144,3 +1127,39 @@ msgstr "נתוני התקלה נשלחים"
 
 #~ msgid "Force Closed"
 #~ msgstr "לסגור בכוח"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "דיווח זה מתייחס ל־snap שפורסם על ידי %s. לא סופקה כתובת ליצירת קשר, מומלץ "
+#~ "לבקר בפורום בכתובת https://forum.snapcraft.io/ ‎לקבלת עזרה."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "דיווח זה מתייחס ל־snap שפורסם על ידי %s. יש ליצור קשר עם המפרסם ישירות "
+#~ "דרך %s לקבלת עזרה."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "פעולה זו תדווח על תקלה כנגדר חבילת ה־deb, אך מותקן אצל גם snap שפורסם על "
+#~ "ידי %s. ניתן ליצור קשר עם המפרסם דרך %s לקבלת עזרה. להמשיך בדיווח על "
+#~ "התקלה כנגד ה־deb?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "פעולה זו תדווח על תקלה כנגדר חבילת ה־deb, אך מותקן אצל גם snap שפורסם על "
+#~ "ידי %s. עבור ה־snap לא פורסמו כתובת ליצירת קשר, נא לבקר ב־https://forum."
+#~ "snapcraft.io/ ‎ לקבלת עזרה. להמשיך בדיווח על התקלה כנגד ה־deb?"

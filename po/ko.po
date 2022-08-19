@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Namhyung Kim <namhyung@gmail.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -47,6 +47,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"공식 %s 패키지가 아닌 것 같습니다. 사용 가능한 패키지의 인덱스를 업데이트 한 "
+"후 다시 시도하시오. 그래도 작동하지 않으면 관련 타사 패키지를 제거하고 다시 "
+"시도하시오."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -102,16 +105,12 @@ msgid "There is not enough disk space available to process this report."
 msgstr "디스크 공간이 부족하여 보고서를 처리할 수 없습니다."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "패키지가 지정되지 않음"
+msgstr "PID가 지정되지 않음"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
-"패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니"
-"다."
+msgstr "PID를 지정해야 합니다. 더 많은 정보는 --help를 통해 확인하시오."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -367,32 +366,33 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"해당 프로그램은 두 가지 버전으로 설치되었습니다, 어느 것에 대한 버그를 보고하"
+"시겠습니까?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s 스냅"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb 패키지"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"이 보고서는 %s 에서 게시 한 스냅에 대한 것입니다. 도움을 받으려면 %s 을(를) "
-"통해 그들에게 연락하십시오."
+"%s 은(는) %s  배포한 스냅에서 제공합니다. 도움이 필요하면 %s 연락하십시오."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"이 보고서는 %s 에서 게시 한 스냅에 대한 것입니다. 연락처 주소가 제공되지 않았"
-"습니다. https://forum.snapcraft.io/ 의 포럼을 방문하여 도움을 받으십시오."
+"%s 은(는) %s 배포한 스냅에서 제공합니다. 연락처가 제공되지 않았습니다. 도움"
+"이 필요하면 https://forum.snapcraft.io/ 포럼을 방문하십시오."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -969,28 +969,6 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr ""
 
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "deb 패키지에 대한 버그를 보고하려고 하지만, %s 에 의해 게시된 스냅도 설치"
-#~ "되어 있습니다. 도움을 받으려면 %s 을(를) 통해 연락 할 수 있습니다. deb에 "
-#~ "대한 버그 리포트를 계속 하시겠습니까?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "deb 패키지에 대한 버그를 보고하려고 하지만, %s 에 의해 게시된 스냅도 설치"
-#~ "되어 있습니다. 스냅의 경우 연락처 주소가 제공되지 않았습니다. https://"
-#~ "forum.snapcraft.io/ 의 포럼을 방문하여 도움을 받으십시오. deb에 대한 버그 "
-#~ "리포트를 계속 하시겠습니까?"
-
 #, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "보고서 작성 (추천; %s)"
@@ -1106,3 +1084,41 @@ msgstr ""
 #, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "완전한 보고서 보내기(&S) - (추천; %s)"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "deb 패키지에 대한 버그를 보고하려고 하지만, %s 에 의해 게시된 스냅도 설치"
+#~ "되어 있습니다. 도움을 받으려면 %s 을(를) 통해 연락 할 수 있습니다. deb에 "
+#~ "대한 버그 리포트를 계속 하시겠습니까?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "이 보고서는 %s 에서 게시 한 스냅에 대한 것입니다. 연락처 주소가 제공되지 "
+#~ "않았습니다. https://forum.snapcraft.io/ 의 포럼을 방문하여 도움을 받으십시"
+#~ "오."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "이 보고서는 %s 에서 게시 한 스냅에 대한 것입니다. 도움을 받으려면 %s 을"
+#~ "(를) 통해 그들에게 연락하십시오."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "deb 패키지에 대한 버그를 보고하려고 하지만, %s 에 의해 게시된 스냅도 설치"
+#~ "되어 있습니다. 스냅의 경우 연락처 주소가 제공되지 않았습니다. https://"
+#~ "forum.snapcraft.io/ 의 포럼을 방문하여 도움을 받으십시오. deb에 대한 버그 "
+#~ "리포트를 계속 하시겠습니까?"

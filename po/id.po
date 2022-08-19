@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:19+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Cecep Mahbub <cecep.mahbub@gmail.com>\n"
 "Language-Team: Indonesian <id@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
-"X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
+"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
+"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -43,14 +43,15 @@ msgid "This package does not seem to be installed correctly"
 msgstr "Paket ini nampaknya tak terpasang secara benar"
 
 #: ../apport/ui.py:174
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Ini bukan paket %s resmi. Harap hapus sebarang paket pihak ketiga dan coba "
-"lagi."
+"Ini tampaknya bukan paket %s resmi. Harap coba ulang setelah memutakhirkan "
+"indeks dari paket yang tersedia, bila itu tidak bekerja maka hapuslah paket "
+"pihak ke tiga dan coba lagi."
 
 #: ../apport/ui.py:204
 #, python-format
@@ -106,16 +107,13 @@ msgid "There is not enough disk space available to process this report."
 msgstr "Tak tersedia ruang cakram yang cukup untuk mengolah laporan ini."
 
 #: ../apport/ui.py:478
-#, fuzzy
 msgid "No PID specified"
-msgstr "Tak ada paket yang dinyatakan"
+msgstr "Tidak ada PID yang dinyatakan"
 
 #: ../apport/ui.py:480
-#, fuzzy
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
-"Anda perlu menyatakan suatu paket atau sebuah PID. Lihat --help untuk "
-"informasi lebih."
+"Anda perlu menyatakan suatu PID. Lihat --help untuk informasi lebih lanjut."
 
 #: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
@@ -239,6 +237,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Opsi jendela tidak bisa dipakai pada Wayland.\n"
+"\n"
+"Harap cari ID proses jendela lalu jalankan 'ubuntu-bug <ID proses>'.\n"
+"\n"
+"ID proses dapat ditemukan dengan menjalankan aplikasi Pemantau Sistem. Dalam "
+"tab Proses, gulir sampai Anda menemukan aplikasi yang tepat. ID proses "
+"adalah angka yang dicantumkan dalam kolom ID."
 
 #: ../apport/ui.py:889
 msgid ""
@@ -407,33 +412,35 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Anda memiliki dua versi dari aplikasi ini yang terpasang, yang mana yang "
+"Anda ingin laporkan kutunya?"
 
 #: ../apport/ui.py:1532
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s paket deb"
 
 #: ../apport/ui.py:1574
-#, fuzzy, python-format
+#, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"Laporan ini tentang suatu snap yang dipublikasikan oleh %s. Hubungi mereka "
+"%s disediakan oleh sebuah snap yang dipublikasikan oleh %s. Hubungi mereka "
 "melalui %s untuk bantuan."
 
 #: ../apport/ui.py:1579
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"Laporan ini tentang suatu snap yang dipublikasikan oleh %s. Tidak ada alamat "
-"kontak yang diberikan; kunjungi forum di https://forum.snapcraft.io/ untuk "
-"bantuan."
+"%s disediakan oleh sebuah snap yang dipublikasikan oleh %s. Tidak ada alamat "
+"kontak yang disediakan; kunjungi forum pada https://forum.snapcraft.io/ "
+"untuk bantuan."
 
 #: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
@@ -841,13 +848,10 @@ msgstr ""
 "laporkan kemajuan unduh/pasang ketika memasang paket ke dalam kotak pasir"
 
 #: ../bin/apport-valgrind.py:86
-#, fuzzy
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"executable yang dijalankan di bawah perkakas memcheck valgrind untuk deteksi "
-"kebocoran memori"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -1065,29 +1069,6 @@ msgid "Uploading Problem Information"
 msgstr "Mengunggah Informasi Masalah"
 
 #, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. You can contact them via %s for "
-#~ "help. Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Anda akan melaporkan suatu kutu atas paket deb, tapi Anda juga memasang "
-#~ "suatu snap yang dipublikasikan oleh %s. Anda dapat menghubungi mereka "
-#~ "melalui %s untuk bantuan. Apakah Anda hendak melanjutkan laporan kutu "
-#~ "atas deb?"
-
-#, python-format
-#~ msgid ""
-#~ "You are about to report a bug against the deb package, but you also a "
-#~ "have snap published by %s installed. For the snap, no contact address has "
-#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
-#~ "Do you want to continue with the bug report against the deb?"
-#~ msgstr ""
-#~ "Anda akan melaporkan suatu kutu atas paket deb, tapi Anda juga memasang "
-#~ "suatu snap yang dipublikasikan oleh %s. Untuk snap, tidak ada alamat "
-#~ "kontak yang telah diberikan; kunjungi forum pada https://forum.snapcraft."
-#~ "io/ untuk bantuan. Apakah Anda hendak melanjutkan laporan kutu atas deb?"
-
-#, python-format
 #~ msgid "Please enter your account information for the %s bug tracking system"
 #~ msgstr "Silakan masukkan informasi akun Anda bagi sistem pelacakan kutu %s"
 
@@ -1240,13 +1221,67 @@ msgstr "Mengunggah Informasi Masalah"
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s tertutup tak terduga di %s pada %s."
 
+#, python-format
+#~ msgid ""
+#~ "This is not an official %s package. Please remove any third party package "
+#~ "and try again."
+#~ msgstr ""
+#~ "Ini bukan paket %s resmi. Harap hapus sebarang paket pihak ketiga dan "
+#~ "coba lagi."
+
 #~ msgid "Send an error report to help fix this problem"
 #~ msgstr "Mengirim laporan kesalahan dapat membantu memperbaiki masalah ini"
 
 #~ msgid "Force Closed"
 #~ msgstr "Paksakan Ditutup"
 
+#~ msgid ""
+#~ "the executable that is run under valgrind's memcheck tool  for memory "
+#~ "leak detection"
+#~ msgstr ""
+#~ "executable yang dijalankan di bawah perkakas memcheck valgrind untuk "
+#~ "deteksi kebocoran memori"
+
 #~ msgid "Your system might become unstablenow and might need to be restarted."
 #~ msgstr ""
 #~ "Sistem Anda mungkin menjadi tak stabil saat ini dan mungkin perlu dimulai "
 #~ "ulang."
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Anda akan melaporkan suatu kutu atas paket deb, tapi Anda juga memasang "
+#~ "suatu snap yang dipublikasikan oleh %s. Anda dapat menghubungi mereka "
+#~ "melalui %s untuk bantuan. Apakah Anda hendak melanjutkan laporan kutu "
+#~ "atas deb?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Anda akan melaporkan suatu kutu atas paket deb, tapi Anda juga memasang "
+#~ "suatu snap yang dipublikasikan oleh %s. Untuk snap, tidak ada alamat "
+#~ "kontak yang telah diberikan; kunjungi forum pada https://forum.snapcraft."
+#~ "io/ untuk bantuan. Apakah Anda hendak melanjutkan laporan kutu atas deb?"
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. No contact address has been "
+#~ "provided; visit the forum at https://forum.snapcraft.io/ for help."
+#~ msgstr ""
+#~ "Laporan ini tentang suatu snap yang dipublikasikan oleh %s. Tidak ada "
+#~ "alamat kontak yang diberikan; kunjungi forum di https://forum.snapcraft."
+#~ "io/ untuk bantuan."
+
+#, python-format
+#~ msgid ""
+#~ "This report is about a snap published by %s. Contact them via %s for help."
+#~ msgstr ""
+#~ "Laporan ini tentang suatu snap yang dipublikasikan oleh %s. Hubungi "
+#~ "mereka melalui %s untuk bantuan."
