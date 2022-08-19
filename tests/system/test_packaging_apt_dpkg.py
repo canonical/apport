@@ -8,13 +8,8 @@ import unittest
 
 from apt import apt_pkg
 
-from tests.helper import has_internet, import_module_from_file
-from tests.paths import is_local_source_directory
-
-if is_local_source_directory():
-    impl = import_module_from_file("backends/packaging-apt-dpkg.py").impl
-else:
-    from apport.packaging_impl import impl
+from apport.packaging_impl.apt_dpkg import impl
+from tests.helper import has_internet
 
 
 @unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")

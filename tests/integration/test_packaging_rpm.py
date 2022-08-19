@@ -1,14 +1,9 @@
 import shutil
 import unittest
 
-from tests.helper import import_module_from_file
-from tests.paths import is_local_source_directory
-
 try:
-    if is_local_source_directory():
-        impl = import_module_from_file("backends/packaging_rpm.py").impl
-    else:
-        from apport.packaging_impl import impl
+    from apport.packaging_impl.rpm import impl
+
     HAS_RPM = True
 except ImportError:
     HAS_RPM = False

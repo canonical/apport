@@ -59,8 +59,3 @@ if [ -n "$out" ]; then
     echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
     exit 1
 fi
-
-if [ ! -e apport/packaging_impl.py ]; then
-    echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py; run './setup.py build' for auto-detection." >&2
-    exit 1
-fi

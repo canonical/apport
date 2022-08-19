@@ -6,13 +6,7 @@ import tempfile
 import time
 import unittest
 
-from tests.helper import import_module_from_file
-from tests.paths import is_local_source_directory
-
-if is_local_source_directory():
-    impl = import_module_from_file("backends/packaging-apt-dpkg.py").impl
-else:
-    from apport.packaging_impl import impl
+from apport.packaging_impl.apt_dpkg import impl
 
 
 @unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")
