@@ -17,17 +17,16 @@ import apport.crashdb
 
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
-    """
-    Debian crash database
-    This is a Apport CrashDB implementation for interacting with Debian BTS
+    """Debian crash database.
+
+    This is a Apport CrashDB implementation for interacting with Debian BTS.
     """
 
     # TODO: Implement several missing abstract methods from parent class
     # pylint: disable=abstract-method
 
     def __init__(self, auth_file, options):
-        """
-        Initialize crash database connection.
+        """Initialize crash database connection.
 
         Debian implementation is pretty basic as most of its bug management
         processes revolve around the email interface
@@ -42,8 +41,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             self.options["recipient"] = "submit@bugs.debian.org"
 
     def accepts(self, report):
-        """
-        Check if this report can be uploaded to this database.
+        """Check if this report can be uploaded to this database.
         Checks for the proper settings of apport.
         """
         if (
@@ -126,8 +124,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return True
 
     def get_comment_url(self, report, handle):
-        """
-        Return an URL that should be opened after report has been uploaded
+        """Return an URL that should be opened after report has been uploaded
         and upload() returned handle.
 
         Should return None if no URL should be opened (anonymous filing without

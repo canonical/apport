@@ -24,7 +24,7 @@ assert (
 
 
 class build_java_subdir(distutils.core.Command):
-    """Java crash handler build command"""
+    """Java crash handler build command."""
 
     description = "Compile java components of Apport"
     user_options = []
@@ -56,7 +56,7 @@ class build_java_subdir(distutils.core.Command):
 
 
 class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
-    """Java crash handler clean command"""
+    """Java crash handler clean command."""
 
     def run(self):
         DistUtilsExtra.auto.clean_build_tree.run(self)

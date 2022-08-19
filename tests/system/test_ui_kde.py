@@ -658,7 +658,6 @@ class T(unittest.TestCase):
 
     def test_bug_report_uninstalled_package(self):
         """Bug report for uninstalled package"""
-
         pkg = apport.packaging.get_uninstalled_package()
 
         self.app.report_file = None
@@ -687,7 +686,6 @@ class T(unittest.TestCase):
     )
     def test_1_update_report(self):
         """Updating an existing report"""
-
         self.app.report_file = None
 
         def cont():
@@ -724,7 +722,6 @@ class T(unittest.TestCase):
     def test_1_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
-
         self.app.report_file = None
 
         def cont():

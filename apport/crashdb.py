@@ -22,7 +22,6 @@ import apport.report
 
 def _u(string):
     """Convert str to an unicode if it isn't already."""
-
     if isinstance(string, bytes):
         return string.decode("UTF-8", "ignore")
     return string
@@ -367,7 +366,6 @@ class CrashDatabase:
 
     def duplicate_db_change_master_id(self, old_id, new_id):
         """Change a crash ID."""
-
         assert (
             self.duplicate_db
         ), "init_duplicate_db() needs to be called before"
@@ -471,8 +469,7 @@ class CrashDatabase:
             shutil.rmtree(publish_dir + ".old")
 
     def _duplicate_db_upgrade(self, cur_format):
-        """Upgrade database to current format"""
-
+        """Upgrade database to current format."""
         # Format 3 added a primary key which can't be done as an upgrade in
         # SQLite
         if cur_format < 3:
@@ -665,8 +662,7 @@ class CrashDatabase:
 
     @staticmethod
     def duplicate_sig_hash(sig):
-        """Create a www/URL proof hash for a duplicate signature"""
-
+        """Create a www/URL proof hash for a duplicate signature."""
         # cannot hash multi-line custom duplicate signatures
         if "\n" in sig:
             return None
@@ -731,7 +727,6 @@ class CrashDatabase:
 
     def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -784,7 +779,6 @@ class CrashDatabase:
 
     def get_distro_release(self, crash_id):
         """Get 'DistroRelease: <release>' from the report ID."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -841,14 +835,12 @@ class CrashDatabase:
 
     def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
     def is_reporter(self, crash_id):
         """Check whether the user is the reporter of given ID."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -885,15 +877,14 @@ class CrashDatabase:
 
     def mark_regression(self, crash_id, master):
         """Mark a crash id as reintroducing an earlier crash which is
-        already marked as fixed (having ID 'master')."""
-
+        already marked as fixed (having ID 'master').
+        """
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
     def mark_retraced(self, crash_id):
         """Mark crash id as retraced."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -911,7 +902,7 @@ class CrashDatabase:
         )
 
     def _mark_dup_checked(self, crash_id, report):
-        """Mark crash id as checked for being a duplicate
+        """Mark crash id as checked for being a duplicate.
 
         This is an internal method that should not be called from outside.
         """

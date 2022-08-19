@@ -18,8 +18,7 @@ try:
 except ImportError:  # Python < 3.10
 
     def _parse_os_release(*os_release_files):
-        """
-        Parse os-release and return a parameter dictionary
+        """Parse os-release and return a parameter dictionary.
 
         This function will behave identical to
         platform.freedesktop_os_release() from Python >= 3.10, if
@@ -85,7 +84,6 @@ class PackageInfo:
 
     def get_dependencies(self, package):
         """Return a list of packages a package depends on."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -144,7 +142,6 @@ class PackageInfo:
 
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
@@ -341,7 +338,6 @@ class PackageInfo:
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
-
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )

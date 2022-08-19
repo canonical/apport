@@ -1,4 +1,4 @@
-"""Functions to manage sandboxes"""
+"""Functions to manage sandboxes."""
 
 # Copyright (C) 2006 - 2013 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -49,8 +49,7 @@ def needed_packages(report):
 
 
 def report_package_versions(report):
-    """Return package -> version dictionary from report"""
-
+    """Return package -> version dictionary from report."""
     pkg_vers = {}
     for line in (
         report.get("Package", "") + "\n" + report.get("Dependencies", "")

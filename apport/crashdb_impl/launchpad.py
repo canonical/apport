@@ -146,7 +146,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     @property
     def launchpad(self):
         """Return Launchpad instance."""
-
         if self.__launchpad:
             return self.__launchpad
 
@@ -236,7 +235,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def get_hostname(self):
         """Return the hostname for the Launchpad instance."""
-
         launchpad_instance = self.options.get("launchpad_instance")
         if launchpad_instance:
             if launchpad_instance == "qastaging":
@@ -255,8 +253,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         Should return None if no URL should be opened (anonymous filing without
         user comments); in that case this function should do whichever
-        interactive steps it wants to perform."""
-
+        interactive steps it wants to perform.
+        """
         args = {}
         title = report.get("Title", report.standard_title())
         if title:
@@ -305,7 +303,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
-
         report = apport.report.Report()
         b = self.launchpad.bugs[crash_id]
 
@@ -554,7 +551,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
-
         bug_target_re = re.compile(
             r"/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$"
             % self.distro
@@ -574,7 +570,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def is_reporter(self, crash_id):
         """Check whether the user is the reporter of given ID."""
-
         bug = self.launchpad.bugs[crash_id]
         return bug.owner.name == self.launchpad.me.name
 
@@ -621,8 +616,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This is mainly useful for crashes of scripting languages such as
         Python, since they do not need to be retraced. It should not return
-        bugs that are covered by get_unretraced()."""
-
+        bugs that are covered by get_unretraced().
+        """
         try:
             bugs = self.lp_distro.searchTasks(
                 tags="need-duplicate-check", created_since="2011-08-01"
@@ -641,8 +636,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably OSError)."""
-
+        raise an exception (preferably OSError).
+        """
         bugs = self.lp_distro.searchTasks(tags="apport-crash")
         return id_set(bugs)
 
@@ -935,8 +930,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def mark_regression(self, crash_id, master):
         """Mark a crash id as reintroducing an earlier crash which is
-        already marked as fixed (having ID 'master')."""
-
+        already marked as fixed (having ID 'master').
+        """
         bug = self.launchpad.bugs[crash_id]
         bug.newMessage(
             content="This crash has the same stack trace characteristics as"
@@ -953,7 +948,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def mark_retraced(self, crash_id):
         """Mark crash id as retraced."""
-
         bug = self.launchpad.bugs[crash_id]
         if self.arch_tag in bug.tags:
             x = bug.tags[:]  # LP#254901 workaround
@@ -966,7 +960,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def mark_retrace_failed(self, crash_id, invalid_msg=None):
         """Mark crash id as 'failed to retrace'."""
-
         bug = self.launchpad.bugs[crash_id]
         if invalid_msg:
             try:
@@ -995,7 +988,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""
-
         bug = self.launchpad.bugs[crash_id]
 
         # if we have a distro task without a package, fix it
@@ -1086,7 +1078,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def _subscribe_triaging_team(self, bug, report):
         """Subscribe the right triaging team to the bug."""
-
         # FIXME: this entire function is an ugly Ubuntu specific hack until LP
         # gets a real crash db; see https://wiki.ubuntu.com/CrashReporting
 
@@ -1183,8 +1174,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     @staticmethod
     def _filter_tag_names(tags):
-        """Replace characters from tags which are not palatable to Launchpad"""
-
+        """Replace characters from tags which are not palatable to
+        Launchpad."""
         res = ""
         for ch in tags.lower().encode("ASCII", errors="ignore"):
             if ch in b"abcdefghijklmnopqrstuvwxyz0123456789 " or (
@@ -1308,7 +1299,7 @@ if __name__ == "__main__":
     _CACHE = {}
 
     def cache(func):
-        """Decorator to cache result of function/method call.
+        """Decorate a function/method to cache the result of its call.
 
         The cache is ignored if force_fresh is set to True.
         """
@@ -1349,7 +1340,6 @@ if __name__ == "__main__":
 
         def _create_project(self, name):
             """Create a project using launchpadlib to be used by tests."""
-
             project = self.crashdb.launchpad.projects[name]
             if not project:
                 self.crashdb.launchpad.projects.new_project(
@@ -1363,7 +1353,6 @@ if __name__ == "__main__":
         @property
         def hostname(self):
             """Get the Launchpad hostname for the given crashdb."""
-
             return self.crashdb.get_hostname()
 
         @cache
@@ -1475,7 +1464,6 @@ and more
 
         def test_1_download(self):
             """download()"""
-
             r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r["ProblemType"], "Crash")
             self.assertEqual(r["Title"], "crash crashed with SIGSEGV in f()")
@@ -1535,7 +1523,6 @@ and more
 
         def test_2_update_traces(self):
             """update_traces()"""
-
             r = self.crashdb.download(self.get_segv_report())
             self.assertIn("CoreDump", r)
             self.assertIn("Dependencies", r)
@@ -1641,7 +1628,6 @@ and more
 
         def test_get_comment_url(self):
             """get_comment_url() for non-ASCII titles"""
-
             title = b"1\xc3\xa4\xe2\x99\xa52"
 
             # distro, UTF-8 bytestring
@@ -1675,7 +1661,6 @@ and more
 
         def test_update_description(self):
             """update() with changing description"""
-
             bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
             bug = self.crashdb.launchpad.bugs.createBug(
                 description="test description for test bug.",
@@ -1714,7 +1699,6 @@ and more
 
         def test_update_comment(self):
             """update() with appending comment"""
-
             bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
             # we need to fake an apport description separator here, since we
             # want to be lazy and use download() for checking the result
@@ -1754,7 +1738,6 @@ and more
 
         def test_update_filter(self):
             """update() with a key filter"""
-
             bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
             bug = self.crashdb.launchpad.bugs.createBug(
                 description="test description for test bug",
@@ -1795,7 +1778,6 @@ and more
 
         def test_get_distro_release(self):
             """get_distro_release()"""
-
             self.assertEqual(
                 self.crashdb.get_distro_release(self.get_segv_report()),
                 self.ref_report["DistroRelease"],
@@ -1803,7 +1785,6 @@ and more
 
         def test_get_affected_packages(self):
             """get_affected_packages()"""
-
             self.assertEqual(
                 self.crashdb.get_affected_packages(self.get_segv_report()),
                 [self.ref_report["SourcePackage"]],
@@ -1811,19 +1792,16 @@ and more
 
         def test_is_reporter(self):
             """is_reporter()"""
-
             self.assertTrue(self.crashdb.is_reporter(self.get_segv_report()))
             self.assertFalse(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             """can_update()"""
-
             self.assertTrue(self.crashdb.can_update(self.get_segv_report()))
             self.assertFalse(self.crashdb.can_update(1))
 
         def test_duplicates(self):
-            """duplicate handling"""
-
+            """Test duplicate handling."""
             # initially we have no dups
             self.assertEqual(
                 self.crashdb.duplicate_of(self.get_segv_report()), None
@@ -1892,8 +1870,7 @@ and more
             self._verify_marked_regression(segv_id)
 
         def test_marking_segv(self):
-            """processing status markings for signal crashes"""
-
+            """Test processing status markings for signal crashes."""
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
             self.assertIn(self.get_segv_report(), unretraced_before)
@@ -1941,8 +1918,7 @@ and more
             )
 
         def test_marking_project(self):
-            """processing status markings for a project CrashDB"""
-
+            """Test processing status markings for a project CrashDB."""
             # create a distro bug
             distro_bug = self.crashdb.launchpad.bugs.createBug(
                 description="foo",
@@ -1986,8 +1962,7 @@ and more
             )
 
         def test_marking_foreign_arch(self):
-            """processing status markings for a project CrashDB"""
-
+            """Test processing status markings for a project CrashDB."""
             # create a DB for fake arch
             launchpad_instance = (
                 os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
@@ -2027,8 +2002,7 @@ and more
             )
 
         def test_marking_python(self):
-            """processing status markings for interpreter crashes"""
-
+            """Test processing status markings for interpreter crashes."""
             unchecked_before = self.crashdb.get_dup_unchecked()
             self.assertIn(self.get_python_report(), unchecked_before)
             self.assertNotIn(self.get_segv_report(), unchecked_before)
@@ -2046,7 +2020,7 @@ and more
             )
 
         def test_update_traces_invalid(self):
-            """updating an invalid crash
+            """Test updating an invalid crash.
 
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
@@ -2096,8 +2070,7 @@ and more
         @staticmethod
         @cache
         def _get_instance():
-            """Create a CrashDB instance"""
-
+            """Create a CrashDB instance."""
             launchpad_instance = (
                 os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
@@ -2110,7 +2083,6 @@ and more
         @staticmethod
         def _get_bug_target(db, report):
             """Return the bug_target for this report."""
-
             project = db.options.get("project")
             if "SourcePackage" in report:
                 return db.lp_distro.getSourcePackage(
@@ -2183,7 +2155,6 @@ and more
 
         def _mark_needs_retrace(self, crash_id):
             """Mark a report ID as needing retrace."""
-
             bug = self.crashdb.launchpad.bugs[crash_id]
             if self.crashdb.arch_tag not in bug.tags:
                 bug.tags = bug.tags + [self.crashdb.arch_tag]
@@ -2191,7 +2162,6 @@ and more
 
         def _mark_needs_dupcheck(self, crash_id):
             """Mark a report ID as needing duplicate check."""
-
             bug = self.crashdb.launchpad.bugs[crash_id]
             if "need-duplicate-check" not in bug.tags:
                 bug.tags = bug.tags + ["need-duplicate-check"]
@@ -2199,7 +2169,6 @@ and more
 
         def _mark_report_fixed(self, crash_id):
             """Close a report ID as "fixed"."""
-
             bug = self.crashdb.launchpad.bugs[crash_id]
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
@@ -2209,7 +2178,6 @@ and more
 
         def _mark_report_new(self, crash_id):
             """Reopen a report ID as "new"."""
-
             bug = self.crashdb.launchpad.bugs[crash_id]
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
@@ -2219,13 +2187,11 @@ and more
 
         def _verify_marked_regression(self, crash_id):
             """Verify that report ID is marked as regression."""
-
             bug = self.crashdb.launchpad.bugs[crash_id]
             self.assertIn("regression-retracer", bug.tags)
 
         def test_project(self):
-            """reporting crashes against a project instead of a distro"""
-
+            """Test reporting crashes against a project instead of a distro."""
             launchpad_instance = (
                 os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
@@ -2292,7 +2258,6 @@ NameError: global name 'weird' is not defined"""
 
         def test_download_robustness(self):
             """download() of uncommon description formats"""
-
             # only ProblemType/Architecture/DistroRelease in description
             r = self.crashdb.download(self.get_uncommon_description_report())
             self.assertEqual(r["ProblemType"], "Package")
@@ -2301,7 +2266,6 @@ NameError: global name 'weird' is not defined"""
 
         def test_escalation(self):
             """Escalating bugs with more than 10 duplicates"""
-
             launchpad_instance = (
                 os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
             )
@@ -2346,8 +2310,8 @@ NameError: global name 'weird' is not defined"""
             sys.stderr.write("\n")
 
         def test_marking_python_task_mangle(self):
-            """source package task fixup for marking interpreter crashes"""
-
+            """Test source package task fixup for marking interpreter
+            scrashes."""
             self._mark_needs_dupcheck(self.get_python_report())
             unchecked_before = self.crashdb.get_dup_unchecked()
             self.assertIn(self.get_python_report(), unchecked_before)

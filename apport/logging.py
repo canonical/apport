@@ -4,8 +4,7 @@ import time
 
 
 def log(message, timestamp=False):
-    """Log the given string to stdout. Prepend timestamp if requested"""
-
+    """Log the given string to stdout. Prepend timestamp if requested."""
     if timestamp:
         sys.stdout.write("%s: " % time.strftime("%x %X"))
     print(message)
@@ -13,14 +12,12 @@ def log(message, timestamp=False):
 
 def fatal(msg, *args):
     """Print out an error message and exit the program."""
-
     error(msg, *args)
     sys.exit(1)
 
 
 def error(msg, *args):
     """Print out an error message."""
-
     if sys.stderr:
         sys.stderr.write("ERROR: ")
         sys.stderr.write(msg % args)
@@ -29,7 +26,6 @@ def error(msg, *args):
 
 def warning(msg, *args):
     """Print out an warning message."""
-
     if sys.stderr:
         sys.stderr.write("WARNING: ")
         sys.stderr.write(msg % args)

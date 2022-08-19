@@ -1079,7 +1079,6 @@ class T(unittest.TestCase):
     def test_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
-
         self.app.report_file = None
 
         def cont():

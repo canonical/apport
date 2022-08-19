@@ -32,7 +32,6 @@ class REThread(threading.Thread):
 
     def run(self):
         """Run target function, identical to threading.Thread.run()."""
-
         if self.__target:
             try:
                 self._retval = self.__target(*self.__args, **self.__kwargs)
@@ -52,7 +51,6 @@ class REThread(threading.Thread):
 
     def exc_info(self):
         """Return (type, value, traceback) of the exception caught in run()."""
-
         return self._exception
 
     def exc_raise(self):

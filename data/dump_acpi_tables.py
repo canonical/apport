@@ -6,8 +6,7 @@ import sys
 
 
 def dump_acpi_table(filename, tablename, out):
-    """Dump a single ACPI table"""
-
+    """Dump a single ACPI table."""
     if not os.access(filename, os.R_OK):
         return
 
@@ -45,8 +44,7 @@ def dump_acpi_table(filename, tablename, out):
 
 
 def dump_acpi_tables(path, out):
-    """Dump ACPI tables"""
-
+    """Dump ACPI tables."""
     tables = os.listdir(path)
     for tablename in tables:
         pathname = os.path.join(path, tablename)

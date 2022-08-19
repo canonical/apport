@@ -38,7 +38,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_versioned(self):
         """install_packages() with versions and with cache"""
-
         release = self._setup_foonux_config(updates=True)
         wanted = {
             "coreutils": "8.32-4.1ubuntu1",
@@ -221,7 +220,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_unversioned(self):
         """install_packages() without versions and no cache"""
-
         release = self._setup_foonux_config()
         obsolete = impl.install_packages(
             self.rootdir,
@@ -278,7 +276,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_dependencies(self):
         """install packages's dependencies"""
-
         release = self._setup_foonux_config()
         # coreutils should always depend on libc6
         result = impl.install_packages(
@@ -305,7 +302,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_system(self):
         """install_packages() with system configuration"""
-
         # trigger an unrelated package query here to get the cache set up,
         # reproducing an install failure when the internal caches are not
         # reset properly
@@ -365,7 +361,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_error(self):
         """install_packages() with errors"""
-
         # sources.list with invalid format
         release = self._setup_foonux_config()
         with open(
@@ -427,7 +422,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_permanent_sandbox(self):
         """install_packages() with a permanent sandbox"""
-
         release = self._setup_foonux_config()
         zonetab = os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab")
 
@@ -591,7 +585,6 @@ class T(unittest.TestCase):
     )
     def test_install_packages_armhf(self):
         """install_packages() for foreign architecture armhf"""
-
         release = self._setup_foonux_config()
         wanted_version = "2.35-0ubuntu0"
         got_version = "2.35-0ubuntu3"
@@ -641,7 +634,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_from_launchpad(self):
         """install_packages() using packages only available on Launchpad"""
-
         release = self._setup_foonux_config(release="focal")
         # Wanted are superseded versions from -updates or -security.
         wanted = {
@@ -740,7 +732,6 @@ class T(unittest.TestCase):
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_old_packages(self):
         """sandbox will install older package versions from launchpad"""
-
         release = self._setup_foonux_config()
         wanted_package = "libcurl4"
         wanted_version = "7.81.0-1"  # pre-release version

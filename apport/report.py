@@ -72,7 +72,6 @@ interpreters = [
 
 def _transitive_dependencies(package, depends_set):
     """Recursively add dependencies of package to depends_set."""
-
     try:
         packaging.get_version(package)
     except ValueError:
@@ -223,7 +222,6 @@ def _check_bug_patterns(report, patterns):
 
 def _dom_remove_space(node):
     """Recursively remove whitespace from given XML DOM node."""
-
     for c in node.childNodes:
         if c.nodeType == xml.dom.Node.TEXT_NODE and c.nodeValue.strip() == "":
             c.unlink()
@@ -264,8 +262,7 @@ def _run_hook(report, ui, hook):
 
 
 def _which_extrapath(command, extra_path):
-    """Return path of command, preferring extra_path"""
-
+    """Return path of command, preferring extra_path."""
     path = None
     if extra_path:
         path = os.pathsep.join([extra_path, os.environ.get("PATH", "")])
@@ -282,7 +279,8 @@ class Report(problem_report.ProblemReport):
     """A problem report specific to apport (crash or bug).
 
     This class wraps a standard ProblemReport and adds methods for collecting
-    standard debugging data."""
+    standard debugging data.
+    """
 
     def __init__(self, problem_type="Crash", date=None):
         """Initialize a fresh problem report.
@@ -322,7 +320,7 @@ class Report(problem_report.ProblemReport):
         return suffix
 
     def add_package(self, package):
-        """Add Package: field
+        """Add Package: field.
 
         Determine the version of the given package (uses "(not installed") for
         uninstalled packages) and add Package: field to report.
@@ -405,7 +403,7 @@ class Report(problem_report.ProblemReport):
             )
 
     def add_snap_info(self, snap):
-        """Add info about an installed Snap
+        """Add info about an installed Snap.
 
         This adds a Snap: field, containing name, version and channel.
         It adds a SnapSource: field, if the snap has a Launchpad contact
@@ -594,7 +592,6 @@ class Report(problem_report.ProblemReport):
 
     def _twistd_executable(self):
         """Determine the twistd client program from ProcCmdline."""
-
         args = self["ProcCmdline"].split("\0")[2:]
 
         # search for a -f/--file, -y/--python or -s/--source argument
@@ -619,7 +616,7 @@ class Report(problem_report.ProblemReport):
 
     @staticmethod
     def _python_module_path(module):
-        """Determine path of given Python module"""
+        """Determine path of given Python module."""
         try:
             spec = importlib.util.find_spec(module)
         except ImportError:
@@ -1142,7 +1139,7 @@ class Report(problem_report.ProblemReport):
         return False
 
     def search_bug_patterns(self, url):
-        """Check bug patterns loaded from the specified url.
+        r"""Check bug patterns loaded from the specified url.
 
         Return bug URL on match, or None otherwise.
 
@@ -1374,8 +1371,7 @@ class Report(problem_report.ProblemReport):
         return unknown_fn.count(True) <= len(unknown_fn) / 2.0
 
     def stacktrace_top_function(self):
-        """Return topmost function in StacktraceTop"""
-
+        """Return topmost function in StacktraceTop."""
         for line in self.get("StacktraceTop", "").splitlines():
             fname = line.split("(")[0].strip()
             if fname != "??":
@@ -1530,7 +1526,6 @@ class Report(problem_report.ProblemReport):
 
     def obsolete_packages(self):
         """Return list of obsolete packages in Package and Dependencies."""
-
         obsolete = []
         for line in (
             self.get("Package", "") + "\n" + self.get("Dependencies", "")

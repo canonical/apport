@@ -12,7 +12,6 @@ class T(unittest.TestCase):
 
     def test_has_useful_stacktrace(self):
         """has_useful_stacktrace()."""
-
         r = apport.report.Report()
         self.assertFalse(r.has_useful_stacktrace())
 
@@ -58,7 +57,6 @@ class T(unittest.TestCase):
 
     def test_standard_title(self):
         """standard_title()."""
-
         report = apport.report.Report()
         self.assertEqual(report.standard_title(), None)
 
@@ -282,7 +280,6 @@ ImportError: No module named nonexistent
 
     def test_gen_stacktrace_top(self):
         """_gen_stacktrace_top()."""
-
         # nothing to chop off
         r = apport.report.Report()
         r["Stacktrace"] = textwrap.dedent(
@@ -604,7 +601,6 @@ dispatch_queue () at canberra-gtk-module.c:815""",
 
     def test_crash_signature(self):
         """crash_signature()."""
-
         r = apport.report.Report()
         self.assertEqual(r.crash_signature(), None)
 
@@ -849,7 +845,6 @@ CR2: 00000000ffffb4ff
 
     def test_nonascii_data(self):
         """methods get along with non-ASCII data"""
-
         # fake os.uname() into reporting a non-ASCII name
         uname = os.uname()
         uname = (
@@ -880,7 +875,6 @@ CR2: 00000000ffffb4ff
 
     def test_address_to_offset(self):
         """_address_to_offset()"""
-
         pr = apport.report.Report()
 
         self.assertRaises(AssertionError, pr._address_to_offset, 0)
@@ -923,7 +917,6 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
 
     def test_address_to_offset_arm(self):
         """_address_to_offset() for ARM /proc/pid/maps"""
-
         pr = apport.report.Report()
         pr[
             "ProcMaps"
@@ -955,7 +948,6 @@ ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
 
     def test_crash_signature_addresses(self):
         """crash_signature_addresses()"""
-
         pr = apport.report.Report()
         self.assertEqual(pr.crash_signature_addresses(), None)
 
@@ -1069,7 +1061,6 @@ No symbol table info available.
     @staticmethod
     def test_missing_uid():
         """check_ignored() works for removed user"""
-
         orig_getuid = os.getuid
         os.getuid = lambda: 123456789
         try:

@@ -233,7 +233,6 @@ class UserInterface:
 
     def __init__(self):
         """Initialize program state and parse command line options."""
-
         self.gettext_domain = "apport"
         self.report = None
         self.report_file = None
@@ -669,7 +668,6 @@ class UserInterface:
 
     def run_update_report(self):
         """Update an existing bug with locally collected information."""
-
         # avoid irrelevant noise
         if not self.crashdb.can_update(self.args.update_report):
             self.ui_error_message(
@@ -832,7 +830,6 @@ class UserInterface:
 
     def run_symptom(self):
         """Report a bug with a symptom script."""
-
         script = os.path.join(symptom_script_dir, self.args.symptom + ".py")
         if not os.path.exists(script):
             self.ui_error_message(
@@ -1172,7 +1169,6 @@ class UserInterface:
     def format_filesize(size):
         """Format the given integer as humanly readable and i18n'ed file
         size."""
-
         if size < 1000000:
             return locale.format_string("%.1f KB", size / 1000.0)
         if size < 1000000000:
@@ -1181,7 +1177,6 @@ class UserInterface:
 
     def get_complete_size(self):
         """Return the size of the complete report."""
-
         # report wasn't loaded, so count manually
         size = 0
         for k in self.report:
@@ -1196,7 +1191,6 @@ class UserInterface:
 
     def get_reduced_size(self):
         """Return the size of the reduced report."""
-
         size = 0
         for k in self.report:
             if k != "CoreDump":
@@ -1226,7 +1220,6 @@ class UserInterface:
 
     def restart(self):
         """Reopen the crashed application."""
-
         assert "ProcCmdline" in self.report
 
         if os.fork() == 0:
@@ -1241,7 +1234,6 @@ class UserInterface:
 
     def examine(self):
         """Locally examine crash report."""
-
         response = self.ui_question_choice(
             _(
                 "This will launch apport-retrace in a terminal window"
@@ -1276,7 +1268,7 @@ class UserInterface:
         self.ui_run_terminal(cmds[response[0]])
 
     def remember_send_report(self, send_report):
-        """Put whoopsie in auto or never mode"""
+        """Put whoopsie in auto or never mode."""
         if send_report:
             send_report = "true"
         else:
@@ -1325,8 +1317,7 @@ class UserInterface:
             )
 
     def check_report_crashdb(self):
-        """Process reports' CrashDB field, if present"""
-
+        """Process reports' CrashDB field, if present."""
         if "CrashDB" not in self.report:
             return True
 
@@ -1988,7 +1979,6 @@ class UserInterface:
 
     def add_extra_tags(self):
         """Add extra tags to report specified with --tags on CLI."""
-
         assert self.report
         if self.args.tag:
             tags = self.report.get("Tags", "")
@@ -2017,14 +2007,12 @@ class UserInterface:
 
     def ui_info_message(self, title, text):
         """Show an information message box with given title and text."""
-
         raise NotImplementedError(
             "this function must be overridden by subclasses"
         )
 
     def ui_error_message(self, title, text):
         """Show an error message box with given title and text."""
-
         raise NotImplementedError(
             "this function must be overridden by subclasses"
         )
@@ -2050,7 +2038,6 @@ class UserInterface:
 
     def ui_stop_info_collection_progress(self):
         """Close debug data collection progress window."""
-
         raise NotImplementedError(
             "this function must be overridden by subclasses"
         )
@@ -2078,7 +2065,6 @@ class UserInterface:
 
     def ui_stop_upload_progress(self):
         """Close debug data upload progress window."""
-
         raise NotImplementedError(
             "this function must be overridden by subclasses"
         )
@@ -2217,7 +2203,6 @@ class HookUI:
 
     def _trigger_ui_request(self, fn, *args):
         """Called by HookUi functions in info collection thread."""
-
         # only one at a time
         assert not self._request_event.is_set()
         assert not self._response_event.is_set()
@@ -2236,7 +2221,6 @@ class HookUI:
 
     def process_event(self):
         """Called by GUI thread to check and process hook UI requests."""
-
         # sleep for 0.1 seconds to wait for events
         self._request_event.wait(0.1)
         if not self._request_event.is_set():

@@ -91,7 +91,8 @@ class RPMPackageInfo:
         """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g.  an i386 Firefox
-        package on a x86_64 system)"""
+        package on a x86_64 system).
+        """
         # Yeah, this is kind of redundant, as package is ENVRA, but I want
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
@@ -198,7 +199,8 @@ class RPMPackageInfo:
         fetch distribution files/packages from the network.
 
         By default, the mirror will be read from the system configuration
-        files."""
+        files.
+        """
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
@@ -230,7 +232,8 @@ class RPMPackageInfo:
     def compare_versions(self, ver1, ver2):
         """Compare two package versions.
 
-        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2."""
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
+        """
         # Used by crashdb.py (i.e. the frontends)
         # I could duplicate stringToVersion/compareEVR from rpmUtils.misc,
         # but I hate duplicating code. So if you don't want to require rpmUtils
@@ -243,7 +246,6 @@ class RPMPackageInfo:
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
-
         raise NotImplementedError("TODO")
 
     #
@@ -262,7 +264,6 @@ class RPMPackageInfo:
     @staticmethod
     def _get_header(envra):
         """Get the RPM header that matches the given ENVRA."""
-
         querystr = envra
         qlen = len(envra)
         while qlen > 0:
@@ -286,8 +287,7 @@ class RPMPackageInfo:
 
     @staticmethod
     def _make_envra_from_header(h):
-        """Generate an ENVRA string from an rpm header"""
-
+        """Generate an ENVRA string from an rpm header."""
         nvra = "%s-%s-%s.%s" % (h["n"], h["v"], h["r"], h["arch"])
         if h["e"]:
             envra = "%s:%s" % (h["e"], nvra)
@@ -297,8 +297,7 @@ class RPMPackageInfo:
 
     @staticmethod
     def _checkmd5(filename, filemd5):
-        """Internal function to check a file's md5sum"""
-
+        """Check a file's md5sum."""
         m = hashlib.md5()
         with open(filename, encoding="utf-8") as md5_file:
             data = md5_file.read()

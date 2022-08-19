@@ -17,7 +17,6 @@ CONFIG = "/etc/default/apport"
 
 def enabled():
     """Return whether Apport should generate crash reports."""
-
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
     try:
@@ -34,7 +33,6 @@ def enabled():
 
 def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
     """Catch an uncaught exception and make a traceback."""
-
     # create and save a problem report. Note that exceptions in this code
     # are bad, and we probably need a per-thread reentrancy guard to
     # prevent that happening. However, on Ubuntu there should never be
@@ -210,7 +208,6 @@ def dbus_service_unknown_analysis(exc_obj, report):
 
 def install():
     """Install the python apport hook."""
-
     # Record before the program can mutate sys.argv and can call os.chdir().
     binary = sys.argv[0]
     if binary and not binary.startswith("/"):

@@ -164,8 +164,7 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
 
 
 def attach_upstart_overrides(report, package):
-    """Attach information about any Upstart override files"""
-
+    """Attach information about any Upstart override files."""
     try:
         files = packaging.get_files(package)
     except ValueError:
@@ -179,8 +178,7 @@ def attach_upstart_overrides(report, package):
 
 
 def attach_upstart_logs(report, package):
-    """Attach information about a package's session upstart logs"""
-
+    """Attach information about a package's session upstart logs."""
     try:
         files = packaging.get_files(package)
     except ValueError:
@@ -693,7 +691,6 @@ PCI_SERIAL_BUS = 0x0C
 
 def pci_devices(*pci_classes):
     """Return a text dump of PCI devices attached to the system."""
-
     if not pci_classes:
         return command_output(["lspci", "-vvnn"])
 
@@ -726,15 +723,13 @@ def pci_devices(*pci_classes):
 
 def usb_devices():
     """Return a text dump of USB devices attached to the system."""
-
     # TODO: would be nice to be able to filter by interface class
     return command_output(["lsusb", "-v"])
 
 
 def files_in_package(package, globpat=None):
     """Retrieve a list of files owned by package, optionally matching
-    globpat"""
-
+    globpat."""
     files = packaging.get_files(package)
     if globpat:
         result = [f for f in files if glob.fnmatch.fnmatch(f, globpat)]
@@ -744,14 +739,12 @@ def files_in_package(package, globpat=None):
 
 
 def attach_gconf(report, package):  # pylint: disable=unused-argument
-    """Obsolete"""
-
+    """Obsolete."""
     # keeping a no-op function for some time to not break hooks
 
 
 def attach_gsettings_schema(report, schema):
     """Attach user-modified gsettings keys of a schema."""
-
     cur_value = report.get("GsettingsChanges", "")
 
     defaults = {}  # schema -> key ->  value
@@ -793,7 +786,6 @@ def attach_gsettings_schema(report, schema):
 
 def attach_gsettings_package(report, package):
     """Attach user-modified gsettings keys of all schemas in a package."""
-
     for schema_file in files_in_package(
         package, "/usr/share/glib-2.0/schemas/*.gschema.xml"
     ):
@@ -808,7 +800,6 @@ def attach_journal_errors(report, time_window=10) -> None:
     date (plus/minus the time_window in seconds). Otherwise attach the
     latest 1000 journal logs since the last boot.
     """
-
     if not os.path.exists("/run/systemd/system"):
         return
 
@@ -826,7 +817,6 @@ def attach_journal_errors(report, time_window=10) -> None:
 
 def attach_network(report):
     """Attach generic network-related information to report."""
-
     report["IpRoute"] = command_output(["ip", "route"])
     report["IpAddr"] = command_output(["ip", "addr"])
     report["PciNetwork"] = pci_devices(PCI_NETWORK)
@@ -841,7 +831,6 @@ def attach_network(report):
 
 def attach_wifi(report):
     """Attach wireless (WiFi) network information to report."""
-
     report["WifiSyslog"] = recent_syslog(
         re.compile(
             r"(NetworkManager|modem-manager|dhclient|kernel|wpa_supplicant)"
@@ -930,7 +919,6 @@ def attach_printing(report):
 
 def attach_mac_events(report, profiles=None):
     """Attach MAC information and events to the report."""
-
     # Allow specifying a string, or a list of strings
     if isinstance(profiles, str):
         profiles = [profiles]
@@ -980,7 +968,7 @@ def attach_mac_events(report, profiles=None):
 
 
 def _add_tag(report, tag):
-    """Adds or appends a tag to the report"""
+    """Add or append a tag to the report."""
     current_tags = report.get("Tags", "")
     if current_tags:
         current_tags += " "
@@ -988,7 +976,7 @@ def _add_tag(report, tag):
 
 
 def attach_related_packages(report, packages):
-    """Attach version information for related packages
+    """Attach version information for related packages.
 
     In the future, this might also run their hooks.
     """
@@ -1028,7 +1016,6 @@ def package_versions(*packages):
 
 def _get_module_license(module):
     """Return the license for a given kernel module."""
-
     try:
         modinfo = subprocess.run(
             ["/sbin/modinfo", module],
@@ -1052,7 +1039,6 @@ def _get_module_license(module):
 
 def nonfree_kernel_modules(module_list="/proc/modules"):
     """Check loaded modules and return a list of those which are not free."""
-
     try:
         with open(module_list, encoding="utf-8") as f:
             mods = [line.split()[0] for line in f]
@@ -1144,8 +1130,7 @@ def in_session_of_problem(report):
 
 
 def attach_default_grub(report, key=None):
-    """attach /etc/default/grub after filtering out password lines"""
-
+    """Attach /etc/default/grub after filtering out password lines."""
     path = "/etc/default/grub"
     if not key:
         key = path_to_key(path)

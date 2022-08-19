@@ -116,7 +116,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def _cache(self):
         """Return apt.Cache() (initialized lazily)."""
-
         self._sandbox_apt_cache = None
         if not self._apt_cache:
             try:
@@ -173,7 +172,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_version(self, package):
         """Return the installed version of a package."""
-
         pkg = self._apt_pkg(package)
         inst = pkg.installed
         if not inst:
@@ -182,12 +180,10 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_available_version(self, package):
         """Return the latest available version of a package."""
-
         return self._apt_pkg(package).candidate.version
 
     def get_dependencies(self, package):
         """Return a list of packages a package depends on."""
-
         cur_ver = self._apt_pkg(package).installed
         if not cur_ver:
             # happens with virtual packages
@@ -201,7 +197,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_source(self, package):
         """Return the source package name for a package."""
-
         if self._apt_pkg(package).installed:
             return self._apt_pkg(package).installed.source_name
         if self._apt_pkg(package).candidate:
@@ -251,7 +246,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return False
 
     def is_native_origin_package(self, package):
-        """Check if a package originated from a native location
+        """Check if a package originated from a native location.
 
         Return True for a package which came from an origin which is listed in
         native-origins.d, False if it comes from a third-party source.
@@ -321,7 +316,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def json_request(url, entries=False):
-        """Open, read and parse the json of a url
+        """Open, read and parse the JSON of a URL.
 
         Set entries to True when the json data returned by Launchpad
         has a dictionary with an entries key which contains the data
@@ -379,8 +374,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g. an i386 Firefox
-        package on a x86_64 system)"""
-
+        package on a x86_64 system)
+        """
         if self._apt_pkg(package).installed:
             return self._apt_pkg(package).installed.architecture or "unknown"
         if self._apt_pkg(package).candidate:
@@ -389,7 +384,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_files(self, package):
         """Return list of files shipped by a package."""
-
         output = self._call_dpkg(["-L", package])
         if output is None:
             return None
@@ -397,7 +391,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
-
         # get the maximum mtime of package files that we consider unmodified
         listfile = "/var/lib/dpkg/info/%s:%s.list" % (
             package,
@@ -500,7 +493,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     def __fgrep_files(pattern, file_list):
         """Call fgrep for a pattern on given file list and return the first
         matching file, or None if no file matches."""
-
         match = None
         slice_size = 100
         i = 0
@@ -588,7 +580,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_system_architecture():
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
-
         dpkg = subprocess.run(
             ["dpkg", "--print-architecture"],
             check=True,
@@ -1345,7 +1336,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
-
         return glob.fnmatch.filter(self._cache().keys(), nameglob)
 
     #
@@ -1356,7 +1346,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _call_dpkg(args):
         """Call dpkg with given arguments and return output, or return None on
         error."""
-
         dpkg = subprocess.run(
             ["dpkg"] + args,
             check=False,
@@ -1369,7 +1358,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def _check_files_md5(sumfile):
-        """Internal function for calling md5sum.
+        """Call md5sum.
 
         This is separate from get_modified_files so that it is automatically
         testable.
@@ -1407,8 +1396,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def _get_primary_mirror_from_apt_sources(apt_sources):
-        """Heuristically determine primary mirror from an apt sources.list"""
-
+        """Heuristically determine primary mirror from an apt sources.list."""
         with open(apt_sources, encoding="utf-8") as f:
             for line in f:
                 fields = line.split()
@@ -1432,8 +1420,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Return the distribution mirror URL.
 
         If it has not been set yet, it will be read from the system
-        configuration."""
-
+        configuration.
+        """
         if not self._mirror:
             self._mirror = self._get_primary_mirror_from_apt_sources(
                 "/etc/apt/sources.list"
@@ -1444,8 +1432,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
 
     def _distro_release_to_codename(self, release):
-        """Map a DistroRelease: field value to a release code name"""
-
+        """Map a DistroRelease: field value to a release code name."""
         # if we called install_packages() with a configdir, we can read the
         # codename from there
         if self._current_release_codename is not None:
@@ -1457,8 +1444,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         )
 
     def _search_contents(self, file, map_cachedir, release, arch):
-        """Internal function for searching file in Contents.gz."""
-
+        """Search file in Contents.gz."""
         if not map_cachedir:
             if not self._contents_dir:
                 self._contents_dir = tempfile.mkdtemp()
@@ -1636,7 +1622,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         Return a string containing content suitable for writing to a
         sources.list file, or None if the origin is not a Launchpad PPA.
         """
-
         if origin.startswith("LP-PPA-"):
             components = origin.split("-")[2:]
             # If the PPA is unnamed, it will not appear in origin information
@@ -1850,8 +1835,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def _deb_version(pkg):
-        """Return the version of a .deb file"""
-
+        """Return the version of a .deb file."""
         dpkg = subprocess.run(
             ["dpkg-deb", "-f", pkg, "Version"],
             check=True,
@@ -1866,14 +1850,12 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
         """
-
         return apt.apt_pkg.version_compare(ver1, ver2)
 
     _distro_codename = None
 
     def get_distro_codename(self):
         """Get "lsb_release -sc", cache the result."""
-
         if self._distro_codename is None:
             try:
                 info = freedesktop_os_release()
@@ -1895,7 +1877,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_distro_name(self):
         """Get osname from /etc/os-release, or if that doesn't exist,
         'lsb_release -sir' output and cache the result."""
-
         if self._distro_name is None:
             self._distro_name = self.get_os_version()[0].lower()
             if " " in self._distro_name:

@@ -8,20 +8,17 @@ import apport.REThread
 
 def idle(seconds):
     """Test thread to just wait a bit."""
-
     time.sleep(seconds)
 
 
 def div(x, y):
     """Test thread to divide two numbers."""
-
     return x / y
 
 
 class T(unittest.TestCase):
     def test_return_value(self):
         """return value works properly."""
-
         t = apport.REThread.REThread(target=div, args=(42, 2))
         t.start()
         t.join()
@@ -32,7 +29,6 @@ class T(unittest.TestCase):
 
     def test_no_return_value(self):
         """apport.REThread.REThread works if run() does not return anything."""
-
         t = apport.REThread.REThread(target=idle, args=(0.5,))
         t.start()
         # thread must be joined first
@@ -43,7 +39,6 @@ class T(unittest.TestCase):
 
     def test_exception(self):
         """exception in thread is caught and passed."""
-
         t = apport.REThread.REThread(target=div, args=(1, 0))
         t.start()
         t.join()
@@ -61,7 +56,6 @@ class T(unittest.TestCase):
 
     def test_exc_raise(self):
         """exc_raise() raises caught thread exception."""
-
         t = apport.REThread.REThread(target=div, args=(1, 0))
         t.start()
         t.join()

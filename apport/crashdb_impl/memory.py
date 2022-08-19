@@ -17,13 +17,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     """Simple implementation of crash database interface which keeps everything
     in memory.
 
-    This is mainly useful for testing and debugging."""
+    This is mainly useful for testing and debugging.
+    """
 
     def __init__(self, auth_file, options):
         """Initialize crash database connection.
 
-        This class does not support bug patterns and authentication."""
-
+        This class does not support bug patterns and authentication.
+        """
         apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
 
         # reports is a list of dictionaries with keys:
@@ -60,8 +61,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_comment_url(self, report, handle):
         """Return http://<sourcepackage>.bugs.example.com/<handle> for package
         bugs or http://bugs.example.com/<handle> for reports without a
-        SourcePackage."""
-
+        SourcePackage.
+        """
         if "SourcePackage" in report:
             return "http://%s.bugs.example.com/%i" % (
                 report["SourcePackage"],
@@ -81,17 +82,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def download(self, crash_id):
         """Download the problem report from given ID and return a Report."""
-
         return self.reports[crash_id]["report"]
 
     def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
-
         return [self.reports[crash_id]["report"]["SourcePackage"]]
 
     def is_reporter(self, crash_id):
         """Check whether the user is the reporter of given ID."""
-
         return True
 
     def can_update(self, crash_id):
@@ -141,7 +139,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_distro_release(self, crash_id):
         """Get 'DistroRelease: <release>' from the given report ID and return
         it."""
-
         return self.reports[crash_id]["report"]["DistroRelease"]
 
     def get_unfixed(self):
@@ -151,8 +148,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably OSError)."""
-
+        raise an exception (preferably OSError).
+        """
         result = set()
         for i, report in enumerate(self.reports):
             if report["dup_of"] is None and report["fixed_version"] is None:
@@ -170,8 +167,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably OSError)."""
-
+        raise an exception (preferably OSError).
+        """
         try:
             if self.reports[crash_id]["dup_of"] is not None:
                 return "invalid"
@@ -195,8 +192,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def mark_regression(self, crash_id, master):
         """Mark a crash id as reintroducing an earlier crash which is
-        already marked as fixed (having ID 'master')."""
-
+        already marked as fixed (having ID 'master').
+        """
         assert self.reports[master]["fixed_version"] is not None
         self.reports[crash_id]["comment"] = (
             "regression, already fixed in #%i" % master
@@ -204,7 +201,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""
-
         try:
             self.dup_unchecked.remove(crash_id)
         except KeyError:
@@ -212,7 +208,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def mark_retraced(self, crash_id):
         """Mark crash id as retraced."""
-
         self.unretraced.remove(crash_id)
 
     def mark_retrace_failed(self, crash_id, invalid_msg=None):
@@ -224,7 +219,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_unretraced(self):
         """Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture."""
-
         return self.unretraced
 
     def get_dup_unchecked(self):
@@ -233,20 +227,19 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This is mainly useful for crashes of scripting languages such as
         Python, since they do not need to be retraced. It should not return
-        bugs that are covered by get_unretraced()."""
-
+        bugs that are covered by get_unretraced().
+        """
         return self.dup_unchecked
 
     def latest_id(self):
         """Return the ID of the most recently filed report."""
-
         return len(self.reports) - 1
 
     def add_dummy_data(self):
         """Add some dummy crash reports.
 
-        This is mostly useful for test suites."""
-
+        This is mostly useful for test suites.
+        """
         # signal crash with source package and complete stack trace
         r = apport.report.Report()
         r["Package"] = "libfoo1 1.2-3"

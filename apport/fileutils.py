@@ -50,7 +50,6 @@ class UHTTPConnection(http.client.HTTPConnection):
 
 def allowed_to_report():
     """Check whether crash reporting is enabled."""
-
     if not os.access("/usr/bin/whoopsie", os.X_OK):
         return True
 
@@ -63,7 +62,6 @@ def allowed_to_report():
 
 def get_dbus_socket(dbus_addr):
     """Extract the socket from a DBus address."""
-
     if not dbus_addr:
         return None
 
@@ -187,7 +185,6 @@ def find_snap(snap):
 
 def seen_report(report):
     """Check whether the report file has already been processed earlier."""
-
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
@@ -220,7 +217,6 @@ def mark_hanging_process(report, pid):
 
 def mark_report_seen(report):
     """Mark given report file as seen."""
-
     st = os.stat(report)
     try:
         os.utime(report, (st.st_mtime, st.st_mtime - 1))
@@ -250,7 +246,6 @@ def mark_report_seen(report):
 
 def get_all_reports():
     """Return a list with all report files accessible to the calling user."""
-
     reports = []
     for r in glob.glob(os.path.join(report_dir, "*.crash")):
         try:
@@ -352,7 +347,7 @@ def get_recent_crashes(report):
 
 
 def make_report_file(report, uid=None):
-    """Construct a canonical pathname for a report and open it for writing
+    """Construct a canonical pathname for a report and open it for writing.
 
     If uid is not given, it defaults to the effective uid of the current
     process. The report file must not exist already, to prevent losing
@@ -413,7 +408,6 @@ def get_config(section, setting, default=None, path=None, boolean=False):
 
     Privileges may need to be dropped before calling this.
     """
-
     if not path:
         # Properly handle dropped privileges
         homedir = pwd.getpwuid(os.geteuid())[5]
@@ -457,8 +451,7 @@ get_config.config = None
 
 
 def get_starttime(contents):
-    """Extracts the starttime from the contents of a stat file"""
-
+    """Extract the starttime from the contents of a stat file."""
     # 22nd field in a stat file is the time the process started after
     # system boot in clock ticks. In order to prevent filename
     # manipulations including spaces or extra parentheses, skip all the way
@@ -469,8 +462,7 @@ def get_starttime(contents):
 
 
 def get_uid_and_gid(contents):
-    """Extracts the uid and gid from the contents of a status file"""
-
+    """Extract the uid and gid from the contents of a status file."""
     real_uid = None
     real_gid = None
     for line in contents.splitlines():
@@ -485,7 +477,7 @@ def get_uid_and_gid(contents):
 
 
 def search_map(mapfd, uid):
-    """Search for an ID in a map fd"""
+    """Search for an ID in a map fd."""
     for line in mapfd:
         fields = line.split()
         if len(fields) != 3:
@@ -501,16 +493,14 @@ def search_map(mapfd, uid):
 
 
 def get_boot_id():
-    """Gets the kernel boot id"""
-
+    """Get the kernel boot id."""
     with open("/proc/sys/kernel/random/boot_id", encoding="utf-8") as f:
         boot_id = f.read().strip()
     return boot_id
 
 
 def get_process_path(proc_pid_fd=None):
-    """Gets the process path from a proc directory file descriptor"""
-
+    """Get the process path from a proc directory file descriptor."""
     if proc_pid_fd is None:
         return "unknown"
     try:
@@ -522,8 +512,7 @@ def get_process_path(proc_pid_fd=None):
 def get_core_path(
     pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
 ):
-    """Get the path to a core file"""
-
+    """Get the path to a core file."""
     if pid is None:
         pid = "unknown"
         timestamp = "unknown"
@@ -556,9 +545,10 @@ def get_core_path(
 
 
 def find_core_files_by_uid(uid):
-    """Searches the core file directory for files that belong to a
+    """Search the core file directory for files that belong to a
     specified uid. Returns a list of lists containing the filename and
-    the file modification time."""
+    the file modification time.
+    """
     uid = str(uid)
     core_files = []
     uid_files = []
@@ -577,9 +567,9 @@ def find_core_files_by_uid(uid):
 
 
 def clean_core_directory(uid):
-    """Removes old files from the core directory if there are more than
-    the maximum allowed per uid"""
-
+    """Remove old files from the core directory if there are more than
+    the maximum allowed per uid.
+    """
     uid_files = find_core_files_by_uid(uid)
     sorted_files = sorted(uid_files, key=operator.itemgetter(1))
 

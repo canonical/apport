@@ -44,7 +44,6 @@ class T(unittest.TestCase):
 
     def _test_crash(self, extracode="", scriptname=None):
         """Create a test crash."""
-
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
         if scriptname:
@@ -93,7 +92,6 @@ func(42)
 
     def test_dbus_service_unknown_invalid(self):
         """DBus.Error.ServiceUnknown with an invalid name"""
-
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -119,7 +117,6 @@ func(42)
     def test_dbus_service_unknown_wrongbus_notrunning(self):
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (not running)"""
-
         subprocess.call(["killall", "gvfsd-metadata"])
         self._test_crash(
             extracode=textwrap.dedent(
@@ -145,7 +142,6 @@ func(42)
     def test_dbus_service_unknown_wrongbus_running(self):
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (running)"""
-
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -174,7 +170,6 @@ func(42)
 
     def test_dbus_service_timeout_running(self):
         """DBus.Error.NoReply with a running service"""
-
         # ensure the service is running
         metadata_obj = dbus.SessionBus().get_object(
             "org.gtk.vfs.Metadata", "/org/gtk/vfs/metadata"
@@ -210,7 +205,6 @@ func(42)
 
     def test_dbus_service_other_error(self):
         """Other DBusExceptions get an unwrapped original exception"""
-
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -239,8 +233,7 @@ func(42)
         )
 
     def _load_report(self):
-        """Ensure that there is exactly one crash report and load it"""
-
+        """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(
             len(reports), 1, "crashed Python program produced a report"

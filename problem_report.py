@@ -33,7 +33,6 @@ class CompressedValue:
 
     def __init__(self, value=None, name=None):
         """Initialize an empty CompressedValue object with an optional name."""
-
         self.gzipvalue = None
         self.name = name
         # By default, compressed values are in gzip format. Earlier versions of
@@ -46,7 +45,6 @@ class CompressedValue:
 
     def set_value(self, value):
         """Set uncompressed value."""
-
         out = io.BytesIO()
         gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
         self.gzipvalue = out.getvalue()
@@ -54,7 +52,6 @@ class CompressedValue:
 
     def get_value(self):
         """Return uncompressed value."""
-
         if not self.gzipvalue:
             return None
 
@@ -64,7 +61,6 @@ class CompressedValue:
 
     def write(self, file):
         """Write uncompressed value into given file-like object."""
-
         assert self.gzipvalue
 
         if self.legacy_zlib:
@@ -80,7 +76,6 @@ class CompressedValue:
 
     def __len__(self):
         """Return length of uncompressed value."""
-
         assert self.gzipvalue
         if self.legacy_zlib:
             return len(self.get_value())
@@ -88,7 +83,6 @@ class CompressedValue:
 
     def splitlines(self):
         """Behaves like splitlines() for a normal string."""
-
         return self.get_value().splitlines()
 
 
@@ -186,7 +180,7 @@ class ProblemReport(collections.UserDict):
         self.old_keys = set(self.data.keys())
 
     def extract_keys(self, file, bin_keys, directory):
-        """Extract only one binary element from the problem_report
+        """Extract only one binary element from the problem report.
 
         Binary elements like kernel crash dumps can be very big. This method
         extracts directly files without loading the report into memory.
@@ -252,7 +246,7 @@ class ProblemReport(collections.UserDict):
             )
 
     def get_timestamp(self) -> typing.Optional[int]:
-        """Get timestamp (seconds since epoch) from Date field
+        """Get timestamp (seconds since epoch) from Date field.
 
         Return None if it is not present.
         """
@@ -310,7 +304,6 @@ class ProblemReport(collections.UserDict):
     @staticmethod
     def is_binary(string):
         """Check if the given strings contains binary data."""
-
         if isinstance(string, bytes):
             for c in string:
                 if c < 32 and not chr(c).isspace():
@@ -319,8 +312,7 @@ class ProblemReport(collections.UserDict):
 
     @classmethod
     def _try_unicode(cls, value):
-        """Try to convert bytearray value to unicode"""
-
+        """Try to convert bytearray value to Unicode."""
         if isinstance(value, bytes) and not cls.is_binary(value):
             try:
                 return value.decode("UTF-8")
@@ -715,7 +707,6 @@ class ProblemReport(collections.UserDict):
     @staticmethod
     def _strip_gzip_header(line):
         """Strip gzip header from line and return the rest."""
-
         flags = line[3]
         offset = 10
         if flags & 4:  # FLG.FEXTRA
@@ -735,8 +726,7 @@ class ProblemReport(collections.UserDict):
 
     @staticmethod
     def _assert_bin_mode(file):
-        """Assert that given file object is in binary mode"""
-
+        """Assert that given file object is in binary mode."""
         assert not hasattr(
             file, "encoding"
         ), "file stream must be in binary mode"
