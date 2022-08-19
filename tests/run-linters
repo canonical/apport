@@ -38,6 +38,19 @@ else
     echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi
 
+if type pydocstyle >/dev/null 2>&1; then
+    pydocstyle_version=$(pydocstyle --version)
+    pydocstyle_major_version=$(echo "$pydocstyle_version" | cut -d. -f1)
+    if test "$pydocstyle_major_version" -ge 6; then
+        echo "Running pydocstyle..."
+        pydocstyle . ${PYTHON_SCRIPTS}
+    else
+        echo "Skipping pydocstyle tests, pydocstyle $pydocstyle_version is too old"
+    fi
+else
+    echo "Skipping pydocstyle tests, pydocstyle is not installed"
+fi
+
 # pyflakes3, if available
 if type pyflakes3 >/dev/null 2>&1; then
     echo "Running pyflakes3..."
