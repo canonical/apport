@@ -7,349 +7,52 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-17 09:15-0700\n"
+"POT-Creation-Date: 2022-08-19 15:17+0200\n"
 "PO-Revision-Date: 2020-04-03 16:38+0000\n"
 "Last-Translator: Úr Balázs <balazs@urbalazs.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2021-12-17 06:28+0000\n"
 "X-Generator: Launchpad (build 187c285fd6c80b9f090ec17915d0449a4afcade5)\n"
-"Language: hu\n"
 
-#: ../kde/apport-kde.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
-#: ../gtk/apport-gtk.desktop.in.h:1
-msgid "Report a problem..."
-msgstr "Hiba jelentése…"
+#: ../apport/com.ubuntu.apport.policy.in.h:1
+msgid "Collect system information"
+msgstr "Rendszer-információk összegyűjtése"
 
-#: ../kde/apport-kde.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
-#: ../gtk/apport-gtk.desktop.in.h:2
-msgid "Report a malfunction to the developers"
-msgstr "Hibás működés jelentése a fejlesztőknek"
-
-#: ../bin/apport-cli.py:166 ../gtk/apport-gtk.py:146
-#: ../debian/tmp/usr/share/apport/apport-kde.py:363
-#: ../debian/tmp/usr/bin/apport-cli.py:166 ../kde/apport-kde.py:363
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:146
-msgid "(binary data)"
-msgstr "(bináris adatok)"
-
-#: ../gtk/apport-gtk.py:161 ../debian/tmp/usr/share/apport/apport-gtk.py:161
-#, python-format
-msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr "Elnézést, a(z) %s alkalmazás váratlanul leállt."
-
-#: ../gtk/apport-gtk.py:164 ../debian/tmp/usr/share/apport/apport-gtk.py:164
-#, python-format
-msgid "Sorry, %s has closed unexpectedly."
-msgstr "Elnézést, a(z) %s váratlanul befejeződött."
-
-#: ../gtk/apport-gtk.py:169 ../debian/tmp/usr/share/apport/apport-kde.py:200
-#: ../debian/tmp/usr/share/apport/apport-kde.py:238 ../kde/apport-kde.py:200
-#: ../kde/apport-kde.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:169
-#, python-format
-msgid "Sorry, %s has experienced an internal error."
-msgstr "Elnézést, a(z) %s belső hibát észlelt."
-
-#: ../gtk/apport-gtk.ui.h:6 ../bin/apport-cli.py:194 ../gtk/apport-gtk.py:181
-#: ../debian/tmp/usr/share/apport/apport-kde.py:186
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
-#: ../debian/tmp/usr/bin/apport-cli.py:194 ../kde/apport-kde.py:186
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:181
-msgid "Send problem report to the developers?"
-msgstr "Elküldi a hibajelentést a feljesztőknek?"
-
-#: ../gtk/apport-gtk.ui.h:14 ../gtk/apport-gtk.py:188
-#: ../debian/tmp/usr/share/apport/apport-kde.py:194
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14 ../kde/apport-kde.py:194
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:188
-msgid "Send"
-msgstr "Küldés"
-
-#: ../gtk/apport-gtk.ui.h:11 ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:575
-#: ../debian/tmp/usr/share/apport/apport-kde.py:292
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../kde/apport-kde.py:292
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:204
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:575
-msgid "Show Details"
-msgstr "Részletek megjelenítése"
-
-#: ../gtk/apport-gtk.py:216 ../debian/tmp/usr/share/apport/apport-kde.py:231
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../kde/apport-kde.py:231
-#: ../kde/apport-kde.py:244 ../debian/tmp/usr/share/apport/apport-gtk.py:216
-msgid "Continue"
-msgstr "Folytatás"
-
-#: ../gtk/apport-gtk.py:239 ../debian/tmp/usr/share/apport/apport-gtk.py:239
-#, python-format
-msgid "The application %s has stopped responding."
-msgstr "A(z) %s alkalmazás nem válaszol."
-
-#: ../gtk/apport-gtk.py:243 ../debian/tmp/usr/share/apport/apport-gtk.py:243
-#, python-format
-msgid "The program \"%s\" has stopped responding."
-msgstr "A(z) „%s” program nem válaszol."
-
-#: ../gtk/apport-gtk.py:259 ../debian/tmp/usr/share/apport/apport-kde.py:208
-#: ../kde/apport-kde.py:208 ../debian/tmp/usr/share/apport/apport-gtk.py:259
-#, python-format
-msgid "Package: %s"
-msgstr "Csomag: %s"
-
-#: ../gtk/apport-gtk.py:265 ../debian/tmp/usr/share/apport/apport-kde.py:214
-#: ../kde/apport-kde.py:214 ../debian/tmp/usr/share/apport/apport-gtk.py:265
-msgid "Sorry, a problem occurred while installing software."
-msgstr "Elnézést, hiba történt a szoftvertelepítés alatt."
-
-#: ../gtk/apport-gtk.py:274 ../gtk/apport-gtk.py:289
-#: ../debian/tmp/usr/share/apport/apport-kde.py:220 ../kde/apport-kde.py:220
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:274
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:289
-#, python-format
-msgid "The application %s has experienced an internal error."
-msgstr "A(z) %s alkalmazás belső hibát észlelt."
-
-#: ../gtk/apport-gtk.py:277 ../debian/tmp/usr/share/apport/apport-kde.py:223
-#: ../kde/apport-kde.py:223 ../debian/tmp/usr/share/apport/apport-gtk.py:277
-#, python-format
-msgid "The application %s has closed unexpectedly."
-msgstr "A(z) %s alkalmazás váratlanul befejeződött."
-
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:297
-#: ../debian/tmp/usr/share/apport/apport-kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7 ../kde/apport-kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:297
-msgid "If you notice further problems, try restarting the computer."
-msgstr ""
-"Ha további problémákat észlel, próbálja meg újraindítani a számítógépet."
-
-#: ../gtk/apport-gtk.py:299 ../debian/tmp/usr/share/apport/apport-kde.py:245
-#: ../kde/apport-kde.py:245 ../debian/tmp/usr/share/apport/apport-gtk.py:299
-msgid "Ignore future problems of this type"
-msgstr "Ilyen típusú problémák figyelmen kívül hagyása a jövőben"
-
-#: ../gtk/apport-gtk.py:579 ../debian/tmp/usr/share/apport/apport-kde.py:289
-#: ../kde/apport-kde.py:289 ../debian/tmp/usr/share/apport/apport-gtk.py:579
-msgid "Hide Details"
-msgstr "Részletek elrejtése"
-
-#: ../bin/apport-retrace.py:34 ../debian/tmp/usr/bin/apport-retrace.py:34
-msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
-"Ne tegye be az új nyomkövetéseket a jelentésbe, hanem írja ki a szabványos "
-"kimenetre."
-
-#: ../bin/apport-retrace.py:36 ../debian/tmp/usr/bin/apport-retrace.py:36
+#: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
-"Start an interactive gdb session with the report's core dump (-o ignored; "
-"does not rewrite report)"
+"Authentication is required to collect system information for this problem "
+"report"
 msgstr ""
-"Interaktív gdb munkamenet indítása a jelentés memóriakiíratásával (a -o "
-"figyelmen kívül marad, nem írja újra a jelentést)"
+"A hibajelentéshez szükséges rendszer-információk összegyűjtéséhez "
+"hitelesítés szükséges."
 
-#: ../bin/apport-retrace.py:38 ../debian/tmp/usr/bin/apport-retrace.py:38
-msgid ""
-"Write modified report to given file instead of changing the original report"
-msgstr ""
-"Módosított jelentés írása a megadott fájlba az eredeti jelentés módosítása "
-"helyett"
+#: ../apport/com.ubuntu.apport.policy.in.h:3
+msgid "System problem reports"
+msgstr "Rendszerhiba-jelentések"
 
-#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
-msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
-"A veremkiíratás ismételt előállítása után a memóriakiíratás eltávolítása a "
-"jelentésből"
+#: ../apport/com.ubuntu.apport.policy.in.h:4
+msgid "Please enter your password to access problem reports of system programs"
+msgstr "Adja meg jelszavát a rendszerprogramok hibáinak eléréséhez"
 
-#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
-msgid "Override report's CoreFile"
-msgstr "A jelentés CoreFile-jának felülbírálása"
-
-#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
-msgid "Override report's ExecutablePath"
-msgstr "A jelentés ExecutablePath-jának felülbírálása"
-
-#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
-msgid "Override report's ProcMaps"
-msgstr "A jelentés ProcMaps-jának felülbírálása"
-
-#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
-msgid "Rebuild report's Package information"
-msgstr "A jelentés csomaginformációinak újjáépítése"
-
-#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
-msgid ""
-"Build a temporary sandbox and download/install the necessary packages and "
-"debug symbols in there; without this option it assumes that the necessary "
-"packages and debug symbols are already installed in the system. The argument "
-"points to the packaging system configuration base directory; if you specify "
-"\"system\", it will use the system configuration files, but will then only "
-"be able to retrace crashes that happened on the currently running release."
-msgstr ""
-"Ideiglenes homokozó létrehozása, majd ebbe a szükséges csomagok, "
-"hibakeresési szimbólumok letöltése/telepítése; enélkül feltételezi, hogy a "
-"szükséges csomagok és hibakeresési szimbólumok már telepítve lettek. Az "
-"argumentum a csomagkezelő rendszer konfigurációs alapkönyvtárára mutat; a "
-"„system” esetén a rendszer konfigurációs fájljait használja, de ekkor csak "
-"az aktuálisan futó kiadás összeomlásait lesz képes nyomon követni."
-
-#: ../bin/apport-retrace.py:53 ../debian/tmp/usr/bin/apport-retrace.py:53
-msgid ""
-"Build another temporary sandbox for installing gdb and its dependencies "
-"using the same release as the report rather than whatever version of gdb you "
-"have installed."
-msgstr ""
-"Állítson össze egy másik, a jelentéssel megegyező kiadást használó átmeneti "
-"homokozót a gdb és függőségei telepítéséhez az Ön által telepített "
-"valamilyen gdb verzió helyett."
-
-#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
-msgid ""
-"Report download/install progress when installing packages into sandbox"
-msgstr ""
-"Homokozóba történő telepítéskor a letöltés/telepítési folyamat kijelzése"
-
-#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
-msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "Helyezzen időbélyegeket a naplóüzenetek elé, a kötegelt működéshez"
-
-#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-retrace.py:59
-msgid ""
-"Create and use third-party repositories from origins specified in reports"
-msgstr ""
-"Külső tárolók létrehozása és használata a jelentésekben megadott forrásokból"
-
-#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
-msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "Homokozóba letöltött csomagok gyorsítókönyvtára"
-
-#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-retrace.py:63
-msgid ""
-"Directory for unpacked packages. Future runs will assume that any already "
-"downloaded package is also extracted to this sandbox."
-msgstr ""
-"Kicsomagolt csomagok könyvtára. A jövőbeli futások feltételezik, hogy a már "
-"kicsomagolt csomagok ugyanebbe a homokozóba lesznek kicsomagolva."
-
-#: ../bin/apport-retrace.py:65 ../debian/tmp/usr/bin/apport-valgrind.py:66
-#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-valgrind.py:66
-msgid ""
-"Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "Extra csomag homokozóba telepítése (többször is megadható)"
-
-#: ../bin/apport-retrace.py:67 ../debian/tmp/usr/bin/apport-retrace.py:67
-msgid ""
-"Path to a file with the crash database authentication information. This is "
-"used when specifying a crash ID to upload the retraced stack traces (only if "
-"neither -g, -o, nor -s are specified)"
-msgstr ""
-"Az összeomlási adatbázis hitelesítési információit tartalmazó fájl útvonala. "
-"Ez összeomlási azonosító megadásakor használatos az ismételten nyomon "
-"követett veremkiíratások feltöltésekor (ha a -g, -o és -s egyike sincs "
-"megadva)"
-
-#: ../bin/apport-retrace.py:69 ../debian/tmp/usr/bin/apport-retrace.py:69
-msgid ""
-"Display retraced stack traces and ask for confirmation before sending them "
-"to the crash database."
-msgstr ""
-"Ismételten nyomon követett veremkiíratások megjelenítése, és megerősítés "
-"kérése a beküldés előtt az összeomlási adatbázisba."
-
-#: ../bin/apport-retrace.py:71 ../debian/tmp/usr/bin/apport-retrace.py:71
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
-"Útvonal a kettőzött sqlite adatbázishoz (alapértelmezett: nincs ellenőrzés)"
-
-#: ../bin/apport-retrace.py:73 ../debian/tmp/usr/bin/apport-retrace.py:73
-msgid "Do not add StacktraceSource to the report."
-msgstr "Ne adja hozzá a veremkövetés forrását a jelentéshez."
-
-#: ../bin/apport-retrace.py:82 ../debian/tmp/usr/bin/apport-retrace.py:82
-msgid "You cannot use -C without -S. Stopping."
-msgstr "Nem használhatja a -C kapcsolót az -S kapcsoló nélkül. Leállítás."
-
-#. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:115 ../debian/tmp/usr/bin/apport-retrace.py:115
-msgid "OK to send these as attachments? [y/n]"
-msgstr "Elküldhetők ezek mellékletként? [y/n]"
-
-#: ../kde/apport-kde-mimelnk.desktop.in.h:1
-msgid "Apport crash file"
-msgstr "Apport jelentésfájl"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:37 ../bin/apport-valgrind.py:37
-msgid "See man page for details."
-msgstr "Részletekért lásd a man oldalt."
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:43 ../bin/apport-valgrind.py:43
-msgid "specify the log file name produced by valgrind"
-msgstr "Adja meg a Valgrind naplófájl nevét"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:46 ../bin/apport-valgrind.py:46
-msgid ""
-"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
-"create it"
-msgstr ""
-"Korábban létrehozott sandbox mappa (SDIR) újra felhasználása, vagy ha nem "
-"létezik, létrehozása"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:50 ../bin/apport-valgrind.py:50
-msgid ""
-"do  not  create  or reuse a sandbox directory for additional debug symbols "
-"but rely only on installed debug symbols."
-msgstr ""
-"Ne hozzon létre vagy használjon fel újra homokozó mappát további "
-"hibakeresési szimbólumokhoz, csak a telepített hibakeresési szimbólumokat "
-"használja."
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:54 ../bin/apport-valgrind.py:54
-msgid ""
-"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
-"it"
-msgstr ""
-"Korábban létrehozott gyorsítókönyvtár (CDIR) újra felhasználása, vagy ha nem "
-"létezik, létrehozása"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
-msgstr ""
-"Letöltési/telepítési folyamat jelentése csomagok telepítésekor a homokozóba"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
-msgid ""
-"the executable that is run under valgrind's memcheck tool  for memory leak "
-"detection"
-msgstr "A végrehajtható, amelynek a memóriaszivárgását figyeli a Valgrind"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
-#, python-format
-msgid "Error: %s is not an executable. Stopping."
-msgstr "Hiba: a(z) %s nem végrehajtható. Leállítás."
-
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:139
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:139
-#: ../apport/ui.py:139
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:139
+#: ../apport/ui.py:164
 msgid "This package does not seem to be installed correctly"
 msgstr "Úgy tűnik, ez a csomag nincs megfelelően telepítve"
 
-#: ../apport/ui.py:144
-#: ../debian/tmp/usr/lib/python3.8/dist-packages/apport/ui.py:144
-#, python-format
+#: ../apport/ui.py:174
+#, fuzzy, python-format
 msgid ""
-"This is not an official %s package. Please remove any third party package "
-"and try again."
+"This does not seem to be an official %s package. Please retry after updating "
+"the indexes of available packages, if that does not work then remove related "
+"third party packages and try again."
 msgstr ""
 "Ez nem egy hivatalos %s csomag. Távolítson el minden harmadik féltől "
 "származó csomagot és próbálja újra."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:166
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:166
-#: ../apport/ui.py:166
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:166
+#: ../apport/ui.py:204
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -362,36 +65,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:303
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:303
-#: ../apport/ui.py:303
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:303
+#: ../apport/ui.py:358
 msgid "unknown program"
 msgstr "ismeretlen program"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:304
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:304
-#: ../apport/ui.py:304
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:304
+#: ../apport/ui.py:361
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Elnézést, a(z) „%s” program váratlanul összeomlott."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:306
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1459
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:306
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1459
-#: ../apport/ui.py:306 ../apport/ui.py:1459
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:306
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1459
+#: ../apport/ui.py:364 ../apport/ui.py:1898
 #, python-format
 msgid "Problem in %s"
 msgstr "Probléma a következőben: %s"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:307
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:307
-#: ../apport/ui.py:307
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:307
+#: ../apport/ui.py:369
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -399,116 +87,68 @@ msgstr ""
 "A számítógépe nem rendelkezik elegendő szabad memóriával a probléma "
 "automatikus elemzéséhez és a jelentés elküldéséhez a fejlesztőknek."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:362
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:370
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:519
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:522
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:727
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1264
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1431
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1435
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:362
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:370
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:519
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:522
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:727
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1264
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1431
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1435
-#: ../apport/ui.py:362 ../apport/ui.py:370 ../apport/ui.py:519
-#: ../apport/ui.py:522 ../apport/ui.py:727 ../apport/ui.py:1264
-#: ../apport/ui.py:1431 ../apport/ui.py:1435
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:362
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:370
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:519
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:522
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:727
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1264
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1431
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1435
+#: ../apport/ui.py:429 ../apport/ui.py:447 ../apport/ui.py:620
+#: ../apport/ui.py:629 ../apport/ui.py:866 ../apport/ui.py:1676
+#: ../apport/ui.py:1859 ../apport/ui.py:1864
 msgid "Invalid problem report"
 msgstr "Érvénytelen hibajelentés"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:363
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:363
-#: ../apport/ui.py:363
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:363
+#: ../apport/ui.py:430
 msgid "You are not allowed to access this problem report."
 msgstr "A hibajelentés elérése nem engedélyezett"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:366
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:366
-#: ../apport/ui.py:366
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:366
+#: ../apport/ui.py:438
 msgid "Error"
 msgstr "Hiba"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:367
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:367
-#: ../apport/ui.py:367
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:367
+#: ../apport/ui.py:440
 msgid "There is not enough disk space available to process this report."
 msgstr "Nincs elegendő lemezterület a hiba feldolgozásához."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:411
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:500
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:411
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:500
-#: ../apport/ui.py:411 ../apport/ui.py:500
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:411
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:500
+#: ../apport/ui.py:478
+#, fuzzy
+msgid "No PID specified"
+msgstr "Nincs megadva csomag"
+
+#: ../apport/ui.py:480
+#, fuzzy
+msgid "You need to specify a PID. See --help for more information."
+msgstr ""
+"Meg kell adnia egy csomagot vagy PID azonosítót. További információkért "
+"tekintse meg a --help kapcsoló kimenetét."
+
+#: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
 msgstr "Érvénytelen PID"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:412
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:412
-#: ../apport/ui.py:412
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:412
+#: ../apport/ui.py:492
 msgid "The specified process ID does not exist."
 msgstr "A megadott folyamatazonosító nem létezik."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:415
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:415
-#: ../apport/ui.py:415
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:415
+#: ../apport/ui.py:497
 msgid "Not your PID"
 msgstr "Nem az Ön folyamatazonosítója"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:416
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:416
-#: ../apport/ui.py:416
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:416
+#: ../apport/ui.py:498
 msgid "The specified process ID does not belong to you."
 msgstr "A megadott folyamatazonosító nem Önhöz tartozik."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:467
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:467
-#: ../apport/ui.py:467
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:467
+#: ../apport/ui.py:553
 msgid "No package specified"
 msgstr "Nincs megadva csomag"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:468
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:468
-#: ../apport/ui.py:468
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:468
+#: ../apport/ui.py:555
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Meg kell adnia egy csomagot vagy PID azonosítót. További információkért "
 "tekintse meg a --help kapcsoló kimenetét."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:497
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:497
-#: ../apport/ui.py:497
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:497
+#: ../apport/ui.py:583
 msgid "Permission denied"
 msgstr "Hozzáférés megtagadva"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:498
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:498
-#: ../apport/ui.py:498
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:498
+#: ../apport/ui.py:585
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -516,59 +156,30 @@ msgstr ""
 "A megadott folyamat nem Önhöz tartozik. Ezt a programot a folyamat "
 "tulajdonosaként vagy rendszergazdaként futtassa."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:501
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:501
-#: ../apport/ui.py:501
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:501
+#: ../apport/ui.py:598
 msgid "The specified process ID does not belong to a program."
 msgstr "A megadott PID nem programhoz tartozik."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:520
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:520
-#: ../apport/ui.py:520
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:520
+#: ../apport/ui.py:622
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "A(z) %s tünetparancsfájl nem határozott meg érintett csomagot"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:523
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:523
-#: ../apport/ui.py:523
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:523
+#: ../apport/ui.py:630
 #, python-format
 msgid "Package %s does not exist"
 msgstr "A(z) %s csomag nem létezik"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:552
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:739
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:744
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:552
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:739
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:744
-#: ../apport/ui.py:552 ../apport/ui.py:739 ../apport/ui.py:744
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:552
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:739
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:744
+#: ../apport/ui.py:659 ../apport/ui.py:871 ../apport/ui.py:904
+#: ../apport/ui.py:914
 msgid "Cannot create report"
 msgstr "Nem készíthető jelentés"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:567
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:613
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:629
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:567
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:613
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:629
-#: ../apport/ui.py:567 ../apport/ui.py:613 ../apport/ui.py:629
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:567
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:613
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:629
+#: ../apport/ui.py:674 ../apport/ui.py:733 ../apport/ui.py:751
 msgid "Updating problem report"
 msgstr "Hibajelentés frissítése"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:568
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:568
-#: ../apport/ui.py:568
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:568
+#: ../apport/ui.py:676
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -580,10 +191,7 @@ msgstr ""
 "\n"
 "Készítsen új jelentést az „apport-bug” használatával."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:577
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:577
-#: ../apport/ui.py:577
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:577
+#: ../apport/ui.py:688
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -604,42 +212,35 @@ msgstr ""
 "\n"
 "Biztosan folytatja?"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:614
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:630
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:614
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:630
-#: ../apport/ui.py:614 ../apport/ui.py:630
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:614
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:630
+#: ../apport/ui.py:734 ../apport/ui.py:752
 msgid "No additional information collected."
 msgstr "Nem került gyűjtésre további információ."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:681
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:681
-#: ../apport/ui.py:681
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:681
+#: ../apport/ui.py:815
 msgid "What kind of problem do you want to report?"
 msgstr "Milyen problémát kíván jelenteni?"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:698
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:698
-#: ../apport/ui.py:698
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:698
+#: ../apport/ui.py:836
 msgid "Unknown symptom"
 msgstr "Ismeretlen tünet"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:699
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:699
-#: ../apport/ui.py:699
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:699
+#: ../apport/ui.py:837
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "A(z) „%s” tünet ismeretlen."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:730
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:730
-#: ../apport/ui.py:730
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:730
+#: ../apport/ui.py:873
+msgid ""
+"The window option cannot be used on Wayland.\n"
+"\n"
+"Please find the window's process ID and then run 'ubuntu-bug <process ID>'.\n"
+"\n"
+"The process ID can be found by running the System Monitor application. In "
+"the Processes tab, scroll until you find the correct application. The "
+"process ID is the number listed in the ID column."
+msgstr ""
+
+#: ../apport/ui.py:889
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -647,53 +248,31 @@ msgstr ""
 "Ezen üzenet bezárása után kattintson egy alkalmazásablakra az azzal "
 "kapcsolatos hiba jelentéséhez."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:740
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:745
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:740
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:745
-#: ../apport/ui.py:740 ../apport/ui.py:745
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:740
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:745
+#: ../apport/ui.py:906 ../apport/ui.py:915
 msgid "xprop failed to determine process ID of the window"
 msgstr "Az xprop nem tudta meghatározni az ablak folyamatazonosítóját"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:759
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:759
-#: ../apport/ui.py:759
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:759
-msgid "%prog <report number>"
+#: ../apport/ui.py:930
+#, fuzzy, python-format
+msgid "%(prog)s <report number>"
 msgstr "%prog <jelentésszám>"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:761
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:761
-#: ../apport/ui.py:761
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:761
+#: ../apport/ui.py:931
 msgid "Specify package name."
 msgstr "Adja meg a csomagnevet."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:763
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:815
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:763
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:815
-#: ../apport/ui.py:763 ../apport/ui.py:815
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:763
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:815
+#: ../apport/ui.py:937 ../apport/ui.py:1069
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Extra címke hozzáadása a jelentéshez. Többször is megadható."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:794
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:794
-#: ../apport/ui.py:794
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:794
+#: ../apport/ui.py:975
+#, fuzzy, python-format
 msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [kapcsolók] [tünet|pid|csomag|program elérési_út|.apport/.crash fájl]"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:797
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:797
-#: ../apport/ui.py:797
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:797
+#: ../apport/ui.py:986
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -703,25 +282,16 @@ msgstr ""
 "egy --pid kapcsolót igényel. Ha egyik sincs megadva, az ismert tünetek "
 "listáját jeleníti meg. (Egy paraméter megadása is ezt jelenti.)"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:799
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:799
-#: ../apport/ui.py:799
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:799
+#: ../apport/ui.py:995
 msgid "Click a window as a target for filing a problem report."
 msgstr "Kattintson egy ablakra az azzal kapcsolatos hiba jelentéséhez."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:801
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:801
-#: ../apport/ui.py:801
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:801
+#: ../apport/ui.py:1004
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Indítás hibafrissítés módban. Opcionálisan használható a --package kapcsoló."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:803
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:803
-#: ../apport/ui.py:803
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:803
+#: ../apport/ui.py:1013
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -729,10 +299,7 @@ msgstr ""
 "Hiba bejelentése egy tünetről. (Ha az egyetlen paraméter tünetnév, az is ezt "
 "jelenti.)"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:805
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:805
-#: ../apport/ui.py:805
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:805
+#: ../apport/ui.py:1022
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -740,10 +307,7 @@ msgstr ""
 "Csomagnév megadása --file-bug módban. Ez elhagyható, ha a --pid meg van "
 "adva. (Ha az egyetlen paraméter egy csomagnév, az is ezt jelenti.)"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:807
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:807
-#: ../apport/ui.py:807
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:807
+#: ../apport/ui.py:1033
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -752,17 +316,11 @@ msgstr ""
 "Futó program megadása --file-bug módban. Ha ez meg van adva, a hibajelentés "
 "több információt fog tartalmazni."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:809
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:809
-#: ../apport/ui.py:809
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:809
+#: ../apport/ui.py:1041
 msgid "The provided pid is a hanging application."
 msgstr "A megadott PID egy nem válaszoló alkalmazásra mutat."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:811
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:811
-#: ../apport/ui.py:811
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:811
+#: ../apport/ui.py:1049
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -772,10 +330,7 @@ msgstr ""
 "függőben lévők helyet. (Ha az egyetlen paraméter egy fájl, az is ezt "
 "jelenti.)"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:813
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:813
-#: ../apport/ui.py:813
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:813
+#: ../apport/ui.py:1059
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -784,80 +339,50 @@ msgstr ""
 "Hibajelentő módban az összegyűjtött információk mentése fájlba a bejelentés "
 "helyett. Ez a fájl később másik gépről beküldhető."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:817
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:817
-#: ../apport/ui.py:817
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:817
+#: ../apport/ui.py:1077
 msgid "Print the Apport version number."
 msgstr "Az Apport verziószámának megjelenítése."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:968
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:968
-#: ../apport/ui.py:968
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:968
+#: ../apport/ui.py:1239
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Ez meg fogja nyitni az apport-retrace-t egy terminálban, hogy az "
 "megvizsgálja az összeomlást."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:969
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:969
-#: ../apport/ui.py:969
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:969
+#: ../apport/ui.py:1243
 msgid "Run gdb session"
 msgstr "gdb folyamat futtatása"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:970
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:970
-#: ../apport/ui.py:970
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:970
+#: ../apport/ui.py:1244
 msgid "Run gdb session without downloading debug symbols"
 msgstr "gdb folyamat futtatása a hibakeresési szimbólumok letöltése nélkül"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:972
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:972
-#: ../apport/ui.py:972
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:972
+#: ../apport/ui.py:1246
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "%s frissítése teljes szimbolikus veremkiíratással"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1008
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1008
-#: ../apport/ui.py:1008
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1008
+#: ../apport/ui.py:1308
 msgid "Can't remember send report status settings"
 msgstr "Nem lehet megjegyezni a jelentés küldése állapot beállításait"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1009
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1009
-#: ../apport/ui.py:1009
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1009
+#: ../apport/ui.py:1312
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 "Az összeomlási jelentés állapotának mentése sikertelen. Nem lehet beállítani "
 "az automatikus vagy sohasem jelentési módot."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1068
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1078
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1068
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1078
-#: ../apport/ui.py:1068 ../apport/ui.py:1078
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1068
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1078
+#: ../apport/ui.py:1395 ../apport/ui.py:1408
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Ez a problémajelentés egy olyan programra vonatkozik, amely már nincs "
 "telepítve."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1093
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1093
-#: ../apport/ui.py:1093
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1093
+#: ../apport/ui.py:1432
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -865,148 +390,86 @@ msgid ""
 msgstr ""
 "A hiba a(z) „%s” programmal lépett fel, amely megváltozott az összeomlás óta."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1140
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1221
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1437
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1140
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1221
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1437
-#: ../apport/ui.py:1140 ../apport/ui.py:1221 ../apport/ui.py:1437
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1140
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1221
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1437
+#: ../apport/ui.py:1493 ../apport/ui.py:1617 ../apport/ui.py:1868
 msgid "This problem report is damaged and cannot be processed."
 msgstr "A hibajelentés megsérült és nem dolgozható fel."
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1130
-#: ../apport/ui.py:1130
-#, python-format
+#: ../apport/ui.py:1502
+msgid "This report is about a package that is not installed."
+msgstr "Ez a jelentés egy nem telepített csomagról szól."
+
+#: ../apport/ui.py:1510
+msgid "An error occurred while attempting to process this problem report:"
+msgstr "Hiba történt a következő hibabejelentés feldolgozása közben:"
+
+#: ../apport/ui.py:1527
 msgid ""
-"This report is about a snap published by %s. Contact them via %s for help."
+"You have two versions of this application installed, which one do you want "
+"to report a bug against?"
+msgstr ""
+
+#: ../apport/ui.py:1532
+#, python-format
+msgid "%s snap"
+msgstr ""
+
+#: ../apport/ui.py:1533
+#, python-format
+msgid "%s deb package"
+msgstr ""
+
+#: ../apport/ui.py:1574
+#, fuzzy, python-format
+msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 "Ez a jelentés egy %s által közzétett snap csomagról szól. A segítségért "
 "lépjen velük kapcsolatba a(z) %s használatával."
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1133
-#: ../apport/ui.py:1133
-#, python-format
+#: ../apport/ui.py:1579
+#, fuzzy, python-format
 msgid ""
-"This report is about a snap published by %s. No contact address has been "
+"%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 "Ez a jelentés egy %s által közzétett snap csomagról szól. Nem lett "
-"kapcsolatfelvételi cím megadva. A segítségért látogassa meg a "
-"https://forum.snapcraft.io/ címen elérhető fórumot."
+"kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://forum."
+"snapcraft.io/ címen elérhető fórumot."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1145
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1145
-#: ../apport/ui.py:1145
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1145
-msgid "This report is about a package that is not installed."
-msgstr "Ez a jelentés egy nem telepített csomagról szól."
-
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1149
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1149
-#: ../apport/ui.py:1149
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1149
-msgid "An error occurred while attempting to process this problem report:"
-msgstr "Hiba történt a következő hibabejelentés feldolgozása közben:"
-
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1148
-#: ../apport/ui.py:1148
-#, python-format
-msgid ""
-"You are about to report a bug against the deb package, but you also a have "
-"snap published by %s installed. You can contact them via %s for help. Do you "
-"want to continue with the bug report against the deb?"
-msgstr ""
-"Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
-"közzétett snap csomagot is telepítette. A segítségért kapcsolatba léphet "
-"velük a(z) %s használatával. Szeretné folytatni a deb csomaggal kapcsolatos "
-"hibajelentést?"
-
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1150
-#: ../apport/ui.py:1150
-#, python-format
-msgid ""
-"You are about to report a bug against the deb package, but you also a have "
-"snap published by %s installed. For the snap, no contact address has been "
-"provided; visit the forum at https://forum.snapcraft.io/ for help. Do you "
-"want to continue with the bug report against the deb?"
-msgstr ""
-"Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
-"közzétett snap csomagot is telepítette. A snap csomaghoz nem lett "
-"kapcsolatfelvételi cím megadva. A segítségért látogassa meg a "
-"https://forum.snapcraft.io/ címen elérhető fórumot. Szeretné folytatni a deb "
-"csomaggal kapcsolatos hibajelentést?"
-
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1265
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1265
-#: ../apport/ui.py:1265
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1265
+#: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
 msgstr "A csomag vagy forrás neve nem állapítható meg."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1283
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1283
-#: ../apport/ui.py:1283
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1283
+#: ../apport/ui.py:1703
 msgid "Unable to start web browser"
 msgstr "A webböngésző nem indítható."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1284
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1284
-#: ../apport/ui.py:1284
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1284
+#: ../apport/ui.py:1704
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "A(z) „%s” megnyitásához nem lehet elindítani a webböngészőt."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1385
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1385
-#: ../apport/ui.py:1385
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1385
-#, python-format
-msgid "Please enter your account information for the %s bug tracking system"
-msgstr "Adja meg fiókadatait a(z) %s hibakövető rendszerhez"
-
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1397
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1397
-#: ../apport/ui.py:1397
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1397
+#: ../apport/ui.py:1814
 msgid "Network problem"
 msgstr "Hálózati probléma"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1399
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1399
-#: ../apport/ui.py:1399
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1399
+#: ../apport/ui.py:1818
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nem lehet kapcsolódni az összeomlás-adatbázishoz, ellenőrizze az "
 "internetkapcsolatát."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1426
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1426
-#: ../apport/ui.py:1426
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1426
+#: ../apport/ui.py:1850
 msgid "Memory exhaustion"
 msgstr "Elfogyott a memória"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1427
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1427
-#: ../apport/ui.py:1427
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1427
+#: ../apport/ui.py:1852
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "A rendszere nem rendelkezik elegendő memóriával ezen összeomlásjelentés "
 "feldolgozásához."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1462
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1462
-#: ../apport/ui.py:1462
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1462
+#: ../apport/ui.py:1903
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -1017,20 +480,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1518
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1525
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1518
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1525
-#: ../apport/ui.py:1518 ../apport/ui.py:1525
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1518
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1525
+#: ../apport/ui.py:1959 ../apport/ui.py:1971
 msgid "Problem already known"
 msgstr "A probléma már ismert."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1519
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1519
-#: ../apport/ui.py:1519
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1519
+#: ../apport/ui.py:1961
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -1040,142 +494,38 @@ msgstr ""
 "hibajelentés. Ellenőrizze, hogy tud-e további információkkal szolgálni, "
 "amelyek hasznosak lehetnek a fejlesztők számára."
 
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1526
-#: ../debian/tmp/usr/lib/python3.9/dist-packages/apport/ui.py:1526
-#: ../apport/ui.py:1526
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1526
+#: ../apport/ui.py:1973
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Ez a probléma már jelentve volt a fejlesztőknek. Köszönjük!"
 
-#: ../gtk/apport-gtk.ui.h:1 ../debian/tmp/usr/share/apport/apport-kde.py:469
-#: ../debian/tmp/usr/share/apport/apport-kde.py:504
-#: ../debian/tmp/usr/share/apport/apport-kde.py:524
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:469
-#: ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
-msgid "Apport"
-msgstr "Apport"
-
-#: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
-msgid "Cancel"
-msgstr "Mégse"
-
-#: ../gtk/apport-gtk.ui.h:3 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3
-msgid "OK"
-msgstr "Ok"
-
-#: ../gtk/apport-gtk.ui.h:4 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
-msgid "Crash report"
-msgstr "Összeomlás-jelentés"
-
-#: ../gtk/apport-gtk.ui.h:5 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5
-msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr "<big><b>Elnézést, belső hiba történt.</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:8 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8
-msgid "Remember this in future"
-msgstr "Emlékezzen erre a jövőben"
-
-#: ../gtk/apport-gtk.ui.h:9 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
-msgid "Ignore future problems of this program version"
-msgstr "Ezen programverzió további problémáinak figyelmen kívül hagyása"
-
-#: ../gtk/apport-gtk.ui.h:10 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
-msgid "Relaunch this application"
-msgstr "Az alkalmazás újraindítása"
-
-#: ../gtk/apport-gtk.ui.h:12 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
-msgid "_Examine locally"
-msgstr "_Vizsgálat helyileg"
-
-#: ../gtk/apport-gtk.ui.h:13 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-msgid "Don't send"
-msgstr "Ne küldje el"
-
-#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
-msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Információgyűjtés a problémáról</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:16 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16
-msgid ""
-"Information is being collected that may help the developers fix the problem "
-"you report."
-msgstr ""
-"Információk gyűjtése, amelyek segíthetik a fejlesztőket a jelentendő "
-"probléma megoldásában."
-
-#: ../gtk/apport-gtk.ui.h:17 ../bin/apport-cli.py:267
-#: ../debian/tmp/usr/share/apport/apport-kde.py:435
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
-#: ../debian/tmp/usr/bin/apport-cli.py:267 ../kde/apport-kde.py:435
-msgid "Uploading problem information"
-msgstr "A hibával kapcsolatos információk feltöltése"
-
-#: ../gtk/apport-gtk.ui.h:18 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:18
-msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>Hibainformációk feltöltése</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:19 ../debian/tmp/usr/share/apport/apport-kde.py:436
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:19 ../kde/apport-kde.py:436
-msgid ""
-"The collected information is being sent to the bug tracking system. This "
-"might take a few minutes."
-msgstr ""
-"Az összegyűjtött információk elküldésre kerülnek a hibakövető rendszerbe. Ez "
-"eltarthat néhány percig."
-
-#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
-msgid "Your system might become unstable now and might need to be restarted."
-msgstr "A rendszer instabillá válhatott, és szükség lehet az újraindítására."
-
-#: ../bin/apport-unpack.py:22 ../debian/tmp/usr/bin/apport-unpack.py:22
-#, python-format
-msgid "Usage: %s <report> <target directory>"
-msgstr "Használat: %s <jelentés> <célkönyvtár>"
-
-#: ../bin/apport-unpack.py:42 ../debian/tmp/usr/bin/apport-unpack.py:42
-msgid "Destination directory exists and is not empty."
-msgstr "A célkönyvtár létezik és nem üres."
-
-#: ../apport/com.ubuntu.apport.policy.in.h:1
-msgid "Collect system information"
-msgstr "Rendszer-információk összegyűjtése"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:2
-msgid ""
-"Authentication is required to collect system information for this problem "
-"report"
-msgstr ""
-"A hibajelentéshez szükséges rendszer-információk összegyűjtéséhez "
-"hitelesítés szükséges."
-
-#: ../apport/com.ubuntu.apport.policy.in.h:3
-msgid "System problem reports"
-msgstr "Rendszerhiba-jelentések"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
-msgstr "Adja meg jelszavát a rendszerprogramok hibáinak eléréséhez"
-
-#: ../bin/apport-cli.py:80 ../debian/tmp/usr/bin/apport-cli.py:80
+#: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
 msgstr "A folytatáshoz nyomjon le egy billentyűt…"
 
-#: ../bin/apport-cli.py:87 ../debian/tmp/usr/bin/apport-cli.py:87
+#: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
 msgstr "Mit szeretne tenni? A lehetőségek:"
 
-#: ../bin/apport-cli.py:100 ../debian/tmp/usr/bin/apport-cli.py:100
+#: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Válasszon (%s):"
 
-#: ../bin/apport-cli.py:164 ../debian/tmp/usr/bin/apport-cli.py:164
+#: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bájt)"
 
-#: ../bin/apport-cli.py:195 ../debian/tmp/usr/bin/apport-cli.py:195
+#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:168 ../kde/apport-kde.py:401
+msgid "(binary data)"
+msgstr "(bináris adatok)"
+
+#: ../bin/apport-cli.py:208 ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.ui.h:6
+#: ../kde/apport-kde.py:195
+msgid "Send problem report to the developers?"
+msgstr "Elküldi a hibajelentést a feljesztőknek?"
+
+#: ../bin/apport-cli.py:210
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -1183,57 +533,51 @@ msgstr ""
 "A hibajelentés elküldése után töltse ki a kérdőívet az\n"
 "automatikusan megnyíló webböngészőben."
 
-#: ../bin/apport-cli.py:198 ../debian/tmp/usr/bin/apport-cli.py:198
+#: ../bin/apport-cli.py:217
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Hibajelentés küldése (%s)"
 
-#: ../bin/apport-cli.py:202 ../debian/tmp/usr/bin/apport-cli.py:202
+#: ../bin/apport-cli.py:222
 msgid "&Examine locally"
 msgstr "&Vizsgálat helyileg"
 
-#: ../bin/apport-cli.py:206 ../debian/tmp/usr/bin/apport-cli.py:206
+#: ../bin/apport-cli.py:226
 msgid "&View report"
 msgstr "Hi&bajelentés megtekintése"
 
-#: ../bin/apport-cli.py:207 ../debian/tmp/usr/bin/apport-cli.py:207
+#: ../bin/apport-cli.py:229
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "Hibajelentés megtartása &későbbi küldésre, vagy más helyre másolásra"
 
-#: ../bin/apport-cli.py:208 ../debian/tmp/usr/bin/apport-cli.py:208
+#: ../bin/apport-cli.py:234
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
 "Mégse, és ezentúl a programverzió összeomlásainak figyelmen &kívül hagyása"
 
-#: ../bin/apport-cli.py:210 ../bin/apport-cli.py:287 ../bin/apport-cli.py:319
-#: ../bin/apport-cli.py:340 ../debian/tmp/usr/bin/apport-cli.py:210
-#: ../debian/tmp/usr/bin/apport-cli.py:287
-#: ../debian/tmp/usr/bin/apport-cli.py:319
-#: ../debian/tmp/usr/bin/apport-cli.py:340
+#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:331 ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:388
 msgid "&Cancel"
 msgstr "Mé&gse"
 
-#: ../bin/apport-cli.py:238 ../debian/tmp/usr/bin/apport-cli.py:238
+#: ../bin/apport-cli.py:272
 msgid "Problem report file:"
 msgstr "Hibajelentésfájl:"
 
-#: ../bin/apport-cli.py:244 ../bin/apport-cli.py:249
-#: ../debian/tmp/usr/bin/apport-cli.py:244
-#: ../debian/tmp/usr/bin/apport-cli.py:249
+#: ../bin/apport-cli.py:278 ../bin/apport-cli.py:283
 msgid "&Confirm"
 msgstr "Meg&erősítés"
 
-#: ../bin/apport-cli.py:248 ../debian/tmp/usr/bin/apport-cli.py:248
+#: ../bin/apport-cli.py:282
 #, python-format
 msgid "Error: %s"
 msgstr "Hiba: %s"
 
-#: ../bin/apport-cli.py:254 ../debian/tmp/usr/share/apport/apport-kde.py:407
-#: ../debian/tmp/usr/bin/apport-cli.py:254 ../kde/apport-kde.py:407
+#: ../bin/apport-cli.py:288 ../kde/apport-kde.py:456
 msgid "Collecting problem information"
 msgstr "Információgyűjtés a hibáról"
 
-#: ../bin/apport-cli.py:255 ../debian/tmp/usr/bin/apport-cli.py:255
+#: ../bin/apport-cli.py:290
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -1242,7 +586,11 @@ msgstr ""
 "javíthassanak\n"
 "az alkalmazáson. A küldés eltarthat pár percig."
 
-#: ../bin/apport-cli.py:268 ../debian/tmp/usr/bin/apport-cli.py:268
+#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:504
+msgid "Uploading problem information"
+msgstr "A hibával kapcsolatos információk feltöltése"
+
+#: ../bin/apport-cli.py:308
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1250,40 +598,40 @@ msgstr ""
 "Az összegyűjtött információk elküldése a hibakövető rendszernek.\n"
 "Ez eltarthat pár percig."
 
-#: ../bin/apport-cli.py:318 ../debian/tmp/usr/bin/apport-cli.py:318
+#: ../bin/apport-cli.py:364
 msgid "&Done"
 msgstr "&Kész"
 
-#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:324
+#: ../bin/apport-cli.py:370
 msgid "none"
 msgstr "nincs"
 
-#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
+#: ../bin/apport-cli.py:372
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Kiválasztva: %s. További lehetőségek:"
 
-#: ../bin/apport-cli.py:341 ../debian/tmp/usr/bin/apport-cli.py:341
+#: ../bin/apport-cli.py:389
 msgid "Choices:"
 msgstr "Lehetőségek:"
 
-#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
+#: ../bin/apport-cli.py:403
 msgid "Path to file (Enter to cancel):"
 msgstr "Fájl helye (kilépés enterrel):"
 
-#: ../bin/apport-cli.py:361 ../debian/tmp/usr/bin/apport-cli.py:361
+#: ../bin/apport-cli.py:409
 msgid "File does not exist."
 msgstr "A fájl nem létezik."
 
-#: ../bin/apport-cli.py:363 ../debian/tmp/usr/bin/apport-cli.py:363
+#: ../bin/apport-cli.py:411
 msgid "This is a directory."
 msgstr "Ez egy könyvtár."
 
-#: ../bin/apport-cli.py:369 ../debian/tmp/usr/bin/apport-cli.py:369
+#: ../bin/apport-cli.py:417
 msgid "To continue, you must visit the following URL:"
 msgstr "A folytatáshoz meg kell nyitnia a következő URL-címet:"
 
-#: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
+#: ../bin/apport-cli.py:420
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -1291,18 +639,223 @@ msgstr ""
 "Elindíthatja most a böngészőt, vagy átmásolhatja ezt az URL-címet egy másik "
 "számítógépen lévő böngészőbe."
 
-#: ../bin/apport-cli.py:373 ../debian/tmp/usr/bin/apport-cli.py:373
+#: ../bin/apport-cli.py:426
 msgid "Launch a browser now"
 msgstr "Böngésző indítása most"
 
-#: ../bin/apport-cli.py:388 ../debian/tmp/usr/bin/apport-cli.py:388
+#: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nincs függőben lévő összeomlás-jelentés. \r\n"
 "További információkért tekintse meg a --help kapcsoló kimenetét."
 
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:67
-#: ../data/apportcheckresume.py:67
+#: ../bin/apport-retrace.py:44
+msgid "Do not put the new traces into the report, but write them to stdout."
+msgstr ""
+"Ne tegye be az új nyomkövetéseket a jelentésbe, hanem írja ki a szabványos "
+"kimenetre."
+
+#: ../bin/apport-retrace.py:53
+msgid ""
+"Start an interactive gdb session with the report's core dump (-o ignored; "
+"does not rewrite report)"
+msgstr ""
+"Interaktív gdb munkamenet indítása a jelentés memóriakiíratásával (a -o "
+"figyelmen kívül marad, nem írja újra a jelentést)"
+
+#: ../bin/apport-retrace.py:62
+msgid ""
+"Write modified report to given file instead of changing the original report"
+msgstr ""
+"Módosított jelentés írása a megadott fájlba az eredeti jelentés módosítása "
+"helyett"
+
+#: ../bin/apport-retrace.py:72
+msgid "Remove the core dump from the report after stack trace regeneration"
+msgstr ""
+"A veremkiíratás ismételt előállítása után a memóriakiíratás eltávolítása a "
+"jelentésből"
+
+#: ../bin/apport-retrace.py:80
+msgid "Override report's CoreFile"
+msgstr "A jelentés CoreFile-jának felülbírálása"
+
+#: ../bin/apport-retrace.py:86
+msgid "Override report's ExecutablePath"
+msgstr "A jelentés ExecutablePath-jának felülbírálása"
+
+#: ../bin/apport-retrace.py:92
+msgid "Override report's ProcMaps"
+msgstr "A jelentés ProcMaps-jának felülbírálása"
+
+#: ../bin/apport-retrace.py:98
+msgid "Rebuild report's Package information"
+msgstr "A jelentés csomaginformációinak újjáépítése"
+
+#: ../bin/apport-retrace.py:105
+msgid ""
+"Build a temporary sandbox and download/install the necessary packages and "
+"debug symbols in there; without this option it assumes that the necessary "
+"packages and debug symbols are already installed in the system. The argument "
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
+msgstr ""
+"Ideiglenes homokozó létrehozása, majd ebbe a szükséges csomagok, "
+"hibakeresési szimbólumok letöltése/telepítése; enélkül feltételezi, hogy a "
+"szükséges csomagok és hibakeresési szimbólumok már telepítve lettek. Az "
+"argumentum a csomagkezelő rendszer konfigurációs alapkönyvtárára mutat; a "
+"„system” esetén a rendszer konfigurációs fájljait használja, de ekkor csak "
+"az aktuálisan futó kiadás összeomlásait lesz képes nyomon követni."
+
+#: ../bin/apport-retrace.py:119
+msgid ""
+"Build another temporary sandbox for installing gdb and its dependencies "
+"using the same release as the report rather than whatever version of gdb you "
+"have installed."
+msgstr ""
+"Állítson össze egy másik, a jelentéssel megegyező kiadást használó átmeneti "
+"homokozót a gdb és függőségei telepítéséhez az Ön által telepített "
+"valamilyen gdb verzió helyett."
+
+#: ../bin/apport-retrace.py:129
+msgid "Report download/install progress when installing packages into sandbox"
+msgstr ""
+"Homokozóba történő telepítéskor a letöltés/telepítési folyamat kijelzése"
+
+#: ../bin/apport-retrace.py:136
+msgid "Prepend timestamps to log messages, for batch operation"
+msgstr "Helyezzen időbélyegeket a naplóüzenetek elé, a kötegelt működéshez"
+
+#: ../bin/apport-retrace.py:142
+msgid ""
+"Create and use third-party repositories from origins specified in reports"
+msgstr ""
+"Külső tárolók létrehozása és használata a jelentésekben megadott forrásokból"
+
+#: ../bin/apport-retrace.py:150
+msgid "Cache directory for packages downloaded in the sandbox"
+msgstr "Homokozóba letöltött csomagok gyorsítókönyvtára"
+
+#: ../bin/apport-retrace.py:156
+msgid ""
+"Directory for unpacked packages. Future runs will assume that any already "
+"downloaded package is also extracted to this sandbox."
+msgstr ""
+"Kicsomagolt csomagok könyvtára. A jövőbeli futások feltételezik, hogy a már "
+"kicsomagolt csomagok ugyanebbe a homokozóba lesznek kicsomagolva."
+
+#: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
+msgid ""
+"Install an extra package into the sandbox (can be specified multiple times)"
+msgstr "Extra csomag homokozóba telepítése (többször is megadható)"
+
+#: ../bin/apport-retrace.py:174
+msgid ""
+"Path to a file with the crash database authentication information. This is "
+"used when specifying a crash ID to upload the retraced stack traces (only if "
+"neither -g, -o, nor -s are specified)"
+msgstr ""
+"Az összeomlási adatbázis hitelesítési információit tartalmazó fájl útvonala. "
+"Ez összeomlási azonosító megadásakor használatos az ismételten nyomon "
+"követett veremkiíratások feltöltésekor (ha a -g, -o és -s egyike sincs "
+"megadva)"
+
+#: ../bin/apport-retrace.py:184
+msgid ""
+"Display retraced stack traces and ask for confirmation before sending them "
+"to the crash database."
+msgstr ""
+"Ismételten nyomon követett veremkiíratások megjelenítése, és megerősítés "
+"kérése a beküldés előtt az összeomlási adatbázisba."
+
+#: ../bin/apport-retrace.py:192
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+"Útvonal a kettőzött sqlite adatbázishoz (alapértelmezett: nincs ellenőrzés)"
+
+#: ../bin/apport-retrace.py:200
+msgid "Do not add StacktraceSource to the report."
+msgstr "Ne adja hozzá a veremkövetés forrását a jelentéshez."
+
+#: ../bin/apport-retrace.py:213
+msgid "You cannot use -C without -S. Stopping."
+msgstr "Nem használhatja a -C kapcsolót az -S kapcsoló nélkül. Leállítás."
+
+#. translators: don't translate y/n,
+#. apport currently only checks for "y"
+#: ../bin/apport-retrace.py:243
+msgid "OK to send these as attachments? [y/n]"
+msgstr "Elküldhetők ezek mellékletként? [y/n]"
+
+#: ../bin/apport-unpack.py:29
+#, fuzzy, python-format
+msgid "%(prog)s <report> <target directory>"
+msgstr "Használat: %s <jelentés> <célkönyvtár>"
+
+#: ../bin/apport-unpack.py:31
+msgid "Report file to unpack"
+msgstr ""
+
+#: ../bin/apport-unpack.py:33
+msgid "directory to unpack report to"
+msgstr ""
+
+#: ../bin/apport-unpack.py:45
+msgid "Destination directory exists and is not empty."
+msgstr "A célkönyvtár létezik és nem üres."
+
+#: ../bin/apport-valgrind.py:37
+msgid "See man page for details."
+msgstr "Részletekért lásd a man oldalt."
+
+#: ../bin/apport-valgrind.py:46
+msgid "specify the log file name produced by valgrind"
+msgstr "Adja meg a Valgrind naplófájl nevét"
+
+#: ../bin/apport-valgrind.py:52
+msgid ""
+"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
+"create it"
+msgstr ""
+"Korábban létrehozott sandbox mappa (SDIR) újra felhasználása, vagy ha nem "
+"létezik, létrehozása"
+
+#: ../bin/apport-valgrind.py:60
+msgid ""
+"do  not  create  or reuse a sandbox directory for additional debug symbols "
+"but rely only on installed debug symbols."
+msgstr ""
+"Ne hozzon létre vagy használjon fel újra homokozó mappát további "
+"hibakeresési szimbólumokhoz, csak a telepített hibakeresési szimbólumokat "
+"használja."
+
+#: ../bin/apport-valgrind.py:69
+msgid ""
+"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
+"it"
+msgstr ""
+"Korábban létrehozott gyorsítókönyvtár (CDIR) újra felhasználása, vagy ha nem "
+"létezik, létrehozása"
+
+#: ../bin/apport-valgrind.py:78
+msgid "report download/install progress when installing packages into sandbox"
+msgstr ""
+"Letöltési/telepítési folyamat jelentése csomagok telepítésekor a homokozóba"
+
+#: ../bin/apport-valgrind.py:86
+#, fuzzy
+msgid ""
+"the executable that is run under valgrind's memcheck tool for memory leak "
+"detection"
+msgstr "A végrehajtható, amelynek a memóriaszivárgását figyeli a Valgrind"
+
+#: ../bin/apport-valgrind.py:129
+#, python-format
+msgid "Error: %s is not an executable. Stopping."
+msgstr "Hiba: a(z) %s nem végrehajtható. Leállítás."
+
+#: ../data/apportcheckresume.py:68
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
@@ -1310,8 +863,7 @@ msgstr ""
 "Ez egy korábbi felfüggesztés közben történt, és ezzel megakadályozta a "
 "rendszer megfelelő indulását."
 
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:69
-#: ../data/apportcheckresume.py:69
+#: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
@@ -1319,8 +871,7 @@ msgstr ""
 "Ez egy korábbi hibernálás közben történt, és ezzel megakadályozta a rendszer "
 "megfelelő indulását."
 
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:74
-#: ../data/apportcheckresume.py:74
+#: ../data/apportcheckresume.py:81
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
@@ -1328,29 +879,179 @@ msgstr ""
 "A folytatás feldolgozása a vége felé megszakadt, és úgy fog tűnni, hogy "
 "normálisan befejeződött."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:234 ../kde/apport-kde.py:234
+#: ../data/kernel_oops.py:30
+msgid "Your system might become unstable now and might need to be restarted."
+msgstr "A rendszer instabillá válhatott, és szükség lehet az újraindítására."
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1
+msgid "Report a problem..."
+msgstr "Hiba jelentése…"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2
+msgid "Report a malfunction to the developers"
+msgstr "Hibás működés jelentése a fejlesztőknek"
+
+#: ../gtk/apport-gtk.py:184
+#, python-format
+msgid "Sorry, the application %s has stopped unexpectedly."
+msgstr "Elnézést, a(z) %s alkalmazás váratlanul leállt."
+
+#: ../gtk/apport-gtk.py:187
+#, python-format
+msgid "Sorry, %s has closed unexpectedly."
+msgstr "Elnézést, a(z) %s váratlanul befejeződött."
+
+#: ../gtk/apport-gtk.py:192 ../kde/apport-kde.py:210 ../kde/apport-kde.py:262
+#, python-format
+msgid "Sorry, %s has experienced an internal error."
+msgstr "Elnézést, a(z) %s belső hibát észlelt."
+
+#: ../gtk/apport-gtk.py:215 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:203
+msgid "Send"
+msgstr "Küldés"
+
+#: ../gtk/apport-gtk.py:233 ../gtk/apport-gtk.py:665 ../gtk/apport-gtk.ui.h:11
+#: ../kde/apport-kde.py:326
+msgid "Show Details"
+msgstr "Részletek megjelenítése"
+
+#: ../gtk/apport-gtk.py:246 ../kde/apport-kde.py:254 ../kde/apport-kde.py:272
+msgid "Continue"
+msgstr "Folytatás"
+
+#: ../gtk/apport-gtk.py:270
+#, python-format
+msgid "The application %s has stopped responding."
+msgstr "A(z) %s alkalmazás nem válaszol."
+
+#: ../gtk/apport-gtk.py:274
+#, python-format
+msgid "The program \"%s\" has stopped responding."
+msgstr "A(z) „%s” program nem válaszol."
+
+#: ../gtk/apport-gtk.py:291 ../kde/apport-kde.py:218
+#, python-format
+msgid "Package: %s"
+msgstr "Csomag: %s"
+
+#: ../gtk/apport-gtk.py:297 ../kde/apport-kde.py:225
+msgid "Sorry, a problem occurred while installing software."
+msgstr "Elnézést, hiba történt a szoftvertelepítés alatt."
+
+#: ../gtk/apport-gtk.py:309 ../gtk/apport-gtk.py:333 ../kde/apport-kde.py:234
+#, python-format
+msgid "The application %s has experienced an internal error."
+msgstr "A(z) %s alkalmazás belső hibát észlelt."
+
+#: ../gtk/apport-gtk.py:315 ../kde/apport-kde.py:241
+#, python-format
+msgid "The application %s has closed unexpectedly."
+msgstr "A(z) %s alkalmazás váratlanul befejeződött."
+
+#: ../gtk/apport-gtk.py:346 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:267
+msgid "If you notice further problems, try restarting the computer."
+msgstr ""
+"Ha további problémákat észlel, próbálja meg újraindítani a számítógépet."
+
+#: ../gtk/apport-gtk.py:351 ../kde/apport-kde.py:274
+msgid "Ignore future problems of this type"
+msgstr "Ilyen típusú problémák figyelmen kívül hagyása a jövőben"
+
+#: ../gtk/apport-gtk.py:669 ../kde/apport-kde.py:323
+msgid "Hide Details"
+msgstr "Részletek elrejtése"
+
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:545 ../kde/apport-kde.py:588
+msgid "Apport"
+msgstr "Apport"
+
+#: ../gtk/apport-gtk.ui.h:2
+msgid "Cancel"
+msgstr "Mégse"
+
+#: ../gtk/apport-gtk.ui.h:3
+msgid "OK"
+msgstr "Ok"
+
+#: ../gtk/apport-gtk.ui.h:4
+msgid "Crash report"
+msgstr "Összeomlás-jelentés"
+
+#: ../gtk/apport-gtk.ui.h:5
+msgid "<big><b>Sorry, an internal error happened.</b></big>"
+msgstr "<big><b>Elnézést, belső hiba történt.</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:8
+msgid "Remember this in future"
+msgstr "Emlékezzen erre a jövőben"
+
+#: ../gtk/apport-gtk.ui.h:9
+msgid "Ignore future problems of this program version"
+msgstr "Ezen programverzió további problémáinak figyelmen kívül hagyása"
+
+#: ../gtk/apport-gtk.ui.h:10
+msgid "Relaunch this application"
+msgstr "Az alkalmazás újraindítása"
+
+#: ../gtk/apport-gtk.ui.h:12
+msgid "_Examine locally"
+msgstr "_Vizsgálat helyileg"
+
+#: ../gtk/apport-gtk.ui.h:13
+msgid "Don't send"
+msgstr "Ne küldje el"
+
+#: ../gtk/apport-gtk.ui.h:15
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Információgyűjtés a problémáról</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:16
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Információk gyűjtése, amelyek segíthetik a fejlesztőket a jelentendő "
+"probléma megoldásában."
+
+#: ../gtk/apport-gtk.ui.h:18
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Hibainformációk feltöltése</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:506
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"Az összegyűjtött információk elküldésre kerülnek a hibakövető rendszerbe. Ez "
+"eltarthat néhány percig."
+
+#: ../kde/apport-kde-mimelnk.desktop.in.h:1
+msgid "Apport crash file"
+msgstr "Apport jelentésfájl"
+
+#: ../kde/apport-kde.py:257
 msgid "Leave Closed"
 msgstr "Bezárva hagyás"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:235
-#: ../debian/tmp/usr/share/apport/apport-kde.py:381 ../kde/apport-kde.py:235
-#: ../kde/apport-kde.py:381
+#: ../kde/apport-kde.py:258 ../kde/apport-kde.py:427
 msgid "Relaunch"
 msgstr "Újraindítás"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
+#: ../kde/apport-kde.py:351
 msgid "Username:"
 msgstr "Felhasználónév:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:316 ../kde/apport-kde.py:316
+#: ../kde/apport-kde.py:352
 msgid "Password:"
 msgstr "Jelszó:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../kde/apport-kde.py:406
+#: ../kde/apport-kde.py:455
 msgid "Collecting Problem Information"
 msgstr "Információgyűjtés a hibáról"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../kde/apport-kde.py:408
+#: ../kde/apport-kde.py:458
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1358,9 +1059,37 @@ msgstr ""
 "Az összegyűjtött információk elküldhetők a fejlesztőknek az alkalmazás "
 "javítása érdekében. Ez eltarthat néhány percig."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../kde/apport-kde.py:434
+#: ../kde/apport-kde.py:503
 msgid "Uploading Problem Information"
 msgstr "A hibával kapcsolatos információk feltöltése"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. You can contact them via %s for "
+#~ "help. Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
+#~ "közzétett snap csomagot is telepítette. A segítségért kapcsolatba léphet "
+#~ "velük a(z) %s használatával. Szeretné folytatni a deb csomaggal "
+#~ "kapcsolatos hibajelentést?"
+
+#, python-format
+#~ msgid ""
+#~ "You are about to report a bug against the deb package, but you also a "
+#~ "have snap published by %s installed. For the snap, no contact address has "
+#~ "been provided; visit the forum at https://forum.snapcraft.io/ for help. "
+#~ "Do you want to continue with the bug report against the deb?"
+#~ msgstr ""
+#~ "Ön egy deb csomaggal kapcsolatos hibát készül jelenteni, de a(z) %s által "
+#~ "közzétett snap csomagot is telepítette. A snap csomaghoz nem lett "
+#~ "kapcsolatfelvételi cím megadva. A segítségért látogassa meg a https://"
+#~ "forum.snapcraft.io/ címen elérhető fórumot. Szeretné folytatni a deb "
+#~ "csomaggal kapcsolatos hibajelentést?"
+
+#, python-format
+#~ msgid "Please enter your account information for the %s bug tracking system"
+#~ msgstr "Adja meg fiókadatait a(z) %s hibakövető rendszerhez"
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
@@ -1387,8 +1116,8 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Ha nem csinált semmi bizalmasat (jelszó vagy egyéb személyes információk "
 #~ "beírása), a hiba jelentésével segíthet az alkalmazás továbbfejlesztésében."
@@ -1418,7 +1147,8 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ha éppen semmi bizalmasat sem végzett (jelszavak vagy egyéb \n"
@@ -1461,13 +1191,13 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 #~ "&Csökkentett hibajelentés küldése (lassú internetkapcsolat esetén; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Ez eltávolítja a jelentés néhány nagy méretű elemét. Ezek nagyon hasznosak a "
-#~ "fejlesztők számára a hiba megkeresésében, de lassú internetkapcsolat esetén "
-#~ "túl nagyok lehetnek a feltöltéshez."
+#~ "Ez eltávolítja a jelentés néhány nagy méretű elemét. Ezek nagyon "
+#~ "hasznosak a fejlesztők számára a hiba megkeresésében, de lassú "
+#~ "internetkapcsolat esetén túl nagyok lehetnek a feltöltéshez."
 
 #~ msgid "The report belongs to a package that is not installed."
 #~ msgstr "A jelentés egy nem telepített csomaghoz tartozik."
@@ -1521,8 +1251,8 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Elnézést, a(z)  „%s” csomag telepítése "
-#~ "vagy frissítése meghiúsult.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Elnézést, a(z)  „%s” csomag "
+#~ "telepítése vagy frissítése meghiúsult.</span>"
 
 #~ msgid ""
 #~ "you either need to do a local operation (-s, -g, -o) or supply an "
@@ -1533,7 +1263,8 @@ msgstr "A hibával kapcsolatos információk feltöltése"
 
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr ""
-#~ "A paraméterszám nem megfelelő, használja a --help kapcsolót a tömör súgóhoz"
+#~ "A paraméterszám nem megfelelő, használja a --help kapcsolót a tömör "
+#~ "súgóhoz"
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Hiba jelentése…"

@@ -7,361 +7,48 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-17 09:15-0700\n"
+"POT-Creation-Date: 2022-08-19 15:17+0200\n"
 "PO-Revision-Date: 2012-09-04 12:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Burmese <my@li.org>\n"
+"Language: my\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2022-06-09 06:52+0000\n"
 "X-Generator: Launchpad (build 0f209dcba08bdd5fd387de120244a7b387be6615)\n"
-"Language: my\n"
 
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
-#: ../kde/apport-kde.desktop.in.h:1
-msgid "Report a problem..."
-msgstr "ပြသာနာတစ်ခုကိုသတင်းပို့မည်"
+#: ../apport/com.ubuntu.apport.policy.in.h:1
+msgid "Collect system information"
+msgstr "စနစ်အချက်အလက်ကို စုဆောင်းပါ။"
 
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
-#: ../kde/apport-kde.desktop.in.h:2
-msgid "Report a malfunction to the developers"
-msgstr "malfunction တစ်ခုကို ဆော့ဖ်ဝဲရေးသားသူများထံ တိုင်ကြားပါ။"
-
-#: ../debian/tmp/usr/bin/apport-cli.py:166
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:146 ../bin/apport-cli.py:166
-#: ../debian/tmp/usr/share/apport/apport-kde.py:364 ../gtk/apport-gtk.py:146
-#: ../kde/apport-kde.py:364
-msgid "(binary data)"
-msgstr "(binary data)"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:161 ../gtk/apport-gtk.py:161
-#, python-format
-msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr "ဆောရီး application %s သည်ရုပ်တရက်ရပ်သွားသည်။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:164 ../gtk/apport-gtk.py:164
-#, python-format
-msgid "Sorry, %s has closed unexpectedly."
-msgstr "ဆောရီး %s သည်မမျှော်လင့်ပဲပိတ်သွားပါသည်"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:169
-#: ../debian/tmp/usr/share/apport/apport-kde.py:201
-#: ../debian/tmp/usr/share/apport/apport-kde.py:239 ../gtk/apport-gtk.py:169
-#: ../kde/apport-kde.py:201 ../kde/apport-kde.py:239
-#, python-format
-msgid "Sorry, %s has experienced an internal error."
-msgstr "ဆောရီး, %s သည်အတွင်းပိုင်းပြသာနာတက်နေသည်။"
-
-#: ../debian/tmp/usr/bin/apport-cli.py:194 ../gtk/apport-gtk.ui.h:6
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:181
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../bin/apport-cli.py:194
-#: ../debian/tmp/usr/share/apport/apport-kde.py:187 ../gtk/apport-gtk.py:181
-#: ../kde/apport-kde.py:187
-msgid "Send problem report to the developers?"
-msgstr "developer ဆီသို့ပြသာနာများကို သတင်းပို့မည်"
-
-#: ../gtk/apport-gtk.ui.h:14 ../debian/tmp/usr/share/apport/apport-gtk.py:188
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14
-#: ../debian/tmp/usr/share/apport/apport-kde.py:195 ../gtk/apport-gtk.py:188
-#: ../kde/apport-kde.py:195
-msgid "Send"
-msgstr "ပို့မည်။"
-
-#: ../gtk/apport-gtk.ui.h:11 ../debian/tmp/usr/share/apport/apport-gtk.py:204
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:575
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
-#: ../debian/tmp/usr/share/apport/apport-kde.py:293 ../gtk/apport-gtk.py:204
-#: ../gtk/apport-gtk.py:575 ../kde/apport-kde.py:293
-msgid "Show Details"
-msgstr "အသေးစိတ်များကို ဖော်ပြပါ။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:216
-#: ../debian/tmp/usr/share/apport/apport-kde.py:232
-#: ../debian/tmp/usr/share/apport/apport-kde.py:245 ../gtk/apport-gtk.py:216
-#: ../kde/apport-kde.py:232 ../kde/apport-kde.py:245
-msgid "Continue"
-msgstr "ဆက်လုပ်"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:239 ../gtk/apport-gtk.py:239
-#, python-format
-msgid "The application %s has stopped responding."
-msgstr "ဒီ application %s တုံ့ပြန်ရပ်တန့်ခဲ့သည်။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:243 ../gtk/apport-gtk.py:243
-#, python-format
-msgid "The program \"%s\" has stopped responding."
-msgstr "အဆိုပါအစီအစဉ်ကို \"%s\" တုန့်ပြန်ရပ်တန့်ခဲ့သည်။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:259
-#: ../debian/tmp/usr/share/apport/apport-kde.py:209 ../gtk/apport-gtk.py:259
-#: ../kde/apport-kde.py:209
-#, python-format
-msgid "Package: %s"
-msgstr "Package: %s"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:265
-#: ../debian/tmp/usr/share/apport/apport-kde.py:215 ../gtk/apport-gtk.py:265
-#: ../kde/apport-kde.py:215
-msgid "Sorry, a problem occurred while installing software."
-msgstr "ဆောရီး၊ ဆော့ဝဲလ်သွင်းနေစဉ်ပြသာနာအနည်းငယ်ရှိသည်။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:274
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:289
-#: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:274
-#: ../gtk/apport-gtk.py:289 ../kde/apport-kde.py:221
-#, python-format
-msgid "The application %s has experienced an internal error."
-msgstr "အက်ပလီကေးရှင်း %s သည် အတွင်းပိုင်းအမှားအယွင်းတစ်ခု ကြုံတွေ့နေရပါသည်။"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:277
-#: ../debian/tmp/usr/share/apport/apport-kde.py:224 ../gtk/apport-gtk.py:277
-#: ../kde/apport-kde.py:224
-#, python-format
-msgid "The application %s has closed unexpectedly."
-msgstr "application %s သည်မမျှော်လင့်ပဲပိတ်သွားသည်"
-
-#: ../gtk/apport-gtk.ui.h:7 ../debian/tmp/usr/share/apport/apport-gtk.py:297
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
-#: ../debian/tmp/usr/share/apport/apport-kde.py:242 ../gtk/apport-gtk.py:297
-#: ../kde/apport-kde.py:242
-msgid "If you notice further problems, try restarting the computer."
-msgstr ""
-"နောက်ထပ်ပြသာနာများကိုတွေ့ရှိပါက "
-"သင်၏ကွန်ပြူတာကိုပိတ်ပြီးပြန်ဖွင့်ခြင်းဖြင့်ကြိုးစားကြည့်ပါ"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:299
-#: ../debian/tmp/usr/share/apport/apport-kde.py:246 ../gtk/apport-gtk.py:299
-#: ../kde/apport-kde.py:246
-msgid "Ignore future problems of this type"
-msgstr "ဒီလိုအမျိုးအစားပြသာနာများကိုလစ်လျူရှုမည်"
-
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:579
-#: ../debian/tmp/usr/share/apport/apport-kde.py:290 ../gtk/apport-gtk.py:579
-#: ../kde/apport-kde.py:290
-msgid "Hide Details"
-msgstr "အချက်အလက်များကို ဖျောက်ထားမည်"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
-msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "တင်ပြမှုတွင်လမ်းကြောင်းသစ်များမထည့်ပါနှင့် သို့သော် stdout တွင်ရေးပါ"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
+#: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
-"Start an interactive gdb session with the report's core dump (-o ignored; "
-"does not rewrite report)"
-msgstr ""
-"gdb အပြန်အလှန်ကဏ္ဍကို တင်ပြမှုရဲ့ ပင်မအစုဖြင့်စတင်ပါ (-o လျစ်လျှူရှု; "
-"တင်ပြမှုကိုပြန်လည်မရေးတော့ပါ)"
+"Authentication is required to collect system information for this problem "
+"report"
+msgstr "authentication ဤပြဿနာကိုအစီရင်ခံစာသည် system သတင်းအချက်အလက်စုဆောင်းဖို့လိုအပ်သည်"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
-msgid ""
-"Write modified report to given file instead of changing the original report"
-msgstr "မူလတင်ပြချက်ကို ပြင်မည့်အစား အသစ်ပြင်ထားသောတင်ပြချက်ကိုရေး၍ပေးပါ"
+#: ../apport/com.ubuntu.apport.policy.in.h:3
+msgid "System problem reports"
+msgstr "System ကိုပြဿနာအစီရင်ခံစာများ"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
-msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr "ခြေရာခံမှုထုတ်ပြန်ပြီးနောက် ပင်မပြဿနာအစုကို တင်ပြမှုမှဖယ်ထုတ်ပါ"
+#: ../apport/com.ubuntu.apport.policy.in.h:4
+msgid "Please enter your password to access problem reports of system programs"
+msgstr "မိမိကွန်ပျူတာ၏စနစ်ကိုပြဿနာအစီရင်ခံစာများဝင်ရောက်ကြည့်ရှုရန်သင့် password ကိုရိုက်ထည့်ပေးပါ"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
-msgid "Override report's CoreFile"
-msgstr "တင်ပြမှုရဲ့ အဓိကဖိုင်ကို ပြင်ရေးပါ"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
-msgid "Override report's ExecutablePath"
-msgstr "တင်ပြမှုရဲ့ ခွင့်ပြုလမ်းကြောင်းကိုပြင်ရေးပါ"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
-msgid "Override report's ProcMaps"
-msgstr "တင်ပြမှုရဲ့ ProcMaps ကိုပြင်ရေးပါ"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
-msgid "Rebuild report's Package information"
-msgstr "တင်ပြမှုရဲ့ ပက်ကေ့ချ်အချက်အလက်ကို ပြန်တည်ဆောက်ပါ"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
-msgid ""
-"Build a temporary sandbox and download/install the necessary packages and "
-"debug symbols in there; without this option it assumes that the necessary "
-"packages and debug symbols are already installed in the system. The argument "
-"points to the packaging system configuration base directory; if you specify "
-"\"system\", it will use the system configuration files, but will then only "
-"be able to retrace crashes that happened on the currently running release."
-msgstr ""
-"ယာယီ ပေးပို့မှုတည်ဆောက်ပြီး လိုအပ်သော ပက်ကေ့ချ်များကို "
-"ဆွဲချခြင်းတပ်ဆင်ခြင်းနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတရှိနေမည်။ "
-"ဤရွေးချယ်မှုမပါဝင်ပါကလိုအပ်သောပက်ကေ့ချ်များနှင့် "
-"အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတများရှိပြီးသားဟုမှတ်ယူမည်။ပက်ကေ့ချ်စနစ်ရဲ့ပြုပြင်ပြီ"
-"းသားအခြေခံလမ်းကြောင်းတွင်ရှိသော ထပ်ဖြည့်မှတ်များ၌ "
-"အကယ်၍သင့်အနေဖြင့်စနစ်ဟုသတ်မှတ်လျှင် ၎င်းတို့သည် "
-"စနစ်ရဲ့စီမံပြီးသားဖိုင်တွေကိုအသုံးပြုမည်။သို့သော် "
-"ပျက်စီးမှုလမ်းကြောင်းများကိုသာသိနိုင်ပြီးယခုလက်ရှိထွက်ရှိမှုတွင်သာအကြုံးဝင်သည"
-"်။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
-msgid ""
-"Build another temporary sandbox for installing gdb and its dependencies "
-"using the same release as the report rather than whatever version of gdb you "
-"have installed."
-msgstr ""
-"သင်ထည့်သွင်းထားသည့် မည်သည့် gdb ဗားရှင်းမဆိုထက် အစီရင်ခံစာကဲ့သို့ "
-"တူညီသောထွက်ရှိမှုကို အသုံးပြု၍ gdb နှင့် ၎င်း၏ dependencies တို့ကို "
-"ထည့်သွင်းရန်အတွက် နောက်ထပ် ယာယီ sandbox ကို တည်ဆောက်ပါ။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
-msgid ""
-"Report download/install progress when installing packages into sandbox"
-msgstr ""
-"ပက်ကေ့ဂျ်များကို sandbox တွင် ထည့်သွင်းသည့်အခါ "
-"ဒေါင်းလုဒ်လုပ်ခြင်း/ထည့်သွင်းခြင်းတိုးတက်မှုကို အစီရင်ခံပါ။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
-msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
-"အတွဲလိုက်လုပ်ဆောင်မှုအတွက် မက်ဆေ့ချ်များမှတ်တမ်းတင်ရန် timestamps ထည့်ပါ။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
-msgid ""
-"Create and use third-party repositories from origins specified in reports"
-msgstr ""
-"အစီရင်ခံစာများတွင် သတ်မှတ်ထားသည့် မူရင်းများမှ third-party repositories ကို "
-"ဖန်တီးပြီး အသုံးပြုပါ။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
-msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "sandbox တွင် ဒေါင်းလုဒ်လုပ်ထားသော ပက်ကေ့ဂျ်များအတွက် ကက်ရှ်လမ်းညွှန်"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
-msgid ""
-"Directory for unpacked packages. Future runs will assume that any already "
-"downloaded package is also extracted to this sandbox."
-msgstr ""
-"ဖြည်ချထားသောပက်ကေ့ဂျ်များအတွက် လမ်းညွှန်ခြင်း။ "
-"အနာဂတ်လုပ်ဆောင်မှုများအနေဖြင့် ဒေါင်းလုဒ်လုပ်ထားသော မည်သည့်ပက်ကေ့ခ်ျကိုမဆို "
-"ဤ sandbox သို့ ဖြည်ချသည်ဟု ယူဆပါမည်။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:65
-#: ../debian/tmp/usr/bin/apport-valgrind.py:66 ../bin/apport-valgrind.py:66
-#: ../bin/apport-retrace.py:65
-msgid ""
-"Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
-"sandbox တွင် အပိုပက်ကေ့ဂျ်တစ်ခုထည့်သွင်းပါ။ (အကြိမ်ပေါင်းများစွာ "
-"သတ်မှတ်နိုင်သည်။)"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
-msgid ""
-"Path to a file with the crash database authentication information. This is "
-"used when specifying a crash ID to upload the retraced stack traces (only if "
-"neither -g, -o, nor -s are specified)"
-msgstr ""
-"ပျက်စီးဒေတာဘေ့စ်ဖြစ်ကြောင်း အထောက်အထားအချက်အလက်ပါရှိသည့် "
-"ဖိုင်တစ်ခုသို့လမ်းကြောင်းပြခြင်း။ ပြန်လည်ခြေရာခံထားသော stack ခြေရာခံများကို "
-"အပ်လုဒ်လုပ်ရန်အတွက် ပျက်စီး ID တစ်ခုသတ်မှတ်သည့်အခါတွင် ၎င်းကို "
-"အသုံးပြုပါသည်။ (-g၊ -o၊ သို့မဟုတ် -s တို့ကို "
-"သတ်မှတ်ထားခြင်းမရှိမှသာဖြစ်ပါသည်။)"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
-msgid ""
-"Display retraced stack traces and ask for confirmation before sending them "
-"to the crash database."
-msgstr ""
-"ပြန်လည်ခြေရာခံထားသော stack traces ပြသပြီး ပျက်စီးမှုဒေတာဘေ့စ်သို့မပို့မီ "
-"အတည်ပြုချက်တောင်းပါ။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:71 ../bin/apport-retrace.py:71
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
-"ထပ်နေသော sqlite ဒေတာဘေ့စ်သို့ လမ်းကြောင်းပြခြင်း (မူလ- ထပ်နေခြင်းကို "
-"စစ်ဆေးထားခြင်းမရှိပါ။)"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:73 ../bin/apport-retrace.py:73
-msgid "Do not add StacktraceSource to the report."
-msgstr "အစီရင်ခံစာတွင် StacktraceSource မထည့်ပါနှင့်။"
-
-#: ../debian/tmp/usr/bin/apport-retrace.py:82 ../bin/apport-retrace.py:82
-msgid "You cannot use -C without -S. Stopping."
-msgstr "-S မရှိရင် -C ကို သုံးလို့မရပါဘူး။ ရပ်တန့်ခြင်း။"
-
-#. translators: don't translate y/n, apport currently only checks for "y"
-#: ../debian/tmp/usr/bin/apport-retrace.py:115 ../bin/apport-retrace.py:115
-msgid "OK to send these as attachments? [y/n]"
-msgstr "၎င်းတို့ကို ပူးတွဲပါဖိုင်များအဖြစ် ပေးပို့ရန် အိုကေမလား။ [y/n]"
-
-#: ../kde/apport-kde-mimelnk.desktop.in.h:1
-msgid "Apport crash file"
-msgstr "Apport crash file"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:37 ../bin/apport-valgrind.py:37
-msgid "See man page for details."
-msgstr "အသေးစိတ်အချက်များအတွက် man page ကို ကြည့်ပါ။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:43 ../bin/apport-valgrind.py:43
-msgid "specify the log file name produced by valgrind"
-msgstr "valgrind ကထုတ်လုပ်ဃဖိုင်အမည်ကိုသတ်မှတ်"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:46 ../bin/apport-valgrind.py:46
-msgid ""
-"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
-"create it"
-msgstr ""
-"ယခင်က ဖန်တီးထားသော sandbox dir (SDIR) ကို ပြန်သုံးပါ သို့မဟုတ် မရှိပါက "
-"၎င်းကို ဖန်တီးပါ။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:50 ../bin/apport-valgrind.py:50
-msgid ""
-"do  not  create  or reuse a sandbox directory for additional debug symbols "
-"but rely only on installed debug symbols."
-msgstr ""
-"နောက်ထပ် debug symbol များအတွက် sandbox လမ်းညွှန်တစ်ခု ဖန်တီးခြင်း သို့မဟုတ် "
-"ပြန်လည်အသုံးပြုခြင်း မပြုလုပ်ဘဲ ထည့်သွင်းထားသည့် debug symbol များပေါ်တွင်သာ "
-"အမှီပြုပြီးဆောင်ရွက်ပါ။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:54 ../bin/apport-valgrind.py:54
-msgid ""
-"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
-"it"
-msgstr ""
-"ယခင်က ဖန်တီးထားသော cache dir (CDIR) ကို ပြန်သုံးပါ သို့မဟုတ် မရှိပါက ၎င်းကို "
-"ဖန်တီးပါ။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
-msgstr ""
-"ပက်ကေ့ဂျ်များကို sandbox တွင် ထည့်သွင်းသည့်အခါ "
-"ဒေါင်းလုဒ်လုပ်ခြင်း/ထည့်သွင်းခြင်းတိုးတက်မှုကို အစီရင်ခံပါ။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
-msgid ""
-"the executable that is run under valgrind's memcheck tool  for memory leak "
-"detection"
-msgstr ""
-"memory leak detection အတွက် valgrind ၏ memcheck tool အောက်တွင် "
-"လုပ်ဆောင်နိုင်သော executable ဖြစ်သည်။"
-
-#: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
-#, python-format
-msgid "Error: %s is not an executable. Stopping."
-msgstr ""
-"အမှားအယွင်း - %s သည် အကောင်ထည်ဖော်နိုင်သော အရာမဟုတ်ပါ။ ရပ်တန့်နေပါသည်။"
-
-#: ../apport/ui.py:139
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:139
+#: ../apport/ui.py:164
 msgid "This package does not seem to be installed correctly"
 msgstr "ဒီ package သည်ကောင်းမွန်စွာမသွင်းထားဘူးဟုထင်ရပါသည်"
 
-#: ../debian/tmp/usr/lib/python3.8/dist-packages/apport/ui.py:144
-#: ../apport/ui.py:144
+#: ../apport/ui.py:174
 #, python-format
 msgid ""
-"This is not an official %s package. Please remove any third party package "
-"and try again."
+"This does not seem to be an official %s package. Please retry after updating "
+"the indexes of available packages, if that does not work then remove related "
+"third party packages and try again."
 msgstr ""
 
-#: ../apport/ui.py:166
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:166
+#: ../apport/ui.py:204
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -369,164 +56,135 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"သင့်တွင် အသုံးမပြုတော့သော ပက်ကေ့ဂျ်ဗားရှင်းအချို့ကို ထည့်သွင်းထားသည်။ "
-"ကျေးဇူးပြု၍ အောက်ဖော်ပြပါ ပက်ကေ့ဂျ်များကို အဆင့်မြှင့်တင်ပြီး "
-"ပြဿနာရှိနေသေးသလား စစ်ဆေးပါ။\n"
+"သင့်တွင် အသုံးမပြုတော့သော ပက်ကေ့ဂျ်ဗားရှင်းအချို့ကို ထည့်သွင်းထားသည်။ ကျေးဇူးပြု၍ အောက်ဖော်ပြပါ "
+"ပက်ကေ့ဂျ်များကို အဆင့်မြှင့်တင်ပြီး ပြဿနာရှိနေသေးသလား စစ်ဆေးပါ။\n"
 "\n"
 "%s"
 
-#: ../apport/ui.py:303
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:303
+#: ../apport/ui.py:358
 msgid "unknown program"
 msgstr "အမည်မသိပရိုဂရမ်"
 
-#: ../apport/ui.py:304
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:304
+#: ../apport/ui.py:361
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "ဆောရီး၊ ပရိုဂရမ် \"%s\" သည်မမျှော်လင့်ပဲပိတ်သွားပါသည်"
 
-#: ../apport/ui.py:306 ../apport/ui.py:1472
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:306
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1472
+#: ../apport/ui.py:364 ../apport/ui.py:1898
 #, python-format
 msgid "Problem in %s"
 msgstr "%s တွင်ပြသာနတက်နေပါသည်"
 
-#: ../apport/ui.py:307
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:307
+#: ../apport/ui.py:369
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"သင့်ကွန်ပျူတာတွင် ပြဿနာကိုအလိုအလျောက်ခွဲခြမ်းစိတ်ဖြာပြီး "
-"ဆော့ဖ်ဝဲရ်ရေးသားသူများထံ အစီရင်ခံစာပေးပို့ရန်အတွက် လုံလောက်သည့် free memory "
-"မရှိပါ။"
+"သင့်ကွန်ပျူတာတွင် ပြဿနာကိုအလိုအလျောက်ခွဲခြမ်းစိတ်ဖြာပြီး ဆော့ဖ်ဝဲရ်ရေးသားသူများထံ အစီရင်ခံစာပေးပို့ရန်အတွက် "
+"လုံလောက်သည့် free memory မရှိပါ။"
 
-#: ../apport/ui.py:362 ../apport/ui.py:370 ../apport/ui.py:519
-#: ../apport/ui.py:522 ../apport/ui.py:727 ../apport/ui.py:1277
-#: ../apport/ui.py:1444 ../apport/ui.py:1448
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:362
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:370
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:519
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:522
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:727
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1277
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1444
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1448
+#: ../apport/ui.py:429 ../apport/ui.py:447 ../apport/ui.py:620
+#: ../apport/ui.py:629 ../apport/ui.py:866 ../apport/ui.py:1676
+#: ../apport/ui.py:1859 ../apport/ui.py:1864
 msgid "Invalid problem report"
 msgstr "ပြဿနာသတင်းပို့ချက်မမှန်ကန်ပါ"
 
-#: ../apport/ui.py:363
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:363
+#: ../apport/ui.py:430
 msgid "You are not allowed to access this problem report."
 msgstr "ဤပြဿနာအစီရင်ခံစာသို့ ဝင်ရောက်ခွင့် သင့်တွင်မရှိပါ။"
 
-#: ../apport/ui.py:366
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:366
+#: ../apport/ui.py:438
 msgid "Error"
 msgstr "ချို့ယွင်းချက်"
 
-#: ../apport/ui.py:367
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:367
+#: ../apport/ui.py:440
 msgid "There is not enough disk space available to process this report."
 msgstr "ဤအစီရင်ခံစာလုပ်ဆောင်ရန်အတွက် ဒစ်ခ်နေရာမှာ မလုံလောက်ပါ။"
 
-#: ../apport/ui.py:411 ../apport/ui.py:500
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:411
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:500
+#: ../apport/ui.py:478
+#, fuzzy
+msgid "No PID specified"
+msgstr "ပက်ကေ့ဂျ် သတ်မှတ်ထားခြင်း မရှိပါ။"
+
+#: ../apport/ui.py:480
+#, fuzzy
+msgid "You need to specify a PID. See --help for more information."
+msgstr ""
+"ပက်ကေ့ဂျ်တစ်ခု သို့မဟုတ် PID တစ်ခု သတ်မှတ်ရန် လိုအပ်ပါသည်။ နောက်ထပ်အချက်အလက်များအတွက် --help ကိုကြည့်ပါ။"
+
+#: ../apport/ui.py:491 ../apport/ui.py:596
 msgid "Invalid PID"
 msgstr "PID မမှန်ကန်ပါ"
 
-#: ../apport/ui.py:412
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:412
+#: ../apport/ui.py:492
 msgid "The specified process ID does not exist."
 msgstr "သတ်မှတ်ထားသော လုပ်ငန်းစဉ် ID မရှိပါ။"
 
-#: ../apport/ui.py:415
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:415
+#: ../apport/ui.py:497
 msgid "Not your PID"
 msgstr "သင်၏ PID မဟုတ်ပါ။"
 
-#: ../apport/ui.py:416
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:416
+#: ../apport/ui.py:498
 msgid "The specified process ID does not belong to you."
 msgstr "သတ်မှတ်ထားသော လုပ်ငန်းစဉ် ID မှာ သင်နှင့်မသက်ဆိုင်ပါ။"
 
-#: ../apport/ui.py:467
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:467
+#: ../apport/ui.py:553
 msgid "No package specified"
 msgstr "ပက်ကေ့ဂျ် သတ်မှတ်ထားခြင်း မရှိပါ။"
 
-#: ../apport/ui.py:468
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:468
+#: ../apport/ui.py:555
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"ပက်ကေ့ဂျ်တစ်ခု သို့မဟုတ် PID တစ်ခု သတ်မှတ်ရန် လိုအပ်ပါသည်။ "
-"နောက်ထပ်အချက်အလက်များအတွက် --help ကိုကြည့်ပါ။"
+"ပက်ကေ့ဂျ်တစ်ခု သို့မဟုတ် PID တစ်ခု သတ်မှတ်ရန် လိုအပ်ပါသည်။ နောက်ထပ်အချက်အလက်များအတွက် --help ကိုကြည့်ပါ။"
 
-#: ../apport/ui.py:497
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:497
+#: ../apport/ui.py:583
 msgid "Permission denied"
 msgstr "ခွင့်ပြုချက်ငြင်းပယ်ခြင်းခံရပါသည်"
 
-#: ../apport/ui.py:498
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:498
+#: ../apport/ui.py:585
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"သတ်မှတ်ထားသော လုပ်ငန်းစဉ်သည် သင်နှင့် မသက်ဆိုင်ပါ။ ကျေးဇူးပြု၍ ဤပရိုဂရမ်ကို "
-"လုပ်ငန်းစဉ်ပိုင်ရှင်အဖြစ် သို့မဟုတ် root အဖြစ် လုပ်ဆောင်ပါ။"
+"သတ်မှတ်ထားသော လုပ်ငန်းစဉ်သည် သင်နှင့် မသက်ဆိုင်ပါ။ ကျေးဇူးပြု၍ ဤပရိုဂရမ်ကို လုပ်ငန်းစဉ်ပိုင်ရှင်အဖြစ် သို့မဟုတ် "
+"root အဖြစ် လုပ်ဆောင်ပါ။"
 
-#: ../apport/ui.py:501
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:501
+#: ../apport/ui.py:598
 msgid "The specified process ID does not belong to a program."
 msgstr "သတ်မှတ်ထားသော လုပ်ငန်းစဉ် ID သည် ပရိုဂရမ်တစ်ခုနှင့် မသက်ဆိုင်ပါ။"
 
-#: ../apport/ui.py:520
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:520
+#: ../apport/ui.py:622
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Symptom script %s သည် ထိခိုက်မှုရှိသောပက်ကေ့ဂျ်ကို မဆုံးဖြတ်နိုင်ပါ။"
 
-#: ../apport/ui.py:523
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:523
+#: ../apport/ui.py:630
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Package %s သည်မတည်ရှိပါ"
 
-#: ../apport/ui.py:552 ../apport/ui.py:731 ../apport/ui.py:752
-#: ../apport/ui.py:757
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:552
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:731
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:752
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:757
+#: ../apport/ui.py:659 ../apport/ui.py:871 ../apport/ui.py:904
+#: ../apport/ui.py:914
 msgid "Cannot create report"
 msgstr "report မဖန်တီးနိုင်ပါ"
 
-#: ../apport/ui.py:567 ../apport/ui.py:613 ../apport/ui.py:629
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:567
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:613
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:629
+#: ../apport/ui.py:674 ../apport/ui.py:733 ../apport/ui.py:751
 msgid "Updating problem report"
 msgstr "ပြဿနာအစီရင်ခံစာကို အပ်ဒိတ်လုပ်နေခြင်း"
 
-#: ../apport/ui.py:568
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:568
+#: ../apport/ui.py:676
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"သင်သည် ဤပြဿနာအစီရင်ခံစာ၏ သတင်းထောက် သို့မဟုတ် စာရင်းသွင်းသူမဟုတ်ပါ၊ "
-"သို့မဟုတ် အစီရင်ခံစာသည် ထပ်နေသည် သို့မဟုတ် ပိတ်ထားပြီးဖြစ်သည်။\n"
+"သင်သည် ဤပြဿနာအစီရင်ခံစာ၏ သတင်းထောက် သို့မဟုတ် စာရင်းသွင်းသူမဟုတ်ပါ၊ သို့မဟုတ် အစီရင်ခံစာသည် ထပ်နေသည် သို့မဟုတ် "
+"ပိတ်ထားပြီးဖြစ်သည်။\n"
 "ကျေးဇူးပြု၍ \"apport-bug\" ကို အသုံးပြုပြီး အစီရင်ခံစာအသစ်တစ်ခုဖန်တီးပါ။"
 
-#: ../apport/ui.py:577
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:577
+#: ../apport/ui.py:688
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -537,324 +195,253 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"သင်သည် ဤပြဿနာအစီရင်ခံစာအတွက် သတင်းထောက်မဟုတ်ပါ။ သင့်မှတ်ချက်များနှင့် "
-"ပူးတွဲပါဖိုင်များကို bug အသစ်တစ်ခုသို့ ရွှေ့ရန်ထက် "
-"အခြားတစ်ခုထပ်ပွားမှုတစ်ခုအဖြစ် bug ကို အမှတ်အသားပြုရန်မှာ "
-"ပိုမိုလွယ်ကူစေပါသည်။\n"
+"သင်သည် ဤပြဿနာအစီရင်ခံစာအတွက် သတင်းထောက်မဟုတ်ပါ။ သင့်မှတ်ချက်များနှင့် ပူးတွဲပါဖိုင်များကို bug အသစ်တစ်ခုသို့ "
+"ရွှေ့ရန်ထက် အခြားတစ်ခုထပ်ပွားမှုတစ်ခုအဖြစ် bug ကို အမှတ်အသားပြုရန်မှာ ပိုမိုလွယ်ကူစေပါသည်။\n"
 "\n"
-"နောက်ပိုင်းတွင်  \"apport-bug\" ကို အသုံးပြု၍ bug "
-"အစီရင်ခံစာအသစ်တစ်ခုတင်ရန်နှင့် သင်ဖိုင်နှင့်ပတ်သက်သော ဤ bug တွင် "
-"မှတ်ချက်တစ်ခုပြုလုပ်ရန် အကြံပြုအပ်ပါသည်။\n"
+"နောက်ပိုင်းတွင်  \"apport-bug\" ကို အသုံးပြု၍ bug အစီရင်ခံစာအသစ်တစ်ခုတင်ရန်နှင့် သင်ဖိုင်နှင့်ပတ်သက်သော ဤ "
+"bug တွင် မှတ်ချက်တစ်ခုပြုလုပ်ရန် အကြံပြုအပ်ပါသည်။\n"
 "\n"
 "သင် အမှန်တကယ် ရှေ့ဆက်လိုပါသလား။"
 
-#: ../apport/ui.py:614 ../apport/ui.py:630
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:614
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:630
+#: ../apport/ui.py:734 ../apport/ui.py:752
 msgid "No additional information collected."
 msgstr "နောက်ထပ် အချက်အလက် စုဆောင်းထားခြင်းမရှိပါ။"
 
-#: ../apport/ui.py:681
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:681
+#: ../apport/ui.py:815
 msgid "What kind of problem do you want to report?"
 msgstr "ဘယ်လိုပြဿနာမျိုးကိုသတင်းပို့လိုပါသလား။"
 
-#: ../apport/ui.py:698
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:698
+#: ../apport/ui.py:836
 msgid "Unknown symptom"
 msgstr "Unknown symptom"
 
-#: ../apport/ui.py:699
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:699
+#: ../apport/ui.py:837
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "symptom \"%s\" ကို မသိပါ။"
 
-#: ../apport/ui.py:743
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:743
+#: ../apport/ui.py:873
+msgid ""
+"The window option cannot be used on Wayland.\n"
+"\n"
+"Please find the window's process ID and then run 'ubuntu-bug <process ID>'.\n"
+"\n"
+"The process ID can be found by running the System Monitor application. In "
+"the Processes tab, scroll until you find the correct application. The "
+"process ID is the number listed in the ID column."
+msgstr ""
+
+#: ../apport/ui.py:889
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
-"ဤမက်ဆေ့ဂျ်ကိုပိတ်ပြီးနောက် ၎င်းနှင့်ပတ်သက်သည့် ပြဿနာတစ်ခုကို "
-"အစီရင်ခံရန်အတွက် Application Window ကို နှိပ်ပါ။"
+"ဤမက်ဆေ့ဂျ်ကိုပိတ်ပြီးနောက် ၎င်းနှင့်ပတ်သက်သည့် ပြဿနာတစ်ခုကို အစီရင်ခံရန်အတွက် Application Window ကို နှိပ်ပါ။"
 
-#: ../apport/ui.py:753 ../apport/ui.py:758
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:753
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:758
+#: ../apport/ui.py:906 ../apport/ui.py:915
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop သည် Window ၏ လုပ်ငန်းစဉ် ID ကို ဆုံးဖြတ်ရန် မအောင်မြင်ပါ။"
 
-#: ../apport/ui.py:772
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:772
-msgid "%prog <report number>"
+#: ../apport/ui.py:930
+#, fuzzy, python-format
+msgid "%(prog)s <report number>"
 msgstr "%prog <report number>"
 
-#: ../apport/ui.py:774
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:774
+#: ../apport/ui.py:931
 msgid "Specify package name."
 msgstr "ပက်ကေ့ဂျ်အမည်ကို သတ်မှတ်ပါ။"
 
-#: ../apport/ui.py:776 ../apport/ui.py:828
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:776
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:828
+#: ../apport/ui.py:937 ../apport/ui.py:1069
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
-"အစီရင်ခံစာတွင် အပိုတဂ်တစ်ခု ထည့်ပါ။ အကြိမ်ပေါင်းများစွာ သတ်မှတ်နိုင်ပါသည်။"
+msgstr "အစီရင်ခံစာတွင် အပိုတဂ်တစ်ခု ထည့်ပါ။ အကြိမ်ပေါင်းများစွာ သတ်မှတ်နိုင်ပါသည်။"
 
-#: ../apport/ui.py:807
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:807
+#: ../apport/ui.py:975
+#, fuzzy, python-format
 msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:810
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:810
+#: ../apport/ui.py:986
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"bug filing မုဒ်တွင် စတင်ပါ။ --package နှင့် optional --pid သို့မဟုတ် --pid "
-"တစ်ခုသာ လိုအပ်သည်။ ပေးထားခြင်းမရှိပါက သိရှိထားသော symptoms စာရင်းကို ပြသပါ။ "
-"(အငြင်းအခုံတစ်ခုဖြစ်ပါက ညွှန်းဆိုပါ။)"
+"bug filing မုဒ်တွင် စတင်ပါ။ --package နှင့် optional --pid သို့မဟုတ် --pid တစ်ခုသာ လိုအပ်သည်။ "
+"ပေးထားခြင်းမရှိပါက သိရှိထားသော symptoms စာရင်းကို ပြသပါ။ (အငြင်းအခုံတစ်ခုဖြစ်ပါက ညွှန်းဆိုပါ။)"
 
-#: ../apport/ui.py:812
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:812
+#: ../apport/ui.py:995
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
-"ပြဿနာအစီရင်ခံစာတစ်ခု တင်ရန်အတွက် ပစ်မှတ်အဖြစ် ဝင်းဒိုးတစ်ခုကို နှိပ်ပါ။"
+msgstr "ပြဿနာအစီရင်ခံစာတစ်ခု တင်ရန်အတွက် ပစ်မှတ်အဖြစ် ဝင်းဒိုးတစ်ခုကို နှိပ်ပါ။"
 
-#: ../apport/ui.py:814
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:814
+#: ../apport/ui.py:1004
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
-"bug မွမ်းမံခြင်းမုဒ်တွင် စတင်ပါ။ ရွေးချယ်နိုင်သော --package တစ်ခုကို "
-"ယူနိုင်ပါသည်။"
+msgstr "bug မွမ်းမံခြင်းမုဒ်တွင် စတင်ပါ။ ရွေးချယ်နိုင်သော --package တစ်ခုကို ယူနိုင်ပါသည်။"
 
-#: ../apport/ui.py:816
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:816
+#: ../apport/ui.py:1013
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"Symptom တစ်ခုအကြောင်း bug အစီရင်ခံစာတင်ပါ။ (Symptom အမည်ကို Argument "
-"တစ်ခုတည်းအဖြစ် ပေးထားပါက ညွှန်းဆိုရန်)"
+"Symptom တစ်ခုအကြောင်း bug အစီရင်ခံစာတင်ပါ။ (Symptom အမည်ကို Argument တစ်ခုတည်းအဖြစ် "
+"ပေးထားပါက ညွှန်းဆိုရန်)"
 
-#: ../apport/ui.py:818
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:818
+#: ../apport/ui.py:1022
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"--file-bug မုဒ်တွင် ပက်ကေ့ဂျ်အမည်ကို သတ်မှတ်ပါ။ --pid ကို သတ်မှတ်ထားပါက "
-"စိတ်ကြိုက်ရွေးချယ်နိုင်ပါသည်။ (ပက်ကေ့ဂျ်အမည်ကို Argument တစ်ခုတည်းအဖြစ် "
-"ပေးထားပါက ညွှန်းဆိုရန်)"
+"--file-bug မုဒ်တွင် ပက်ကေ့ဂျ်အမည်ကို သတ်မှတ်ပါ။ --pid ကို သတ်မှတ်ထားပါက စိတ်ကြိုက်ရွေးချယ်နိုင်ပါသည်။ "
+"(ပက်ကေ့ဂျ်အမည်ကို Argument တစ်ခုတည်းအဖြစ် ပေးထားပါက ညွှန်းဆိုရန်)"
 
-#: ../apport/ui.py:820
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:820
+#: ../apport/ui.py:1033
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"--file-bug မုဒ်တွင် လုပ်ဆောင်နေသောပရိုဂရမ်ကို သတ်မှတ်ပါ။ ၎င်းကို "
-"သတ်မှတ်ထားပါက bug အစီရင်ခံစာတွင် နောက်ထပ်အချက်အလက်များ ပါဝင်မည်ဖြစ်သည်။ (pid "
-"ကို Argument တစ်ခုတည်းအဖြစ်သာ ပေးထားပါက ညွှန်းဆိုရန်)"
+"--file-bug မုဒ်တွင် လုပ်ဆောင်နေသောပရိုဂရမ်ကို သတ်မှတ်ပါ။ ၎င်းကို သတ်မှတ်ထားပါက bug အစီရင်ခံစာတွင် "
+"နောက်ထပ်အချက်အလက်များ ပါဝင်မည်ဖြစ်သည်။ (pid ကို Argument တစ်ခုတည်းအဖြစ်သာ ပေးထားပါက ညွှန်းဆိုရန်)"
 
-#: ../apport/ui.py:822
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:822
+#: ../apport/ui.py:1041
 msgid "The provided pid is a hanging application."
 msgstr "ပေးထားသော pid သည် hanging အက်ပလီကေးရှင်းတစ်ခုဖြစ်သည်။"
 
-#: ../apport/ui.py:824
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:824
+#: ../apport/ui.py:1049
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"%s ရှိ ဆိုင်းငံ့ထားသည့်အရာများအစား ပေးထားသည့် .apport သို့မဟုတ် .crash "
-"ဖိုင်မှ ပျက်စီးမှုကို အစီရင်ခံပါ။ ( File ကို Argument တစ်ခုတည်းအဖြစ်သာ "
-"ပေးထားပါက ညွှန်းဆိုရန်)"
+"%s ရှိ ဆိုင်းငံ့ထားသည့်အရာများအစား ပေးထားသည့် .apport သို့မဟုတ် .crash ဖိုင်မှ ပျက်စီးမှုကို အစီရင်ခံပါ။ "
+"( File ကို Argument တစ်ခုတည်းအဖြစ်သာ ပေးထားပါက ညွှန်းဆိုရန်)"
 
-#: ../apport/ui.py:826
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:826
+#: ../apport/ui.py:1059
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"bug တင်သည့်မုဒ်တွင် စုဆောင်းထားသောအချက်အလက်များကို အစီရင်ခံမည့်အစား "
-"ဖိုင်တစ်ခုတွင် သိမ်းဆည်းပါ။ ဤဖိုင်ကို အခြားစက်တစ်ခုမှ နောက်ပိုင်းတွင် "
-"အစီရင်ခံနိုင်ပါသည်။"
+"bug တင်သည့်မုဒ်တွင် စုဆောင်းထားသောအချက်အလက်များကို အစီရင်ခံမည့်အစား ဖိုင်တစ်ခုတွင် သိမ်းဆည်းပါ။ ဤဖိုင်ကို "
+"အခြားစက်တစ်ခုမှ နောက်ပိုင်းတွင် အစီရင်ခံနိုင်ပါသည်။"
 
-#: ../apport/ui.py:830
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:830
+#: ../apport/ui.py:1077
 msgid "Print the Apport version number."
 msgstr "Apport ဗားရှင်းနံပါတ်ကိုပရင့်ထုတ်မည်"
 
-#: ../apport/ui.py:981
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:981
+#: ../apport/ui.py:1239
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr ""
-"ပျက်စီးမှုစစ်ဆေးရန်အတွက် Terminal Window တစ်ခုတွင် appport-retrace ကို "
-"ဖွင့်ပေးမည်ဖြစ်သည်။"
+msgstr "ပျက်စီးမှုစစ်ဆေးရန်အတွက် Terminal Window တစ်ခုတွင် appport-retrace ကို ဖွင့်ပေးမည်ဖြစ်သည်။"
 
-#: ../apport/ui.py:982
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:982
+#: ../apport/ui.py:1243
 msgid "Run gdb session"
 msgstr "gdb session ကို ဖွင့်ပါ။"
 
-#: ../apport/ui.py:983
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:983
+#: ../apport/ui.py:1244
 msgid "Run gdb session without downloading debug symbols"
 msgstr "debug သင်္ကေတများကို ဒေါင်းလုဒ်မလုပ်ဘဲ gdb session ကို ဖွင့်ပါ။"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:985
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:985
+#: ../apport/ui.py:1246
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "အပြည့်အ၀ symbolic stack trace ဖြင့် %s ကို အပ်ဒိတ်လုပ်ပါ။"
 
-#: ../apport/ui.py:1021
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1021
+#: ../apport/ui.py:1308
 msgid "Can't remember send report status settings"
 msgstr "ပေးပို့လာသည့် အစီရင်ခံစာအခြေအနေပြသတ်မှတ်ချက်များကို မမှတ်မိနိုင်ပါ။"
 
-#: ../apport/ui.py:1022
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1022
+#: ../apport/ui.py:1312
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
-"ပျက်စီးမှုအစီရင်ခံခြင်းအခြေအနေအား သိမ်းဆည်းခြင်းမှာ မအောင်မြင်ပါ။ "
-"အလိုအလျောက် သို့မဟုတ် အစီရင်ခံခြင်းမုဒ်ကို မည်သည့်အခါမျှ "
-"သတ်မှတ်နိုင်မည်မဟုတ်ပါ။"
+"ပျက်စီးမှုအစီရင်ခံခြင်းအခြေအနေအား သိမ်းဆည်းခြင်းမှာ မအောင်မြင်ပါ။ အလိုအလျောက် သို့မဟုတ် "
+"အစီရင်ခံခြင်းမုဒ်ကို မည်သည့်အခါမျှ သတ်မှတ်နိုင်မည်မဟုတ်ပါ။"
 
-#: ../apport/ui.py:1081 ../apport/ui.py:1091
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1081
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1091
+#: ../apport/ui.py:1395 ../apport/ui.py:1408
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"ဤပြဿနာအစီရင်ခံချက်သည် နောက်ထပ်မထည့်သွင်းရသေးသည့် ပရိုဂရမ်တစ်ခုနှင့် "
-"သက်ဆိုင်ပါသည်။"
+msgstr "ဤပြဿနာအစီရင်ခံချက်သည် နောက်ထပ်မထည့်သွင်းရသေးသည့် ပရိုဂရမ်တစ်ခုနှင့် သက်ဆိုင်ပါသည်။"
 
-#: ../apport/ui.py:1106
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1106
+#: ../apport/ui.py:1432
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr ""
-"ပျက်စီးမှုဖြစ်ပွားပြီးနောက် ပြောင်းလဲခဲ့သည့် ပရိုဂရမ် %s နှင့် "
-"ပြဿနာဖြစ်ခဲ့သည်။"
+msgstr "ပျက်စီးမှုဖြစ်ပွားပြီးနောက် ပြောင်းလဲခဲ့သည့် ပရိုဂရမ် %s နှင့် ပြဿနာဖြစ်ခဲ့သည်။"
 
-#: ../apport/ui.py:1153 ../apport/ui.py:1234 ../apport/ui.py:1450
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1153
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1234
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1450
+#: ../apport/ui.py:1493 ../apport/ui.py:1617 ../apport/ui.py:1868
 msgid "This problem report is damaged and cannot be processed."
 msgstr "ဤပြဿနာအစီရင်ခံစာသည် ပျက်စီးနေပြီး လုပ်ဆောင်နိုင်ခြင်းမရှိပါ။"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1130
-#: ../apport/ui.py:1130
-#, python-format
-msgid ""
-"This report is about a snap published by %s. Contact them via %s for help."
-msgstr ""
-
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1133
-#: ../apport/ui.py:1133
-#, python-format
-msgid ""
-"This report is about a snap published by %s. No contact address has been "
-"provided; visit the forum at https://forum.snapcraft.io/ for help."
-msgstr ""
-
-#: ../apport/ui.py:1158
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1158
+#: ../apport/ui.py:1502
 msgid "This report is about a package that is not installed."
 msgstr "ဤအစီရင်ခံစာသည် ထည့်သွင်းမထားသော ပက်ကေ့ခ်ျတစ်ခုနှင့်ပတ်သက်သည်။"
 
-#: ../apport/ui.py:1162
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1162
+#: ../apport/ui.py:1510
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
-"ဤပြဿနာအစီရင်ခံစာကို လုပ်ဆောင်ရန် ကြိုးစားနေစဉ် အမှားအယွင်းတစ်ခု "
-"ဖြစ်ပေါ်ခဲ့သည် -"
+msgstr "ဤပြဿနာအစီရင်ခံစာကို လုပ်ဆောင်ရန် ကြိုးစားနေစဉ် အမှားအယွင်းတစ်ခု ဖြစ်ပေါ်ခဲ့သည် -"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1148
-#: ../apport/ui.py:1148
+#: ../apport/ui.py:1527
+msgid ""
+"You have two versions of this application installed, which one do you want "
+"to report a bug against?"
+msgstr ""
+
+#: ../apport/ui.py:1532
+#, python-format
+msgid "%s snap"
+msgstr ""
+
+#: ../apport/ui.py:1533
+#, python-format
+msgid "%s deb package"
+msgstr ""
+
+#: ../apport/ui.py:1574
+#, python-format
+msgid "%s is provided by a snap published by %s. Contact them via %s for help."
+msgstr ""
+
+#: ../apport/ui.py:1579
 #, python-format
 msgid ""
-"You are about to report a bug against the deb package, but you also a have "
-"snap published by %s installed. You can contact them via %s for help. Do you "
-"want to continue with the bug report against the deb?"
+"%s is provided by a snap published by %s. No contact address has been "
+"provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1150
-#: ../apport/ui.py:1150
-#, python-format
-msgid ""
-"You are about to report a bug against the deb package, but you also a have "
-"snap published by %s installed. For the snap, no contact address has been "
-"provided; visit the forum at https://forum.snapcraft.io/ for help. Do you "
-"want to continue with the bug report against the deb?"
-msgstr ""
-
-#: ../apport/ui.py:1278
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1278
+#: ../apport/ui.py:1678
 msgid "Could not determine the package or source package name."
 msgstr "ပက်ကေ့ဂျ် သို့မဟုတ် အရင်းအမြစ်ပက်ကေ့ဂျ်အမည်ကို မဆုံးဖြတ်နိုင်ပါ။"
 
-#: ../apport/ui.py:1296
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1296
+#: ../apport/ui.py:1703
 msgid "Unable to start web browser"
 msgstr "Web browser ကိုမဖွင့်နိုင်ပါ"
 
-#: ../apport/ui.py:1297
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1297
+#: ../apport/ui.py:1704
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s ဖွင့်ရန် ဝဘ်ဘရောက်ဆာကို စတင်၍မရပါ။"
 
-#: ../apport/ui.py:1398
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1398
-#, python-format
-msgid "Please enter your account information for the %s bug tracking system"
-msgstr "%s bug ခြေရာခံစနစ်အတွက် သင့်အကောင့်အချက်အလက်ကို ထည့်သွင်းပါ။"
-
-#: ../apport/ui.py:1410
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1410
+#: ../apport/ui.py:1814
 msgid "Network problem"
 msgstr "နတ်ဝေါ့ပြသာနာ"
 
-#: ../apport/ui.py:1412
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1412
+#: ../apport/ui.py:1818
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
-msgstr ""
-"ပျက်စီးနေသောဒေတာဘေ့စ်သို့ ချိတ်ဆက်၍မရပါ။ ကျေးဇူးပြု၍ အင်တာနက်ချိတ်ဆက်မှုကို "
-"စစ်ဆေးပါ။"
+msgstr "ပျက်စီးနေသောဒေတာဘေ့စ်သို့ ချိတ်ဆက်၍မရပါ။ ကျေးဇူးပြု၍ အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပါ။"
 
-#: ../apport/ui.py:1439
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1439
+#: ../apport/ui.py:1850
 msgid "Memory exhaustion"
 msgstr "Memory exhaustion"
 
-#: ../apport/ui.py:1440
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1440
+#: ../apport/ui.py:1852
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
-"သင့်စနစ်တွင် ဤပျက်စီးမှုအစီရင်ခံစာလုပ်ဆောင်ရန်အတွက် လုံလောက်သော memory "
-"မရှိပါ။"
+msgstr "သင့်စနစ်တွင် ဤပျက်စီးမှုအစီရင်ခံစာလုပ်ဆောင်ရန်အတွက် လုံလောက်သော memory မရှိပါ။"
 
-#: ../apport/ui.py:1475
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1475
+#: ../apport/ui.py:1903
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -865,159 +452,51 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1531 ../apport/ui.py:1538
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1531
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1538
+#: ../apport/ui.py:1959 ../apport/ui.py:1971
 msgid "Problem already known"
 msgstr "ပြသာနာကိုသိရှိပြီးပါပြီ။"
 
-#: ../apport/ui.py:1532
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1532
+#: ../apport/ui.py:1961
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"ဤပြဿနာကို ဝဘ်ဘရောက်ဆာတွင် ပြသထားသည့် bug အစီရင်ခံစာတွင် "
-"အစီရင်ခံထားပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ ဆော့ဖ်ဝဲရ်ရေးသားသူများအတွက် "
-"အထောက်အကူဖြစ်နိုင်သည့် နောက်ထပ်အချက်အလက်များထည့်သွင်းနိုင်ရန် စစ်ဆေးပါ။"
+"ဤပြဿနာကို ဝဘ်ဘရောက်ဆာတွင် ပြသထားသည့် bug အစီရင်ခံစာတွင် အစီရင်ခံထားပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ "
+"ဆော့ဖ်ဝဲရ်ရေးသားသူများအတွက် အထောက်အကူဖြစ်နိုင်သည့် နောက်ထပ်အချက်အလက်များထည့်သွင်းနိုင်ရန် စစ်ဆေးပါ။"
 
-#: ../apport/ui.py:1539
-#: ../debian/tmp/usr/lib/python3.10/dist-packages/apport/ui.py:1539
+#: ../apport/ui.py:1973
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "ဒီပြသာနာကို developer များသို့ပို့ပြီးပါပြီ။ ကျေးဇူးတင်ရှိပါသည်။"
 
-#: ../gtk/apport-gtk.ui.h:1 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
-#: ../debian/tmp/usr/share/apport/apport-kde.py:470
-#: ../debian/tmp/usr/share/apport/apport-kde.py:505
-#: ../debian/tmp/usr/share/apport/apport-kde.py:525 ../kde/apport-kde.py:470
-#: ../kde/apport-kde.py:505 ../kde/apport-kde.py:525
-msgid "Apport"
-msgstr "Apport"
-
-#: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
-msgid "Cancel"
-msgstr "ပယ်ဖျက်မည်"
-
-#: ../gtk/apport-gtk.ui.h:3 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3
-msgid "OK"
-msgstr "ကောင်းပြီ"
-
-#: ../gtk/apport-gtk.ui.h:4 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
-msgid "Crash report"
-msgstr "လေယာဉ်ပျက်ကျအစီရင်ခံစာ"
-
-#: ../gtk/apport-gtk.ui.h:5 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5
-msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr "<big><b>ဆောရီး၊ အတွင်းပိုင်းပြသာနာတက်နေပါသည်</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:8 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8
-msgid "Remember this in future"
-msgstr "ဤအရာကို အနာဂတ်တွင် သတိရပါစေ။"
-
-#: ../gtk/apport-gtk.ui.h:9 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
-msgid "Ignore future problems of this program version"
-msgstr "ဒီပရိုဂရမ်ဗားရှင်း၏အနာဂတ်ပြဿနာတွေ Ignore"
-
-#: ../gtk/apport-gtk.ui.h:10 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
-msgid "Relaunch this application"
-msgstr "ဤအက်ပလီကေးရှင်းကို ပြန်လည်စတင်ပါ။"
-
-#: ../gtk/apport-gtk.ui.h:12 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
-msgid "_Examine locally"
-msgstr "locally အလိုက် _E စစ်ဆေးပါ။"
-
-#: ../gtk/apport-gtk.ui.h:13 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-msgid "Don't send"
-msgstr "မပို့ပါနှင့်"
-
-#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
-msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>ပြဿနာအချက်အလက်များကိုစုဆောင်းနေပါသည်</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:16 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16
-msgid ""
-"Information is being collected that may help the developers fix the problem "
-"you report."
-msgstr ""
-"သင်သတင်းပို့သောပြဿနာကို ဆော့ဖ်ဝဲရ်ရေးသားသူများမှ "
-"ကူညီဖြေရှင်းပေးနိုင်ရန်အတွက် အချက်အလက်များ စုဆောင်းလျက်ရှိပါသည်။"
-
-#: ../debian/tmp/usr/bin/apport-cli.py:267 ../gtk/apport-gtk.ui.h:17
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17 ../bin/apport-cli.py:267
-#: ../debian/tmp/usr/share/apport/apport-kde.py:436 ../kde/apport-kde.py:436
-msgid "Uploading problem information"
-msgstr "ပြဿနာအချက်အလက်ကို အပ်လုဒ်တင်ခြင်း။"
-
-#: ../gtk/apport-gtk.ui.h:18 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:18
-msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b> ပြဿနာ အချက်အလက်ကို အပ်လုဒ်တင်ခြင်း</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:19 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:19
-#: ../debian/tmp/usr/share/apport/apport-kde.py:437 ../kde/apport-kde.py:437
-msgid ""
-"The collected information is being sent to the bug tracking system. This "
-"might take a few minutes."
-msgstr ""
-"စုဆောင်းထားသော အချက်အလက်များကို bug ခြေရာခံစနစ်သို့ ပေးပို့နေပါသည်။ ၎င်းမှာ "
-"မိနစ်အနည်းငယ် ကြာနိုင်ပါသည်။"
-
-#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
-msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
-"သင့်စနစ်သည် ယခု မတည်မငြိမ်ဖြစ်လာနိုင်ပြီး ပြန်လည်စတင်ရန် လိုအပ်နိုင်ပါသည်။"
-
-#: ../bin/apport-unpack.py:22 ../debian/tmp/usr/bin/apport-unpack.py:22
-#, python-format
-msgid "Usage: %s <report> <target directory>"
-msgstr "အသုံးပြုမှု - %s <report> <target directory>"
-
-#: ../bin/apport-unpack.py:42 ../debian/tmp/usr/bin/apport-unpack.py:42
-msgid "Destination directory exists and is not empty."
-msgstr "ဦးတည်ရာလမ်းကြောင်းရှိ၍ ၎င်းမှာ ဗလာမဟုတ်ပါ။"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:1
-msgid "Collect system information"
-msgstr "စနစ်အချက်အလက်ကို စုဆောင်းပါ။"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:2
-msgid ""
-"Authentication is required to collect system information for this problem "
-"report"
-msgstr ""
-"authentication ဤပြဿနာကိုအစီရင်ခံစာသည် system "
-"သတင်းအချက်အလက်စုဆောင်းဖို့လိုအပ်သည်"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:3
-msgid "System problem reports"
-msgstr "System ကိုပြဿနာအစီရင်ခံစာများ"
-
-#: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
-msgstr ""
-"မိမိကွန်ပျူတာ၏စနစ်ကိုပြဿနာအစီရင်ခံစာများဝင်ရောက်ကြည့်ရှုရန်သင့် password "
-"ကိုရိုက်ထည့်ပေးပါ"
-
-#: ../debian/tmp/usr/bin/apport-cli.py:80 ../bin/apport-cli.py:80
+#: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
 msgstr "ဆက်လုပ်ရန်ကီးဘုတ်မှခလုတ်တစ်ခုခုကိုနှိပ်ပါ"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:87 ../bin/apport-cli.py:87
+#: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
 msgstr "သင်ဘာလုပ်လိုပါသလဲ။ သင်၏ရွေးချယ်မှု့များကတော့ -"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:100 ../bin/apport-cli.py:100
+#: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
 msgstr "ကျေးဇူးပြုပြီးရွေးပါ (%s):"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:164 ../bin/apport-cli.py:164
+#: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:195 ../bin/apport-cli.py:195
+#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:168 ../kde/apport-kde.py:401
+msgid "(binary data)"
+msgstr "(binary data)"
+
+#: ../bin/apport-cli.py:208 ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.ui.h:6
+#: ../kde/apport-kde.py:195
+msgid "Send problem report to the developers?"
+msgstr "developer ဆီသို့ပြသာနာများကို သတင်းပို့မည်"
+
+#: ../bin/apport-cli.py:210
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -1025,68 +504,63 @@ msgstr ""
 "ပြဿနာအစီရင်ခံစာပေးပို့ပြီးပါက ကျေးဇူးပြု၍ \n"
 "အလိုအလျောက်ဖွင့်ထားသော Web Browser တွင် ဖောင်ဖြည့်ပါ။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:198 ../bin/apport-cli.py:198
+#: ../bin/apport-cli.py:217
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&S အစီရင်ခံစာကိုပို့မည်  (%s)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:202 ../bin/apport-cli.py:202
+#: ../bin/apport-cli.py:222
 msgid "&Examine locally"
 msgstr "locally အလိုက် &_E ဆန်းစစ်ပါ။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:206 ../bin/apport-cli.py:206
+#: ../bin/apport-cli.py:226
 msgid "&View report"
 msgstr "&V အစီရင်ခံစာကိုကြည့်မည်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:207 ../bin/apport-cli.py:207
+#: ../bin/apport-cli.py:229
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
-"နောက်မှပေးပို့ခြင်း သို့မဟုတ် အခြားတစ်နေရာသို့ကူးယူခြင်းတို့အတွက် "
-"အစီရင်ခံစာဖိုင်ကို &K သိမ်းဆည်းထားပါ။"
+msgstr "နောက်မှပေးပို့ခြင်း သို့မဟုတ် အခြားတစ်နေရာသို့ကူးယူခြင်းတို့အတွက် အစီရင်ခံစာဖိုင်ကို &K သိမ်းဆည်းထားပါ။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:208 ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:234
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
-"ဤပရိုဂရမ်ဗားရှင်း၏ အနာဂတ် ပျက်စီးမှုများကို ပယ်ဖျက်ပြီး &i လျစ်လျူရှုပါ။"
+msgstr "ဤပရိုဂရမ်ဗားရှင်း၏ အနာဂတ် ပျက်စီးမှုများကို ပယ်ဖျက်ပြီး &i လျစ်လျူရှုပါ။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:210
-#: ../debian/tmp/usr/bin/apport-cli.py:287
-#: ../debian/tmp/usr/bin/apport-cli.py:319
-#: ../debian/tmp/usr/bin/apport-cli.py:340 ../bin/apport-cli.py:210
-#: ../bin/apport-cli.py:287 ../bin/apport-cli.py:319 ../bin/apport-cli.py:340
+#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:331 ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:388
 msgid "&Cancel"
 msgstr "&C ပယ်ဖျက်မည်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:238 ../bin/apport-cli.py:238
+#: ../bin/apport-cli.py:272
 msgid "Problem report file:"
 msgstr "ပြဿနာအစီရင်ခံစာဖိုင် -"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:244
-#: ../debian/tmp/usr/bin/apport-cli.py:249 ../bin/apport-cli.py:244
-#: ../bin/apport-cli.py:249
+#: ../bin/apport-cli.py:278 ../bin/apport-cli.py:283
 msgid "&Confirm"
 msgstr "&C အတည်ပြုမည်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:248 ../bin/apport-cli.py:248
+#: ../bin/apport-cli.py:282
 #, python-format
 msgid "Error: %s"
 msgstr "ချို့ယွင်းချက် - %s"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:254 ../bin/apport-cli.py:254
-#: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../kde/apport-kde.py:408
+#: ../bin/apport-cli.py:288 ../kde/apport-kde.py:456
 msgid "Collecting problem information"
 msgstr "ပြသာနာအချက်အလက်များကိုစုစည်းနေပါသည်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:255 ../bin/apport-cli.py:255
+#: ../bin/apport-cli.py:290
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"စုဆောင်းထားသောအချက်အလက်များကို အက်ပလီကေးရှင်းတိုးတက်စေရန်အတွက် "
-"ဆော့ဖ်ဝဲရေးသားသူများထံ ပေးပို့နိုင်ပါသည်။ \n"
+"စုဆောင်းထားသောအချက်အလက်များကို အက်ပလီကေးရှင်းတိုးတက်စေရန်အတွက် ဆော့ဖ်ဝဲရေးသားသူများထံ "
+"ပေးပို့နိုင်ပါသည်။ \n"
 "၎င်းမှာ မိနစ်အနည်းငယ် ကြာနိုင်ပါသည်။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:268 ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:504
+msgid "Uploading problem information"
+msgstr "ပြဿနာအချက်အလက်ကို အပ်လုဒ်တင်ခြင်း။"
+
+#: ../bin/apport-cli.py:308
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1094,117 +568,453 @@ msgstr ""
 "စုဆောင်းထားသောအချက်အလက်များကို bug ခြေရာခံစနစ်သို့ ပေးပို့နေပါသည်။\n"
 "၎င်းမှာ မိနစ်အနည်းငယ် ကြာနိုင်ပါသည်။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:318 ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:364
 msgid "&Done"
 msgstr "&D ပြီးပါပြီ"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:324 ../bin/apport-cli.py:324
+#: ../bin/apport-cli.py:370
 msgid "none"
 msgstr "ဘာမှမဟုတ်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:325 ../bin/apport-cli.py:325
+#: ../bin/apport-cli.py:372
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "ရွေးထားသည် - %s။ Multiple choices:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:341 ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:389
 msgid "Choices:"
 msgstr "ရွေးချယ်မှု့များ -"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:355 ../bin/apport-cli.py:355
+#: ../bin/apport-cli.py:403
 msgid "Path to file (Enter to cancel):"
 msgstr "ဖိုင်တင်ရန် လမ်းကြောင်း (ပယ်ဖျက်ရန် ထည့်သွင်းပါ)။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:361 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:409
 msgid "File does not exist."
 msgstr "ဖိုင်မတည်ရှိပါ"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:363 ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:411
 msgid "This is a directory."
 msgstr "ဤအရာမှာ လမ်းညွှန်တစ်ခုဖြစ်ပါသည်။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:369 ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:417
 msgid "To continue, you must visit the following URL:"
 msgstr "ဆက်လက်သွားရန်အတွက် အောက်ပါ URL ကိုအလည်သွားမှရမည် -"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:371 ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:420
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"သင်သည် ဘရောက်ဆာကို ယခုဖွင့်နိုင်သည် သို့မဟုတ် ဤ URL ကို အခြားကွန်ပျူတာရှိ "
-"ဘရောက်ဇာတစ်ခုသို့ ကူးယူနိုင်ပါသည်။"
+"သင်သည် ဘရောက်ဆာကို ယခုဖွင့်နိုင်သည် သို့မဟုတ် ဤ URL ကို အခြားကွန်ပျူတာရှိ ဘရောက်ဇာတစ်ခုသို့ ကူးယူနိုင်ပါသည်။"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:373 ../bin/apport-cli.py:373
+#: ../bin/apport-cli.py:426
 msgid "Launch a browser now"
 msgstr "browser တစ်ခုကိုဖွင့်မည်"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:388 ../bin/apport-cli.py:388
+#: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
-"ဆိုင်းငံ့ထားသော ပျက်စီးမှုအစီရင်ခံစာများမရှိပါ။ နောက်ထပ်အချက်အလက်များအတွက် --"
-"help တွင် ရှာဖွေပါ။"
+"ဆိုင်းငံ့ထားသော ပျက်စီးမှုအစီရင်ခံစာများမရှိပါ။ နောက်ထပ်အချက်အလက်များအတွက် --help တွင် ရှာဖွေပါ။"
 
-#: ../data/apportcheckresume.py:67
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:67
+#: ../bin/apport-retrace.py:44
+msgid "Do not put the new traces into the report, but write them to stdout."
+msgstr "တင်ပြမှုတွင်လမ်းကြောင်းသစ်များမထည့်ပါနှင့် သို့သော် stdout တွင်ရေးပါ"
+
+#: ../bin/apport-retrace.py:53
+msgid ""
+"Start an interactive gdb session with the report's core dump (-o ignored; "
+"does not rewrite report)"
+msgstr "gdb အပြန်အလှန်ကဏ္ဍကို တင်ပြမှုရဲ့ ပင်မအစုဖြင့်စတင်ပါ (-o လျစ်လျှူရှု; တင်ပြမှုကိုပြန်လည်မရေးတော့ပါ)"
+
+#: ../bin/apport-retrace.py:62
+msgid ""
+"Write modified report to given file instead of changing the original report"
+msgstr "မူလတင်ပြချက်ကို ပြင်မည့်အစား အသစ်ပြင်ထားသောတင်ပြချက်ကိုရေး၍ပေးပါ"
+
+#: ../bin/apport-retrace.py:72
+msgid "Remove the core dump from the report after stack trace regeneration"
+msgstr "ခြေရာခံမှုထုတ်ပြန်ပြီးနောက် ပင်မပြဿနာအစုကို တင်ပြမှုမှဖယ်ထုတ်ပါ"
+
+#: ../bin/apport-retrace.py:80
+msgid "Override report's CoreFile"
+msgstr "တင်ပြမှုရဲ့ အဓိကဖိုင်ကို ပြင်ရေးပါ"
+
+#: ../bin/apport-retrace.py:86
+msgid "Override report's ExecutablePath"
+msgstr "တင်ပြမှုရဲ့ ခွင့်ပြုလမ်းကြောင်းကိုပြင်ရေးပါ"
+
+#: ../bin/apport-retrace.py:92
+msgid "Override report's ProcMaps"
+msgstr "တင်ပြမှုရဲ့ ProcMaps ကိုပြင်ရေးပါ"
+
+#: ../bin/apport-retrace.py:98
+msgid "Rebuild report's Package information"
+msgstr "တင်ပြမှုရဲ့ ပက်ကေ့ချ်အချက်အလက်ကို ပြန်တည်ဆောက်ပါ"
+
+#: ../bin/apport-retrace.py:105
+msgid ""
+"Build a temporary sandbox and download/install the necessary packages and "
+"debug symbols in there; without this option it assumes that the necessary "
+"packages and debug symbols are already installed in the system. The argument "
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
+msgstr ""
+"ယာယီ ပေးပို့မှုတည်ဆောက်ပြီး လိုအပ်သော ပက်ကေ့ချ်များကို ဆွဲချခြင်းတပ်ဆင်ခြင်းနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတရှိနေမည်။ "
+"ဤရွေးချယ်မှုမပါဝင်ပါကလိုအပ်သောပက်ကေ့ချ်များနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတများရှိပြီးသားဟုမှတ်ယူမည်။"
+"ပက်ကေ့ချ်စနစ်ရဲ့ပြုပြင်ပြီးသားအခြေခံလမ်းကြောင်းတွင်ရှိသော ထပ်ဖြည့်မှတ်များ၌ "
+"အကယ်၍သင့်အနေဖြင့်စနစ်ဟုသတ်မှတ်လျှင် ၎င်းတို့သည် စနစ်ရဲ့စီမံပြီးသားဖိုင်တွေကိုအသုံးပြုမည်။သို့သော် "
+"ပျက်စီးမှုလမ်းကြောင်းများကိုသာသိနိုင်ပြီးယခုလက်ရှိထွက်ရှိမှုတွင်သာအကြုံးဝင်သည်။"
+
+#: ../bin/apport-retrace.py:119
+msgid ""
+"Build another temporary sandbox for installing gdb and its dependencies "
+"using the same release as the report rather than whatever version of gdb you "
+"have installed."
+msgstr ""
+"သင်ထည့်သွင်းထားသည့် မည်သည့် gdb ဗားရှင်းမဆိုထက် အစီရင်ခံစာကဲ့သို့ တူညီသောထွက်ရှိမှုကို အသုံးပြု၍ gdb နှင့် ၎င်း၏ "
+"dependencies တို့ကို ထည့်သွင်းရန်အတွက် နောက်ထပ် ယာယီ sandbox ကို တည်ဆောက်ပါ။"
+
+#: ../bin/apport-retrace.py:129
+msgid "Report download/install progress when installing packages into sandbox"
+msgstr ""
+"ပက်ကေ့ဂျ်များကို sandbox တွင် ထည့်သွင်းသည့်အခါ ဒေါင်းလုဒ်လုပ်ခြင်း/ထည့်သွင်းခြင်းတိုးတက်မှုကို အစီရင်ခံပါ။"
+
+#: ../bin/apport-retrace.py:136
+msgid "Prepend timestamps to log messages, for batch operation"
+msgstr "အတွဲလိုက်လုပ်ဆောင်မှုအတွက် မက်ဆေ့ချ်များမှတ်တမ်းတင်ရန် timestamps ထည့်ပါ။"
+
+#: ../bin/apport-retrace.py:142
+msgid ""
+"Create and use third-party repositories from origins specified in reports"
+msgstr ""
+"အစီရင်ခံစာများတွင် သတ်မှတ်ထားသည့် မူရင်းများမှ third-party repositories ကို ဖန်တီးပြီး အသုံးပြုပါ။"
+
+#: ../bin/apport-retrace.py:150
+msgid "Cache directory for packages downloaded in the sandbox"
+msgstr "sandbox တွင် ဒေါင်းလုဒ်လုပ်ထားသော ပက်ကေ့ဂျ်များအတွက် ကက်ရှ်လမ်းညွှန်"
+
+#: ../bin/apport-retrace.py:156
+msgid ""
+"Directory for unpacked packages. Future runs will assume that any already "
+"downloaded package is also extracted to this sandbox."
+msgstr ""
+"ဖြည်ချထားသောပက်ကေ့ဂျ်များအတွက် လမ်းညွှန်ခြင်း။ အနာဂတ်လုပ်ဆောင်မှုများအနေဖြင့် ဒေါင်းလုဒ်လုပ်ထားသော "
+"မည်သည့်ပက်ကေ့ခ်ျကိုမဆို ဤ sandbox သို့ ဖြည်ချသည်ဟု ယူဆပါမည်။"
+
+#: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
+msgid ""
+"Install an extra package into the sandbox (can be specified multiple times)"
+msgstr "sandbox တွင် အပိုပက်ကေ့ဂျ်တစ်ခုထည့်သွင်းပါ။ (အကြိမ်ပေါင်းများစွာ သတ်မှတ်နိုင်သည်။)"
+
+#: ../bin/apport-retrace.py:174
+msgid ""
+"Path to a file with the crash database authentication information. This is "
+"used when specifying a crash ID to upload the retraced stack traces (only if "
+"neither -g, -o, nor -s are specified)"
+msgstr ""
+"ပျက်စီးဒေတာဘေ့စ်ဖြစ်ကြောင်း အထောက်အထားအချက်အလက်ပါရှိသည့် ဖိုင်တစ်ခုသို့လမ်းကြောင်းပြခြင်း။ "
+"ပြန်လည်ခြေရာခံထားသော stack ခြေရာခံများကို အပ်လုဒ်လုပ်ရန်အတွက် ပျက်စီး ID တစ်ခုသတ်မှတ်သည့်အခါတွင် ၎င်းကို "
+"အသုံးပြုပါသည်။ (-g၊ -o၊ သို့မဟုတ် -s တို့ကို သတ်မှတ်ထားခြင်းမရှိမှသာဖြစ်ပါသည်။)"
+
+#: ../bin/apport-retrace.py:184
+msgid ""
+"Display retraced stack traces and ask for confirmation before sending them "
+"to the crash database."
+msgstr ""
+"ပြန်လည်ခြေရာခံထားသော stack traces ပြသပြီး ပျက်စီးမှုဒေတာဘေ့စ်သို့မပို့မီ အတည်ပြုချက်တောင်းပါ။"
+
+#: ../bin/apport-retrace.py:192
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+"ထပ်နေသော sqlite ဒေတာဘေ့စ်သို့ လမ်းကြောင်းပြခြင်း (မူလ- ထပ်နေခြင်းကို စစ်ဆေးထားခြင်းမရှိပါ။)"
+
+#: ../bin/apport-retrace.py:200
+msgid "Do not add StacktraceSource to the report."
+msgstr "အစီရင်ခံစာတွင် StacktraceSource မထည့်ပါနှင့်။"
+
+#: ../bin/apport-retrace.py:213
+msgid "You cannot use -C without -S. Stopping."
+msgstr "-S မရှိရင် -C ကို သုံးလို့မရပါဘူး။ ရပ်တန့်ခြင်း။"
+
+#. translators: don't translate y/n,
+#. apport currently only checks for "y"
+#: ../bin/apport-retrace.py:243
+msgid "OK to send these as attachments? [y/n]"
+msgstr "၎င်းတို့ကို ပူးတွဲပါဖိုင်များအဖြစ် ပေးပို့ရန် အိုကေမလား။ [y/n]"
+
+#: ../bin/apport-unpack.py:29
+#, fuzzy, python-format
+msgid "%(prog)s <report> <target directory>"
+msgstr "အသုံးပြုမှု - %s <report> <target directory>"
+
+#: ../bin/apport-unpack.py:31
+msgid "Report file to unpack"
+msgstr ""
+
+#: ../bin/apport-unpack.py:33
+msgid "directory to unpack report to"
+msgstr ""
+
+#: ../bin/apport-unpack.py:45
+msgid "Destination directory exists and is not empty."
+msgstr "ဦးတည်ရာလမ်းကြောင်းရှိ၍ ၎င်းမှာ ဗလာမဟုတ်ပါ။"
+
+#: ../bin/apport-valgrind.py:37
+msgid "See man page for details."
+msgstr "အသေးစိတ်အချက်များအတွက် man page ကို ကြည့်ပါ။"
+
+#: ../bin/apport-valgrind.py:46
+msgid "specify the log file name produced by valgrind"
+msgstr "valgrind ကထုတ်လုပ်ဃဖိုင်အမည်ကိုသတ်မှတ်"
+
+#: ../bin/apport-valgrind.py:52
+msgid ""
+"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
+"create it"
+msgstr "ယခင်က ဖန်တီးထားသော sandbox dir (SDIR) ကို ပြန်သုံးပါ သို့မဟုတ် မရှိပါက ၎င်းကို ဖန်တီးပါ။"
+
+#: ../bin/apport-valgrind.py:60
+msgid ""
+"do  not  create  or reuse a sandbox directory for additional debug symbols "
+"but rely only on installed debug symbols."
+msgstr ""
+"နောက်ထပ် debug symbol များအတွက် sandbox လမ်းညွှန်တစ်ခု ဖန်တီးခြင်း သို့မဟုတ် ပြန်လည်အသုံးပြုခြင်း "
+"မပြုလုပ်ဘဲ ထည့်သွင်းထားသည့် debug symbol များပေါ်တွင်သာ အမှီပြုပြီးဆောင်ရွက်ပါ။"
+
+#: ../bin/apport-valgrind.py:69
+msgid ""
+"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
+"it"
+msgstr "ယခင်က ဖန်တီးထားသော cache dir (CDIR) ကို ပြန်သုံးပါ သို့မဟုတ် မရှိပါက ၎င်းကို ဖန်တီးပါ။"
+
+#: ../bin/apport-valgrind.py:78
+msgid "report download/install progress when installing packages into sandbox"
+msgstr ""
+"ပက်ကေ့ဂျ်များကို sandbox တွင် ထည့်သွင်းသည့်အခါ ဒေါင်းလုဒ်လုပ်ခြင်း/ထည့်သွင်းခြင်းတိုးတက်မှုကို အစီရင်ခံပါ။"
+
+#: ../bin/apport-valgrind.py:86
+#, fuzzy
+msgid ""
+"the executable that is run under valgrind's memcheck tool for memory leak "
+"detection"
+msgstr ""
+"memory leak detection အတွက် valgrind ၏ memcheck tool အောက်တွင် လုပ်ဆောင်နိုင်သော "
+"executable ဖြစ်သည်။"
+
+#: ../bin/apport-valgrind.py:129
+#, python-format
+msgid "Error: %s is not an executable. Stopping."
+msgstr "အမှားအယွင်း - %s သည် အကောင်ထည်ဖော်နိုင်သော အရာမဟုတ်ပါ။ ရပ်တန့်နေပါသည်။"
+
+#: ../data/apportcheckresume.py:68
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
-"၎င်းသည် ယခင် Suspend ကာလအတွင်း ဖြစ်ပွားခဲ့ပြီး စနစ်ကောင်းမွန်စွာ "
-"ပြန်လည်စတင်နိုင်စေရန် တားဆီးခဲ့သည်။"
+"၎င်းသည် ယခင် Suspend ကာလအတွင်း ဖြစ်ပွားခဲ့ပြီး စနစ်ကောင်းမွန်စွာ ပြန်လည်စတင်နိုင်စေရန် တားဆီးခဲ့သည်။"
 
-#: ../data/apportcheckresume.py:69
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:69
+#: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
-"၎င်းသည် ယခင် Hibernation ကာလအတွင်း ဖြစ်ပွားခဲ့ပြီး စနစ်ကောင်းမွန်စွာ "
-"ပြန်လည်စတင်နိုင်စေရန် တားဆီးခဲ့သည်။"
+"၎င်းသည် ယခင် Hibernation ကာလအတွင်း ဖြစ်ပွားခဲ့ပြီး စနစ်ကောင်းမွန်စွာ ပြန်လည်စတင်နိုင်စေရန် "
+"တားဆီးခဲ့သည်။"
 
-#: ../data/apportcheckresume.py:74
-#: ../debian/tmp/usr/share/apport/apportcheckresume.py:74
+#: ../data/apportcheckresume.py:81
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr ""
-"resume လုပ်ငန်းစဉ်သည် ပြီးဆုံးခါနီးတွင် မပြီးပြတ်နိုင်ဘဲ သာမန်အားဖြင့် "
-"ပြီးဆုံးသွားပုံပေါ်သည်။"
+msgstr "resume လုပ်ငန်းစဉ်သည် ပြီးဆုံးခါနီးတွင် မပြီးပြတ်နိုင်ဘဲ သာမန်အားဖြင့် ပြီးဆုံးသွားပုံပေါ်သည်။"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:235 ../kde/apport-kde.py:235
+#: ../data/kernel_oops.py:30
+msgid "Your system might become unstable now and might need to be restarted."
+msgstr "သင့်စနစ်သည် ယခု မတည်မငြိမ်ဖြစ်လာနိုင်ပြီး ပြန်လည်စတင်ရန် လိုအပ်နိုင်ပါသည်။"
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1
+msgid "Report a problem..."
+msgstr "ပြသာနာတစ်ခုကိုသတင်းပို့မည်"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2
+msgid "Report a malfunction to the developers"
+msgstr "malfunction တစ်ခုကို ဆော့ဖ်ဝဲရေးသားသူများထံ တိုင်ကြားပါ။"
+
+#: ../gtk/apport-gtk.py:184
+#, python-format
+msgid "Sorry, the application %s has stopped unexpectedly."
+msgstr "ဆောရီး application %s သည်ရုပ်တရက်ရပ်သွားသည်။"
+
+#: ../gtk/apport-gtk.py:187
+#, python-format
+msgid "Sorry, %s has closed unexpectedly."
+msgstr "ဆောရီး %s သည်မမျှော်လင့်ပဲပိတ်သွားပါသည်"
+
+#: ../gtk/apport-gtk.py:192 ../kde/apport-kde.py:210 ../kde/apport-kde.py:262
+#, python-format
+msgid "Sorry, %s has experienced an internal error."
+msgstr "ဆောရီး, %s သည်အတွင်းပိုင်းပြသာနာတက်နေသည်။"
+
+#: ../gtk/apport-gtk.py:215 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:203
+msgid "Send"
+msgstr "ပို့မည်။"
+
+#: ../gtk/apport-gtk.py:233 ../gtk/apport-gtk.py:665 ../gtk/apport-gtk.ui.h:11
+#: ../kde/apport-kde.py:326
+msgid "Show Details"
+msgstr "အသေးစိတ်များကို ဖော်ပြပါ။"
+
+#: ../gtk/apport-gtk.py:246 ../kde/apport-kde.py:254 ../kde/apport-kde.py:272
+msgid "Continue"
+msgstr "ဆက်လုပ်"
+
+#: ../gtk/apport-gtk.py:270
+#, python-format
+msgid "The application %s has stopped responding."
+msgstr "ဒီ application %s တုံ့ပြန်ရပ်တန့်ခဲ့သည်။"
+
+#: ../gtk/apport-gtk.py:274
+#, python-format
+msgid "The program \"%s\" has stopped responding."
+msgstr "အဆိုပါအစီအစဉ်ကို \"%s\" တုန့်ပြန်ရပ်တန့်ခဲ့သည်။"
+
+#: ../gtk/apport-gtk.py:291 ../kde/apport-kde.py:218
+#, python-format
+msgid "Package: %s"
+msgstr "Package: %s"
+
+#: ../gtk/apport-gtk.py:297 ../kde/apport-kde.py:225
+msgid "Sorry, a problem occurred while installing software."
+msgstr "ဆောရီး၊ ဆော့ဝဲလ်သွင်းနေစဉ်ပြသာနာအနည်းငယ်ရှိသည်။"
+
+#: ../gtk/apport-gtk.py:309 ../gtk/apport-gtk.py:333 ../kde/apport-kde.py:234
+#, python-format
+msgid "The application %s has experienced an internal error."
+msgstr "အက်ပလီကေးရှင်း %s သည် အတွင်းပိုင်းအမှားအယွင်းတစ်ခု ကြုံတွေ့နေရပါသည်။"
+
+#: ../gtk/apport-gtk.py:315 ../kde/apport-kde.py:241
+#, python-format
+msgid "The application %s has closed unexpectedly."
+msgstr "application %s သည်မမျှော်လင့်ပဲပိတ်သွားသည်"
+
+#: ../gtk/apport-gtk.py:346 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:267
+msgid "If you notice further problems, try restarting the computer."
+msgstr "နောက်ထပ်ပြသာနာများကိုတွေ့ရှိပါက သင်၏ကွန်ပြူတာကိုပိတ်ပြီးပြန်ဖွင့်ခြင်းဖြင့်ကြိုးစားကြည့်ပါ"
+
+#: ../gtk/apport-gtk.py:351 ../kde/apport-kde.py:274
+msgid "Ignore future problems of this type"
+msgstr "ဒီလိုအမျိုးအစားပြသာနာများကိုလစ်လျူရှုမည်"
+
+#: ../gtk/apport-gtk.py:669 ../kde/apport-kde.py:323
+msgid "Hide Details"
+msgstr "အချက်အလက်များကို ဖျောက်ထားမည်"
+
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:545 ../kde/apport-kde.py:588
+msgid "Apport"
+msgstr "Apport"
+
+#: ../gtk/apport-gtk.ui.h:2
+msgid "Cancel"
+msgstr "ပယ်ဖျက်မည်"
+
+#: ../gtk/apport-gtk.ui.h:3
+msgid "OK"
+msgstr "ကောင်းပြီ"
+
+#: ../gtk/apport-gtk.ui.h:4
+msgid "Crash report"
+msgstr "လေယာဉ်ပျက်ကျအစီရင်ခံစာ"
+
+#: ../gtk/apport-gtk.ui.h:5
+msgid "<big><b>Sorry, an internal error happened.</b></big>"
+msgstr "<big><b>ဆောရီး၊ အတွင်းပိုင်းပြသာနာတက်နေပါသည်</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:8
+msgid "Remember this in future"
+msgstr "ဤအရာကို အနာဂတ်တွင် သတိရပါစေ။"
+
+#: ../gtk/apport-gtk.ui.h:9
+msgid "Ignore future problems of this program version"
+msgstr "ဒီပရိုဂရမ်ဗားရှင်း၏အနာဂတ်ပြဿနာတွေ Ignore"
+
+#: ../gtk/apport-gtk.ui.h:10
+msgid "Relaunch this application"
+msgstr "ဤအက်ပလီကေးရှင်းကို ပြန်လည်စတင်ပါ။"
+
+#: ../gtk/apport-gtk.ui.h:12
+msgid "_Examine locally"
+msgstr "locally အလိုက် _E စစ်ဆေးပါ။"
+
+#: ../gtk/apport-gtk.ui.h:13
+msgid "Don't send"
+msgstr "မပို့ပါနှင့်"
+
+#: ../gtk/apport-gtk.ui.h:15
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>ပြဿနာအချက်အလက်များကိုစုဆောင်းနေပါသည်</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:16
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"သင်သတင်းပို့သောပြဿနာကို ဆော့ဖ်ဝဲရ်ရေးသားသူများမှ ကူညီဖြေရှင်းပေးနိုင်ရန်အတွက် အချက်အလက်များ "
+"စုဆောင်းလျက်ရှိပါသည်။"
+
+#: ../gtk/apport-gtk.ui.h:18
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b> ပြဿနာ အချက်အလက်ကို အပ်လုဒ်တင်ခြင်း</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:506
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"စုဆောင်းထားသော အချက်အလက်များကို bug ခြေရာခံစနစ်သို့ ပေးပို့နေပါသည်။ ၎င်းမှာ မိနစ်အနည်းငယ် "
+"ကြာနိုင်ပါသည်။"
+
+#: ../kde/apport-kde-mimelnk.desktop.in.h:1
+msgid "Apport crash file"
+msgstr "Apport crash file"
+
+#: ../kde/apport-kde.py:257
 msgid "Leave Closed"
 msgstr "ပိတ်လိုက်မည်"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:236
-#: ../debian/tmp/usr/share/apport/apport-kde.py:382 ../kde/apport-kde.py:236
-#: ../kde/apport-kde.py:382
+#: ../kde/apport-kde.py:258 ../kde/apport-kde.py:427
 msgid "Relaunch"
 msgstr "ပြန်ဖွင့်မည်"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:316 ../kde/apport-kde.py:316
+#: ../kde/apport-kde.py:351
 msgid "Username:"
 msgstr "အသုံးပြုသူအမည် −"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:317 ../kde/apport-kde.py:317
+#: ../kde/apport-kde.py:352
 msgid "Password:"
 msgstr "စကားဝှက် −"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
+#: ../kde/apport-kde.py:455
 msgid "Collecting Problem Information"
 msgstr "ပြသာနာအချက်အလက်များကိုစုစည်းနေပါသည်"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:409 ../kde/apport-kde.py:409
+#: ../kde/apport-kde.py:458
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"ဒီ application ကောင်းမွန်စေရန်အတွက် စုဆောင်းရရှိသည့်အချက်အလက်များကို  "
-"developer များထံသို့ပို့မည်။ မိနစ်အနည်းငယ်ကြာနိုင်ပါသည်။"
+"ဒီ application ကောင်းမွန်စေရန်အတွက် စုဆောင်းရရှိသည့်အချက်အလက်များကို  developer များထံသို့ပို့မည်။ "
+"မိနစ်အနည်းငယ်ကြာနိုင်ပါသည်။"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:435 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:503
 msgid "Uploading Problem Information"
 msgstr "ပြဿနာ အချက်အလက် အပ်လုဒ်တင်ခြင်း။"
+
+#, python-format
+#~ msgid "Please enter your account information for the %s bug tracking system"
+#~ msgstr "%s bug ခြေရာခံစနစ်အတွက် သင့်အကောင့်အချက်အလက်ကို ထည့်သွင်းပါ။"
 
 #~ msgid "Force Closed"
 #~ msgstr "အတင်းပိတ်မည်"
