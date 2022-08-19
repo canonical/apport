@@ -285,9 +285,9 @@ detailed list of changes, please see ChangeLog.
    Ensure that ExecutablePath: fields loaded from reports do not contain
    directories. Until now, an attacker could trick a user into opening a
    malicious .crash file containing
-
-     ExecutablePath: /opt/../../../../some/dir/foo
-
+   ```
+   ExecutablePath: /opt/../../../../some/dir/foo
+   ```
    which would execute /some/dir/foo.py with arbitrary code.  Thanks to Felix
    Wilhelm for discovering this!
    (CVE-2017-10708, LP: #1700573)
@@ -336,9 +336,9 @@ detailed list of changes, please see ChangeLog.
    Ensure that Package: and SourcePackage: fields loaded from reports do not
    contain directories. Until now, an attacker could trick a user into opening a
    malicious .crash file containing
-
-     Package: ../../../../some/dir/foo
-
+   ```
+   Package: ../../../../some/dir/foo
+   ```
    which would execute /some/dir/foo.py with arbitrary code.
    Thanks to Donncha O'Cearbhaill for discovering this!
    (CVE-2016-9950, LP: #1648806)
