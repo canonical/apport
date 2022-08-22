@@ -110,14 +110,16 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             pass
         if pr.check_ignored():
             return
+
+        report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
+        try:
+            os.makedirs(report_dir, mode=0o3777, exist_ok=True)
+        except OSError:
+            return
+
         mangled_program = re.sub("/", "_", binary)
         # get the uid for now, user name later
-        user = os.getuid()
-        pr_filename = "%s/%s.%i.crash" % (
-            os.environ.get("APPORT_REPORT_DIR", "/var/crash"),
-            mangled_program,
-            user,
-        )
+        pr_filename = f"{report_dir}/{mangled_program}.{os.getuid()}.crash"
         crash_counter = 0
         if os.path.exists(pr_filename):
             if apport.fileutils.seen_report(pr_filename):
