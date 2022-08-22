@@ -21,6 +21,7 @@ import socket
 import stat
 import subprocess
 import time
+import typing
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -614,6 +615,32 @@ def shared_libraries(path):
     if ldd.returncode != 0:
         return {}
     return libs
+
+
+def should_skip_crash(
+    report: ProblemReport, filename: str
+) -> typing.Optional[str]:
+    """Check if the crash should be skipped for flood protection.
+
+    In case the crash should be skipped return a string with the reason.
+    Otherwise return None.
+    """
+    try:
+        crash_counter = int(report["CrashCounter"])
+    except (KeyError, ValueError):
+        crash_counter = 0
+    if crash_counter > 1:
+        return (
+            f"this executable already crashed"
+            f" {crash_counter} times, ignoring"
+        )
+    if os.path.exists(filename) and not seen_report(filename):
+        # don't clobber existing report
+        return (
+            f"report {filename} already exists and unseen,"
+            f" skipping to avoid disk usage DoS"
+        )
+    return None
 
 
 def links_with_shared_library(path, lib):

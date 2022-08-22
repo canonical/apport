@@ -984,24 +984,11 @@ def main():
                                 apport.fileutils.get_recent_crashes(f)
                             )
                         crash_counter += 1
-                        if crash_counter > 1:
-                            write_user_coredump(
-                                options.executable_path,
-                                pid,
-                                process_start,
-                                core_ulimit,
-                                coredump_fd,
-                            )
-                            error_log(
-                                "this executable already crashed %i times,"
-                                " ignoring" % crash_counter
-                            )
-                            sys.exit(0)
-                else:
-                    error_log(
-                        "apport: report %s already exists and unseen,"
-                        " skipping to avoid disk usage DoS" % report
-                    )
+                if crash_counter > 0:
+                    info["CrashCounter"] = "%i" % crash_counter
+                skip_msg = apport.fileutils.should_skip_crash(info, report)
+                if skip_msg:
+                    error_log(skip_msg)
                     write_user_coredump(
                         options.executable_path,
                         pid,
@@ -1010,8 +997,6 @@ def main():
                         coredump_fd,
                     )
                     sys.exit(0)
-                if crash_counter > 0:
-                    info["CrashCounter"] = "%i" % crash_counter
                 # remove the old file, so that we can create the new one
                 # with os.O_CREAT|os.O_EXCL
                 os.unlink(report)

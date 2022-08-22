@@ -60,7 +60,11 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             import traceback
 
             import apport.report
-            from apport.fileutils import get_recent_crashes, likely_packaged
+            from apport.fileutils import (
+                get_recent_crashes,
+                likely_packaged,
+                should_skip_crash,
+            )
         except (ImportError, OSError):
             return
 
@@ -126,13 +130,10 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
                 # flood protection
                 with open(pr_filename, "rb") as f:
                     crash_counter = get_recent_crashes(f) + 1
-                if crash_counter > 1:
-                    return
-            else:
-                # don't clobber existing report
-                return
             if crash_counter:
                 pr["CrashCounter"] = str(crash_counter)
+            if should_skip_crash(pr, pr_filename):
+                return
             # remove the old file, so that we can create the new one with
             # os.O_CREAT|os.O_EXCL
             os.unlink(pr_filename)
