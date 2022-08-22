@@ -997,9 +997,6 @@ def main():
                                 " ignoring" % crash_counter
                             )
                             sys.exit(0)
-                    # remove the old file, so that we can create the new one
-                    # with os.O_CREAT|os.O_EXCL
-                    os.unlink(report)
                 else:
                     error_log(
                         "apport: report %s already exists and unseen,"
@@ -1013,6 +1010,10 @@ def main():
                         coredump_fd,
                     )
                     sys.exit(0)
+                # remove the old file, so that we can create the new one
+                # with os.O_CREAT|os.O_EXCL
+                os.unlink(report)
+
             # we prefer having a file mode of 0 while writing;
             fd = os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0)
             reportfile = os.fdopen(fd, "w+b")
