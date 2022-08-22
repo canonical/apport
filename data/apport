@@ -1010,6 +1010,8 @@ def main():
                         coredump_fd,
                     )
                     sys.exit(0)
+                if crash_counter > 0:
+                    info["CrashCounter"] = "%i" % crash_counter
                 # remove the old file, so that we can create the new one
                 # with os.O_CREAT|os.O_EXCL
                 os.unlink(report)
@@ -1034,9 +1036,6 @@ def main():
 
         info.add_user_info()
         info.add_os_info()
-
-        if crash_counter > 0:
-            info["CrashCounter"] = "%i" % crash_counter
 
         try:
             info.write(reportfile)

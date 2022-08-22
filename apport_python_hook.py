@@ -131,12 +131,12 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             else:
                 # don't clobber existing report
                 return
+            if crash_counter:
+                pr["CrashCounter"] = str(crash_counter)
             # remove the old file, so that we can create the new one with
             # os.O_CREAT|os.O_EXCL
             os.unlink(pr_filename)
 
-        if crash_counter:
-            pr["CrashCounter"] = str(crash_counter)
         with os.fdopen(
             os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),
             "wb",
