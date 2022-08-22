@@ -61,7 +61,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
 
             import apport.report
             from apport.fileutils import (
-                get_recent_crashes,
+                increment_crash_counter,
                 likely_packaged,
                 should_skip_crash,
             )
@@ -124,14 +124,8 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
         mangled_program = re.sub("/", "_", binary)
         # get the uid for now, user name later
         pr_filename = f"{report_dir}/{mangled_program}.{os.getuid()}.crash"
-        crash_counter = 0
         if os.path.exists(pr_filename):
-            if apport.fileutils.seen_report(pr_filename):
-                # flood protection
-                with open(pr_filename, "rb") as f:
-                    crash_counter = get_recent_crashes(f) + 1
-            if crash_counter:
-                pr["CrashCounter"] = str(crash_counter)
+            increment_crash_counter(pr, pr_filename)
             if should_skip_crash(pr, pr_filename):
                 return
             # remove the old file, so that we can create the new one with

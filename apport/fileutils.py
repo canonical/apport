@@ -347,6 +347,19 @@ def get_recent_crashes(report):
         return 0
 
 
+def increment_crash_counter(report: ProblemReport, filename: str) -> None:
+    """Increment the crash counter if report was seen."""
+    if not seen_report(filename):
+        return
+    # Make sure the file isn't a FIFO or symlink
+    fd = os.open(filename, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK)
+    st = os.fstat(fd)
+    if stat.S_ISREG(st.st_mode):
+        with os.fdopen(fd, "rb") as f:
+            crash_counter = get_recent_crashes(f) + 1
+        report["CrashCounter"] = str(crash_counter)
+
+
 def make_report_file(report, uid=None):
     """Construct a canonical pathname for a report and open it for writing.
 

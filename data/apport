@@ -30,7 +30,6 @@ import os
 import pwd
 import signal
 import socket
-import stat
 import struct
 import subprocess
 import sys
@@ -960,8 +959,6 @@ def main():
             error_log("Ignoring systemd watchdog restart")
             sys.exit(0)
 
-        crash_counter = 0
-
         # Create crash report file descriptor for writing the report into
         # report_dir
         try:
@@ -971,21 +968,7 @@ def main():
                 pidstat.st_uid,
             )
             if os.path.exists(report):
-                if apport.fileutils.seen_report(report):
-                    # do not flood the logs and the user with repeated crashes
-                    # and make sure the file isn't a FIFO or symlink
-                    fd = os.open(
-                        report, os.O_NOFOLLOW | os.O_RDONLY | os.O_NONBLOCK
-                    )
-                    st = os.fstat(fd)
-                    if stat.S_ISREG(st.st_mode):
-                        with os.fdopen(fd, "rb") as f:
-                            crash_counter = (
-                                apport.fileutils.get_recent_crashes(f)
-                            )
-                        crash_counter += 1
-                if crash_counter > 0:
-                    info["CrashCounter"] = "%i" % crash_counter
+                apport.fileutils.increment_crash_counter(info, report)
                 skip_msg = apport.fileutils.should_skip_crash(info, report)
                 if skip_msg:
                     error_log(skip_msg)
