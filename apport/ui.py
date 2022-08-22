@@ -43,7 +43,7 @@ import apport.REThread
 from apport import unicode_gettext as _
 from apport.packaging_impl import impl as packaging
 
-__version__ = "2.22.0"
+__version__ = "2.23.0"
 
 
 symptom_script_dir = os.environ.get(
