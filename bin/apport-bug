@@ -16,7 +16,7 @@
 # cannot abuse the environment to escape AppArmor confinement via this script
 # (LP: #1045986). This can be removed once AppArmor supports environment
 # filtering (LP: #1045985)
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 # locate path of a particular program
 find_program() {
