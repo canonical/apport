@@ -5,6 +5,9 @@ on:  # yamllint disable-line rule:truthy
   - push
   - pull_request
 
+env:
+  DEBIAN_FRONTEND: noninteractive
+
 jobs:
   linter-tests:
     runs-on: ubuntu-latest
