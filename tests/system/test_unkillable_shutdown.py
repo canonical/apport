@@ -14,6 +14,7 @@ import shutil
 import signal
 import subprocess
 import tempfile
+import time
 import typing
 import unittest
 
@@ -81,13 +82,28 @@ class TestUnkillableShutdown(unittest.TestCase):
             )
         except FileNotFoundError as error:  # pragma: no cover
             self.skipTest(f"{error.filename} not available")
-        test_executable_pids = {
-            pid
-            for pid in pidof(self.TEST_EXECUTABLE)
-            if pid not in existing_pids
-        }
-        self.assertEqual(len(test_executable_pids), 1, test_executable_pids)
-        return test_executable_pids.pop()
+        return self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+
+    def _wait_for_process(
+        self,
+        program: str,
+        existing_pids: typing.Container[int],
+        timeout_sec=5.0,
+    ) -> int:
+        """Wait until one process with the given name is running."""
+        timeout = 0.0
+        while timeout < timeout_sec:
+            pids = {pid for pid in pidof(program) if pid not in existing_pids}
+            if pids:
+                self.assertEqual(len(pids), 1, pids)
+                return pids.pop()
+
+            time.sleep(0.1)
+            timeout += 0.1
+
+        self.fail(
+            f"Process {program} not started within {int(timeout)} seconds."
+        )
 
     def test_omit_all_processes_except_one(self):
         """unkillable_shutdown will write exactly one report."""
