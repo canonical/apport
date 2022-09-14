@@ -66,14 +66,13 @@ class TestUnkillableShutdown(unittest.TestCase):
     @unittest.skipIf(
         get_init_system() != "systemd", "running init system is not systemd"
     )
-    def _launch_process_with_different_session_id(
-        self, existing_pids: list
-    ) -> int:
+    def _launch_process_with_different_session_id(self) -> int:
         """Launch test executable with different session ID.
 
         getsid() will return a different ID than the current process.
         """
         service_manager = "--system" if os.geteuid() == 0 else "--user"
+        existing_pids = self._get_all_pids()
         try:
             subprocess.run(
                 ["systemd-run", service_manager, self.TEST_EXECUTABLE]
@@ -93,7 +92,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def test_omit_all_processes_except_one(self):
         """unkillable_shutdown will write exactly one report."""
         existing_pids = self._get_all_pids()
-        pid = self._launch_process_with_different_session_id(existing_pids)
+        pid = self._launch_process_with_different_session_id()
         try:
             self._call(omit=existing_pids, expected_stderr="")
         finally:
@@ -106,8 +105,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def test_write_reports(self):
         """unkillable_shutdown will write reports."""
         # Ensure that at least one process is honoured by unkillable_shutdown.
-        existing_pids = self._get_all_pids()
-        pid = self._launch_process_with_different_session_id(existing_pids)
+        pid = self._launch_process_with_different_session_id()
         try:
             self._call()
         finally:
