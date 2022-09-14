@@ -1167,9 +1167,12 @@ class T(unittest.TestCase):
         while timeout < 5:
             gdb_children = gdb_process.children()
             for process in gdb_children:
-                if process.status() == "tracing-stop":
+                try:
+                    if process.status() == "tracing-stop":
+                        continue
+                    cmdline = process.cmdline()
+                except psutil.NoSuchProcess:  # pragma: no cover
                     continue
-                cmdline = process.cmdline()
                 if cmdline and cmdline[0] == command:
                     return process
 
