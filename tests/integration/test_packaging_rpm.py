@@ -1,5 +1,6 @@
-import shutil
 import unittest
+
+from tests.helper import skip_if_command_is_missing
 
 try:
     from apport.packaging_impl.rpm import impl
@@ -10,7 +11,7 @@ except ImportError:
 
 
 @unittest.skipUnless(HAS_RPM, "rpm module not available")
-@unittest.skipIf(shutil.which("rpm") is None, "rpm not available")
+@skip_if_command_is_missing("rpm")
 class T(unittest.TestCase):
     def test_get_dependencies(self):
         """get_dependencies()."""

@@ -14,6 +14,7 @@ import unittest.mock
 import apport.packaging
 import apport.report
 import problem_report
+from tests.helper import skip_if_command_is_missing
 from tests.paths import patch_data_dir, restore_data_dir
 
 
@@ -547,9 +548,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/python")
         self.assertNotIn("UnreportableReason", pr)
 
-    @unittest.skipIf(
-        shutil.which("twistd") is None, "twisted is not installed"
-    )
+    @skip_if_command_is_missing("twistd")
     def test_check_interpreted_twistd(self):
         """_check_interpreted() for programs ran through twistd"""
 

@@ -15,6 +15,7 @@ import unittest
 
 import apport.fileutils
 import apport.report
+from tests.helper import skip_if_command_is_missing
 from tests.paths import (
     SRCDIR,
     get_data_directory,
@@ -23,7 +24,7 @@ from tests.paths import (
 )
 
 
-@unittest.skipIf(shutil.which("java") is None, "Java not available")
+@skip_if_command_is_missing("java")
 class T(unittest.TestCase):
     def setUp(self):
         self.env = os.environ | local_test_environment()
