@@ -9,10 +9,10 @@ import unittest
 from apt import apt_pkg
 
 from apport.packaging_impl.apt_dpkg import impl
-from tests.helper import has_internet
+from tests.helper import has_internet, skip_if_command_is_missing
 
 
-@unittest.skipIf(shutil.which("dpkg") is None, "dpkg not available")
+@skip_if_command_is_missing("dpkg")
 class T(unittest.TestCase):
     # pylint: disable=protected-access
 

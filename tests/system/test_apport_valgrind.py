@@ -13,6 +13,7 @@ import subprocess
 import tempfile
 import unittest
 
+from tests.helper import skip_if_command_is_missing
 from tests.paths import local_test_environment
 
 with open("/proc/meminfo", encoding="utf-8") as f:
@@ -22,7 +23,7 @@ with open("/proc/meminfo", encoding="utf-8") as f:
             break
 
 
-@unittest.skipIf(shutil.which("valgrind") is None, "valgrind not installed")
+@skip_if_command_is_missing("valgrind")
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

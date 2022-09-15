@@ -10,7 +10,7 @@ import time
 import unittest
 
 import apport.fileutils
-from tests.helper import get_init_system, pidof
+from tests.helper import get_init_system, pidof, skip_if_command_is_missing
 from tests.paths import (
     get_data_directory,
     is_local_source_directory,
@@ -209,9 +209,7 @@ class T(unittest.TestCase):
     @unittest.skipIf(
         get_init_system() != "systemd", "running init system is not systemd"
     )
-    @unittest.skipIf(
-        shutil.which("systemd-run") is None, "systemd-run not installed"
-    )
+    @skip_if_command_is_missing("systemd-run")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_system_slice(self):
         """report generation for a protected process running in the system

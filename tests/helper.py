@@ -4,6 +4,7 @@ import contextlib
 import importlib.machinery
 import importlib.util
 import os
+import shutil
 import subprocess
 import typing
 import unittest.mock
@@ -77,6 +78,17 @@ def read_shebang(command: str) -> typing.Optional[str]:
     if not first_line.startswith(b"#!"):
         return None
     return first_line.decode().split(" ", 1)[0][2:]
+
+
+def _id(obj):
+    return obj
+
+
+def skip_if_command_is_missing(cmd: str):
+    """Skip a test if the command is not found."""
+    if shutil.which(cmd) is None:
+        return unittest.skip(f"{cmd} not installed")
+    return _id
 
 
 @contextlib.contextmanager
