@@ -878,6 +878,8 @@ class T(unittest.TestCase):
                 [
                     "gdb",
                     "--batch",
+                    "-iex",
+                    "set debuginfod enable off",
                     "--ex",
                     f"run {' '.join(self.TEST_ARGS)}",
                     "--ex",

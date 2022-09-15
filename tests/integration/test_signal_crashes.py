@@ -874,7 +874,16 @@ class T(unittest.TestCase):
         st = os.stat(core_path)
         self.assertGreater(st.st_size, 10000)
         gdb = subprocess.run(
-            ["gdb", "--batch", "--ex", "bt", command, core_path],
+            [
+                "gdb",
+                "--batch",
+                "-iex",
+                "set debuginfod enable off",
+                "--ex",
+                "bt",
+                command,
+                core_path,
+            ],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -1083,7 +1092,7 @@ class T(unittest.TestCase):
         Note: The arguments for the command must not contain spaces.
         Since there was no need for it, the support was not implemented.
         """
-        gdb_args = ["gdb", "--quiet"]
+        gdb_args = ["gdb", "--quiet", "-iex", "set debuginfod enable off"]
 
         args = " ".join(f" {a}" for a in args)
         if uid is not None:

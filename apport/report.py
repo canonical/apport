@@ -887,8 +887,14 @@ class Report(problem_report.ProblemReport):
                 "gdb not found in retracing env",
             )
 
-        # limit maximum backtrace depth (to avoid looped stacks)
-        gdb_cmd += ["--batch", "--ex", "set backtrace limit 2000"]
+        gdb_cmd += [
+            "--batch",
+            # limit maximum backtrace depth (to avoid looped stacks)
+            "--ex",
+            "set backtrace limit 2000",
+            "-iex",
+            "set debuginfod enable off",
+        ]
 
         value_keys = []
         # append the actual commands and something that acts as a separator

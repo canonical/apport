@@ -203,8 +203,10 @@ except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while preparing to create sandbox\n")
     _exit_on_interrupt()
 
+valgrind_env = {k: v for k, v in os.environ.items() if k != "DEBUGINFOD_URLS"}
+
 try:
-    subprocess.call(argv)
+    subprocess.call(argv, env=valgrind_env)
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while running valgrind\n")
     _exit_on_interrupt()

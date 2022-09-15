@@ -21,6 +21,7 @@ class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()
+        cls.env.pop("DEBUGINFOD_URLS", None)
 
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
