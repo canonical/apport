@@ -661,6 +661,8 @@ int main() { return f(42); }
                 [
                     "gdb",
                     "--batch",
+                    "-iex",
+                    "set debuginfod enable off",
                     "--ex",
                     f"run{' ' + ' '.join(args) if args else ''}",
                     "--ex",
@@ -908,6 +910,8 @@ int main() { return f(42); }
                     [
                         "gdb",
                         "--batch",
+                        "-iex",
+                        "set debuginfod enable off",
                         "--ex",
                         f"run {script}",
                         "--ex",
