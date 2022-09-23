@@ -2010,13 +2010,15 @@ class Report(problem_report.ProblemReport):
         Return (session_id, session_start_timestamp) if process is in a logind
         session, or None otherwise.
         """
-        if proc_pid_fd is not None:
-            cgroup_file = os.open("cgroup", os.O_RDONLY, dir_fd=proc_pid_fd)
-        else:
-            cgroup_file = "/proc/%s/cgroup" % pid
-
-        # determine cgroup
         try:
+            # determine cgroup
+            if proc_pid_fd is not None:
+                cgroup_file = os.open(
+                    "cgroup", os.O_RDONLY, dir_fd=proc_pid_fd
+                )
+            else:
+                cgroup_file = "/proc/%s/cgroup" % pid
+
             with io.open(cgroup_file, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()

@@ -1893,6 +1893,15 @@ int main() { return f(42); }
             timestamp, time.mktime(time.strptime("2014-01-01", "%Y-%m-%d"))
         )
 
+    def test_get_logind_session_missing_cgroup(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            proc_pid_fd = os.open(
+                tmpdir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            )
+            self.assertEqual(
+                apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd), None
+            )
+
     def test_command_output_passes_env(self):
         fake_env = {"GCONV_PATH": "/tmp"}
         out = apport.report._command_output(["env"], env=fake_env)
