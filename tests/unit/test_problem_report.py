@@ -12,8 +12,7 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 class T(unittest.TestCase):
     def test_basic_operations(self):
-        """basic creation and operation."""
-
+        """Basic creation and operation."""
         pr = problem_report.ProblemReport()
         pr["foo"] = "bar"
         pr["bar"] = " foo   bar\nbaz\n   blip  "
@@ -35,7 +34,6 @@ class T(unittest.TestCase):
 
     def test_ctor_arguments(self):
         """non-default constructor arguments."""
-
         pr = problem_report.ProblemReport("KernelCrash")
         self.assertEqual(pr["ProblemType"], "KernelCrash")
         pr = problem_report.ProblemReport(date="19801224 12:34")
@@ -69,8 +67,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr.get_timestamp(), None)
 
     def test_sanity_checks(self):
-        """various error conditions."""
-
+        """Various error conditions."""
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, pr.__setitem__, "a b", "1")
         self.assertRaises(TypeError, pr.__setitem__, "a", 1)
@@ -89,7 +86,6 @@ class T(unittest.TestCase):
 
     def test_write(self):
         """write() and proper formatting."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["SimpleUTF8"] = "1äö2Φ3".encode("UTF-8")
@@ -126,7 +122,6 @@ class T(unittest.TestCase):
 
     def test_load(self):
         """load() with various formatting."""
-
         report = textwrap.dedent(
             f"""\
             ProblemType: Crash
@@ -211,8 +206,7 @@ class T(unittest.TestCase):
         self.assertEqual(list(pr.keys()), ["ProblemType"])
 
     def test_write_fileobj(self):
-        """writing a report with a pointer to a file-like object."""
-
+        """Write a report with a pointer to a file-like object."""
         tempbin = io.BytesIO(bin_data)
         tempasc = io.BytesIO(b"Hello World")
 
@@ -229,9 +223,8 @@ class T(unittest.TestCase):
         self.assertEqual(pr["AscFile"], tempasc.getvalue().decode())
 
     def test_write_empty_fileobj(self):
-        """writing a report with a pointer to a file-like object with
+        """Write a report with a pointer to a file-like object with
         enforcing non-emptyness."""
-
         tempbin = io.BytesIO(b"")
         tempasc = io.BytesIO(b"")
 
@@ -246,8 +239,7 @@ class T(unittest.TestCase):
         self.assertRaises(OSError, pr.write, out)
 
     def test_read_file(self):
-        """reading a report with binary data."""
-
+        """Read a report with binary data."""
         bin_report = textwrap.dedent(
             """\
             ProblemType: Crash
@@ -279,9 +271,8 @@ class T(unittest.TestCase):
         self.assertEqual(pr["File"].get_value(), bin_data)
 
     def test_read_file_legacy(self):
-        """reading a report with binary data in legacy format without gzip
+        """Read a report with binary data in legacy format without gzip
         header."""
-
         bin_report = textwrap.dedent(
             """\
             ProblemType: Crash
@@ -318,7 +309,6 @@ class T(unittest.TestCase):
 
     def test_iter(self):
         """problem_report.ProblemReport iteration."""
-
         pr = problem_report.ProblemReport()
         pr["foo"] = "bar"
 
@@ -332,7 +322,6 @@ class T(unittest.TestCase):
 
     def test_modify(self):
         """reading, modifying fields, and writing back."""
-
         report = textwrap.dedent(
             """\
             ProblemType: Crash
@@ -381,7 +370,6 @@ class T(unittest.TestCase):
 
     def test_write_mime_text(self):
         """write_mime() for text values."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["SimpleUTF8"] = "1äö2Φ3".encode("UTF-8")
@@ -487,7 +475,6 @@ class T(unittest.TestCase):
 
     def test_write_mime_extra_headers(self):
         """write_mime() with extra headers."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["TwoLine"] = "first\nsecond\n"
@@ -514,7 +501,6 @@ class T(unittest.TestCase):
 
     def test_write_mime_order(self):
         """write_mime() with keys ordered."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["SecondText"] = "What"
         pr["FirstText"] = "Who"
@@ -562,7 +548,6 @@ class T(unittest.TestCase):
 
     def test_updating(self):
         """new_keys() and write() with only_new=True."""
-
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(["ProblemType", "Date"]))
         pr.load(
@@ -589,8 +574,7 @@ class T(unittest.TestCase):
         self.assertEqual(out.getvalue(), b"NewKey: new new\n")
 
     def test_import_dict(self):
-        """importing a dictionary with update()."""
-
+        """Import a dictionary with update()."""
         pr = problem_report.ProblemReport()
         pr["oldtext"] = "Hello world"
         pr["oldbin"] = bin_data
@@ -609,8 +593,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["overwrite"], "I am good")
 
     def test_load_key_filter(self):
-        """load a report with filtering keys."""
-
+        """Load a report with filtering keys."""
         report = textwrap.dedent(
             """\
             ProblemType: Crash

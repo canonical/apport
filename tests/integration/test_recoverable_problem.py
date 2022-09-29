@@ -61,7 +61,6 @@ class T(unittest.TestCase):
 
     def test_recoverable_problem(self):
         """recoverable_problem with valid data"""
-
         self.call_recoverable_problem("hello\0there")
         path = self.wait_for_report()
         with open(path, "rb") as report_path:
@@ -72,7 +71,6 @@ class T(unittest.TestCase):
 
     def test_recoverable_problem_dupe_sig(self):
         """recoverable_problem duplicate signature includes ExecutablePath"""
-
         self.call_recoverable_problem("Package\0test\0DuplicateSignature\0ds")
         path = self.wait_for_report()
         with open(path, "rb") as report_path:
@@ -86,7 +84,6 @@ class T(unittest.TestCase):
 
     def test_invalid_data(self):
         """recoverable_problem with invalid data"""
-
         self.assertRaises(
             subprocess.CalledProcessError,
             self.call_recoverable_problem,

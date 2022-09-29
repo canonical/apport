@@ -137,7 +137,8 @@ class T(unittest.TestCase):
         self.assertFalse(result["report"])
 
     def test_kernel_crash_layout(self):
-        """
+        """Display crash dialog for kernel crash.
+
         +-----------------------------------------------------------------+
         | [ logo ] YourDistro has experienced an internal error.          |
         |                                                                 |
@@ -163,7 +164,8 @@ class T(unittest.TestCase):
         self.assertFalse(self.app.dialog.text.isVisible())
 
     def test_package_crash_layout(self):
-        """
+        """Display crash dialog for a failed package installation.
+
         +-----------------------------------------------------------------+
         | [ error  ] Sorry, a problem occurred while installing software. |
         |            Package: apport 1.2.3~0ubuntu1                       |
@@ -202,7 +204,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
 
     def test_regular_crash_layout(self):
-        """
+        """Display crash dialog for an application crash.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |                                                                 |
@@ -252,7 +255,8 @@ class T(unittest.TestCase):
         )
 
     def test_regular_crash_layout_restart(self):
-        """
+        """Display crash dialog for an application crash offering a restart.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |                                                                 |
@@ -304,7 +308,8 @@ class T(unittest.TestCase):
         )
 
     def test_regular_crash_layout_norestart(self):
-        """
+        """Display crash dialog for an application crash offering no restart.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |                                                                 |
@@ -347,7 +352,8 @@ class T(unittest.TestCase):
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
     def test_system_crash_layout(self):
-        """
+        """Display crash dialog for a system application crash.
+
         +-----------------------------------------------------------------+
         | [ logo ] Sorry, YourDistro has experienced an internal error.   |
         |            If you notice further problems, try restarting the   |
@@ -388,7 +394,8 @@ class T(unittest.TestCase):
         )
 
     def test_apport_bug_package_layout(self):
-        """
+        """Display report detail dialog.
+
         +-------------------------------------------------------------------+
         | [ error  ] Send problem report to the developers?                 |
         |                                                                   |
@@ -419,7 +426,8 @@ class T(unittest.TestCase):
         self.assertTrue(self.app.dialog.treeview.isVisible())
 
     def test_recoverable_crash_layout(self):
-        """
+        """Display crash dialog for a recoverable crash.
+
         +-----------------------------------------------------------------+
         | [ logo ] The application Foo has experienced an internal error. |
         |          Developer-specified error text.                        |
@@ -636,8 +644,7 @@ class T(unittest.TestCase):
         self.assertIn("libc", r["Dependencies"])
 
     def test_bug_report_installed_package(self):
-        """Bug report for installed package"""
-
+        """Bug report for installed package."""
         self.app.report_file = None
         self.app.args.package = "bash"
 

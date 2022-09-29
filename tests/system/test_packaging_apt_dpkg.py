@@ -275,7 +275,7 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_dependencies(self):
-        """install packages's dependencies"""
+        """Test install packages's dependencies."""
         release = self._setup_foonux_config()
         # coreutils should always depend on libc6
         result = impl.install_packages(
@@ -731,7 +731,7 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_old_packages(self):
-        """sandbox will install older package versions from launchpad"""
+        """Sandbox will install older package versions from launchpad."""
         release = self._setup_foonux_config()
         wanted_package = "libcurl4"
         wanted_version = "7.81.0-1"  # pre-release version

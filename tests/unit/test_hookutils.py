@@ -20,7 +20,6 @@ class T(unittest.TestCase):
 
     def test_dmesg_overwrite(self):
         """attach_dmesg() does not overwrite already existing data"""
-
         report = {"CurrentDmesg": "existingcurrent"}
 
         apport.hookutils.attach_dmesg(report)
@@ -71,8 +70,7 @@ class T(unittest.TestCase):
         )
 
     def test_path_to_key(self):
-        """transforming a file path to a valid report key"""
-
+        """Transform a file path to a valid report key."""
         self.assertEqual(
             apport.hookutils.path_to_key("simple.txt"), "simple.txt"
         )

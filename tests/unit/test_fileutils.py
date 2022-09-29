@@ -9,7 +9,6 @@ import apport.packaging
 class T(unittest.TestCase):
     def test_likely_packaged(self):
         """likely_packaged()"""
-
         self.assertEqual(apport.fileutils.likely_packaged("/bin/bash"), True)
         self.assertEqual(
             apport.fileutils.likely_packaged("/usr/bin/foo"), True
@@ -28,7 +27,6 @@ class T(unittest.TestCase):
 
     def test_get_recent_crashes(self):
         """get_recent_crashes()"""
-
         # incomplete fields
         r = io.BytesIO(b"""ProblemType: Crash""")
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
@@ -62,7 +60,6 @@ class T(unittest.TestCase):
 
     def test_get_dbus_socket(self):
         """get_dbus_socket()"""
-
         tests = [
             ("unix:path=/run/user/1000/bus", "/run/user/1000/bus"),
             ("unix:path=/run/user/1000/bus;unix:path=/run/user/0/bus", None),
@@ -80,7 +77,6 @@ class T(unittest.TestCase):
 
     def test_get_starttime(self):
         """get_starttime()"""
-
         template = (
             "2022799 (%s) S 1834041 2022799 2022799 34820 "
             "2022806 4194304 692 479 0 0 2 0 0 0 20 0 1 0 "
@@ -109,7 +105,6 @@ class T(unittest.TestCase):
 
     def test_get_uid_and_gid(self):
         """get_uid_and_gid()"""
-
         # Python 3's open uses universal newlines, which means all
         # line endings get replaced with \n, so we don't need to test
         # different line ending combinations

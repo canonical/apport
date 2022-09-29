@@ -134,8 +134,7 @@ class T(unittest.TestCase):
         self.assertEqual(unexpected_reports, [])
 
     def test_limit_size(self):
-        """core dumps are capped on available memory size"""
-
+        """Core dumps are capped on available memory size."""
         # determine how much data we have to pump into apport in order to make
         # sure that it will refuse the core dump
         r = apport.Report()
@@ -212,7 +211,7 @@ class T(unittest.TestCase):
     @skip_if_command_is_missing("systemd-run")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_system_slice(self):
-        """report generation for a protected process running in the system
+        """Report generation for a protected process running in the system
         slice"""
         apport.fileutils.report_dir = self.orig_report_dir
         self.test_report = os.path.join(

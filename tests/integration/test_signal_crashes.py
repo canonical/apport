@@ -115,8 +115,7 @@ class T(unittest.TestCase):
             shutil.rmtree(self.workdir)
 
     def test_empty_core_dump(self):
-        """empty core dumps do not generate a report"""
-
+        """Empty core dumps do not generate a report."""
         test_proc = self.create_test_process()
         try:
             with subprocess.Popen(
@@ -144,8 +143,7 @@ class T(unittest.TestCase):
         self._check_report(expect_report=False)
 
     def test_crash_apport(self):
-        """report generation with apport"""
-
+        """Report generation with apport."""
         self.do_crash()
         st = os.stat(self.test_report)
 
@@ -214,8 +212,7 @@ class T(unittest.TestCase):
 
     @unittest.skip("fix test as multiple instances can be started within 30s")
     def test_parallel_crash(self):
-        """only one apport instance is ran at a time"""
-
+        """Only one apport instance is ran at a time."""
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process("/bin/dd", args=[])
         try:
@@ -287,8 +284,7 @@ class T(unittest.TestCase):
             test_proc2.wait()
 
     def test_unpackaged_binary(self):
-        """unpackaged binaries do not create a report"""
-
+        """Unpackaged binaries do not create a report."""
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
             with open(self.TEST_EXECUTABLE, "rb") as src:
@@ -297,8 +293,7 @@ class T(unittest.TestCase):
         self.do_crash(command=local_exe, expect_report=False)
 
     def test_unpackaged_script(self):
-        """unpackaged scripts do not create a report"""
-
+        """Unpackaged scripts do not create a report."""
         local_exe = os.path.join(self.workdir, "myscript")
         with open(local_exe, "w", encoding="utf-8") as f:
             f.write("#!/usr/bin/perl\nsleep(86400);\n")
@@ -312,7 +307,7 @@ class T(unittest.TestCase):
         self.do_crash(command="./myscript", args=[], expect_report=False)
 
     def test_unsupported_arguments_no_stderr(self):
-        """Write failure to log file when stderr is missing
+        """Write failure to log file when stderr is missing.
 
         The kernel calls apport with no stdout and stderr file
         descriptors set.
@@ -340,12 +335,11 @@ class T(unittest.TestCase):
         self.assertIn("the following arguments are required: -p/--pid", logged)
 
     def test_ignore_sigquit(self):
-        """apport ignores SIGQUIT"""
+        """Apport ignores SIGQUIT."""
         self.do_crash(sig=signal.SIGQUIT, expect_report=False)
 
     def test_leak_inaccessible_files(self):
-        """existence of user-inaccessible files does not leak"""
-
+        """Existence of user-inaccessible files do not leak."""
         local_exe = os.path.join(self.workdir, "myscript")
         with open(local_exe, "w", encoding="utf-8") as f:
             f.write(
@@ -373,8 +367,7 @@ class T(unittest.TestCase):
         apport.fileutils.delete_report(leak)
 
     def test_flood_limit(self):
-        """limitation of crash report flood"""
-
+        """Limitation of crash report flood."""
         count = 0
         while count < 7:
             sys.stderr.write("%i " % count)
@@ -392,8 +385,7 @@ class T(unittest.TestCase):
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_nonreadable_exe(self):
-        """report generation for non-readable exe"""
-
+        """Report generation for non-readable executable."""
         # CVE-2015-1324: if a user cannot read an executable, it behaves much
         # like a suid root binary in terms of writing a core dump
 
@@ -413,8 +405,7 @@ class T(unittest.TestCase):
         )
 
     def test_core_dump_packaged(self):
-        """packaged executables create core dumps on proper ulimits"""
-
+        """Packaged executables create core dumps on proper ulimits."""
         # for SEGV and ABRT we expect reports and core files
         for sig in (signal.SIGSEGV, signal.SIGABRT):
             for (kb, exp_file) in core_ulimit_table:
@@ -432,15 +423,14 @@ class T(unittest.TestCase):
             apport.fileutils.delete_report(self.test_report)
 
     def test_core_dump_packaged_sigquit(self):
-        """packaged executables create core files, no report for SIGQUIT"""
+        """Packaged executables create core files, no report for SIGQUIT."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(
             expect_corefile=True, expect_report=False, sig=signal.SIGQUIT
         )
 
     def test_core_dump_unpackaged(self):
-        """unpackaged executables create core dumps on proper ulimits"""
-
+        """Unpackaged executables create core dumps on proper ulimits."""
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
             with open(self.TEST_EXECUTABLE, "rb") as src:
@@ -459,8 +449,7 @@ class T(unittest.TestCase):
                 )
 
     def test_core_file_injection(self):
-        """cannot inject core file"""
-
+        """Cannot inject core file."""
         # CVE-2015-1325: ensure that apport does not re-open its .crash report,
         # as that allows us to intercept and replace the report and tinker with
         # the core dump
@@ -513,8 +502,7 @@ class T(unittest.TestCase):
         )
 
     def test_ignore(self):
-        """ignoring executables"""
-
+        """Ignore executables."""
         self.do_crash()
 
         pr = apport.Report()
@@ -527,8 +515,7 @@ class T(unittest.TestCase):
         self.do_crash(expect_report=False)
 
     def test_modify_after_start(self):
-        """ignores executables which got modified after process started"""
-
+        """Ignore executables which got modified after process started."""
         # create executable in a path we can modify which apport regards as
         # likely packaged
         (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
@@ -583,8 +570,7 @@ class T(unittest.TestCase):
         self._check_report(expect_report=False)
 
     def test_logging_file(self):
-        """outputs to log file, if available"""
-
+        """Output to log file, if available."""
         test_proc = self.create_test_process()
         log = os.path.join(self.workdir, "apport.log")
         try:
@@ -637,8 +623,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
     def test_logging_stderr(self):
-        """outputs to stderr if log is not available"""
-
+        """Output to stderr if log is not available."""
         test_proc = self.create_test_process()
         try:
             env = os.environ.copy()
@@ -684,8 +669,7 @@ class T(unittest.TestCase):
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_keep(self):
-        """report generation for setuid program which stays root"""
-
+        """Report generation for setuid program which stays root."""
         # create suid root executable in a path we can modify which apport
         # regards as likely packaged
         (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
@@ -710,8 +694,7 @@ class T(unittest.TestCase):
     )
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self):
-        """report generation for setuid program which drops root"""
-
+        """Report generation for setuid program which drops root."""
         # run ping as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
@@ -723,8 +706,7 @@ class T(unittest.TestCase):
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self):
-        """report generation for unpackaged setuid program"""
-
+        """Report generation for unpackaged setuid program."""
         # create suid root executable in a path we can modify which apport
         # regards as not packaged
         (fd, myexe) = tempfile.mkstemp(dir="/tmp")
@@ -748,7 +730,7 @@ class T(unittest.TestCase):
         )
 
     def test_coredump_from_socket(self):
-        """forwarding of a core dump through socket
+        """Forward a core dump through a socket.
 
         This is being used in a container via systemd activation, where the
         core dump gets read from /run/apport.socket.
@@ -762,7 +744,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
 
     def test_core_dump_packaged_sigquit_via_socket(self):
-        """executable create core files via socket, no report for SIGQUIT"""
+        """Executable create core files via socket, no report for SIGQUIT."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(
             expect_corefile=True,
@@ -776,7 +758,7 @@ class T(unittest.TestCase):
     )
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop_via_socket(self):
-        """report generation via socket for setuid program which drops root"""
+        """Report generation via socket for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         # run ping as user "mail"
         self.do_crash(
@@ -1121,8 +1103,7 @@ class T(unittest.TestCase):
         )
 
     def check_report_coredump(self, report_path):
-        """Check that given report file has a valid core dump"""
-
+        """Check that given report file has a valid core dump."""
         r = apport.Report()
         with open(report_path, "rb") as f:
             r.load(f)
