@@ -21,8 +21,7 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_compressed_values(self):
-        """handling of CompressedValue values."""
-
+        """Handle of CompressedValue values."""
         large_val = b"A" * 5000000
 
         pr = problem_report.ProblemReport()
@@ -66,7 +65,6 @@ class T(unittest.TestCase):
 
     def test_write_append(self):
         """write() with appending to an existing file."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
         pr["WhiteSpace"] = " foo   bar\nbaz\n  blip  "
@@ -116,7 +114,6 @@ class T(unittest.TestCase):
 
     def test_extract_keys(self):
         """extract_keys() with various binary elements."""
-
         # create a test report with binary elements
         large_val = b"A" * 5000000
 
@@ -181,8 +178,7 @@ class T(unittest.TestCase):
                 self.assertEqual(f.read(), expected)
 
     def test_write_file(self):
-        """writing a report with binary file data."""
-
+        """Write a report with binary file data."""
         with tempfile.NamedTemporaryFile() as temp:
             temp.write(bin_data)
             temp.flush()
@@ -247,8 +243,7 @@ class T(unittest.TestCase):
             )
 
     def test_write_delayed_fileobj(self):
-        """writing a report with file pointers and delayed data."""
-
+        """Write a report with file pointers and delayed data."""
         (fout, fin) = os.pipe()
 
         if os.fork() == 0:
@@ -278,8 +273,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr2["BinFile"], "ab" * 512 * 1024 + "hello world")
 
     def test_big_file(self):
-        """writing and re-decoding a big random file."""
-
+        """Write and re-decoding a big random file."""
         # create 1 MB random file
         with tempfile.NamedTemporaryFile() as temp:
             data = os.urandom(1048576)
@@ -315,8 +309,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["File"].get_value(), data)
 
     def test_size_limit(self):
-        """writing and a big random file with a size limit key."""
-
+        """Write and a big random file with a size limit key."""
         # create 1 MB random file
         with tempfile.NamedTemporaryFile() as temp:
             data = os.urandom(1048576)
@@ -349,8 +342,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["ZAfter"], "ytesty")
 
     def test_add_to_existing(self):
-        """adding information to an existing report."""
-
+        """Add information to an existing report."""
         # original report
         pr = problem_report.ProblemReport()
         pr["old1"] = "11"
@@ -432,7 +424,6 @@ class T(unittest.TestCase):
 
     def test_write_mime_binary(self):
         """write_mime() for binary values and file references."""
-
         with tempfile.NamedTemporaryFile() as temp:
             with tempfile.NamedTemporaryFile() as tempgz:
                 temp.write(bin_data)
@@ -507,7 +498,6 @@ class T(unittest.TestCase):
 
     def test_write_mime_filter(self):
         """write_mime() with key filters."""
-
         pr = problem_report.ProblemReport(date="now!")
         pr["GoodText"] = "Hi"
         pr["BadText"] = "YouDontSeeMe"

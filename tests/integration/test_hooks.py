@@ -43,7 +43,6 @@ class T(unittest.TestCase):
 
     def test_package_hook_nologs(self):
         """package_hook without any log files."""
-
         ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", "bash"],
             check=False,
@@ -69,7 +68,6 @@ class T(unittest.TestCase):
 
     def test_package_hook_uninstalled(self):
         """package_hook on an uninstalled package (might fail to install)."""
-
         pkg = apport.packaging.get_uninstalled_package()
         ph = subprocess.run(
             ["%s/package_hook" % datadir, "-p", pkg],
@@ -94,7 +92,6 @@ class T(unittest.TestCase):
 
     def test_package_hook_logs(self):
         """package_hook with a log dir and a log file."""
-
         with open(
             os.path.join(self.workdir, "log_1.log"), "w", encoding="utf-8"
         ) as f:
@@ -184,7 +181,6 @@ class T(unittest.TestCase):
 
     def test_kernel_crashdump_kexec(self):
         """kernel_crashdump using kexec-tools."""
-
         with open(
             os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
         ) as vmcore:
@@ -232,7 +228,6 @@ class T(unittest.TestCase):
 
     def test_kernel_crashdump_kdump(self):
         """kernel_crashdump using kdump-tools."""
-
         timedir = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d%H%M"
         )
@@ -280,7 +275,7 @@ class T(unittest.TestCase):
         self.assertIn(os.uname()[2].split("-")[0], r["Package"])
 
     def test_kernel_crashdump_log_symlink(self):
-        """attempted DoS with vmcore.log symlink
+        """Attempt DoS with vmcore.log symlink.
 
         We must only accept plain files, otherwise vmcore.log might be a
         symlink to the .crash file, which would recursively fill itself.
@@ -306,8 +301,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
     def test_kernel_crashdump_kdump_log_symlink(self):
-        """attempted DoS with dmesg symlink with kdump-tools"""
-
+        """Attempt DoS with dmesg symlink with kdump-tools."""
         timedir = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d%H%M"
         )
@@ -330,8 +324,7 @@ class T(unittest.TestCase):
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_kernel_crashdump_kdump_log_dir_symlink(self):
-        """attempted DoS with dmesg dir symlink with kdump-tools"""
-
+        """Attempted DoS with dmesg dir symlink with kdump-tools."""
         timedir = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d%H%M"
         )
@@ -361,7 +354,6 @@ class T(unittest.TestCase):
     def _gcc_version_path():
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
-
         gcc = subprocess.run(
             ["gcc", "--version"], check=True, stdout=subprocess.PIPE, text=True
         )
@@ -383,7 +375,6 @@ class T(unittest.TestCase):
 
     def test_gcc_ide_hook_file(self):
         """gcc_ice_hook with a temporary file."""
-
         (gcc_version, gcc_path) = self._gcc_version_path()
 
         with tempfile.NamedTemporaryFile() as test_source:
@@ -420,7 +411,6 @@ class T(unittest.TestCase):
 
     def test_gcc_ide_hook_file_binary(self):
         """gcc_ice_hook with a temporary file with binary data."""
-
         gcc_path = self._gcc_version_path()[1]
 
         with tempfile.NamedTemporaryFile() as test_source:
@@ -447,7 +437,6 @@ class T(unittest.TestCase):
 
     def test_gcc_ide_hook_pipe(self):
         """gcc_ice_hook with piping."""
-
         (gcc_version, gcc_path) = self._gcc_version_path()
 
         test_source = "int f(int x);"

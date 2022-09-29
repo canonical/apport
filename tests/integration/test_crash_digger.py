@@ -90,8 +90,7 @@ class T(unittest.TestCase):
         return (crash_digger.stdout, crash_digger.stderr)
 
     def test_crashes(self):
-        """Crash retracing"""
-
+        """Crash retracing."""
         (out, err) = self.call(
             [
                 "-c",
@@ -131,8 +130,7 @@ class T(unittest.TestCase):
         )
 
     def test_crashes_error(self):
-        """Crash retracing if apport-retrace fails on bug #1"""
-
+        """Crash retracing if apport-retrace fails on bug #1."""
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, self.apport_retrace + ".bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
@@ -189,8 +187,7 @@ class T(unittest.TestCase):
         os.rename(self.apport_retrace + ".bak", self.apport_retrace)
 
     def test_crashes_transient_error(self):
-        """Crash retracing if apport-retrace reports a transient error"""
-
+        """Crash retracing if apport-retrace reports a transient error."""
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, self.apport_retrace + ".bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
@@ -238,8 +235,7 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists(self.lock_file))
 
     def test_dupcheck(self):
-        """Duplicate checking"""
-
+        """Duplicate checking."""
         (out, err) = self.call(
             [
                 "-a",
@@ -260,8 +256,7 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists(self.lock_file))
 
     def test_stderr_redirection(self):
-        """apport-retrace's stderr is redirected to stdout"""
-
+        """apport-retrace's stderr is redirected to stdout."""
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write("#!/bin/sh\necho ApportRetraceError >&2\n")
         (out, err) = self.call(
@@ -280,8 +275,7 @@ class T(unittest.TestCase):
         self.assertIn("ApportRetraceError", out)
 
     def test_publish_db(self):
-        """Duplicate database publishing"""
-
+        """Duplicate database publishing."""
         (out, err) = self.call(
             [
                 "-c",
@@ -304,8 +298,7 @@ class T(unittest.TestCase):
         )
 
     def test_alternate_crashdb(self):
-        """Alternate crash database name"""
-
+        """Alternate crash database name."""
         # existing DB "empty" has no crashes
         (out, err) = self.call(
             [

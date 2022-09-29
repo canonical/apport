@@ -116,7 +116,8 @@ class T(unittest.TestCase):
         self.assertFalse(result["report"])
 
     def test_kernel_crash_layout(self):
-        """
+        """Display crash dialog for kernel crash.
+
         +-----------------------------------------------------------------+
         | [ logo] YourDistro has experienced an internal error.           |
         |            Send problem report to the developers?               |
@@ -152,7 +153,8 @@ class T(unittest.TestCase):
         )
 
     def test_package_crash_layout(self):
-        """
+        """Display crash dialog for a failed package installation.
+
         +-----------------------------------------------------------------+
         | [ error  ] Sorry, a problem occurred while installing software. |
         |            Send problem report to the developers?               |
@@ -212,7 +214,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
 
     def test_regular_crash_layout(self):
-        """
+        """Display crash dialog for an application crash.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |            Send problem report to the developers?               |
@@ -270,7 +273,8 @@ class T(unittest.TestCase):
         )
 
     def test_regular_crash_layout_restart(self):
-        """
+        """Display crash dialog for an application crash offering a restart.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |            Send problem report to the developers?               |
@@ -333,7 +337,8 @@ class T(unittest.TestCase):
         self.assertTrue(self.app.w("relaunch_app").get_active())
 
     def test_regular_crash_layout_norestart(self):
-        """
+        """Display crash dialog for an application crash offering no restart.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.      |
         |            Send problem report to the developers?               |
@@ -384,7 +389,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
 
     def test_hang_layout(self):
-        """
+        """Display crash dialog for a hanging process.
+
         +-----------------------------------------------------------------+
         | [ apport ] The application Apport has stopped responding.       |
         |            Send problem report to the developers?               |
@@ -447,7 +453,8 @@ class T(unittest.TestCase):
         )
 
     def test_system_crash_layout(self):
-        """
+        """Display crash dialog for a system application crash.
+
         +---------------------------------------------------------------+
         | [ logo ] Sorry, YourDistro has experienced an internal error. |
         |          Send problem report to the developers?               |
@@ -497,7 +504,8 @@ class T(unittest.TestCase):
         )
 
     def test_system_crash_from_console_layout(self):
-        """
+        """Display crash dialog from console.
+
         +-------------------------------------------------------------------+
         | [ ubuntu ] Sorry, the application apport has closed unexpectedly. |
         |            Send problem report to the developers?                 |
@@ -559,7 +567,8 @@ class T(unittest.TestCase):
         GTKUserInterface, "can_examine_locally", unittest.mock.MagicMock()
     )
     def test_examine_button(self):
-        """
+        """Crash dialog showing or not showing "Examine locally".
+
         +---------------------------------------------------------------------+
         | [ apport ] The application Apport has closed unexpectedly.          |
         |            Send problem report to the developers?                   |
@@ -584,7 +593,8 @@ class T(unittest.TestCase):
         self.assertTrue(result["examine"])
 
     def test_apport_bug_package_layout(self):
-        """
+        """Display report detail dialog.
+
         +-------------------------------------------------------------------+
         | [ error  ] Send problem report to the developers?                 |
         |                                                                   |
@@ -620,8 +630,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.app.w("dialog_crash_new").get_resizable())
 
     def test_apport_bug_package_layout_load_file(self):
-        """bug layout from a loaded report"""
-
+        """Bug layout from a loaded report."""
         self.app.report_file = "/tmp/foo.apport"
         self.app.report = apport.report.Report("Bug")
         self.app.report["Package"] = "libfoo1"
@@ -650,7 +659,8 @@ class T(unittest.TestCase):
         self.assertTrue(self.app.w("dialog_crash_new").get_resizable())
 
     def test_recoverable_crash_layout(self):
-        """
+        """Display crash dialog for a recoverable crash.
+
         +-----------------------------------------------------------------+
         | [ logo ] The application Foo has experienced an internal error. |
         |            Send problem report to the developers?               |
@@ -841,8 +851,7 @@ class T(unittest.TestCase):
         unittest.mock.MagicMock(return_value=True),
     )
     def test_broken_crash_details(self):
-        """Broken crash report with showing details"""
-
+        """Broken crash report with showing details."""
         # pylint: disable=attribute-defined-outside-init
         self.error_title = None
         self.error_text = None
@@ -1040,8 +1049,7 @@ class T(unittest.TestCase):
         GTKUserInterface, "open_url", unittest.mock.MagicMock()
     )
     def test_update_report(self):
-        """Updating an existing report"""
-
+        """Updating an existing report."""
         self.app.report_file = None
 
         def cont():
@@ -1220,8 +1228,7 @@ class T(unittest.TestCase):
         )
 
     def test_immediate_close(self):
-        """Close details window immediately"""
-
+        """Close details window immediately."""
         # this reproduces https://launchpad.net/bugs/938090
         self.app.w("dialog_crash_new").destroy()
         GLib.idle_add(Gtk.main_quit)

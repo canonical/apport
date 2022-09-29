@@ -51,8 +51,7 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = self.orig_report_dir
 
     def test_crash_class(self):
-        """Crash in a .class file"""
-
+        """Crash in a .class file."""
         crash_class = os.path.dirname(self.crash_jar_path) + "/crash.class"
         if not os.path.exists(crash_class):
             self.skipTest(f"{crash_class} missing")
@@ -78,8 +77,7 @@ class T(unittest.TestCase):
         self._check_crash_report(crash_class)
 
     def test_crash_jar(self):
-        """Crash in a .jar file"""
-
+        """Crash in a .jar file."""
         if not os.path.exists(self.crash_jar_path):
             self.skipTest(f"{self.crash_jar_path} missing")
         java = subprocess.run(
@@ -102,8 +100,7 @@ class T(unittest.TestCase):
         self._check_crash_report(self.crash_jar_path + "!/crash.class")
 
     def _check_crash_report(self, main_file):
-        """Check that we have one crash report, and verify its contents"""
-
+        """Check that we have one crash report, and verify its contents."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "did not create a crash report")
         r = apport.report.Report()

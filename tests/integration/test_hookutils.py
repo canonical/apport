@@ -20,7 +20,7 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_module_license_evaluation(self):
-        """module licenses can be validated correctly"""
+        """Module licenses can be validated correctly."""
         # pylint: disable=protected-access
 
         def _build_ko(license_name):
@@ -62,7 +62,7 @@ class T(unittest.TestCase):
         self.assertIn(bad_ko, nonfree)
 
     def test_real_module_license_evaluation(self):
-        """module licenses can be validated correctly for real module"""
+        """Module licenses can be validated correctly for real module."""
         # pylint: disable=protected-access
         isofs_license = apport.hookutils._get_module_license("isofs")
         if isofs_license == "invalid":
@@ -78,7 +78,6 @@ class T(unittest.TestCase):
 
     def test_attach_file(self):
         """attach_file()"""
-
         with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
         with open("/etc/issue", encoding="utf-8") as f:
@@ -144,7 +143,6 @@ class T(unittest.TestCase):
 
     def test_attach_file_binary(self):
         """attach_file() for binary files"""
-
         myfile = os.path.join(self.workdir, "data")
         with open(myfile, "wb") as f:
             f.write(b"a\xc3\xb6b\xffx")
@@ -162,7 +160,6 @@ class T(unittest.TestCase):
 
     def test_attach_file_if_exists(self):
         """attach_file_if_exists()"""
-
         with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
 
@@ -198,7 +195,6 @@ class T(unittest.TestCase):
 
     def test_recent_syslog(self):
         """recent_syslog"""
-
         self.assertEqual(
             apport.hookutils.recent_syslog(
                 re.compile("."), path="/nonexisting"
@@ -224,7 +220,6 @@ class T(unittest.TestCase):
     )
     def test_attach_mac_events(self):
         """attach_mac_events()"""
-
         denied_log = (
             "[  351.624338] type=1400 audit(1343775571.688:27):"
             ' apparmor="DENIED" operation="capable" parent=1'
@@ -366,7 +361,6 @@ class T(unittest.TestCase):
 
     def test_recent_syslog_overflow(self):
         """recent_syslog on a huge file"""
-
         log = os.path.join(self.workdir, "syslog")
         with open(log, "w", encoding="utf-8") as f:
             lines = 1000000
@@ -424,7 +418,6 @@ class T(unittest.TestCase):
 
     def test_xsession_errors(self):
         """xsession_errors()"""
-
         with open(
             os.path.join(self.workdir, ".xsession-errors"),
             "w",
@@ -494,8 +487,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         unittest.mock.MagicMock(return_value=[]),
     )
     def test_no_crashes():
-        """functions do not crash (very shallow)"""
-
+        """Functions do not crash (very shallow)."""
         report = {}
         apport.hookutils.attach_hardware(report)
         apport.hookutils.attach_alsa(report)
@@ -538,8 +530,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 
     @staticmethod
     def _get_mem_usage():
-        """Get current memory usage in kB"""
-
+        """Get current memory usage in kB."""
         with open("/proc/self/status", encoding="utf-8") as f:
             for line in f:
                 if line.startswith("VmSize:"):
