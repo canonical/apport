@@ -968,7 +968,7 @@ class UserInterface:
         if len(sys.argv) > 0 and cmd.endswith("-bug"):
             suppress = argparse.SUPPRESS
         else:
-            suppress = False
+            suppress = None
 
         parser = argparse.ArgumentParser(
             usage=_(
