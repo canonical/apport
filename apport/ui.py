@@ -2007,9 +2007,11 @@ class UserInterface:
         raise NotImplementedError(
             "this function must be overridden by subclasses"
         )
-    
+
     def ui_github_login(self, text, url, code):
-        return self.ui_info_message("Login required", text.format(url=url, code=code))
+        return self.ui_info_message(
+            "Login required", text.format(url=url, code=code)
+        )
 
     def ui_info_message(self, title, text):
         """Show an information message box with given title and text."""

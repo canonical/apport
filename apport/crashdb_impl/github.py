@@ -28,18 +28,21 @@ class Github:
         self.__client_id = client_id
         self.__authentication_data = None
         self.__access_token = None
+        self.__cooldown = None
+        self.__expiry = None
         self.ui = ui
 
     @staticmethod
     def _stringify(data: dict) -> str:
-        "Takes a dict and returns it as a string for POSTing."
+        """Takes a dict and returns it as a string for POSTing."""
         string = ""
         for key, value in data.items():
             string = f"{string}&{key}={value}"
         return string
 
     def _post(self, url: str, data: str):
-        "POSTs the given data to the given URL. Uses auth token if available"
+        """Posts the given data to the given URL.
+        Uses auth token if available"""
         headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
@@ -68,7 +71,7 @@ class Github:
         return self._post(url, json.dumps(data))
 
     def __enter__(self):
-        "Enters login process. At exit, login process ends (session doesn't)."
+        """Enters login process. At exit, login process ends."""
         data = {"client_id": self.__client_id, "scope": "public_repo"}
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
@@ -78,11 +81,11 @@ class Github:
         prompt += "\n"
         prompt += "Open the following URL. When requested, write this code "
         prompt += "to enable apport to open an issue.\n"
-        prompt += 'URL:  {url}\n'
-        prompt += 'Code: {code}'
+        prompt += "URL:  {url}\n"
+        prompt += "Code: {code}"
 
-        url=response["verification_uri"]
-        code=response["user_code"]
+        url = response["verification_uri"]
+        code = response["user_code"]
 
         self.ui.ui_github_login(prompt, url, code)
 
@@ -102,8 +105,7 @@ class Github:
         self.__expiry = 0
 
     def authentication_complete(self) -> bool:
-        """
-        Asks Github if the user has logged in already.
+        """Asks Github if the user has logged in already.
         It respects the wait-time requested by Github.
         """
         if not self.__authentication_data:
@@ -132,7 +134,7 @@ class Github:
                 self.__cooldown = int(response["interval"])
                 return False
             raise RuntimeError(f"Unknown error from Github: {response}")
-        elif "access_token" in response:
+        if "access_token" in response:
             self.__access_token = response["access_token"]
             return True
         raise RuntimeError(f"Unknown response from Github: {response}")
@@ -144,15 +146,12 @@ class IssueHandle:
 
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
-    """
-    Github crash database.
+    """Github crash database.
     This is a Apport CrashDB implementation for interacting with Github issues
     """
 
     def __init__(self, auth_file, options):
-        """
-        Initialize some variables. Login is delayed until necessary.
-        """
+        """Initialize some variables. Login is delayed until necessary."""
         apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
         self.repository_owner = options["repository_owner"]
         self.repository_name = options["repository_name"]
@@ -162,9 +161,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.github = None
 
     def _format_report(self, report: apport.Report) -> dict:
-        """
-        Formats report info as markdown and creates Github issue JSON.
-        """
+        """Formats report info as markdown and creates Github issue JSON."""
         body_markdown = ""
         for key, value in report.items():
             body_markdown += f"**{key}**\n{value}\n\n"
@@ -172,7 +169,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return {
             "title": "Issue submitted via apport",
             "body": body_markdown,
-            "labels": [lbl for lbl in self.labels],
+            "labels": list(self.labels),
         }
 
     def external_login(self, ui) -> None:
@@ -185,7 +182,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self, report: apport.Report, progress_callback=None
     ) -> IssueHandle:
         """Upload given problem report return a handle for it.
-
         In Github, we open an issue.
         """
         assert self.accepts(report)
@@ -202,8 +198,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_comment_url(
         self, report: apport.Report, handle: IssueHandle
     ) -> str:
-        """
-        Return an URL that should be opened after report has been uploaded
+        """Return a URL that should be opened after report has been uploaded
         and upload() returned handle.
         """
         return handle.url
