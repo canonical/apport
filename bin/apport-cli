@@ -180,14 +180,15 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return details
 
-    def ui_update_view(self):
+    def ui_update_view(self, stdout=None):
         self.in_update_view = True
         report = self._get_details()
         try:
             subprocess.run(
                 ["/usr/bin/sensible-pager"],
                 check=False,
-                stdin=report.encode("UTF-8"),
+                input=report.encode("UTF-8"),
+                stdout=stdout,
             )
         except OSError as error:
             # ignore broken pipe (premature quit)
