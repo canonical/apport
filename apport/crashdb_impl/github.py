@@ -73,11 +73,18 @@ class Github:
         url = "https://github.com/login/device/code"
         response = self.api_authentication(url, data)
 
-        prompt = "Open the following URL. When requested, write this code"
-        prompt += "to enable apport to post an issue.\n"
-        prompt += f'URL:  {response["verification_uri"]}\n'
-        prompt += f'Code: {response["user_code"]}'
-        self.ui.ui_info_message("Permissions needed", prompt)
+        prompt = "Posting an issue requires a Github account. If you have "
+        prompt += "one, please follow these steps to log in.\n"
+        prompt += "\n"
+        prompt += "Open the following URL. When requested, write this code "
+        prompt += "to enable apport to open an issue.\n"
+        prompt += 'URL:  {url}\n'
+        prompt += 'Code: {code}'
+
+        url=response["verification_uri"]
+        code=response["user_code"]
+
+        self.ui.ui_github_login(prompt, url, code)
 
         self.__authentication_data = {
             "client_id": self.__client_id,
