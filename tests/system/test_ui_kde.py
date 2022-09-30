@@ -11,7 +11,6 @@
 # the full text of the license.
 import os
 import shutil
-import sys
 import tempfile
 import textwrap
 import unittest
@@ -50,12 +49,14 @@ else:
 )
 class T(unittest.TestCase):
     COLLECTING_DIALOG = unittest.mock.call(
+        os.path.dirname(apport_kde_path),
         "Collecting Problem Information",
         "Collecting problem information",
         "The collected information can be sent to the developers to improve "
         "the application. This might take a few minutes.",
     )
     UPLOADING_DIALOG = unittest.mock.call(
+        os.path.dirname(apport_kde_path),
         "Uploading Problem Information",
         "Uploading problem information",
         "The collected information is being sent to the bug tracking system. "
@@ -91,11 +92,7 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
-        self.orig_argv = sys.argv
-        # Work around MainUserInterface using basename to find the KDE UI file.
-        sys.argv = self.argv
-        self.app = MainUserInterface()
-
+        self.app = MainUserInterface(self.argv)
         # use in-memory crashdb
         self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 
@@ -123,7 +120,6 @@ class T(unittest.TestCase):
 
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.hook_dir)
-        sys.argv = self.orig_argv
 
     def test_close_button(self):
         """Clicking the close button on the window does not report the

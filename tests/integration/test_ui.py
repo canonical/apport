@@ -12,6 +12,7 @@ import sys
 import tempfile
 import textwrap
 import time
+import typing
 import unittest
 import unittest.mock
 
@@ -34,7 +35,7 @@ logind_session = apport.Report.get_logind_session(os.getpid())
 class TestSuiteUserInterface(apport.ui.UserInterface):
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
-    def __init__(self):
+    def __init__(self, argv: typing.Optional[list[str]] = None):
         # use our dummy crashdb
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
@@ -59,7 +60,9 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
 
         os.environ["APPORT_CRASHDB_CONF"] = self.crashdb_conf.name
 
-        apport.ui.UserInterface.__init__(self)
+        if argv is None:
+            argv = ["ui-test"]
+        apport.ui.UserInterface.__init__(self, argv)
 
         self.crashdb = apport.crashdb_impl.memory.CrashDatabase(
             None, {"dummy_data": 1, "dupdb_url": ""}
@@ -197,9 +200,6 @@ class T(unittest.TestCase):
         )
         os.mknod(apport.report._ignore_file)
 
-        # need to do this to not break ui's ctor
-        self.orig_argv = sys.argv
-        sys.argv = ["ui-test"]
         self.ui = TestSuiteUserInterface()
 
         # demo report
@@ -236,7 +236,6 @@ class T(unittest.TestCase):
         self.report_file.flush()
 
     def tearDown(self):
-        sys.argv = self.orig_argv
         apport.fileutils.report_dir = self.orig_report_dir
         self.orig_report_dir = None
         apport.ui.symptom_script_dir = self.orig_symptom_script_dir
@@ -605,23 +604,20 @@ class T(unittest.TestCase):
 
     def test_run_report_bug_noargs(self):
         """run_report_bug() without specifying arguments"""
-        sys.argv = ["ui-test", "-f"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f"])
         self.assertEqual(self.ui.run_argv(), False)
         self.assertEqual(self.ui.msg_severity, "error")
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def test_run_version(self, stdout_mock):
         """run_report_bug() as "ubuntu-bug" with version argument"""
-        sys.argv = ["ubuntu-bug", "-v"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ubuntu-bug", "-v"])
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(stdout_mock.getvalue(), apport.ui.__version__ + "\n")
 
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
-        sys.argv = ["ui-test", "-f", "-p", "bash"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f", "-p", "bash"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -646,8 +642,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
         # should not crash on nonexisting package
-        sys.argv = ["ui-test", "-f", "-p", "nonexisting_gibberish"]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-f", "-p", "nonexisting_gibberish"]
+        self.ui = TestSuiteUserInterface(argv)
         try:
             self.ui.run_argv()
         except SystemExit:
@@ -666,8 +662,8 @@ class T(unittest.TestCase):
 
         try:
             # report a bug on text executable process
-            sys.argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
-            self.ui = TestSuiteUserInterface()
+            argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
+            self.ui = TestSuiteUserInterface(argv)
             self.ui.present_details_response = {
                 "report": True,
                 "blacklist": False,
@@ -721,8 +717,7 @@ class T(unittest.TestCase):
         # silently ignore missing PID; this happens when the user closes
         # the application prematurely
         pid = self._find_unused_pid()
-        sys.argv = ["ui-test", "-f", "-P", str(pid)]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f", "-P", str(pid)])
         self.ui.run_argv()
 
     def test_run_report_bug_noperm_pid(self):
@@ -734,8 +729,7 @@ class T(unittest.TestCase):
             restore_root = True
 
         try:
-            sys.argv = ["ui-test", "-f", "-P", "1"]
-            self.ui = TestSuiteUserInterface()
+            self.ui = TestSuiteUserInterface(["ui-test", "-f", "-P", "1"])
             self.ui.run_argv()
 
             self.assertEqual(self.ui.msg_severity, "error")
@@ -761,8 +755,7 @@ class T(unittest.TestCase):
         time.sleep(0.2)
 
         try:
-            sys.argv = ["ui-test", "-f", "-P", str(pid)]
-            self.ui = TestSuiteUserInterface()
+            self.ui = TestSuiteUserInterface(["ui-test", "-f", "-P", str(pid)])
             self.assertRaises(SystemExit, self.ui.run_argv)
         finally:
             os.kill(pid, signal.SIGKILL)
@@ -788,8 +781,7 @@ class T(unittest.TestCase):
         else:
             self.skipTest("no kernel thread found")
 
-        sys.argv = ["ui-test", "-f", "-P", str(pid)]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f", "-P", str(pid)])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -812,8 +804,8 @@ class T(unittest.TestCase):
         os.mkdir(d)
         reportfile = os.path.join(d, "bashisbad.apport")
 
-        sys.argv = ["ui-test", "-f", "-p", "bash", "--save", reportfile]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-f", "-p", "bash", "--save", reportfile]
+        self.ui = TestSuiteUserInterface(argv)
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_severity, None)
@@ -833,8 +825,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["ProblemType"], "Bug")
 
         # report it
-        sys.argv = ["ui-test", "-c", reportfile]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-c", reportfile])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -1058,8 +1049,8 @@ class T(unittest.TestCase):
         self.report["Package"] = "bash"
         self.update_report_file()
 
-        sys.argv = ["ui-test", "-c", self.report_file.name]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-c", self.report_file.name]
+        self.ui = TestSuiteUserInterface(argv)
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -1081,8 +1072,8 @@ class T(unittest.TestCase):
         )
         self.update_report_file()
 
-        sys.argv = ["ui-test", "-c", self.report_file.name]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-c", self.report_file.name]
+        self.ui = TestSuiteUserInterface(argv)
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -1100,8 +1091,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "info")
 
         # should not die with an exception on an invalid name
-        sys.argv = ["ui-test", "-c", "/nonexisting.crash"]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-c", "/nonexisting.crash"]
+        self.ui = TestSuiteUserInterface(argv)
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
@@ -1911,8 +1902,7 @@ class T(unittest.TestCase):
 
     def test_run_update_report_nonexisting_package_from_bug(self):
         """run_update_report() on a nonexisting package (from bug)"""
-        sys.argv = ["ui-test", "-u", "1"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-u", "1"])
 
         self.assertEqual(self.ui.run_argv(), False)
         self.assertIn("No additional information collected.", self.ui.msg_text)
@@ -1920,8 +1910,7 @@ class T(unittest.TestCase):
 
     def test_run_update_report_nonexisting_package_cli(self):
         """run_update_report() on a nonexisting package (CLI argument)"""
-        sys.argv = ["ui-test", "-u", "1", "-p", "bar"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-u", "1", "-p", "bar"])
 
         self.assertEqual(self.ui.run_argv(), False)
         self.assertIn("No additional information collected.", self.ui.msg_text)
@@ -1929,8 +1918,7 @@ class T(unittest.TestCase):
 
     def test_run_update_report_existing_package_from_bug(self):
         """run_update_report() on an existing package (from bug)"""
-        sys.argv = ["ui-test", "-u", "1"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-u", "1"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -1955,8 +1943,8 @@ class T(unittest.TestCase):
     def test_run_update_report_existing_package_cli_tags(self):
         """run_update_report() on an existing package (CLI argument)
         with extra tag"""
-        sys.argv = ["ui-test", "-u", "1", "-p", "bash", "--tag", "foo"]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-u", "1", "-p", "bash", "--tag", "foo"]
+        self.ui = TestSuiteUserInterface(argv)
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -1979,8 +1967,7 @@ class T(unittest.TestCase):
 
     def test_run_update_report_existing_package_cli_cmdname(self):
         """run_update_report() on an existing package (-collect program)"""
-        sys.argv = ["apport-collect", "-p", "bash", "1"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["apport-collect", "-p", "bash", "1"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2002,8 +1989,7 @@ class T(unittest.TestCase):
 
     def test_run_update_report_noninstalled_but_hook(self):
         """run_update_report() on an uninstalled package with a source hook"""
-        sys.argv = ["ui-test", "-u", "1"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-u", "1"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2036,8 +2022,8 @@ class T(unittest.TestCase):
         source_pkg = "shadow"
         self.assertRaises(ValueError, apport.packaging.get_version, source_pkg)
 
-        sys.argv = ["ui-test", "-p", source_pkg, "-u", "1"]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "-p", source_pkg, "-u", "1"]
+        self.ui = TestSuiteUserInterface(argv)
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2236,8 +2222,7 @@ class T(unittest.TestCase):
     def test_run_symptom(self, stderr_mock):
         """run_symptom()"""
         # unknown symptom
-        sys.argv = ["ui-test", "-s", "foobar"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "foobar"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2253,8 +2238,7 @@ class T(unittest.TestCase):
         self._write_symptom_script(
             "nopkg.py", "def run(report, ui):\n    pass\n"
         )
-        sys.argv = ["ui-test", "-s", "nopkg"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "nopkg"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = stderr_mock.getvalue()
@@ -2264,8 +2248,7 @@ class T(unittest.TestCase):
         self._write_symptom_script(
             "norun.py", "def something(x, y):\n    return 1\n"
         )
-        sys.argv = ["ui-test", "-s", "norun"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "norun"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = stderr_mock.getvalue()
@@ -2275,8 +2258,7 @@ class T(unittest.TestCase):
         self._write_symptom_script(
             "crash.py", "def run(report, ui):\n    return 1/0\n"
         )
-        sys.argv = ["ui-test", "-s", "crash"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "crash"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
         err = stderr_mock.getvalue()
@@ -2290,8 +2272,7 @@ class T(unittest.TestCase):
             '  report["itch"] = "scratch"\n'
             '  return "bash"\n',
         )
-        sys.argv = ["ui-test", "-s", "itching"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "itching"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2311,8 +2292,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
         # working noninteractive script with extra tag
-        sys.argv = ["ui-test", "--tag", "foo", "-s", "itching"]
-        self.ui = TestSuiteUserInterface()
+        argv = ["ui-test", "--tag", "foo", "-s", "itching"]
+        self.ui = TestSuiteUserInterface(argv)
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2340,8 +2321,7 @@ class T(unittest.TestCase):
                 """
             ),
         )
-        sys.argv = ["ui-test", "-s", "itching"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-s", "itching"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2378,8 +2358,7 @@ class T(unittest.TestCase):
             "bar.py", 'def run(report, ui):\n  return "coreutils"\n'
         )
 
-        sys.argv = ["ui-test", "-f"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f"])
         self.ui.present_details_response = {
             "report": True,
             "blacklist": False,
@@ -2417,10 +2396,10 @@ class T(unittest.TestCase):
         """parse_args() option inference for a single argument"""
 
         def _chk(program_name, arg, expected_opts):
-            sys.argv = [program_name]
+            argv = [program_name]
             if arg:
-                sys.argv.append(arg)
-            ui = apport.ui.UserInterface()
+                argv.append(arg)
+            ui = apport.ui.UserInterface(argv)
             expected_opts["version"] = False
             self.assertEqual(ui.args.__dict__, expected_opts)
             self.assertEqual(stderr_mock.getvalue(), "")
@@ -2584,8 +2563,7 @@ class T(unittest.TestCase):
         """parse_args() option inference when invoked as *-bug"""
 
         def _chk(args, expected_opts):
-            sys.argv = ["apport-bug"] + args
-            ui = apport.ui.UserInterface()
+            ui = apport.ui.UserInterface(["apport-bug"] + args)
             expected_opts["version"] = False
             self.assertEqual(ui.args.__dict__, expected_opts)
             self.assertEqual(stderr_mock.getvalue(), "")
@@ -2823,8 +2801,7 @@ class T(unittest.TestCase):
 
         latest_id_before = self.ui.crashdb.latest_id()
 
-        sys.argv = ["ui-test", "-f", "-p", "bash"]
-        self.ui = TestSuiteUserInterface()
+        self.ui = TestSuiteUserInterface(["ui-test", "-f", "-p", "bash"])
 
         # Pretend it does not accept report
         self.ui.crashdb.accepts = lambda r: False

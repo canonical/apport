@@ -75,10 +75,10 @@ uic.properties.Properties._string = translate
 class Dialog(QDialog):
     """Main dialog wrapper"""
 
-    def __init__(self, ui, title, heading, text):
+    def __init__(self, ui_data_path, ui, title, heading, text):
         QDialog.__init__(self, None, Qt.Window)
 
-        uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
+        uic.loadUi(os.path.join(ui_data_path, ui), self)
 
         self.setWindowTitle(title)
         if self.findChild(QLabel, "heading"):
@@ -98,8 +98,8 @@ class Dialog(QDialog):
 class ChoicesDialog(Dialog):
     """Choices dialog wrapper"""
 
-    def __init__(self, title, text):
-        Dialog.__init__(self, "choices.ui", title, None, text)
+    def __init__(self, ui_data_path, title, text):
+        Dialog.__init__(self, ui_data_path, "choices.ui", title, None, text)
 
         self.setMaximumSize(1, 1)
 
@@ -112,8 +112,10 @@ class ChoicesDialog(Dialog):
 class ProgressDialog(Dialog):
     """Progress dialog wrapper"""
 
-    def __init__(self, title, heading, text):
-        Dialog.__init__(self, "progress.ui", title, heading, text)
+    def __init__(self, ui_data_path, title, heading, text):
+        Dialog.__init__(
+            self, ui_data_path, "progress.ui", title, heading, text
+        )
 
         self.setMaximumSize(1, 1)
 
@@ -140,7 +142,9 @@ class ReportDialog(Dialog):
         if "DistroRelease" not in report:
             report.add_os_info()
         distro = report["DistroRelease"]
-        Dialog.__init__(self, "bugreport.ui", distro.split()[0], "", "")
+        Dialog.__init__(
+            self, ui.ui_data_path, "bugreport.ui", distro.split()[0], "", ""
+        )
         self.details = self.findChild(QPushButton, "show_details")
         self.details.clicked.connect(self.on_show_details_clicked)
         self.continue_button = self.findChild(QPushButton, "continue_button")
@@ -166,7 +170,7 @@ class ReportDialog(Dialog):
         self.spinner = QLabel("", parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
         self.movie = QMovie(
-            os.path.join(os.path.dirname(sys.argv[0]), "spinner.gif"),
+            os.path.join(ui.ui_data_path, "spinner.gif"),
             QByteArray(),
             self.spinner,
         )
@@ -346,8 +350,8 @@ class ReportDialog(Dialog):
 class UserPassDialog(Dialog):
     """Username/Password dialog wrapper"""
 
-    def __init__(self, title, text):
-        Dialog.__init__(self, "userpass.ui", title, None, text)
+    def __init__(self, ui_data_path, title, text):
+        Dialog.__init__(self, ui_data_path, "userpass.ui", title, None, text)
         self.findChild(QLabel, "l_username").setText(_("Username:"))
         self.findChild(QLabel, "l_password").setText(_("Password:"))
 
@@ -360,8 +364,9 @@ class UserPassDialog(Dialog):
 class MainUserInterface(apport.ui.UserInterface):
     """The main user interface presented to the user"""
 
-    def __init__(self):
-        apport.ui.UserInterface.__init__(self)
+    def __init__(self, argv: list[str]):
+        apport.ui.UserInterface.__init__(self, argv)
+        self.ui_data_path = os.path.dirname(argv[0])
         # Help unit tests get at the dialog.
         self.dialog = None
         self.progress = None
@@ -452,6 +457,7 @@ class MainUserInterface(apport.ui.UserInterface):
         elif self.crashdb.accepts(self.report):
             # show a progress dialog if our DB accepts the crash
             self.progress = ProgressDialog(
+                self.ui_data_path,
                 _("Collecting Problem Information"),
                 _("Collecting problem information"),
                 _(
@@ -500,6 +506,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_start_upload_progress(self):
         self.progress = ProgressDialog(
+            self.ui_data_path,
             _("Uploading Problem Information"),
             _("Uploading problem information"),
             _(
@@ -542,7 +549,7 @@ class MainUserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple is False, the list will always have one element.
         """
-        dialog = ChoicesDialog(_("Apport"), text)
+        dialog = ChoicesDialog(self.ui_data_path, _("Apport"), text)
 
         b = None
         for option in options:
@@ -594,5 +601,5 @@ if __name__ == "__main__":
     )
     app.installTranslator(translator)
 
-    UserInterface = MainUserInterface()
+    UserInterface = MainUserInterface(sys.argv)
     sys.exit(UserInterface.run_argv())
