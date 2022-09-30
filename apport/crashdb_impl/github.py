@@ -202,3 +202,96 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         and upload() returned handle.
         """
         return handle.url
+
+    def _mark_dup_checked(self, crash_id, report):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def can_update(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def close_duplicate(self, report, crash_id, master_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def download(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def duplicate_of(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_affected_packages(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_distro_release(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_dup_unchecked(self):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_fixed_version(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_id_url(self, report, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_unfixed(self):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def get_unretraced(self):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def is_reporter(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def mark_regression(self, crash_id, master):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def mark_retrace_failed(self, crash_id, invalid_msg=None):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def mark_retraced(self, crash_id):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )
+
+    def update(
+        self,
+        crash_id,
+        report,
+        comment,
+        change_description=False,
+        attachment_comment=None,
+        key_filter=None,
+    ):
+        raise NotImplementedError(
+            "This method is not relevant for Github database implementation."
+        )

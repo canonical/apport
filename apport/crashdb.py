@@ -779,7 +779,6 @@ class CrashDatabase:
 
     def external_login(self, ui):
         """Login to the database via an external resource, e.g. web browser."""
-        pass
 
     def get_distro_release(self, crash_id):
         """Get 'DistroRelease: <release>' from the report ID."""
