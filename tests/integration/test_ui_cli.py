@@ -10,7 +10,6 @@
 """Command line Apport user interface tests."""
 
 import os
-import sys
 import unittest
 
 import apport.report
@@ -40,11 +39,7 @@ class TestApportCli(unittest.TestCase):
         os.environ.update(cls.orig_environ)
 
     def setUp(self):
-        saved = sys.argv
-        sys.argv = [apport_cli_path]
-        self.app = apport_cli.CLIUserInterface()
-        sys.argv = saved
-
+        self.app = apport_cli.CLIUserInterface([apport_cli_path])
         self.app.report = apport.report.Report()
         self.app.report.add_os_info()
         self.app.report["ExecutablePath"] = "/bin/bash"

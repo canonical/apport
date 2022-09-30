@@ -32,6 +32,7 @@ import sys
 import threading
 import time
 import traceback
+import typing
 import urllib.error
 import webbrowser
 import zlib
@@ -231,7 +232,7 @@ class UserInterface:
     A concrete subclass must implement all the abstract ui_* methods.
     """
 
-    def __init__(self):
+    def __init__(self, argv: list[str]):
         """Initialize program state and parse command line options."""
         self.gettext_domain = "apport"
         self.report = None
@@ -256,7 +257,7 @@ class UserInterface:
             )
 
         gettext.textdomain(self.gettext_domain)
-        self.args = self.parse_argv()
+        self.args = self.parse_argv(argv)
 
     #
     # main entry points
@@ -925,7 +926,7 @@ class UserInterface:
     #
 
     @staticmethod
-    def parse_argv_update() -> argparse.Namespace:
+    def parse_argv_update(argv: typing.Sequence[str]) -> argparse.Namespace:
         """Parse command line options when being invoked in update mode."""
         parser = argparse.ArgumentParser(usage=_("%(prog)s <report number>"))
         parser.add_argument("-p", "--package", help=_("Specify package name."))
@@ -939,7 +940,7 @@ class UserInterface:
             ),
         )
         parser.add_argument("update_report", metavar="report_number", type=int)
-        args = parser.parse_args()
+        args = parser.parse_args(argv[1:])
 
         args.symptom = None
         args.filebug = False
@@ -948,24 +949,24 @@ class UserInterface:
         args.hanging = False
         return args
 
-    def parse_argv(self) -> argparse.Namespace:
+    def parse_argv(self, argv: list[str]) -> argparse.Namespace:
         """Parse command line options.
 
         If a single argument is given without any options, this tries to "do
         what I mean".
         """
         # invoked in update mode?
-        if len(sys.argv) > 0:
+        if len(argv) > 0:
             if "APPORT_INVOKED_AS" in os.environ:
-                sys.argv[0] = os.path.join(
-                    os.path.dirname(sys.argv[0]),
+                argv[0] = os.path.join(
+                    os.path.dirname(argv[0]),
                     os.path.basename(os.environ["APPORT_INVOKED_AS"]),
                 )
-            cmd = sys.argv[0]
+            cmd = argv[0]
             if cmd.endswith("-update-bug") or cmd.endswith("-collect"):
-                return self.parse_argv_update()
+                return self.parse_argv_update(argv)
 
-        if len(sys.argv) > 0 and cmd.endswith("-bug"):
+        if len(argv) > 0 and cmd.endswith("-bug"):
             suppress = argparse.SUPPRESS
         else:
             suppress = None
@@ -1078,7 +1079,7 @@ class UserInterface:
         )
         parser.add_argument("issue", nargs="?", help=argparse.SUPPRESS)
 
-        args = parser.parse_args()
+        args = parser.parse_args(argv[1:])
         issue = args.issue
         del args.issue
 
@@ -1100,9 +1101,9 @@ class UserInterface:
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
-        # NOTE: uses sys.argv, since args if empty for all the options,
+        # NOTE: uses argv, since args if empty for all the options,
         # e.g. "-v" or "-u $BUG"
-        if len(sys.argv) == 1 and cmd.endswith("-bug"):
+        if len(argv) == 1 and cmd.endswith("-bug"):
             args.filebug = True
             return args
 

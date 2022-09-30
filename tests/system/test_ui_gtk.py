@@ -12,7 +12,6 @@
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 import textwrap
 import unittest
@@ -73,12 +72,7 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
-        saved = sys.argv
-        # Work around GTKUserInterface using basename to find the GtkBuilder UI
-        # file.
-        sys.argv = [apport_gtk_path]
-        self.app = GTKUserInterface()
-        sys.argv = saved
+        self.app = GTKUserInterface([apport_gtk_path])
 
         # use in-memory crashdb
         self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
