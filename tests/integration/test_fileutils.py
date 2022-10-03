@@ -32,8 +32,7 @@ class T(unittest.TestCase):
 
     @staticmethod
     def _create_reports(create_inaccessible=False):
-        """Create some test reports"""
-
+        """Create some test reports."""
         r1 = os.path.join(apport.fileutils.report_dir, "rep1.crash")
         r2 = os.path.join(apport.fileutils.report_dir, "rep2.crash")
 
@@ -55,7 +54,6 @@ class T(unittest.TestCase):
 
     def test_find_package_desktopfile(self):
         """find_package_desktopfile()"""
-
         # package without any .desktop file
         nodesktop = "bash"
         assert (
@@ -135,7 +133,6 @@ class T(unittest.TestCase):
 
     def test_find_file_package(self):
         """find_file_package()"""
-
         self.assertEqual(
             apport.fileutils.find_file_package("/bin/bash"), "bash"
         )
@@ -148,7 +145,6 @@ class T(unittest.TestCase):
 
     def test_seen(self):
         """get_new_reports() and seen_report()"""
-
         self.assertEqual(apport.fileutils.get_new_reports(), [])
         if os.getuid() == 0:
             tr = self._create_reports(True)
@@ -206,7 +202,6 @@ class T(unittest.TestCase):
 
     def test_get_all_reports(self):
         """get_all_reports()"""
-
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         if os.getuid() == 0:
             tr = self._create_reports(True)
@@ -226,7 +221,6 @@ class T(unittest.TestCase):
 
     def test_get_system_reports(self):
         """get_all_system_reports() and get_new_system_reports()"""
-
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
         if os.getuid() == 0:
@@ -265,7 +259,6 @@ class T(unittest.TestCase):
     @unittest.mock.patch.object(pwd, "getpwuid")
     def test_get_system_reports_guest(self, getpwuid_mock, stat_mock):
         """get_all_system_reports() filters out reports from guest user"""
-
         self._create_reports()
 
         stat_mock.return_value.st_size = 1000
@@ -275,7 +268,6 @@ class T(unittest.TestCase):
 
     def test_unwritable_report(self):
         """get_all_reports() and get_new_reports() for unwritable report"""
-
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
@@ -293,7 +285,6 @@ class T(unittest.TestCase):
 
     def test_delete_report(self):
         """delete_report()"""
-
         tr = self._create_reports()
 
         while tr:
@@ -302,7 +293,6 @@ class T(unittest.TestCase):
 
     def test_make_report_file(self):
         """make_report_file()"""
-
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, apport.fileutils.make_report_file, pr)
 
@@ -332,7 +322,6 @@ class T(unittest.TestCase):
 
     def test_check_files_md5(self):
         """check_files_md5()"""
-
         f1 = os.path.join(apport.fileutils.report_dir, "test 1.txt")
         f2 = os.path.join(apport.fileutils.report_dir, "test:2.txt")
         sumfile = os.path.join(apport.fileutils.report_dir, "sums.txt")
@@ -372,7 +361,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
     def test_get_config(self):
         """get_config()"""
-
         # nonexisting
         apport.fileutils._config_file = "/nonexisting"
         self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
@@ -448,7 +436,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
     def test_shared_libraries(self):
         """shared_libraries()"""
-
         libs = apport.fileutils.shared_libraries(sys.executable)
         self.assertGreater(len(libs), 3)
         self.assertIn("libc.so.6", libs)
@@ -466,7 +453,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
     def test_links_with_shared_library(self):
         """links_with_shared_library()"""
-
         self.assertTrue(
             apport.fileutils.links_with_shared_library(sys.executable, "libc")
         )
@@ -495,7 +481,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
     def test_get_core_path(self):
         """get_core_path()"""
-
         boot_id = apport.fileutils.get_boot_id()
 
         # Basic test
@@ -542,7 +527,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
 
     def test_clean_core_directory(self):
         """clean_core_directory()"""
-
         fake_uid = 5150
         extra_core_files = 4
         num_core_files = (

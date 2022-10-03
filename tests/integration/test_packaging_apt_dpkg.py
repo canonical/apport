@@ -32,7 +32,6 @@ class T(unittest.TestCase):
 
     def test_check_files_md5(self):
         """_check_files_md5()."""
-
         td = tempfile.mkdtemp()
         try:
             f1 = os.path.join(td, "test 1.txt")
@@ -86,14 +85,12 @@ class T(unittest.TestCase):
 
     def test_get_version(self):
         """get_version()."""
-
         self.assertTrue(impl.get_version("libc6").startswith("2"))
         self.assertRaises(ValueError, impl.get_version, "nonexisting")
         self.assertRaises(ValueError, impl.get_version, "wukrainian")
 
     def test_get_available_version(self):
         """get_available_version()."""
-
         self.assertTrue(impl.get_available_version("libc6").startswith("2"))
         self.assertRaises(
             ValueError, impl.get_available_version, "nonexisting"
@@ -101,7 +98,6 @@ class T(unittest.TestCase):
 
     def test_get_dependencies(self):
         """get_dependencies()."""
-
         # package with both Depends: and Pre-Depends:
         d = impl.get_dependencies("bash")
         self.assertGreater(len(d), 2)
@@ -127,14 +123,12 @@ class T(unittest.TestCase):
 
     def test_get_source(self):
         """get_source()."""
-
         self.assertRaises(ValueError, impl.get_source, "nonexisting")
         self.assertEqual(impl.get_source("bash"), "bash")
         self.assertIn("glibc", impl.get_source("libc6"))
 
     def test_get_package_origin(self):
         """get_package_origin()."""
-
         # determine distro name
         distro = impl.get_os_version()[0]
 
@@ -147,14 +141,12 @@ class T(unittest.TestCase):
 
     def test_is_distro_package(self):
         """is_distro_package()."""
-
         self.assertRaises(ValueError, impl.is_distro_package, "nonexisting")
         self.assertTrue(impl.is_distro_package("bash"))
         # no False test here, hard to come up with a generic one
 
     def test_get_architecture(self):
         """get_architecture()."""
-
         self.assertRaises(ValueError, impl.get_architecture, "nonexisting")
         # just assume that bash uses the native architecture
         dpkg = subprocess.run(
@@ -168,13 +160,11 @@ class T(unittest.TestCase):
 
     def test_get_files(self):
         """get_files()."""
-
         self.assertRaises(ValueError, impl.get_files, "nonexisting")
         self.assertIn("/bin/bash", impl.get_files("bash"))
 
     def test_get_file_package(self):
         """get_file_package() on installed files."""
-
         self.assertEqual(impl.get_file_package("/bin/bash"), "bash")
         self.assertEqual(impl.get_file_package("/bin/cat"), "coreutils")
         self.assertEqual(
@@ -184,7 +174,6 @@ class T(unittest.TestCase):
 
     def test_get_file_package_uninstalled(self):
         """get_file_package() on uninstalled packages."""
-
         # generate a test Contents.gz
         basedir = tempfile.mkdtemp()
         try:
@@ -290,7 +279,6 @@ bin/true                                                admin/superutils
 
     def test_get_file_package_uninstalled_multiarch(self):
         """get_file_package() on foreign arches and releases"""
-
         # map "Foonux 3.14" to "mocky"
         orig_distro_release_to_codename = impl._distro_release_to_codename
         impl._distro_release_to_codename = (
@@ -484,7 +472,6 @@ usr/bin/frob                                            foo/frob
 
     def test_get_file_package_diversion(self):
         """get_file_package() for a diverted file."""
-
         output = subprocess.check_output(
             ["dpkg-divert", "--list"], env={}
         ).decode()
@@ -547,7 +534,6 @@ deb http://secondary.mirror tuxy extra
 
     def test_get_modified_conffiles(self):
         """get_modified_conffiles()"""
-
         # very shallow
         self.assertEqual(type(impl.get_modified_conffiles("bash")), type({}))
         self.assertEqual(type(impl.get_modified_conffiles("apport")), type({}))
@@ -557,7 +543,6 @@ deb http://secondary.mirror tuxy extra
 
     def test_get_system_architecture(self):
         """get_system_architecture()."""
-
         arch = impl.get_system_architecture()
         # must be nonempty without line breaks
         self.assertNotEqual(arch, "")
@@ -565,7 +550,6 @@ deb http://secondary.mirror tuxy extra
 
     def test_get_library_paths(self):
         """get_library_paths()."""
-
         paths = impl.get_library_paths()
         # must be nonempty without line breaks
         self.assertNotEqual(paths, "")
@@ -575,7 +559,6 @@ deb http://secondary.mirror tuxy extra
 
     def test_compare_versions(self):
         """compare_versions."""
-
         self.assertEqual(impl.compare_versions("1", "2"), -1)
         self.assertEqual(
             impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu2"), -1
@@ -591,7 +574,6 @@ deb http://secondary.mirror tuxy extra
 
     def test_enabled(self):
         """enabled."""
-
         impl.configuration = "/nonexisting"
         self.assertEqual(impl.enabled(), True)
 
@@ -615,12 +597,10 @@ deb http://secondary.mirror tuxy extra
 
     def test_get_kernel_package(self):
         """get_kernel_package()."""
-
         self.assertIn("linux", impl.get_kernel_package())
 
     def test_package_name_glob(self):
         """package_name_glob()."""
-
         self.assertGreater(len(impl.package_name_glob("a*")), 5)
         self.assertIn("bash", impl.package_name_glob("ba*h"))
         self.assertEqual(impl.package_name_glob("bash"), ["bash"])

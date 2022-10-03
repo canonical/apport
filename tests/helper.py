@@ -1,6 +1,7 @@
 """Helper functions for the test cases."""
 
 import contextlib
+import functools
 import importlib.machinery
 import importlib.util
 import os
@@ -18,7 +19,8 @@ def get_init_system() -> str:
         return comm.read().rstrip()
 
 
-def has_internet():
+@functools.lru_cache(maxsize=1)
+def has_internet() -> bool:
     """Return if there is sufficient network connection for the tests.
 
     This checks if https://api.launchpad.net/devel/ubuntu/ can be downloaded
@@ -26,18 +28,13 @@ def has_internet():
     """
     if os.environ.get("SKIP_ONLINE_TESTS"):
         return False
-    if has_internet.cache is None:
-        try:
-            with urllib.request.urlopen(
-                "https://api.launchpad.net/devel/ubuntu/", timeout=30
-            ) as url:
-                has_internet.cache = b"web_link" in url.readline()
-        except urllib.error.URLError:
-            has_internet.cache = False
-    return has_internet.cache
-
-
-has_internet.cache = None
+    try:
+        with urllib.request.urlopen(
+            "https://api.launchpad.net/devel/ubuntu/", timeout=30
+        ) as url:
+            return b"web_link" in url.readline()
+    except urllib.error.URLError:
+        return False
 
 
 def import_module_from_file(filename: str):

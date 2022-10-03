@@ -844,7 +844,7 @@ CR2: 00000000ffffb4ff
         )
 
     def test_nonascii_data(self):
-        """methods get along with non-ASCII data"""
+        """Methods get along with non-ASCII data."""
         # fake os.uname() into reporting a non-ASCII name
         uname = os.uname()
         uname = (

@@ -6,7 +6,6 @@ import apport.packaging
 class T(unittest.TestCase):
     def test_get_uninstalled_package(self):
         """get_uninstalled_package()"""
-
         p = apport.packaging.get_uninstalled_package()
         self.assertNotEqual(p, None)
         self.assertNotEqual(apport.packaging.get_available_version(p), "")
@@ -15,7 +14,6 @@ class T(unittest.TestCase):
 
     def test_get_os_version(self):
         """get_os_version()"""
-
         (n, v) = apport.packaging.get_os_version()
         self.assertEqual(type(n), str)
         self.assertEqual(type(v), str)

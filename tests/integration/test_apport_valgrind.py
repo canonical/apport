@@ -33,8 +33,7 @@ class T(unittest.TestCase):
         os.chdir(self.pwd)
 
     def test_valgrind_min_installed(self):
-        """valgrind is installed and recent enough"""
-
+        """Valgrind is installed and recent enough."""
         cmd = ["valgrind", "-q", "--extra-debuginfo-path=./", "ls"]
         (ret, out, err) = self._call(cmd)
         self.assertEqual(err, "")
@@ -53,8 +52,7 @@ class T(unittest.TestCase):
         return (process.returncode, process.stdout, process.stderr)
 
     def test_help_display(self):
-        """help display"""
-
+        """Display help."""
         cmd = ["apport-valgrind", "-h"]
         (ret, out, err) = self._call(cmd)
         self.assertEqual(err, "")
@@ -62,8 +60,7 @@ class T(unittest.TestCase):
         self.assertIn("--help", out)
 
     def test_invalid_args(self):
-        """return code is not 0 when invalid args are passed"""
-
+        """Return code is not 0 when invalid args are passed."""
         cmd = ["apport-valgrind", "-k", "pwd"]
         (ret, out, err) = self._call(cmd)
         self.assertEqual(out, "")
@@ -71,8 +68,7 @@ class T(unittest.TestCase):
         self.assertIn("unrecognized arguments: -k", err)
 
     def test_vlog_created(self):
-        """apport-valgrind creates valgrind.log with expected content"""
-
+        """apport-valgrind creates valgrind.log with expected content."""
         cmd = ["apport-valgrind", "--no-sandbox", "true"]
         os.chdir(self.workdir)
         self.assertEqual(self._call(cmd), (0, "", ""))
@@ -82,8 +78,7 @@ class T(unittest.TestCase):
         )
 
     def test_intentional_mem_leak_detection(self):
-        """apport-valgrind log reports intentional memory leak"""
-
+        """apport-valgrind log reports intentional memory leak."""
         os.chdir(self.workdir)
 
         # compile memleak.c to create memleak.o that intentionally creates a
@@ -141,8 +136,7 @@ void makeleak(void){
         )
 
     def test_unpackaged_exe(self):
-        """apport-valgrind creates valgrind log on unpackaged executable"""
-
+        """apport-valgrind creates valgrind log on unpackaged executable."""
         exepath = os.path.join(self.workdir, "pwd")
         shutil.copy("/bin/pwd", exepath)
         logpath = os.path.join(self.workdir, "unpackaged-exe.log")

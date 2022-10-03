@@ -53,7 +53,6 @@ class T(unittest.TestCase):
 
     def test_unpack(self):
         """apport-unpack for all possible data types"""
-
         self.assertEqual(
             self._call(["apport-unpack", self.report_file, self.unpack_dir]),
             (0, "", ""),
@@ -65,16 +64,14 @@ class T(unittest.TestCase):
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
     def test_help(self):
-        """calling apport-unpack with help"""
-
+        """Call apport-unpack with --help."""
         (ret, out, err) = self._call(["apport-unpack", "--help"])
         self.assertEqual(ret, 0)
         self.assertEqual(err, "")
         self.assertTrue(out.startswith("usage:"), out)
 
     def test_error(self):
-        """calling apport-unpack with wrong arguments"""
-
+        """Call apport-unpack with wrong arguments."""
         (ret, out, err) = self._call(["apport-unpack"])
         self.assertEqual(ret, 2)
         self.assertEqual(out, "")

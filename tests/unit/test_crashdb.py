@@ -41,21 +41,18 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_no_dummy_data(self):
-        """No dummy data is added by default"""
-
+        """No dummy data is added by default."""
         self.crashes = CrashDatabase(None, {})
         self.assertEqual(self.crashes.latest_id(), -1)
         self.assertRaises(IndexError, self.crashes.download, 0)
 
     def test_retrace_markers(self):
-        """Bookkeeping in retraced and dupchecked bugs"""
-
+        """Bookkeeping in retraced and dupchecked bugs."""
         self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
         self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
 
     def test_dynamic_crashdb_conf(self):
-        """Dynamic code in crashdb.conf"""
-
+        """Dynamic code in crashdb.conf."""
         # use our dummy crashdb
         with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
             crashdb_conf.write(
@@ -93,8 +90,7 @@ class T(unittest.TestCase):
             self.assertEqual(db.options["whoami"], "dynname")
 
     def test_accepts_default(self):
-        """accepts(): default configuration"""
-
+        """accepts(): default configuration."""
         # by default crash DBs accept any type
         self.assertTrue(self.crashes.accepts(apport.report.Report("Crash")))
         self.assertTrue(self.crashes.accepts(apport.report.Report("Bug")))
@@ -103,8 +99,7 @@ class T(unittest.TestCase):
         )
 
     def test_accepts_problem_types(self):
-        """accepts(): problem_types option in crashdb.conf"""
-
+        """accepts(): problem_types option in crashdb.conf."""
         # create a crash DB with type limits
         with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
             crashdb_conf.write(
@@ -134,8 +129,7 @@ class T(unittest.TestCase):
     #
 
     def test_submit(self):
-        """Crash uploading and downloading"""
-
+        """Crash uploading and downloading."""
         # setUp() already checks upload() and get_comment_url()
         r = self.crashes.download(0)
         self.assertEqual(r["SourcePackage"], "foo")
@@ -152,7 +146,6 @@ class T(unittest.TestCase):
 
     def test_update(self):
         """update()"""
-
         r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
@@ -168,7 +161,6 @@ class T(unittest.TestCase):
 
     def test_update_filter(self):
         """update() with key_filter"""
-
         r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
@@ -186,7 +178,6 @@ class T(unittest.TestCase):
 
     def test_update_traces(self):
         """update_traces()"""
-
         r = apport.report.Report()
         r["Package"] = "new"
         r["FooBar"] = "Bogus"
@@ -202,13 +193,11 @@ class T(unittest.TestCase):
 
     def test_get_distro_release(self):
         """get_distro_release()"""
-
         self.assertEqual(self.crashes.get_distro_release(0), "FooLinux Pi/2")
 
     def test_status(self):
         """get_unfixed(), get_fixed_version(), duplicate_of(),
         close_duplicate()"""
-
         self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 3, 4]))
         self.assertEqual(self.crashes.get_fixed_version(0), None)
         self.assertEqual(self.crashes.get_fixed_version(1), None)
@@ -227,7 +216,6 @@ class T(unittest.TestCase):
 
     def test_mark_regression(self):
         """mark_regression()"""
-
         self.crashes.reports[3]["fixed_version"] = "4.1"
 
         self.crashes.mark_regression(4, 3)
@@ -244,7 +232,6 @@ class T(unittest.TestCase):
 
     def test_duplicate_db_fixed(self):
         """duplicate_db_fixed()"""
-
         self.crashes.init_duplicate_db(":memory:")
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
@@ -262,7 +249,6 @@ class T(unittest.TestCase):
 
     def test_duplicate_db_remove(self):
         """duplicate_db_remove()"""
-
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
 
@@ -294,7 +280,6 @@ class T(unittest.TestCase):
 
     def test_check_duplicate(self):
         """check_duplicate() and known()"""
-
         # db not yet initialized
         self.assertRaises(
             AssertionError,
@@ -443,7 +428,6 @@ class T(unittest.TestCase):
 
     def test_check_duplicate_utf8(self):
         """check_duplicate() with UTF-8 strings"""
-
         # assertion failure, with UTF-8 strings
         r = apport.report.Report()
         r["Package"] = "bash 5"
@@ -469,7 +453,6 @@ class T(unittest.TestCase):
 
     def test_check_duplicate_custom_signature(self):
         """check_duplicate() with custom DuplicateSignature: field"""
-
         r = apport.report.Report()
         r["SourcePackage"] = "bash"
         r["Package"] = "bash 5"
@@ -505,7 +488,6 @@ class T(unittest.TestCase):
 
     def test_check_duplicate_report_arg(self):
         """check_duplicate() with explicitly passing report"""
-
         self.crashes.init_duplicate_db(":memory:")
 
         # ID#0 -> no dup
@@ -605,7 +587,6 @@ class T(unittest.TestCase):
 
     def test_known_address_sig(self):
         """known() for address signatures"""
-
         self.crashes.init_duplicate_db(":memory:")
 
         r = apport.report.Report()
@@ -743,7 +724,6 @@ class T(unittest.TestCase):
 
     def test_duplicate_db_publish_long_sigs(self):
         """duplicate_db_publish() with very long signatures"""
-
         self.crashes.init_duplicate_db(":memory:")
 
         # give #0 a long symbolic sig which needs lots of quoting
@@ -769,7 +749,6 @@ class T(unittest.TestCase):
 
     def test_change_master_id(self):
         """duplicate_db_change_master_id()"""
-
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
 
@@ -812,8 +791,7 @@ class T(unittest.TestCase):
         )
 
     def test_db_corruption(self):
-        """Detection of DB file corruption"""
-
+        """Detection of DB file corruption."""
         try:
             (fd, db) = tempfile.mkstemp()
             os.close(fd)

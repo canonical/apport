@@ -8,3 +8,4 @@ profile = "black"
 [tool.pydocstyle]
 # TODO: Address the ignored codes (except D203,D213)
 ignore = "D1,D203,D205,D209,D213,D400,D401,D402,D415"
+match = ".*\\.py"

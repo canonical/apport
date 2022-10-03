@@ -18,7 +18,7 @@ def div(x, y):
 
 class T(unittest.TestCase):
     def test_return_value(self):
-        """return value works properly."""
+        """Return value works properly."""
         t = apport.REThread.REThread(target=div, args=(42, 2))
         t.start()
         t.join()
@@ -38,7 +38,7 @@ class T(unittest.TestCase):
         self.assertEqual(t.exc_info(), None)
 
     def test_exception(self):
-        """exception in thread is caught and passed."""
+        """Exception in thread is caught and passed."""
         t = apport.REThread.REThread(target=div, args=(1, 0))
         t.start()
         t.join()
@@ -72,7 +72,7 @@ class T(unittest.TestCase):
         self.assertTrue(raised)
 
     def test_exc_raise_complex(self):
-        """exceptions that can't be simply created are reraised correctly
+        """Exceptions that can't be simply created are reraised correctly.
 
         A unicode error takes several arguments on construction, so trying to
         recreate it by just passing an instance to the class, as the Python 3

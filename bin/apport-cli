@@ -144,8 +144,8 @@ class CLIProgressDialog(CLIDialog):
 class CLIUserInterface(apport.ui.UserInterface):
     """Command line Apport user interface"""
 
-    def __init__(self):
-        apport.ui.UserInterface.__init__(self)
+    def __init__(self, argv: list[str]):
+        apport.ui.UserInterface.__init__(self, argv)
         self.in_update_view = False
         self.progress = None
 
@@ -180,14 +180,15 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return details
 
-    def ui_update_view(self):
+    def ui_update_view(self, stdout=None):
         self.in_update_view = True
         report = self._get_details()
         try:
             subprocess.run(
                 ["/usr/bin/sensible-pager"],
                 check=False,
-                stdin=report.encode("UTF-8"),
+                input=report.encode("UTF-8"),
+                stdout=stdout,
             )
         except OSError as error:
             # ignore broken pipe (premature quit)
@@ -438,6 +439,6 @@ class CLIUserInterface(apport.ui.UserInterface):
 
 
 if __name__ == "__main__":
-    app = CLIUserInterface()
+    app = CLIUserInterface(sys.argv)
     if not app.run_argv():
         print(_("No pending crash reports. Try --help for more information."))

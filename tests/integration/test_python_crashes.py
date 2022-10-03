@@ -47,7 +47,6 @@ class T(unittest.TestCase):
 
     def _test_crash(self, extracode="", scriptname=None, relpath=False):
         """Create a test crash."""
-
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
         if scriptname:
@@ -104,8 +103,7 @@ func(42)
         return script
 
     def test_general(self):
-        """general operation of the Python crash hook."""
-
+        """General operation of the Python crash hook."""
         script = self._test_crash()
 
         # did we get a report?
@@ -157,7 +155,6 @@ func(42)
 
     def test_existing(self):
         """Python crash hook overwrites seen existing files."""
-
         script = self._test_crash()
 
         # did we get a report?
@@ -187,8 +184,7 @@ func(42)
         self.assertEqual(len(reports), 1)
 
     def test_symlink(self):
-        """Python crash of a symlinked program resolves to target"""
-
+        """Python crash of a symlinked program resolves to target."""
         script = self._test_crash()
 
         # load report for this
@@ -237,8 +233,7 @@ func(42)
         self.assertEqual(pr1.crash_signature(), pr2.crash_signature())
 
     def test_no_argv(self):
-        """with zapped sys.argv."""
-
+        """With zapped sys.argv."""
         script = self._test_crash("import sys\nsys.argv = None")
 
         # did we get a report?
@@ -284,8 +279,7 @@ func(42)
         self.assertTrue(pr["Traceback"].startswith("Traceback"))
 
     def test_python_env(self):
-        """Python environmental variables appear in report"""
-
+        """Python environmental variables appear in report."""
         self._test_crash()
 
         # did we get a report?
@@ -305,7 +299,6 @@ func(42)
 
     def _assert_no_reports(self):
         """Assert that there are no crash reports."""
-
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(
             len(reports), 0, "no crash reports present (cwd: %s)" % os.getcwd()
@@ -367,8 +360,7 @@ func(42)
         self._assert_no_reports()
 
     def test_interactive(self):
-        """interactive Python sessions never generate a report."""
-
+        """Interactive Python sessions never generate a report."""
         orig_cwd = os.getcwd()
         try:
             for d in ("/tmp", "/usr/local", "/usr"):
@@ -393,8 +385,7 @@ func(42)
             os.chdir(orig_cwd)
 
     def test_ignoring(self):
-        """the Python crash hook respects the ignore list."""
-
+        """The Python crash hook respects the ignore list."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
         (fd, script) = tempfile.mkstemp(dir="/var/tmp")
@@ -453,8 +444,7 @@ func(42)
         self.assertEqual(len(reports), 0)
 
     def test_no_flooding(self):
-        """limit successive reports"""
-
+        """Limit successive reports."""
         count = 0
         limit = 5
         try:
@@ -477,8 +467,7 @@ func(42)
         self.assertLess(count, limit)
 
     def test_generic_os_error(self):
-        """OSError with errno and no known subclass"""
-
+        """Raise OSError with errno and no known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -497,8 +486,7 @@ func(42)
         )
 
     def test_generic_os_error_no_errno(self):
-        """OSError without errno and no known subclass"""
-
+        """Raise OSError without errno and no known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -517,7 +505,7 @@ func(42)
         )
 
     def test_getcwd_error(self):
-        """FileNotFoundError on os.getcwd() call"""
+        """Raise FileNotFoundError on os.getcwd() call."""
         for relpath in (True, False):
             with self.subTest(relpath=relpath):
                 self._test_crash(
@@ -541,8 +529,7 @@ func(42)
                 )
 
     def test_subclassed_os_error(self):
-        """OSError with known subclass"""
-
+        """Raise OSError with known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
                 """\
@@ -562,8 +549,7 @@ func(42)
         )
 
     def _load_report(self):
-        """Ensure that there is exactly one crash report and load it"""
-
+        """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(
             len(reports), 1, "crashed Python program produced a report"

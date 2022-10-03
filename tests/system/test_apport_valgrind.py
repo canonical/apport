@@ -42,7 +42,6 @@ class T(unittest.TestCase):
     )
     def test_sandbox_cache_options(self):
         """apport-valgrind creates a user specified sandbox and cache"""
-
         sandbox = os.path.join(self.workdir, "test-sandbox")
         cache = os.path.join(self.workdir, "test-cache")
 

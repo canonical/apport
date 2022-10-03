@@ -47,7 +47,6 @@ class T(unittest.TestCase):
 
     def test_add_package_info(self):
         """add_package_info()."""
-
         # determine bash version
         bashversion = apport.packaging.get_version("bash")
 
@@ -76,7 +75,6 @@ class T(unittest.TestCase):
 
     def test_add_os_info(self):
         """add_os_info()."""
-
         pr = apport.report.Report()
         pr.add_os_info()
         self.assertTrue(pr["Uname"].startswith("Linux"))
@@ -94,7 +92,6 @@ class T(unittest.TestCase):
 
     def test_add_user_info(self):
         """add_user_info()."""
-
         pr = apport.report.Report()
         pr.add_user_info()
         self.assertIn("UserGroups", pr)
@@ -108,7 +105,6 @@ class T(unittest.TestCase):
 
     def test_add_proc_info(self):
         """add_proc_info()."""
-
         # check without additional safe environment variables
         pr = apport.report.Report()
         self.assertEqual(pr.pid, None)
@@ -251,7 +247,6 @@ class T(unittest.TestCase):
 
     def test_add_proc_info_nonascii(self):
         """add_proc_info() for non-ASCII values"""
-
         lang = b"n\xc3\xb6_v\xc3\xb8lid"
 
         # one variable from each category (ignored/filtered/shown)
@@ -273,7 +268,6 @@ class T(unittest.TestCase):
 
     def test_add_proc_info_current_desktop(self):
         """add_proc_info() CurrentDesktop"""
-
         with subprocess.Popen(
             ["cat"], stdin=subprocess.PIPE, env={"LANG": "xx_YY.UTF-8"}
         ) as cat:
@@ -297,8 +291,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["CurrentDesktop"], "Pixel Pusher")
 
     def test_add_path_classification(self):
-        """classification of $PATH."""
-
+        """Classification of $PATH."""
         # system default
         with subprocess.Popen(
             ["cat"],
@@ -340,7 +333,6 @@ class T(unittest.TestCase):
 
     def test_check_interpreted(self):
         """_check_interpreted()."""
-
         restore_root = False
         if os.getuid() == 0:
             # temporarily drop to normal user "mail"
@@ -529,7 +521,6 @@ class T(unittest.TestCase):
 
     def test_check_interpreted_no_exec(self):
         """_check_interpreted() does not run module code"""
-
         # python script through -m, with dot separator; top-level module
         pr = apport.report.Report()
         pr["ExecutablePath"] = "/usr/bin/python"
@@ -551,7 +542,6 @@ class T(unittest.TestCase):
     @skip_if_command_is_missing("twistd")
     def test_check_interpreted_twistd(self):
         """_check_interpreted() for programs ran through twistd"""
-
         # LP#761374
         pr = apport.report.Report()
         pr["ExecutablePath"] = "/usr/bin/python2.7"
@@ -720,7 +710,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info(self):
         """add_gdb_info() with core dump file reference."""
-
         pr = apport.report.Report()
         # should not throw an exception for missing fields
         pr.add_gdb_info()
@@ -753,7 +742,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info_load(self):
         """add_gdb_info() with inline core dump."""
-
         with tempfile.NamedTemporaryFile() as rep:
             self._generate_sigsegv_report(rep)
             rep.seek(0)
@@ -767,7 +755,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info_damaged(self):
         """add_gdb_info() with damaged core dump"""
-
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
         del pr["StacktraceTop"]
@@ -788,7 +775,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info_short_core_file(self):
         """add_gdb_info() with damaged core dump in gzip file"""
-
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
         del pr["StacktraceTop"]
@@ -811,7 +797,6 @@ int main() { return f(42); }
     @unittest.mock.patch("gzip.GzipFile.read")
     def test_add_gdb_info_damaged_gz_core(self, mock_gzread):
         """add_gdb_info() with damaged gzip file of core dump"""
-
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
         del pr["StacktraceTop"]
@@ -833,7 +818,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info_exe_missing(self):
         """add_gdb_info() with missing executable"""
-
         pr = self._generate_sigsegv_report()
         # change it to something that doesn't exist
         pr["ExecutablePath"] = pr["ExecutablePath"].replace("crash", "gone")
@@ -882,7 +866,6 @@ int main() { return f(42); }
 
     def test_add_gdb_info_script(self):
         """add_gdb_info() with a script."""
-
         # This needs to handle different bash locations across releases
         # to get the core filename right
         shell = os.path.realpath("/bin/bash")
@@ -941,7 +924,6 @@ int main() { return f(42); }
         If these come from an assert(), the report should have the assertion
         message. Otherwise it should be marked as not reportable.
         """
-
         # abort with assert
         pr = self._generate_sigsegv_report(
             code=textwrap.dedent(
@@ -1093,7 +1075,6 @@ int main() { return f(42); }
 
     def test_search_bug_patterns(self):
         """search_bug_patterns()."""
-
         # create some test patterns
         patterns = textwrap.dedent(
             """\
@@ -1282,7 +1263,6 @@ int main() { return f(42); }
 
     def test_add_hooks_info(self):
         """add_hooks_info()."""
-
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
         orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
@@ -1512,7 +1492,6 @@ int main() { return f(42); }
 
     def test_add_hooks_info_opt(self):
         """add_hooks_info() for a package in /opt"""
-
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
         orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
@@ -1574,7 +1553,6 @@ int main() { return f(42); }
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_add_hooks_info_errors(self, stderr_mock):
         """add_hooks_info() with errors in hooks"""
-
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
         orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
@@ -1643,7 +1621,6 @@ int main() { return f(42); }
 
     def test_ignoring(self):
         """mark_ignore() and check_ignored()."""
-
         orig_ignore_file = apport.report.apport.report._ignore_file
         workdir = tempfile.mkdtemp()
         apport.report.apport.report._ignore_file = os.path.join(
@@ -1715,7 +1692,6 @@ int main() { return f(42); }
 
     def test_blacklisting(self):
         """check_ignored() for system-wise blacklist."""
-
         orig_blacklist_dir = apport.report._blacklist_dir
         apport.report._blacklist_dir = tempfile.mkdtemp()
         orig_ignore_file = apport.report._ignore_file
@@ -1774,7 +1750,6 @@ int main() { return f(42); }
 
     def test_whitelisting(self):
         """check_ignored() for system-wise whitelist."""
-
         orig_whitelist_dir = apport.report._whitelist_dir
         apport.report._whitelist_dir = tempfile.mkdtemp()
         orig_ignore_file = apport.report.apport.report._ignore_file
@@ -1833,7 +1808,6 @@ int main() { return f(42); }
 
     def test_obsolete_packages(self):
         """obsolete_packages()."""
-
         report = apport.report.Report()
         self.assertEqual(report.obsolete_packages(), [])
 
@@ -1864,7 +1838,6 @@ int main() { return f(42); }
 
     def test_address_to_offset_live(self):
         """_address_to_offset() for current /proc/pid/maps"""
-
         # this primarily checks that the parser actually gets along with the
         # real /proc/pid/maps and not just with our static test case above
         pr = apport.report.Report()
@@ -1926,7 +1899,7 @@ int main() { return f(42); }
         self.assertIn(b"GCONV_PATH", out)
 
     def test_extrapath_preferred(self):
-        """if extrapath is passed it is preferred"""
+        """If extrapath is passed it is preferred."""
         bin_true = apport.report._which_extrapath("true", None)
         # need something to be preferred
         os.symlink("/bin/true", "/tmp/true")
