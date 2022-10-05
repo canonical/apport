@@ -90,3 +90,36 @@ to it. Please send patches which are applicable to main as merge requests or
 bug reports, so that
 1. other distributions can benefit from them as well, and
 2. you reduce the code delta to upstream.
+
+Creating releases
+=================
+
+This project uses [semantic versioning](https://semver.org/). To create a
+release, increase the version in [apport/ui.py](apport/ui.py) and document the
+noteworthy changes in [NEWS.md](./NEWS.md). Then commit the changes and get them
+reviewed:
+
+```
+version=$(python3 -c "import apport.ui; print(apport.ui.__version__)")
+git commit -sm "Release apport $version" NEWS.md setup.py
+```
+
+Once merged to `main`, tag the release and generate a xz-compressed release
+tarball:
+
+```
+version=$(python3 -c "import apport.ui; print(apport.ui.__version__)")
+name="apport-$version"
+git tag "$version" main
+git archive --prefix="$name/" "$version" | xz -c9 > "../$name.tar.xz"
+gpg --output "../$name.tar.xz.asc" --armor --detach-sign "../$name.tar.xz"
+```
+
+On https://launchpad.net/apport/main create a release from the milestone. Set
+the date and copy the entries from [NEWS.md](./NEWS.md) to the release notes.
+Click on "Add download file" and add `apport-${version}.tar.xz`. Use the
+filename as description and do not forget to add the GPG signature. Finally
+set the bug status for all linked bugs from "Fix Committed" to "Fix Released".
+
+Afterwards create a new milestone on https://launchpad.net/apport/main using the
+next version as name. All other fields can be left empty.
