@@ -1507,6 +1507,8 @@ class T(unittest.TestCase):
             src_pkg = "linux-signed"
         else:
             src_pkg = "linux"
+        if "azure" in os.uname().release:
+            src_pkg += "-azure"
 
         # set up hook
         with open(
