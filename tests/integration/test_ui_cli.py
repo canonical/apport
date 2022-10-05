@@ -19,9 +19,7 @@ from tests.paths import is_local_source_directory, local_test_environment
 if is_local_source_directory():
     apport_cli_path = "bin/apport-cli"
 else:
-    apport_cli_path = os.path.join(
-        os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "apport-cli"
-    )
+    apport_cli_path = "/usr/bin/apport-cli"
 apport_cli = import_module_from_file(apport_cli_path)
 
 
