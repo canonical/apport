@@ -165,7 +165,7 @@ jobs:
           python3-pyqt5 python3-pytest python3-pytest-cov ubuntu-dbgsym-keyring
           ubuntu-keyring valgrind xvfb
       - name: Install
-        run: sudo ./setup.py install --install-layout=deb --prefix=/usr
+        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
       - name: Enable Apport
         run: >
           echo "|/usr/share/apport/apport "
