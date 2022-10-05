@@ -1,6 +1,25 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.23.1 (2022-10-05)
+-------------------
+
+### Changed
+* Disable debuginfod when collecting a report
+  ([LP: #1989803](https://launchpad.net/bugs/1989803))
+
+### Fixed
+* apport-cli: Fix AttributeError: 'bytes' object has no attribute 'fileno'
+  ([LP: #1991200](https://launchpad.net/bugs/1991200))
+* apport-bug: Add `/snap/bin` to `PATH` for Firefox snap on Lubuntu
+  ([LP: #1973470](https://launchpad.net/bugs/1973470))
+* tests:
+  * Wait for test process to be started to fix `AssertionError` in
+    `test_omit_all_processes_except_one`
+    ([LP: #1989365](https://launchpad.net/bugs/1989365))
+  * Fix `psutil.NoSuchProcess` in `wait_for_gdb_child_process`
+    ([LP: #1989371](https://launchpad.net/bugs/1989371))
+
 2.23.0 (2022-08-22)
 -------------------
 
