@@ -489,7 +489,7 @@ class T(unittest.TestCase):
                         dialog.hide()
                         return
                 # try again
-                QTimer.singleShot(200, hide_dialog)
+                QTimer.singleShot(200, hide_dialog)  # pragma: no cover
 
             QTimer.singleShot(200, hide_dialog)
             answer = self.app.ui_question_choice(
@@ -515,7 +515,7 @@ class T(unittest.TestCase):
                 self.app.dialog.continue_button.click()
                 return
             # try again
-            QTimer.singleShot(1000, cont)
+            QTimer.singleShot(1000, cont)  # pragma: no cover
 
         QTimer.singleShot(1000, cont)
         with wrap_object(
@@ -561,7 +561,7 @@ class T(unittest.TestCase):
                 return
 
             # try again
-            QTimer.singleShot(200, show_details)
+            QTimer.singleShot(200, show_details)  # pragma: no cover
 
         def cont():
             # wait until data collection is done and tree filled
@@ -574,7 +574,7 @@ class T(unittest.TestCase):
                 self.app.dialog.continue_button.click()
                 return
             # try again
-            QTimer.singleShot(200, cont)
+            QTimer.singleShot(200, cont)  # pragma: no cover
 
         QTimer.singleShot(200, show_details)
         with wrap_object(
@@ -616,7 +616,7 @@ class T(unittest.TestCase):
                 self.app.dialog.continue_button.click()
                 return
             # try again
-            QTimer.singleShot(1000, cont)
+            QTimer.singleShot(1000, cont)  # pragma: no cover
 
         QTimer.singleShot(1000, cont)
         self.app.crashdb.options["problem_types"] = ["bug"]
@@ -649,7 +649,7 @@ class T(unittest.TestCase):
                 self.app.dialog.cancel_button.click()
                 return
             # try again
-            QTimer.singleShot(1000, c)
+            QTimer.singleShot(1000, c)  # pragma: no cover
 
         QTimer.singleShot(1000, c)
         self.app.run_report_bug()
@@ -671,7 +671,7 @@ class T(unittest.TestCase):
                 self.app.dialog.cancel_button.click()
                 return
             # try again
-            QTimer.singleShot(1000, c)
+            QTimer.singleShot(1000, c)  # pragma: no cover
 
         QTimer.singleShot(1000, c)
         self.app.run_report_bug()
@@ -696,7 +696,7 @@ class T(unittest.TestCase):
                 self.app.dialog.continue_button.click()
                 return
             # try again
-            QTimer.singleShot(200, cont)
+            QTimer.singleShot(200, cont)  # pragma: no cover
 
         # upload empty report
         crash_id = self.app.crashdb.upload({})
@@ -732,7 +732,7 @@ class T(unittest.TestCase):
                 self.app.dialog.continue_button.click()
                 return
             # try again
-            QTimer.singleShot(200, cont)
+            QTimer.singleShot(200, cont)  # pragma: no cover
 
         # this test assumes that the source package name is not an
         # installed binary package
