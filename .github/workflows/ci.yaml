@@ -67,6 +67,46 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml
 
+  unit-tests-installed:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Remove system installed Apport
+        run: >
+          sudo apt-get remove --purge --yes
+          apport python3-apport python3-problem-report
+      - name: Install dependencies
+        run: >
+          sudo apt-get update
+          && sudo apt-get install --no-install-recommends --yes
+          locales python3 python3-apt python3-distutils-extra python3-pytest
+          python3-pytest-cov
+      - name: Enable German locale
+        run: >
+          sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen
+          && sudo locale-gen
+      - name: Install
+        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
+      - name: Run unit tests
+        run: >
+          WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
+          && cp -r tests "$WORKDIR"
+          && cd "$WORKDIR"
+          && python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/unit/
+          && cd -
+          && cp "$WORKDIR/coverage.xml" .
+      - name: Install dependencies for Codecov
+        run: >
+          sudo apt-get install --no-install-recommends --yes
+          ca-certificates curl git
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          files: ./coverage.xml
+
   integration-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -96,6 +136,45 @@ jobs:
       - name: Install dependencies for Codecov
         run: >
           apt-get install --no-install-recommends --yes
+          ca-certificates curl git
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          files: ./coverage.xml
+
+  integration-tests-installed:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Remove system installed Apport
+        run: >
+          sudo apt-get remove --purge --yes
+          apport python3-apport python3-problem-report
+      - name: Install dependencies
+        run: >
+          sudo apt-get update
+          && sudo apt-get install --no-install-recommends --yes
+          bash binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
+          libc6-dev pkg-config python3 python3-apt python3-distutils-extra
+          python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
+          python3-systemd valgrind
+      - name: Install
+        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
+      - name: Run integration tests
+        run: >
+          WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
+          && cp -r tests "$WORKDIR"
+          && cd "$WORKDIR"
+          && python3 -m pytest -ra --cov=$(pwd) --cov-report=xml
+          tests/integration/
+          && cd -
+          && cp "$WORKDIR/coverage.xml" .
+      - name: Install dependencies for Codecov
+        run: >
+          sudo apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
