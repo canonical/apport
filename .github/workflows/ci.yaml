@@ -153,6 +153,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
+      - name: Remove system installed Apport
+        run: >
+          sudo apt-get remove --purge --yes
+          apport python3-apport python3-problem-report
       - name: Enable 'deb-src' URIs in /etc/apt/sources.list
         run: sudo sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
       - name: Install dependencies
