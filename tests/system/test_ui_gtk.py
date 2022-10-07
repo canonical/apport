@@ -732,9 +732,9 @@ class T(unittest.TestCase):
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("continue_button").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("continue_button").clicked()
             return False
 
@@ -786,19 +786,19 @@ class T(unittest.TestCase):
 
         def show_details():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("show_details").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("show_details").clicked()
             GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             # wait until data collection is done and tree filled
             if self.app.tree_model.get_iter_first() is None:
-                return True
+                return True  # pragma: no cover
 
             self.assertTrue(self.app.w("continue_button").get_visible())
             self.app.w("continue_button").clicked()
@@ -852,9 +852,9 @@ class T(unittest.TestCase):
 
         def show_details():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("show_details").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("show_details").clicked()
             GLib.timeout_add(self.POLLING_INTERVAL_MS, cont)
             return False
@@ -862,9 +862,9 @@ class T(unittest.TestCase):
         def cont():
             # wait until data collection is done and tree filled
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if self.app.tree_model.get_iter_first() is None:
-                return True
+                return True  # pragma: no cover
 
             self.assertTrue(self.app.w("continue_button").get_visible())
             self.app.w("continue_button").clicked()
@@ -874,9 +874,9 @@ class T(unittest.TestCase):
         def ack_error():
             # wait until error dialog gets visible
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.md:
-                return True
+                return True  # pragma: no cover
             self.error_title = self.app.md.get_title()
             self.error_text = self.app.md.get_property("text")
             self.app.md.response(0)
@@ -919,9 +919,9 @@ class T(unittest.TestCase):
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("continue_button").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("continue_button").clicked()
             return False
 
@@ -959,9 +959,9 @@ class T(unittest.TestCase):
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("continue_button").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("continue_button").clicked()
             return False
 
@@ -996,10 +996,10 @@ class T(unittest.TestCase):
 
         def c():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             dont_send_button = self.app.w("dont_send_button")
             if not self.has_click_event_connected(dont_send_button):
-                return True
+                return True  # pragma: no cover
             dont_send_button.clicked()
             return False
 
@@ -1018,10 +1018,10 @@ class T(unittest.TestCase):
 
         def c():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             dont_send_button = self.app.w("dont_send_button")
             if not self.has_click_event_connected(dont_send_button):
-                return True
+                return True  # pragma: no cover
             dont_send_button.clicked()
             return False
 
@@ -1048,9 +1048,9 @@ class T(unittest.TestCase):
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if self.app.tree_model.get_iter_first() is None:
-                return True
+                return True  # pragma: no cover
             self.app.w("continue_button").clicked()
             return False
 
@@ -1085,9 +1085,9 @@ class T(unittest.TestCase):
 
         def cont():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if self.app.tree_model.get_iter_first() is None:
-                return True
+                return True  # pragma: no cover
             self.app.w("continue_button").clicked()
             return False
 
@@ -1147,7 +1147,7 @@ class T(unittest.TestCase):
 
         def show_details(data):
             if not self.app.w("show_details").get_visible():
-                return True
+                return True  # pragma: no cover
 
             data["orig_size"] = self.app.w("dialog_crash_new").get_size()
             data["orig_resizable"] = self.app.w(
@@ -1160,7 +1160,7 @@ class T(unittest.TestCase):
         def hide_details(data):
             # wait until data collection is done and tree filled
             if self.app.tree_model.get_iter_first() is None:
-                return True
+                return True  # pragma: no cover
 
             data["detail_size"] = self.app.w("dialog_crash_new").get_size()
             data["detail_resizable"] = self.app.w(
@@ -1173,7 +1173,7 @@ class T(unittest.TestCase):
         def details_hidden(data):
             # wait until data collection is done and tree filled
             if self.app.w("details_scrolledwindow").get_visible():
-                return True
+                return True  # pragma: no cover
 
             data["hidden_size"] = self.app.w("dialog_crash_new").get_size()
             data["hidden_resizable"] = self.app.w(
@@ -1202,9 +1202,9 @@ class T(unittest.TestCase):
 
         def close(response):
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.md:
-                return True
+                return True  # pragma: no cover
             self.app.md.response(response)
             return False
 
@@ -1236,16 +1236,16 @@ class T(unittest.TestCase):
 
         def show_details():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             if not self.app.w("show_details").get_visible():
-                return True
+                return True  # pragma: no cover
             self.app.w("show_details").clicked()
             GLib.timeout_add(self.POLLING_INTERVAL_MS, close)
             return False
 
         def close():
             if Gtk.events_pending():
-                return True
+                return True  # pragma: no cover
             self.app.w("dialog_crash_new").destroy()
             return False
 
