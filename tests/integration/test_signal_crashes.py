@@ -1173,3 +1173,34 @@ class T(unittest.TestCase):
             f"GDB child process {command} not started within "
             f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
         )
+
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_gdb_child_process(self, sleep_mock):
+        """Test wait_for_gdb_child_process() helper method."""
+        child = unittest.mock.MagicMock(spec=psutil.Process)
+        child.status.side_effect = ["tracing-stop", "sleeping"]
+        child.cmdline.return_value = [self.TEST_EXECUTABLE] + self.TEST_ARGS
+        with unittest.mock.patch(
+            "psutil.Process", spec=psutil.Process
+        ) as process_mock:
+            process_mock.return_value.children.side_effect = [
+                [],
+                [child],  # child not started (tracing-stop)
+                [child],  # child ready
+            ]
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 2)
+
+    @unittest.mock.patch("psutil.Process", spec=psutil.Process)
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_gdb_child_process_timeout(
+        self, sleep_mock, process_mock
+    ):
+        """Test wait_for_gdb_child_process() helper runs into timeout."""
+        process_mock.return_value.children.return_value = []
+        with unittest.mock.patch.object(self, "fail") as fail_mock:
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
+        fail_mock.assert_called_once()
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 51)
