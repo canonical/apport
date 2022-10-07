@@ -1502,13 +1502,12 @@ class T(unittest.TestCase):
 
     def test_run_crash_kernel(self):
         """run_crash() for a kernel error"""
-        sys_arch = apport.packaging.get_system_architecture()
-        if sys_arch in ["amd64", "arm64", "ppc64el", "s390x"]:
-            src_pkg = "linux-signed"
-        else:
+        package = apport.packaging.get_kernel_package()
+        try:
+            src_pkg = apport.packaging.get_source(package)
+        except ValueError:
+            # Kernel package not installed (e.g. in container)
             src_pkg = "linux"
-        if "azure" in os.uname().release:
-            src_pkg += "-azure"
 
         # set up hook
         with open(
@@ -1527,7 +1526,7 @@ class T(unittest.TestCase):
 
         # generate crash report
         r = apport.Report("KernelCrash")
-        r["Package"] = apport.packaging.get_kernel_package()
+        r["Package"] = package
         r["SourcePackage"] = src_pkg
 
         # write crash report
