@@ -22,7 +22,7 @@ jobs:
     container:
       image: ${{ matrix.container }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: >
           apt-get update
@@ -47,7 +47,7 @@ jobs:
     container:
       image: ${{ matrix.container }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: >
           apt-get update
@@ -62,7 +62,7 @@ jobs:
           apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
@@ -72,7 +72,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Remove system installed Apport
         run: >
           sudo apt-get remove --purge --yes
@@ -102,7 +102,7 @@ jobs:
           sudo apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
@@ -119,7 +119,7 @@ jobs:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: >
           apt-get update
@@ -138,7 +138,7 @@ jobs:
           apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
@@ -148,7 +148,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Remove system installed Apport
         run: >
           sudo apt-get remove --purge --yes
@@ -177,7 +177,7 @@ jobs:
           sudo apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
@@ -194,7 +194,7 @@ jobs:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Enable 'deb-src' URIs in /etc/apt/sources.list
         run: sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
       - name: Install dependencies
@@ -221,7 +221,7 @@ jobs:
           apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
@@ -231,7 +231,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Remove system installed Apport
         run: >
           sudo apt-get remove --purge --yes
@@ -272,7 +272,7 @@ jobs:
           sudo apt-get install --no-install-recommends --yes
           ca-certificates curl git
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           files: ./coverage.xml
