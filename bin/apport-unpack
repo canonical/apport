@@ -35,48 +35,53 @@ def parse_args():
     return parser.parse_args()
 
 
-gettext.textdomain("apport")
-args = parse_args()
+def main():
+    gettext.textdomain("apport")
+    args = parse_args()
 
-# ensure that the directory does not yet exist or is empty
-try:
-    if os.path.isdir(args.target_directory):
-        if os.listdir(args.target_directory):
-            fatal(_("Destination directory exists and is not empty."))
+    # ensure that the directory does not yet exist or is empty
+    try:
+        if os.path.isdir(args.target_directory):
+            if os.listdir(args.target_directory):
+                fatal(_("Destination directory exists and is not empty."))
+        else:
+            os.mkdir(args.target_directory)
+    except OSError as error:
+        fatal(str(error))
+
+    bin_keys = []
+    pr = problem_report.ProblemReport()
+    if args.report == "-":
+        pr.load(sys.stdin, binary=False)
     else:
-        os.mkdir(args.target_directory)
-except OSError as error:
-    fatal(str(error))
-
-bin_keys = []
-pr = problem_report.ProblemReport()
-if args.report == "-":
-    pr.load(sys.stdin, binary=False)
-else:
+        try:
+            if args.report.endswith(".gz"):
+                with gzip.open(args.report, "rb") as f:
+                    pr.load(f, binary=False)
+            else:
+                with open(args.report, "rb") as f:
+                    pr.load(f, binary=False)
+        except OSError as error:
+            fatal(str(error))
+    for key, value in pr.items():
+        if value is None:
+            bin_keys.append(key)
+            continue
+        with open(os.path.join(args.target_directory, key), "wb") as f:
+            if isinstance(value, str):
+                f.write(value.encode("UTF-8"))
+            else:
+                f.write(value)
     try:
         if args.report.endswith(".gz"):
             with gzip.open(args.report, "rb") as f:
-                pr.load(f, binary=False)
+                pr.extract_keys(f, bin_keys, args.target_directory)
         else:
             with open(args.report, "rb") as f:
-                pr.load(f, binary=False)
+                pr.extract_keys(f, bin_keys, args.target_directory)
     except OSError as error:
         fatal(str(error))
-for key, value in pr.items():
-    if value is None:
-        bin_keys.append(key)
-        continue
-    with open(os.path.join(args.target_directory, key), "wb") as f:
-        if isinstance(value, str):
-            f.write(value.encode("UTF-8"))
-        else:
-            f.write(value)
-try:
-    if args.report.endswith(".gz"):
-        with gzip.open(args.report, "rb") as f:
-            pr.extract_keys(f, bin_keys, args.target_directory)
-    else:
-        with open(args.report, "rb") as f:
-            pr.extract_keys(f, bin_keys, args.target_directory)
-except OSError as error:
-    fatal(str(error))
+
+
+if __name__ == "__main__":
+    main()
