@@ -35,6 +35,19 @@ def parse_args():
     return parser.parse_args()
 
 
+def load_report(report: str) -> problem_report.ProblemReport:
+    pr = problem_report.ProblemReport()
+    if report == "-":
+        pr.load(sys.stdin, binary=False)
+    elif report.endswith(".gz"):
+        with gzip.open(report, "rb") as f:
+            pr.load(f, binary=False)
+    else:
+        with open(report, "rb") as f:
+            pr.load(f, binary=False)
+    return pr
+
+
 def main():
     gettext.textdomain("apport")
     args = parse_args()
@@ -50,19 +63,10 @@ def main():
         fatal(str(error))
 
     bin_keys = []
-    pr = problem_report.ProblemReport()
-    if args.report == "-":
-        pr.load(sys.stdin, binary=False)
-    else:
-        try:
-            if args.report.endswith(".gz"):
-                with gzip.open(args.report, "rb") as f:
-                    pr.load(f, binary=False)
-            else:
-                with open(args.report, "rb") as f:
-                    pr.load(f, binary=False)
-        except OSError as error:
-            fatal(str(error))
+    try:
+        pr = load_report(args.report)
+    except OSError as error:
+        fatal(str(error))
     for key, value in pr.items():
         if value is None:
             bin_keys.append(key)
