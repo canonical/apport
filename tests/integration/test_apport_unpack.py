@@ -53,10 +53,12 @@ class T(unittest.TestCase):
 
     def test_unpack(self):
         """apport-unpack for all possible data types"""
-        self.assertEqual(
-            self._call(["apport-unpack", self.report_file, self.unpack_dir]),
-            (0, "", ""),
+        process = self._call(
+            ["apport-unpack", self.report_file, self.unpack_dir]
         )
+        self.assertEqual(process.returncode, 0)
+        self.assertEqual(process.stderr, "")
+        self.assertEqual(process.stdout, "")
 
         self.assertEqual(self._get_unpack("utf8"), self.utf8_str)
         self.assertEqual(self._get_unpack("unicode"), self.utf8_str)
@@ -65,32 +67,32 @@ class T(unittest.TestCase):
 
     def test_help(self):
         """Call apport-unpack with --help."""
-        (ret, out, err) = self._call(["apport-unpack", "--help"])
-        self.assertEqual(ret, 0)
-        self.assertEqual(err, "")
-        self.assertTrue(out.startswith("usage:"), out)
+        process = self._call(["apport-unpack", "--help"])
+        self.assertEqual(process.returncode, 0)
+        self.assertEqual(process.stderr, "")
+        self.assertTrue(process.stdout.startswith("usage:"), process.stdout)
 
     def test_error(self):
         """Call apport-unpack with wrong arguments."""
-        (ret, out, err) = self._call(["apport-unpack"])
-        self.assertEqual(ret, 2)
-        self.assertEqual(out, "")
-        self.assertTrue(err.startswith("usage:"), out)
+        process = self._call(["apport-unpack"])
+        self.assertEqual(process.returncode, 2)
+        self.assertEqual(process.stdout, "")
+        self.assertTrue(process.stderr.startswith("usage:"), process.stderr)
 
-        (ret, out, err) = self._call(["apport-unpack", self.report_file])
-        self.assertEqual(ret, 2)
-        self.assertEqual(out, "")
-        self.assertTrue(err.startswith("usage:"), out)
+        process = self._call(["apport-unpack", self.report_file])
+        self.assertEqual(process.returncode, 2)
+        self.assertEqual(process.stdout, "")
+        self.assertTrue(process.stderr.startswith("usage:"), process.stderr)
 
-        (ret, out, err) = self._call(
+        process = self._call(
             ["apport-unpack", "/nonexisting.crash", self.unpack_dir]
         )
-        self.assertEqual(ret, 1)
-        self.assertIn("/nonexisting.crash", err)
-        self.assertEqual(out, "")
+        self.assertEqual(process.returncode, 1)
+        self.assertIn("/nonexisting.crash", process.stderr)
+        self.assertEqual(process.stdout, "")
 
-    def _call(self, argv):
-        process = subprocess.run(
+    def _call(self, argv: list) -> subprocess.CompletedProcess:
+        return subprocess.run(
             argv,
             check=False,
             encoding="UTF-8",
@@ -98,7 +100,6 @@ class T(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        return (process.returncode, process.stdout, process.stderr)
 
     def _get_unpack(self, fname):
         with open(os.path.join(self.unpack_dir, fname), "rb") as f:
