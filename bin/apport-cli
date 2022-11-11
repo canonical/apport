@@ -429,8 +429,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
 
-    @staticmethod
-    def ui_has_terminal():
+    def ui_has_terminal(self):
         # we are already running in a terminal, so this works by definition
         return True
 

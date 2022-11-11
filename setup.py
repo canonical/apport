@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+# distutils-extra needs porting, pylint: disable=deprecated-module
 import distutils.command.build
 import distutils.command.clean
 import distutils.core

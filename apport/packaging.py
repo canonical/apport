@@ -146,8 +146,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    @staticmethod
-    def get_modified_conffiles(package):
+    def get_modified_conffiles(self, package):
         """Return modified configuration files of a package.
 
         Return a file name -> file contents map of all configuration files of
@@ -156,7 +155,7 @@ class PackageInfo:
         allows filtering.
         """
         # Default implementation does nothing, i.e. no config files modified
-        # pylint: disable=unused-argument
+        # pylint: disable=no-self-use,unused-argument
         return {}
 
     def get_file_package(
@@ -183,7 +182,8 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_system_architecture(self):
+    @staticmethod
+    def get_system_architecture():
         """Return the architecture of the system.
 
         This should use the notation of the particular distribution.
@@ -192,15 +192,14 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    @staticmethod
-    def get_library_paths():
+    def get_library_paths(self):
         """Return a list of default library search paths.
 
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        # dummy default implementation
+        # dummy default implementation, pylint: disable=no-self-use
         return "/lib:/usr/lib"
 
     def set_mirror(self, url):
@@ -342,8 +341,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    @staticmethod
-    def is_native_origin_package(package):
+    def is_native_origin_package(self, package):
         """Check if a package is one which has been white listed.
 
         Return True for a package which came from an origin which is listed in
@@ -351,7 +349,7 @@ class PackageInfo:
         """
         # Default implementation does nothing, i. e. native origins are not
         # supported.
-        # pylint: disable=unused-argument
+        # pylint: disable=no-self-use,unused-argument
         return False
 
     def get_uninstalled_package(self):

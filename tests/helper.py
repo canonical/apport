@@ -112,9 +112,9 @@ def wrap_object(
 
     def mocked_attribute(self, *args, **kwargs):
         if include_instance:
-            mock.__call__(self, *args, **kwargs)
+            mock(self, *args, **kwargs)
         else:
-            mock.__call__(*args, **kwargs)
+            mock(*args, **kwargs)
         return real_attribute(self, *args, **kwargs)
 
     with unittest.mock.patch.object(target, attribute, mocked_attribute):
