@@ -8,6 +8,7 @@
 # the full text of the license.
 
 import array
+import collections
 import grp
 import os
 import resource
@@ -1147,6 +1148,34 @@ class T(unittest.TestCase):
                 f"Corefile {core_file} not written by GDB "
                 f"within {int(timeout)} seconds."
             )
+
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_core_file_core_not_created(
+        self, sleep_mock, exists_mock
+    ):
+        """Test wait_for_core_file() helper runs into timeout for core file."""
+        exists_mock.return_value = False
+        with self.assertRaises(AssertionError):
+            self.wait_for_core_file(123456789, "core")
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 51)
+
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("psutil.Process", spec=psutil.Process)
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_core_file_timeout(
+        self, sleep_mock, process_mock, exists_mock
+    ):
+        """Test wait_for_core_file() helper runs into timeout."""
+        popenfile = collections.namedtuple("popenfile", ["path"])
+        exists_mock.return_value = True
+        process_mock.return_value.open_files.return_value = [popenfile("core")]
+        with unittest.mock.patch.object(self, "fail") as fail_mock:
+            self.wait_for_core_file(123456789, "core")
+        fail_mock.assert_called_once()
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 600)
 
     def wait_for_gdb_child_process(
         self, gdb_pid: int, command: str
