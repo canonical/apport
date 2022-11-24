@@ -1,12 +1,24 @@
 import io
 import time
 import unittest
+import unittest.mock
 
 import apport.fileutils
 import apport.packaging
 
 
 class T(unittest.TestCase):
+    @unittest.mock.patch("apport.fileutils.packaging.get_files")
+    def test_find_package_desktopfile_deleted(self, get_files_mock):
+        """find_package_desktopfile() for a deleted desktop file."""
+        get_files_mock.return_value = [
+            "/usr/share/applications/non-existing/blueman.desktop"
+        ]
+        self.assertEqual(
+            apport.fileutils.find_package_desktopfile("blueman"), None
+        )
+        get_files_mock.assert_called_once_with("blueman")
+
     def test_likely_packaged(self):
         """likely_packaged()"""
         self.assertEqual(apport.fileutils.likely_packaged("/bin/bash"), True)
