@@ -110,9 +110,12 @@ def find_package_desktopfile(package):
                 return None  # more than one
 
             # only consider visible ones
-            with open(line, "rb") as f:
-                if b"NoDisplay=true" not in f.read():
-                    desktopfile = line
+            try:
+                with open(line, "rb") as f:
+                    if b"NoDisplay=true" not in f.read():
+                        desktopfile = line
+            except FileNotFoundError:
+                continue
 
     return desktopfile
 
