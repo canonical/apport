@@ -215,6 +215,16 @@ class T(unittest.TestCase):
             ):
                 report.load(report_file)
 
+    def test_load_missing_colon(self):
+        """Throw exception when key-value line misses a colon as separator."""
+        report = problem_report.ProblemReport()
+        with io.BytesIO(b"\n") as report_file:
+            with self.assertRaisesRegex(
+                problem_report.MalformedProblemReport,
+                r"Line '\\n' does not contain a colon",
+            ):
+                report.load(report_file)
+
     def test_write_fileobj(self):
         """Write a report with a pointer to a file-like object."""
         tempbin = io.BytesIO(bin_data)
