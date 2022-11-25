@@ -26,6 +26,7 @@ import zlib
 
 import apport
 import apport.fileutils
+from problem_report import MalformedProblemReport
 
 
 def process_report(report):
@@ -75,7 +76,7 @@ def process_report(report):
                 return None
             r.load(f, binary="compressed")
             report_stat = os.stat(report)
-    except (OSError, zlib.error) as error:
+    except (MalformedProblemReport, OSError, zlib.error) as error:
         sys.stderr.write("ERROR: cannot load %s: %s\n" % (report, str(error)))
         return None
     if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:

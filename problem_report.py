@@ -28,6 +28,13 @@ import zlib
 GZIP_HEADER_START = b"\037\213\010"
 
 
+class MalformedProblemReport(ValueError):
+    """Raised when a problem report violates the crash report format.
+
+    This exception might be raised when the keys of the report are not ASCII.
+    """
+
+
 class CompressedValue:
     """Represent a ProblemReport value which is gzip compressed."""
 
@@ -164,7 +171,13 @@ class ProblemReport(collections.UserDict):
                         self.data[key] = self._try_unicode(value)
 
                 (key, value) = line.split(b":", 1)
-                key = key.decode("ASCII")
+                try:
+                    key = key.decode("ASCII")
+                except UnicodeDecodeError as error:
+                    raise MalformedProblemReport(
+                        f"Malformed problem report: {error}. "
+                        f"Is this a proper .crash text file?"
+                    ) from None
                 value = value.strip()
                 if value == b"base64":
                     if binary == "compressed":

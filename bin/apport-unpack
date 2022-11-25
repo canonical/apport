@@ -65,7 +65,7 @@ def main():
     bin_keys = []
     try:
         pr = load_report(args.report)
-    except OSError as error:
+    except (OSError, problem_report.MalformedProblemReport) as error:
         fatal(str(error))
     for key, value in pr.items():
         if value is None:
