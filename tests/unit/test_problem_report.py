@@ -225,6 +225,21 @@ class T(unittest.TestCase):
             ):
                 report.load(report_file)
 
+    def test_load_incorrect_padding(self):
+        """Throw exception when base64 encoded data has incorrect padding."""
+        report = problem_report.ProblemReport()
+        content = (
+            b"CoreDump: base64\n"
+            b" H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
+            b" 7Z0LYFPV/cdP0rQ\n"
+        )
+        with io.BytesIO(content) as report_file:
+            with self.assertRaisesRegex(
+                problem_report.MalformedProblemReport,
+                "^Malformed problem report: Incorrect padding.$",
+            ):
+                report.load(report_file)
+
     def test_write_fileobj(self):
         """Write a report with a pointer to a file-like object."""
         tempbin = io.BytesIO(bin_data)
