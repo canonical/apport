@@ -205,6 +205,16 @@ class T(unittest.TestCase):
         pr.load(io.BytesIO(b"ProblemType: Crash"))
         self.assertEqual(list(pr.keys()), ["ProblemType"])
 
+    def test_load_binary_blob(self):
+        """Throw exception when binary file (e.g. core) is loaded."""
+        report = problem_report.ProblemReport()
+        with io.BytesIO(b"AB\xfc:CD") as report_file:
+            with self.assertRaisesRegex(
+                problem_report.MalformedProblemReport,
+                "codec can't decode byte 0xfc in position 2",
+            ):
+                report.load(report_file)
+
     def test_write_fileobj(self):
         """Write a report with a pointer to a file-like object."""
         tempbin = io.BytesIO(bin_data)

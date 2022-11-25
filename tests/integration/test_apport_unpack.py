@@ -89,6 +89,23 @@ class T(unittest.TestCase):
         self.assertIn("/nonexisting.crash", process.stderr)
         self.assertEqual(process.stdout, "")
 
+    def test_broken_report(self):
+        with tempfile.NamedTemporaryFile("wb") as report_file:
+            report_file.write(b"AB\xfc:CD\n")
+            report_file.flush()
+            process = self._call_apport_unpack(
+                [report_file.name, self.unpack_dir]
+            )
+
+        self.assertEqual(process.returncode, 1)
+        self.assertEqual(
+            process.stderr,
+            "ERROR: Malformed problem report: 'ascii' codec can't decode "
+            "byte 0xfc in position 2: ordinal not in range(128). "
+            "Is this a proper .crash text file?\n",
+        )
+        self.assertEqual(process.stdout, "")
+
     def _call_apport_unpack(self, argv: list) -> subprocess.CompletedProcess:
         return subprocess.run(
             ["apport-unpack"] + argv,
