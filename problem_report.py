@@ -170,7 +170,14 @@ class ProblemReport(collections.UserDict):
                     else:
                         self.data[key] = self._try_unicode(value)
 
-                (key, value) = line.split(b":", 1)
+                try:
+                    (key, value) = line.split(b":", 1)
+                except ValueError:
+                    raise MalformedProblemReport(
+                        f"Malformed problem report: Line {line.decode()!r}"
+                        f" does not contain a colon for separating"
+                        f" the key from the value."
+                    ) from None
                 try:
                     key = key.decode("ASCII")
                 except UnicodeDecodeError as error:
