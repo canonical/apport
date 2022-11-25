@@ -53,9 +53,7 @@ class T(unittest.TestCase):
 
     def test_unpack(self):
         """apport-unpack for all possible data types"""
-        process = self._call(
-            ["apport-unpack", self.report_file, self.unpack_dir]
-        )
+        process = self._call_apport_unpack([self.report_file, self.unpack_dir])
         self.assertEqual(process.returncode, 0)
         self.assertEqual(process.stderr, "")
         self.assertEqual(process.stdout, "")
@@ -67,33 +65,33 @@ class T(unittest.TestCase):
 
     def test_help(self):
         """Call apport-unpack with --help."""
-        process = self._call(["apport-unpack", "--help"])
+        process = self._call_apport_unpack(["--help"])
         self.assertEqual(process.returncode, 0)
         self.assertEqual(process.stderr, "")
         self.assertTrue(process.stdout.startswith("usage:"), process.stdout)
 
     def test_error(self):
         """Call apport-unpack with wrong arguments."""
-        process = self._call(["apport-unpack"])
+        process = self._call_apport_unpack([])
         self.assertEqual(process.returncode, 2)
         self.assertEqual(process.stdout, "")
         self.assertTrue(process.stderr.startswith("usage:"), process.stderr)
 
-        process = self._call(["apport-unpack", self.report_file])
+        process = self._call_apport_unpack([self.report_file])
         self.assertEqual(process.returncode, 2)
         self.assertEqual(process.stdout, "")
         self.assertTrue(process.stderr.startswith("usage:"), process.stderr)
 
-        process = self._call(
-            ["apport-unpack", "/nonexisting.crash", self.unpack_dir]
+        process = self._call_apport_unpack(
+            ["/nonexisting.crash", self.unpack_dir]
         )
         self.assertEqual(process.returncode, 1)
         self.assertIn("/nonexisting.crash", process.stderr)
         self.assertEqual(process.stdout, "")
 
-    def _call(self, argv: list) -> subprocess.CompletedProcess:
+    def _call_apport_unpack(self, argv: list) -> subprocess.CompletedProcess:
         return subprocess.run(
-            argv,
+            ["apport-unpack"] + argv,
             check=False,
             encoding="UTF-8",
             env=self.env,
