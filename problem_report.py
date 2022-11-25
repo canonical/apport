@@ -10,6 +10,7 @@
 # the full text of the license.
 
 import base64
+import binascii
 import collections
 import email.encoders
 import email.mime.base
@@ -293,7 +294,12 @@ class ProblemReport(collections.UserDict):
     @classmethod
     def _decompress_line(cls, line, decompressor, value=b""):
         """Decompress a Base64 encoded line of gzip compressed data."""
-        block = base64.b64decode(line)
+        try:
+            block = base64.b64decode(line)
+        except binascii.Error as error:
+            raise MalformedProblemReport(
+                f"Malformed problem report: {error}."
+            ) from None
         if decompressor:
             value += decompressor.decompress(block)
         else:
