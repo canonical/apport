@@ -230,17 +230,17 @@ class __AptDpkgPackageInfo(PackageInfo):
         if pkg.installed and pkg.installed.version is None:
             return False
 
-        distro_name = self.get_os_version()[0]
+        if not pkg.candidate:
+            return False
 
-        if pkg.candidate and pkg.candidate.origins:  # might be None
-            for o in pkg.candidate.origins:
-                if o.origin == distro_name:
-                    return True
+        origins = {o.origin for o in pkg.candidate.origins}
+
+        distro_name = self.get_os_version()[0]
+        if distro_name in origins:
+            return True
 
         # on Ubuntu system-image we might not have any /var/lib/apt/lists
-        if {o.origin for o in pkg.candidate.origins} == {
-            ""
-        } and os.path.exists("/etc/system-image/channel.ini"):
+        if origins == {""} and os.path.exists("/etc/system-image/channel.ini"):
             return True
 
         return False
