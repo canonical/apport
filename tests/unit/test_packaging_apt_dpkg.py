@@ -25,6 +25,16 @@ class TestPackagingAptDpkg(unittest.TestCase):
     """Unit tests for apport.packaging_impl.apt_dpkg."""
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
+    def test_is_distro_package_no_candidate(self, apt_cache_mock):
+        """is_distro_package() for package that has no candidate."""
+        getitem_mock = apt_cache_mock.return_value.__getitem__
+        getitem_mock.return_value = unittest.mock.MagicMock(
+            spec=apt.Package, installed=None, candidate=None
+        )
+        self.assertEqual(impl.is_distro_package("adduser"), False)
+        getitem_mock.assert_called_once_with("adduser")
+
+    @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_installed_version(self, apt_cache_mock):
         """is_distro_package() for not installed package."""
         getitem_mock = apt_cache_mock.return_value.__getitem__
