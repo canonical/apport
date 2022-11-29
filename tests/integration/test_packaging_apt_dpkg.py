@@ -143,7 +143,6 @@ class T(unittest.TestCase):
         """is_distro_package()."""
         self.assertRaises(ValueError, impl.is_distro_package, "nonexisting")
         self.assertTrue(impl.is_distro_package("bash"))
-        # no False test here, hard to come up with a generic one
 
     def test_get_architecture(self):
         """get_architecture()."""
