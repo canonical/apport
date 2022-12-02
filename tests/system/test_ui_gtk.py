@@ -1274,6 +1274,11 @@ class T(unittest.TestCase):
             f'Für Hilfe gehen Sie über <a href="{url}">{url}</a>.',
         )
 
+    def test_ui_update_view_destroyed(self):
+        """Test ui_update_view if the dialog is already destroyed."""
+        self.app.w("details_treeview").destroy()
+        self.app.ui_update_view()
+
     @staticmethod
     def has_click_event_connected(widget):
         signal_id = GObject.signal_lookup("clicked", widget)
