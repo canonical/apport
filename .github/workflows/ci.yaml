@@ -88,7 +88,11 @@ jobs:
           sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen
           && sudo locale-gen
       - name: Install
-        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
+        run: >
+          sudo python3 -m coverage run
+          ./setup.py install --install-layout=deb --prefix=/usr --root=/
+          && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
+          && python3 -m coverage xml -o coverage-setup.xml
       - name: Run unit tests
         run: >
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
@@ -105,7 +109,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-          files: ./coverage.xml
+          files: ./coverage.xml,./coverage-setup.xml
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -129,7 +133,9 @@ jobs:
           python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
           python3-systemd valgrind
       - name: Build Java subdir
-        run: ./setup.py build_java_subdir
+        run: >
+          python3 -m coverage run ./setup.py build_java_subdir
+          && python3 -m coverage xml -o coverage-setup.xml
       - name: Run integration tests
         run: >
           python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/integration/
@@ -141,7 +147,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-          files: ./coverage.xml
+          files: ./coverage.xml,./coverage-setup.xml
 
   integration-tests-installed:
     runs-on: ubuntu-22.04
@@ -162,7 +168,11 @@ jobs:
           python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
           python3-systemd valgrind
       - name: Install
-        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
+        run: >
+          sudo python3 -m coverage run
+          ./setup.py install --install-layout=deb --prefix=/usr --root=/
+          && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
+          && python3 -m coverage xml -o coverage-setup.xml
       - name: Run integration tests
         run: >
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
@@ -180,7 +190,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-          files: ./coverage.xml
+          files: ./coverage.xml,./coverage-setup.xml
 
   system-tests:
     runs-on: ubuntu-latest
@@ -248,7 +258,11 @@ jobs:
           python3-pyqt5 python3-pytest python3-pytest-cov ubuntu-dbgsym-keyring
           ubuntu-keyring valgrind xvfb
       - name: Install
-        run: sudo ./setup.py install --install-layout=deb --prefix=/usr --root=/
+        run: >
+          sudo python3 -m coverage run
+          ./setup.py install --install-layout=deb --prefix=/usr --root=/
+          && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
+          && python3 -m coverage xml -o coverage-setup.xml
       - name: Enable Apport
         run: >
           echo "|/usr/share/apport/apport "
@@ -275,4 +289,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-          files: ./coverage.xml
+          files: ./coverage.xml,./coverage-setup.xml
