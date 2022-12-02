@@ -23,6 +23,8 @@ assert (
     distutils.version.StrictVersion(DistUtilsExtra.auto.__version__) >= "2.24"
 ), "needs DistUtilsExtra.auto >= 2.24"
 
+BASH_COMPLETIONS = "share/bash-completion/completions/"
+
 
 class build_java_subdir(distutils.core.Command):
     """Java crash handler build command."""
@@ -71,8 +73,41 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
 class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
     """Fix hashbang lines in scripts in data dir."""
 
+    def _fix_symlinks_in_bash_completion(self):
+        autoinstalled_completion_dir = os.path.join(
+            self.install_data, "share", "apport", "bash-completion"
+        )
+        for completion in glob.glob("data/bash-completion/*"):
+            try:
+                source = os.readlink(completion)
+            except OSError:
+                continue
+            dest = os.path.join(
+                self.install_data,
+                BASH_COMPLETIONS,
+                os.path.basename(completion),
+            )
+            if not os.path.exists(dest):
+                continue
+
+            distutils.log.info(
+                "Convert %s into a symlink to %s...", dest, source
+            )
+            os.remove(dest)
+            os.symlink(source, dest)
+
+            autoinstalled = os.path.join(
+                autoinstalled_completion_dir, os.path.basename(completion)
+            )
+            os.remove(autoinstalled)
+
+        # Clean-up left-over bash-completion from auto install
+        if os.path.isdir(autoinstalled_completion_dir):
+            os.rmdir(autoinstalled_completion_dir)
+
     def run(self):
         DistUtilsExtra.auto.install_auto.run(self)
+        self._fix_symlinks_in_bash_completion()
         new_hashbang = "#!%s\n" % sys.executable.rsplit(".", 1)[0]
 
         for d in (
@@ -146,6 +181,7 @@ DistUtilsExtra.auto.setup(
         ("share/doc/apport/", glob.glob("doc/*.txt")),
         # these are not supposed to be called directly, use apport-bug instead
         ("share/apport", ["gtk/apport-gtk", "kde/apport-kde"]),
+        (BASH_COMPLETIONS, glob.glob("data/bash-completion/*")),
         ("lib/pm-utils/sleep.d/", glob.glob("pm-utils/sleep.d/*")),
         ("/lib/udev/rules.d", glob.glob("udev/*.rules")),
         (systemd_unit_dir, glob.glob("data/systemd/*.s*")),
