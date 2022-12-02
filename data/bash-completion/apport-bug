@@ -1,7 +1,4 @@
-# 
-# Apport bash-completion
-#
-###############################################################################
+# Apport bash-completion for apport-bug and apport-cli
 
 # get available symptoms
 _apport_symptoms ()
@@ -204,65 +201,7 @@ _apport-cli ()
     esac
 }
 
-# apport-unpack completion
-_apport-unpack ()
-{
-    local cur prev
-
-    COMPREPLY=()
-    cur=`_get_cword`
-    prev=${COMP_WORDS[COMP_CWORD-1]}
-
-    case "$prev" in
-    apport-unpack)
-        # only show *.apport *.crash files
-        COMPREPLY=( $( compgen -G "${cur}*.apport"
-                       compgen -G "${cur}*.crash" ) )
-
-    ;;
-    esac
-}
-
-# apport-collect completion
-_apport-collect ()
-{
-    local cur prev
-
-    COMPREPLY=()
-    cur=`_get_cword`
-    prev=${COMP_WORDS[COMP_CWORD-1]}
-
-    case "$prev" in 
-    apport-collect)
-        COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
-
-    ;;
-    -p | --package)
-        # list package names
-        COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
-
-    ;;
-    --tag)
-        # standalone parameter
-        return 0
-    ;;
-    *)
-        # only complete -p/--package once
-        if [[ "${COMP_WORDS[*]}" =~ .*\ -p.* || "${COMP_WORDS[*]}" =~ .*--package.* ]]; then
-            COMPREPLY=( $( compgen -W "--tag" -- $cur) )
-        else
-            COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
-        fi
-        
-    ;;
-    esac
-}
-
 # bind completion to apport commands
 complete -F _apport-bug -o filenames -o dirnames ubuntu-bug
 complete -F _apport-bug -o filenames -o dirnames apport-bug
 complete -F _apport-cli -o filenames -o dirnames apport-cli
-complete -F _apport-unpack -o filenames -o dirnames apport-unpack
-complete -F _apport-collect apport-collect
-
-# vi: syntax=bash

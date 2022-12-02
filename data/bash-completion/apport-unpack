@@ -1,0 +1,21 @@
+# Apport bash-completion for apport-unpack
+
+_apport-unpack ()
+{
+    local cur prev
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+    apport-unpack)
+        # only show *.apport *.crash files
+        COMPREPLY=( $( compgen -G "${cur}*.apport"
+                       compgen -G "${cur}*.crash" ) )
+
+    ;;
+    esac
+}
+
+complete -F _apport-unpack -o filenames -o dirnames apport-unpack

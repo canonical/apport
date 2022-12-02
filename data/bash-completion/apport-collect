@@ -1,0 +1,37 @@
+# Apport bash-completion for apport-collect
+
+_apport-collect ()
+{
+    local cur prev
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+    apport-collect)
+        COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
+
+    ;;
+    -p | --package)
+        # list package names
+        COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
+
+    ;;
+    --tag)
+        # standalone parameter
+        return 0
+    ;;
+    *)
+        # only complete -p/--package once
+        if [[ "${COMP_WORDS[*]}" =~ .*\ -p.* || "${COMP_WORDS[*]}" =~ .*--package.* ]]; then
+            COMPREPLY=( $( compgen -W "--tag" -- $cur) )
+        else
+            COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
+        fi
+
+    ;;
+    esac
+}
+
+complete -F _apport-collect apport-collect
