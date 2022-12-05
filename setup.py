@@ -39,9 +39,10 @@ class build_java_subdir(distutils.core.Command):
     def run(self):
         oldwd = os.getcwd()
         os.chdir("java")
+        release = "7"
 
         subprocess.check_call(
-            ["javac", "-source", "1.6", "-target", "1.6"]
+            ["javac", "-source", release, "-target", release]
             + glob.glob("com/ubuntu/apport/*.java")
         )
         subprocess.check_call(
@@ -49,7 +50,7 @@ class build_java_subdir(distutils.core.Command):
             + glob.glob("com/ubuntu/apport/*.class")
         )
         subprocess.check_call(
-            ["javac", "-source", "1.6", "-target", "1.6", "crash.java"]
+            ["javac", "-source", release, "-target", release, "crash.java"]
         )
         subprocess.check_call(["jar", "cvf", "crash.jar", "crash.class"])
 
