@@ -45,6 +45,17 @@ class T(unittest.TestCase):
             f" {int(elapsed_time)} seconds."
         )
 
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_proc_cmdline_failure(self, sleep_mock):
+        """Test wait_for_proc_cmdline() helper runs into timeout."""
+        open_mock = unittest.mock.mock_open(read_data="")
+        with unittest.mock.patch("builtins.open", open_mock):
+            with self.assertRaises(AssertionError):
+                self.wait_for_proc_cmdline(12345, 0.3)
+        open_mock.assert_called_with("/proc/12345/cmdline", encoding="utf-8")
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 3)
+
     def test_add_package_info(self):
         """add_package_info()."""
         # determine bash version
