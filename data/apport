@@ -632,7 +632,7 @@ def forward_crash_to_container(
         error_log("Container apport failed to process crash within 30s")
 
 
-def parse_arguments():
+def parse_arguments(args: list[str]):
     parser = argparse.ArgumentParser()
 
     # TODO: Use type=int
@@ -649,7 +649,7 @@ def parse_arguments():
         "executable_path", nargs="*", help="path of executable (%%E)"
     )
 
-    options = parser.parse_args()
+    options = parser.parse_args(args)
 
     # In kernels before 5.3.0, an executable path with spaces may be split
     # into separate arguments. If options.executable_path is a list, join
@@ -664,7 +664,7 @@ def parse_arguments():
     return options
 
 
-def main():
+def main(args: list[str]):
     init_error_log()
 
     # systemd socket activation
@@ -717,31 +717,30 @@ def main():
 
         sys.stdin = os.fdopen(int(fds[0]), "r")
 
-        # Replace argv by the arguments received over the socket
-        sys.argv = [sys.argv[0]]
-        sys.argv += msg.decode().split()
+        # Replace args by the arguments received over the socket
+        args = msg.decode().split()
         if len(ucreds) >= 3:
-            sys.argv[1] = "%d" % ucreds[0]
+            args[0] = "%d" % ucreds[0]
 
-        if len(sys.argv) != 5:
+        if len(args) != 4:
             error_log(
                 "Received a bad number of arguments from forwarder,"
-                " received %d, expected 5, aborting." % len(sys.argv)
+                " received %d, expected 4, aborting." % len(args)
             )
             sys.exit(1)
 
         options = argparse.Namespace(
-            pid=sys.argv[1],
-            signal_number=sys.argv[2],
-            core_ulimit=sys.argv[3],
-            dump_mode=sys.argv[4],
+            pid=args[0],
+            signal_number=args[1],
+            core_ulimit=args[2],
+            dump_mode=args[3],
             global_pid=None,
             uid=None,
             gid=None,
             executable_path=None,
         )
     else:
-        options = parse_arguments()
+        options = parse_arguments(args)
 
     # Check if we received a valid global PID (kernel >= 3.12). If we do,
     # then compare it with the local PID. If they don't match, it's an
@@ -1047,4 +1046,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
