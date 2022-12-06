@@ -664,7 +664,7 @@ def parse_arguments(args: list[str]):
     return options
 
 
-def main(args: list[str]):
+def main(args: list[str]) -> int:
     init_error_log()
 
     # systemd socket activation
@@ -677,13 +677,13 @@ def main(args: list[str]):
                 "Received a crash via apport-forward.socket,"
                 " but systemd python module is not installed"
             )
-            sys.exit(0)
+            return 0
 
         # Extract and validate the fd
         fds = listen_fds()
         if len(fds) < 1:
             error_log("Invalid socket activation, no fd provided")
-            sys.exit(1)
+            return 1
 
         # Open the socket
         sock = socket.fromfd(int(fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
@@ -727,7 +727,7 @@ def main(args: list[str]):
                 "Received a bad number of arguments from forwarder,"
                 " received %d, expected 4, aborting." % len(args)
             )
-            sys.exit(1)
+            return 1
 
         options = argparse.Namespace(
             pid=args[0],
@@ -751,24 +751,24 @@ def main(args: list[str]):
 
         if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
             forward_crash_to_container(host_pid, options)
-            sys.exit(0)
-        elif not is_same_ns(host_pid, "mnt"):
+            return 0
+        if not is_same_ns(host_pid, "mnt"):
             error_log(
                 "host pid %s crashed in a separate mount namespace, ignoring"
                 % host_pid
             )
-            sys.exit(0)
-        else:
-            # If it doesn't look like the crash originated from within a full
-            # container or if the is_same_ns() function fails open (returning
-            # True), then take the global pid and replace the local pid with
-            # it, then move on to normal handling.
+            return 0
 
-            # This bit is needed because some software like the chrome sandbox
-            # will use container namespaces as a security measure but are still
-            # otherwise host processes. When that's the case, we need to keep
-            # handling those crashes locally using the global pid.
-            options.pid = str(host_pid)
+        # If it doesn't look like the crash originated from within a full
+        # container or if the is_same_ns() function fails open (returning
+        # True), then take the global pid and replace the local pid with
+        # it, then move on to normal handling.
+
+        # This bit is needed because some software like the chrome sandbox
+        # will use container namespaces as a security measure but are still
+        # otherwise host processes. When that's the case, we need to keep
+        # handling those crashes locally using the global pid.
+        options.pid = str(host_pid)
 
     check_lock()
 
@@ -790,14 +790,14 @@ def main(args: list[str]):
         process_start = get_process_starttime()
         if process_start > apport_start:
             error_log("process was replaced after Apport started, ignoring")
-            sys.exit(0)
+            return 0
 
         # Make sure the process uid/gid match the ones provided by the kernel
         # if available, if not, it may have been replaced
         if (options.uid is not None) and (options.gid is not None):
             if (options.uid != crash_uid) or (options.gid != crash_gid):
                 error_log("process uid/gid doesn't match expected, ignoring")
-                sys.exit(0)
+                return 0
 
         # check if the executable was modified after the process started (e. g.
         # package got upgraded in between).
@@ -808,7 +808,7 @@ def main(args: list[str]):
             or exe_mtime > process_mtime
         ):
             error_log("executable was modified after program start, ignoring")
-            sys.exit(0)
+            return 0
 
         error_log(
             "called for pid %s, signal %s, core limit %s, dump mode %s"
@@ -844,7 +844,7 @@ def main(args: list[str]):
                 core_ulimit,
                 coredump_fd,
             )
-            sys.exit(0)
+            return 0
 
         info = apport.Report("Crash")
         info["Signal"] = signum
@@ -870,7 +870,7 @@ def main(args: list[str]):
 
         if "ExecutablePath" not in info:
             error_log("could not determine ExecutablePath, aborting")
-            sys.exit(1)
+            return 1
 
         subject = info["ExecutablePath"].replace("/", "_")
         base = "%s.%s.%s.hanging" % (subject, str(pidstat.st_uid), pid)
@@ -911,7 +911,7 @@ def main(args: list[str]):
                     core_ulimit,
                     coredump_fd,
                 )
-                sys.exit(0)
+                return 0
 
         # ignore SIGXCPU and SIGXFSZ since this indicates some external
         # influence changing soft RLIMIT values when running programs.
@@ -927,12 +927,12 @@ def main(args: list[str]):
                 core_ulimit,
                 coredump_fd,
             )
-            sys.exit(0)
+            return 0
 
         # ignore blacklisted binaries
         if info.check_ignored():
             error_log("executable version is blacklisted, ignoring")
-            sys.exit(0)
+            return 0
 
         # We can now recover privileges to create the crash report file and
         # write out the user coredumps
@@ -940,13 +940,13 @@ def main(args: list[str]):
 
         if is_closing_session():
             error_log("happens for shutting down session, ignoring")
-            sys.exit(0)
+            return 0
 
         # ignore systemd watchdog kills; most often they don't tell us the
         # actual reason (kernel hang, etc.), LP #1433320
         if is_systemd_watchdog_restart(signum):
             error_log("Ignoring systemd watchdog restart")
-            sys.exit(0)
+            return 0
 
         # Create crash report file descriptor for writing the report into
         # report_dir
@@ -968,7 +968,7 @@ def main(args: list[str]):
                         core_ulimit,
                         coredump_fd,
                     )
-                    sys.exit(0)
+                    return 0
                 # remove the old file, so that we can create the new one
                 # with os.O_CREAT|os.O_EXCL
                 os.unlink(report)
@@ -986,7 +986,7 @@ def main(args: list[str]):
                 os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
         except OSError as error:
             error_log("Could not create report file: %s" % str(error))
-            sys.exit(1)
+            return 1
 
         # Drop privileges before writing out the reportfile.
         drop_privileges()
@@ -1044,6 +1044,8 @@ def main(args: list[str]):
         )
         error_log("environment: %s" % str(os.environ))
 
+    return 0
+
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
