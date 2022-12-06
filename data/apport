@@ -813,10 +813,10 @@ def main(args: list[str]) -> int:
     if options.global_pid is not None:
         host_pid = int(options.global_pid)
 
-        if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
-            forward_crash_to_container(host_pid, options)
-            return 0
         if not is_same_ns(host_pid, "mnt"):
+            if not is_same_ns(host_pid, "pid"):
+                forward_crash_to_container(host_pid, options)
+                return 0
             error_log(
                 "host pid %s crashed in a separate mount namespace, ignoring"
                 % host_pid
