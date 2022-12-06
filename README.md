@@ -94,6 +94,13 @@ bug reports, so that
 Creating releases
 =================
 
+Update the translation template before the release:
+
+```
+./setup.py build_i18n --merge-po
+git commit -sm "chore: Update translation template" po/
+```
+
 This project uses [semantic versioning](https://semver.org/). To create a
 release, increase the version in [apport/ui.py](apport/ui.py) and document the
 noteworthy changes in [NEWS.md](./NEWS.md). Then commit the changes and get them
