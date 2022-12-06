@@ -28,6 +28,7 @@ import inspect
 import io
 import os
 import pwd
+import re
 import signal
 import socket
 import struct
@@ -632,11 +633,51 @@ def forward_crash_to_container(
         error_log("Container apport failed to process crash within 30s")
 
 
+def check_kernel_crash() -> None:
+    """Check for kernel crash dump, convert it to apport report."""
+    kernel_crash_re = re.compile("^([0-9]{12}|vmcore)$")
+    for report in os.listdir(apport.fileutils.report_dir):
+        if kernel_crash_re.match(report):
+            subprocess.run(["/usr/share/apport/kernel_crashdump"], check=False)
+            return
+
+
+def create_directory(path: str, mode: int) -> None:
+    """Ensure the directory is created with the correct mode."""
+    os.makedirs(path, exist_ok=True)
+    os.chmod(path, mode)
+
+
+def write_to_proc_sys(path: str, value: str) -> None:
+    """Write value to /proc/sys."""
+    with open(os.path.join("/proc/sys", path), "w", encoding="utf-8") as proc:
+        proc.write(value)
+
+
+def start_apport() -> None:
+    """Start Apport crash handler."""
+    create_directory(apport.fileutils.report_dir, 0o1777)
+    write_to_proc_sys(
+        "kernel/core_pattern",
+        f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E",
+    )
+    write_to_proc_sys("fs/suid_dumpable", "2")
+    write_to_proc_sys("kernel/core_pipe_limit", "10")
+    check_kernel_crash()
+
+
+def stop_apport() -> None:
+    """Stop Apport crash handler."""
+    write_to_proc_sys("kernel/core_pipe_limit", "0")
+    write_to_proc_sys("fs/suid_dumpable", "0")
+    write_to_proc_sys("kernel/core_pattern", "core")
+
+
 def parse_arguments(args: list[str]):
     parser = argparse.ArgumentParser()
 
     # TODO: Use type=int
-    parser.add_argument("-p", "--pid", required=True, help="process id (%%p)")
+    parser.add_argument("-p", "--pid", help="process id (%%p)")
     parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
     parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
     parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
@@ -649,7 +690,21 @@ def parse_arguments(args: list[str]):
         "executable_path", nargs="*", help="path of executable (%%E)"
     )
 
+    parser.add_argument(
+        "--start",
+        action="store_true",
+        help="Start Apport crash handler and exit",
+    )
+    parser.add_argument(
+        "--stop",
+        action="store_true",
+        help="Stop Apport crash handler and exit",
+    )
+
     options = parser.parse_args(args)
+
+    if not options.pid and not options.start and not options.stop:
+        parser.error("the following arguments are required: -p/--pid")
 
     # In kernels before 5.3.0, an executable path with spaces may be split
     # into separate arguments. If options.executable_path is a list, join
@@ -738,9 +793,18 @@ def main(args: list[str]) -> int:
             uid=None,
             gid=None,
             executable_path=None,
+            start=False,
+            stop=False,
         )
     else:
         options = parse_arguments(args)
+
+    if options.stop:
+        stop_apport()
+        return 0
+    if options.start:
+        start_apport()
+        return 0
 
     # Check if we received a valid global PID (kernel >= 3.12). If we do,
     # then compare it with the local PID. If they don't match, it's an

@@ -35,13 +35,7 @@ do_start()
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
 
-	[ -e /var/crash ] || mkdir -p /var/crash
-	chmod 1777 /var/crash
-
-	# check for kernel crash dump, convert it to apport report
-	if [ -e /var/crash/vmcore ] || [ -n "`ls /var/crash | egrep ^[0-9]{12}$`" ];then
-	    /usr/share/apport/kernel_crashdump || true
-	fi
+	$AGENT --start
 
 	# check for incomplete suspend/resume or hibernate
 	if [ -e /var/lib/pm-utils/status ]; then
@@ -49,10 +43,6 @@ do_start()
 		rm -f /var/lib/pm-utils/status
 		rm -f /var/lib/pm-utils/resume-hang.log
 	fi
-
-	echo "|$AGENT -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E" > /proc/sys/kernel/core_pattern
-	echo 2 > /proc/sys/fs/suid_dumpable
-	echo 10 > /proc/sys/kernel/core_pipe_limit
 }
 
 #
@@ -66,20 +56,13 @@ do_stop()
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
 
-	echo 0 > /proc/sys/kernel/core_pipe_limit
-	echo 0 > /proc/sys/fs/suid_dumpable
-
 	# Check for a hung resume.  If we find one try and grab everything
 	# we can to aid in its discovery.
 	if [ -e /var/lib/pm-utils/status ]; then
 		ps -wwef >/var/lib/pm-utils/resume-hang.log
 	fi
 
-	if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" != "|" ]; then
-	    return 1
-	else
-	    echo "core" > /proc/sys/kernel/core_pattern
-	fi
+	$AGENT --stop
 }
 
 case "$1" in
