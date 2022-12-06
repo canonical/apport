@@ -1,0 +1,13 @@
+[Unit]
+Description=automatic crash report generation
+After=remote-fs.target
+ConditionVirtualization=!container
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/share/apport/apport --start
+ExecStop=/usr/share/apport/apport --stop
+
+[Install]
+WantedBy=multi-user.target
