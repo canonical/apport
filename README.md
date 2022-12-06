@@ -101,7 +101,7 @@ reviewed:
 
 ```
 version=$(python3 -c "import apport.ui; print(apport.ui.__version__)")
-git commit -sm "Release apport $version" NEWS.md setup.py
+git commit -sm "Release apport $version" NEWS.md apport/ui.py
 ```
 
 Once merged to `main`, tag the release and generate a xz-compressed release
