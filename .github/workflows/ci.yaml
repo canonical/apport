@@ -264,12 +264,7 @@ jobs:
           && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
           && python3 -m coverage xml -o coverage-setup.xml
       - name: Enable Apport
-        run: >
-          echo "|/usr/share/apport/apport "
-          "-p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E"
-          | sudo tee /proc/sys/kernel/core_pattern
-          && echo 2 | sudo tee /proc/sys/fs/suid_dumpable
-          && echo 10 | sudo tee /proc/sys/kernel/core_pipe_limit
+        run: sudo /usr/share/apport/apport --start
       - name: Run system tests
         env:
           GDK_BACKEND: x11
