@@ -339,6 +339,10 @@ class T(unittest.TestCase):
         """Apport ignores SIGQUIT."""
         self.do_crash(sig=signal.SIGQUIT, expect_report=False)
 
+    def test_ignore_sigxcpu(self):
+        """Apport ignores CPU time limit exceeded (SIGXCPU)."""
+        self.do_crash(sig=signal.SIGXCPU, expect_report=False)
+
     def test_leak_inaccessible_files(self):
         """Existence of user-inaccessible files do not leak."""
         local_exe = os.path.join(self.workdir, "myscript")
