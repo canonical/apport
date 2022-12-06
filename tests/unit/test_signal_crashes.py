@@ -52,6 +52,18 @@ class TestApport(unittest.TestCase):
             ["/usr/share/apport/kernel_crashdump"], check=False
         )
 
+    @unittest.mock.patch.object(
+        apport_binary,
+        "is_same_ns",
+        unittest.mock.MagicMock(return_value=False),
+    )
+    @unittest.mock.patch.object(apport_binary, "forward_crash_to_container")
+    def test_main_forward_crash_to_container(self, forward_mock):
+        """Test main() to forward crash to container."""
+        args = ["-p", "12345", "-P", "67890"]
+        self.assertEqual(apport_binary.main(args), 0)
+        forward_mock.assert_called_once()
+
     @unittest.mock.patch.object(apport_binary, "start_apport")
     def test_main_start(self, start_mock):
         """Test calling apport with --start."""
