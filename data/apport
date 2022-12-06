@@ -446,7 +446,7 @@ def is_closing_session():
 def is_systemd_watchdog_restart(signum):
     """Check if this is a restart by systemd's watchdog"""
 
-    if signum != str(signal.SIGABRT) or not os.path.isdir(
+    if signum != str(int(signal.SIGABRT)) or not os.path.isdir(
         "/run/systemd/system"
     ):
         return False
@@ -979,7 +979,7 @@ def main(args: list[str]) -> int:
 
         # ignore SIGXCPU and SIGXFSZ since this indicates some external
         # influence changing soft RLIMIT values when running programs.
-        if signum in [str(signal.SIGXCPU), str(signal.SIGXFSZ)]:
+        if signum in (str(int(signal.SIGXCPU)), str(int(signal.SIGXFSZ))):
             error_log(
                 "Ignoring signal %s (caused by exceeding soft RLIMIT)" % signum
             )
