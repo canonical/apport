@@ -517,6 +517,121 @@ def is_same_ns(pid, ns):
     return False
 
 
+def forward_crash_to_container(
+    host_pid: int, options: argparse.Namespace
+) -> None:
+    """Try to forward the crash to the container.
+
+    If the crash came from a container, don't attempt to handle
+    locally as that would just result in wrong system information.
+
+    Instead, attempt to find apport inside the container and
+    forward the process information there.
+    """
+    proc_host_pid_fd = os.open(
+        "/proc/%d" % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+    )
+
+    def proc_host_pid_opener(path, flags):
+        return os.open(path, flags, dir_fd=proc_host_pid_fd)
+
+    # Validate that the target socket is owned
+    # by the user namespace of the process
+    try:
+        sock_fd = os.open(
+            "root/run/apport.socket",
+            os.O_RDONLY | os.O_PATH,
+            dir_fd=proc_host_pid_fd,
+        )
+        socket_uid = os.fstat(sock_fd).st_uid
+    except FileNotFoundError:
+        error_log(
+            "host pid %s crashed in a container without apport support"
+            % options.global_pid
+        )
+        return
+
+    try:
+        with open(
+            "uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener
+        ) as fd:
+            if not apport.fileutils.search_map(fd, socket_uid):
+                error_log(
+                    "user is trying to trick apport into accessing"
+                    " a socket that doesn't belong to the container"
+                )
+                return
+    except FileNotFoundError:
+        pass
+
+    # Validate that the crashed binary is owned
+    # by the user namespace of the process
+    task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
+    try:
+        with open(
+            "uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener
+        ) as fd:
+            if not apport.fileutils.search_map(fd, task_uid):
+                error_log(
+                    "host pid %s crashed in a container"
+                    " with no access to the binary" % options.global_pid
+                )
+                return
+    except FileNotFoundError:
+        pass
+
+    task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
+    try:
+        with open(
+            "gid_map", "r", encoding="utf-8", opener=proc_host_pid_opener
+        ) as fd:
+            if not apport.fileutils.search_map(fd, task_gid):
+                error_log(
+                    "host pid %s crashed in a container"
+                    " with no access to the binary" % options.global_pid
+                )
+                return
+    except FileNotFoundError:
+        pass
+
+    # Now open the socket
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        sock.connect("/proc/self/fd/%s" % sock_fd)
+    except OSError:
+        error_log(
+            "host pid %s crashed in a container with a broken apport"
+            % options.global_pid
+        )
+        return
+
+    # Send main arguments only
+    # Older apport in containers doesn't support positional arguments
+    args = "%s %s %s %s" % (
+        options.pid,
+        options.signal_number,
+        options.core_ulimit,
+        options.dump_mode,
+    )
+    try:
+        sock.sendmsg(
+            [args.encode()],
+            [
+                # Send a ucred containing the global pid
+                (
+                    socket.SOL_SOCKET,
+                    socket.SCM_CREDENTIALS,
+                    struct.pack("3i", host_pid, 0, 0),
+                ),
+                # Send fd 0 (the coredump)
+                (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array("i", [0])),
+            ],
+        )
+        sock.shutdown(socket.SHUT_RDWR)
+    except TimeoutError:
+        error_log("Container apport failed to process crash within 30s")
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
@@ -636,132 +751,7 @@ def main():
         host_pid = int(options.global_pid)
 
         if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
-            # If the crash came from a container, don't attempt to handle
-            # locally as that would just result in wrong system information.
-
-            # Instead, attempt to find apport inside the container and
-            # forward the process information there.
-
-            proc_host_pid_fd = os.open(
-                "/proc/%d" % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-            )
-
-            def proc_host_pid_opener(path, flags):
-                return os.open(path, flags, dir_fd=proc_host_pid_fd)
-
-            # Validate that the target socket is owned
-            # by the user namespace of the process
-            try:
-                sock_fd = os.open(
-                    "root/run/apport.socket",
-                    os.O_RDONLY | os.O_PATH,
-                    dir_fd=proc_host_pid_fd,
-                )
-                socket_uid = os.fstat(sock_fd).st_uid
-            except FileNotFoundError:
-                error_log(
-                    "host pid %s crashed in a container without apport support"
-                    % options.global_pid
-                )
-                sys.exit(0)
-
-            try:
-                with open(
-                    "uid_map",
-                    "r",
-                    encoding="utf-8",
-                    opener=proc_host_pid_opener,
-                ) as fd:
-                    if not apport.fileutils.search_map(fd, socket_uid):
-                        error_log(
-                            "user is trying to trick apport into accessing"
-                            " a socket that doesn't belong to the container"
-                        )
-                        sys.exit(0)
-            except FileNotFoundError:
-                pass
-
-            # Validate that the crashed binary is owned
-            # by the user namespace of the process
-            task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
-            try:
-                with open(
-                    "uid_map",
-                    "r",
-                    encoding="utf-8",
-                    opener=proc_host_pid_opener,
-                ) as fd:
-                    if not apport.fileutils.search_map(fd, task_uid):
-                        error_log(
-                            "host pid %s crashed in a container"
-                            " with no access to the binary"
-                            % options.global_pid
-                        )
-                        sys.exit(0)
-            except FileNotFoundError:
-                pass
-
-            task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
-            try:
-                with open(
-                    "gid_map",
-                    "r",
-                    encoding="utf-8",
-                    opener=proc_host_pid_opener,
-                ) as fd:
-                    if not apport.fileutils.search_map(fd, task_gid):
-                        error_log(
-                            "host pid %s crashed in a container"
-                            " with no access to the binary"
-                            % options.global_pid
-                        )
-                        sys.exit(0)
-            except FileNotFoundError:
-                pass
-
-            # Now open the socket
-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            try:
-                sock.connect("/proc/self/fd/%s" % sock_fd)
-            except OSError:
-                error_log(
-                    "host pid %s crashed in a container with a broken apport"
-                    % options.global_pid
-                )
-                sys.exit(0)
-
-            # Send main arguments only
-            # Older apport in containers doesn't support positional arguments
-            args = "%s %s %s %s" % (
-                options.pid,
-                options.signal_number,
-                options.core_ulimit,
-                options.dump_mode,
-            )
-            try:
-                sock.sendmsg(
-                    [args.encode()],
-                    [
-                        # Send a ucred containing the global pid
-                        (
-                            socket.SOL_SOCKET,
-                            socket.SCM_CREDENTIALS,
-                            struct.pack("3i", host_pid, 0, 0),
-                        ),
-                        # Send fd 0 (the coredump)
-                        (
-                            socket.SOL_SOCKET,
-                            socket.SCM_RIGHTS,
-                            array.array("i", [0]),
-                        ),
-                    ],
-                )
-                sock.shutdown(socket.SHUT_RDWR)
-            except TimeoutError:
-                error_log(
-                    "Container apport failed to process crash within 30s"
-                )
-
+            forward_crash_to_container(host_pid, options)
             sys.exit(0)
         elif not is_same_ns(host_pid, "mnt"):
             error_log(
