@@ -53,6 +53,9 @@ class TestApport(unittest.TestCase):
         )
 
     @unittest.mock.patch.object(
+        apport_binary, "init_error_log", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
         apport_binary,
         "is_same_ns",
         unittest.mock.MagicMock(return_value=False),
@@ -64,12 +67,18 @@ class TestApport(unittest.TestCase):
         self.assertEqual(apport_binary.main(args), 0)
         forward_mock.assert_called_once()
 
+    @unittest.mock.patch.object(
+        apport_binary, "init_error_log", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch.object(apport_binary, "start_apport")
     def test_main_start(self, start_mock):
         """Test calling apport with --start."""
         self.assertEqual(apport_binary.main(["--start"]), 0)
         start_mock.assert_called_once_with()
 
+    @unittest.mock.patch.object(
+        apport_binary, "init_error_log", unittest.mock.MagicMock()
+    )
     @unittest.mock.patch.object(apport_binary, "stop_apport")
     def test_main_stop(self, stop_mock):
         """Test calling apport with --stop."""
