@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2015-04-27 21:45+0000\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
+"PO-Revision-Date: 2022-10-25 10:03+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -254,9 +254,9 @@ msgid "xprop failed to determine process ID of the window"
 msgstr "xprop nije uspio odrediti proces ID prozora"
 
 #: ../apport/ui.py:931
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report number>"
-msgstr "%prog <broj izvještaja>"
+msgstr "%(prog)s <broj izvještaja>"
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
@@ -267,11 +267,11 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Dodajte dodatnu oznaku u izvještaj. Moguće je odrediti više puta."
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [mogućnosti] [simptom|pid|paket|program putanja|.apport/.crash "
+"%(prog)s [mogućnosti] [simptom|pid|paket|program putanja|.apport/.crash "
 "datoteka]"
 
 #: ../apport/ui.py:987
@@ -787,17 +787,17 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 
 #: ../bin/apport-unpack.py:29
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "Upotreba: %s <report> <target directory>"
+msgstr "%(prog)s <izvještaj> <odredišni direktorij>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Datoteka izvještaja za raspakiravanje"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "direktorij za raspakiravanje izvještaja"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
@@ -847,6 +847,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"izvršna datoteka koja je pokrenuta valgrindovim alatom provjere memorije za "
+"otkrivanje curenja memorije"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
@@ -880,6 +882,7 @@ msgstr ""
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
+"Moguće je da vaš sustav postane nestabilan i zatreba ponovno pokretanje."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1

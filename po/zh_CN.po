@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -47,6 +47,8 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"%s 软件包似乎不是官方版本。请在更新可用包索引后重试，如果仍然不能工作，请移除"
+"这些第三方软件包后再试。"
 
 #: ../apport/ui.py:205
 #, python-format
@@ -56,7 +58,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"您安装了一些陈旧的软件包。请升级以下软件包后再查看问题是否依然发生:\n"
+"您安装了一些过时的软件包版本。请升级以下软件包，并检查问题是否仍然发生：\n"
 "\n"
 "%s"
 
@@ -100,11 +102,11 @@ msgstr "没有足够的磁盘空间来处理报告。"
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
-msgstr ""
+msgstr "没有指定 PID"
 
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "你需要指定一个 PID。获取更多信息请使用 --help 参数。"
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
@@ -243,10 +245,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "向报告中添加额外的标记，可多次指定。"
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [选项] [症状|PID|软件包|程序目录|.apport/.crash file]"
+msgstr ""
 
 #: ../apport/ui.py:987
 msgid ""
@@ -393,6 +395,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s 是 %s 提供的一个 Snap，但没有提供联系地址。请访问 https://forum.snapcraft."
+"io 以寻求帮助。"
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -713,17 +717,17 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "确定以附件形式发送这些？[y/n]"
 
 #: ../bin/apport-unpack.py:29
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "用法：%s <报告> <目标目录>"
+msgstr ""
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "要解压的报告文件"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "存放解压后报告的文件夹"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."

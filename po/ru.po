@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
 "PO-Revision-Date: 2019-11-01 10:51+0000\n"
 "Last-Translator: Sandro <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -50,6 +50,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Похоже, это неофициальный пакет %s. Повторите попытку после обновления "
+"индексов доступных пакетов. Если это не помогает, тогда удалите "
+"соответствующие сторонние пакеты и попробуйте ещё раз."
 
 #: ../apport/ui.py:205
 #, python-format
@@ -111,6 +114,8 @@ msgstr "Не указан идентификатор процесса (PID)"
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
+"Необходимо указать идентификатор процесса (PID). Смотрите --help для "
+"получения дополнительной информации."
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
@@ -232,6 +237,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Параметр --window не может быть использован в Wayland.\n"
+"\n"
+"Найдите идентификатор процесса окна и выполните «ubuntu-bug <идентификатор "
+"процесса>».\n"
+"\n"
+"Идентификатор процесса может быть найден с помощью Системного монитора. "
+"Запустите его и найдите интересующее приложение на вкладке Процессы. "
+"Идентификатор процесса — номер, указанный в столбце ID."
 
 #: ../apport/ui.py:890
 msgid ""
@@ -246,9 +259,9 @@ msgid "xprop failed to determine process ID of the window"
 msgstr "xprop не удалось определить ID процесса этого окна"
 
 #: ../apport/ui.py:931
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report number>"
-msgstr "%prog <номер отчета>"
+msgstr "%(prog)s <номер отчёта>"
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
@@ -259,11 +272,11 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Добавить дополнительный тег в отчет. Может быть указан несколько раз."
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [параметры] [признак|pid|пакет|путь до программы|.apport/.crash файл]"
+"%(prog)s [параметры] [симптом|pid|пакет|путь к программе|.apport/.crash файл]"
 
 #: ../apport/ui.py:987
 msgid ""
@@ -419,6 +432,8 @@ msgstr "%s deb-пакет"
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s предоставлен в виде snap-пакета и опубликован %s. Для получения помощи "
+"свяжитесь с ними по %s."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -426,6 +441,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s предоставлен в виде snap-пакета и опубликован %s. Контактный адрес не "
+"указан. Для получения помощи посетите форум https://forum.snapcraft.io/."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -776,17 +793,17 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "Отправить эти приложения? [y/n]"
 
 #: ../bin/apport-unpack.py:29
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "Использование: %s <отчет> <папка назначения>"
+msgstr "%(prog)s <отчёт> <целевой каталог>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Файл отчёта для распаковки."
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "Каталог для распаковки отчёта."
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
@@ -834,6 +851,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"Исполняемый файл, который запускается с помощью инструмента Valgrind "
+"memcheck для обнаружения утечки памяти."
 
 #: ../bin/apport-valgrind.py:129
 #, python-format

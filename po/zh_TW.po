@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -236,10 +236,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
 
 #: ../apport/ui.py:987
 msgid ""
@@ -707,9 +707,9 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "允許傳送這些附件？"
 
 #: ../bin/apport-unpack.py:29
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "用法：%s <回報檔> <目標目錄>"
+msgstr ""
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"

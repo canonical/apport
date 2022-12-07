@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Aputsiak Niels Janussen <aputtu@gmail.com>\n"
+"Last-Translator: Aputsiak Niels Janussen <Unknown>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -243,9 +243,9 @@ msgid "xprop failed to determine process ID of the window"
 msgstr "xprop kunne ikke bestemme proces-id for vinduet"
 
 #: ../apport/ui.py:931
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report number>"
-msgstr "%prog <rapportnummer>"
+msgstr "%(prog)s <rapportnummer>"
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
@@ -256,10 +256,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Tilføj et ekstra mærke til rapporten. Kan gives flere gange."
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [tilvalg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
+msgstr "%(prog)s [tilvalg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:987
 msgid ""
@@ -761,17 +761,17 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "O.k. at sende disse som bilag [y/n]"
 
 #: ../bin/apport-unpack.py:29
-#, fuzzy, python-format
+#, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "Brug: %s <rapport> <målkatalog>"
+msgstr "%(prog)s <rapport> <målmappe>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Rapportfil som skal udpakkes"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "mappe som rapport skal udpakkes i"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
@@ -820,6 +820,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"programmet som køres under valgrinds hukommelsestjekværktøj til registrering "
+"af hukommelseslæk"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
