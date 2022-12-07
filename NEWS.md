@@ -1,6 +1,35 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.24.0 (2022-12-07)
+-------------------
+
+### Added
+* Add `apport.service` as alternative to the init.d script
+
+### Changed
+* build: Bump source/target Java version to 7
+* Split bash completions by command
+
+### Fixed
+* Address complaints from pylint 2.15.5
+* Catch malformed problem reports
+  ([LP: #1996040](https://launchpad.net/bugs/1996040))
+* Catch `ValueError`: not enough values to unpack
+  ([LP: #1995100](https://launchpad.net/bugs/1995100))
+* Catch `FileNotFoundError` for missing desktop files
+  ([LP: #1997753](https://launchpad.net/bugs/1997753))
+* Catch `binascii.Error`: Incorrect padding
+  ([LP: #1997912](https://launchpad.net/bugs/1997912))
+* Catch `AttributeError`: `NoneType` object has no attribute `origins`
+  ([LP: #1997973](https://launchpad.net/bugs/1997973))
+* Add main category System to `apport-kde-mime.desktop`
+* data/apport: Fix ignoring `SIGXCPU` and `SIGXFSZ`
+* tests:
+  * Fix path for installed `apport-cli`
+  * Determine source package dynamically in `test_run_crash_kernel`
+    ([LP: #1992172](https://launchpad.net/bugs/1992172))
+
 2.23.1 (2022-10-05)
 -------------------
 
