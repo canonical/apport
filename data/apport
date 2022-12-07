@@ -869,31 +869,8 @@ def process_crash(options: argparse.Namespace) -> int:
 
     get_pid_info(pid)
 
-    # Sanity check to make sure the process wasn't replaced after the crash
-    # happened. The start time isn't fine-grained enough to be an adequate
-    # security check.
-    apport_start = get_apport_starttime()
     process_start = get_process_starttime()
-    if process_start > apport_start:
-        error_log("process was replaced after Apport started, ignoring")
-        return 0
-
-    # Make sure the process uid/gid match the ones provided by the kernel
-    # if available, if not, it may have been replaced
-    if (options.uid is not None) and (options.gid is not None):
-        if (options.uid != crash_uid) or (options.gid != crash_gid):
-            error_log("process uid/gid doesn't match expected, ignoring")
-            return 0
-
-    # check if the executable was modified after the process started (e. g.
-    # package got upgraded in between).
-    exe_mtime = os.stat("exe", dir_fd=proc_pid_fd).st_mtime
-    process_mtime = os.lstat("cmdline", dir_fd=proc_pid_fd).st_mtime
-    if (
-        not os.path.exists(os.readlink("exe", dir_fd=proc_pid_fd))
-        or exe_mtime > process_mtime
-    ):
-        error_log("executable was modified after program start, ignoring")
+    if not sanity_checks(options, process_start):
         return 0
 
     error_log(
@@ -1112,6 +1089,37 @@ def process_crash(options: argparse.Namespace) -> int:
         from_report=reportfile,
     )
     return 0
+
+
+def sanity_checks(options: argparse.Namespace, process_start: int) -> bool:
+    """Run sanity checks and return True if all pass."""
+    # Sanity check to make sure the process wasn't replaced after the crash
+    # happened. The start time isn't fine-grained enough to be an adequate
+    # security check.
+    apport_start = get_apport_starttime()
+    if process_start > apport_start:
+        error_log("process was replaced after Apport started, ignoring")
+        return False
+
+    # Make sure the process uid/gid match the ones provided by the kernel
+    # if available, if not, it may have been replaced
+    if (options.uid is not None) and (options.gid is not None):
+        if (options.uid != crash_uid) or (options.gid != crash_gid):
+            error_log("process uid/gid doesn't match expected, ignoring")
+            return False
+
+    # check if the executable was modified after the process started (e. g.
+    # package got upgraded in between).
+    exe_mtime = os.stat("exe", dir_fd=proc_pid_fd).st_mtime
+    process_mtime = os.lstat("cmdline", dir_fd=proc_pid_fd).st_mtime
+    if (
+        not os.path.exists(os.readlink("exe", dir_fd=proc_pid_fd))
+        or exe_mtime > process_mtime
+    ):
+        error_log("executable was modified after program start, ignoring")
+        return False
+
+    return True
 
 
 if __name__ == "__main__":
