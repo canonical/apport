@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
+"POT-Creation-Date: 2022-12-07 16:23+0100\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Ofir Klinger <klinger.ofir@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -249,10 +249,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:976
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
 
 #: ../apport/ui.py:987
 msgid ""
@@ -391,6 +391,7 @@ msgstr "חבילת deb %s"
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s מסופק על ידי snap שהופץ על ידי %s. יש ליצור אתם קשר דרך %s לקלבת עזרה."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -398,6 +399,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s מסופק על ידי snap שהופץ על ידי %s. לא סופקה דרך ליצירת קשר, יש לבקר "
+"בפורום https://forum.snapcraft.io/‎ לקבלת עזרה."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -716,7 +719,7 @@ msgstr "לא להוסיף StacktraceSource (מקור השתלשלות התקלה
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
-msgstr ""
+msgstr "לא ניתן להשתמש ב־‎-C בלי ‎-S. נעצר."
 
 #. translators: don't translate y/n,
 #. apport currently only checks for "y"
@@ -780,7 +783,7 @@ msgstr ""
 #: ../bin/apport-valgrind.py:129
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr ""
+msgstr "שגיאה: %s זה לא קובץ שניתן להריץ. נעצר."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
