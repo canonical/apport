@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:47+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-09-12 21:37+0000\n"
+"Last-Translator: Sabri Ünal <Unknown>\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -49,6 +49,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Bu resmi bir %s paketi gibi gözükmüyor. Lütfen mevcut paketlerin indeksini "
+"güncelleştirdikten sonra yeniden deneyin, eğer bu işinizi görmezse ilişkili "
+"üçüncü parti paketleri kaldırıp yeniden deneyin."
 
 #: ../apport/ui.py:205
 #, python-format
@@ -105,11 +108,12 @@ msgstr "Bu raporu işlemek için yeterli disk alanı yok."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
-msgstr ""
+msgstr "PID belirtilmemiş"
 
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
+"PID belirtmeniz gerekiyor. Daha fazla bilgi için --help sayfasını inceleyin."
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
@@ -117,15 +121,15 @@ msgstr "Geçersiz PID"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Belirtilen işlem kimliği mevcut değil."
 
 #: ../apport/ui.py:498
 msgid "Not your PID"
-msgstr ""
+msgstr "Sizin İşlem Kimliğiniz değil"
 
 #: ../apport/ui.py:499
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Belirtilen işlem kimliği size ait değil."
 
 #: ../apport/ui.py:554
 msgid "No package specified"
@@ -233,6 +237,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Pencere seçeneği Wayland'da kullanılamaz.\n"
+"\n"
+"Lütfen pencerenin işlem kimliğini bulun ve ardından 'ubuntu-bug <işlem "
+"kimliği>' komutunu çalıştırın.\n"
+"\n"
+"İşlem kimliği, Sistem Gözetimcisi uygulaması çalıştırılarak bulunabilir. "
+"İşlemler sekmesinde doğru uygulamayı bulana kadar kaydırın.  İşlem kimliği, "
+"kimlik sütununda listelenen numaradır."
 
 #: ../apport/ui.py:890
 msgid ""
@@ -387,7 +399,7 @@ msgstr "Bu sorun raporu hasarlı, bu nedenle işlenemiyor."
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "Bu rapor kurulmamış paketler hakkındadır."
 
 #: ../apport/ui.py:1511
 msgid "An error occurred while attempting to process this problem report:"
@@ -398,21 +410,24 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Bu uygulamanın iki versiyonu kurulmuş, bildireceğiniz hata hangisine ait?"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap paketi"
 
 #: ../apport/ui.py:1534
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb paketi"
 
 #: ../apport/ui.py:1575
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s, %s tarafından yayınlanan bir snap aracılığıyla sağlanmaktadır. Yardım "
+"için %s aracılığıyla iletişime geçin."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -420,6 +435,9 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s, %s tarafından yayınlanan bir snap aracılığıyla sağlanmaktadır. İletişim "
+"adresi bulunmamaktadır; yardım için https://forum.snapcraft.io/ adresindeki "
+"forumu ziyaret edin."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -691,6 +709,9 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Yüklediğiniz gdb'nin herhangi bir sürümü yerine, raporla aynı sürümünü "
+"kullanarak gdb'yi ve bağımlılıklarını yüklemek için başka bir geçici sanal "
+"alan oluşturun."
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
@@ -828,12 +849,16 @@ msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Bu durum bir önceki beklemeye almadan kaynaklamıştır ve sistemin düzenli "
+"devam etmesini engellemiştir."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Bu durum bir önceki uykuya almadan kaynaklamıştır ve sistemin düzenli devam "
+"etmesini engellemiştir."
 
 #: ../data/apportcheckresume.py:81
 msgid ""

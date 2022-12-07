@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Phan Trọng Khanh <phantrongkhanh87@gmail.com>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2011-03-27 11:11+0000\n"
+"Last-Translator: Nguyễn Anh <Unknown>\n"
 "Language-Team: Vietnamese <vi@li.org>\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
@@ -155,6 +155,7 @@ msgstr "ID của tiến trình không phải của một chương trình."
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
+"Trình tìm triệu chứng %s không xác định được gói phần mềm đã bị ảnh hưởng"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -164,11 +165,11 @@ msgstr "Gói %s không tồn tại"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Không tạo được bản báo cáo"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Cập nhật lại vấn đề đang báo cáo"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -177,6 +178,9 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Bạn không phải là người báo hoặc người theo dõi vấn đề này, hay là báo cáo "
+"này đã bị báo trùng hoặc đã bị đóng.\n"
+"Hãy tạo một tạo một báo lỗi mới sử dụng \"apport-bug\"."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -189,10 +193,16 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Bạn không phải là người báo cáo vấn đề này. Một cách dễ dàng hơn để đánh dấu "
+"lỗi bị trùng với một cái khác là di chuyển những lời giải thích và đính kèm "
+"của bạn vào một lỗi mới.\n"
+"Sau đó, chúng tôi khuyên bạn tạo một báo cáo lỗi mới sử dụng \"Trình báo "
+"lỗi\" và tạo một chú giải về vấn đề mà bạn báo.\n"
+"Bạn có thật sự muốn thực hiện?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Không có thêm thông tin đã được thu tập"
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
@@ -223,10 +233,12 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Sau khi đóng thông điệp này vui lòng nhấp vào một cửa sổ ứng dụng để báo cáo "
+"một vấn đề về nó."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop không thể định số ID tiến trình của cửa sổ"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -239,7 +251,7 @@ msgstr ""
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "Thêm một thẻ cho báo cáo. Có thể thực hiện nhiều lần."
 
 #: ../apport/ui.py:976
 #, python-format
@@ -263,7 +275,7 @@ msgstr ""
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "Bắt đầu ở chế độ cập nhật lỗi. Có thể dùng tuỳ chọn --package."
 
 #: ../apport/ui.py:1014
 msgid ""
@@ -468,7 +480,7 @@ msgstr "Vui lòng chọn (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -689,6 +701,9 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Đường dẫn đến tệp với thông tin xác thực cho cơ sở dữ liệu về những sự cố. "
+"Múc đích là tạo ra một ID để tải lên những dấu vết đã theo (chỉ khi nào "
+"không dùng -g, -o hoặc -s)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
@@ -957,11 +972,11 @@ msgstr ""
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Tài khoản:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Mật khẩu:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"

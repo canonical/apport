@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: František Zatloukal <Zatloukal.Frantisek@gmail.com>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-10-05 19:59+0000\n"
+"Last-Translator: Tomáš Marný <tomik.marny@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -50,6 +50,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Zdá se, že se nejedná o oficiální balíček %s. Zkuste to prosím znovu po "
+"aktualizaci indexů dostupných balíčků, pokud to nebude fungovat, odeberte "
+"související balíčky třetích stran a zkuste to znovu."
 
 #: ../apport/ui.py:205
 #, python-format
@@ -106,11 +109,12 @@ msgstr "Pro zpracování tohoto hlášení není na disku dost místa."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
-msgstr ""
+msgstr "Žádné PID nebylo specifikováno"
 
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
+"Musíte specifikovat PID. Více informací naleznete pomocí příkazu --help"
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
@@ -400,21 +404,24 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Máte nainstalovány dvě verze této aplikace, pro kterou z nich chcete "
+"nahlásit chybu?"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1534
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb balíček"
 
 #: ../apport/ui.py:1575
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s je poskytován skrze snap vydaný %s. Pro pomoc je kontaktujte přes %s."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -422,6 +429,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s je poskytován skrze snap vydaný %s. Nejsou poskytnuty žádné kontaktní "
+"údaje; pro pomoc navštivte fórum na adrese https://forum.snapcraft.io/."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."

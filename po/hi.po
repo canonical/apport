@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2012-07-30 10:06+0000\n"
-"Last-Translator: Manish Kumar <manishku86@yahoo.co.in>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2011-12-27 13:13+0000\n"
+"Last-Translator: Vibhav Pant <vibhavp@gmail.com>\n"
 "Language-Team: Hindi <hi@li.org>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
@@ -127,7 +127,7 @@ msgstr ""
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "पैकेज का विशिष्ट निर्देश नहीं है"
 
 #: ../apport/ui.py:556
 msgid ""
@@ -154,7 +154,7 @@ msgstr "विशिष्ट निर्देश आईडी प्रोग
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "सिनेप्टिक स्क्रिप्ट %s प्रभावित पैकेज का निर्धारण नहीं कर पा रहा है"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -321,10 +321,12 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"बग भराई पद्धति में, संगृहित सूचना को रपट करने के बजाए एक फ़ाइल में सहेजें. यह फ़ाइल परवर्ति "
+"एक अन्य मशीन से रपट किया जा  सकता है."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "एपोर्ट(Apport) संस्करण संख्या को छापे."
 
 #: ../apport/ui.py:1240
 msgid ""
@@ -333,11 +335,11 @@ msgstr ""
 
 #: ../apport/ui.py:1244
 msgid "Run gdb session"
-msgstr ""
+msgstr "जीडीबी सत्र चलाएँ"
 
 #: ../apport/ui.py:1245
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "जीडीबी का सत्र बिना डिबग प्रतीकों डाउनलोड करें शुरु करें"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:1247
@@ -357,7 +359,7 @@ msgstr ""
 #: ../apport/ui.py:1396 ../apport/ui.py:1409
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
+msgstr "यह समस्या रिपोर्ट एक ऐसे कार्यक्रम के संबंधित है जो की अब संस्थापित नहीं है."
 
 #: ../apport/ui.py:1433
 #, python-format
@@ -408,33 +410,33 @@ msgstr ""
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "पैकेज या स्त्रोत पैकेज नाम को निर्धारित नहीं कर सका."
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "वेब खंगालक(ब्राउजर) को शुरु करनें में असमर्थ"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "वेब खंगालक(ब्राउजर) खोलने में असमर्थ %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "संजाल समस्या"
 
 #: ../apport/ui.py:1819
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
-msgstr ""
+msgstr "विध्वंस समंंकआधार से जुड़ नहीं सका, कृपया अपने अंतरजाल संयोजन की जाँच करें."
 
 #: ../apport/ui.py:1851
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "स्मरण समाप्त हो गया है"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
+msgstr "आपके तंत्र में पर्याप्त स्मरण नहीं है कि इस ध्वंस के रिपोर्ट की प्रक्रिया कर सके."
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -443,10 +445,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"यह समस्या रिपोर्ट नहीं हो सकती:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr ""
+msgstr "समस्या पूर्व से ज्ञात है"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -454,184 +459,197 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"यह समस्या पहले से ही बग रिपोर्ट में रिपोर्ट किया हुआ है जो वेब खंगालक पर दिख रहा है. "
+"कृपया जाँच करे कि यदि अन्य को अतिरिक्त सूचना जोड़ सकते है या नहीं जो कि विकासकर्ता को "
+"अधिक मददगार साबित हो."
 
 #: ../apport/ui.py:1974
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "यह समस्या पहले से ही डेवलपर्स को  सूचित किया गया था. शुक्रिया!"
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "आगे बढ़ने के लिए कोई कुंजी दबाएं..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "आप क्या करना चाहते है? आपके विकल्प है:"
 
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "कृपया चुनें (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i बाइट)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(द्विचर समंक)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "समस्या रिपोर्ट विकासकर्ता को भेजें?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"समस्या रिपोर्ट भेजने के पश्चात, कृपया इस फार्म को भरें जो\n"
+"स्वचालित रुप से वेब खंगालक(ब्राउजर) में खुलेगा."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "रिपोर्ट (&S)भेजें (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
-msgstr ""
+msgstr "&स्थानीय स्तर पर जांच"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "रिपोर्ट देखें(&V)"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
+msgstr "बाद में भेजने हेतु रिपोर्ट संचिका रखें(&K) या किसी अन्य जगह पर इसकी नकल रखे"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "निरस्त करें तथा इस कार्यक्रम संस्करण के आगे से ध्वंस की उपेक्षा(&i)करें"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "निरस्त(&C) करें"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "समस्या रिपोर्ट संचिकाः"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "सुनिश्चित(&C)"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "त्रुटि: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "समस्या सूचना इकठ्ठा कर रहा है"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"संगृहित सूचना के द्वारा कार्यक्रम को उन्नत करने हेतु विकासकर्ता के पास भेजा जा सकता है\n"
+"इसमें कुछ मिनट का समय लग सकता है."
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "समस्या सूचना अपलोड कर रहा है"
 
 #: ../bin/apport-cli.py:309
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"संकलित सूचना बग खोज तंत्र को भेजा जाना है.\n"
+"इसमें कुछ मिनट का समय लग सकता है."
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "सम्पन्न (&D)"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "कोई नहीं"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "चुने: %s. बहुविकल्प:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "विकल्प:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "संचिका का मार्ग(निरस्त हेतु एंटर करें)"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "संचिका उपलब्ध नहीं है"
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "यह एक निर्देशिका है."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "आगे बढ़ने के लिए, आप निम्न URL पर जाएंः"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"आप अब एक खंगालक(ब्राउजर) खोल सकते है या इस URL की नकल अन्य कंप्यूटर के खंगालक में कर सकते "
+"हैं."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "अब एक खंगालक(ब्राउजर) खोले"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
+msgstr "विध्वंस रिपोर्ट विचारधीन नहीं है. अधिक जानकारी हेतु --help का उपयोग करें."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "इस रिपोर्ट में नया खोज नहीं डाले, लेकिन इसे stdout में लिखें."
 
 #: ../bin/apport-retrace.py:53
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"संवादात्मक gdb सत्र को कोर ढ़ेर रिपोर्ट के साथ शुरु करें (-o उपेक्षित; रिपोर्ट को पुनः नहीं "
+"लिखें)"
 
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "मूल रिपोर्ट में बदलाव के स्थान पर दिए गए संचिका हेतु आशोधन रिपोर्ट लिखें"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "ढ़ेर खोज पुनःउत्पत्ति के पश्चात रिपोर्ट से कोर ढ़ेर को हटाएं"
 
 #: ../bin/apport-retrace.py:80
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "कोरसंचिका रिपोर्ट की अवहेलना करें"
 
 #: ../bin/apport-retrace.py:86
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "ExecutablePath रिपोर्ट की अवहेलना करे"
 
 #: ../bin/apport-retrace.py:92
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "ProcMaps रिपोर्ट की अवहेलना करे"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "पैकेज सूचना रिपोर्ट को पुनः बनाएं"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -676,7 +694,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "सैन्द्बौक्स  में एक अतिरिक्त पैकेज स्थापित (कई बार निर्दिष्ट किया जा सकता है है)"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -684,16 +702,21 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"एक संचिका जो विध्वंस समंकआधार अधिप्रमाणन सूचना के साथ है का रास्ता बताएं. यह तब उपयोग "
+"होगा जब एक विध्वंस आईडी का वर्णन retraced stack traces अपलोड करते समय किया जाएगा."
+"( केवल तब जब न तो -g, -o न ही -s का वर्णन रहेगा)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"retraced stack traces को दिखाएं तथा उसके विध्वंस समंकआधार को भेजने के पूर्व पुष्टिकरण हेतु "
+"कहें."
 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
+msgstr "sqlite समंकआधार के नकल पर ले जाएं (डिफॉल्ट: कोई नकल जाँच नहीं है)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
@@ -707,7 +730,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "इस संलग्नक को भेजने की पुष्टि करें? [हाँy / नn]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -724,7 +747,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "गंतव्य निर्देशिका वर्तमान है तथा यह खाली नहीं है."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -784,20 +807,22 @@ msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"पुनःप्राप्त करने की प्रक्रिया लगभग समाप्ति पे है तथा आशा है की यह समान्यरुप से पुरा हो "
+"जाएगा."
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
+msgstr "आपका तंत्र संभवतः अब अस्थायी है तथा पुनःशुरु करने की जरुरत है."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "समस्या को रिपोर्ट करें..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "विकासकर्ता को खराबी के बारे में रिपोर्ट करें"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
@@ -870,7 +895,7 @@ msgstr "विवरण छिपाएँ"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "अप्पोर्ट(Apport)"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -902,7 +927,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
-msgstr ""
+msgstr "_स्थानीय स्तर पर जांच करें"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
@@ -910,27 +935,29 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>समस्या सूचना इकठ्ठा कर रहा है</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"सूचना संगृहित हो रही है जो आपके रिपोर्ट करने पर विकासकर्ता को समस्या निराकरण में मदद "
+"करेगा."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>समस्या सूचना को अपलोड कर रहा है</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr ""
+msgstr "संगृहित सूचना को बग मार्ग तंत्र को भेजी जा रही है. इसमें कुछ मिनट लग सकते हैं."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "विध्वंस संचिका संविभाजित करें"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
@@ -942,22 +969,24 @@ msgstr "पुन: लॉन्‍च करें"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "प्रयोक्तानाम:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "कूटशब्द:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "समस्या सूचना संग्रह करें"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"संगृहीत समस्या को अनुप्रयोग को विकसीत करने हेतु विकासकर्ता को भेजा जाएगा. इसमें कुछ मिनटों "
+"का समय लगेगा."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "समस्या सूचना को अपलोड कर रहा है"

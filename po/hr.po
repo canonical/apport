@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2022-10-25 10:03+0000\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-09-03 12:24+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
@@ -74,7 +74,7 @@ msgstr "nepoznati program"
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Isprika, program \"%s\" se neočekivano zatvorio"
+msgstr "Program \"%s\" se neočekivano zatvorio"
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
@@ -515,29 +515,29 @@ msgstr "Molim odaberite (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr "(%i bajtova)"
+msgstr "(%i bajta)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr "(binarni podatci)"
+msgstr "(binarni podaci)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr "Pošaljite izvještaj o problemu razvojnom timu?"
+msgstr "Pošaljite izvještaj problema razvijateljima?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"Nakon slanja izvještaja o problemu, molimo ispunite formular u\n"
+"Nakon slanja izvještaja problema, ispunite formular u\n"
 "automatski otvorenom internet pregledniku."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr "&Pošaljite izvještaj (%s)"
+msgstr "&Pošalji izvještaj (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -545,17 +545,17 @@ msgstr "&Pregledaj lokalno"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr "&Pogledajte izvještaj"
+msgstr "&Pogledaj izvještaj"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
-"&Zadržite dokument izvještaja za kasnije slanje ili kopiranje na neko drugo "
-"mjesto"
+"&Zadržite datoteku izvještaja za kasnije slanje ili kopiranje na neku drugu "
+"lokaciju"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Poništi i &ignoriraj buduća rušenja ove verzije programa"
+msgstr "Poništi i &zanemari buduća rušenja za ovu inačicu programa"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
@@ -564,7 +564,7 @@ msgstr "&Odustani"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr "Dokument izvještaja o problemu:"
+msgstr "Datoteka izvještaja problema:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
@@ -584,9 +584,9 @@ msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"Prikupljene informacije mogu biti poslane razvojnom timu kako bi se "
+"Prikupljene informacije mogu biti poslane razvijateljima kako bi se "
 "aplikacija\n"
-"poboljšala. To može potrajati nekoliko minuta."
+"poboljšala. Ovo može potrajati nekoliko minuta."
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
@@ -602,7 +602,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr "&Obavljeno"
+msgstr "&Završeno"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
@@ -611,15 +611,15 @@ msgstr "nijedno"
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "Označeno: %s. Višestruki izbori:"
+msgstr "Odabrano: %s. Višestruki odabiri:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr "Izbori:"
+msgstr "Odabiri:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr "Putanja do datoteke ( Enter za prekid):"
+msgstr "Putanja do datoteke (Enter za prekid):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
@@ -631,24 +631,25 @@ msgstr "Ovo je direktorij."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr "Da biste nastavili, morate posjetiti sljedeći URL:"
+msgstr "Za nastavak, morate posjetiti sljedeći URL:"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"Sada možete pokrenuti pretreživač, ili kopirati URL u pretreživač na drugom "
-"računalu."
+"Sada možete pokrenuti internet preglednik, ili kopirati ovaj URL u "
+"preglednik na drugom računalu."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr "Sada pokrenite preglednik"
+msgstr "Pokreni preglednik odmah"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
-"Nema neposlanih izvještaja o rušenju. Pokušajte --help za više informacija."
+"Nema izvještaja o rušenju koji su na čekanju. Pokušajte s --help za više "
+"informacija."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
@@ -687,7 +688,7 @@ msgstr "Zaobiđi ProcMaps izvještaja"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr "Obnovi izvješća o informacijama paketa."
+msgstr "Obnovi izvještaje o informacijama paketa"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -784,7 +785,7 @@ msgstr "Ne možete koristiti -C bez -S. Zaustavljanje."
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr "Jeli u redu otposlati ove privitke? [d/n]"
+msgstr "Je li u redu poslati ovo kao privitke? [d/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -801,7 +802,7 @@ msgstr "direktorij za raspakiravanje izvještaja"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr "Odredišni direktorji postiji i nije prazan."
+msgstr "Direktorji odredišta postoji i nije prazan."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -1005,15 +1006,15 @@ msgstr "Ne šalji"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Sakupljanje podataka o problemu</b></big>"
+msgstr "<big><b>Prikupljanje informacija o problemu</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"Skupljaju se informacije koje mogu pomoći razvojnom timu pri rješavanju "
-"problema koje prijavljujete."
+"Prikupljaju se informacije koje mogu pomoći razvijateljima u popravljanju "
+"problema koji prijavljujete."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
@@ -1049,7 +1050,7 @@ msgstr "Lozinka:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr "Prikupljanje Informacija o Problemu"
+msgstr "Prikupljanje Informacija o problemu"
 
 #: ../kde/apport-kde.py:464
 msgid ""
@@ -1061,4 +1062,4 @@ msgstr ""
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr "Prenos Informacija o Problemu"
+msgstr "Slanje informacija o problemu"

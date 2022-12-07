@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2022-10-08 17:08+0000\n"
-"Last-Translator: Volodymyr Shypovych <Unknown>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2020-10-01 04:32+0000\n"
+"Last-Translator: Mykola Tkach <chistomov@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -177,7 +177,7 @@ msgstr "Неможливо створити звіт"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr "Оновлення звіту про проблему"
+msgstr "Оновлення звіту про проблеми"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -186,8 +186,9 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"Ви не є автором або підписником цього звіту про проблему, або звіт вже "
-"існує, або вже закритий.\n"
+"Ви не є відправником чи отримувачем звіту про дану проблему, можливо звіт "
+"вже існує або вже був закритий.\n"
+"\n"
 "Будь-ласка, створіть новий звіт за допомогою \"apport-bug\"."
 
 #: ../apport/ui.py:689
@@ -331,9 +332,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Повідомити про аварійне завершення із наданого файлу .apport або .crash "
-"замість файлів у черзі в %s. (За умови, що файл надано у якості єдиного "
-"параметру.)"
+"Повідомити про аварію із наданого файлу .apport або .crash замість файлів у "
+"черзі в %s. (За умови, що файл надано у якості єдиного параметру.)"
 
 #: ../apport/ui.py:1060
 msgid ""
@@ -377,6 +377,8 @@ msgstr "Неможливо запам'ятати параметри стану �
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Збереження стану звітування про аварію завершилося невдачею. Неможливо "
+"встановити режим звітування auto або never."
 
 #: ../apport/ui.py:1396 ../apport/ui.py:1409
 msgid ""
@@ -390,6 +392,8 @@ msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
+"Проблема у програмі %s, до якої були внесені зміни з моменту аварійного "
+"завершення її роботи."
 
 #: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
 msgid "This problem report is damaged and cannot be processed."
@@ -397,7 +401,7 @@ msgstr "Цей звіт про помилку пошкоджено та не м�
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "Цей звіт стосується пакунку, який не встановлено."
 
 #: ../apport/ui.py:1511
 msgid "An error occurred while attempting to process this problem report:"
@@ -414,7 +418,7 @@ msgstr ""
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1534
 #, python-format
@@ -425,6 +429,8 @@ msgstr "%s пакунок deb"
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s постачається в snap, оприлюднено від %s. Зв'яжіться через %s для "
+"отримання допомоги."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -432,6 +438,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s постачається в snap, оприлюднено від %s. Контактної адреси не вказано; "
+"відвідайте форум https://forum.snapcraft.io/ для отримання допомоги."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -439,12 +447,12 @@ msgstr "Не вдалося визначити ім'я пакунку або і�
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr "Неможливо запустити оглядач тенет"
+msgstr "Неможливо запустити веб-переглядач"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "Неможливо запустити оглядач тенет, щоб відкрити %s."
+msgstr "Не вдається запустити веб-переглядач, щоб відкрити %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
@@ -463,7 +471,7 @@ msgstr "Пам'ять вичерпано"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "У системі недостатньо пам'яті для обробки цього звіту про помилку."
+msgstr "У системі недостатньо пам'яті для обробки цього звіту про аварію."
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -500,7 +508,7 @@ msgstr "Натисніть будь-яку клавішу для продовж�
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr "Що ви бажаєте зробити? Варіянти вибору:"
+msgstr "Що ви бажаєте зробити? Варіанти вибору:"
 
 #: ../bin/apport-cli.py:104
 #, python-format
@@ -536,7 +544,7 @@ msgstr "&Надіслати звіт (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Локальна перевірка"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
@@ -549,7 +557,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Скасувати та &ігнорувати майбутні збої у цій версії програми"
+msgstr "Скасувати та &ігнорувати майбутні аварії у цій версії програми"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
@@ -641,7 +649,7 @@ msgstr "Запустити браузер"
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
-"Немає звітів про помилки у очікуванні. Спробуйте --help для детальної "
+"Немає звітів про аварії у очікуванні. Спробуйте --help для детальної "
 "інформації."
 
 #: ../bin/apport-retrace.py:44
@@ -653,7 +661,7 @@ msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
-"Початок інтерактивної GDB сесії з  дампом у звіті (-o ігнорувати, не "
+"Початок інтерактивного GDB-сеансу з  дампом у звіті (-o ігнорувати, не "
 "записувати у звіт)"
 
 #: ../bin/apport-retrace.py:62
@@ -705,6 +713,9 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Створіть іншу тимчасову пісочницю для встановлення gdb та її залежностей, "
+"використовуючи той же випуск, що і звіт, а не іншу версію gdb, яку ви "
+"встановили."
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
@@ -715,6 +726,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
+"Додавати тимчасові мітки до повідомлень у журналі, для групових операцій"
 
 #: ../bin/apport-retrace.py:142
 msgid ""
@@ -733,7 +745,7 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
-"Директорія для розпакування пакунків. При наступних запусках усі вже "
+"Каталог для розпакування пакунків. При наступних запусках усі вже "
 "завантажені пакунки будуть розпаковуватися у це ізольоване оточення."
 
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
@@ -749,8 +761,8 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
-"Шлях до файлу з інформацією про автентифікацію бази даних про крахи. "
-"Використовується лише якщо вказано ID краху для відсилання трасувань стеку "
+"Шлях до файлу з інформацією про автентифікацію бази даних про аварії. "
+"Використовується лише якщо вказано ID аварії для відсилання трасувань стеку "
 "(за умови, що ні -g, -o , ані -s не вказано)"
 
 #: ../bin/apport-retrace.py:184
@@ -768,7 +780,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Не додавати StacktraceSource до звіту."
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
@@ -810,8 +822,8 @@ msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
-"використовувати раніше створений каталог пісочниці (SDIR) або створити його "
-"якщо його не існує"
+"використовувати раніше створений каталог пісочниці (SDIR) або створити, якщо "
+"його не існує"
 
 #: ../bin/apport-valgrind.py:60
 msgid ""
@@ -827,8 +839,8 @@ msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
-"використовувати раніше створений каталог кешу (CDIR) або створити його якщо "
-"його не існує"
+"використовувати раніше створений каталог кешу (CDIR) або створити, якщо його "
+"не існує"
 
 #: ../bin/apport-valgrind.py:78
 msgid "report download/install progress when installing packages into sandbox"
@@ -845,7 +857,7 @@ msgstr ""
 #: ../bin/apport-valgrind.py:129
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr "Помилка: %s — не виконуваний файл. Зупинка."
+msgstr "Помилка: %s — невиконуваний файл. Зупинка."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
@@ -869,7 +881,7 @@ msgid ""
 "completed normally."
 msgstr ""
 "Обробка даних звіту зависла дуже близько до кінця і буде, як видається, "
-"завершено нормально."
+"завершена нормально."
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
@@ -889,12 +901,12 @@ msgstr "Звітувати про збій розробникам"
 #: ../gtk/apport-gtk.py:185
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr "Вибачте, застосунок %s неочікувано зупинився."
+msgstr "Перепрошуємо, програма %s неочікувано зупинилася."
 
 #: ../gtk/apport-gtk.py:188
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr ""
+msgstr "Вибачте, %s було несподівано завершено."
 
 #: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:214 ../kde/apport-kde.py:266
 #, python-format
@@ -903,21 +915,21 @@ msgstr "Вибачте, у %s сталася внутрішня помилка."
 
 #: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:207
 msgid "Send"
-msgstr ""
+msgstr "Надіслати"
 
 #: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:666 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
-msgstr ""
+msgstr "Показати подробиці"
 
 #: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:258 ../kde/apport-kde.py:276
 msgid "Continue"
-msgstr ""
+msgstr "Продовжити"
 
 #: ../gtk/apport-gtk.py:271
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr "Застосунок %s перестав відповідати."
+msgstr "Програма %s перестала відповідати."
 
 #: ../gtk/apport-gtk.py:275
 #, python-format
@@ -936,16 +948,16 @@ msgstr "Вибачте, під час встановлення сталася п
 #: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:238
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr "У додатку %s сталася внутрішня помилка."
+msgstr "У програмі %s сталася внутрішня помилка."
 
 #: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:245
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "Програма %s несподівано припинила роботу."
 
 #: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:271
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
+msgstr "Якщо проблема з’явиться знову, спробуйте перезавантажити комп’ютер."
 
 #: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:278
 msgid "Ignore future problems of this type"
@@ -953,11 +965,11 @@ msgstr "Ігнорувати такі проблеми у майбутньому
 
 #: ../gtk/apport-gtk.py:670 ../kde/apport-kde.py:327
 msgid "Hide Details"
-msgstr ""
+msgstr "Сховати подробиці"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -969,7 +981,7 @@ msgstr "Гаразд"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
-msgstr ""
+msgstr "Звіт про аварію"
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
@@ -977,7 +989,7 @@ msgstr "<big><b>Вибачте, сталася внутрішня помилка
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Запам'ятати це на майбутнє"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -985,15 +997,15 @@ msgstr "Ігнорувати подальші збої у цій версії п
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Перезапустити цю програму"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Локальна перевірка"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Не надсилати"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
@@ -1021,7 +1033,7 @@ msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr "Пошкодженя файлу Apport"
+msgstr "Файл аварії Apport"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
@@ -1029,19 +1041,19 @@ msgstr "Залишити закритим"
 
 #: ../kde/apport-kde.py:262 ../kde/apport-kde.py:432
 msgid "Relaunch"
-msgstr ""
+msgstr "Перезапустити"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Ім'я користувача:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Збір інформації про помилку"
 
 #: ../kde/apport-kde.py:464
 msgid ""
@@ -1053,4 +1065,4 @@ msgstr ""
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Вивантаження інформації про помилку"

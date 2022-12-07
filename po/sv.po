@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-10-16 12:22+0000\n"
+"Last-Translator: Arve Eriksson <Unknown>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -20,21 +20,23 @@ msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Samla in systeminformation"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Autentisering krävs för att sammanställa systeminformationen i den här "
+"felrapporten"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr ""
+msgstr "Systemfelrapporter"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
-msgstr ""
+msgstr "Ange ditt lösenord för att komma åt systemprogrammens felrapporter"
 
 #: ../apport/ui.py:165
 msgid "This package does not seem to be installed correctly"
@@ -47,6 +49,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Detta verkar inte vara ett officiellt %s-paket. Försök igen efter "
+"uppdatering av indexet över tillgängliga paket; om det inte fungerar kan du "
+"ta bort berörda tredjepartspaket och försöka igen."
 
 #: ../apport/ui.py:205
 #, python-format
@@ -87,7 +92,7 @@ msgstr ""
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr "Ogiltig problemrapport"
+msgstr "Ogiltig felrapport"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
@@ -105,11 +110,11 @@ msgstr ""
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
-msgstr ""
+msgstr "Ingen PID angavs"
 
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "Du måste ange en PID. Se --help för mer information."
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
@@ -121,11 +126,11 @@ msgstr "Den angivna process-ID:n finns inte."
 
 #: ../apport/ui.py:498
 msgid "Not your PID"
-msgstr ""
+msgstr "Inte din PID"
 
 #: ../apport/ui.py:499
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Den angivna process-ID:n tillhör inte dig."
 
 #: ../apport/ui.py:554
 msgid "No package specified"
@@ -230,6 +235,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Fönsteralternativet kan inte användas i Wayland.\n"
+"\n"
+"Hitta fönstrets process-ID och kör sedan 'ubuntu-bug <process-ID>'.\n"
+"\n"
+"Process-ID hittar du genom att köra programmet Systemövervakare. I fliken "
+"Processer, rulla tills du hittar programmet ifråga. Process-ID är numret som "
+"anges i ID-kolumnen."
 
 #: ../apport/ui.py:890
 msgid ""
@@ -246,7 +258,7 @@ msgstr "xprop misslyckades med att fastställa process-ID för fönstret"
 #: ../apport/ui.py:931
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <rapportnummer>"
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
@@ -260,7 +272,7 @@ msgstr "Lägg till en extra tagg till rapporten. Kan anges flera gånger."
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%(prog)s [alternativ] [symtom|pid|paket|sökväg|.apport-/.crash-fil]"
 
 #: ../apport/ui.py:987
 msgid ""
@@ -308,7 +320,7 @@ msgstr ""
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
-msgstr ""
+msgstr "Det givna pid:t är ett program som har låst sig."
 
 #: ../apport/ui.py:1050
 #, python-format
@@ -356,12 +368,14 @@ msgstr "Uppdatera %s med fullständigt symbolisk stackspårning"
 
 #: ../apport/ui.py:1309
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Kan inte komma ihåg inställningar för att skicka rapportstatus"
 
 #: ../apport/ui.py:1313
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Kunde inte spara kraschrapporttillstånd. Kan inte sätta lägena 'auto' eller "
+"'rapportera aldrig'."
 
 #: ../apport/ui.py:1396 ../apport/ui.py:1409
 msgid ""
@@ -396,21 +410,25 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Du har två versioner av det här programmet installerade; vilken vill du "
+"lämna en felrapport för?"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1534
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb-paket"
 
 #: ../apport/ui.py:1575
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s tillhandahålls som en snap, utgiven av %s. Kontakta dem via %s om du "
+"behöver hjälp."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -418,6 +436,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s tillhandahålls som en snap, utgiven av %s. Ingen kontaktinformation "
+"finns; besök forumet på https://forum.snapcraft.io/ om du behöver hjälp."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
@@ -558,7 +578,7 @@ msgstr "Fel: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr "Samlar in probleminformation"
+msgstr "Samlar probleminformation"
 
 #: ../bin/apport-cli.py:291
 msgid ""
@@ -693,6 +713,9 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Bygg en annan tillfällig sandlåda för att installera gdb och dess beroenden "
+"med samma utgåva som i rapporten, istället för din installerade version av "
+"gdb."
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
@@ -721,6 +744,8 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"Katalog för uppackade paket. Framtida körningar kommer anta att alla paket "
+"som laddats ner också packas upp i denna sandlåda."
 
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
 msgid ""
@@ -753,11 +778,11 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Lägg inte till StacktraceSource i rapporten."
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
-msgstr ""
+msgstr "Du kan inte använda -C utan -S. Stoppar."
 
 #. translators: don't translate y/n,
 #. apport currently only checks for "y"
@@ -768,15 +793,15 @@ msgstr "OK att skicka dessa som bilagor? [y/n]"
 #: ../bin/apport-unpack.py:29
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <rapport> <destinationsmapp>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Rapportfil att packa upp"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "mapp att packa upp till"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
@@ -784,56 +809,70 @@ msgstr "Målkatalogen finns och är inte tom."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
-msgstr ""
+msgstr "Se manualsidorna för ytterligare detaljer."
 
 #: ../bin/apport-valgrind.py:46
 msgid "specify the log file name produced by valgrind"
-msgstr ""
+msgstr "Specifiera logfilens namn som skapades av valgrind"
 
 #: ../bin/apport-valgrind.py:52
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
+"återanvänd en tidigare skapad sandlåda dir (SDIR) eller, om det inte finns, "
+"skapa den"
 
 #: ../bin/apport-valgrind.py:60
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
+"Skapa inte eller återanvand en sandlåda-katalog för ytterligare avbuggning "
+"symboler, men lita enbart på installerade avbuggningsymboler"
 
 #: ../bin/apport-valgrind.py:69
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
+"Återanvänd en tidigare skapad Cache dir (CDIR) eller, om den inte finns, "
+"skapa den."
 
 #: ../bin/apport-valgrind.py:78
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
+"Rapportera nedladdning/installationsframsteg när du installerar paket i "
+"sandlådan"
 
 #: ../bin/apport-valgrind.py:86
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"körfilen som körs under valgrinds memcheck-verktyg för att upptäcka "
+"minnesläckor"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr ""
+msgstr "Error: %s är inte körbar. Stoppar."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Detta inträffade under ett föregående vänteläge, och hindrade systemet från "
+"att fortsätta korrekt."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Detta inträffade under ett föregående viloläge, och hindrade systemet från "
+"att fortsätta korrekt."
 
 #: ../data/apportcheckresume.py:81
 msgid ""
@@ -860,7 +899,7 @@ msgstr "Rapportera ett fel till utvecklarna"
 #: ../gtk/apport-gtk.py:185
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "Tyvärr, programmet %s stannade oväntat."
 
 #: ../gtk/apport-gtk.py:188
 #, python-format
@@ -888,12 +927,12 @@ msgstr "Fortsätt"
 #: ../gtk/apport-gtk.py:271
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr ""
+msgstr "Programmet %s svarar inte."
 
 #: ../gtk/apport-gtk.py:275
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "Programmet ”%s” har slutat svara."
 
 #: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:222
 #, python-format
@@ -907,7 +946,7 @@ msgstr "Tyvärr, ett problem inträffade vid installation av program."
 #: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:238
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr ""
+msgstr "Programmet %s stötte på ett internt fel."
 
 #: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:245
 #, python-format
@@ -916,11 +955,11 @@ msgstr "Programmet %s har oväntat stängts av."
 
 #: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:271
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Starta om datorn om du fortsätter att uppleva problem."
+msgstr "Starta om datorn om problemen fortsätter."
 
 #: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:278
 msgid "Ignore future problems of this type"
-msgstr "Ignorera framtida problem av denna typ"
+msgstr "Ignorera fortsatta problem av samma typ"
 
 #: ../gtk/apport-gtk.py:670 ../kde/apport-kde.py:327
 msgid "Hide Details"
@@ -932,11 +971,11 @@ msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -948,15 +987,15 @@ msgstr "<big><b>Tyvärr, ett internt fel inträffade.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Kom ihåg detta i framtiden"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr "Ignorera framtida problem med denna programversion"
+msgstr "Ignorera fortsatta problem med denna programversion"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Starta om programmet"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -964,7 +1003,7 @@ msgstr "Und_ersök lokalt"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Skicka inte"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
@@ -1012,7 +1051,7 @@ msgstr "Lösenord:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr "Samlar in probleminformation"
+msgstr "Samlar probleminformation"
 
 #: ../kde/apport-kde.py:464
 msgid ""

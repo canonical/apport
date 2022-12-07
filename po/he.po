@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:47+0000\n"
-"Last-Translator: Ofir Klinger <klinger.ofir@gmail.com>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-08-19 14:26+0000\n"
+"Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
@@ -76,7 +76,7 @@ msgstr "התכנה „%s“  נסגרה במפתיע, עמך הסליחה"
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr "תקלה ב-%s"
+msgstr "תקלה ב־%s"
 
 #: ../apport/ui.py:370
 msgid ""
@@ -93,7 +93,7 @@ msgstr "דוח תקלה שגוי"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
-msgstr "אינך מורשה לגשת לדוח תקלה זה."
+msgstr "אין לך הרשאה לגשת לדוח תקלה זה."
 
 #: ../apport/ui.py:439
 msgid "Error"
@@ -129,12 +129,12 @@ msgstr "מזהה התהליך שצוין לא שייך לך."
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr "לא צויינה כל חבילה"
+msgstr "לא צוינה חבילה כלשהי"
 
 #: ../apport/ui.py:556
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "עליך לציין חבילה או מזהה תהליך. עיין ב --help לקבלת מידע נוסף."
+msgstr "עליך לציין חבילה או מזהה תהליך. ניתן לעיין ב־‎--help לקבלת מידע נוסף."
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
@@ -145,16 +145,16 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"התהליך שצויין אינו שייך לך. נא להריץ תוכנה זו כבעל התהליך או כמנהל (root)."
+"התהליך שצוין אינו שייך לך. נא להריץ תכנה זו כבעל התהליך או כמשתמש על (root)."
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr "מזהה התהליך שצויין אינו שייך לאף תוכנית."
+msgstr "מזהה התהליך שצוין אינו שייך לאף תכנית."
 
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "סקריפט התסמינים %s לא איתר חבילות שנפגעו"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -164,7 +164,7 @@ msgstr "החבילה %s אינה קיימת"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "לא ניתן ליצור דוח"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
@@ -177,6 +177,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"לדיווח תקלה זו אין לך רישום כמדווח או כמנוי, או שהדיווח הוא כפיל או שהוא "
+"נסגר.\n"
+"\n"
+"יש ליצור דיווח חדש באמצעות \"apport-bug\"."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -199,7 +203,7 @@ msgstr ""
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "לא נאסף מידע נוסף."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
@@ -230,10 +234,11 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"לאחר סגירת הודעה זו יש ללחוץ על חלון היישום כדי לדווח על בעיות בהפעלתו."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop לא הצליח לזהות את מזהה התהליך של החלון"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -246,7 +251,7 @@ msgstr "נא לציין את שם החבילה."
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "הוספת תגית נוספת לדיווח. ניתן לציין מספר פעמים."
 
 #: ../apport/ui.py:976
 #, python-format
@@ -266,11 +271,11 @@ msgstr ""
 
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "יש ללחוץ על חלון כיעד לדיווח על תקלה."
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "הפעלה במצב עדכון. ניתן להוסיף ‎--package במידת הצורך."
 
 #: ../apport/ui.py:1014
 msgid ""
@@ -283,6 +288,8 @@ msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"יש לציין את שם החבילה במצב ‎--file-bug. אין חובה לעשות כך אם צוין ה־‎--pid. "
+"(מרומז אם שם החבילה הוא הארגומנט היחיד שצוין.)"
 
 #: ../apport/ui.py:1034
 msgid ""
@@ -312,6 +319,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"במצב דיווח על באגים, יש לשמור את המידע שנאסף לקובץ במקום לדווח עליו. ניתן "
+"לדווח באמצעות קובץ זה בשלב מאוחר יותר דרך מחשב אחר."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
@@ -445,7 +454,7 @@ msgstr ""
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr "התקלה כבר ידועה"
+msgstr "התקלה כבר מוכרת"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -462,7 +471,7 @@ msgstr "תקלה זו כבר דווחה למתכנתים. תודה רבה!"
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr "לחץ על מקש כלשהו להמשך..."
+msgstr "נא ללחוץ על מקש כלשהו להמשך..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
@@ -476,7 +485,7 @@ msgstr "נא לבחור (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i בתים)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -492,13 +501,13 @@ msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"לאחר שדיווח אודות התקלה נשלח, נא מלאו את הטופס\n"
-"בדפדפן האינטרנט שנפתח אוטומטית."
+"לאחר שהדיווח על התקלה נשלח, נא למלא את הטופס\n"
+"שנפתח אוטומטית בדפדפן האינטרנט."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr "&שלח דוח (%s)"
+msgstr "&שליחת דוח (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -506,15 +515,15 @@ msgstr "&ניתוח מקומי"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr "ה&צג דוח"
+msgstr "&צפייה בדוח"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "&שמור על קובץ הדוח לשליחה מאוחרת או העתקה למיקום אחר"
+msgstr "יש ל&שמור על קובץ הדוח לשליחה במועד מאוחר יותר או להעתיק למיקום אחר"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "בטל והת&עלם מקריסות עתידיות של גירסה זו של התוכנה"
+msgstr "יש לבטל ולהת&עלם מקריסות עתידיות של גרסה זו של התכנה"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
@@ -527,7 +536,7 @@ msgstr "קובץ דיווח התקלה:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr "&אשר"
+msgstr "&אישור"
 
 #: ../bin/apport-cli.py:283
 #, python-format
@@ -536,7 +545,7 @@ msgstr "שגיאה: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr "אוסף מידע אודות התקלה"
+msgstr "נאסף מידע על התקלה"
 
 #: ../bin/apport-cli.py:291
 msgid ""
@@ -548,7 +557,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr "מעלה את פרטי התקלה"
+msgstr "פרטי התקלה נשלחים"
 
 #: ../bin/apport-cli.py:309
 msgid ""
@@ -569,11 +578,11 @@ msgstr "ללא"
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "נבחרו %s. בחירות מרובות:"
+msgstr "נבחרו %s. ריבוי בחירות:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr "בחירות"
+msgstr "בחירות:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
@@ -595,7 +604,7 @@ msgstr "כדי להמשיך, עליך לבקר בכתובת הבאה:"
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
-msgstr "ניתן לטעון את הדפדפן כעת, או להעתיק את הכתובת הזאת לדפדפן במחשב אחר."
+msgstr "ניתן לטעון את הדפדפן כעת, או להעתיק כתובת זאת לדפדפן במחשב אחר."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
@@ -603,7 +612,7 @@ msgstr "טעינת הדפדפן כעת"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
-msgstr "אין דיווחי קריסות בהמתנה. נסו --help לקבלת מידע נוסף."
+msgstr "אין דיווחי קריסות בהמתנה. ניתן לנסות את ‎--help לקבלת מידע נוסף."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
@@ -620,27 +629,27 @@ msgstr ""
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "כתיבת דוח ערוך לקובץ הנתון במקום לשנות את הדוח המקורי"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "הסרת איסוף הליבה מהדוח לאחר יצירה מחדש של מעקב אחר המחסנית"
 
 #: ../bin/apport-retrace.py:80
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "שכתוב על קובץ הליבה של הדוח (CoreFile)"
 
 #: ../bin/apport-retrace.py:86
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "שכתוב על נתיב ההפעלה של הדוח (ExecutablePath)"
 
 #: ../bin/apport-retrace.py:92
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "שכתוב על מפות התהליכים של הדוח (ProcMaps)"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "בנייה מחדש חבילת מידע של דוח"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -712,6 +721,7 @@ msgstr "הצגת מעקבי מחסניות מחודשים ובקשת אישור 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"נתיב אל מסד הנתונים של הכפילויות מסוג sqlite (בררת מחדל: ללא בדיקות כפילויות)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
@@ -890,7 +900,7 @@ msgstr "הסתרת הפרטים"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -930,17 +940,17 @@ msgstr "לא לשלוח"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>אוסף מידע אודות התקלה</b></big>"
+msgstr "<big><b>נאסף מידע על הבעיה</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr "המידע נאסף כדי לעזור למפתחים לתקן את התקלה עליה אתה מדווח."
+msgstr "המידע נאסף כדי לעזור למפתחים לתקן את הבעיה עליה דיווחת."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>מעלה את נתוני התקלה</b></big>"
+msgstr "<big><b>נתוני הבעיה נשלחים</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
@@ -963,11 +973,11 @@ msgstr "הפעלה מחדש"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "שם המשתמש:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "ססמה:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"

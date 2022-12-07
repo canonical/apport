@@ -7,38 +7,42 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2018-03-04 11:30+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-09-29 14:03+0000\n"
+"Last-Translator: Rhoslyn Prys <Unknown>\n"
 "Language-Team: Welsh <cy@li.org>\n"
 "Language: cy\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Casglu gwybodaeth system"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Mae angen dilysu er mwyn casglu gwybodaeth system ar gyfer yr adroddiad "
+"problem hwn"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr ""
+msgstr "Adroddiadau problemau system"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
+"Rhowch eich cyfrinair i gael mynediad at adroddiadau problemau rhaglenni "
+"system"
 
 #: ../apport/ui.py:165
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Nid yw'n ymddangos bod y pecyn hwn wedi'i osod yn gywir"
 
 #: ../apport/ui.py:175
 #, python-format
@@ -47,6 +51,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Nid yw'n ymddangos bod hwn yn becyn %s swyddogol. Rhowch gynnig arall arni "
+"ar ôl diweddaru mynegeion y pecynnau sydd ar gael, os nad yw hynny'n "
+"gweithio yna tynnwch becynnau trydydd parti cysylltiedig a cheisiwch eto."
 
 #: ../apport/ui.py:205
 #, python-format
@@ -56,110 +63,119 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Mae gennych rai hen fersiynau o'r pecyn wedi'u gosod. Diweddarwch y pecynnau "
+"canlynol a gwiriwch a yw'r broblem yn dal i ddigwydd:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "rhaglen anhysbys"
 
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "Mae'n ddrwg gennym, caeodd y rhaglen \"%s\" yn annisgwyl"
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Problem yn %s"
 
 #: ../apport/ui.py:370
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"Nid oes gan eich cyfrifiadur ddigon o gof am ddim i ddadansoddi'r broblem yn "
+"awtomatig ac anfon adroddiad at y datblygwyr."
 
 #: ../apport/ui.py:430 ../apport/ui.py:448 ../apport/ui.py:621
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Adroddiad problem annilys"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Ni chaniateir i chi gael mynediad at yr adroddiad problem hwn."
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Gwall"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "Nid oes digon o le ar ddisg ar gael i brosesu'r adroddiad hwn."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
-msgstr ""
+msgstr "Dim PID wedi'i nodi"
 
 #: ../apport/ui.py:481
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "Mae angen i chi nodi PID. Gweler --help am ragor o wybodaeth."
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "PID annilys"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Nid yw'r ID proses penodedig yn bodoli."
 
 #: ../apport/ui.py:498
 msgid "Not your PID"
-msgstr ""
+msgstr "Nid eich PID"
 
 #: ../apport/ui.py:499
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Nid yw'r ID proses penodedig yn perthyn i chi."
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "Dim pecyn wedi'i nodi"
 
 #: ../apport/ui.py:556
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Mae angen i chi nodi pecyn neu PID. Gweler --help am ragor o wybodaeth."
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
-msgstr ""
+msgstr "Gwrthodwyd caniatâd"
 
 #: ../apport/ui.py:586
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Nid yw'r broses benodedig yn perthyn i chi. Rhedwch y rhaglen hon fel "
+"perchennog y broses neu fel gwraidd."
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "Nid yw'r ID proses penodedig yn perthyn i raglen."
 
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Nid yw sgript symptom  wedi canfod y pecyn %s effeithiwyd arno"
 
 #: ../apport/ui.py:631
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "Nid yw pecyn %s yn bodoli"
 
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Methu creu adroddiad"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Wrthi'n diweddaru adroddiad problem"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -168,6 +184,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Nid chi yw awdur neu danysgrifiwr yr adroddiad problem hwn, neu mae'r "
+"adroddiad yn ddyblyg neu wedi'i gau eisoes.\n"
+"\n"
+"Crëwch adroddiad newydd gan ddefnyddio \"apport-bug\"."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -180,23 +200,31 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Nid chi yw awdur yr adroddiad problem hwn. Mae'n llawer haws nodi byg fel "
+"byg arall na symud eich sylwadau ac atodiadau i fyg newydd.\n"
+"\n"
+"Yn dilyn hynny, rydym yn argymell eich bod yn ffeilio adroddiad gwall newydd "
+"gan ddefnyddio \"apport-bug\" a gwneud sylw yn y byg hwn am yr un rydych "
+"chi'n ei ffeilio.\n"
+"\n"
+"Ydych chi wir eisiau bwrw ymlaen?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Dim gwybodaeth ychwanegol wedi'i chasglu."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Pa fath o broblem ydych chi am roi gwybod amdani?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Symptom anhysbys"
 
 #: ../apport/ui.py:838
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "Nid yw'r symptom \"%s\" yn hysbys."
 
 #: ../apport/ui.py:874
 msgid ""
@@ -208,35 +236,47 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Nid oes modd defnyddio'r opsiwn ffenestr ar Wayland.\n"
+"\n"
+"Dewch o hyd i ID proses y ffenestr ac yna rhedeg 'ubuntu-bug<process ID> "
+"'. \n"
+"\n"
+"Mae modd dod o hyd i ID y broses trwy redeg y rhaglen Monitor System. Yn y "
+"tab Prosesau, sgroliwch nes i chi ddod o hyd i'r rhaglen gywir. ID y broses "
+"yw'r rhif sy'n cael ei restri yn y golofn ID."
 
 #: ../apport/ui.py:890
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Ar ôl cau'r neges hon, cliciwch ar ffenestr y raglen i roi gwybod am broblem "
+"amdani."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop wedi methu pennu ID proses y ffenestr"
 
 #: ../apport/ui.py:931
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s<report number>"
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "Nodwch enw'r pecyn."
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Ychwanegwch dag ychwanegol at yr adroddiad. Mae modd ei nodi sawl gwaith."
 
 #: ../apport/ui.py:976
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:987
 msgid ""
@@ -244,26 +284,33 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"Dechreuwch yn y modd ffeilio bygiau. Mae angen --package a --pid dewisol, "
+"neu dim ond --pid. Os na roddir y naill na'r llall, dangoswch restr o "
+"symptomau hysbys. (Goblygiad os oes ymresymiad sengl yn cael ei gynnig.)"
 
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Cliciwch ffenestr fel targed ar gyfer ffeilio adroddiad problem."
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "Dechreuwch yn y modd diweddaru gwall. Gall gymryd --package dewisol."
 
 #: ../apport/ui.py:1014
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"Ffeiliwch adroddiad gwall am symptom. (Goblygir os rhoddir enw'r symptom fel "
+"dadl yn unig.)"
 
 #: ../apport/ui.py:1023
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"Nodwch enw'r pecyn yn y modd --file-bug. Mae hyn yn ddewisol os nodir --pid. "
+"(Goblygiad os oes ymresymiad sengl yn cael ei gynnig.)"
 
 #: ../apport/ui.py:1034
 msgid ""
@@ -271,10 +318,13 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Nodwch raglen redeg yn y modd --file-bug. Os nodir hyn, bydd yr adroddiad "
+"nam yn cynnwys mwy o wybodaeth. (Goblygiad os pid yw'r unig ymresymiad sy'n "
+"cael ei gynnig.)"
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
-msgstr ""
+msgstr "Mae'r pid a ddarperir yn raglen sy'n oedi."
 
 #: ../apport/ui.py:1050
 #, python-format
@@ -282,6 +332,9 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"Rhoi gwybod am y chwaliad o'r ffeil .apport neu .crash a roddwyd yn lle'r "
+"rhai sydd ar y gweill yn %s. (Goblygiad os taw ffeil sy'n cael ei chynnig "
+"fel yr unig ymresymiad.)"
 
 #: ../apport/ui.py:1060
 msgid ""
@@ -289,43 +342,52 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Yn y modd ffeilio bygiau, cadwch y wybodaeth a gasglwyd mewn ffeil yn "
+"hytrach na'i hadrodd. Yna bydd modd adrodd ar y ffeil hon yn ddiweddarach o "
+"beiriant gwahanol."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Argraffwch y rhif fersiwn Apport."
 
 #: ../apport/ui.py:1240
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Bydd hyn yn lansio appport-retrace mewn ffenestr derfynell i archwilio'r "
+"chwaliad."
 
 #: ../apport/ui.py:1244
 msgid "Run gdb session"
-msgstr ""
+msgstr "Rhedeg sesiwn gdb"
 
 #: ../apport/ui.py:1245
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Rhedeg sesiwn gdb heb lwytho I lawr symbolau dadfygio"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:1247
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Diweddaru %s gydag olrhain stac symbolaidd llawn"
 
 #: ../apport/ui.py:1309
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Methu cofio anfon gosodiadau statws adroddiad"
 
 #: ../apport/ui.py:1313
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Methodd cadw cyflwr adrodd y chwalfa. Methu â gosod modd adrodd awtomatig "
+"neu byth."
 
 #: ../apport/ui.py:1396 ../apport/ui.py:1409
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
+"Mae'r adroddiad problem hwn yn berthnasol i raglen nad yw wedi'i gosod "
+"mwyach."
 
 #: ../apport/ui.py:1433
 #, python-format
@@ -333,39 +395,45 @@ msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
+"Digwyddodd y broblem gyda'r rhaglen %s a newidiodd ers i'r chwaliad ddigwydd."
 
 #: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
+"Mae'r adroddiad problem hwn wedi'i ddifrodi ac nid oes modd ei brosesu."
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "Mae'r adroddiad hwn yn ymwneud â phecyn nad yw wedi'i osod."
 
 #: ../apport/ui.py:1511
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "Digwyddodd gwall wrth geisio prosesu'r adroddiad problem hwn:"
 
 #: ../apport/ui.py:1528
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Mae gennych chi ddau fersiwn o'r rhaglen hon wedi'u gosod, pa un ydych chi "
+"am adrodd gwall yn ei erbyn?"
 
 #: ../apport/ui.py:1533
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1534
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "Pecyn deb %s"
 
 #: ../apport/ui.py:1575
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"Mae %s yn cael ei ddarparu gan snap a gyhoeddwyd gan %s. Cysylltwch â nhw "
+"trwy %s am gymorth."
 
 #: ../apport/ui.py:1580
 #, python-format
@@ -373,36 +441,41 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"Mae %s yn cael ei ddarparu gan snap a gyhoeddwyd gan %s. Nid oes cyfeiriad "
+"cyswllt wedi'i ddarparu; ewch i'r fforwm yn https://forum.snapcraft.io/ am "
+"help."
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "Methu pennu enw'r pecyn neu ffynhonnell y pecyn."
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Methu cychwyn porwr gwe"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "Methu cychwyn porwr gwe i agor %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "Problem rhwydwaith"
 
 #: ../apport/ui.py:1819
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
+"Methu cysylltu â chronfa ddata chwalfa, gwiriwch eich cysylltiad rhyngrwyd."
 
 #: ../apport/ui.py:1851
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "Cof wedi dod i ben"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
+"Nid oes gan eich system ddigon o gof i brosesu'r adroddiad chwalfa hwn."
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -411,10 +484,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Nid oes modd adrodd ar y broblem:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr ""
+msgstr "Problem eisoes yn hysbys"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -422,184 +498,203 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"Adroddwyd am y broblem hon eisoes yn yr adroddiad gwall sy'n cael ei ddangos "
+"yn y porwr gwe. Gwiriwch a allwch ychwanegu unrhyw wybodaeth bellach a allai "
+"fod o gymorth i'r datblygwyr."
 
 #: ../apport/ui.py:1974
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Rhoddwyd gwybod i ddatblygwyr am y broblem hon eisoes. Diolch!"
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Pwyswch unrhyw fysell i barhau..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "Beth hoffech chi ei wneud? Eich opsiynau yw:"
 
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Dewiswch (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i beit)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(data deuaidd)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "Anfon adroddiad problem i'r datblygwyr?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Ar ôl i'r adroddiad problem gael ei anfon, llenwch y ffurflen yn y\n"
+"porwr gwe agorwyd yn awtomatig."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "A&nfon adroddiad (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
-msgstr ""
+msgstr "A&rchwiliwch yn lleol"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "&Gweld yr adroddiad"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
+"&Cadw ffeil adroddiad i'w hanfon yn hwyrach neu ei chopïo i rywle arall"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "D&iddymu ac anwybyddu chwaliadau o'r fersiwn rhaglen hon yn y dyfodol"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "&Diddymu"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "Ffeil adroddiad problem:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "&Cadarnhau"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Gwall: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "Casglu gwybodaeth am broblemau"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Mae modd anfon y wybodaeth a gasglwyd at y datblygwyr i wella'r\n"
+"rhaglen. Gall hyn gymryd ychydig funudau."
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "Wrthi'n llwytho gwybodaeth problem"
 
 #: ../bin/apport-cli.py:309
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Mae'r wybodaeth a gasglwyd yn cael ei hanfon i'r system olrhain bygiau.\n"
+"Gall hyn gymryd ychydig o funudau."
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&Wedi gorffen!"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "dim"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Wedi'i ddewis: %s. Dewisiadau lluosog:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Dewisiadau:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Llwybr i'r ffeil (Enter i ddiddymu):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "Nid yw'r ffeil yn bodoli"
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "Cyfeiriadur yw hwn."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "I barhau, rhaid i chi ymweld â'r URL canlynol:"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"Gallwch chi lansio porwr nawr, neu gopïo'r URL hwn i mewn i borwr ar "
+"gyfrifiadur arall."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Lansio porwr nawr"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
+"Dim adroddiadau chwalu yn yr arfaeth. Rhowch gynnig ar --help am fwy o "
+"wybodaeth."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
+"Peidiwch â rhoi'r olion newydd yn yr adroddiad, ond eu hanfon nhw i stdout."
 
 #: ../bin/apport-retrace.py:53
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Dechreuwch sesiwn gdb rhyngweithiol gyda dymp craidd yr adroddiad (-o "
+"ignored; nid yw'n ailysgrifennu'r adroddiad)"
 
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
+"Ysgrifennwch adroddiad wedi'i addasu i ffeil a roddwyd yn lle newid yr "
+"adroddiad gwreiddiol"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "Tynnwch y dymp craidd o'r adroddiad ar ôl adfywio olrhain pentwr"
 
 #: ../bin/apport-retrace.py:80
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "Diystyru CoreFile yr adroddiad"
 
 #: ../bin/apport-retrace.py:86
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "Diystyru Llwybr Gweithredadwy'r adroddiad"
 
 #: ../bin/apport-retrace.py:92
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Diystyru ProcMaps yr adroddiad"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "Ailadeiladwch wybodaeth Pecyn yr adroddiad"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -610,6 +705,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Adeiladu blwch tywod dros dro a llwytho i lawr/gosod y pecynnau "
+"angenrheidiol a'r symbolau dadfygio ynddo; heb yr opsiwn hwn mae'n cymryd yn "
+"ganiataol bod y pecynnau angenrheidiol a'r symbolau dadfygio eisoes wedi'u "
+"gosod yn y system. Mae'r ymresymiad yn cyfeirio at gyfeiriadur sylfaen "
+"cyfluniad y system becynnu; os byddwch yn nodi \"system\", bydd yn "
+"defnyddio'r ffeiliau ffurfweddiad system, ond dim ond wedyn bydd yn gallu "
+"olrhain damweiniau a ddigwyddodd ar y ryddhad sy'n rhedeg ar hyn o bryd."
 
 #: ../bin/apport-retrace.py:119
 msgid ""
@@ -617,34 +719,44 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Adeiladwch flwch tywod dros dro arall ar gyfer gosod gdb a'i ddibyniaethau "
+"gan ddefnyddio'r un datganiad â'r adroddiad yn hytrach na pha fersiwn bynnag "
+"o gdb rydych chi wedi'i osod."
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Adroddwch gynnydd llwytho i lawr/gosod wrth osod pecynnau yn y blwch tywod"
 
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "Paratowch stampiau amser i gofnodi negeseuon, ar gyfer gweithredu swp"
 
 #: ../bin/apport-retrace.py:142
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
+"Creu a defnyddio storfeydd trydydd parti o wreiddiau sy'n cael eu nodi nodir "
+"mewn adroddiadau"
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
+"Cyfeiriadur storfa ar gyfer pecynnau wedi'u llwytho i lawr yn y blwch tywod"
 
 #: ../bin/apport-retrace.py:156
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"Cyfeiriadur ar gyfer pecynnau heb eu pacio. Bydd rhediadau yn y dyfodol yn "
+"tybio bod unrhyw becyn sydd eisoes wedi'i lwytho I lawr hefyd yn cael ei "
+"echdynnu i'r blwch tywod hwn."
 
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "Gosod pecyn ychwanegol yn y blwch tywod (mae modd ei nodi sawl gwaith)"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -652,280 +764,311 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Llwybr i ffeil gyda gwybodaeth dilysu cronfa ddata chwalfa. Mae hwn yn cael "
+"ei ddefnyddio wrth nodi ID chwalfa i lwytho I fyny'r olion pentwr ôl-olrhain "
+"(dim ond os na nodir -g, -o, nac -s)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Yn dangos olion stac wedi'u hôl a gofyn am gadarnhad cyn eu hanfon i'r "
+"gronfa ddata damweiniau."
 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"Llwybr i'r gronfa ddata sqlite ddyblyg (rhagosodedig: dim gwirio dyblyg)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Peidiwch ag ychwanegu StacktraceSource at yr adroddiad."
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
-msgstr ""
+msgstr "Methu defnyddio -C heb -S. Stopio."
 
 #. translators: don't translate y/n,
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Iawn I anfon y rhain fel atodiadau? [y/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <report> <target directory>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Ffeil adrodd i'w dadbacio"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "cyfeiriadur i ddadbacio adroddiad iddo"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Mae'r cyfeiriadur cyrchfan yn bodoli ac nid yw'n wag."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
-msgstr ""
+msgstr "Gweler tudalen man am fanylion."
 
 #: ../bin/apport-valgrind.py:46
 msgid "specify the log file name produced by valgrind"
-msgstr ""
+msgstr "nodwch enw'r ffeil log a gynhyrchwyd gan valgrind"
 
 #: ../bin/apport-valgrind.py:52
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
+"ailddefnyddio cyfeiriad blwch tywod a grëwyd yn flaenorol (SDIR) neu, os nad "
+"yw'n bodoli, ei greu"
 
 #: ../bin/apport-valgrind.py:60
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
+"peidiwch  â  chreu  neu ailddefnyddio cyfeiriadur blwch tywod ar gyfer "
+"symbolau dadfygio ychwanegol ond dibynnu ar symbolau dadfygio wedi'u gosod "
+"yn unig."
 
 #: ../bin/apport-valgrind.py:69
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
+"ailddefnyddio cache dir (CDIR) a grëwyd yn flaenorol neu, os nad yw'n "
+"bodoli, ei greu"
 
 #: ../bin/apport-valgrind.py:78
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
+"adrodd cynnydd llwytho i lawr/gosod wrth osod pecynnau yn y blwch tywod"
 
 #: ../bin/apport-valgrind.py:86
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"y gweithredadwy sy'n cael ei redeg o dan offeryn memcheck valgrind ar gyfer "
+"canfod gollyngiadau cof"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr ""
+msgstr "Gwall: Nid yw %s yn weithredadwy. Yn stopio."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Digwyddodd hyn yn ystod ataliad blaenorol, ac ataliodd y system rhag "
+"ailddechrau'n iawn."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Digwyddodd hyn yn ystod cysgu trwm blaenorol, ac ataliodd y system rhag "
+"ailddechrau'n iawn."
 
 #: ../data/apportcheckresume.py:81
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Roedd y prosesu ailddechrau yn hongian yn agos iawn at y diwedd a bydd yn "
+"ymddangos ei fod wedi'i gwblhau fel arfer."
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
+"Mae'n bosibl y bydd eich system yn mynd yn ansefydlog nawr ac efallai y bydd "
+"angen ei hailddechrau."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "Adrodd am broblem..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Rhoi gwybod am gamweithio i'r datblygwyr"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "Mae'n ddrwg gennym, mae'r rhaglen %s wedi dod i ben yn annisgwyl."
 
 #: ../gtk/apport-gtk.py:188
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr ""
+msgstr "Mae'n ddrwg gennym, mae %s wedi cau'n annisgwyl."
 
 #: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:214 ../kde/apport-kde.py:266
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Mae'n ddrwg gennym, mae %s wedi profi gwall mewnol."
 
 #: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:207
 msgid "Send"
-msgstr ""
+msgstr "Anfon"
 
 #: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:666 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
-msgstr ""
+msgstr "Dangos Manylion"
 
 #: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:258 ../kde/apport-kde.py:276
 msgid "Continue"
-msgstr ""
+msgstr "Parhau"
 
 #: ../gtk/apport-gtk.py:271
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr ""
+msgstr "Mae'r rhaglen %s wedi peidio ag ymateb."
 
 #: ../gtk/apport-gtk.py:275
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "Mae'r rhaglen \"%s\" wedi peidio ag ymateb."
 
 #: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:222
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Pecyn: %s"
 
 #: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:229
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Ymddiheuriadau, cafwyd problem wrth osod meddalwedd."
 
 #: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:238
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr ""
+msgstr "Mae'r rhaglen %s wedi profi gwall mewnol."
 
 #: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:245
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "Mae'r rhaglen %s wedi cau'n annisgwyl."
 
 #: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:271
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
+"Os byddwch yn sylwi ar broblemau pellach, ceisiwch ailgychwyn y cyfrifiadur."
 
 #: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:278
 msgid "Ignore future problems of this type"
-msgstr ""
+msgstr "Anwybyddwch broblemau o'r math hwn yn y dyfodol"
 
 #: ../gtk/apport-gtk.py:670 ../kde/apport-kde.py:327
 msgid "Hide Details"
-msgstr ""
+msgstr "Cuddio Manylion"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr ""
+msgstr "Diddymu"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr ""
+msgstr "Iawn"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
-msgstr ""
+msgstr "Adroddiad chwalu"
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Ymddiheuriau, digwyddodd gwall mewnol.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Cofiwch hyn yn y dyfodol"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr ""
+msgstr "Anwybyddu problemau yn y dyfodol o'r fersiwn rhaglen hon"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Ail gychwyn y rhaglen hon"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Archwilio'n lleol"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Peidio anfon"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Casglu gwybodaeth am broblemau</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"Mae gwybodaeth yn cael ei chasglu a allai helpu'r datblygwyr i ddatrys y "
+"broblem rydych chi'n rhoi gwybod amdani."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Wrthi'n llwytho manylion problem</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"Mae'r wybodaeth a gasglwyd yn cael ei hanfon i'r system olrhain bygiau.\n"
+"Gall hyn gymryd ychydig o funudau."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Ffeil chwalfa Apport"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
-msgstr ""
+msgstr "Gadael ar Gau"
 
 #: ../kde/apport-kde.py:262 ../kde/apport-kde.py:432
 msgid "Relaunch"
-msgstr ""
+msgstr "Ail gychwyn"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Enw defnyddiwr:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Cyfrinair:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Yn Casglu Manylion Problem"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Mae modd anfon y wybodaeth a gasglwyd at y datblygwyr i wella'r\n"
+"rhaglen. Gall hyn gymryd ychydig funudau."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Wrthi'n llwytho manylion problem"

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: ivarela <ivarela@ubuntu.com>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2020-10-20 11:42+0000\n"
+"Last-Translator: Xandru Martino <Unknown>\n"
 "Language-Team: Asturian <alministradores@softastur.org>\n"
 "Language: ast\n"
 "MIME-Version: 1.0\n"
@@ -70,7 +70,7 @@ msgstr "programa desconocíu"
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Sentimoslo; el programa «%s» zarróse inesperadamente"
+msgstr "Sentímoslo; el programa «%s» zarróse inesperadamente"
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
@@ -158,7 +158,7 @@ msgstr "El ID de procesu especificáu nun pertenez a dengún programa."
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "El script de síntomes %s nun determinó dengún paquete afeutáu"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -168,11 +168,11 @@ msgstr "El paquete %s nun esiste"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Nun puede crease l'informe"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Anovando informe de fallu"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -181,6 +181,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Nun yes l'informador o soscritor d'esti informe de problemes, o l'informe ye "
+"un duplicáu o yá ta zarráu.\n"
+"\n"
+"Crea un informe nuevu usando «apport-bug»."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -193,10 +197,18 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Nun yes l'informador d'esti problema. Ye muncho más cenciello marcar un bug "
+"como duplicáu d'otru que treslladar los tos comentarios y ficheros axuntos a "
+"un bug nuevu.\n"
+"\n"
+"Poro, encamentámoste a qu'informes d'un bug nuevu usando  «apport-bug» y "
+"facer un comentariu nesti bug qu'informes.\n"
+"\n"
+"¿Daveres quies siguir?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nun se collechó información adicional."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
@@ -227,10 +239,12 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Dempués de zarrar esti mensaxe calca nuna ventana d'aplicación pa informar "
+"tocante a esti problema."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop falló al determinar la ID de procesu de la ventana"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -239,11 +253,11 @@ msgstr ""
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "Especifica'l nome del paquete."
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "Amiesta una etiqueta estra al informe. Pue especificase delles vegaes."
 
 #: ../apport/ui.py:976
 #, python-format
@@ -264,10 +278,13 @@ msgstr ""
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
+"Fai click nuna ventana como oxetivu pa rellenar un informe de problema."
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Aniciar en mou d'anovamientu d'errores. Almite un parámetru --package "
+"opcional."
 
 #: ../apport/ui.py:1014
 msgid ""
@@ -292,6 +309,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Especifica un programa executándose en mou --file-bug. Si s'especifica, "
+"l'informe de fallu contendrá más información.  (Implica si pid se da como un "
+"argumentu solu.)"
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
@@ -313,6 +333,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Nel mou de rellenu del fallu, guarda la información recoyida nun ficheru en "
+"cuenta d'unviala. Esti ficheru pue unviase más sero, dende una máquina "
+"diferente."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
@@ -487,7 +510,7 @@ msgstr "Por favor escueye (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -672,6 +695,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Constrúi una caxe de sable (sandbox) temporal y descarga/instala los "
+"paquetes necesarios y los símbolos de depuración; ensin esta opción asúmese "
+"que los paquetes necesarios y los símbolos de depuración yá tán instalados "
+"nel sistema. L'argumentu apunta al direutoriu de sistema de paquetes de "
+"configuración de base, si s'especifica «system», qu'usará los ficheros de "
+"configuración del sistema, pero namái va poder volver sobre los accidentes "
+"qu'ocurrieron nel llanzamientu n'execución."
 
 #: ../bin/apport-retrace.py:119
 msgid ""
@@ -686,6 +716,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Informar del progresu de la descarga/instalación de paquetes na caxa de "
+"sable (sanbox)"
 
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -701,7 +733,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Almacenar direutorios pa paquetes descargaos na caxa de sable (sanbox)"
 
 #: ../bin/apport-retrace.py:156
 msgid ""
@@ -716,6 +748,8 @@ msgstr ""
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Instalar un paquete estra na caxa de sable (sanbox). Pue especificase delles "
+"vegaes"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -931,7 +965,7 @@ msgstr "Anubrir Detalles"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -978,7 +1012,7 @@ msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"La información que tas esbillando puede aidar a los desendolcadores a igüar "
+"La información que tas esbillando pue ayudar a los desendolcadores a iguar "
 "el problema que vas a notificar."
 
 #: ../gtk/apport-gtk.ui.h:18
@@ -1007,22 +1041,24 @@ msgstr "Rellanzar"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Nome d'usuariu:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Contraseña:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Recopilando información del problema"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"La información recopilada puede unviase a los desendolcadores pa meyorar "
+"l'aplicación. Esto puede tardar dalgunos minutos."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Unviando información del problema"

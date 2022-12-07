@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Marius Gedminas <marius@gedmin.as>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2019-04-13 17:56+0000\n"
+"Last-Translator: Moo <hazap@hotmail.com>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
@@ -119,15 +119,15 @@ msgstr "Neteisingas PID"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Nurodyto proceso ID nėra."
 
 #: ../apport/ui.py:498
 msgid "Not your PID"
-msgstr ""
+msgstr "Nėra jūsų PID"
 
 #: ../apport/ui.py:499
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Nurodyto proceso ID nepriklauso jums."
 
 #: ../apport/ui.py:554
 msgid "No package specified"
@@ -481,7 +481,7 @@ msgstr "Apie šią problemą jau buvo pranešta kūrėjams. Ačiū!"
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr "Spauskite bet kurį klavišą tęsimui..."
+msgstr "Norėdami tęsti, paspauskite bet kurį klavišą..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
@@ -511,8 +511,8 @@ msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"Kai ataskaita apie problemą bus nusiųsta, prašome užpildyti formą\n"
-"automatiškai atvertoje žiniatinklio naršyklėje."
+"Po to, kai ataskaita apie problemą bus nusiųsta, prašome automatiškai \n"
+"atvertoje žiniatinklio naršyklėje užpildyti formą."
 
 #: ../bin/apport-cli.py:218
 #, python-format
@@ -705,6 +705,7 @@ msgstr "Prie žurnalo pranešimų pridėti laiko žymes"
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
+"Sukurti ir naudoti trečiųjų šalių saugyklas iš ataskaitose nurodytų šaltinių"
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -780,33 +781,39 @@ msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
-msgstr ""
+msgstr "Išsamesnei informacijai, žiūrėkite vadovo (\"man\") puslapius."
 
 #: ../bin/apport-valgrind.py:46
 msgid "specify the log file name produced by valgrind"
-msgstr ""
+msgstr "nurodyti valgrind kuriamą žurnalo failo pavadinimą"
 
 #: ../bin/apport-valgrind.py:52
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
+"iš naujo naudoti anksčiau sukurtą smėliadėžės katalogą (SDIR) arba, jeigu jo "
+"nėra, jį sukurti"
 
 #: ../bin/apport-valgrind.py:60
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
+"papildomiems derinimo simboliams nekurti ar iš naujo nenaudoti smėliadėžės "
+"katalogo, bet pasikliauti tik įdiegtais derinimo simboliais."
 
 #: ../bin/apport-valgrind.py:69
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
+"iš naujo naudoti anksčiau sukurtą podėlio katalogą (CDIR) arba, jeigu jo "
+"nėra, jį sukurti"
 
 #: ../bin/apport-valgrind.py:78
 msgid "report download/install progress when installing packages into sandbox"
-msgstr ""
+msgstr "įdiegiant paketus į smėliadėžę, pranešti apie atsiuntimo/įdiegimo eigą"
 
 #: ../bin/apport-valgrind.py:86
 msgid ""
@@ -817,19 +824,23 @@ msgstr ""
 #: ../bin/apport-valgrind.py:129
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr ""
+msgstr "Klaida: %s nėra vykdomasis. Stabdoma."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Tai įvyko ankstesnio pristabdymo metu ir neleido sistemai tinkamai pratęsti "
+"savo darbą."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
+"Tai įvyko ankstesnio užmigdymo metu ir neleido sistemai tinkamai pratęsti "
+"savo darbą."
 
 #: ../data/apportcheckresume.py:81
 msgid ""
@@ -842,7 +853,8 @@ msgstr ""
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
-"Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš naujo."
+"Jūsų sistema dabar gali tapti nestabili ir gali prireikti paleisti OS iš "
+"naujo."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
@@ -930,11 +942,11 @@ msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr ""
+msgstr "Atsisakyti"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr ""
+msgstr "Gerai"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -954,7 +966,7 @@ msgstr "Ignoruoti šios programos versijos problemas ateityje"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Paleisti šią programą iš naujo"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -962,7 +974,7 @@ msgstr "_Ištirti vietoje"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Nesiųsti"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
