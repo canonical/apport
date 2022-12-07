@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:47+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2014-02-18 15:58+0000\n"
+"Last-Translator: Atanas Kovachki <Unknown>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
@@ -330,6 +330,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"В режим за докладване на грешки, запазете събраната информация във файл, "
+"вместо да я докладвате. Този файл може да бъде докладван по-късно от друг "
+"компютър."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
@@ -636,7 +639,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "Не поставяйте повече трасирания в доклада, а ги запишете в stdout."
 
 #: ../bin/apport-retrace.py:53
 msgid ""
@@ -738,12 +741,18 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Път към файла с информация за автентикация на базата данни със сривовете. "
+"Това се използва само когато се специфицира ID на срив, за да се качи "
+"ретрасирано трасиране на стека (само ако нито един от -g, -o, nor -s са "
+"специфицирани)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Показване на ретрасираните трасирания на стека и искане на потвърждение "
+"преди изпращането им в базата данни със сривовете."
 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
@@ -779,7 +788,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Крайната директория съществува и не е празна."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -986,8 +995,8 @@ msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"Бива събирана информация, която може да помогне на разработчиците да "
-"поправят проблема, който докладвате."
+"Събира се информация, която може да помогне на разработчиците да поправят "
+"проблема, който докладвате."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
@@ -998,7 +1007,7 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"Събраната информация бива изпращана към системата за следене на грешки. Това "
+"Събраната информация се изпраща към системата за следене на бъгове. Това "
 "може да отнеме няколко минути."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
@@ -1030,6 +1039,8 @@ msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Събраната информация може да се изпрати на разработчиците, за да подобрят "
+"програмата. Това може да отнеме няколко минути."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2017-04-24 01:43+0000\n"
+"Last-Translator: samson <Unknown>\n"
 "Language-Team: Amharic <am@li.org>\n"
 "Language: am\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -63,17 +63,17 @@ msgstr ""
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "ያልታወቀ ፕሮግራም"
 
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "አዝናለሁ ፕሮግራሙ \"%s\" በድንገት ተዘግቷል"
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "ችግር በ %s"
 
 #: ../apport/ui.py:370
 msgid ""
@@ -94,7 +94,7 @@ msgstr "እርስዎ እዚህ የ ችግር መግለጫ ጋር ለ መድረ�
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "ስህተት"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
@@ -135,7 +135,7 @@ msgstr ""
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
-msgstr ""
+msgstr "ፍቃድ ተከልክሏል"
 
 #: ../apport/ui.py:586
 msgid ""
@@ -155,7 +155,7 @@ msgstr ""
 #: ../apport/ui.py:631
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "ጥቅሉ %s አልተገኘም"
 
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
@@ -188,11 +188,11 @@ msgstr ""
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "የተሰበሰበ ተጨማሪ መረጃ የለም"
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "ምን አይነት ችግር ነው ማሳወቅ የሚፈልጉት?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
@@ -231,7 +231,7 @@ msgstr ""
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "የጥቅሉን ስም ይግለጹ"
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
@@ -385,7 +385,7 @@ msgstr ""
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "ድር መቃኛውን ማስጀመር አልተቻለም"
 
 #: ../apport/ui.py:1705
 #, python-format
@@ -394,7 +394,7 @@ msgstr "የ ዌብ መቃኛ ማስጀመር አልተቻለም ለ መክፈት
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "የኔትዎርክ ችግር"
 
 #: ../apport/ui.py:1819
 msgid ""
@@ -437,7 +437,7 @@ msgstr "ይህ ችግር ቀደም ብሎ ለ አበልፃጊዎች ተልኳል
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "ለመቀጠል ማናቸውንም ቁልፍ ይጫኑ..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
@@ -446,7 +446,7 @@ msgstr "ምን ማድረግ ነው የሚፈልጉት? ያለው ምርጫው �
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "እባክዎን ይምረጡ (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
@@ -500,16 +500,16 @@ msgstr "የ ችግር መግለጫ ፋይል:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "&ማረጋገጫ"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "ስህተት: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "የችግሩን መረጃ በማሰባሰብ ላይ"
 
 #: ../bin/apport-cli.py:291
 msgid ""
@@ -519,7 +519,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "የችግሩን መረጃ በመጫን ላይ"
 
 #: ../bin/apport-cli.py:309
 msgid ""
@@ -529,11 +529,11 @@ msgstr ""
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&ጨርሷል"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "ምንም"
 
 #: ../bin/apport-cli.py:373
 #, python-format
@@ -542,7 +542,7 @@ msgstr "ተመርጧል: %s. በርካታ ምርጫዎች:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "ምርጫዎች :"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
@@ -554,7 +554,7 @@ msgstr "ፋይሉ አልነበረም"
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "ይህ ዳይሬክቶሪ ነው"
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
@@ -769,7 +769,7 @@ msgstr "የ እርስዎ ስርአት አሁን ያልተረጋጋ ሊሆን ይ
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "ችግሩን ያመልክቱ"
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
@@ -887,7 +887,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>የችግሩን መረጃ በማሰባሰብ ላይ</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
@@ -897,7 +897,7 @@ msgstr "የ እርስዎ መግለጫ መረጃ እየተሰበሰበ ነው: �
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>የችግሩን መረጃ በመጫን ላይ</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
@@ -919,15 +919,15 @@ msgstr "እንደገና ማስጀመሪያ"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "የተጠቃሚ ስም:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "የመግቢያ ቃል :"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "የችግሩን መረጃ በማሰባሰብ ላይ"
 
 #: ../kde/apport-kde.py:464
 msgid ""
@@ -937,4 +937,4 @@ msgstr "የ ተሰበሰበው መረጃ ለ አበልጻጊዎች ይላካል 
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "የችግሩን መረጃ በመጫን ላይ"

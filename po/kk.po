@@ -1,22 +1,22 @@
 # Kazakh translation for apport
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2011-04-13 06:20+0000\n"
+"Last-Translator: jmb_kz <Unknown>\n"
 "Language-Team: Kazakh <kk@li.org>\n"
 "Language: kk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -56,44 +56,51 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Сіздің жүйеңізде кейбір пакеттердің ескірген нұсқалары орнатылған. Келесі "
+"пакеттерді жаңартып, мәселенің бар болуы қайтадан байқап көріңіз:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "белгісіз бағдарлама"
 
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "Кешіріңіз, бірақ \"%s\" бағдарламасы апатты түрде жабылды"
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Олқылық (неполадка) %s ішінде"
 
 #: ../apport/ui.py:370
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"Олқылықты (неполадка) автоматты түрде талдау және өндірушілерге ол жайлы "
+"есепті жіберу, сіздің компьютеріңізде жады жеткіліксіз болғандықтан мүмкін "
+"емес."
 
 #: ../apport/ui.py:430 ../apport/ui.py:448 ../apport/ui.py:621
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Қате туралы есеп бұрыс"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Сізде қате есебіне рұқсатыңыз жоқ."
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Қате"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "Осы есепті өңдеу үшін дискілік орын жетіспейді."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
@@ -105,7 +112,7 @@ msgstr ""
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "Бұрыс PID"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
@@ -121,26 +128,30 @@ msgstr ""
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "Пакет көрсетілмеген"
 
 #: ../apport/ui.py:556
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Пакетті немесе PID көрсетуіңіз қажет. Қосымша ақпарат алу үшін бағдарламаны "
+"--help кілтпенен ашыңыз."
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
-msgstr ""
+msgstr "Рұқсат жоқ"
 
 #: ../apport/ui.py:586
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Көрсетілген үрдіс басқа пайдаланушымен орындалуда. Осы бағдарламаны сол "
+"пайдаланушы атынан не әкімшілік құқықтармен ашыңыз."
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "Көрсетілген PID басқа үрдіске меншіктелген."
 
 #: ../apport/ui.py:623
 #, python-format
@@ -150,16 +161,16 @@ msgstr ""
 #: ../apport/ui.py:631
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "%s пакеті жоқ"
 
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Есепті құру мүмкін емес"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Қате есебі жаңартылуда"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -183,20 +194,20 @@ msgstr ""
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Қосымша ақпарат жиналынбады."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Сіз қандай қате туралы хабарлағыңыз келіп тұр?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Белгісіз белгілеулер (симптомдар)"
 
 #: ../apport/ui.py:838
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "\"%s\" белгілеуі (симптомы) белгісіз."
 
 #: ../apport/ui.py:874
 msgid ""
@@ -292,7 +303,7 @@ msgstr ""
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Apport нұсқасын баспаға шығару."
 
 #: ../apport/ui.py:1240
 msgid ""
@@ -325,7 +336,7 @@ msgstr ""
 #: ../apport/ui.py:1396 ../apport/ui.py:1409
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
+msgstr "Бұл есеп орнатылмаған бағдарламаға пакетке жатпайды."
 
 #: ../apport/ui.py:1433
 #, python-format
@@ -336,7 +347,7 @@ msgstr ""
 
 #: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
 msgid "This problem report is damaged and cannot be processed."
-msgstr ""
+msgstr "Олқылық жайлы есеп бұзылған және де өңделу мүмкін емес."
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
@@ -377,19 +388,20 @@ msgstr ""
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
 msgstr ""
+"Пакеттің атын немесе бастапқы коды бар пакеттің атын анықтау мүмкін емес."
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Веб-шолғышты ашу мүмкін емес"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "%s ашу үшін веб-шолғышты ашу мүмкін емес."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "Желілік мәселе"
 
 #: ../apport/ui.py:1819
 msgid ""
@@ -398,11 +410,11 @@ msgstr ""
 
 #: ../apport/ui.py:1851
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "Жады жетіспейді"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
+msgstr "Осы есепті өңдеу үшін жүйелік жады жетіспейді."
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -411,10 +423,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Қате туралы хабарлау мүмкін емес:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr ""
+msgstr "Қате сондай-ақ белгілі"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -422,6 +437,9 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"Веб-шолғышта көрсетілгендей, осы қате қателер есептерлерінде хабарланған. "
+"Сіз осы қате жайлы, өндірушілерге көмектесетін, қосымша қосатын "
+"мәліметтеріңіз бар болуын тексеріңіз."
 
 #: ../apport/ui.py:1974
 msgid "This problem was already reported to developers. Thank you!"
@@ -429,41 +447,43 @@ msgstr ""
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Жалғастыру үшін кез-келген пернені басыңыз..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "Сіз не жасауды қалайсыз? Мүмкін болатын әрекеттер:"
 
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Таңдаңыз (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i байт)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(екілік мәліметтер)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "Осы қате есебін өндірушілерге жіберу қажет пе?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Есеп жіберілгеннен кейін, шолғыштың ашылған терезесінде\n"
+"шығатын форманы толтырыңыз."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "Есепті &жіберу (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -471,100 +491,109 @@ msgstr ""
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "Есепті &қарап шығу"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
+msgstr "Кейінгі жіберу немесе басқа жерге көшіру үшін есеп файлын &сақтау"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
+"Кері қайтару және бағдарламаның осы нұсқасында болатын ендігі қауыздарды "
+"&елемеу (игнорировать)"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "&Болдырмау"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "Мәселе жайлы есеп файлы:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "&Растау"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Қате: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "Қате туралы ақпаратты жинау"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Бағдарламаны жақсарту үшін жиналған мәліметтер бағдарламаның өндірушілеріне\n"
+"жіберілуі мүмкін. Бұл бірнеше минутыңызды алатын болады."
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "Қате туралы ақпаратты жіберілу"
 
 #: ../bin/apport-cli.py:309
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Жиналған мәліметтер қателерді байқау жүйесіне бағытталады.\n"
+"Бұл бірнеше минутыңызды алатын болады."
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&Дайын"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "жоқ"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Таңдалған: %s. Бірнеше нұсқалар:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Таңдаулар:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Файл орналасу жері (болдырмау үшін Enter басыңыз):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "Файл жоқ."
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "Бұл бума."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Әрі қарай жалғастыру үшін сіз келесі сілтеме бойынша өтуіңіз қажет:"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"Енді сіз шолғышыңызды ашуға немесе сілтемені басқа компьютерге көшіруіңізге "
+"болады."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Шолғышты дәл қазір ашу"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
+"Қауыздар жайлы мәлімдемелер басқалынбады. --help кілтін байқап көріңіз."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
@@ -579,7 +608,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "Түпнұсқалық есепті өзгертпей, өзгертілген есепті басқашалай сақтау"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -675,7 +704,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Осы тиеуді жіберу қажет пе? [y/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -692,7 +721,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Нысандалған бума бар және бос емес."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -752,20 +781,22 @@ msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Есепті құру үрдісі аяқталуына өте жақын кезде ілініп (зависание) қалды; есеп "
+"көрінген кезде, барлығы дұрыс аяқталғаны."
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
+msgstr "Жүйе тұрақсыз болуы мүмкін, қайта жүктеу қажет болуы мүмкін."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "Мәселе жайлы хабарлау..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Қауыз/қате жайлы өндірушілерге хабарлау"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
@@ -838,7 +869,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -878,27 +909,29 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Олқылық (неполадка) жайлы мәліметтер жиналуды</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr ""
+msgstr "Өндірушілерге мәселені шешуге көмектесе алатын, мәліметтер жиналуда."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Олқылық (неполадка) жайлы мәліметтері жіберілуде</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"Жиналған мәліметтер қателерді байқау жүйесіне бағытталады. Бұл бірнеше "
+"минутыңызды алатын болады."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Apport мәлесе есебі"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
@@ -910,22 +943,24 @@ msgstr ""
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Пайдаланушы аты:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Құпия сөз:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Қате туралы мәлімет жинау"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Жиналған мәліметтерді бағдарламаны жақсарту үшін, өндірушілерге жіберуге "
+"болады. Бұл бірнеше минутыңызды алатын болады."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Қате туралы мәліметті жіберу"

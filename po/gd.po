@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2016-01-29 01:13+0000\n"
+"Last-Translator: Akerbeltz <fios@akerbeltz.org>\n"
 "Language-Team: Gaelic; Scottish <gd@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "prògram neo-aithnichte"
 
 #: ../apport/ui.py:362
 #, python-format
@@ -100,7 +100,7 @@ msgstr "Chan eil cead-inntrigidh agad dhan aithris duilgheadais seo."
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Mearachd"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
@@ -132,7 +132,7 @@ msgstr ""
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "Cha deach pacaid a shònrachadh"
 
 #: ../apport/ui.py:556
 msgid ""
@@ -355,7 +355,7 @@ msgstr ""
 
 #: ../apport/ui.py:1244
 msgid "Run gdb session"
-msgstr ""
+msgstr "Ruith seisean gdb"
 
 #: ../apport/ui.py:1245
 msgid "Run gdb session without downloading debug symbols"
@@ -518,7 +518,7 @@ msgstr "Dèan taghadh (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -574,12 +574,12 @@ msgstr "Faidhle aithris an duilgheadais:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "&Dearbhaich"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Mearachd: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
@@ -623,7 +623,7 @@ msgstr "Thagh thu: %s. Iomadh roghainn:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Roghainnean:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
@@ -930,7 +930,7 @@ msgstr "Tha sinn duilich, thachair mearachd inntearnail ann an %s."
 
 #: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:207
 msgid "Send"
-msgstr ""
+msgstr "Cuir"
 
 #: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:666 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
@@ -954,7 +954,7 @@ msgstr "Chan eil am prògram \"%s\" a' freagairt tuilleadh."
 #: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:222
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Pacaid: %s"
 
 #: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:229
 msgid "Sorry, a problem occurred while installing software."
@@ -988,7 +988,7 @@ msgstr "Falaich am mion-fhiosrachadh"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -1061,15 +1061,15 @@ msgstr "Fàg dùinte e"
 
 #: ../kde/apport-kde.py:262 ../kde/apport-kde.py:432
 msgid "Relaunch"
-msgstr ""
+msgstr "Cuir air bhog a-rithist"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Ainm-cleachdaiche:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Facal-faire:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"

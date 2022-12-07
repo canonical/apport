@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2018-04-11 17:57+0000\n"
+"Last-Translator: Rūdolfs Mazurs <Unknown>\n"
 "Language-Team: Latvian <lv@li.org>\n"
 "Language: lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "nezināma programma"
 
 #: ../apport/ui.py:362
 #, python-format
@@ -91,7 +91,7 @@ msgstr ""
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Nepareizs kļūdas ziņojums"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
@@ -99,7 +99,7 @@ msgstr "Jums nav atļauts piekļūt kļūdas ziņojumam."
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Kļūda"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
@@ -115,7 +115,7 @@ msgstr ""
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "Nepareizs PID"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
@@ -131,16 +131,16 @@ msgstr ""
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "Nav norādīta pakotne"
 
 #: ../apport/ui.py:556
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
+msgstr "Jums jānorāda pakotne vai PID. Apskatiet --help, lai uzzinātu vairāk."
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
-msgstr ""
+msgstr "Nav tiesību uz procesu"
 
 #: ../apport/ui.py:586
 msgid ""
@@ -152,26 +152,26 @@ msgstr ""
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "Norādītais procesa ID nepieder programmai."
 
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Simptoma skripts %s nenoteica ietekmēto pakotni"
 
 #: ../apport/ui.py:631
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "Pakotne %s neeksistē"
 
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Neizdodas izveidot ziņojumu"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Uzlabo ziņojumu par problēmu"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -180,6 +180,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Jūs neesat problēmas ziņojuma ziņotājs vai neesat pierakstījies uz to, vai "
+"arī ziņojums ir dublikāts, vai arī jau aizvērts.\n"
+"\n"
+"Lūdzu izveidojiet jaunu ziņojumu izmantojiet \"apport-bug\"."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -192,23 +196,32 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Jūs neesat šī ziņojuma par problēmu ziņotājs. Ir daudz vieglāk atzīmēt kļūdu "
+"kā dublikātu nekā pārvietot jūsu komentārus un pievienojumus uz jaunu kļūdas "
+"ziņojumu.\n"
+"\n"
+"Mēs jums rekomendējam aizpildīt jaunu ziņojumu par kļūdu izmantojot "
+"\"appport-bug\" un veikt komentāru pie šī paziņojuma par jūsu aizpildīto "
+"paziņojumu, norādot numuru.\n"
+"\n"
+"Vai jūs patiešām vēlaties turpināt?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nekāda papildus informācija netika savākta."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Par kāda veida problēmu jūs vēlaties ziņot?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Nezināms simptoms"
 
 #: ../apport/ui.py:838
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "Simptoms \"%s\" nav zināms."
 
 #: ../apport/ui.py:874
 msgid ""
@@ -226,10 +239,12 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Pēc šīs ziņas aizvēršanas, lūdzu, klikšķiniet uz lietotnes loga, lai ziņotu "
+"par tās problēmu."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop neizdevās noteikt loga procesa ID"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -238,11 +253,11 @@ msgstr ""
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "Norādīt pakotnes nosaukumu."
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "Pievienot papildu etiķeti atskaitei. Var norādīt vairākas reizes."
 
 #: ../apport/ui.py:976
 #, python-format
@@ -256,26 +271,34 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"Sākt kļūdu aizpildīšanas režīmā. Pieprasa --package un optionālo --pid, vai "
+"tikai --pid karodziņu. Ja neviens no tiem nav dots, parāda sarakstu ar "
+"zināmiem simptomiem (pieņemot, ka dots viens arguments)."
 
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Klikšķiniet uz loga, kas ir problēmas ziņojuma mērķis."
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Sākt kļūdas atjaunināšanas režīmā. Var pieņemt optionālu --package karodziņu."
 
 #: ../apport/ui.py:1014
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"Aizpildīt kļūdas ziņojumu par simptomu (pieņemot, ka simptoma nosaukums ir "
+"dots kā vienīgais arguments)."
 
 #: ../apport/ui.py:1023
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"Norādiet pakotnes nosaukumu --file-bug režīmā. Tas ir optionāli ja --pid ir "
+"norādīts (pieņemot, ka pakotnes nosaukums ir dots kā vienīgais arguments)."
 
 #: ../apport/ui.py:1034
 msgid ""
@@ -283,6 +306,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Norādiet palaisto programmu --file-bug režīmā. Ja tas ir norādīts, kļūdas "
+"ziņojums saturēs vairāk informācijas. (Tiek pieņemts, ja pid ir padots kā "
+"vienīgais parametrs.)"
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
@@ -294,6 +320,9 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"Ziņot par avāriju izmantojot doto .apport vai .crash failu, nevis par tām "
+"avārijām, kas gaida savu kārtu %s (pieņemot, ka fails ir dots kā vienīgais "
+"arguments)."
 
 #: ../apport/ui.py:1060
 msgid ""
@@ -301,10 +330,12 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Kļūdas iesniegšanas režīmā saglabājiet savākto informāciju failā, nevis "
+"ziņojiet par to. Pēc tam uz cita datora šo failu var noziņot."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Drukāt Apport versijas numuru."
 
 #: ../apport/ui.py:1240
 msgid ""
@@ -339,6 +370,8 @@ msgstr ""
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
+"Šis ziņojums par problēmu attiecas uz programmu, kas vairs nav instalēta "
+"šajā sistēmā."
 
 #: ../apport/ui.py:1433
 #, python-format
@@ -389,33 +422,36 @@ msgstr ""
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "Neizdevās noteikt pakotnes vai pirmkoda pakotnes nosaukumu."
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Neizdevās palaist tīmekļa pārlūku"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "Neizdevās palaist tīmekļa pārlūku, lai atvērtu %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "Tīkla problēma"
 
 #: ../apport/ui.py:1819
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
+"Neizdodas savienoties ar avāriju datubāzi, lūdzu pārbaudiet jūsu Internet "
+"savienojumu."
 
 #: ../apport/ui.py:1851
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "Atmiņas pārtēriņš"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
+"Jūsu sistēmai nepietiek atmiņas, lai apstrādātu šo ziņojumu par avāriju."
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -424,10 +460,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Neizdodas ziņot par problēmu:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr ""
+msgstr "Jau zināma problēma"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -435,6 +474,9 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"Par šo problēmu ir jau ziņots ziņojumā, kas redzams jūsu tīmekļa pārlūkā. "
+"Lūdzu pārbaudiet, vai jūs varat pievienot papildus informāciju, kas varētu "
+"būt noderīga izstrādātājiem."
 
 #: ../apport/ui.py:1974
 msgid "This problem was already reported to developers. Thank you!"
@@ -442,41 +484,43 @@ msgstr "Šī problēma jau ir ziņota izstrādātājiem. Paldies!"
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Lai turpinātu, nospiediet jebkuru taustiņu..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "Ko jūs vēlētos darīt? Jūsu opcijas ir:"
 
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Lūdzu izvēlieties (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i baiti)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(bināri dati)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "Sūtīt ziņojumu par problēmu izstrādātājiem?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Pēc tam, kad problēma būs nosūtīta, lūdzu aizpildiet formu, kas tiks\n"
+"automātiski atvērta tīmekļa pārlūkā."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "&Sūtīt ziņojumu (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -484,135 +528,145 @@ msgstr "&Eksaminēt lokāli"
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "Sk&atīt ziņojumu"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
+msgstr "&Paturēt ziņojumu failu sūtīšanai vēlāk vai kopēšanai uz citurieni"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "Atcelt un &ignorēt šīs programmas versijas tālākās avārijas"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "At&celt"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "Problēmas ziņojuma fails:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "Aps&tiprināt"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Kļūda: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "Savāc informāciju par problēmu"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Savāktā informācija var tikt nosūtīta izstrādātājiem, lai uzlabotu "
+"lietotnes\n"
+"darbību. Tas var aizņemt pāris minūtes."
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "Augšupielādē informāciju par problēmu"
 
 #: ../bin/apport-cli.py:309
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Savāktā informācija tiek nosūtīta uz kļūdu sekošanas sistēmu.\n"
+"Tas var aizņemt pāris minūtes."
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&Pabeigts"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "nekas"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Izvēlēts: %s. Vairākas izvēles:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Izvēles:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Ceļs uz failu (Enter, lai atsauktu):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "Fails nepastāv."
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "Tā ir direktorija."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Lai turpinātu, jums jāapmeklē šekojoša adrese ar URL:"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"Jūs varat palaist pārlūku tagad, vai arī nokopēt šo URL pārlūkā citā datorā."
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Palaist pārlūku tagad"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
+"Nav gaidošu ziņojumu par avāriju. Mēģiniet --help, lai uzzinātu vairāk."
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "Ziņojumam nepievienot jaunas trases, bet izvadīt tās stdout."
 
 #: ../bin/apport-retrace.py:53
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Sākt interaktīvu gdb sesiju ar ziņojuma kodola izmeti (ignorēts -o; "
+"nepārraksta ziņojumu)"
 
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
+"Raksta izmainītu ziņojumu uz doto failu oriģinālā ziņojuma izmainīšanas vietā"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "Izņemt kodola izmeti no ziņojuma pēc steka trases reģenerācijas"
 
 #: ../bin/apport-retrace.py:80
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "Pārrakstīt ziņojuma CoreFile"
 
 #: ../bin/apport-retrace.py:86
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "Pārrakstīt ziņojuma ExecutablePath"
 
 #: ../bin/apport-retrace.py:92
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Pārrakstīt ziņojuma ProcMaps"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "Pārbūvēt ziņojumā iekļauto informāciju par pakotni"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -623,6 +677,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Izveidojiet pagaidu smilšu kasti un tur lejupielādējiet/instalējiet "
+"nepieciešamās pakotnes un atkļūdošanas simbolus; bez šīs opcijas tiks "
+"pieņemts, ka nepieciešamās pakotnes un atkļūdošanas simboli jaut ir "
+"uzinstalēti uz sistēmas. Parametrs norāda uz pakotņu sistēmas konfigurācijas "
+"bāzes direktoriju; ja norādīsiet \"system\", tiks izmantoti sistēmas "
+"konfigurācijas faili, bet tad  tas varēs izsekot tikai tām avārijām, kas "
+"notiek pašlaik strādājošā laidienā."
 
 #: ../bin/apport-retrace.py:119
 msgid ""
@@ -637,6 +698,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Ziņot par lejupielādes/instalēšanas progresu, kad pakotnes tiek instalēts "
+"smilšu kastē."
 
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -651,7 +714,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Pieglabāt mapi pakotnēm, kas lejupielādētas smilšu kastē"
 
 #: ../bin/apport-retrace.py:156
 msgid ""
@@ -664,7 +727,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "Instalēt papildu pakotni smilšu kastē (var norādīt vairākas reizes)"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -672,16 +735,22 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Ceļš uz failu, kas satur avāriju datubāzes autentifikācijas informāciju. Tas "
+"tiek izmantots norādot avārijas ID, kad tiek augšupielādētas pārtrasētās "
+"steka trases (tikai ja nav norādīts neviens no -g, -o, vai -s)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Attēlot pātrasētās steka trases un vaicāt pēc apstiprinājuma pirms sūtīt tās "
+"uz avāriju datubāzi."
 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"Ceļš uz dublikāta sqlite datubāzi (pēc noklusējuma: nepārbaudīt dublikātu)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
@@ -695,7 +764,7 @@ msgstr "Nevar izmantot -C bez -S. Aptur."
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Sūtīt tos kā pielikumus? [j/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -712,7 +781,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Mērķa direktorija eksistē un nav tukša."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -784,20 +853,22 @@ msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Atsākšanas process pakārās tuvu beigām, kas radīs iespaidu, ka tas ir "
+"pabeigts normāli."
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
+msgstr "Jūsu sistēma varētu tagad kļūt nestabila, un to vajadzētu pārstartēt."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "Ziņot par problēmu..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Ziņot par kļūdainu funkcionalitāti izstrādātājiem"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
@@ -870,7 +941,7 @@ msgstr "Slēpt detaļas"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -910,27 +981,31 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Savāc informāciju par problēmu</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"Tiek savākta informācija, kas varētu palīdzēt izstrādātājiem novērst "
+"problēmu, par kuru ziņojat."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Augšupielādē informāciju par problēmu</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"Savāktā informācija tiek nosūtīta uz kļūdu sekošanas sistēmu. Tas var "
+"aizņemt pāris minūtes."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Apport avārijas fails"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
@@ -942,22 +1017,24 @@ msgstr "Palaist vēlreiz"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Lietotājvārds:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Parole:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Ievāc informāciju par problēmu"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Savāktā informācija var tik nosūtīta izstrādātājiem, lai tie varētu uzlabot "
+"lietotni. Tas var aizņemt dažas minūtes."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Augšupielādē informāciju par problēmu"

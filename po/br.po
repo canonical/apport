@@ -1,22 +1,22 @@
 # Breton translation for apport
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2010-06-11 21:48+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Breton <br@li.org>\n"
 "Language: br\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -59,41 +59,44 @@ msgstr ""
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "goulev dianav"
 
 #: ../apport/ui.py:362
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "Digarezit, gant un doare dic'hortoz eo bet serret ar goulev \"%s\""
 
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Kudenn e %s"
 
 #: ../apport/ui.py:370
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"N'eus ket memor diac'hub a-walc'h evit dielfennañ ent emgefreek ar gudenn ha "
+"kas un danevell da baotred an diorren."
 
 #: ../apport/ui.py:430 ../apport/ui.py:448 ../apport/ui.py:621
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Danevell a-fet kudennoù didalvoudek"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "N'hoc'h eus ket an aotre da haeziñ an danevell-mañ."
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Fazi"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
 msgstr ""
+"N'eus ket plas a-walc'h war ar gantenn a-benn keweriañ an danevell-mañ."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
@@ -103,9 +106,10 @@ msgstr ""
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 
+# PID : process ID
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "Naoudi an argerzh (PID) didalvoudek"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
@@ -121,45 +125,49 @@ msgstr ""
 
 #: ../apport/ui.py:554
 msgid "No package specified"
-msgstr ""
+msgstr "Pakad erspizet ebet"
 
 #: ../apport/ui.py:556
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Ezhomm hoc'h eus erspizañ ur pakad pe un naoudi eus un argerzh (PID). Lennit "
+"--help evit gouzout hiroc'h."
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
-msgstr ""
+msgstr "Aotre nac'het"
 
 #: ../apport/ui.py:586
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Naoudi an argerzh (PID) erspizet n'eo ket deoc'h. Erounit ar goulev-mañ evel "
+"perc'henn an argerzh pe ardead gwrizienn (root)."
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "Naoudi an argerzh (PID) erspizet n'eo ket d'ur goulev."
 
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Skript an azon %s n'en deus ket despizet ar pakad tizhet"
 
 #: ../apport/ui.py:631
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "Ar pakad %s n'eus ket anezhañ"
 
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "N'hall ket krouiñ an danevell"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "O hizivaat an danevell a-zivout ar gudenn"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -183,20 +191,20 @@ msgstr ""
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Titouroù ouzhpenn ebet bet dastumet."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Evit peseurt kudennoù a fell deoc'h kas un danevell ?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Azon dianav"
 
 #: ../apport/ui.py:838
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "N'eo ket anavezet an azon \"%s\"."
 
 #: ../apport/ui.py:874
 msgid ""
@@ -292,7 +300,7 @@ msgstr ""
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Moullañ niverenn handelv Apport."
 
 #: ../apport/ui.py:1240
 msgid ""
@@ -336,7 +344,7 @@ msgstr ""
 
 #: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
 msgid "This problem report is damaged and cannot be processed."
-msgstr ""
+msgstr "Mekaet eo an danevell a-zivout ar gudenn ha n'hall ket bezañ keweriet."
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
@@ -376,20 +384,20 @@ msgstr ""
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "N'hall ket despizañ ar pakad pe anv tarzh ar pakad."
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "N'eo ket gouest da loc'hañ ar merdeer web"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "N'eo ket gouest da loc'hañ ar merdeer web a-benn digeriñ %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "Kudenn gant ar rouedad"
 
 #: ../apport/ui.py:1819
 msgid ""
@@ -411,10 +419,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"N'hall ket sevel un danevell a-zivout ar gudenn-mañ :\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:1960 ../apport/ui.py:1972
 msgid "Problem already known"
-msgstr ""
+msgstr "Anavezet eo ar gudenn endeo"
 
 #: ../apport/ui.py:1962
 msgid ""
@@ -429,41 +440,43 @@ msgstr ""
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Pouezit war ur stokell (ne vern pe hini) a-benn kenderc'hel..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "petra a fell deoc'h ober ? Dibabit e-touez :"
 
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Mar plij, dibabit (%s) :"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i a vitoù)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(roadennoù daouredel)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "Kas an danevell a-fet kudennoù da baotred an diorren ?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Goude bezañ kaset an danevell, mar plij, leugnit ar furmskrid\n"
+"er merdeer web bet digoret gant un doare emgefreek."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "&Kas an danevell (%s)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -471,7 +484,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "&Gwelout an danevell"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
@@ -484,24 +497,24 @@ msgstr ""
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "&Dilezel"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "Restr an danevell a-fet kudenn :"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "&Kadarnaat"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Fazi : %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "O tastumañ stlennoù ar gudenn"
 
 #: ../bin/apport-cli.py:291
 msgid ""
@@ -521,20 +534,20 @@ msgstr ""
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&Graet"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "tra ebet"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Diuzet : %s. Liesdibaboù :"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Dibaboù :"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
@@ -542,15 +555,15 @@ msgstr ""
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "Ar restr n'eus ket anezhi."
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "Ur c'havlec'hiad eo an dra-mañ."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Mar fell deoc'h kenderc'hel, kit da welout an URL-mañ :"
 
 #: ../bin/apport-cli.py:421
 msgid ""
@@ -560,7 +573,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Luskañ ur medeer bremañ"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
@@ -675,7 +688,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "A-du da gas ar stagadennoù ? [y/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -692,7 +705,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Ar c'havlec'hiad arvoned zo anezhañ ha n'eo ket goullo."
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -760,12 +773,12 @@ msgstr ""
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "Savit un danevell a-zivout ar gudenn..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Sevel un danevell a-fet gwallac'hwelerezh da baotred an diorren"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
@@ -898,7 +911,7 @@ msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Restr sac'haden Apport"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"

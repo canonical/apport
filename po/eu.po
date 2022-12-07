@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:47+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2020-03-25 16:37+0000\n"
+"Last-Translator: Ibai Oihanguren Sala <Unknown>\n"
 "Language-Team: Basque <eu@li.org>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
@@ -156,7 +156,7 @@ msgstr "Zehaztutako prozesu-IDa ez dagokio inongo programari."
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "%s script sintomak ez du determinatzen eraginda dagoen pakete bat"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -166,11 +166,11 @@ msgstr "%s paketea ez da existitzen"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Ezin da txostena sortu"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Arazoaren txostena eguneratzen"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -207,7 +207,7 @@ msgstr ""
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Ez dago bilduta informazio gehiago."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
@@ -493,7 +493,7 @@ msgstr "Mesedez, hautatu (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i byte)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -734,6 +734,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"Bikoiztuta dagoen sqlite datu-basera ailegatzeko bidea (lehenetsia: frogatze "
+"bikoizturik ez)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
@@ -747,7 +749,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Ondo dago eranskin hauek bidaltzea? (y, bai; n, ez) [y/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -1006,14 +1008,16 @@ msgstr "Pasahitza:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Arazoari Buruzko Informazioa Biltzen"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Bildutako informazioa garatzaileei bidali daiteke, hauek aplikazioa "
+"hobetzeko. Bidaltzeak agian minutu batzuk beharko lituzke."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Arazoari Buruzko Informazioa Bidaltzen"

@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:23+0100\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Martin Pitt <martin@piware.de>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-04-01 10:43+0000\n"
+"Last-Translator: Hannie Dumoleyn <Unknown>\n"
 "Language-Team: Nederlands <nl_NL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -109,7 +109,7 @@ msgstr "Fout"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
-msgstr "Er is onvoldoende schijfruimte om dit rapport te verwerken"
+msgstr "Er is onvoldoende schijfruimte om dit rapport te verwerken."
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
@@ -163,7 +163,7 @@ msgstr "Het opgegeven proces-PID behoort niet tot een programma."
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Symptoom-script %s kon geen betrokken pakket bepalen"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -173,11 +173,11 @@ msgstr "Pakket %s bestaat niet"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "Kan rapport niet aanmaken"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "Probleemrapport aan het bijwerken"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -186,6 +186,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"U bent niet de indiener of een abonnee van dit probleem-rapport, het rapport "
+"is een duplicaat of al gesloten.\n"
+"\n"
+"Maak alstublieft een nieuw rapport aan met \"apport-bug\"."
 
 #: ../apport/ui.py:689
 msgid ""
@@ -198,10 +202,18 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"U bent niet de eigenaar van dit probleemrapport. Het is veel eenvoudiger om "
+"een bug als duplicaat van een ander aan te merken dan al uw commentaar en "
+"bijlagen naar een nieuwe bug te verplaatsen.\n"
+"\n"
+"Het wordt daarom aangeraden dat u een nieuw foutrapport aanmaakt met "
+"\"apport-bug\" en in dit rapport uw eigen foutrapport vermeldt.\n"
+"\n"
+"Wilt u echt doorgaan?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "Geen extra informatie verzameld."
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
@@ -239,10 +251,12 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Nadat u dit bericht heeft gesloten dient u op een venster te klikken om "
+"daarvoor een probleem te rapporteren."
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop kon het proces-ID niet bepalen van het venster"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -251,11 +265,13 @@ msgstr ""
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "Pakketnaam opgeven"
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Voeg een extra tag aan het rapport toe. Dit kan meerdere keren worden "
+"opgegeven."
 
 #: ../apport/ui.py:976
 #, python-format
@@ -276,11 +292,12 @@ msgstr ""
 
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Klik het venster aan waar u een rapport voor wilt indienen"
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"In modus voor het updaten van bugs starten. Mogelijk met optioneel --package."
 
 #: ../apport/ui.py:1014
 msgid ""
@@ -288,7 +305,7 @@ msgid ""
 "argument.)"
 msgstr ""
 "Een foutrapport over een symptoom indienen. (Impliciet als symptoomnaam het "
-"enige argument zijn.)"
+"enige argument is.)"
 
 #: ../apport/ui.py:1023
 msgid ""
@@ -304,6 +321,8 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Indien u een programma uitvoert in de --file-bug modus, zal het bugrapport "
+"meer informatie bevatten."
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
@@ -315,8 +334,9 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"De vastloper van een gegeven .apport- of .crash-bestand rapporten in plaats "
-"van de wachtende rapporten in %s. (Impliciet als file het enige argument is.)"
+"De vastloper van een gegeven .apport- of .crash-bestand rapporteren in "
+"plaats van de wachtende rapporten in %s. (Impliciet als file het enige "
+"argument is.)"
 
 #: ../apport/ui.py:1060
 msgid ""
@@ -324,6 +344,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Sla, terwijl u in file-bug modus werkt, de verzamelde informatie op in een "
+"bestand in plaats van het aan te melden. U kunt dit bestand dan op een later "
+"tijdstip vanaf een andere computer aanmelden."
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
@@ -501,7 +524,7 @@ msgstr "Maak uw keuze (%s):"
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -603,7 +626,7 @@ msgstr "Keuzes:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr "Pad naar het bestand (Enter om te stoppen):"
+msgstr "Pad naar het bestand (Enter om te annuleren):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
@@ -652,7 +675,7 @@ msgstr ""
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
-"Gewijzigde rapport naar opgegeven bestand schrijven in plaats van het "
+"Gewijzigd rapport naar opgegeven bestand schrijven in plaats van het "
 "originele bestand bij te werken"
 
 #: ../bin/apport-retrace.py:72
@@ -685,6 +708,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Maak een tijdelijke sandbox en download/installeer daarin de benodigde "
+"pakketten en debugsymbolen; zonder deze optie wordt er aangenomen dat de "
+"nodige pakketten en debugsymbolen reeds op het systeem geïnstalleerd zijn. "
+"Het argument van de optie verwijst naar de configuratiemap van het "
+"pakketsysteem; wanneer u \"system\" opgeeft, zullen de configuratiebestanden "
+"van het systeem gebruikt worden. Er kunnen dan alleen crashes nagelopen "
+"worden op de huidige uitgave."
 
 #: ../bin/apport-retrace.py:119
 msgid ""
@@ -699,6 +729,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Voortgang van download/installatie rapporteren wanneer er pakketten in een "
+"sandbox worden geïnstalleerd."
 
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -713,7 +745,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Cache-map voor pakketten die gedownload worden in de sandbox"
 
 #: ../bin/apport-retrace.py:156
 msgid ""
@@ -728,6 +760,7 @@ msgstr ""
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Extra pakket in de sandbox installeren (kan meerdere keren opgegeven worden)"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -736,7 +769,7 @@ msgid ""
 "neither -g, -o, nor -s are specified)"
 msgstr ""
 "Pad naar het bestand met de aanmeldinformatie voor de crash-database. Dit "
-"wordt gebruikt bij het opgegeven van een crash-ID om hergetraceerde "
+"wordt gebruikt bij het opgeven van een crash-ID om gehertraceerde "
 "stacktraces te uploaden (alleen als -g, -o en -s niet zijn opgegeven)"
 
 #: ../bin/apport-retrace.py:184
@@ -744,7 +777,7 @@ msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
-"Hergetraceerde stacktraces tonen en voor bevestiging vragen alvorens te "
+"Gehertraceerde stacktraces tonen en om bevestiging vragen alvorens te "
 "verzenden naar de crash-database."
 
 #: ../bin/apport-retrace.py:192
@@ -944,7 +977,7 @@ msgstr "Details verbergen"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -991,8 +1024,8 @@ msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"Er wordt informatie verzameld die ontwikkelaars kan helpen om het "
-"gerapporteerde probleem te verhelpen."
+"Er wordt informatie verzameld die ontwikkelaars kan helpen om het gemelde "
+"probleem te verhelpen."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
@@ -1020,22 +1053,24 @@ msgstr "Opnieuw starten"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "Gebruikersnaam:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "Wachtwoord:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Bezig met verzamelen van probleeminformatie"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"De verzamelde informatie kan naar de ontwikkelaars worden gestuurd om de "
+"toepassing te verbeteren. Dit kan enkele minuten duren."
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Probleeminformatie wordt geüpload"

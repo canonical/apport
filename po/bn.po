@@ -2,21 +2,22 @@
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the apport package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
+# Zenat Rahnuma <zenat@ankur.org.bd>, 2011.
+# Ayesha Akhtar <ayesha@ankur.org.bd>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Khandakar Mujahidul Islam <suzan229@gmail.com>\n"
-"Language-Team: Bengali <bn@li.org>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2022-07-03 18:34+0000\n"
+"Last-Translator: Tushar <Unknown>\n"
+"Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
 "Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -56,6 +57,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"আপনার কিছু পুরনো প্যাকেজ ইনস্টল করা রয়েছে, দয়া করে সেগুলি কে আপগ্রেড করুন এবং চেষ্টা "
+"করে দেখুন যে কোনো অসুবিধা হচ্ছে কিনা:   \n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:359
 msgid "unknown program"
@@ -76,18 +81,18 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারদেরকে রিপোর্ট করার জন্য আপনার "
+"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারকে প্রতিবেদন করার জন্য আপনার "
 "কম্পিউটারে পর্যাপ্ত পরিমাণ খালি মেমোরি নেই।"
 
 #: ../apport/ui.py:430 ../apport/ui.py:448 ../apport/ui.py:621
 #: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
 #: ../apport/ui.py:1860 ../apport/ui.py:1865
 msgid "Invalid problem report"
-msgstr "অবৈধ সমস্যা রিপোর্ট"
+msgstr "অবৈধ সমস্যা প্রতিবেদন"
 
 #: ../apport/ui.py:431
 msgid "You are not allowed to access this problem report."
-msgstr "এই সমস্যা রিপোর্টটিতে আপনার প্রবেশাধিকার নেই।"
+msgstr "এই সমস্যার প্রতিবেদনটিতে আপনার প্রবেশাধিকার নেই।"
 
 #: ../apport/ui.py:439
 msgid "Error"
@@ -95,7 +100,7 @@ msgstr "ত্রুটি"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "এই প্রতিবেদন প্রক্রিয়া করতে যথেষ্ট ডিস্কের জায়গা বিদ্যমান নেই।"
 
 #: ../apport/ui.py:479
 msgid "No PID specified"
@@ -107,7 +112,7 @@ msgstr ""
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "অকার্যকর PID"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
@@ -129,6 +134,8 @@ msgstr "কোন প্যাকেজ নির্দিষ্ট করা �
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"আপনার প্যাকেজ অথবা PID সুনির্দিষ্টভাবে উল্লেখ করা প্রয়োজন। দেখুন --আরও তথ্যের জন্য "
+"সহায়তা।"
 
 #: ../apport/ui.py:584
 msgid "Permission denied"
@@ -139,15 +146,17 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"নির্ধারিত প্রক্রিয়াটি আপনার অন্তর্ভুক্ত নয়। অনুগ্রহ করে প্রক্রিয়ার মালিক অথবা মূল হিসেবে "
+"এই প্রোগ্রামটি সচল রাখুন।"
 
 #: ../apport/ui.py:599
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "নির্ধারিত প্রক্রিয়াধীন ID প্রোগ্রামের অন্তর্ভুক্ত নয়।"
 
 #: ../apport/ui.py:623
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "উপসর্গ স্ক্রিপ্ট %s প্রভাবিত প্যাকেজ নির্ধারণ করেনি"
 
 #: ../apport/ui.py:631
 #, python-format
@@ -157,11 +166,11 @@ msgstr "%s প্যাকেজের অস্তিত্ব নেই"
 #: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
 #: ../apport/ui.py:915
 msgid "Cannot create report"
-msgstr ""
+msgstr "প্রতিবেদন তৈরি করা যাবে না"
 
 #: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
 msgid "Updating problem report"
-msgstr ""
+msgstr "সমস্যার প্রতিবেদন হালনাগাদ করা হচ্ছে"
 
 #: ../apport/ui.py:677
 msgid ""
@@ -170,6 +179,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"আপনি এই সমস্যার প্রতিবেদনের প্রতিবেদক বা গ্রাহক নন, অথবা প্রতিবেদনটি অনুরূপ অথবা "
+"ইতোমধ্যে বন্ধ।\n"
+"\n"
+"অনুগ্রহ করে \"অ্যাপোর্ট-বাগ\" ব্যবহার করে নতুন প্রতিবেদন তৈরি করুন।"
 
 #: ../apport/ui.py:689
 msgid ""
@@ -182,14 +195,21 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"আপনি এই সমস্যার প্রতিবেদনের প্রতিবেদক নন। নতুন বাগে আপনার মন্তব্য এবং সংযুক্তি "
+"সরানোর বদলে অন্যটির অনুরূপ হিসেবে বাগ চিহ্নিত করা অনেক সহজ।\n"
+"\n"
+"পরবর্তীতে, আমরা সুপারিশ করছি যে, \"অ্যাপোর্ট-বাগ\" ব্যবহার করে নতুন বাগ ফাইল "
+"প্রতিবেদন দিন এবং এই বাগের মধ্যে একটি ফাইল সম্পর্কে মন্তব্য করুন।\n"
+"\n"
+"আপনি কি সত্যিই অগ্রসর হতে চান?"
 
 #: ../apport/ui.py:735 ../apport/ui.py:753
 msgid "No additional information collected."
-msgstr ""
+msgstr "কোনো অতিরিক্ত তথ্য সংগ্রহ হয়নি।"
 
 #: ../apport/ui.py:816
 msgid "What kind of problem do you want to report?"
-msgstr "কি ধরণের সমস্যা আপনি রিপোর্ট করতে চান?"
+msgstr "কি ধরণের সমস্যা আপনি প্রতিবেদন করতে চান?"
 
 #: ../apport/ui.py:837
 msgid "Unknown symptom"
@@ -216,10 +236,12 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"এই বার্তা বন্ধের পরে অনুগ্রহ করে এটি সংক্রান্ত সমস্যা প্রতিবেদন করতে অ্যাপ্লিকেশন "
+"উইন্ডোতে ক্লিক করুন।"
 
 #: ../apport/ui.py:907 ../apport/ui.py:916
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "উইন্ডোর প্রক্রিয়া ID নির্ধারণ করতে xprop ব্যর্থ"
 
 #: ../apport/ui.py:931
 #, python-format
@@ -228,11 +250,13 @@ msgstr ""
 
 #: ../apport/ui.py:932
 msgid "Specify package name."
-msgstr ""
+msgstr "প্যাকেজের নাম সুনির্দিষ্টভাবে উল্লেখ করুন।"
 
 #: ../apport/ui.py:938 ../apport/ui.py:1070
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"প্রতিবেদনে একটি অতিরিক্ত ট্যাগ সংযুক্ত করুন। একাধিক সময় সুনির্দিষ্টভাবে উল্লেখিত হতে "
+"পারে।"
 
 #: ../apport/ui.py:976
 #, python-format
@@ -246,26 +270,33 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"বাগ পূরণ মোডে আরম্ভ করুন। প্রয়োজন --প্যাকেজ এবং ঐচ্ছিক --pid, অথবা শুধুমাত্র --pid। "
+"যদি একটিও দেয়া না থাকে, পরিচিত উপসর্গের তালিকা প্রদর্শন করুন। (যদি একক যুক্তি দেয়া "
+"হয় সূচিত করা হবে।)"
 
 #: ../apport/ui.py:996
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "সমস্যার প্রতিবেদন পূরণের জন্য একটি লক্ষ্য হিসেবে উইন্ডোতে ক্লিক করুন।"
 
 #: ../apport/ui.py:1005
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "বাগ হালনাগাদ মোডে আরম্ভ করুন। ঐচ্ছিক --প্যাকেজ নিতে পারেন।"
 
 #: ../apport/ui.py:1014
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"উপসর্গ সম্পর্কিত একটি বাগ প্রতিবেদন ফাইল করুন। (যদি উপসর্গ নাম শুধুমাত্র যুক্তি হিসাবে "
+"দেওয়া হয় তাহলে সূচিত করা হবে।)"
 
 #: ../apport/ui.py:1023
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"সুনির্দিষ্টভাবে উল্লেখ করুন প্যাকেজের নাম --ফাইল-বাগ মোডে। এটি ঐচ্ছিক যদি --pid "
+"সুনির্দিষ্ট হয়। (যদি উপসর্গ নাম শুধুমাত্র যুক্তি হিসাবে দেওয়া হয় তাহলে সূচিত করা হবে।)"
 
 #: ../apport/ui.py:1034
 msgid ""
@@ -273,6 +304,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"সুনির্দিষ্টভাবে উল্লেখ করুন সচল প্রোগ্রাম --ফাইল-বাগ মোডে। যদি এটি সুনির্দিষ্ট হয়, বাগ "
+"প্রতিবেদন আরও তথ্য ধারণ করবে। (যদি pid শুধুমাত্র যুক্তি হিসাবে দেওয়া হয় তাহলে সূচিত "
+"করা হবে।)"
 
 #: ../apport/ui.py:1042
 msgid "The provided pid is a hanging application."
@@ -284,6 +318,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"%s তে অমীমাংসিত একটির পরিবর্তে given .apport অথবা .crash ফাইল থেকে ক্র্যাশ "
+"প্রতিবেদন দিন। (যদি ফাইল যুক্তি হিসেবে দেয়া হয় তাহলে সূচিত করা হবে।)"
 
 #: ../apport/ui.py:1060
 msgid ""
@@ -291,10 +327,12 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"বাগ পূরণ মোডে, এটি প্রতিবেদন দেওয়ার পরিবর্তে সংগৃহীত তথ্য ফাইলে সংরক্ষণ করুন। এই "
+"ফাইলটি তখন ভিন্ন মেশিন থেকে পরবর্তীতে প্রতিবেদন করা হতে পারে।"
 
 #: ../apport/ui.py:1078
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "অ্যাপোর্ট সংস্করণ সংখ্যা মুদ্রণ করুন।"
 
 #: ../apport/ui.py:1240
 msgid ""
@@ -328,6 +366,8 @@ msgstr ""
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
+"এমন একটি প্রোগ্রাম এই সমস্যার প্রতিবেদনে প্রয়োগ করা হয় যা কিনা আরও বেশি ইনস্টল করা "
+"যায় না।"
 
 #: ../apport/ui.py:1433
 #, python-format
@@ -338,7 +378,7 @@ msgstr "প্রোগ্রাম %s দ্বারা সমস্যা ঘ
 
 #: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
 msgid "This problem report is damaged and cannot be processed."
-msgstr ""
+msgstr "এই সমস্যা প্রতিবেদন ক্ষতিগ্রস্ত এবং প্রক্রিয়াধীন করা যাবে না।"
 
 #: ../apport/ui.py:1503
 msgid "This report is about a package that is not installed."
@@ -378,7 +418,7 @@ msgstr ""
 
 #: ../apport/ui.py:1679
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "প্যাকেজ অথবা উৎস প্যাকেজের নাম নির্ধারণ করা যায় নি।"
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
@@ -387,7 +427,7 @@ msgstr "ওয়েব ব্রাউজার চালু করতে অস�
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "%s খুলতে ওয়েব চালু করতে অসমর্থ"
+msgstr "%s খুলতে ওয়েব ব্রাউজার আরম্ভ করতে অসমর্থ।"
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
@@ -402,11 +442,11 @@ msgstr ""
 
 #: ../apport/ui.py:1851
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "মেমরি নিঃশেষিত"
 
 #: ../apport/ui.py:1853
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "এই বিধস্ত রিপোর্ট প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
+msgstr "এই বিধস্ত প্রতিবেদন প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
 
 #: ../apport/ui.py:1904
 #, python-format
@@ -415,7 +455,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"সমস্যাটি রিপোর্ট করা যাবে না:\n"
+"সমস্যাটি প্রতিবেদন করা যাবে না:\n"
 "\n"
 "%s"
 
@@ -429,6 +469,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"এই সমস্যাটি ইতিমধ্যে বাগ প্রতিবেদন প্রতিবেদন করেছে যা ওয়েব ব্রাউজারে প্রদর্শিত "
+"হয়েছে। ডেভেলপারের জন্য সহায়ক হবে এমন আরো তথ্য অনুগ্রহ করে নির্বাচন করুন।"
 
 #: ../apport/ui.py:1974
 msgid "This problem was already reported to developers. Thank you!"
@@ -445,32 +487,34 @@ msgstr "আপনি কি করতে পছন্দ করেন? আপন
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "অনুগ্রহ করে নির্বাচন করুন (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i বাইট)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
-msgstr ""
+msgstr "(বাইনারি ডাটা)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:199
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "ডেভেলপারকে সমস্যার প্রতিবেদন পাঠানো হবে কি?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"সমস্যার প্রতিবেদন পাঠানোর পরে, অনুগ্রহ করে \n"
+"স্বয়ংক্রিয়ভাবে উন্মুক্ত ওয়েব ব্রাউজারে ফর্মটি পূরণ করুন।"
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "প্রতিবেদন পাঠানো হয়েছে (%s) (&S)"
 
 #: ../bin/apport-cli.py:223
 msgid "&Examine locally"
@@ -478,15 +522,15 @@ msgstr "স্থানীয়ভাবে পরীক্ষা করুন 
 
 #: ../bin/apport-cli.py:227
 msgid "&View report"
-msgstr ""
+msgstr "প্রদর্শিত রিপোর্ট (&V)"
 
 #: ../bin/apport-cli.py:230
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
+msgstr "রিপোর্ট ফাইল পরে পাঠানোর জন্য রাখুন অথবা অন্য কোথাও অনুলিপি করুন (&K)"
 
 #: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "এই প্রোগ্রাম সংস্করণের ভবিষ্যৎ ক্র্যাশ বাতিল এবং উপেক্ষা করুন ( &I)"
 
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
@@ -495,118 +539,128 @@ msgstr "বাতিল (&C)"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
-msgstr ""
+msgstr "রিপোর্ট ফাইলে সমস্যা:"
 
 #: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
 msgid "&Confirm"
-msgstr ""
+msgstr "নিশ্চিত (&C)"
 
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "ত্রুটি: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
-msgstr ""
+msgstr "সমস্যার তথ্য সংগ্রহ করা হচ্ছে"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"সংগৃহীত তথ্য ডেভেলপারকে পাঠানো হতে পারে উন্নত করতে\n"
+"অ্যাপ্লিকেশন। এটি কয়েক মিনিট সময় নিতে পারে।"
 
 #: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
 msgid "Uploading problem information"
-msgstr ""
+msgstr "সমস্যার তথ্য হালনাগাদ করা হচ্ছে"
 
 #: ../bin/apport-cli.py:309
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"সংগৃহীত তথ্য বাগ ট্র্যাকিং সিস্টেমে পাঠানো হচ্ছে।\n"
+"এটি কয়েক মিনিট সময় নিতে পারে।"
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "সম্পন্ন (&D)"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
-msgstr ""
+msgstr "কোনটি না"
 
 #: ../bin/apport-cli.py:373
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "নির্বাচিত: %s। একাধিক পছন্দ:"
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "পছন্দ:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "ফাইলের পাথ (বাতিল করতে এন্টার দিন):"
 
 #: ../bin/apport-cli.py:410
 msgid "File does not exist."
-msgstr ""
+msgstr "ফাইল বিদ্যমান নয়।"
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "এটি একটি ডিরেক্টরি।"
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "চালিয়ে যেতে, আপনি অবশ্যই উল্লেখিত URL পরিদর্শন করুন:"
 
 #: ../bin/apport-cli.py:421
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"আপনি এখন ব্রাউজার চালু করতে পারেন, অথবা অন্য কম্পিউটারের ব্রাউজারে এই URL অনুলিপি "
+"করতে পারেন।"
 
 #: ../bin/apport-cli.py:427
 msgid "Launch a browser now"
-msgstr ""
+msgstr "এখন ব্রাউজার চালু করুন"
 
 #: ../bin/apport-cli.py:443
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
+msgstr "কোনো অমীমাংসিত ক্র্যাশ প্রতিবেদন নেই। চেষ্টা করুন --আরও তথ্যের জন্য সহায়তা।"
 
 #: ../bin/apport-retrace.py:44
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "প্রতিবেদনে নতুন চিহ্ন রাখবেন না, কিন্তু stdout এ লিখুন।"
 
 #: ../bin/apport-retrace.py:53
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"প্রতিবেদনের কেন্দ্র ডাম্পের সাথে মিথষ্ক্রিয়ায় gdb সেশন আরম্ভ করুন (-o উপেক্ষা করা "
+"হয়েছে; পুনরায় প্রতিবেদন লিখেনি)"
 
 #: ../bin/apport-retrace.py:62
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
+"পরিবর্তন করা হচ্ছে এমন প্রকৃত প্রতিবেদনের পরিবর্তে প্রদত্ত ফাইলের পরিবর্তিত প্রতিবেদন "
+"লিখুন"
 
 #: ../bin/apport-retrace.py:72
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "স্ট্যাক চিহ্ন পুনরূদ্ধারের পরে প্রতিবেদন থেকে কোর ডাম্প অপসারণ করুন"
 
 #: ../bin/apport-retrace.py:80
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "CoreFile প্রতিবেদন অগ্রাহ্য করুন"
 
 #: ../bin/apport-retrace.py:86
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "ExecutablePath প্রতিবেদন অগ্রাহ্য করুন"
 
 #: ../bin/apport-retrace.py:92
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "ProcMaps প্রতিবেদন অগ্রাহ্য করুন"
 
 #: ../bin/apport-retrace.py:98
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "প্রতিবেদনের প্যাকেজ তথ্য পুনর্গঠন"
 
 #: ../bin/apport-retrace.py:105
 msgid ""
@@ -617,6 +671,12 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"একটি অস্থায়ী স্যান্ডবক্স নির্মাণ করুন এবং প্রয়োজনীয় প্যাকেজ ডাউনলোড/ইনস্টল করুন এবং "
+"ডিবাগ চিহ্ন দিন; এই অপশন ছাড়া এটি অনুমান করে যে প্রয়োজনীয় প্যাকেজ এবং ডিবাগ চিহ্ন "
+"ইতোমধ্যে এই সিস্টেমে ইন্সটল করা হয়েছে। প্যাকেজিং সিস্টেমের যুক্তি পয়েন্ট কনফিগারেশন "
+"ভিত্তিক ডিরেক্টরি; যদি আপনি সুনির্দিষ্টভাবে উল্লেখ করেন \"সিস্টেম\", এটি সিস্টেম "
+"কনফিগারেশন ফাইলে ব্যবহৃত হবে, কিন্তু তারপর শুধুমাত্র বর্তমানে চলমান রিলিজে ঘটেছে এমন "
+"ক্র্যাশ অনুসন্ধান করা হবে।"
 
 #: ../bin/apport-retrace.py:119
 msgid ""
@@ -627,7 +687,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:129
 msgid "Report download/install progress when installing packages into sandbox"
-msgstr ""
+msgstr "স্যান্ডবক্সে প্যাকেজ ইনস্টল করার সময় ডাউনলোড/ইনস্টল এর অগ্রগতির প্রতিবেদন"
 
 #: ../bin/apport-retrace.py:136
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -640,7 +700,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:150
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "স্যান্ডবক্সে প্যাকেজ ডাউনলোডের জন্য ক্যাশ ডিরেক্টরি"
 
 #: ../bin/apport-retrace.py:156
 msgid ""
@@ -651,7 +711,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:167 ../bin/apport-valgrind.py:97
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "স্যান্ডবক্সে অতিরিক্ত প্যাকেজ ইনস্টল করুন (একাধিক সময় উল্লেখিত হতে পারে)"
 
 #: ../bin/apport-retrace.py:174
 msgid ""
@@ -659,16 +719,21 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"ক্র্যাশ ডাটাবেস প্রমাণীকরণ তথ্যের সাথে ফাইলের পাথ দিন। পুনরায় চিহ্নিত স্ট্যাক চিহ্ন "
+"আপলোড করতে ক্র্যাশ ID সুনির্দিষ্টভাবে উল্লেখ করার সময় এটি ব্যবহৃত হয় (শুধুমাত্র যদি "
+"কোনটি নয় -g, -o, না -s সুনির্দিষ্টভাবে উল্লেখ করা থাকে)"
 
 #: ../bin/apport-retrace.py:184
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"ক্র্যাশ ডাটাবেসে পাঠানোর আগে পুনরায় চিহ্নিত স্ট্যাক চিহ্ন প্রদর্শন এবং নিশ্চিতকরণের "
+"জন্য জিজ্ঞাসা করা হবে।"
 
 #: ../bin/apport-retrace.py:192
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
+msgstr "অনুরূপ sqlite ডাটাবেসের পাথ (পূর্বনির্ধারিত: অনুরূপ নয় এমন পরীক্ষা করা হচ্ছে)"
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
@@ -682,7 +747,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:243
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "এই সংযুক্তি পাঠানো ঠিক? [y/n]"
 
 #: ../bin/apport-unpack.py:29
 #, python-format
@@ -699,7 +764,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "গন্তব্য ডিরেক্টরি বিদ্যমান এবং ফাঁকা নয়।"
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
@@ -759,20 +824,22 @@ msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"সারসংকলন প্রক্রিয়া শেষে এসে বন্ধ হয়ে গেছে এবং স্বাভাবিকভাবে সম্পন্ন করতে হলে এটি "
+"দৃশ্যমান হতে হবে।"
 
 #: ../data/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
+msgstr "আপনার পদ্ধতি এখন অস্থায়ী হতে পারে এবং পুনরায় শুরু করতে হতে পারে।"
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "সমস্যার প্রতিবেদন..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "ডেভেলপারকে বিকৃত এর প্রতিবেদন দিন"
 
 #: ../gtk/apport-gtk.py:185
 #, python-format
@@ -846,7 +913,7 @@ msgstr "বিস্তারিত আড়াল করুন"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
 msgid "Apport"
-msgstr ""
+msgstr "অ্যাপোর্ট"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -886,27 +953,29 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>সমস্যার তথ্য সংগ্রহ করা হচ্ছে</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"তথ্য সংগৃহীত হচ্ছে যা ডেভেলপারকে সমস্যার প্রতিবেদন নির্ধারণে সাহায্য করতে পারে।"
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>সমস্যার তথ্য হালনাগাদ করা হচ্ছে</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"সংগৃহীত তথ্য বাগ ট্র্যাকিং সিস্টেমে পাঠানো হচ্ছে। এটি কয়েক মিনিট সময় নিতে পারে।"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "অ্যাপোর্ট ক্র্যাশ ফাইল"
 
 #: ../kde/apport-kde.py:261
 msgid "Leave Closed"
@@ -918,22 +987,24 @@ msgstr "পুনরায় আরম্ভ করুন"
 
 #: ../kde/apport-kde.py:355
 msgid "Username:"
-msgstr ""
+msgstr "ব্যবহারকারীর নাম:"
 
 #: ../kde/apport-kde.py:356
 msgid "Password:"
-msgstr ""
+msgstr "পাসওয়ার্ড:"
 
 #: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "সমস্যার তথ্য সংগ্রহ করা হচ্ছে"
 
 #: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"অ্যাপ্লিকেশন উন্নত করতে সংগ্রহকৃত তথ্য ডেভেলপারকে পাঠানো হতে পারে। এটি কয়েক মিনিট "
+"সময় নিতে পারে।"
 
 #: ../kde/apport-kde.py:510
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "সমস্যার তথ্য হালনাগাদ করা হচ্ছে"

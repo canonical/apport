@@ -1,22 +1,22 @@
 # Aragonese translation for apport
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:21+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"PO-Revision-Date: 2011-05-03 12:15+0000\n"
+"Last-Translator: Daniel Martinez <entaltoaragon@gmail.com>\n"
 "Language-Team: Aragonese <an@li.org>\n"
 "Language: an\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-08-19 12:20+0000\n"
-"X-Generator: Launchpad (build 87919ae1fbf1142b0e02b80650e6ccf3e775beb3)\n"
+"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
+"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -59,7 +59,7 @@ msgstr ""
 
 #: ../apport/ui.py:359
 msgid "unknown program"
-msgstr ""
+msgstr "programa desconoxiu"
 
 #: ../apport/ui.py:362
 #, python-format
@@ -69,7 +69,7 @@ msgstr ""
 #: ../apport/ui.py:365 ../apport/ui.py:1899
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Problema en %s"
 
 #: ../apport/ui.py:370
 msgid ""
@@ -89,7 +89,7 @@ msgstr ""
 
 #: ../apport/ui.py:439
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: ../apport/ui.py:441
 msgid "There is not enough disk space available to process this report."
@@ -105,7 +105,7 @@ msgstr ""
 
 #: ../apport/ui.py:492 ../apport/ui.py:597
 msgid "Invalid PID"
-msgstr ""
+msgstr "PID incorrecto"
 
 #: ../apport/ui.py:493
 msgid "The specified process ID does not exist."
@@ -380,16 +380,16 @@ msgstr ""
 
 #: ../apport/ui.py:1704
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "No ye posible encetar o navegador web"
 
 #: ../apport/ui.py:1705
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "No ye posible encetar o navegador web ta ubrir %s."
 
 #: ../apport/ui.py:1815
 msgid "Network problem"
-msgstr ""
+msgstr "Problemas con o rete"
 
 #: ../apport/ui.py:1819
 msgid ""
@@ -429,7 +429,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:84
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Prete una tecla ta continar..."
 
 #: ../bin/apport-cli.py:91
 msgid "What would you like to do? Your options are:"
@@ -438,12 +438,12 @@ msgstr ""
 #: ../bin/apport-cli.py:104
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Por favor trie (%s):"
 
 #: ../bin/apport-cli.py:172
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
 msgid "(binary data)"
@@ -484,7 +484,7 @@ msgstr ""
 #: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
 #: ../bin/apport-cli.py:389
 msgid "&Cancel"
-msgstr ""
+msgstr "&Cancelar"
 
 #: ../bin/apport-cli.py:273
 msgid "Problem report file:"
@@ -497,7 +497,7 @@ msgstr ""
 #: ../bin/apport-cli.py:283
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Error: %s"
 
 #: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
@@ -521,7 +521,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:365
 msgid "&Done"
-msgstr ""
+msgstr "&Feito"
 
 #: ../bin/apport-cli.py:371
 msgid "none"
@@ -534,7 +534,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:390
 msgid "Choices:"
-msgstr ""
+msgstr "Opcions:"
 
 #: ../bin/apport-cli.py:404
 msgid "Path to file (Enter to cancel):"
@@ -546,7 +546,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:412
 msgid "This is a directory."
-msgstr ""
+msgstr "Isto ye un directorio."
 
 #: ../bin/apport-cli.py:418
 msgid "To continue, you must visit the following URL:"
