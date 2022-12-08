@@ -52,6 +52,21 @@ class TestApport(unittest.TestCase):
             ["/usr/share/apport/kernel_crashdump"], check=False
         )
 
+    @unittest.mock.patch("builtins.__import__")
+    def test_receive_arguments_via_socket_import_error(self, import_mock):
+        """Test receive_arguments_via_socket() fail to import systemd."""
+        import_mock.side_effect = ModuleNotFoundError(
+            "No module named 'systemd'"
+        )
+        with self.assertRaisesRegex(SystemExit, "^0$"):
+            apport_binary.receive_arguments_via_socket()
+
+    def test_receive_arguments_via_socket_invalid_socket(self):
+        """Test receive_arguments_via_socket with invalid socket."""
+        self.assertNotIn("LISTEN_FDS", os.environ)
+        with self.assertRaisesRegex(SystemExit, "^1$"):
+            apport_binary.receive_arguments_via_socket()
+
     @unittest.mock.patch.object(
         apport_binary, "init_error_log", unittest.mock.MagicMock()
     )
