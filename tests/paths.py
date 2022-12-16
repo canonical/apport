@@ -7,19 +7,21 @@ CRASHDB_CONF = os.path.join(SRCDIR, "etc", "apport", "crashdb.conf")
 DATADIR = os.path.join(SRCDIR, "data")
 
 
-def get_data_directory() -> str:
+def get_data_directory(local_path: typing.Optional[str] = None) -> str:
     """Return absolute path for apport's data directory.
 
     If the tests are executed in the local source code directory,
-    return the path to the local source directory. Otherwise
-    return the path to the system installed version. The data
-    directory can be specified by setting the environment variable
-    APPORT_DATA_DIR.
+    return the absolute path to the local data directory or to the
+    given local path (if specified). Otherwise return the path to the
+    system installed data directory. The returned data directory can be
+    overridden by setting the environment variable APPORT_DATA_DIR.
     """
     if "APPORT_DATA_DIR" in os.environ:
         return os.environ["APPORT_DATA_DIR"]
     if is_local_source_directory():
-        return DATADIR
+        if local_path is None:
+            return DATADIR
+        return os.path.join(SRCDIR, local_path)
     return "/usr/share/apport"
 
 

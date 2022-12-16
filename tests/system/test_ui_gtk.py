@@ -26,23 +26,15 @@ import apport.crashdb_impl.memory
 import apport.report
 from apport import unicode_gettext as _
 from tests.helper import import_module_from_file
-from tests.paths import is_local_source_directory, local_test_environment
+from tests.paths import get_data_directory, local_test_environment
 
 GLib.log_set_always_fatal(
     GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL
 )
 
 
-if is_local_source_directory():
-    apport_gtk_path = "gtk/apport-gtk"
-    kernel_oops_path = "data/kernel_oops"
-else:
-    apport_gtk_path = os.path.join(
-        os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "apport-gtk"
-    )
-    kernel_oops_path = os.path.join(
-        os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "kernel_oops"
-    )
+apport_gtk_path = os.path.join(get_data_directory("gtk"), "apport-gtk")
+kernel_oops_path = os.path.join(get_data_directory(), "kernel_oops")
 apport_gtk = import_module_from_file(apport_gtk_path)
 GTKUserInterface = apport_gtk.GTKUserInterface
 

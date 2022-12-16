@@ -29,14 +29,9 @@ import apport.crashdb_impl.memory
 import apport.report
 from apport import unicode_gettext as _
 from tests.helper import import_module_from_file, wrap_object
-from tests.paths import is_local_source_directory, local_test_environment
+from tests.paths import get_data_directory, local_test_environment
 
-if is_local_source_directory():
-    apport_kde_path = "kde/apport-kde"
-else:
-    apport_kde_path = os.path.join(
-        os.environ.get("APPORT_DATA_DIR", "/usr/share/apport"), "apport-kde"
-    )
+apport_kde_path = os.path.join(get_data_directory("kde"), "apport-kde")
 if not PYQT5_IMPORT_ERROR:
     apport_kde = import_module_from_file(apport_kde_path)
     MainUserInterface = apport_kde.MainUserInterface
