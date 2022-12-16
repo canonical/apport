@@ -16,12 +16,7 @@ import unittest
 import apport.fileutils
 import apport.report
 from tests.helper import skip_if_command_is_missing
-from tests.paths import (
-    SRCDIR,
-    get_data_directory,
-    is_local_source_directory,
-    local_test_environment,
-)
+from tests.paths import get_data_directory, local_test_environment
 
 
 @skip_if_command_is_missing("java")
@@ -35,10 +30,7 @@ class T(unittest.TestCase):
         self.env["APPORT_JAVA_EXCEPTION_HANDLER"] = os.path.join(
             datadir, "java_uncaught_exception"
         )
-        if is_local_source_directory():
-            java_dir = os.path.join(SRCDIR, "java")
-        else:
-            java_dir = datadir
+        java_dir = get_data_directory("java")
         self.apport_jar_path = os.path.join(java_dir, "apport.jar")
         self.crash_jar_path = os.path.join(java_dir, "testsuite", "crash.jar")
         if not os.path.exists(self.apport_jar_path):
