@@ -36,13 +36,11 @@ class T(unittest.TestCase):
             datadir, "java_uncaught_exception"
         )
         if is_local_source_directory():
-            self.crash_jar_path = os.path.join(SRCDIR, "java", "crash.jar")
-            self.apport_jar_path = os.path.join(SRCDIR, "java", "apport.jar")
+            java_dir = os.path.join(SRCDIR, "java")
         else:
-            self.crash_jar_path = os.path.join(
-                datadir, "testsuite", "crash.jar"
-            )
-            self.apport_jar_path = os.path.join(datadir, "apport.jar")
+            java_dir = datadir
+        self.apport_jar_path = os.path.join(java_dir, "apport.jar")
+        self.crash_jar_path = os.path.join(java_dir, "testsuite", "crash.jar")
         if not os.path.exists(self.apport_jar_path):
             self.skipTest(f"{self.apport_jar_path} missing")
 

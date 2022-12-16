@@ -49,8 +49,10 @@ class build_java_subdir(distutils.core.Command):
             ["jar", "cvf", "apport.jar"]
             + glob.glob("com/ubuntu/apport/*.class")
         )
-        subprocess.check_call(javac + ["crash.java"])
-        subprocess.check_call(["jar", "cvf", "crash.jar", "crash.class"])
+        subprocess.check_call(javac + ["testsuite/crash.java"])
+        subprocess.check_call(
+            ["jar", "cvf", "crash.jar", "crash.class"], cwd="testsuite"
+        )
 
         os.chdir(oldwd)
 
