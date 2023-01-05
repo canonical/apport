@@ -225,6 +225,16 @@ class T(unittest.TestCase):
             ):
                 report.load(report_file)
 
+    def test_load_invalid_utf8(self):
+        """Throw exception when binary file is invalid UTF-8."""
+        report = problem_report.ProblemReport()
+        with io.BytesIO(b"\x7fELF\x02\x01\xb0j") as report_file:
+            with self.assertRaisesRegex(
+                problem_report.MalformedProblemReport,
+                r"Line '\\x7fELF\\x02\\x01\\\\xb0j' does not contain a colon",
+            ):
+                report.load(report_file)
+
     def test_load_incorrect_padding(self):
         """Throw exception when base64 encoded data has incorrect padding."""
         report = problem_report.ProblemReport()

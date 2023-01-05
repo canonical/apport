@@ -175,7 +175,8 @@ class ProblemReport(collections.UserDict):
                     (key, value) = line.split(b":", 1)
                 except ValueError:
                     raise MalformedProblemReport(
-                        f"Malformed problem report: Line {line.decode()!r}"
+                        f"Malformed problem report: Line"
+                        f" {line.decode(errors='backslashreplace')!r}"
                         f" does not contain a colon for separating"
                         f" the key from the value."
                     ) from None
