@@ -246,7 +246,8 @@ class T(unittest.TestCase):
         with io.BytesIO(content) as report_file:
             with self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
-                "^Malformed problem report: Incorrect padding.$",
+                "^Malformed problem report: Incorrect padding."
+                " Is this a proper .crash text file\\?$",
             ):
                 report.load(report_file)
 
