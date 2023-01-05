@@ -35,6 +35,13 @@ class MalformedProblemReport(ValueError):
     This exception might be raised when the keys of the report are not ASCII.
     """
 
+    def __init__(self, message: str, *args: object):
+        super().__init__(
+            f"Malformed problem report: {message}."
+            f" Is this a proper .crash text file?",
+            *args,
+        )
+
 
 class CompressedValue:
     """Represent a ProblemReport value which is gzip compressed."""
@@ -175,18 +182,14 @@ class ProblemReport(collections.UserDict):
                     (key, value) = line.split(b":", 1)
                 except ValueError:
                     raise MalformedProblemReport(
-                        f"Malformed problem report: Line"
-                        f" {line.decode(errors='backslashreplace')!r}"
+                        f"Line {line.decode(errors='backslashreplace')!r}"
                         f" does not contain a colon for separating"
-                        f" the key from the value."
+                        f" the key from the value"
                     ) from None
                 try:
                     key = key.decode("ASCII")
                 except UnicodeDecodeError as error:
-                    raise MalformedProblemReport(
-                        f"Malformed problem report: {error}. "
-                        f"Is this a proper .crash text file?"
-                    ) from None
+                    raise MalformedProblemReport(str(error)) from None
                 value = value.strip()
                 if value == b"base64":
                     if binary == "compressed":
@@ -298,9 +301,7 @@ class ProblemReport(collections.UserDict):
         try:
             block = base64.b64decode(line)
         except binascii.Error as error:
-            raise MalformedProblemReport(
-                f"Malformed problem report: {error}."
-            ) from None
+            raise MalformedProblemReport(str(error)) from None
         if decompressor:
             value += decompressor.decompress(block)
         else:
