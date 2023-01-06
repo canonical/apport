@@ -13,6 +13,7 @@ import os
 import pathlib
 import shutil
 import tempfile
+import time
 import unittest
 
 import apport.fileutils
@@ -109,6 +110,29 @@ class TestApport(unittest.TestCase):
             "/proc/sys/kernel/core_pipe_limit", "w", encoding="utf-8"
         )
         self.assertEqual(open_mock.call_count, 3)
+
+    def test_sanity_checks_replaced_process(self):
+        """Test sanity_checks() for a replaced crash process ID."""
+        options = apport_binary.parse_arguments(["-p", str(os.getpid())])
+        now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
+        self.assertFalse(apport_binary.sanity_checks(options, now))
+
+    def test_sanity_checks_mismatching_uid(self):
+        """Test sanity_checks() for a mitmatching UID."""
+        pid = os.getpid()
+        options = apport_binary.parse_arguments(
+            [
+                "-p",
+                str(pid),
+                "-u",
+                str(os.getuid() + 1),
+                "-g",
+                str(os.getgid() + 1),
+            ]
+        )
+        # TODO: Get rid of global variables from get_pid_info
+        apport_binary.get_pid_info(pid)
+        self.assertFalse(apport_binary.sanity_checks(options, 1))
 
     def test_stop(self):
         """Test stopping Apport crash handler."""
