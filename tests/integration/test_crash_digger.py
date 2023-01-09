@@ -22,7 +22,7 @@ from tests.paths import local_test_environment
 
 class T(unittest.TestCase):
     def setUp(self):
-        """Set up dummy config dir, crashdb.conf, and apport-retrace"""
+        """Set up config dir, crashdb.conf, and apport-retrace for testing"""
         self.env = os.environ | local_test_environment()
 
         self.workdir = tempfile.mkdtemp()
@@ -37,7 +37,7 @@ class T(unittest.TestCase):
                         "memory": {
                             "impl": "memory",
                             "distro": "Testux",
-                            "dummy_data": "1",
+                            "sample_data": "1",
                             "dupdb_url": "%s",
                         },
                         "empty": {"impl": "memory", "distro": "Foonux"},

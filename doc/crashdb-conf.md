@@ -147,5 +147,5 @@ Crash database implementations
  * `memory` is a simple implementation of crash database interface which keeps
    everything in RAM. This is mainly useful for testing and debugging.
 
-   The only supported option is `dummy_data`; if set to a non-`False` value, it
+   The only supported option is `sample_data`; if set to a non-`False` value, it
    will populate the database with some example reports.

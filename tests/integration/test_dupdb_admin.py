@@ -29,7 +29,7 @@ class TestDupdbAdmin(unittest.TestCase):
         self.env = os.environ | local_test_environment()
 
         self.crashes = CrashDatabase(
-            None, {"dummy_data": "1", "dupdb_url": f"file://{self.db_file}"}
+            None, {"sample_data": "1", "dupdb_url": f"file://{self.db_file}"}
         )
         self.crashes.init_duplicate_db(self.db_file)
 

@@ -36,7 +36,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
     def __init__(self, argv: typing.Optional[list[str]] = None):
-        # use our dummy crashdb
+        # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
         self.crashdb_conf.write(
@@ -65,7 +65,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self, argv)
 
         self.crashdb = apport.crashdb_impl.memory.CrashDatabase(
-            None, {"dummy_data": 1, "dupdb_url": ""}
+            None, {"sample_data": 1, "dupdb_url": ""}
         )
 
         # state of progress dialogs

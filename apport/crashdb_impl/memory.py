@@ -33,8 +33,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.unretraced = set()
         self.dup_unchecked = set()
 
-        if "dummy_data" in options:
-            self.add_dummy_data()
+        if "sample_data" in options:
+            self.add_sample_data()
 
     def upload(self, report, progress_callback=None):
         """Store the report and return a handle number (starting from 0).
@@ -235,8 +235,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """Return the ID of the most recently filed report."""
         return len(self.reports) - 1
 
-    def add_dummy_data(self):
-        """Add some dummy crash reports.
+    def add_sample_data(self):
+        """Add some sample crash reports.
 
         This is mostly useful for test suites.
         """
