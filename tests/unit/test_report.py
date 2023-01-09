@@ -445,8 +445,9 @@ No locals.
  user_data=0x8074da8) at libhal.c:820
         udi = <value optimized out>
         object_path = 0x8076d40 "/org/freedesktop/Hal/Manager"
-        error = {name = 0x0, message = 0x0, dummy1 = 1, dummy2 = 0,\
- dummy3 = 0, dummy4 = 1, dummy5 = 0, padding1 = 0xb7e50c00}
+        error = {name = 0x0, message = 0x0, placeholder1 = 1,\
+ placeholder2 = 0, placeholder3 = 0, placeholder4 = 1, placeholder5 = 0,\
+ padding1 = 0xb7e50c00}
 #7  0xb7e071d2 in dbus_connection_dispatch (connection=0x8075288)\
  at dbus-connection.c:4267
 #8  0xb7e33dfd in ?? () from /usr/lib/libdbus-glib-1.so.2"""

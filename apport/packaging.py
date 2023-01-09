@@ -199,7 +199,7 @@ class PackageInfo:
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        # dummy default implementation, pylint: disable=no-self-use
+        # simple default implementation, pylint: disable=no-self-use
         return "/lib:/usr/lib"
 
     def set_mirror(self, url):
