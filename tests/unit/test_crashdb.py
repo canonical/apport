@@ -14,7 +14,7 @@ class T(unittest.TestCase):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")
         self.crashes = CrashDatabase(
-            None, {"dummy_data": "1", "dupdb_url": "file://" + self.dupdb_dir}
+            None, {"sample_data": "1", "dupdb_url": "file://" + self.dupdb_dir}
         )
 
         self.assertEqual(
@@ -40,8 +40,8 @@ class T(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.workdir)
 
-    def test_no_dummy_data(self):
-        """No dummy data is added by default."""
+    def test_no_sample_data(self):
+        """No sample data is added by default."""
         self.crashes = CrashDatabase(None, {})
         self.assertEqual(self.crashes.latest_id(), -1)
         self.assertRaises(IndexError, self.crashes.download, 0)
@@ -53,7 +53,7 @@ class T(unittest.TestCase):
 
     def test_dynamic_crashdb_conf(self):
         """Dynamic code in crashdb.conf."""
-        # use our dummy crashdb
+        # use our memory crashdb
         with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
             crashdb_conf.write(
                 textwrap.dedent(
