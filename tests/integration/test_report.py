@@ -493,10 +493,10 @@ class T(unittest.TestCase):
             pr = apport.report.Report()
             pr["ExecutablePath"] = "/usr/bin/python3"
             pr["ProcStatus"] = "Name:\tpython3"
-            pr["ProcCmdline"] = "python\0-m\0re\0install"
+            pr["ProcCmdline"] = "python3\0-m\0re\0install"
             pr._check_interpreted()
             self.assertEqual(pr["InterpreterPath"], "/usr/bin/python3")
-            self.assertIn("re.py", pr["ExecutablePath"])
+            self.assertRegex(pr["ExecutablePath"], r"re(\.py|/__init__.py)$")
 
             # python script through -m, with dot separator; sub-level module
             pr = apport.report.Report()

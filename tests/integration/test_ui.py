@@ -764,7 +764,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @unittest.mock.patch("apport.packaging.get_version")
+    @unittest.mock.patch("apport.packaging_impl.impl.get_version")
     def test_run_report_bug_kernel_thread(self, get_version_mock):
         """run_report_bug() for a pid of a kernel thread"""
         # The kernel package might not be installed in chroot environments.
