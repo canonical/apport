@@ -52,7 +52,7 @@ class T(unittest.TestCase):
             exc[-1].startswith("ZeroDivisionError"),
             "not a ZeroDivisionError:" + str(exc),
         )
-        self.assertTrue(exc[-2].endswith("return x / y\n"))
+        self.assertIn("\n    return x / y\n", exc[-2])
 
     def test_exc_raise(self):
         """exc_raise() raises caught thread exception."""
@@ -68,7 +68,7 @@ class T(unittest.TestCase):
             raised = True
             error = sys.exc_info()
             exc = traceback.format_exception(error[0], error[1], error[2])
-            self.assertTrue(exc[-2].endswith("return x / y\n"))
+            self.assertIn("\n    return x / y\n", exc[-2])
         self.assertTrue(raised)
 
     def test_exc_raise_complex(self):
