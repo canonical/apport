@@ -17,6 +17,7 @@ import grp
 import importlib.util
 import io
 import os
+import pathlib
 import pwd
 import re
 import shutil
@@ -25,6 +26,7 @@ import subprocess
 import sys
 import tempfile
 import traceback
+import typing
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -80,6 +82,20 @@ def _transitive_dependencies(package, depends_set):
         if d not in depends_set:
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
+
+
+def _read_list_files_in_directory(directory: str) -> typing.Iterator[str]:
+    """Read every file in the directory and return each stripped line."""
+    try:
+        for list_file in pathlib.Path(directory).iterdir():
+            try:
+                with list_file.open(encoding="utf-8") as fd:
+                    for line in fd:
+                        yield line.strip()
+            except OSError:
+                continue
+    except OSError:
+        pass
 
 
 def _read_proc_link(path, pid=None, dir_fd=None):
@@ -1243,7 +1259,7 @@ class Report(problem_report.ProblemReport):
 
         return dom
 
-    def check_ignored(self):
+    def check_ignored(self) -> bool:
         """Check if current report should not be presented.
 
         Reports can be suppressed by per-user blacklisting in
@@ -1261,37 +1277,15 @@ class Report(problem_report.ProblemReport):
         assert "ExecutablePath" in self
 
         # check blacklist
-        try:
-            for f in os.listdir(_blacklist_dir):
-                try:
-                    with open(
-                        os.path.join(_blacklist_dir, f), encoding="utf-8"
-                    ) as fd:
-                        for line in fd:
-                            if line.strip() == self["ExecutablePath"]:
-                                return True
-                except OSError:
-                    continue
-        except OSError:
-            pass
+        if self["ExecutablePath"] in _read_list_files_in_directory(
+            _blacklist_dir
+        ):
+            return True
 
         # check whitelist
-        try:
-            whitelist = set()
-            for f in os.listdir(_whitelist_dir):
-                try:
-                    with open(
-                        os.path.join(_whitelist_dir, f), encoding="utf-8"
-                    ) as fd:
-                        for line in fd:
-                            whitelist.add(line.strip())
-                except OSError:
-                    continue
-
-            if whitelist and self["ExecutablePath"] not in whitelist:
-                return True
-        except OSError:
-            pass
+        whitelist = set(_read_list_files_in_directory(_whitelist_dir))
+        if whitelist and self["ExecutablePath"] not in whitelist:
+            return True
 
         try:
             dom = self._get_ignore_dom()
