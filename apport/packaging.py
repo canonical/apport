@@ -342,7 +342,7 @@ class PackageInfo:
         )
 
     def is_native_origin_package(self, package):
-        """Check if a package is one which has been white listed.
+        """Check if a package is one which has been allow listed.
 
         Return True for a package which came from an origin which is listed in
         native-origins.d, False if it comes from a third-party source.

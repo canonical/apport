@@ -129,7 +129,7 @@ def likely_packaged(file):
     database.
     """
     # packages only ship executables in these directories
-    pkg_whitelist = [
+    pkg_allowlist = [
         "/bin/",
         "/boot",
         "/etc/",
@@ -141,13 +141,13 @@ def likely_packaged(file):
         "/var",
     ]
 
-    whitelist_match = False
-    for i in pkg_whitelist:
+    allowlist_match = False
+    for i in pkg_allowlist:
         if file.startswith(i):
-            whitelist_match = True
+            allowlist_match = True
             break
     return (
-        whitelist_match
+        allowlist_match
         and not file.startswith("/usr/local/")
         and not file.startswith("/var/lib/")
     )
