@@ -2764,7 +2764,7 @@ Bug fixes:
    python-apt versions. ([LP: #531518](https://launchpad.net/bugs/531518))
 
 Improvements:
- - unkillable_shutdown: Add list of running processes and blacklisted pids to
+ - unkillable_shutdown: Add list of running processes and omit PIDs to
    report. ([LP: #537262](https://launchpad.net/bugs/537262))
  - Sort the report by key in the details view.
    ([LP: #519416](https://launchpad.net/bugs/519416))

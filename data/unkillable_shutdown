@@ -31,19 +31,19 @@ def parse_argv():
         metavar="PID",
         action="append",
         default=[],
-        dest="blacklist",
+        dest="omit_pids",
         help="Ignore a particular process ID"
         " (can be specified multiple times)",
     )
     return parser.parse_args()
 
 
-def orphaned_processes(blacklist):
+def orphaned_processes(omit_pids):
     """Yield an iterator of running process IDs.
 
     This excludes PIDs which do not have a valid /proc/pid/exe symlink (e. g.
     kernel processes), the PID of our own process, and everything that is
-    contained in the blacklist argument.
+    contained in the omit_pids argument.
     """
     my_pid = os.getpid()
     my_sid = os.getsid(0)
@@ -52,7 +52,7 @@ def orphaned_processes(blacklist):
             pid = int(d)
         except ValueError:
             continue
-        if pid == 1 or pid == my_pid or d in blacklist:
+        if pid == 1 or pid == my_pid or d in omit_pids:
             apport.warning("ignoring: %s", d)
             continue
 
@@ -81,7 +81,7 @@ def orphaned_processes(blacklist):
         yield d
 
 
-def do_report(pid, blacklist):
+def do_report(pid, omit_pids):
     """Create a report for a particular PID."""
 
     r = apport.Report("Bug")
@@ -97,8 +97,8 @@ def do_report(pid, blacklist):
         r["Title"] = os.path.basename(r["ExecutablePath"]) + " " + r["Title"]
     r["Processes"] = apport.hookutils.command_output(["ps", "aux"])
     r["InitctlList"] = apport.hookutils.command_output(["initctl", "list"])
-    if blacklist:
-        r["OmitPids"] = " ".join(blacklist)
+    if omit_pids:
+        r["OmitPids"] = " ".join(omit_pids)
 
     try:
         with apport.fileutils.make_report_file(r) as f:
@@ -117,5 +117,5 @@ def do_report(pid, blacklist):
 
 args = parse_argv()
 
-for p in orphaned_processes(args.blacklist):
-    do_report(p, args.blacklist)
+for p in orphaned_processes(args.omit_pids):
+    do_report(p, args.omit_pids)
