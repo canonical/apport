@@ -245,7 +245,7 @@ bin/true                                                admin/superutils
                 impl.get_file_package("usr/bin/frob", True, cache_dir),
                 "frob-utils",
             )
-            cache_dir_files = os.listdir(cache_dir)
+            cache_dir_files = sorted(os.listdir(cache_dir))
             self.assertEqual(len(cache_dir_files), 3)
             self.assertEqual(
                 impl.get_file_package("/bo/gu/s", True, cache_dir), None
@@ -267,10 +267,9 @@ bin/true                                                admin/superutils
 
             # outdated cache, must refresh the cache and hit the invalid
             # mirror
-            if "updates" in cache_dir_files[0]:
-                cache_file = cache_dir_files[1]
-            else:
-                cache_file = cache_dir_files[0]
+            cache_file = [
+                name for name in cache_dir_files if "updates" not in name
+            ].pop()
             now = int(time.time())
             os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
         finally:
