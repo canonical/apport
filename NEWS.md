@@ -2074,7 +2074,7 @@ Bug fixes:
 Improvements:
  - Change permissions of .crash files from 0600 to 0640, so that /var/crash can
    be made g+s and crash handling daemons can access those.
- - Python exceptions: Blacklist DBus.Error.NoReply. It does not help to get
+ - Python exceptions: Ignore DBus.Error.NoReply. It does not help to get
    these traces from the client-side application, you need the actual exception
    in the D-Bus server backend instead.
    ([LP: #914220](https://launchpad.net/bugs/914220))
