@@ -10,6 +10,7 @@ import unittest.mock
 
 import apport.hookutils
 import apport.report
+from tests.helper import skip_if_command_is_missing
 
 
 class T(unittest.TestCase):
@@ -19,6 +20,7 @@ class T(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.workdir)
 
+    @skip_if_command_is_missing("/usr/bin/as")
     def test_module_license_evaluation(self):
         """Module licenses can be validated correctly."""
         # pylint: disable=protected-access
@@ -61,6 +63,7 @@ class T(unittest.TestCase):
         self.assertNotIn(good_ko, nonfree)
         self.assertIn(bad_ko, nonfree)
 
+    @skip_if_command_is_missing("/sbin/modinfo")
     def test_real_module_license_evaluation(self):
         """Module licenses can be validated correctly for real module."""
         # pylint: disable=protected-access

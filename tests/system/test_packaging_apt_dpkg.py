@@ -836,6 +836,7 @@ class T(unittest.TestCase):
             "unexpected version: " + res.split("/")[-1],
         )
 
+    @skip_if_command_is_missing("gpg")
     @unittest.skipUnless(has_internet(), "online test")
     def test_create_sources_for_a_named_ppa(self):
         """Add sources.list entries for a named PPA."""
@@ -891,6 +892,7 @@ class T(unittest.TestCase):
         apt_keys = gpg.stdout.decode()
         self.assertIn("Launchpad PPA for Daisy Pluckers", apt_keys)
 
+    @skip_if_command_is_missing("gpg")
     @unittest.skipUnless(has_internet(), "online test")
     def test_create_sources_for_an_unnamed_ppa(self):
         """Add sources.list entries for an unnamed PPA."""
