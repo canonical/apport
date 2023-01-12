@@ -105,6 +105,17 @@ class TestUnkillableShutdown(unittest.TestCase):
             f"Process {program} not started within {int(timeout)} seconds."
         )
 
+    @unittest.mock.patch("tests.system.test_unkillable_shutdown.pidof")
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_process_timeout(self, sleep_mock, pidof_mock):
+        """Test wait_for_gdb_child_process() helper runs into timeout."""
+        pidof_mock.return_value = []
+        with unittest.mock.patch.object(self, "fail") as fail_mock:
+            self._wait_for_process(self.TEST_EXECUTABLE, [])
+        fail_mock.assert_called_once()
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 51)
+
     def test_omit_all_processes_except_one(self):
         """unkillable_shutdown will write exactly one report."""
         existing_pids = self._get_all_pids()
