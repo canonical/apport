@@ -613,9 +613,8 @@ class T(unittest.TestCase):
         self.assertIn("UnreportableReason", pr)
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/twistd")
 
-    @classmethod
     def _generate_sigsegv_report(
-        cls,
+        self,
         file=None,
         signal="11",
         code="""
@@ -649,12 +648,15 @@ int main() { return f(42); }
             # create a test executable
             with open("crash.c", "w", encoding="utf-8") as fd:
                 fd.write(code)
-            assert (
-                subprocess.call(
-                    ["gcc"] + extra_gcc_args + ["-g", "crash.c", "-o", "crash"]
+            try:
+                subprocess.run(
+                    ["gcc"]
+                    + extra_gcc_args
+                    + ["-g", "crash.c", "-o", "crash"],
+                    check=True,
                 )
-                == 0
-            )
+            except FileNotFoundError as error:
+                self.skipTest(f"{error.filename} not available")
             assert os.path.exists("crash")
 
             # call it through gdb and dump core
@@ -674,7 +676,7 @@ int main() { return f(42); }
                 env={"HOME": workdir},
                 stdout=subprocess.PIPE,
             )
-            cls._validate_core("core")
+            self._validate_core("core")
 
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
             pr["CoreDump"] = (os.path.join(workdir, "core"),)

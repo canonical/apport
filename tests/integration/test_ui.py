@@ -22,7 +22,7 @@ import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _
-from tests.helper import pidof
+from tests.helper import pidof, skip_if_command_is_missing
 from tests.paths import (
     local_test_environment,
     patch_data_dir,
@@ -957,6 +957,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
+    @skip_if_command_is_missing("gdb")
     def test_run_crash_broken(self):
         """run_crash() for an invalid core dump"""
         # generate broken crash report
