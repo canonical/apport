@@ -349,13 +349,18 @@ class T(unittest.TestCase):
         )
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
-    @staticmethod
-    def _gcc_version_path():
+    def _gcc_version_path(self):
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
-        gcc = subprocess.run(
-            ["gcc", "--version"], check=True, stdout=subprocess.PIPE, text=True
-        )
+        try:
+            gcc = subprocess.run(
+                ["gcc", "--version"],
+                check=True,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+        except FileNotFoundError as error:
+            self.skipTest(f"{error.filename} not available")
 
         ver_fields = gcc.stdout.splitlines()[0].split()[3].split(".")
         # try major/minor first
