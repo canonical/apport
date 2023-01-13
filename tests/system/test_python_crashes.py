@@ -18,13 +18,19 @@ import tempfile
 import textwrap
 import unittest
 
-import dbus
+try:
+    import dbus
+
+    HAS_DBUS = True
+except ImportError:
+    HAS_DBUS = False
 
 import apport.fileutils
 import apport.report
 from tests.paths import local_test_environment
 
 
+@unittest.skipUnless(HAS_DBUS, "dbus Python module not installed")
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
