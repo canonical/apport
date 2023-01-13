@@ -40,6 +40,7 @@ import traceback
 # False positive, see https://github.com/PyCQA/pylint/issues/7093
 import apport  # pylint: disable=import-self
 import apport.fileutils
+import apport.report
 
 
 def check_lock():
@@ -256,7 +257,7 @@ def write_user_coredump(
 
     # Priming read
     if from_report:
-        r = apport.Report()
+        r = apport.report.Report()
         r.load(from_report)
         core_size = len(r["CoreDump"])
         if 0 < limit < core_size:
@@ -302,7 +303,7 @@ def usable_ram():
     allocated without causing major thrashing."""
 
     # abuse our excellent RFC822 parser to parse /proc/meminfo
-    r = apport.Report()
+    r = apport.report.Report()
     with open("/proc/meminfo", "rb") as f:
         r.load(f)
 
@@ -938,7 +939,7 @@ def process_crash(options: argparse.Namespace) -> int:
         )
         return 0
 
-    info = apport.Report("Crash")
+    info = apport.report.Report("Crash")
     info["Signal"] = signum
     core_size_limit = usable_ram() * 3 / 4
     # read binary data from stdio
