@@ -9,6 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import contextlib
+import multiprocessing
 import os
 import shutil
 import signal
@@ -18,7 +20,7 @@ import time
 import typing
 import unittest
 
-from tests.helper import get_init_system, pidof
+from tests.helper import pidof
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -64,25 +66,29 @@ class TestUnkillableShutdown(unittest.TestCase):
     def _get_all_pids():
         return [int(pid) for pid in os.listdir("/proc") if pid.isdigit()]
 
-    @unittest.skipIf(
-        get_init_system() != "systemd", "running init system is not systemd"
-    )
-    def _launch_process_with_different_session_id(self) -> int:
+    @contextlib.contextmanager
+    def _launch_process_with_different_session_id(
+        self,
+    ) -> typing.Generator[multiprocessing.Process, None, None]:
         """Launch test executable with different session ID.
 
         getsid() will return a different ID than the current process.
         """
-        service_manager = "--system" if os.geteuid() == 0 else "--user"
-        existing_pids = self._get_all_pids()
-        try:
+
+        def _run_test_executable():
+            os.setsid()
             subprocess.run(
-                ["systemd-run", service_manager, self.TEST_EXECUTABLE]
-                + self.TEST_ARGS,
-                check=True,
+                [self.TEST_EXECUTABLE] + self.TEST_ARGS, check=False
             )
-        except FileNotFoundError as error:  # pragma: no cover
-            self.skipTest(f"{error.filename} not available")
-        return self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+
+        existing_pids = self._get_all_pids()
+        runner = multiprocessing.Process(target=_run_test_executable)
+        runner.start()
+        pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+        yield runner
+        os.kill(pid, signal.SIGHUP)
+        runner.join(60)
+        runner.kill()
 
     def _wait_for_process(
         self,
@@ -119,11 +125,8 @@ class TestUnkillableShutdown(unittest.TestCase):
     def test_omit_all_processes_except_one(self):
         """unkillable_shutdown will write exactly one report."""
         existing_pids = self._get_all_pids()
-        pid = self._launch_process_with_different_session_id()
-        try:
-            self._call(omit=existing_pids, expected_stderr="")
-        finally:
-            os.kill(pid, signal.SIGHUP)
+        with self._launch_process_with_different_session_id() as runner:
+            self._call(omit=existing_pids + [runner.pid], expected_stderr="")
         self.assertEqual(
             os.listdir(self.report_dir),
             [f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.geteuid()}.crash"],
@@ -132,10 +135,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def test_write_reports(self):
         """unkillable_shutdown will write reports."""
         # Ensure that at least one process is honoured by unkillable_shutdown.
-        pid = self._launch_process_with_different_session_id()
-        try:
+        with self._launch_process_with_different_session_id():
             self._call()
-        finally:
-            os.kill(pid, signal.SIGHUP)
         reports = os.listdir(self.report_dir)
         self.assertGreater(len(reports), 0, reports)
