@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import time
 import unittest
+import unittest.mock
 
 import apport.report
 from tests.paths import get_data_directory, local_test_environment
@@ -42,6 +43,17 @@ class T(unittest.TestCase):
             f"timeout while waiting for .crash file to be created"
             f" in {self.report_dir}."
         )
+
+    @unittest.mock.patch("os.listdir")
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_report_timeout(self, sleep_mock, listdir_mock):
+        """Test wait_for_report() helper runs into timeout."""
+        listdir_mock.return_value = []
+        with unittest.mock.patch.object(self, "fail") as fail_mock:
+            self.wait_for_report()
+        fail_mock.assert_called_once()
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 101)
 
     def call_recoverable_problem(self, data):
         cmd = ["%s/recoverable_problem" % self.datadir]
