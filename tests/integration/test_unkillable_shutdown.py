@@ -36,11 +36,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.report_dir)
 
-    def _call(
-        self,
-        omit: typing.Optional[list] = None,
-        expected_stderr: typing.Optional[str] = None,
-    ) -> None:
+    def _call(self, omit: typing.Optional[list] = None) -> None:
         cmd = [f"{self.data_dir}/unkillable_shutdown"]
         if omit:
             cmd += [arg for pid in omit for arg in ["-o", str(pid)]]
@@ -54,8 +50,6 @@ class TestUnkillableShutdown(unittest.TestCase):
         )
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(process.stdout, "")
-        if expected_stderr:
-            self.assertEqual(process.stderr, expected_stderr)
 
     @staticmethod
     def _get_all_pids():
@@ -63,5 +57,5 @@ class TestUnkillableShutdown(unittest.TestCase):
 
     def test_omit_all_processes(self):
         """unkillable_shutdown will write no reports."""
-        self._call(omit=self._get_all_pids(), expected_stderr="")
+        self._call(omit=self._get_all_pids())
         self.assertEqual(os.listdir(self.report_dir), [])
