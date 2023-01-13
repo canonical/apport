@@ -1,10 +1,10 @@
 import os
 import typing
 
-SRCDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-BINDIR = os.path.join(SRCDIR, "bin")
-CRASHDB_CONF = os.path.join(SRCDIR, "etc", "apport", "crashdb.conf")
-DATADIR = os.path.join(SRCDIR, "data")
+_SRCDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_BINDIR = os.path.join(_SRCDIR, "bin")
+_CRASHDB_CONF = os.path.join(_SRCDIR, "etc", "apport", "crashdb.conf")
+_DATADIR = os.path.join(_SRCDIR, "data")
 
 
 def get_data_directory(local_path: typing.Optional[str] = None) -> str:
@@ -20,8 +20,8 @@ def get_data_directory(local_path: typing.Optional[str] = None) -> str:
         return os.environ["APPORT_DATA_DIR"]
     if is_local_source_directory():
         if local_path is None:
-            return DATADIR
-        return os.path.join(SRCDIR, local_path)
+            return _DATADIR
+        return os.path.join(_SRCDIR, local_path)
     return "/usr/share/apport"
 
 
@@ -39,10 +39,10 @@ def local_test_environment() -> typing.Mapping[str, str]:
     if not is_local_source_directory():
         return {}
     return {
-        "APPORT_CRASHDB_CONF": CRASHDB_CONF,
-        "APPORT_DATA_DIR": DATADIR,
-        "PATH": f"{BINDIR}:{os.environ.get('PATH', os.defpath)}",
-        "PYTHONPATH": SRCDIR,
+        "APPORT_CRASHDB_CONF": _CRASHDB_CONF,
+        "APPORT_DATA_DIR": _DATADIR,
+        "PATH": f"{_BINDIR}:{os.environ.get('PATH', os.defpath)}",
+        "PYTHONPATH": _SRCDIR,
     }
 
 
