@@ -2418,7 +2418,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2443,7 +2443,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2471,7 +2471,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2489,7 +2489,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2508,7 +2508,7 @@ class T(unittest.TestCase):
                     "update_report": None,
                     "save": None,
                     "window": False,
-                    "tag": [],
+                    "tags": [],
                     "hanging": False,
                 },
             )
@@ -2526,7 +2526,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2541,7 +2541,7 @@ class T(unittest.TestCase):
                 "crash_file": None,
                 "symptom": None,
                 "update_report": 1234,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2554,7 +2554,7 @@ class T(unittest.TestCase):
                 "crash_file": None,
                 "symptom": None,
                 "update_report": 1234,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2583,7 +2583,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2604,7 +2604,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2631,7 +2631,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2649,7 +2649,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2667,7 +2667,7 @@ class T(unittest.TestCase):
                     "update_report": None,
                     "save": None,
                     "window": False,
-                    "tag": [],
+                    "tags": [],
                     "hanging": False,
                 },
             )
@@ -2684,7 +2684,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2705,7 +2705,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": "foo.apport",
                 "window": False,
-                "tag": [],
+                "tags": [],
                 "hanging": False,
             },
         )
@@ -2722,7 +2722,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": ["foo"],
+                "tags": ["foo"],
                 "hanging": False,
             },
         )
@@ -2737,7 +2737,7 @@ class T(unittest.TestCase):
                 "update_report": None,
                 "save": None,
                 "window": False,
-                "tag": ["foo", "bar"],
+                "tags": ["foo", "bar"],
                 "hanging": False,
             },
         )
