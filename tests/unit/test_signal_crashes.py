@@ -63,6 +63,12 @@ class TestApport(unittest.TestCase):
 
     def test_receive_arguments_via_socket_invalid_socket(self):
         """Test receive_arguments_via_socket with invalid socket."""
+        try:
+            # pylint: disable=import-outside-toplevel
+            from systemd.daemon import listen_fds
+        except ImportError:
+            self.skipTest("systemd Python module not available")
+        assert listen_fds
         self.assertNotIn("LISTEN_FDS", os.environ)
         with self.assertRaisesRegex(SystemExit, "^1$"):
             apport_binary.receive_arguments_via_socket()

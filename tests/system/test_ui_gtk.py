@@ -17,28 +17,39 @@ import textwrap
 import unittest
 import unittest.mock
 
-import gi
-
-gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
-from gi.repository import GLib, GObject, Gtk
-
 import apport.crashdb_impl.memory
 import apport.report
 from apport import unicode_gettext as _
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory, local_test_environment
 
-GLib.log_set_always_fatal(
-    GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL
-)
+try:
+    import gi
 
+    gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
+    from gi.repository import GLib, GObject, Gtk
+
+    GLib.log_set_always_fatal(
+        GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL
+    )
+
+    GI_IMPORT_ERROR = None
+except ImportError as error:
+    GI_IMPORT_ERROR = error
 
 apport_gtk_path = os.path.join(get_data_directory("gtk"), "apport-gtk")
 kernel_oops_path = os.path.join(get_data_directory(), "kernel_oops")
-apport_gtk = import_module_from_file(apport_gtk_path)
-GTKUserInterface = apport_gtk.GTKUserInterface
+if not GI_IMPORT_ERROR:
+    apport_gtk = import_module_from_file(apport_gtk_path)
+    GTKUserInterface = apport_gtk.GTKUserInterface
+else:
+    apport_gtk = None
+    GTKUserInterface = None
 
 
+@unittest.skipIf(
+    GI_IMPORT_ERROR, f"gi Python module not available: {GI_IMPORT_ERROR}"
+)
 class T(unittest.TestCase):
     POLLING_INTERVAL_MS = 10
 
