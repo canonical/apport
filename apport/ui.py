@@ -934,6 +934,7 @@ class UserInterface:
             "--tag",
             action="append",
             default=[],
+            dest="tags",
             help=_(
                 "Add an extra tag to the report."
                 " Can be specified multiple times."
@@ -1066,6 +1067,7 @@ class UserInterface:
             "--tag",
             action="append",
             default=[],
+            dest="tags",
             help=_(
                 "Add an extra tag to the report."
                 " Can be specified multiple times."
@@ -1981,11 +1983,11 @@ class UserInterface:
     def add_extra_tags(self):
         """Add extra tags to report specified with --tags on CLI."""
         assert self.report
-        if self.args.tag:
+        if self.args.tags:
             tags = self.report.get("Tags", "")
             if tags:
                 tags += " "
-            self.report["Tags"] = tags + " ".join(self.args.tag)
+            self.report["Tags"] = tags + " ".join(self.args.tags)
 
     #
     # abstract UI methods that must be implemented in derived classes
