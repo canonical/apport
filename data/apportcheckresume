@@ -51,7 +51,7 @@ def main(argv=None):
 
         # Ensure we are appropriately tagged.
         if "Failure" in pr:
-            pr["Tags"] = "resume " + pr["Failure"]
+            pr.add_tags(["resume ", pr["Failure"]])
 
             # Record the failure mode.
             pr["Failure"] += "/resume"
@@ -60,7 +60,7 @@ def main(argv=None):
         # add an additional tag so we can pick these out.
         if os.path.exists(hanglog):
             attach_file_if_exists(pr, hanglog, "ResumeHangLog")
-            pr["Tags"] += " resume-late-hang"
+            pr.add_tags(["resume-late-hang"])
 
         # Generate a sensible report message.
         if pr.get("Failure") == "suspend/resume":

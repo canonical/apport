@@ -11,6 +11,22 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):
+    def test_add_tags(self):
+        """Test ProblemReport.add_tags()."""
+        report = problem_report.ProblemReport()
+        report.add_tags({"tag1"})
+        self.assertEqual(report["Tags"], "tag1")
+        report.add_tags(["tag2", "next_tag"])
+        self.assertEqual(report["Tags"], "next_tag tag1 tag2")
+
+    def test_add_tag_drop_duplicates(self):
+        """Test ProblemReport.add_tags() dropping duplicates."""
+        report = problem_report.ProblemReport()
+        report.add_tags({"same"})
+        self.assertEqual(report["Tags"], "same")
+        report.add_tags(["same"])
+        self.assertEqual(report["Tags"], "same")
+
     def test_basic_operations(self):
         """Basic creation and operation."""
         pr = problem_report.ProblemReport()

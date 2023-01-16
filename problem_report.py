@@ -116,6 +116,12 @@ class ProblemReport(collections.UserDict):
         # keeps track of keys which were added since the last ctor or load()
         self.old_keys = set()
 
+    def add_tags(self, tags: typing.Iterable[str]) -> None:
+        """Add tags to the report. Duplicates are dropped."""
+        current_tags = self.get_tags()
+        new_tags = current_tags.union(tags)
+        self["Tags"] = " ".join(sorted(new_tags))
+
     def load(self, file, binary=True, key_filter=None):
         """Initialize problem report from a file-like object.
 
@@ -269,6 +275,12 @@ class ProblemReport(collections.UserDict):
                     if element is False
                 ]
             )
+
+    def get_tags(self) -> set[str]:
+        """Return the set of tags."""
+        if "Tags" not in self:
+            return set()
+        return set(self["Tags"].split(" "))
 
     def get_timestamp(self) -> typing.Optional[int]:
         """Get timestamp (seconds since epoch) from Date field.

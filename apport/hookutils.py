@@ -948,7 +948,7 @@ def attach_mac_events(report, profiles=None):
         aa_re, report.get("KernLog", "") + report.get("AuditLog", "")
     ):
         if not profiles:
-            _add_tag(report, "apparmor")
+            report.add_tags(["apparmor"])
             break
 
         try:
@@ -963,16 +963,8 @@ def attach_mac_events(report, profiles=None):
 
         for search_profile in profiles:
             if re.match("^" + search_profile + "$", profile):
-                _add_tag(report, "apparmor")
+                report.add_tags(["apparmor"])
                 break
-
-
-def _add_tag(report, tag):
-    """Add or append a tag to the report."""
-    current_tags = report.get("Tags", "")
-    if current_tags:
-        current_tags += " "
-    report["Tags"] = current_tags + tag
 
 
 def attach_related_packages(report, packages):

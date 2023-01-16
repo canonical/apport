@@ -82,15 +82,13 @@ Do you want to continue the report process anyway?
             ):
                 raise StopIteration
             report["LocalLibraries"] = " ".join(local_libs)
-            report["Tags"] = (report.get("Tags", "") + " local-libs").strip()
+            report.add_tags(["local-libs"])
 
     # using third-party packages?
     if "[origin:" in report.get("Package", "") or "[origin:" in report.get(
         "Dependencies", ""
     ):
-        report["Tags"] = (
-            report.get("Tags", "") + " third-party-packages"
-        ).strip()
+        report.add_tags(["third-party-packages"])
 
     # using ecryptfs?
     if os.path.exists(os.path.expanduser("~/.ecryptfs/wrapped-passphrase")):

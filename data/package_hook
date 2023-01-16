@@ -54,7 +54,10 @@ def parse_args():
         "--tags",
         help="Add the following tags to the bug report (comma separated)",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.tags:
+        args.tags = args.tags.split(",")
+    return args
 
 
 def main():
@@ -68,8 +71,7 @@ def main():
     pr["ErrorMessage"] = (sys.stdin, False)
 
     if options.tags:
-        tags = options.tags.replace(",", "")
-        pr["Tags"] = tags
+        pr.add_tags(options.tags)
 
     for line in options.logs or []:
         if os.path.isfile(line):

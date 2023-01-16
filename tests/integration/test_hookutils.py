@@ -10,6 +10,7 @@ import unittest.mock
 
 import apport.hookutils
 import apport.report
+import problem_report
 
 
 class T(unittest.TestCase):
@@ -234,12 +235,12 @@ class T(unittest.TestCase):
             ' pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
         )
 
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_mac_events(report)
         self.assertIn("KernLog", report)
 
         # No AppArmor messages
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = (
             "[    2.997534] i915 0000:00:02.0:"
             " power state changed by ACPI to D0\n"
@@ -253,7 +254,7 @@ class T(unittest.TestCase):
         self.assertNotIn("Tags", report)
 
         # AppArmor message, but not a denial
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = (
             "[   32.420248] type=1400 audit(1344562672.449:2):"
             ' apparmor="STATUS" operation="profile_load" name="/sbin/dhclient"'
@@ -264,71 +265,71 @@ class T(unittest.TestCase):
         self.assertNotIn("Tags", report)
 
         # AppArmor denial, empty tags, no profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report)
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor hex-encoded denial, no profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_hex
 
         apport.hookutils.attach_mac_events(report)
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial in AuditLog
-        report = {}
+        report = problem_report.ProblemReport()
         report["AuditLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report)
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial, pre-existing tags, no profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
         report["Tags"] = "bogustag"
 
         apport.hookutils.attach_mac_events(report)
-        self.assertEqual(report["Tags"], "bogustag apparmor")
+        self.assertEqual(report["Tags"], "apparmor bogustag")
 
         # AppArmor denial, single profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial, regex profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cups.*")
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial, subset profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cup")
         self.assertNotIn("Tags", report)
 
         # AppArmor hex-encoded denial, single profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_hex
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial, single different profile specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
 
         apport.hookutils.attach_mac_events(report, "/usr/sbin/nonexistent")
         self.assertNotIn("Tags", report)
 
         # AppArmor denial, multiple profiles specified
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
         profiles = ["/usr/bin/nonexistent", "/usr/sbin/cupsd"]
 
@@ -336,7 +337,7 @@ class T(unittest.TestCase):
         self.assertEqual(report["Tags"], "apparmor")
 
         # AppArmor denial, multiple different profiles
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = denied_log
         profiles = ["/usr/bin/nonexistent", "/usr/sbin/anotherone"]
 
@@ -344,7 +345,7 @@ class T(unittest.TestCase):
         self.assertNotIn("Tags", report)
 
         # Multiple AppArmor denials, second match
-        report = {}
+        report = problem_report.ProblemReport()
         report["KernLog"] = (
             "[  351.624338] type=1400 audit(1343775571.688:27):"
             ' apparmor="DENIED" operation="capable" parent=1'

@@ -361,7 +361,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     "cannot determine ProblemType from tags: " + str(b.tags)
                 )
 
-        report["Tags"] = " ".join(b.tags)
+        report.add_tags(b.tags)
 
         if "Title" in report:
             report["OriginalTitle"] = report["Title"]
@@ -1481,9 +1481,8 @@ and more
             self.assertEqual(
                 r.get("UserGroups"), self.ref_report.get("UserGroups")
             )
-            tags = set(r["Tags"].split())
             self.assertEqual(
-                tags,
+                r.get_tags(),
                 set(
                     [
                         self.crashdb.arch_tag,
@@ -1507,9 +1506,8 @@ and more
 
             # check tags
             r = self.crashdb.download(self.get_python_report())
-            tags = set(r["Tags"].split())
             self.assertEqual(
-                tags,
+                r.get_tags(),
                 set(
                     [
                         "apport-crash",
