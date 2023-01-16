@@ -104,10 +104,10 @@ Some bug tracking systems support tags to further categorize bug reports and
 make searching/duplication easier. Hooks can set tags with
 
 ```python
-report["Tags"] = "tag1 tag2"
+report.add_tags(["tag1", "tag2"])
 ```
 
-i. e. a space separated list of tag names.
+The `Tags` field contains a space separated list of tag names.
 
 Customize the crash DB to use
 =============================

@@ -161,7 +161,7 @@ class T(unittest.TestCase):
             "-p",
             "bash",
             "-t",
-            "dist-upgrade, verybad",
+            "verybad,dist-upgrade",
         ]
         ph = subprocess.run(
             cmd, check=False, env=self.env, input=b"something is wrong"

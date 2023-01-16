@@ -686,8 +686,7 @@ class T(unittest.TestCase):
         self.assertNotIn("ProcCmdline", self.ui.report)  # privacy!
         self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
-        self.assertIn("Tags", self.ui.report)
-        self.assertIn("foo", self.ui.report["Tags"])
+        self.assertIn("foo", self.ui.report.get_tags())
 
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -1964,7 +1963,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
-        self.assertIn("foo", self.ui.report["Tags"])
+        self.assertIn("foo", self.ui.report.get_tags())
 
     def test_run_update_report_existing_package_cli_cmdname(self):
         """run_update_report() on an existing package (-collect program)"""
@@ -2308,7 +2307,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertEqual(self.ui.report["itch"], "scratch")
-        self.assertIn("foo", self.ui.report["Tags"])
+        self.assertIn("foo", self.ui.report.get_tags())
 
         # working interactive script
         self._write_symptom_script(

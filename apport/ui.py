@@ -1558,11 +1558,7 @@ class UserInterface:
 
             # append snap tags, if this report is about the snap
             if "Snap" in self.report and "SnapTags" in self.report:
-                current_tags = self.report.get("Tags", "")
-                if current_tags:
-                    current_tags += " "
-                self.report["Tags"] = current_tags + self.report["SnapTags"]
-                del self.report["SnapTags"]
+                self.report.add_tags(self.report.pop("SnapTags").split(" "))
 
             # show a hint if we cannot auto report a snap bug via 'SnapSource'
             if (
@@ -1984,10 +1980,7 @@ class UserInterface:
         """Add extra tags to report specified with --tags on CLI."""
         assert self.report
         if self.args.tags:
-            tags = self.report.get("Tags", "")
-            if tags:
-                tags += " "
-            self.report["Tags"] = tags + " ".join(self.args.tags)
+            self.report.add_tags(self.args.tags)
 
     #
     # abstract UI methods that must be implemented in derived classes
