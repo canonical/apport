@@ -17,7 +17,4 @@ __all__ = [
 
 
 def unicode_gettext(message):
-    trans = gettext.gettext(message)
-    if isinstance(trans, bytes):
-        return trans.decode("UTF-8")
-    return trans
+    return gettext.gettext(message)
