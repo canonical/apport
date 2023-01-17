@@ -64,8 +64,7 @@ def translate(self, prop):
         return self._cstring(prop)
     if prop.text is None:
         return ""
-    text = prop.text.encode("UTF-8")
-    return _(text)
+    return _(prop.text)
 
 
 uic.properties.Properties._string = translate
