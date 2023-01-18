@@ -111,14 +111,14 @@ class TestApport(unittest.TestCase):
         )
         self.assertEqual(open_mock.call_count, 3)
 
-    def test_sanity_checks_replaced_process(self):
-        """Test sanity_checks() for a replaced crash process ID."""
+    def test_consistency_checks_replaced_process(self):
+        """Test consistency_checks() for a replaced crash process ID."""
         options = apport_binary.parse_arguments(["-p", str(os.getpid())])
         now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
-        self.assertFalse(apport_binary.sanity_checks(options, now))
+        self.assertFalse(apport_binary.consistency_checks(options, now))
 
-    def test_sanity_checks_mismatching_uid(self):
-        """Test sanity_checks() for a mitmatching UID."""
+    def test_consistency_checks_mismatching_uid(self):
+        """Test consistency_checks() for a mitmatching UID."""
         pid = os.getpid()
         options = apport_binary.parse_arguments(
             [
@@ -132,7 +132,7 @@ class TestApport(unittest.TestCase):
         )
         # TODO: Get rid of global variables from get_pid_info
         apport_binary.get_pid_info(pid)
-        self.assertFalse(apport_binary.sanity_checks(options, 1))
+        self.assertFalse(apport_binary.consistency_checks(options, 1))
 
     def test_stop(self):
         """Test stopping Apport crash handler."""

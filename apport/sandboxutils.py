@@ -317,8 +317,8 @@ def make_sandbox(
         except SystemError as error:
             apport.logging.fatal(str(error))
 
-    # sanity check: for a packaged binary we require having the executable in
-    # the sandbox; TODO: for an unpackage binary we don't currently copy its
+    # consistency check: for a packaged binary we require having the executable
+    # in the sandbox; TODO: for an unpackage binary we don't currently copy its
     # potential local library dependencies (like those in build trees) into the
     # sandbox, and we call gdb/valgrind on the binary outside the sandbox.
     if "Package" in report:

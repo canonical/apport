@@ -625,7 +625,7 @@ class CrashDatabase:
             return
 
     def _duplicate_db_add_address_signature(self, sig, crash_id):
-        # sanity check
+        # consistency check
         existing = self._duplicate_search_address_signature(sig)
         if existing:
             if existing != crash_id:

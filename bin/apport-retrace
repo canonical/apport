@@ -434,7 +434,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     apport.memdbg("processed extra options from command line")
 
-    # sanity checks
+    # consistency checks
     required_fields = set(
         [
             "CoreDump",
@@ -461,7 +461,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         )
         sys.exit(0)
 
-    apport.memdbg("sanity checks passed")
+    apport.memdbg("consistency checks passed")
 
     if options.gdb_sandbox:
         system_arch = apport.packaging.get_system_architecture()
