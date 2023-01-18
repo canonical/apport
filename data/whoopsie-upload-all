@@ -97,7 +97,7 @@ def process_report(report):
             return None
         # add information from package specific hooks
         try:
-            r.add_hooks_info(None)
+            r.add_hooks_info()
         except Exception as error:  # pylint: disable=broad-except
             sys.stderr.write(
                 "WARNING: hook failed for processing %s: %s\n"
