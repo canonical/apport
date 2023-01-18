@@ -82,7 +82,7 @@ class T(unittest.TestCase):
         del pr["Date"]
         self.assertEqual(pr.get_timestamp(), None)
 
-    def test_sanity_checks(self):
+    def test_consistency_checks(self):
         """Various error conditions."""
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, pr.__setitem__, "a b", "1")

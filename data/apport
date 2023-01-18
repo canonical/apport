@@ -369,7 +369,7 @@ def is_closing_session():
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     """
-    # Sanity check, don't do anything for root processes
+    # consistency check, don't do anything for root processes
     if crash_uid == 0 or crash_gid == 0:
         return False
 
@@ -713,7 +713,7 @@ def parse_arguments(args: list[str]):
     if isinstance(options.executable_path, list):
         options.executable_path = " ".join(options.executable_path)
     options.executable_path = options.executable_path.replace("!", "/")
-    # Sanity check to prevent trickery later on
+    # consistency check to prevent trickery later on
     if "../" in options.executable_path:
         options.executable_path = None
 
@@ -860,11 +860,13 @@ def receive_arguments_via_socket() -> argparse.Namespace:
     )
 
 
-def sanity_checks(options: argparse.Namespace, process_start: int) -> bool:
-    """Run sanity checks and return True if all pass."""
-    # Sanity check to make sure the process wasn't replaced after the crash
-    # happened. The start time isn't fine-grained enough to be an adequate
-    # security check.
+def consistency_checks(
+    options: argparse.Namespace, process_start: int
+) -> bool:
+    """Run consistency checks and return True if all pass."""
+    # Consistency check to make sure the process wasn't replaced after the
+    # crash happened. The start time isn't fine-grained enough to be an
+    # adequate security check.
     apport_start = get_apport_starttime()
     if process_start > apport_start:
         error_log("process was replaced after Apport started, ignoring")
@@ -902,7 +904,7 @@ def process_crash(options: argparse.Namespace) -> int:
     get_pid_info(pid)
 
     process_start = get_process_starttime()
-    if not sanity_checks(options, process_start):
+    if not consistency_checks(options, process_start):
         return 0
 
     error_log(
