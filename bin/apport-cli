@@ -204,7 +204,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
-    ):
+    ) -> apport.ui.Action:
         dialog = CLIDialog(
             _("Send problem report to the developers?"),
             _(
@@ -240,20 +240,14 @@ class CLIUserInterface(apport.ui.UserInterface):
         while True:
             response = dialog.run()
 
-            return_value = {
-                "restart": False,
-                "blacklist": False,
-                "remember": False,
-                "report": False,
-                "examine": False,
-            }
+            return_value = apport.ui.Action()
             if response == examine:
-                return_value["examine"] = True
+                return_value.examine = True
                 return return_value
             if response == complete:
-                return_value["report"] = True
+                return_value.report = True
             if response == ignore:
-                return_value["blacklist"] = True
+                return_value.blacklist = True
             if response == view:
                 self.collect_info()
                 self.ui_update_view()

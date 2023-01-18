@@ -99,7 +99,7 @@ class T(unittest.TestCase):
 
         GLib.idle_add(c)
         result = self.app.ui_present_report_details(True)
-        self.assertFalse(result["report"])
+        self.assertFalse(result.report)
 
     def test_kernel_crash_layout(self):
         """Display crash dialog for kernel crash.
@@ -576,7 +576,7 @@ class T(unittest.TestCase):
         self.app.can_examine_locally.return_value = True
         result = self.app.ui_present_report_details(True)
         self.assertTrue(self.app.w("examine").get_property("visible"))
-        self.assertTrue(result["examine"])
+        self.assertTrue(result.examine)
 
     def test_apport_bug_package_layout(self):
         """Display report detail dialog.

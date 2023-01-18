@@ -226,7 +226,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
-    ):
+    ) -> apport.ui.Action:
         icon = None
         self.collect_called = False
         report_type = self.report.get("ProblemType")
@@ -415,13 +415,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         if len(self.argv) == 1:
             d.set_focus_on_map(False)
 
-        return_value = {
-            "report": False,
-            "blacklist": False,
-            "remember": False,
-            "restart": False,
-            "examine": False,
-        }
+        return_value = apport.ui.Action()
 
         def dialog_crash_dismissed(widget):
             self.w("dialog_crash_new").hide()
@@ -429,7 +423,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 Gtk.main_quit()
                 return
             if widget is self.w("examine"):
-                return_value["examine"] = True
+                return_value.examine = True
                 Gtk.main_quit()
                 return
 
@@ -440,17 +434,17 @@ class GTKUserInterface(apport.ui.UserInterface):
                 and self.desktop_info
                 and self.offer_restart
             ):
-                return_value["restart"] = True
+                return_value.restart = True
 
             if self.w("ignore_future_problems").get_active():
-                return_value["blacklist"] = True
+                return_value.blacklist = True
 
-            return_value["remember"] = self.w(
+            return_value.remember = self.w(
                 "remember_send_report_choice"
             ).get_active()
 
             if widget == self.w("continue_button"):
-                return_value["report"] = self.allowed_to_report
+                return_value.report = self.allowed_to_report
 
             Gtk.main_quit()
 
