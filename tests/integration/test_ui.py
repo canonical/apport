@@ -1,3 +1,4 @@
+import contextlib
 import errno
 import glob
 import io
@@ -8,7 +9,6 @@ import shutil
 import signal
 import stat
 import subprocess
-import sys
 import tempfile
 import textwrap
 import time
@@ -262,13 +262,18 @@ class T(unittest.TestCase):
 
         restore_data_dir(apport.report, self.orig_data_dir)
 
-    def _run_test_executable(self, exename=None):
+    @contextlib.contextmanager
+    def _run_test_executable(
+        self, exename=None
+    ) -> typing.Generator[int, None, None]:
         if not exename:
             exename = self.TEST_EXECUTABLE
 
-        os.dup2(os.open("/dev/null", os.O_WRONLY), sys.stdout.fileno())
-        os.execv(exename, [exename] + self.TEST_ARGS)
-        assert False, "Could not execute " + exename
+        with subprocess.Popen([exename] + self.TEST_ARGS) as test_process:
+            # give the execv() some time to finish
+            time.sleep(0.5)
+            yield test_process.pid
+            test_process.kill()
 
     @staticmethod
     def _write_symptom_script(script_name: str, content: str) -> None:
@@ -642,23 +647,12 @@ class T(unittest.TestCase):
 
     def test_run_report_bug_pid_tags(self):
         """run_report_bug() for a pid with extra tags"""
-        # fork a test process
-        pid = os.fork()
-        if pid == 0:
-            self._run_test_executable()
-
-        time.sleep(0.5)
-
-        try:
+        with self._run_test_executable() as pid:
             # report a bug on text executable process
             argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
             self.ui = UserInterfaceMock(argv)
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.assertEqual(self.ui.run_argv(), True)
-        finally:
-            # kill test process
-            os.kill(pid, signal.SIGKILL)
-            os.waitpid(pid, 0)
 
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Dependencies", self.ui.report)
@@ -728,22 +722,11 @@ class T(unittest.TestCase):
         os.close(fd)
         os.chmod(exename, 0o755)
 
-        # unpackaged test process
-        pid = os.fork()
-        if pid == 0:
-            self._run_test_executable(exename)
-
-        # give the execv() some time to finish
-        time.sleep(0.2)
-
-        try:
+        with self._run_test_executable(exename) as pid:
             self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
             self.assertRaises(SystemExit, self.ui.run_argv)
-        finally:
-            os.kill(pid, signal.SIGKILL)
-            os.wait()
-            os.unlink(exename)
 
+        os.unlink(exename)
         self.assertEqual(self.ui.msg_severity, "error")
 
     @unittest.mock.patch("apport.packaging_impl.impl.get_version")
@@ -1122,26 +1105,13 @@ class T(unittest.TestCase):
     def test_run_crash_nocore(self):
         """run_crash() for a crash dump without CoreDump"""
         # create a test executable
-        assert os.access(self.TEST_EXECUTABLE, os.X_OK), (
-            self.TEST_EXECUTABLE + " is not executable"
-        )
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            self._run_test_executable()
-
-        try:
-            time.sleep(0.5)
+        with self._run_test_executable() as pid:
             # generate crash report
             r = apport.Report()
             r["ExecutablePath"] = self.TEST_EXECUTABLE
             r["Signal"] = "42"
             r.add_proc_info(pid)
             r.add_user_info()
-        finally:
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-            os.waitpid(pid, 0)
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -2636,11 +2606,6 @@ class T(unittest.TestCase):
 
     def test_wait_for_pid(self):
         # fork a test process
-        pid = os.fork()
-        if pid == 0:
-            self._run_test_executable()
-
-        time.sleep(0.5)
-        os.kill(pid, signal.SIGKILL)
-        os.waitpid(pid, 0)
+        with self._run_test_executable() as pid:
+            pass
         self.ui.wait_for_pid(pid)
