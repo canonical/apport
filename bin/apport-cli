@@ -247,7 +247,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             if response == complete:
                 return_value.report = True
             if response == ignore:
-                return_value.blacklist = True
+                return_value.ignore = True
             if response == view:
                 self.collect_info()
                 self.ui_update_view()

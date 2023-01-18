@@ -914,14 +914,14 @@ class T(unittest.TestCase):
             )
         )
 
-        # so far we did not blacklist, verify that
+        # so far we did not ignorelist, verify that
         self.assertTrue(not self.ui.report.check_ignored())
 
-        # cancel crash notification dialog and blacklist
+        # cancel crash notification dialog and ignorelist
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(blacklist=True)
+        self.ui.present_details_response = apport.ui.Action(ignore=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
