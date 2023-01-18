@@ -39,6 +39,7 @@ import apport.logging
 import problem_report
 from apport.hookutils import kill_pkttyagent
 from apport.packaging_impl import impl as packaging
+from apport.ui import HookUI, NoninteractiveHookUI
 
 _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
 GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"
@@ -1082,7 +1083,12 @@ class Report(problem_report.ProblemReport):
                 depth += 1
         self["StacktraceTop"] = "\n".join(toptrace).strip()
 
-    def add_hooks_info(self, ui, package=None, srcpackage=None):
+    def add_hooks_info(
+        self,
+        ui: typing.Optional[HookUI] = None,
+        package: typing.Optional[str] = None,
+        srcpackage: typing.Optional[str] = None,
+    ):
         """Run hook script for collecting package specific data.
 
         A hook script needs to be in PACKAGE_HOOK_DIR/<Package>.py or in
@@ -1093,12 +1099,18 @@ class Report(problem_report.ProblemReport):
         return True if the hook requested to stop the report filing process,
         False otherwise.
         """
-        assert ui is not None
+        if ui is None:
+            ui = NoninteractiveHookUI()
         ret = self._add_hooks_info(ui, package, srcpackage)
         kill_pkttyagent()
         return ret
 
-    def _add_hooks_info(self, ui, package, srcpackage):
+    def _add_hooks_info(
+        self,
+        ui: HookUI,
+        package: typing.Optional[str],
+        srcpackage: typing.Optional[str],
+    ):
         # determine package names, unless already given as arguments
         # avoid path traversal
         if not package:

@@ -851,26 +851,26 @@ int main() { return f(42); }
             with open(rep.name, "rb") as f:
                 pr.load(f)
             pr["Signal"] = "1"
-            pr.add_hooks_info("fake_ui")
+            pr.add_hooks_info()
             self.assertNotIn("SegvAnalysis", pr)
 
             pr = apport.report.Report()
             with open(rep.name, "rb") as f:
                 pr.load(f)
-        pr.add_hooks_info("fake_ui")
+        pr.add_hooks_info()
         self.assertIn(
             'Skipped: missing required field "Architecture"',
             pr["SegvAnalysis"],
         )
 
         pr.add_os_info()
-        pr.add_hooks_info("fake_ui")
+        pr.add_hooks_info()
         self.assertIn(
             'Skipped: missing required field "ProcMaps"', pr["SegvAnalysis"]
         )
 
         pr.add_proc_info()
-        pr.add_hooks_info("fake_ui")
+        pr.add_hooks_info()
         if pr["Architecture"] in ["amd64", "i386"]:
             # data/general-hooks/parse_segv.py only runs for x86 and x86_64
             self.assertIn(
@@ -1358,7 +1358,7 @@ int main() { return f(42); }
             r = apport.report.Report()
             r["Package"] = "bar"
             # should not throw any exceptions
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
                 set(
@@ -1377,7 +1377,7 @@ int main() { return f(42); }
             r = apport.report.Report()
             r["Package"] = "baz 1.2-3"
             # should not throw any exceptions
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
                 set(
@@ -1395,7 +1395,7 @@ int main() { return f(42); }
 
             r = apport.report.Report()
             r["Package"] = "foo"
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
                 set(
@@ -1416,11 +1416,11 @@ int main() { return f(42); }
             self.assertEqual(r["Field2"], "Field 2\nBla")
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
-            self.assertEqual(r["CommonField3"], "fake_ui")
+            self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
 
             r = apport.report.Report()
             r["Package"] = "foo 4.5-6"
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
                 set(
@@ -1444,10 +1444,10 @@ int main() { return f(42); }
 
             # test hook abort
             r["Spethial"] = "1"
-            self.assertEqual(r.add_hooks_info("fake_ui"), True)
+            self.assertEqual(r.add_hooks_info(), True)
             r = apport.report.Report()
             r["Package"] = "commonspethial"
-            self.assertEqual(r.add_hooks_info("fake_ui"), True)
+            self.assertEqual(r.add_hooks_info(), True)
 
             # source package hook
             with open(
@@ -1469,7 +1469,7 @@ int main() { return f(42); }
             r = apport.report.Report()
             r["SourcePackage"] = "foo"
             r["Package"] = "libfoo 3"
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
                 set(
@@ -1491,11 +1491,11 @@ int main() { return f(42); }
             self.assertEqual(r["Field2"], "Field 2\nBla")
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
-            self.assertEqual(r["CommonField3"], "fake_ui")
+            self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
 
             # test hook abort
             r["Package"] = "spethial"
-            self.assertEqual(r.add_hooks_info("fake_ui"), True)
+            self.assertEqual(r.add_hooks_info(), True)
 
         finally:
             shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
@@ -1553,7 +1553,7 @@ int main() { return f(42); }
                 "%s/foolabs.example.com/foo/bin/frob" % apport.report._opt_dir
             )
 
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(r["SourceHook"], "1")
         finally:
             shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
@@ -1607,7 +1607,7 @@ int main() { return f(42); }
             r["SourcePackage"] = "foo"
             r["ExecutablePath"] = "/bin/foo-cli"
 
-            self.assertEqual(r.add_hooks_info("fake_ui"), False)
+            self.assertEqual(r.add_hooks_info(), False)
 
             # should have the data until the crash
             self.assertEqual(r["BinHookBefore"], "1")
