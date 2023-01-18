@@ -16,6 +16,7 @@ implementation (like GTK, Qt, or CLI).
 import argparse
 import ast
 import configparser
+import dataclasses
 import errno
 import gettext
 import glob
@@ -223,6 +224,15 @@ def thread_collect_info(
         os.chmod(reportfile, 0o640)
 
 
+@dataclasses.dataclass
+class Action:
+    blacklist: bool = False
+    examine: bool = False
+    remember: bool = False
+    report: bool = False
+    restart: bool = False
+
+
 class UserInterface:
     """Apport user interface API.
 
@@ -377,7 +387,7 @@ class UserInterface:
 
             allowed_to_report = apport.fileutils.allowed_to_report()
             response = self.ui_present_report_details(allowed_to_report)
-            if response["report"] or response["examine"]:
+            if response.report or response.examine:
                 if "Dependencies" not in self.report:
                     self.collect_info()
 
@@ -385,22 +395,22 @@ class UserInterface:
                 # collect() does that on invalid reports
                 return
 
-            if response["examine"]:
+            if response.examine:
                 self.examine()
                 return
-            if response["restart"]:
+            if response.restart:
                 self.restart()
-            if response["blacklist"]:
+            if response.blacklist:
                 self.report.mark_ignore()
             try:
-                if response["remember"]:
-                    self.remember_send_report(response["report"])
+                if response.remember:
+                    self.remember_send_report(response.report)
             # use try/expect for python2 support. Old reports (generated
             # pre-apport 2.20.10-0ubuntu4) may not have the remember key
             # and can be loaded afterwards (or after dist-upgrade)
             except KeyError:
                 pass
-            if not response["report"]:
+            if not response.report:
                 return
 
             # We don't want to send crashes to the crash database for binaries
@@ -507,13 +517,13 @@ class UserInterface:
         response = self.ui_present_report_details(
             allowed_to_report, modal_for=pid
         )
-        if response["report"]:
+        if response.report:
             apport.fileutils.mark_hanging_process(self.report, pid)
             os.kill(int(pid), signal.SIGABRT)
         else:
             os.kill(int(pid), signal.SIGKILL)
 
-        if response["restart"]:
+        if response.restart:
             self.wait_for_pid(pid)
             self.restart()
         return True
@@ -662,7 +672,7 @@ class UserInterface:
             # show what's being sent
             allowed_to_report = True
             response = self.ui_present_report_details(allowed_to_report)
-            if response["report"]:
+            if response.report:
                 self.file_report()
 
         return True
@@ -757,7 +767,7 @@ class UserInterface:
         # show what's being sent
         allowed_to_report = True
         response = self.ui_present_report_details(allowed_to_report)
-        if response["report"]:
+        if response.report:
             self.crashdb.update(
                 self.args.update_report,
                 self.report,
@@ -1988,12 +1998,12 @@ class UserInterface:
 
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
-    ):
+    ) -> Action:
         """Show details of the bug report.
 
-        Return the action and options as a dictionary:
+        Return the action and options as an Action object:
 
-        - Valid keys are: report the crash ('report'), restart
+        - Valid attributes are: report the crash ('report'), restart
           the crashed application ('restart'), or blacklist further crashes
           ('blacklist').
         """

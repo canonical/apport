@@ -125,7 +125,7 @@ class T(unittest.TestCase):
 
         QTimer.singleShot(0, c)
         result = self.app.ui_present_report_details(True)
-        self.assertFalse(result["report"])
+        self.assertFalse(result.report)
 
     def test_kernel_crash_layout(self):
         """Display crash dialog for kernel crash.

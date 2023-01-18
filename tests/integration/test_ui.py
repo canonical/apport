@@ -105,8 +105,9 @@ class UserInterfaceMock(apport.ui.UserInterface):
 
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
-    ):
+    ) -> apport.ui.Action:
         self.present_details_shown = True
+        assert self.present_details_response
         return self.present_details_response
 
     def ui_info_message(self, title, text):
@@ -592,13 +593,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self.ui.run_argv()
         self.assertEqual(self.ui.offer_restart, True)
 
@@ -618,13 +613,7 @@ class T(unittest.TestCase):
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
         self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_severity, None)
@@ -664,13 +653,7 @@ class T(unittest.TestCase):
             # report a bug on text executable process
             argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
             self.ui = UserInterfaceMock(argv)
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
             self.assertEqual(self.ui.run_argv(), True)
         finally:
             # kill test process
@@ -781,13 +764,7 @@ class T(unittest.TestCase):
             self.skipTest("no kernel thread found")
 
         self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_argv()
 
         kernel_package = apport.packaging.get_kernel_package()
@@ -825,13 +802,7 @@ class T(unittest.TestCase):
 
         # report it
         self.ui = UserInterfaceMock(["ui-test", "-c", reportfile])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_text, None)
@@ -903,13 +874,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -921,13 +886,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
         self.assertEqual(self.ui.msg_title, None)
@@ -962,13 +921,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": True,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(blacklist=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -986,13 +939,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
@@ -1024,13 +971,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "info", self.ui.msg_text)
         self.assertIn("decompress", self.ui.msg_text)
@@ -1050,13 +991,7 @@ class T(unittest.TestCase):
 
         argv = ["ui-test", "-c", self.report_file.name]
         self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.assertEqual(self.ui.run_argv(), True)
 
@@ -1073,13 +1008,7 @@ class T(unittest.TestCase):
 
         argv = ["ui-test", "-c", self.report_file.name]
         self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertIn(
@@ -1104,13 +1033,7 @@ class T(unittest.TestCase):
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
         self.update_report_file()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.ui.run_crash(self.report_file.name)
 
@@ -1133,13 +1056,7 @@ class T(unittest.TestCase):
             " 'crash_config': open('/tmp/pwned', 'w').close()}"
         )
         self.update_report_file()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.ui.run_crash(self.report_file.name)
 
@@ -1162,13 +1079,7 @@ class T(unittest.TestCase):
                 "../" * 20 + os.path.splitext(bad_hook.name)[0]
             )
             self.update_report_file()
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
 
             self.ui.run_crash(self.report_file.name)
 
@@ -1192,13 +1103,7 @@ class T(unittest.TestCase):
                 0
             ].replace(hook_dir, "")
             self.update_report_file()
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
 
             self.ui.run_crash(self.report_file.name)
 
@@ -1272,13 +1177,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
         self.assertEqual(
             self.ui.msg_severity,
@@ -1315,13 +1214,7 @@ class T(unittest.TestCase):
 
         # report it
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.cur_package, "uninstalled_pkg")
         self.assertEqual(
@@ -1349,13 +1242,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertRaises(SystemExit, self.ui.run_crash, report_file)
 
         self.assertEqual(self.ui.msg_title, _("Invalid problem report"))
@@ -1371,13 +1258,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _("Problem in bash"))
@@ -1417,13 +1298,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
 
         self.assertNotIn("ExecutableTimestamp", self.ui.report)
@@ -1456,13 +1331,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -1474,13 +1343,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -1535,13 +1398,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
         self.assertEqual(
             self.ui.msg_severity,
@@ -1557,13 +1414,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(
             self.ui.msg_severity,
@@ -1595,13 +1446,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
@@ -1662,13 +1507,7 @@ class T(unittest.TestCase):
             # if this runs anonymization before the duplicate signature, then
             # this will fail, as 0xDEADhostname is an invalid address
             self.ui = UserInterfaceMock()
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
@@ -1700,13 +1539,7 @@ class T(unittest.TestCase):
                 r.write(f)
 
             self.ui = UserInterfaceMock()
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
@@ -1751,13 +1584,7 @@ class T(unittest.TestCase):
                 r.write(f)
 
             self.ui = UserInterfaceMock()
-            self.ui.present_details_response = {
-                "report": True,
-                "blacklist": False,
-                "examine": False,
-                "restart": False,
-                "remember": False,
-            }
+            self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
@@ -1777,13 +1604,7 @@ class T(unittest.TestCase):
         r = self._gen_test_crash()
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         # known without URL
         with open(report_file, "wb") as f:
@@ -1795,13 +1616,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.opened_url, None)
 
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         # known with URL
         with open(report_file, "wb") as f:
             r.write(f)
@@ -1823,13 +1638,7 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(
             self.ui.opened_url,
@@ -1875,13 +1684,7 @@ class T(unittest.TestCase):
         del r
 
         self.ui = UserInterfaceMock()
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crashes()
 
         if os.getuid() != 0:
@@ -1919,13 +1722,7 @@ class T(unittest.TestCase):
     def test_run_update_report_existing_package_from_bug(self):
         """run_update_report() on an existing package (from bug)"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.ui.crashdb.download(1)["SourcePackage"] = "bash"
         self.ui.crashdb.download(1)["Package"] = "bash"
@@ -1945,13 +1742,7 @@ class T(unittest.TestCase):
         with extra tag"""
         argv = ["ui-test", "-u", "1", "-p", "bash", "--tag", "foo"]
         self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -1968,13 +1759,7 @@ class T(unittest.TestCase):
     def test_run_update_report_existing_package_cli_cmdname(self):
         """run_update_report() on an existing package (-collect program)"""
         self.ui = UserInterfaceMock(["apport-collect", "-p", "bash", "1"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -1990,13 +1775,7 @@ class T(unittest.TestCase):
     def test_run_update_report_noninstalled_but_hook(self):
         """run_update_report() on an uninstalled package with a source hook"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
             os.path.join(self.hookdir, "source_foo.py"), "w", encoding="utf-8"
@@ -2024,13 +1803,7 @@ class T(unittest.TestCase):
 
         argv = ["ui-test", "-p", source_pkg, "-u", "1"]
         self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
             os.path.join(self.hookdir, "source_%s.py" % source_pkg),
@@ -2065,13 +1838,7 @@ class T(unittest.TestCase):
 
     def test_interactive_hooks_information(self):
         """Interactive hooks: HookUI.information()"""
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action()
         self._run_hook(
             textwrap.dedent(
                 """\
@@ -2087,13 +1854,7 @@ class T(unittest.TestCase):
 
     def test_interactive_hooks_yesno(self):
         """Interactive hooks: HookUI.yesno()"""
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_yesno_response = True
         self._run_hook(
             textwrap.dedent(
@@ -2121,13 +1882,7 @@ class T(unittest.TestCase):
 
     def test_interactive_hooks_file(self):
         """Interactive hooks: HookUI.file()"""
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_file_response = "/etc/fstab"
         self._run_hook(
             textwrap.dedent(
@@ -2150,13 +1905,7 @@ class T(unittest.TestCase):
 
     def test_interactive_hooks_choices(self):
         """Interactive hooks: HookUI.choice()"""
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_choice_response = [1]
         self._run_hook(
             textwrap.dedent(
@@ -2181,13 +1930,7 @@ class T(unittest.TestCase):
     def test_hooks_choices_db_no_accept(self):
         """HookUI.choice() but DB does not accept report."""
         self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = {
-            "report": False,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_choice_response = [1]
         self._run_hook(
             textwrap.dedent(
@@ -2223,13 +1966,7 @@ class T(unittest.TestCase):
         """run_symptom()"""
         # unknown symptom
         self.ui = UserInterfaceMock(["ui-test", "-s", "foobar"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
         self.assertIn('foobar" is not known', self.ui.msg_text)
         self.assertEqual(self.ui.msg_severity, "error")
@@ -2273,13 +2010,7 @@ class T(unittest.TestCase):
             '  return "bash"\n',
         )
         self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_text, None)
         self.assertEqual(self.ui.msg_severity, None)
@@ -2294,13 +2025,7 @@ class T(unittest.TestCase):
         # working noninteractive script with extra tag
         argv = ["ui-test", "--tag", "foo", "-s", "itching"]
         self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_text, None)
         self.assertEqual(self.ui.msg_severity, None)
@@ -2322,13 +2047,7 @@ class T(unittest.TestCase):
             ),
         )
         self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_yesno_response = True
         self.assertEqual(self.ui.run_argv(), True)
         self.assertTrue(self.ui.present_details_shown)
@@ -2359,13 +2078,7 @@ class T(unittest.TestCase):
         )
 
         self.ui = UserInterfaceMock(["ui-test", "-f"])
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.ui.question_choice_response = None
         self.assertEqual(self.ui.run_argv(), True)
@@ -2805,13 +2518,7 @@ class T(unittest.TestCase):
 
         # Pretend it does not accept report
         self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = {
-            "report": True,
-            "blacklist": False,
-            "examine": False,
-            "restart": False,
-            "remember": False,
-        }
+        self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_severity, None)
