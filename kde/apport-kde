@@ -17,7 +17,7 @@ import shutil
 import subprocess
 import sys
 
-import apport
+import apport.logging
 import apport.ui
 from apport import unicode_gettext as _
 
@@ -48,7 +48,7 @@ try:
     )
 except ImportError as error:
     # this can happen while upgrading python packages
-    apport.fatal(
+    apport.logging.fatal(
         "Could not import module, is a package upgrade in progress?"
         "  Error: %s",
         str(error),
@@ -578,7 +578,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
 if __name__ == "__main__":
     if not os.environ.get("DISPLAY"):
-        apport.fatal(
+        apport.logging.fatal(
             "This program needs a running X session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )
