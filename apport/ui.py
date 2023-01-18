@@ -226,8 +226,8 @@ def thread_collect_info(
 
 @dataclasses.dataclass
 class Action:
-    blacklist: bool = False
     examine: bool = False
+    ignore: bool = False
     remember: bool = False
     report: bool = False
     restart: bool = False
@@ -400,7 +400,7 @@ class UserInterface:
                 return
             if response.restart:
                 self.restart()
-            if response.blacklist:
+            if response.ignore:
                 self.report.mark_ignore()
             try:
                 if response.remember:
@@ -2004,8 +2004,8 @@ class UserInterface:
         Return the action and options as an Action object:
 
         - Valid attributes are: report the crash ('report'), restart
-          the crashed application ('restart'), or blacklist further crashes
-          ('blacklist').
+          the crashed application ('restart'), or ignore further crashes
+          ('ignore').
         """
         raise NotImplementedError(
             "this function must be overridden by subclasses"

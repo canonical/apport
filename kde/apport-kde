@@ -427,7 +427,7 @@ class MainUserInterface(apport.ui.UserInterface):
         if self.dialog.send_error_report.isChecked():
             return_value.report = True
         if self.dialog.ignore_future_problems.isChecked():
-            return_value.blacklist = True
+            return_value.ignore = True
         return return_value
 
     def ui_info_message(self, title, text):

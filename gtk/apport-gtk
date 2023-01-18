@@ -437,7 +437,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return_value.restart = True
 
             if self.w("ignore_future_problems").get_active():
-                return_value.blacklist = True
+                return_value.ignore = True
 
             return_value.remember = self.w(
                 "remember_send_report_choice"
