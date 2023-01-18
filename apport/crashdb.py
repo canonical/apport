@@ -17,7 +17,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-import apport.report
+from apport.packaging_impl import impl as packaging
 
 
 def _u(string):
@@ -190,9 +190,7 @@ class CrashDatabase:
             if (
                 not ex_ver
                 or not report_package_version
-                or apport.packaging.compare_versions(
-                    report_package_version, ex_ver
-                )
+                or packaging.compare_versions(report_package_version, ex_ver)
                 < 0
             ):
                 master_id = ex_id
@@ -522,7 +520,7 @@ class CrashDatabase:
                 return 1
             if y is None:
                 return -1
-            return apport.packaging.compare_versions(x, y)
+            return packaging.compare_versions(x, y)
 
         existing.sort(key=functools.cmp_to_key(cmp))
 
