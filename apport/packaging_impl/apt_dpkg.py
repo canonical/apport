@@ -327,12 +327,12 @@ class __AptDpkgPackageInfo(PackageInfo):
                 content = response.read()
         except (urllib.error.URLError, urllib.error.HTTPError):
             apport.logging.warning(
-                "cannot connect to: %s" % urllib.parse.unquote(url)
+                "cannot connect to: %s", urllib.parse.unquote(url)
             )
             return None
         except OSError:
             apport.logging.warning(
-                "failure reading data at: %s" % urllib.parse.unquote(url)
+                "failure reading data at: %s", urllib.parse.unquote(url)
             )
             return None
         if isinstance(content, bytes):
@@ -806,7 +806,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 )
             except SystemError as error:
                 apport.logging.warning(
-                    "cannot determine mirror: %s" % str(error)
+                    "cannot determine mirror: %s", str(error)
                 )
 
             # set current release code name for _distro_release_to_codename
@@ -909,7 +909,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "%", "%%"
                     )
                     obsolete += m + "\n"
-                    apport.logging.warning(m)
+                    apport.logging.warning("%s", m)
                     continue
                 for dep in cache_pkg.candidate.dependencies:
                     # the dependency may be satisfied by a different package
@@ -949,7 +949,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     "%", "%%"
                 )
                 obsolete += m + "\n"
-                apport.logging.warning(m)
+                apport.logging.warning("%s", m)
                 continue
 
             # try to select matching version
@@ -1770,8 +1770,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         origin_data[origin] = (user, ppa)
                 else:
                     apport.logging.warning(
-                        "Could not find or create source config for %s"
-                        % origin
+                        "Could not find or create source config for %s", origin
                     )
 
         # install apt keyrings; prefer the ones from the config dir, fall back
@@ -1812,8 +1811,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     ]
                 except IndexError:
                     apport.logging.warning(
-                        "Error: can't find signing_key_fingerprint at %s"
-                        % ppa_archive_url
+                        "Error: can't find signing_key_fingerprint at %s",
+                        ppa_archive_url,
                     )
                     continue
                 argv = [
@@ -1830,7 +1829,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
                 if subprocess.call(argv) != 0:
                     apport.logging.warning(
-                        "Unable to import key for %s" % ppa_archive_url
+                        "Unable to import key for %s", ppa_archive_url
                     )
 
     @staticmethod

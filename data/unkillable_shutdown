@@ -105,10 +105,10 @@ def do_report(pid, omit_pids):
             r.write(f)
     except FileExistsError as error:
         apport.warning(
-            f"Cannot create report: {error.filename} already exists"
+            "Cannot create report: %s already exists", error.filename
         )
     except OSError as error:
-        apport.fatal("Cannot create report: " + str(error))
+        apport.fatal("Cannot create report: %s", str(error))
 
 
 #

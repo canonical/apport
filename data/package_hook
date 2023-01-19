@@ -87,7 +87,7 @@ def main():
         with apport.fileutils.make_report_file(pr) as f:
             pr.write(f)
     except OSError as error:
-        apport.fatal("Cannot create report: " + str(error))
+        apport.fatal("Cannot create report: %s", str(error))
 
 
 if __name__ == "__main__":

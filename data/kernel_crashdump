@@ -33,7 +33,7 @@ if os.path.exists(vmcore_path + ".log"):
         pr["VmCoreLog"] = (os.fdopen(log_fd, "rb"),)
         os.unlink(vmcore_path + ".log")
     except OSError as error:
-        apport.fatal("Cannot open vmcore log: " + str(error))
+        apport.fatal("Cannot open vmcore log: %s", str(error))
 
 if os.path.exists(vmcore_path):
     try:
@@ -42,7 +42,7 @@ if os.path.exists(vmcore_path):
         with apport.fileutils.make_report_file(pr) as f:
             pr.write(f)
     except OSError as error:
-        apport.fatal("Cannot create report: " + str(error))
+        apport.fatal("Cannot create report: %s", str(error))
 
     try:
         os.unlink(vmcore_path)
@@ -60,7 +60,7 @@ else:
             # creating a symlink to someplace else and disclosing data; we just
             # compare against euid here so that we can test this as non-root
             if os.lstat(timedir).st_uid != os.geteuid():
-                apport.fatal("%s has unsafe permissions, ignoring" % timedir)
+                apport.fatal("%s has unsafe permissions, ignoring", timedir)
             report_name = package + "-" + timestamp + ".crash"
             try:
                 crash_report = os.path.join(
@@ -71,4 +71,4 @@ else:
                 with open(crash_report, "xb") as f:
                     pr.write(f)
             except OSError as error:
-                apport.fatal("Cannot create report: " + str(error))
+                apport.fatal("Cannot create report: %s", str(error))

@@ -456,8 +456,8 @@ Thank you for your understanding, and sorry for the inconvenience!
             if required_field not in set(report.keys()):
                 missing_fields.append(required_field)
         apport.error(
-            "report file does not contain one of the required fields: "
-            + " ".join(missing_fields)
+            "report file does not contain one of the required fields: %s",
+            " ".join(missing_fields),
         )
         sys.exit(0)
 
@@ -600,7 +600,7 @@ Thank you for your understanding, and sorry for the inconvenience!
             report.add_gdb_info(sandbox, gdb_sandbox)
         except OSError as error:
             if not options.auth:
-                apport.fatal(str(error))
+                apport.fatal("%s", str(error))
             if not options.confirm or confirm_traces(report):
                 invalid_msg = """Thank you for your report!
 
@@ -612,7 +612,7 @@ transit.
 Thank you for your understanding, and sorry for the inconvenience!
 """
                 crashdb.mark_retrace_failed(crashid, invalid_msg)
-            apport.fatal(str(error))
+            apport.fatal("%s", str(error))
         if options.sandbox == "system":
             apt_root = os.path.join(cache, "system", "apt")
         elif options.sandbox:

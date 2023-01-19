@@ -60,13 +60,13 @@ def main():
         else:
             os.mkdir(args.target_directory)
     except OSError as error:
-        fatal(str(error))
+        fatal("%s", str(error))
 
     bin_keys = []
     try:
         pr = load_report(args.report)
     except (OSError, problem_report.MalformedProblemReport) as error:
-        fatal(str(error))
+        fatal("%s", str(error))
     for key, value in pr.items():
         if value is None:
             bin_keys.append(key)
@@ -84,7 +84,7 @@ def main():
             with open(args.report, "rb") as f:
                 pr.extract_keys(f, bin_keys, args.target_directory)
     except OSError as error:
-        fatal(str(error))
+        fatal("%s", str(error))
 
 
 if __name__ == "__main__":
