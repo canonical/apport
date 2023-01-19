@@ -45,6 +45,16 @@ class TestSandboxutils(unittest.TestCase):
         self.assertEqual(packaging_mock.install_packages.call_count, 2)
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
+    def test_make_sandbox_install_packages_failure(
+        self, packaging_mock: unittest.mock.MagicMock
+    ) -> None:
+        """make_sandbox() where packaging.install_packages fails."""
+        packaging_mock.install_packages.side_effect = SystemError("100% fail")
+        with self.assertRaises(SystemExit):
+            make_sandbox(self._get_sample_report(), "system")
+        packaging_mock.install_packages.assert_called_once()
+
+    @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
     def test_make_sandbox_with_sandbox_dir(
         self, packaging_mock: unittest.mock.MagicMock
     ) -> None:

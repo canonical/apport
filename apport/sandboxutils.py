@@ -244,7 +244,7 @@ def make_sandbox(
             origins=origins,
         )
     except SystemError as error:
-        apport.logging.fatal(str(error))
+        apport.logging.fatal("%s", str(error))
 
     # install the extra packages and their deps
     if extra_packages:
@@ -263,7 +263,7 @@ def make_sandbox(
                 install_deps=True,
             )
         except SystemError as error:
-            apport.logging.fatal(str(error))
+            apport.logging.fatal("%s", str(error))
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(
@@ -315,7 +315,7 @@ def make_sandbox(
                 origins=origins,
             )
         except SystemError as error:
-            apport.logging.fatal(str(error))
+            apport.logging.fatal("%s", str(error))
 
     # consistency check: for a packaged binary we require having the executable
     # in the sandbox; TODO: for an unpackage binary we don't currently copy its

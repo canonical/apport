@@ -172,7 +172,9 @@ class CrashDigger:
                 == "bug description must contain standard apport format data"
             ):
                 apport.log("Cannot download report: " + str(error), True)
-                apport.error(f"Cannot download report {crash_id}: {error}")
+                apport.error(
+                    "Cannot download report %s: %s", crash_id, str(error)
+                )
                 return
             apport.log("Cannot download report: " + str(error), True)
             apport.error("Cannot download report %i: %s", crash_id, str(error))
