@@ -502,10 +502,10 @@ class T(unittest.TestCase):
             pr = apport.report.Report()
             pr["ExecutablePath"] = "/usr/bin/python3"
             pr["ProcStatus"] = "Name:\tpython3"
-            pr["ProcCmdline"] = "python\0-m\0distutils.cmd\0foo"
+            pr["ProcCmdline"] = "python3\0-m\0http.server\08080"
             pr._check_interpreted()
             self.assertEqual(pr["InterpreterPath"], "/usr/bin/python3")
-            self.assertIn("distutils/cmd.py", pr["ExecutablePath"])
+            self.assertIn("http/server.py", pr["ExecutablePath"])
 
             # Python script through -m, non-existent module
             pr = apport.report.Report()
