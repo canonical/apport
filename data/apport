@@ -369,10 +369,6 @@ def is_closing_session():
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     """
-    # consistency check, don't do anything for root processes
-    if crash_uid == 0 or crash_gid == 0:
-        return False
-
     with open("environ", "rb", opener=proc_pid_opener) as e:
         env = e.read().split(b"\0")
     for e in env:
@@ -1034,7 +1030,8 @@ def process_crash(options: argparse.Namespace) -> int:
     # write out the user coredumps
     recover_privileges()
 
-    if is_closing_session():
+    # Do not check closing session for root processes
+    if crash_uid != 0 and crash_gid != 0 and is_closing_session():
         error_log("happens for shutting down session, ignoring")
         return 0
 
