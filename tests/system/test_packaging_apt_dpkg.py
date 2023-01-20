@@ -370,7 +370,10 @@ class T(unittest.TestCase):
         ) as f:
             f.write("bogus format")
 
-        try:
+        with self.assertRaisesRegex(
+            SystemError,
+            "^E:Type 'bogus' is not known .* sources could not be read.$",
+        ):
             impl.install_packages(
                 self.rootdir,
                 self.configdir,
@@ -379,13 +382,6 @@ class T(unittest.TestCase):
                 False,
                 self.cachedir,
             )
-            self.fail(
-                "install_packages() unexpectedly succeeded"
-                " with broken sources.list"
-            )
-        except SystemError as error:
-            self.assertIn("bogus", str(error))
-            self.assertNotIn("Exception", str(error))
 
         # sources.list with wrong server
         with open(
@@ -395,7 +391,11 @@ class T(unittest.TestCase):
         ) as f:
             f.write("deb http://archive.ubuntu.com/nosuchdistro/ jammy main\n")
 
-        try:
+        with self.assertRaisesRegex(
+            SystemError,
+            "^E:The repository 'http://archive.ubuntu.com/nosuchdistro"
+            " jammy.*' does not have a Release file.$",
+        ):
             impl.install_packages(
                 self.rootdir,
                 self.configdir,
@@ -404,20 +404,6 @@ class T(unittest.TestCase):
                 False,
                 self.cachedir,
             )
-            self.fail(
-                "install_packages() unexpectedly succeeded"
-                " with broken server URL"
-            )
-        except SystemError as error:
-            self.assertIn("nosuchdistro", str(error))
-            try:
-                self.assertRegex(
-                    str(error),
-                    ".*'http://archive.ubuntu.com/nosuchdistro jammy.*'"
-                    " does not have a Release file",
-                )
-            except AssertionError:
-                self.assertIn("index files failed to download", str(error))
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_permanent_sandbox(self):
@@ -438,8 +424,7 @@ class T(unittest.TestCase):
         # This will now be using a Cache with our rootdir.
         archives = apt_pkg.config.find_dir("Dir::Cache::archives")
         tzdata = glob.glob(os.path.join(archives, "tzdata*.deb"))
-        if not tzdata:
-            self.fail("tzdata was not downloaded")
+        self.assertTrue(tzdata, "tzdata was not downloaded")
         tzdata_written = os.path.getctime(tzdata[0])
         zonetab_written = os.path.getctime(zonetab)
 
@@ -453,21 +438,23 @@ class T(unittest.TestCase):
             permanent_rootdir=True,
         )
 
-        if not glob.glob(os.path.join(archives, "coreutils*.deb")):
-            self.fail("coreutils was not downloaded.")
-            self.assertEqual(
-                os.path.getctime(tzdata[0]),
-                tzdata_written,
-                "tzdata downloaded twice.",
-            )
-            self.assertEqual(
-                zonetab_written,
-                os.path.getctime(zonetab),
-                "zonetab written twice.",
-            )
-            self.assertTrue(
-                os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-            )
+        self.assertTrue(
+            glob.glob(os.path.join(archives, "coreutils*.deb")),
+            "coreutils was not downloaded.",
+        )
+        self.assertEqual(
+            os.path.getctime(tzdata[0]),
+            tzdata_written,
+            "tzdata downloaded twice.",
+        )
+        self.assertEqual(
+            zonetab_written,
+            os.path.getctime(zonetab),
+            "zonetab written twice.",
+        )
+        self.assertTrue(
+            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
+        )
 
         # Prevent packages from downloading.
         orig_apt_proxy = apt_pkg.config.get("Acquire::http::Proxy")

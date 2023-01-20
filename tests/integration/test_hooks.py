@@ -143,8 +143,8 @@ class T(unittest.TestCase):
                 log1key = k
             elif k.endswith("Log2"):
                 log2key = k
-            elif "sub" in k:
-                self.fail("logsub should not go into log files")
+            else:
+                self.assertNotIn("sub", k)
 
         self.assertTrue(filekey)
         self.assertTrue(log1key)
