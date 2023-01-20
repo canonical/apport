@@ -508,17 +508,9 @@ class CrashDatabase:
             y = y[1]
             if x == y:
                 return 0
-            if x == "":
-                if y is None:
-                    return -1
+            if not x and y is not None:
                 return 1
-            if y == "":
-                if x is None:
-                    return 1
-                return -1
-            if x is None:
-                return 1
-            if y is None:
+            if not y:
                 return -1
             return packaging.compare_versions(x, y)
 
