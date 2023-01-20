@@ -9,11 +9,14 @@
 
 """Unit tests for data/apport."""
 
+import contextlib
+import errno
 import os
 import pathlib
 import shutil
 import tempfile
 import time
+import typing
 import unittest
 
 import apport.fileutils
@@ -39,6 +42,13 @@ class TestApport(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.workdir)
         apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
         self.report_dir = pathlib.Path(apport.fileutils.report_dir)
+
+    @staticmethod
+    @contextlib.contextmanager
+    def _open_dir(path: str) -> typing.Generator[int, None, None]:
+        dir_fd = os.open(path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+        yield dir_fd
+        os.close(dir_fd)
 
     @unittest.mock.patch("subprocess.run")
     def test_check_kernel_crash(self, run_mock):
@@ -141,3 +151,90 @@ class TestApport(unittest.TestCase):
             "/proc/sys/kernel/core_pattern", "w", encoding="utf-8"
         )
         self.assertEqual(open_mock.call_count, 3)
+
+    @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
+    @unittest.mock.patch("os.setresuid", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(
+        apport_binary, "_run_with_output_limit_and_timeout"
+    )
+    @unittest.mock.patch("os.path.exists")
+    def test_is_closing_session(
+        self,
+        path_exist_mock: unittest.mock.MagicMock,
+        run_mock: unittest.mock.MagicMock,
+    ) -> None:
+        """Test is_closing_session()."""
+        path_exist_mock.return_value = True
+        run_mock.return_value = (b"(false,)\n", b"some stderr output\n")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = pathlib.Path(tmpdir) / "environ"
+            env.write_text(
+                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
+            )
+            with self._open_dir(tmpdir) as proc_pid_fd:
+                # TODO: Get rid of global variables from get_pid_info
+                apport_binary.proc_pid_fd = proc_pid_fd
+                self.assertEqual(apport_binary.is_closing_session(), True)
+        path_exist_mock.assert_called_once_with("/run/user/1337/bus")
+        run_mock.assert_called_once()
+
+    def test_is_closing_session_no_environ(self) -> None:
+        """Test is_closing_session() with no DBUS_SESSION_BUS_ADDRESS."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = pathlib.Path(tmpdir) / "environ"
+            env.write_text("DISPLAY=:0\0")
+            with self._open_dir(tmpdir) as proc_pid_fd:
+                # TODO: Get rid of global variables from get_pid_info
+                apport_binary.proc_pid_fd = proc_pid_fd
+                self.assertEqual(apport_binary.is_closing_session(), False)
+
+    def test_is_closing_session_no_determine_socket(self) -> None:
+        """Test is_closing_session() cannot determine D-Bus socket."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = pathlib.Path(tmpdir) / "environ"
+            env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:/run/user/42/bus\0")
+            with self._open_dir(tmpdir) as proc_pid_fd:
+                # TODO: Get rid of global variables from get_pid_info
+                apport_binary.proc_pid_fd = proc_pid_fd
+                self.assertEqual(apport_binary.is_closing_session(), False)
+
+    def test_is_closing_session_socket_not_exists(self) -> None:
+        """Test is_closing_session() where D-Bus socket does not exist."""
+        assert not os.path.exists("/run/user/1337/bus")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = pathlib.Path(tmpdir) / "environ"
+            env.write_text(
+                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
+            )
+            with self._open_dir(tmpdir) as proc_pid_fd:
+                # TODO: Get rid of global variables from get_pid_info
+                apport_binary.proc_pid_fd = proc_pid_fd
+                self.assertEqual(apport_binary.is_closing_session(), False)
+
+    @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
+    @unittest.mock.patch("os.setresuid", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(
+        apport_binary, "_run_with_output_limit_and_timeout"
+    )
+    @unittest.mock.patch("os.path.exists")
+    def test_is_closing_session_gdbus_failure(
+        self,
+        path_exist_mock: unittest.mock.MagicMock,
+        run_mock: unittest.mock.MagicMock,
+    ) -> None:
+        """Test is_closing_session() with OSError from gdbus."""
+        path_exist_mock.return_value = True
+        run_mock.side_effect = OSError(
+            errno.ENOENT, "No such file or directory: 'gdbus'"
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = pathlib.Path(tmpdir) / "environ"
+            env.write_text(
+                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
+            )
+            with self._open_dir(tmpdir) as proc_pid_fd:
+                # TODO: Get rid of global variables from get_pid_info
+                apport_binary.proc_pid_fd = proc_pid_fd
+                self.assertEqual(apport_binary.is_closing_session(), False)
+        path_exist_mock.assert_called_once_with("/run/user/1337/bus")
+        run_mock.assert_called_once()
