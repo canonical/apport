@@ -363,7 +363,7 @@ def _run_with_output_limit_and_timeout(
     return stdout, stderr
 
 
-def is_closing_session():
+def is_closing_session() -> bool:
     """Check if pid is in a closing user session.
 
     During that, crashes are common as the session D-BUS and X.org are going
