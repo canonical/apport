@@ -426,6 +426,28 @@ class T(unittest.TestCase):
             },
         )
 
+    def test_check_duplicate_multiple_regressions(self):
+        """check_duplicate() with multiple regressions.
+
+        Bug #3 (version 3epsilon1) got fixed in 4.1. Bug #5 (version 4.3)
+        is a regression and is fixed in 4.8. Bug #4 (version 5) is
+        also a regression, but bug #6 (version 5.7) is a duplicate.
+        """
+        self.crashes.init_duplicate_db(":memory:")
+        report = copy.copy(self.crashes.download(3))
+        report["Package"] = "python-goo 4.3"
+        self.assertEqual(self.crashes.upload(report), 5)
+        report["Package"] = "python-goo 5.7"
+        self.assertEqual(self.crashes.upload(report), 6)
+
+        self.crashes.reports[3]["fixed_version"] = "4.1"
+        self.crashes.reports[5]["fixed_version"] = "4.8"
+
+        self.assertEqual(self.crashes.check_duplicate(3), None)
+        self.assertEqual(self.crashes.check_duplicate(5), None)
+        self.assertEqual(self.crashes.check_duplicate(4), None)
+        self.assertEqual(self.crashes.check_duplicate(6), (4, None))
+
     def test_check_duplicate_utf8(self):
         """check_duplicate() with UTF-8 strings"""
         # assertion failure, with UTF-8 strings
