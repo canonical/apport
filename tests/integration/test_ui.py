@@ -450,7 +450,24 @@ class T(unittest.TestCase):
         # report with only package information
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
-        self.ui.collect_info()
+
+        def search_bug_patterns(url: str) -> typing.Optional[str]:
+            progress_pulses = self.ui.ic_progress_pulses
+            # wait for ui_pulse_info_collection_progress() call
+            while self.ui.ic_progress_pulses == progress_pulses:
+                time.sleep(0.01)
+            return apport.report.Report.search_bug_patterns(
+                self.ui.report, url
+            )
+
+        with unittest.mock.patch.object(
+            self.ui.report,
+            "search_bug_patterns",
+            side_effect=search_bug_patterns,
+        ) as search_bug_patterns_mock:
+            self.ui.collect_info()
+
+        search_bug_patterns_mock.assert_called_once()
         self.assertTrue(
             set(
                 [
