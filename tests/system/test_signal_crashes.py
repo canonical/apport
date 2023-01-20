@@ -35,7 +35,7 @@ class T(unittest.TestCase):
         else:
             cls.apport_path = None
         if is_local_source_directory():
-            cls.apport_path = os.path.join(get_data_directory(), "apport")
+            cls.apport_path = get_data_directory() / "apport"
 
         cls.all_reports = apport.fileutils.get_all_reports()
 

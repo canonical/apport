@@ -32,9 +32,7 @@ GLib.log_set_always_fatal(
     GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL
 )
 
-
-apport_gtk_path = os.path.join(get_data_directory("gtk"), "apport-gtk")
-kernel_oops_path = os.path.join(get_data_directory(), "kernel_oops")
+apport_gtk_path = get_data_directory("gtk") / "apport-gtk"
 apport_gtk = import_module_from_file(apport_gtk_path)
 GTKUserInterface = apport_gtk.GTKUserInterface
 
@@ -64,7 +62,7 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
-        self.app = GTKUserInterface([apport_gtk_path])
+        self.app = GTKUserInterface([str(apport_gtk_path)])
 
         # use in-memory crashdb
         self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
@@ -960,7 +958,7 @@ class T(unittest.TestCase):
         # remove the crash from setUp() and create a kernel oops
         os.remove(self.app.report_file)
         subprocess.run(
-            [kernel_oops_path],
+            [get_data_directory() / "kernel_oops"],
             check=True,
             input=b"Plasma conduit phase misalignment",
         )

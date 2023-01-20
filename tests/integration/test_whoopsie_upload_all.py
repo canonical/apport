@@ -20,7 +20,7 @@ from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
 whoopsie_upload_all = import_module_from_file(
-    os.path.join(get_data_directory(), "whoopsie-upload-all")
+    get_data_directory() / "whoopsie-upload-all"
 )
 
 

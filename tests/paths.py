@@ -1,13 +1,16 @@
 import os
+import pathlib
 import typing
 
-_SRCDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-_BINDIR = os.path.join(_SRCDIR, "bin")
-_CRASHDB_CONF = os.path.join(_SRCDIR, "etc", "apport", "crashdb.conf")
-_DATADIR = os.path.join(_SRCDIR, "data")
+_SRCDIR = pathlib.Path(__file__).absolute().parent.parent
+_BINDIR = _SRCDIR / "bin"
+_CRASHDB_CONF = _SRCDIR / "etc" / "apport" / "crashdb.conf"
+_DATADIR = _SRCDIR / "data"
 
 
-def get_data_directory(local_path: typing.Optional[str] = None) -> str:
+def get_data_directory(
+    local_path: typing.Optional[os.PathLike] = None,
+) -> pathlib.Path:
     """Return absolute path for apport's data directory.
 
     If the tests are executed in the local source code directory,
@@ -17,12 +20,12 @@ def get_data_directory(local_path: typing.Optional[str] = None) -> str:
     overridden by setting the environment variable APPORT_DATA_DIR.
     """
     if "APPORT_DATA_DIR" in os.environ:
-        return os.environ["APPORT_DATA_DIR"]
+        return pathlib.Path(os.environ["APPORT_DATA_DIR"])
     if is_local_source_directory():
         if local_path is None:
             return _DATADIR
-        return os.path.join(_SRCDIR, local_path)
-    return "/usr/share/apport"
+        return _SRCDIR / local_path
+    return pathlib.Path("/usr/share/apport")
 
 
 def is_local_source_directory() -> bool:
@@ -39,10 +42,10 @@ def local_test_environment() -> typing.Mapping[str, str]:
     if not is_local_source_directory():
         return {}
     return {
-        "APPORT_CRASHDB_CONF": _CRASHDB_CONF,
-        "APPORT_DATA_DIR": _DATADIR,
+        "APPORT_CRASHDB_CONF": str(_CRASHDB_CONF),
+        "APPORT_DATA_DIR": str(_DATADIR),
         "PATH": f"{_BINDIR}:{os.environ.get('PATH', os.defpath)}",
-        "PYTHONPATH": _SRCDIR,
+        "PYTHONPATH": str(_SRCDIR),
     }
 
 

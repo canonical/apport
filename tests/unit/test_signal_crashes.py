@@ -20,9 +20,7 @@ import apport.fileutils
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
-apport_binary = import_module_from_file(
-    os.path.join(get_data_directory(), "apport")
-)
+apport_binary = import_module_from_file(get_data_directory() / "apport")
 
 
 class TestApport(unittest.TestCase):

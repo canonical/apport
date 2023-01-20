@@ -56,7 +56,7 @@ class T(unittest.TestCase):
         self.assertEqual(sleep_mock.call_count, 101)
 
     def call_recoverable_problem(self, data):
-        cmd = ["%s/recoverable_problem" % self.datadir]
+        cmd = [self.datadir / "recoverable_problem"]
         proc = subprocess.run(
             cmd,
             check=False,

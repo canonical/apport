@@ -59,7 +59,7 @@ class T(unittest.TestCase):
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
 
-        cls.apport_path = os.path.join(get_data_directory(), "apport")
+        cls.apport_path = get_data_directory() / "apport"
 
         cls.orig_cwd = os.getcwd()
         cls.orig_core_dir = apport.fileutils.core_dir
