@@ -5,6 +5,7 @@ import functools
 import importlib.machinery
 import importlib.util
 import os
+import pathlib
 import shutil
 import subprocess
 import typing
@@ -37,11 +38,11 @@ def has_internet() -> bool:
         return False
 
 
-def import_module_from_file(filename: str):
+def import_module_from_file(path: pathlib.Path):
     """Import a module by its filename."""
-    name = os.path.splitext(os.path.basename(filename))[0].replace("-", "_")
+    name = path.stem.replace("-", "_")
     spec = importlib.util.spec_from_loader(
-        name, importlib.machinery.SourceFileLoader(name, filename)
+        name, importlib.machinery.SourceFileLoader(name, str(path))
     )
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)

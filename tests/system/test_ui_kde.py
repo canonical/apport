@@ -31,7 +31,7 @@ from apport import unicode_gettext as _
 from tests.helper import import_module_from_file, wrap_object
 from tests.paths import get_data_directory, local_test_environment
 
-apport_kde_path = os.path.join(get_data_directory("kde"), "apport-kde")
+apport_kde_path = get_data_directory("kde") / "apport-kde"
 if not PYQT5_IMPORT_ERROR:
     apport_kde = import_module_from_file(apport_kde_path)
     MainUserInterface = apport_kde.MainUserInterface
@@ -44,14 +44,14 @@ else:
 )
 class T(unittest.TestCase):
     COLLECTING_DIALOG = unittest.mock.call(
-        os.path.dirname(apport_kde_path),
+        str(apport_kde_path.parent),
         "Collecting Problem Information",
         "Collecting problem information",
         "The collected information can be sent to the developers to improve "
         "the application. This might take a few minutes.",
     )
     UPLOADING_DIALOG = unittest.mock.call(
-        os.path.dirname(apport_kde_path),
+        str(apport_kde_path.parent),
         "Uploading Problem Information",
         "Uploading problem information",
         "The collected information is being sent to the bug tracking system. "
@@ -64,7 +64,7 @@ class T(unittest.TestCase):
         os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
 
-        cls.argv = [apport_kde_path]
+        cls.argv = [str(apport_kde_path)]
         cls.app = QApplication(cls.argv)
         cls.app.applicationName = "apport-kde"
         cls.app.applicationDisplayName = _("Apport")

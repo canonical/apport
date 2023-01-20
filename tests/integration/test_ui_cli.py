@@ -10,6 +10,7 @@
 """Command line Apport user interface tests."""
 
 import os
+import pathlib
 import unittest
 
 import apport.report
@@ -20,7 +21,7 @@ if is_local_source_directory():
     apport_cli_path = "bin/apport-cli"
 else:
     apport_cli_path = "/usr/bin/apport-cli"
-apport_cli = import_module_from_file(apport_cli_path)
+apport_cli = import_module_from_file(pathlib.Path(apport_cli_path))
 
 
 class TestApportCli(unittest.TestCase):

@@ -1,12 +1,11 @@
-import os.path
-import sys
 import unittest
 
+from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
-sys.path.insert(0, os.path.join(get_data_directory(), "general-hooks"))
-
-import parse_segv  # noqa: E402, pylint: disable=C0411,C0413
+parse_segv = import_module_from_file(
+    get_data_directory() / "general-hooks" / "parse_segv.py"
+)
 
 # Default global registers, maps, and disassembly for testing
 REGS = """\

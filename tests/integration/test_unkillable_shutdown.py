@@ -37,7 +37,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         shutil.rmtree(self.report_dir)
 
     def _call(self, omit: typing.Optional[list] = None) -> None:
-        cmd = [f"{self.data_dir}/unkillable_shutdown"]
+        cmd = [self.data_dir / "unkillable_shutdown"]
         if omit:
             cmd += [arg for pid in omit for arg in ["-o", str(pid)]]
         process = subprocess.run(

@@ -27,13 +27,13 @@ class T(unittest.TestCase):
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         self.env["APPORT_REPORT_DIR"] = apport.fileutils.report_dir
-        self.env["APPORT_JAVA_EXCEPTION_HANDLER"] = os.path.join(
-            datadir, "java_uncaught_exception"
+        self.env["APPORT_JAVA_EXCEPTION_HANDLER"] = str(
+            datadir / "java_uncaught_exception"
         )
         java_dir = get_data_directory("java")
-        self.apport_jar_path = os.path.join(java_dir, "apport.jar")
-        self.crash_jar_path = os.path.join(java_dir, "testsuite", "crash.jar")
-        if not os.path.exists(self.apport_jar_path):
+        self.apport_jar_path = java_dir / "apport.jar"
+        self.crash_jar_path = java_dir / "testsuite" / "crash.jar"
+        if not self.apport_jar_path.exists():
             self.skipTest(f"{self.apport_jar_path} missing")
 
     def tearDown(self):
@@ -42,16 +42,14 @@ class T(unittest.TestCase):
 
     def test_crash_class(self):
         """Crash in a .class file."""
-        crash_class = os.path.dirname(self.crash_jar_path) + "/crash.class"
-        if not os.path.exists(crash_class):
+        crash_class = self.crash_jar_path.with_suffix(".class")
+        if not crash_class.exists():
             self.skipTest(f"{crash_class} missing")
         java = subprocess.run(
             [
                 "java",
                 "-classpath",
-                self.apport_jar_path
-                + ":"
-                + os.path.dirname(self.crash_jar_path),
+                f"{self.apport_jar_path}:{self.crash_jar_path.parent}",
                 "crash",
             ],
             check=False,
@@ -64,17 +62,17 @@ class T(unittest.TestCase):
         )
         self.assertIn("Can't catch this", java.stderr.decode())
 
-        self._check_crash_report(crash_class)
+        self._check_crash_report(str(crash_class))
 
     def test_crash_jar(self):
         """Crash in a .jar file."""
-        if not os.path.exists(self.crash_jar_path):
+        if not self.crash_jar_path.exists():
             self.skipTest(f"{self.crash_jar_path} missing")
         java = subprocess.run(
             [
                 "java",
                 "-classpath",
-                self.apport_jar_path + ":" + self.crash_jar_path,
+                f"{self.apport_jar_path}:{self.crash_jar_path}",
                 "crash",
             ],
             check=False,
@@ -87,7 +85,7 @@ class T(unittest.TestCase):
         )
         self.assertIn("Can't catch this", java.stderr.decode())
 
-        self._check_crash_report(self.crash_jar_path + "!/crash.class")
+        self._check_crash_report(f"{self.crash_jar_path}!/crash.class")
 
     def _check_crash_report(self, main_file):
         """Check that we have one crash report, and verify its contents."""

@@ -9,7 +9,6 @@
 
 """Unit tests for data/general-hooks/image.py."""
 
-import os
 import unittest
 
 import problem_report
@@ -17,7 +16,7 @@ from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
 image = import_module_from_file(
-    os.path.join(get_data_directory(), "general-hooks", "image.py")
+    get_data_directory() / "general-hooks" / "image.py"
 )
 
 
