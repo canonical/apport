@@ -434,10 +434,7 @@ def is_closing_session() -> bool:
         os.setresgid(real_gid, real_gid, -1)
 
     error_log("debug: session gdbus call: " + out.decode("UTF-8"))
-    if out.startswith(b"(false,"):
-        return True
-
-    return False
+    return out.startswith(b"(false,")
 
 
 def is_systemd_watchdog_restart(signum):
