@@ -604,13 +604,14 @@ class T(unittest.TestCase):
             test_proc.kill()
             test_proc.wait()
 
-        if app.stdout != "" or app.stderr != "":
-            self.fail(
-                f"Apport wrote to stdout and/or stderr"
-                f" (exit code {app.returncode})."
-                f"\n*** stdout:\n{app.stdout.strip()}"
-                f"\n*** stderr:\n{app.stderr.strip()}"
-            )
+        self.assertEqual(
+            app.stdout + app.stderr,
+            "",
+            msg=f"Apport wrote to stdout and/or stderr"
+            f" (exit code {app.returncode})."
+            f"\n*** stdout:\n{app.stdout.strip()}"
+            f"\n*** stderr:\n{app.stderr.strip()}",
+        )
         self.assertEqual(app.returncode, 0, app.stderr)
         with open(log, encoding="utf-8") as f:
             logged = f.read()
