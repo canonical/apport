@@ -1098,3 +1098,15 @@ No symbol table info available.
         pr.add_snap_contact_info(snap)
         self.assertEqual("ubuntu/+source/chromium-browser", pr["SnapSource"])
         self.assertEqual("snap", pr["SnapTags"])
+
+    def test_add_snap_contact_info_github(self):
+        """add_snap_contact_info()
+
+        Test that report is against Github
+        """
+        pr = apport.report.Report()
+        snap = "https://github.com/lxc/lxd/issues"
+        pr.add_snap_contact_info(snap)
+        self.assertEqual("lxc", pr["SnapGitOwner"])
+        self.assertEqual("lxd", pr["SnapGitName"])
+        self.assertEqual("snap-github", pr["CrashDB"])
