@@ -447,19 +447,24 @@ class Report(problem_report.ProblemReport):
             )
         # Automatically handle snaps which have a Launchpad contact defined
         if snap.get("contact"):
-            # Parse Launchpad project (e.g. 'subiquity') or source package
-            # string (e.g. 'ubuntu/+source/gnome-calculator') from snap
-            # 'contact'. Additionaly, extract any tag/tags defined in the
-            # contact URL.
-            p = (
-                r"^https?:\/\/.*launchpad\.net\/"
-                r"((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?"
-            )
-            m = re.search(p, urllib.parse.unquote(snap.get("contact", "")))
-            if m and m.group(1):
-                self["SnapSource"] = m.group(1)
-                if m.group(2):
-                    self["SnapTags"] = m.group(2)
+            self.add_snap_contact_info(snap.get("contact"))
+
+    def add_snap_contact_info(self, snap_contact: str) -> None:
+        """Load report with information about where it should be filed.
+
+        Parse project (e.g. 'subiquity') or source package string
+        (e.g. 'ubuntu/+source/gnome-calculator') from snap 'contact'.
+        Additionaly, extract any tag/tags defined in the contact URL.
+        """
+        p = (
+            r"^https?:\/\/.*launchpad\.net\/"
+            r"((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?"
+        )
+        m = re.search(p, urllib.parse.unquote(snap_contact))
+        if m and m.group(1):
+            self["SnapSource"] = m.group(1)
+            if m.group(2):
+                self["SnapTags"] = m.group(2)
 
     def add_os_info(self):
         """Add operating system information.
