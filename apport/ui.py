@@ -1573,7 +1573,10 @@ class UserInterface:
             # show a hint if we cannot auto report a snap bug via 'SnapSource'
             if (
                 "Snap" in self.report
-                and "SnapSource" not in self.report
+                and (
+                    "SnapSource" not in self.report
+                    and "SnapGitName" not in self.report
+                )
                 and "UnreportableReason" not in self.report
                 and self.specified_a_pkg
             ):
