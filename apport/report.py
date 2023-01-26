@@ -456,6 +456,7 @@ class Report(problem_report.ProblemReport):
         (e.g. 'ubuntu/+source/gnome-calculator') from snap 'contact'.
         Additionaly, extract any tag/tags defined in the contact URL.
         """
+        # Launchpad
         p = (
             r"^https?:\/\/.*launchpad\.net\/"
             r"((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?"
@@ -465,6 +466,14 @@ class Report(problem_report.ProblemReport):
             self["SnapSource"] = m.group(1)
             if m.group(2):
                 self["SnapTags"] = m.group(2)
+
+        # Github
+        p = r"^https?://.*github\.com/([^/]+)/([^/]+)"
+        m = re.search(p, urllib.parse.unquote(snap_contact))
+        if m:
+            self["SnapGitOwner"] = m.group(1)
+            self["SnapGitName"] = m.group(2)
+            self["CrashDB"] = "snap-github"
 
     def add_os_info(self):
         """Add operating system information.
