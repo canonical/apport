@@ -1083,3 +1083,17 @@ No symbol table info available.
         del pr["dmi.bios.version"]
         expected = "suspend/resume:Cray XT5"
         self.assertEqual(expected, pr.crash_signature())
+
+    def test_add_snap_contact_info_launchpad(self):
+        """add_snap_contact_info()
+
+        Test that report is against Launchpad
+        """
+        pr = apport.report.Report()
+        snap = (
+            "https://bugs.launchpad.net/ubuntu/+source/"
+            "chromium-browser/+bugs?field.tag=snap"
+        )
+        pr.add_snap_contact_info(snap)
+        self.assertEqual("ubuntu/+source/chromium-browser", pr["SnapSource"])
+        self.assertEqual("snap", pr["SnapTags"])
