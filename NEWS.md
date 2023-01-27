@@ -2078,8 +2078,9 @@ Improvements:
    these traces from the client-side application, you need the actual exception
    in the D-Bus server backend instead.
    ([LP: #914220](https://launchpad.net/bugs/914220))
- - Support /etc/apport/whitelist.d/ similarly to /etc/apport/blacklist.d/, for
-   cases like installer environments where only crashes of a few selected
+ - Support /etc/apport/whitelist.d/ <!-- wokeignore:rule=whitelist -->
+   similarly to /etc/apport/blacklist.d/, <!-- wokeignore:rule=blacklist -->
+   for cases like installer environments where only crashes of a few selected
    programs should be reported.
 
 1.90 (2011-11-24):
