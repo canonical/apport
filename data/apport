@@ -1022,9 +1022,10 @@ def process_crash(options: argparse.Namespace) -> int:
         )
         return 0
 
-    # ignore blacklisted binaries
     if info.check_ignored():
-        error_log("executable version is blacklisted, ignoring")
+        error_log(
+            "executable version is in denylist or not in allowlist, ignoring"
+        )
         return 0
 
     # We can now recover privileges to create the crash report file and

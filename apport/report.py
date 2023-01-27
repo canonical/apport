@@ -48,9 +48,11 @@ _opt_dir = "/opt"
 # path of the ignore file
 _ignore_file = os.environ.get("APPORT_IGNORE_FILE", "~/.apport-ignore.xml")
 
-# system-wide blacklist
-_blacklist_dir = "/etc/apport/blacklist.d"
-_whitelist_dir = "/etc/apport/whitelist.d"
+# system-wide denylist/allowlist directories
+_DENYLIST_DIR = "/etc/apport/report-ignore"
+_ALLOWLIST_DIR = "/etc/apport/report-only"
+_LEGACY_DENYLIST_DIR = "/etc/apport/blacklist.d"  # wokeignore:rule=blacklist
+_LEGACY_ALLOWLIST_DIR = "/etc/apport/whitelist.d"  # wokeignore:rule=whitelist
 
 # programs that we consider interpreters
 interpreters = [
@@ -1262,12 +1264,12 @@ class Report(problem_report.ProblemReport):
     def check_ignored(self) -> bool:
         """Check if current report should not be presented.
 
-        Reports can be suppressed by per-user blacklisting in
+        Reports can be suppressed by per-user denylisting in
         ~/.apport-ignore.xml (in the real UID's home) and
-        /etc/apport/blacklist.d/. For environments where you are only
-        interested in crashes of some programs, you can also create a whitelist
-        in /etc/apport/whitelist.d/, everything which does not match gets
-        ignored then.
+        /etc/apport/report-ignore/. For environments where you are only
+        interested in crashes of some programs, you can also create an
+        allowlist in /etc/apport/report-only/, everything which does not
+        match gets ignored then.
 
         This requires the ExecutablePath attribute. Throws a ValueError if the
         file has an invalid format.
@@ -1276,15 +1278,18 @@ class Report(problem_report.ProblemReport):
         """
         assert "ExecutablePath" in self
 
-        # check blacklist
+        # check system-wide denylist
         if self["ExecutablePath"] in _read_list_files_in_directory(
-            _blacklist_dir
+            _DENYLIST_DIR
+        ) or self["ExecutablePath"] in _read_list_files_in_directory(
+            _LEGACY_DENYLIST_DIR
         ):
             return True
 
-        # check whitelist
-        whitelist = set(_read_list_files_in_directory(_whitelist_dir))
-        if whitelist and self["ExecutablePath"] not in whitelist:
+        # check system-wide allowlist
+        allowlist = set(_read_list_files_in_directory(_ALLOWLIST_DIR))
+        allowlist |= set(_read_list_files_in_directory(_LEGACY_ALLOWLIST_DIR))
+        if allowlist and self["ExecutablePath"] not in allowlist:
             return True
 
         try:

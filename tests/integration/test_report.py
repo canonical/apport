@@ -1701,10 +1701,10 @@ int main() { return f(42); }
             shutil.rmtree(workdir)
             apport.report.apport.report._ignore_file = orig_ignore_file
 
-    def test_blacklisting(self):
-        """check_ignored() for system-wise blacklist."""
-        orig_blacklist_dir = apport.report._blacklist_dir
-        apport.report._blacklist_dir = tempfile.mkdtemp()
+    def test_denylisting(self):
+        """check_ignored() for system-wise denylist."""
+        orig_denylist_dir = apport.report._DENYLIST_DIR
+        apport.report._DENYLIST_DIR = tempfile.mkdtemp()
         orig_ignore_file = apport.report._ignore_file
         apport.report._ignore_file = "/nonexistant"
         try:
@@ -1719,7 +1719,7 @@ int main() { return f(42); }
 
             # should not stumble over comments
             with open(
-                os.path.join(apport.report._blacklist_dir, "README"),
+                os.path.join(apport.report._DENYLIST_DIR, "README"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1727,7 +1727,7 @@ int main() { return f(42); }
 
             # no ignores on nonmatching paths
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl1"),
+                os.path.join(apport.report._DENYLIST_DIR, "bl1"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1737,7 +1737,7 @@ int main() { return f(42); }
 
             # ignore crap now
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl_2"),
+                os.path.join(apport.report._DENYLIST_DIR, "bl_2"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1747,7 +1747,7 @@ int main() { return f(42); }
 
             # ignore bash now
             with open(
-                os.path.join(apport.report._blacklist_dir, "bl1"),
+                os.path.join(apport.report._DENYLIST_DIR, "bl1"),
                 "a",
                 encoding="utf-8",
             ) as fd:
@@ -1755,14 +1755,14 @@ int main() { return f(42); }
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), True)
         finally:
-            shutil.rmtree(apport.report._blacklist_dir)
-            apport.report._blacklist_dir = orig_blacklist_dir
+            shutil.rmtree(apport.report._DENYLIST_DIR)
+            apport.report._DENYLIST_DIR = orig_denylist_dir
             apport.report._ignore_file = orig_ignore_file
 
-    def test_whitelisting(self):
-        """check_ignored() for system-wise whitelist."""
-        orig_whitelist_dir = apport.report._whitelist_dir
-        apport.report._whitelist_dir = tempfile.mkdtemp()
+    def test_allowlisting(self):
+        """check_ignored() for system-wise allowlist."""
+        orig_allowlist_dir = apport.report._ALLOWLIST_DIR
+        apport.report._ALLOWLIST_DIR = tempfile.mkdtemp()
         orig_ignore_file = apport.report.apport.report._ignore_file
         apport.report.apport.report._ignore_file = "/nonexistant"
         try:
@@ -1771,13 +1771,13 @@ int main() { return f(42); }
             crap_rep = apport.report.Report()
             crap_rep["ExecutablePath"] = "/bin/crap"
 
-            # no ignores without any whitelist
+            # no ignores without any allowlist
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
 
             # should not stumble over comments
             with open(
-                os.path.join(apport.report._whitelist_dir, "README"),
+                os.path.join(apport.report._ALLOWLIST_DIR, "README"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1785,7 +1785,7 @@ int main() { return f(42); }
 
             # accepts matching paths
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl1"),
+                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1795,7 +1795,7 @@ int main() { return f(42); }
 
             # also accept crap now
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl_2"),
+                os.path.join(apport.report._ALLOWLIST_DIR, "wl_2"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1805,7 +1805,7 @@ int main() { return f(42); }
 
             # only complete matches accepted
             with open(
-                os.path.join(apport.report._whitelist_dir, "wl1"),
+                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"),
                 "w",
                 encoding="utf-8",
             ) as fd:
@@ -1813,8 +1813,8 @@ int main() { return f(42); }
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), False)
         finally:
-            shutil.rmtree(apport.report._whitelist_dir)
-            apport.report._whitelist_dir = orig_whitelist_dir
+            shutil.rmtree(apport.report._ALLOWLIST_DIR)
+            apport.report._ALLOWLIST_DIR = orig_allowlist_dir
             apport.report.apport.report._ignore_file = orig_ignore_file
 
     def test_obsolete_packages(self):
