@@ -37,12 +37,12 @@ import typing
 import urllib.error
 import webbrowser
 import zlib
+from gettext import gettext as _
 
 import apport.crashdb
 import apport.fileutils
 import apport.logging
 import apport.REThread
-from apport import unicode_gettext as _
 from apport.packaging_impl import impl as packaging
 
 __version__ = "2.24.0"

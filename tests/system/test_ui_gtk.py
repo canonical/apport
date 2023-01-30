@@ -16,10 +16,10 @@ import tempfile
 import textwrap
 import unittest
 import unittest.mock
+from gettext import gettext as _
 
 import apport.crashdb_impl.memory
 import apport.report
-from apport import unicode_gettext as _
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory, local_test_environment
 

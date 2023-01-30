@@ -15,10 +15,10 @@ import os
 import re
 import subprocess
 import sys
+from gettext import gettext as _
 
 import apport
 import apport.ui
-from apport import unicode_gettext as _
 
 try:
     import gi
