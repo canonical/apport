@@ -15,6 +15,7 @@ import tempfile
 import textwrap
 import unittest
 import unittest.mock
+from gettext import gettext as _
 
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
@@ -27,7 +28,6 @@ except ImportError as error:
 
 import apport.crashdb_impl.memory
 import apport.report
-from apport import unicode_gettext as _
 from tests.helper import import_module_from_file, wrap_object
 from tests.paths import get_data_directory, local_test_environment
 

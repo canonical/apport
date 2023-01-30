@@ -20,11 +20,11 @@ import os
 import shutil
 import subprocess
 import sys
+from gettext import gettext as _
 
 import apport
 import apport.fileutils
 import apport.sandboxutils
-from apport import unicode_gettext as _
 
 #
 # functions

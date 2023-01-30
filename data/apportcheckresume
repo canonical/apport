@@ -12,9 +12,9 @@
 import datetime
 import os
 import sys
+from gettext import gettext as _
 
 import apport.report
-from apport import unicode_gettext as _
 from apport.hookutils import attach_file_if_exists
 from apport.packaging_impl import impl as packaging
 

@@ -16,10 +16,10 @@ import os
 import shutil
 import subprocess
 import sys
+from gettext import gettext as _
 
 import apport.logging
 import apport.ui
-from apport import unicode_gettext as _
 
 try:
     from PyQt5 import uic

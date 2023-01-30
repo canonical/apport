@@ -17,10 +17,10 @@ import gettext
 import gzip
 import os
 import sys
+from gettext import gettext as _
 
 import problem_report
 from apport import fatal
-from apport import unicode_gettext as _
 
 
 def parse_args():
