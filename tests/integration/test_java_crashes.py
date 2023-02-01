@@ -43,8 +43,7 @@ class T(unittest.TestCase):
     def test_crash_class(self):
         """Crash in a .class file."""
         crash_class = self.crash_jar_path.with_suffix(".class")
-        if not crash_class.exists():
-            self.skipTest(f"{crash_class} missing")
+        self.assertTrue(crash_class.exists(), f"{crash_class} missing")
         java = subprocess.run(
             [
                 "java",
@@ -66,8 +65,9 @@ class T(unittest.TestCase):
 
     def test_crash_jar(self):
         """Crash in a .jar file."""
-        if not self.crash_jar_path.exists():
-            self.skipTest(f"{self.crash_jar_path} missing")
+        self.assertTrue(
+            self.crash_jar_path.exists(), f"{self.crash_jar_path} missing"
+        )
         java = subprocess.run(
             [
                 "java",
