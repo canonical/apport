@@ -338,7 +338,8 @@ func(42)
         # Workaround for pytest bug.
         # See https://github.com/pytest-dev/pytest-cov/issues/541
         stderr = re.sub(
-            r"^Error processing [A-Za-z0-9 /-]*init_cov_core.pth:\n[\S\W]*\n"
+            r"^(Error processing [A-Za-z0-9 /-]*"
+            r"init_cov_core.pth:\n[\S\W]*\n)?"
             r"pytest-cov: Failed to setup subprocess coverage.*\n",
             "",
             process.stderr.decode(),
