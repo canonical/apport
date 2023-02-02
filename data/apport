@@ -179,8 +179,7 @@ def init_error_log() -> None:
 
     os.dup2(f, 1)
     os.dup2(f, 2)
-    sys.stderr = os.fdopen(2, "wb")
-    sys.stderr = io.TextIOWrapper(sys.stderr)
+    sys.stderr = io.TextIOWrapper(os.fdopen(2, "wb"))
     sys.stdout = sys.stderr
 
 
