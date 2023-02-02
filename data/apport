@@ -369,13 +369,9 @@ def is_closing_session() -> bool:
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     """
-    with open("environ", "rb", opener=proc_pid_opener) as e:
-        env = e.read().split(b"\0")
-    for e in env:
-        if e.startswith(b"DBUS_SESSION_BUS_ADDRESS="):
-            dbus_addr = e.split(b"=", 1)[1].decode()
-            break
-    else:
+    env = apport.fileutils.get_process_environ(proc_pid_fd)
+    dbus_addr = env.get("DBUS_SESSION_BUS_ADDRESS")
+    if dbus_addr is None:
         error_log(
             "is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment"
         )

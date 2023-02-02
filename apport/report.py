@@ -289,6 +289,31 @@ def _which_extrapath(command, extra_path):
     return shutil.which(command, path=path)
 
 
+class _Environment(dict[str, str]):
+    """Wrapper around an environment dictionary."""
+
+    def anonymize_path(self) -> None:
+        """Anonymize PATH environment variable if present."""
+        path = self.get("PATH")
+        if path is None:
+            return
+        if (
+            path == "/usr/local/sbin:/usr/local/bin"
+            ":/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
+        ):
+            del self["PATH"]
+        elif "/home" in path or "/tmp" in path:
+            self["PATH"] = "(custom, user)"
+        else:
+            self["PATH"] = "(custom, no user)"
+
+    def anonymize_vars(self, keys: typing.Iterable[str]) -> None:
+        """Anonymize given environment variables if present."""
+        for key in keys:
+            if key in self:
+                self[key] = "<set>"
+
+
 #
 # Report class
 #
@@ -764,7 +789,8 @@ class Report(problem_report.ProblemReport):
           plus the ones mentioned in extraenv)
         - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
         """
-        safe_vars = [
+        anonymize_vars = {"LD_LIBRARY_PATH", "LD_PRELOAD", "XDG_RUNTIME_DIR"}
+        safe_vars = anonymize_vars | {
             "SHELL",
             "TERM",
             "LANGUAGE",
@@ -782,9 +808,10 @@ class Report(problem_report.ProblemReport):
             "LC_MEASUREMENT",
             "LC_IDENTIFICATION",
             "LOCPATH",
-        ]
+            "PATH",
+        }
         if extraenv:
-            safe_vars += extraenv
+            safe_vars |= set(extraenv)
 
         if not proc_pid_fd:
             if not pid:
@@ -794,43 +821,26 @@ class Report(problem_report.ProblemReport):
                 "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
             )
 
-        self["ProcEnviron"] = ""
-        env = _read_proc_file("environ", pid, proc_pid_fd).replace("\n", "\\n")
-        if env.startswith("Error:"):
-            self["ProcEnviron"] = env
-        else:
-            for line in env.split("\0"):
-                if line.split("=", 1)[0] in safe_vars:
-                    if self["ProcEnviron"]:
-                        self["ProcEnviron"] += "\n"
-                    self["ProcEnviron"] += line
-                elif line.startswith("PATH="):
-                    p = line.split("=", 1)[1]
-                    if "/home" in p or "/tmp" in p:
-                        if self["ProcEnviron"]:
-                            self["ProcEnviron"] += "\n"
-                        self["ProcEnviron"] += "PATH=(custom, user)"
-                    elif (
-                        p != "/usr/local/sbin:/usr/local/bin"
-                        ":/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
-                    ):
-                        if self["ProcEnviron"]:
-                            self["ProcEnviron"] += "\n"
-                        self["ProcEnviron"] += "PATH=(custom, no user)"
-                elif line.startswith("XDG_RUNTIME_DIR="):
-                    if self["ProcEnviron"]:
-                        self["ProcEnviron"] += "\n"
-                    self["ProcEnviron"] += "XDG_RUNTIME_DIR=<set>"
-                elif line.startswith("LD_PRELOAD="):
-                    if self["ProcEnviron"]:
-                        self["ProcEnviron"] += "\n"
-                    self["ProcEnviron"] += "LD_PRELOAD=<set>"
-                elif line.startswith("LD_LIBRARY_PATH="):
-                    if self["ProcEnviron"]:
-                        self["ProcEnviron"] += "\n"
-                    self["ProcEnviron"] += "LD_LIBRARY_PATH=<set>"
-                elif line.startswith("XDG_CURRENT_DESKTOP="):
-                    self["CurrentDesktop"] = line.split("=", 1)[1]
+        try:
+            environ = _Environment(
+                apport.fileutils.get_process_environ(proc_pid_fd)
+            )
+        except OSError as error:
+            self["ProcEnviron"] = f"Error: {error}"
+            return
+
+        environ.anonymize_path()
+        environ.anonymize_vars(anonymize_vars)
+
+        if "XDG_CURRENT_DESKTOP" in environ:
+            self["CurrentDesktop"] = environ["XDG_CURRENT_DESKTOP"]
+        self["ProcEnviron"] = "\n".join(
+            [
+                f"{key}=" + value.replace("\n", "\\n")
+                for key, value in sorted(environ.items())
+                if key in safe_vars
+            ]
+        )
 
     def add_kernel_crash_info(self):
         """Add information from kernel crash.
