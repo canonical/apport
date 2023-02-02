@@ -37,6 +37,25 @@ class T(unittest.TestCase):
             apport.fileutils.likely_packaged("/var/lib/foo"), False
         )
 
+    def test_get_process_environ(self) -> None:
+        open_mock = unittest.mock.mock_open(
+            read_data="SHELL=/bin/bash\0TERM=xterm-256color\0LANGUAGE=en\0"
+        )
+        with unittest.mock.patch("builtins.open", open_mock):
+            environ = apport.fileutils.get_process_environ(1337)
+        open_mock.assert_called_once()
+        self.assertEqual(
+            environ,
+            {"LANGUAGE": "en", "SHELL": "/bin/bash", "TERM": "xterm-256color"},
+        )
+
+    def test_get_process_environ_empty(self) -> None:
+        open_mock = unittest.mock.mock_open(read_data="")
+        with unittest.mock.patch("builtins.open", open_mock):
+            environ = apport.fileutils.get_process_environ(1337)
+        open_mock.assert_called_once()
+        self.assertEqual(environ, {})
+
     def test_get_recent_crashes(self):
         """get_recent_crashes()"""
         # incomplete fields

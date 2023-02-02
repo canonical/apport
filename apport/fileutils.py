@@ -516,6 +516,25 @@ def get_boot_id():
     return boot_id
 
 
+def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
+    """Get the process environ from a proc directory file descriptor.
+
+    Raises an OSError in case the environ file could not been read.
+    """
+
+    def opener(path, flags: int) -> int:
+        return os.open(path, flags, dir_fd=proc_pid_fd)
+
+    with open(
+        "environ", encoding="utf-8", errors="replace", opener=opener
+    ) as environ_fd:
+        environ = environ_fd.read().rstrip("\0 ")
+
+    if not environ:
+        return {}
+    return dict([entry.split("=", 1) for entry in environ.split("\0")])
+
+
 def get_process_path(proc_pid_fd=None):
     """Get the process path from a proc directory file descriptor."""
     if proc_pid_fd is None:
