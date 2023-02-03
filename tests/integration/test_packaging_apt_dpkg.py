@@ -480,7 +480,7 @@ usr/bin/frob                                            foo/frob
             if len(fields) == 7:
                 # pick first diversion we have
                 break
-        else:
+        else:  # pragma: no cover
             self.fail(
                 f"No non-local diversion found. dpkg-divert output: {output}"
             )
