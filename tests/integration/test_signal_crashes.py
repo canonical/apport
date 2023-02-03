@@ -788,15 +788,11 @@ class T(unittest.TestCase):
     # Helper methods
     #
 
-    def _call_apport(
-        self,
-        process: psutil.Process,
-        sig: int,
-        dump_mode: int,
-        stdin: typing.IO,
-    ) -> None:
-        cmd = [
-            self.apport_path,
+    @staticmethod
+    def _apport_args(
+        process: psutil.Process, sig: int, dump_mode: int
+    ) -> list[str]:
+        return [
             f"-p{process.pid}",
             f"-s{sig}",
             f"-c{resource.getrlimit(resource.RLIMIT_CORE)[0]}",
@@ -807,6 +803,15 @@ class T(unittest.TestCase):
             "--",
             process.exe().replace("/", "!"),
         ]
+
+    def _call_apport(
+        self,
+        process: psutil.Process,
+        sig: int,
+        dump_mode: int,
+        stdin: typing.IO,
+    ) -> None:
+        cmd = [self.apport_path] + self._apport_args(process, sig, dump_mode)
         subprocess.check_call(cmd, stdin=stdin)
 
     def _call_apport_via_socket(
