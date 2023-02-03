@@ -62,6 +62,31 @@ class TestApport(unittest.TestCase):
             ["/usr/share/apport/kernel_crashdump"], check=False
         )
 
+    def test_check_lock_not_writable(self) -> None:
+        """Test check_lock() with not writable lock file."""
+        os.environ["APPORT_LOCK_FILE"] = "/non-existing/apport.lock"
+        try:
+            with self.assertRaisesRegex(SystemExit, "^1$"):
+                apport_binary.check_lock()
+        finally:
+            del os.environ["APPORT_LOCK_FILE"]
+
+    @unittest.mock.patch("fcntl.lockf")
+    def test_check_lock_taken(
+        self, lockf_mock: unittest.mock.MagicMock
+    ) -> None:
+        """Test check_lock() with lock file taken by other process."""
+        # Since this is a unit test, let the mock raise an exception instead
+        # of letting the fcntl.lockf call run into the timeout signal.
+        lockf_mock.side_effect = TimeoutError()
+        with tempfile.NamedTemporaryFile("w") as lockfile:
+            os.environ["APPORT_LOCK_FILE"] = lockfile.name
+            try:
+                with self.assertRaisesRegex(SystemExit, "^1$"):
+                    apport_binary.check_lock()
+            finally:
+                del os.environ["APPORT_LOCK_FILE"]
+
     @unittest.mock.patch("os.isatty")
     def test_init_error_log_is_tty(
         self, isatty_mock: unittest.mock.MagicMock
