@@ -30,6 +30,8 @@ import apport.fileutils
 from tests.helper import read_shebang
 from tests.paths import get_data_directory, local_test_environment
 
+APPORT_PATH = get_data_directory() / "apport"
+
 test_package = "coreutils"
 test_source = "coreutils"
 
@@ -58,8 +60,6 @@ class T(unittest.TestCase):
     def setUpClass(cls):
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
-
-        cls.apport_path = get_data_directory() / "apport"
 
         cls.orig_cwd = os.getcwd()
         cls.orig_core_dir = apport.fileutils.core_dir
@@ -121,7 +121,7 @@ class T(unittest.TestCase):
         try:
             with subprocess.Popen(
                 [
-                    self.apport_path,
+                    str(APPORT_PATH),
                     "-p",
                     str(test_proc.pid),
                     "-s",
@@ -219,7 +219,7 @@ class T(unittest.TestCase):
         try:
             with subprocess.Popen(
                 [
-                    self.apport_path,
+                    str(APPORT_PATH),
                     "-p",
                     str(test_proc.pid),
                     "-s",
@@ -237,7 +237,7 @@ class T(unittest.TestCase):
 
                 with subprocess.Popen(
                     [
-                        self.apport_path,
+                        str(APPORT_PATH),
                         "-p",
                         str(test_proc2.pid),
                         "-s",
@@ -323,7 +323,7 @@ class T(unittest.TestCase):
         env = os.environ.copy()
         env["APPORT_LOG_FILE"] = log
         app = subprocess.run(
-            [self.apport_path],
+            [str(APPORT_PATH)],
             check=False,
             env=env,
             preexec_fn=close_stdin_and_stderr,
@@ -542,7 +542,7 @@ class T(unittest.TestCase):
 
             app = subprocess.run(
                 [
-                    self.apport_path,
+                    str(APPORT_PATH),
                     "-p",
                     str(test_proc.pid),
                     "-s",
@@ -583,7 +583,7 @@ class T(unittest.TestCase):
             env["APPORT_LOG_FILE"] = log
             app = subprocess.run(
                 [
-                    self.apport_path,
+                    str(APPORT_PATH),
                     "-p",
                     str(test_proc.pid),
                     "-s",
@@ -636,7 +636,7 @@ class T(unittest.TestCase):
             env["APPORT_LOG_FILE"] = "/not/existing/apport.log"
             app = subprocess.run(
                 [
-                    self.apport_path,
+                    str(APPORT_PATH),
                     "-p",
                     str(test_proc.pid),
                     "-s",
@@ -811,7 +811,7 @@ class T(unittest.TestCase):
         dump_mode: int,
         stdin: typing.IO,
     ) -> None:
-        cmd = [self.apport_path] + self._apport_args(process, sig, dump_mode)
+        cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
         subprocess.check_call(cmd, stdin=stdin)
 
     def _call_apport_via_socket(
@@ -854,7 +854,7 @@ class T(unittest.TestCase):
 
         try:
             subprocess.run(
-                [self.apport_path],
+                [str(APPORT_PATH)],
                 check=True,
                 preexec_fn=child_setup,
                 pass_fds=[3],
