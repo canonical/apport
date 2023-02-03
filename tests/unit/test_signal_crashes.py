@@ -14,6 +14,7 @@ import errno
 import os
 import pathlib
 import shutil
+import sys
 import tempfile
 import time
 import typing
@@ -60,6 +61,18 @@ class TestApport(unittest.TestCase):
         run_mock.assert_called_once_with(
             ["/usr/share/apport/kernel_crashdump"], check=False
         )
+
+    @unittest.mock.patch("os.isatty")
+    def test_init_error_log_is_tty(
+        self, isatty_mock: unittest.mock.MagicMock
+    ) -> None:
+        """Test init_error_log() doing nothing on a TTY."""
+        isatty_mock.return_value = True
+        stderr = sys.stderr
+        apport_binary.init_error_log()
+        # Check sys.stderr to be unchanged
+        self.assertEqual(sys.stderr, stderr)
+        isatty_mock.assert_called_once_with(2)
 
     @unittest.mock.patch("builtins.__import__")
     def test_receive_arguments_via_socket_import_error(self, import_mock):
