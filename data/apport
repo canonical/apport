@@ -79,13 +79,7 @@ def check_lock():
         signal.signal(signal.SIGALRM, original_handler)
 
 
-(pidstat, crash_uid, crash_gid, cwd, proc_pid_fd) = (
-    None,
-    None,
-    None,
-    None,
-    None,
-)
+(pidstat, crash_uid, crash_gid, proc_pid_fd) = (None, None, None, None)
 
 
 def proc_pid_opener(path, flags):
@@ -96,7 +90,7 @@ def get_pid_info(pid):
     """Read /proc information about pid"""
 
     # pylint: disable=global-statement
-    global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
+    global pidstat, crash_uid, crash_gid, proc_pid_fd
 
     proc_pid_fd = os.open(
         "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
@@ -117,10 +111,6 @@ def get_pid_info(pid):
 
     assert crash_uid is not None, "failed to parse Uid"
     assert crash_gid is not None, "failed to parse Gid"
-
-    cwd = os.open(
-        "cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd
-    )
 
 
 def get_process_starttime():
@@ -242,10 +232,7 @@ def write_user_coredump(
         # Limit number of core files to prevent DoS
         apport.fileutils.clean_core_directory(crash_uid)
         core_file = os.open(
-            core_path,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL,
-            mode=0o400,
-            dir_fd=cwd,
+            core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o400
         )
     except OSError:
         return
@@ -265,7 +252,7 @@ def write_user_coredump(
                 core_size,
             )
             os.close(core_file)
-            os.unlink(core_path, dir_fd=cwd)
+            os.unlink(core_path)
             return
         logger.error("writing core dump %s of size %i", core_name, core_size)
         os.write(core_file, r["CoreDump"])
@@ -284,12 +271,12 @@ def write_user_coredump(
                     limit,
                 )
                 os.close(core_file)
-                os.unlink(core_path, dir_fd=cwd)
+                os.unlink(core_path)
                 return
             if os.write(core_file, block) != size:
                 logger.error("aborting core dump writing, could not write")
                 os.close(core_file)
-                os.unlink(core_path, dir_fd=cwd)
+                os.unlink(core_path)
                 return
             block = os.read(coredump_fd, 1048576)
 
