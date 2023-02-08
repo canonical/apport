@@ -92,7 +92,7 @@ def proc_pid_opener(path, flags):
     return os.open(path, flags, dir_fd=proc_pid_fd)
 
 
-def get_pid_info(pid):
+def get_pid_info(pid: int):
     """Read /proc information about pid"""
 
     # pylint: disable=global-statement
@@ -211,7 +211,12 @@ def setup_signals():
 
 
 def write_user_coredump(
-    executable_path, pid, timestamp, limit, coredump_fd=None, from_report=None
+    executable_path,
+    pid: int,
+    timestamp,
+    limit,
+    coredump_fd=None,
+    from_report=None,
 ):
     """Write the core into a directory if ulimit requests it."""
     logger = logging.getLogger()
@@ -434,10 +439,10 @@ def is_closing_session() -> bool:
     return out.startswith(b"(false,")
 
 
-def is_systemd_watchdog_restart(signum):
+def is_systemd_watchdog_restart(signum: int):
     """Check if this is a restart by systemd's watchdog"""
 
-    if signum != str(int(signal.SIGABRT)) or not os.path.isdir(
+    if signum != int(signal.SIGABRT) or not os.path.isdir(
         "/run/systemd/system"
     ):
         return False
@@ -509,9 +514,7 @@ def is_same_ns(pid, ns):
     return False
 
 
-def forward_crash_to_container(
-    host_pid: int, options: argparse.Namespace
-) -> None:
+def forward_crash_to_container(options: argparse.Namespace) -> None:
     """Try to forward the crash to the container.
 
     If the crash came from a container, don't attempt to handle
@@ -522,7 +525,7 @@ def forward_crash_to_container(
     """
     logger = logging.getLogger()
     proc_host_pid_fd = os.open(
-        "/proc/%d" % host_pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+        f"/proc/{options.global_pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
     )
 
     def proc_host_pid_opener(path, flags):
@@ -616,7 +619,7 @@ def forward_crash_to_container(
                 (
                     socket.SOL_SOCKET,
                     socket.SCM_CREDENTIALS,
-                    struct.pack("3i", host_pid, 0, 0),
+                    struct.pack("3i", options.global_pid, 0, 0),
                 ),
                 # Send fd 0 (the coredump)
                 (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array("i", [0])),
@@ -670,13 +673,16 @@ def stop_apport() -> None:
 def parse_arguments(args: list[str]):
     parser = argparse.ArgumentParser()
 
-    # TODO: Use type=int
-    parser.add_argument("-p", "--pid", help="process id (%%p)")
-    parser.add_argument("-s", "--signal-number", help="signal number (%%s)")
-    parser.add_argument("-c", "--core-ulimit", help="core ulimit (%%c)")
-    parser.add_argument("-d", "--dump-mode", help="dump mode (%%d)")
+    parser.add_argument("-p", "--pid", type=int, help="process id (%%p)")
     parser.add_argument(
-        "-P", "--global-pid", help="pid in root namespace (%%P)"
+        "-s", "--signal-number", type=int, help="signal number (%%s)"
+    )
+    parser.add_argument(
+        "-c", "--core-ulimit", type=int, help="core ulimit (%%c)"
+    )
+    parser.add_argument("-d", "--dump-mode", type=int, help="dump mode (%%d)")
+    parser.add_argument(
+        "-P", "--global-pid", type=int, help="pid in root namespace (%%P)"
     )
     parser.add_argument("-u", "--uid", type=int, help="real UID (%%u)")
     parser.add_argument("-g", "--gid", type=int, help="real GID (%%g)")
@@ -735,15 +741,13 @@ def main(args: list[str]) -> int:
     # indication that the crash originated from another PID namespace.
     # Simply log an entry in the host error log and exit 0.
     if options.global_pid is not None:
-        host_pid = int(options.global_pid)
-
-        if not is_same_ns(host_pid, "mnt"):
-            if not is_same_ns(host_pid, "pid"):
-                forward_crash_to_container(host_pid, options)
+        if not is_same_ns(options.global_pid, "mnt"):
+            if not is_same_ns(options.global_pid, "pid"):
+                forward_crash_to_container(options)
                 return 0
             logging.getLogger().error(
                 "host pid %s crashed in a separate mount namespace, ignoring",
-                host_pid,
+                options.global_pid,
             )
             return 0
 
@@ -756,7 +760,7 @@ def main(args: list[str]) -> int:
         # will use container namespaces as a security measure but are still
         # otherwise host processes. When that's the case, we need to keep
         # handling those crashes locally using the global pid.
-        options.pid = str(host_pid)
+        options.pid = options.global_pid
 
     check_lock()
 
@@ -841,10 +845,10 @@ def receive_arguments_via_socket() -> argparse.Namespace:
         sys.exit(1)
 
     return argparse.Namespace(
-        pid=args[0],
-        signal_number=args[1],
-        core_ulimit=args[2],
-        dump_mode=args[3],
+        pid=int(args[0]),
+        signal_number=int(args[1]),
+        core_ulimit=int(args[2]),
+        dump_mode=int(args[3]),
         global_pid=None,
         uid=None,
         gid=None,
@@ -893,13 +897,10 @@ def process_crash(options: argparse.Namespace) -> int:
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
-    pid = options.pid
-    signum = options.signal_number
     core_ulimit = options.core_ulimit
-    dump_mode = options.dump_mode
     coredump_fd = sys.stdin.fileno()
 
-    get_pid_info(pid)
+    get_pid_info(options.pid)
 
     process_start = get_process_starttime()
     if not consistency_checks(options, process_start):
@@ -907,17 +908,12 @@ def process_crash(options: argparse.Namespace) -> int:
 
     logger.error(
         "called for pid %s, signal %s, core limit %s, dump mode %s",
-        pid,
-        signum,
+        options.pid,
+        options.signal_number,
         core_ulimit,
-        dump_mode,
+        options.dump_mode,
     )
 
-    try:
-        core_ulimit = int(core_ulimit)
-    except ValueError:
-        logger.error("core limit is invalid, disabling core files")
-        core_ulimit = 0
     # clamp core_ulimit to a sensible size, for -1 the kernel reports
     # something absurdly big
     if core_ulimit > 9223372036854775807:
@@ -926,18 +922,18 @@ def process_crash(options: argparse.Namespace) -> int:
         )
         core_ulimit = -1
 
-    if dump_mode == "2":
+    if options.dump_mode == 2:
         logger.error(
-            "not creating core for pid with dump mode of %s", dump_mode
+            "not creating core for pid with dump mode of %s", options.dump_mode
         )
         # a report should be created but not a core file
         core_ulimit = 0
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
-    if signum == str(int(signal.SIGQUIT)):
+    if options.signal_number == int(signal.SIGQUIT):
         write_user_coredump(
             options.executable_path,
-            pid,
+            options.pid,
             process_start,
             core_ulimit,
             coredump_fd,
@@ -945,7 +941,7 @@ def process_crash(options: argparse.Namespace) -> int:
         return 0
 
     info = apport.report.Report("Crash")
-    info["Signal"] = signum
+    info["Signal"] = str(options.signal_number)
     core_size_limit = usable_ram() * 3 / 4
     # read binary data from stdio
     info["CoreDump"] = (sys.stdin.detach(), True, core_size_limit, True)
@@ -971,7 +967,7 @@ def process_crash(options: argparse.Namespace) -> int:
         return 1
 
     subject = info["ExecutablePath"].replace("/", "_")
-    base = "%s.%s.%s.hanging" % (subject, str(pidstat.st_uid), pid)
+    base = f"{subject}.{pidstat.st_uid}.{options.pid}.hanging"
     hanging = os.path.join(apport.fileutils.report_dir, base)
 
     if os.path.exists(hanging):
@@ -1003,7 +999,7 @@ def process_crash(options: argparse.Namespace) -> int:
             recover_privileges()
             write_user_coredump(
                 options.executable_path,
-                pid,
+                options.pid,
                 process_start,
                 core_ulimit,
                 coredump_fd,
@@ -1012,14 +1008,15 @@ def process_crash(options: argparse.Namespace) -> int:
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
-    if signum in (str(int(signal.SIGXCPU)), str(int(signal.SIGXFSZ))):
+    if options.signal_number in (int(signal.SIGXCPU), int(signal.SIGXFSZ)):
         logger.error(
-            "Ignoring signal %s (caused by exceeding soft RLIMIT)", signum
+            "Ignoring signal %s (caused by exceeding soft RLIMIT)",
+            options.signal_number,
         )
         recover_privileges()
         write_user_coredump(
             options.executable_path,
-            pid,
+            options.pid,
             process_start,
             core_ulimit,
             coredump_fd,
@@ -1043,7 +1040,7 @@ def process_crash(options: argparse.Namespace) -> int:
 
     # ignore systemd watchdog kills; most often they don't tell us the
     # actual reason (kernel hang, etc.), LP #1433320
-    if is_systemd_watchdog_restart(signum):
+    if is_systemd_watchdog_restart(options.signal_number):
         logger.error("Ignoring systemd watchdog restart")
         return 0
 
@@ -1062,7 +1059,7 @@ def process_crash(options: argparse.Namespace) -> int:
                 logger.error("%s", skip_msg)
                 write_user_coredump(
                     options.executable_path,
-                    pid,
+                    options.pid,
                     process_start,
                     core_ulimit,
                     coredump_fd,
@@ -1122,7 +1119,7 @@ def process_crash(options: argparse.Namespace) -> int:
     reportfile.seek(0)
     write_user_coredump(
         options.executable_path,
-        pid,
+        options.pid,
         process_start,
         core_ulimit,
         from_report=reportfile,
