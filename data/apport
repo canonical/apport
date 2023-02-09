@@ -515,7 +515,9 @@ def is_same_ns(pid, ns):
 
 
 def forward_crash_to_container(
-    options: argparse.Namespace, has_cap_sys_admin: bool = True
+    options: argparse.Namespace,
+    coredump_fd: int = 0,
+    has_cap_sys_admin: bool = True,
 ) -> None:
     """Try to forward the crash to the container.
 
@@ -613,9 +615,13 @@ def forward_crash_to_container(
         options.core_ulimit,
         options.dump_mode,
     )
-    # Send fd 0 (the coredump)
+    # Send coredump fd (defaults to 0 for stdin)
     ancillary = [
-        (socket.SOL_SOCKET, socket.SCM_RIGHTS, bytes(array.array("i", [0])))
+        (
+            socket.SOL_SOCKET,
+            socket.SCM_RIGHTS,
+            bytes(array.array("i", [coredump_fd])),
+        )
     ]
     if has_cap_sys_admin:
         # SCM_CREDENTIALS needs CAP_SYS_ADMIN for specifying another
