@@ -7,7 +7,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import array
+import argparse
 import collections
 import grp
 import os
@@ -27,10 +27,11 @@ import unittest
 import psutil
 
 import apport.fileutils
-from tests.helper import read_shebang
+from tests.helper import import_module_from_file, read_shebang
 from tests.paths import get_data_directory, local_test_environment
 
 APPORT_PATH = get_data_directory() / "apport"
+apport_binary = import_module_from_file(APPORT_PATH)
 
 test_package = "coreutils"
 test_source = "coreutils"
@@ -814,6 +815,23 @@ class T(unittest.TestCase):
         cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
         subprocess.check_call(cmd, stdin=stdin)
 
+    @staticmethod
+    def _forward_crash_to_container(
+        socket_path: str, args: argparse.Namespace, coredump_fd: int
+    ) -> None:
+        orig_os_open = os.open
+
+        def _mocked_os_open(
+            path, flags: int, dir_fd: typing.Optional[int] = None
+        ) -> int:
+            if path == "root/run/apport.socket":
+                return orig_os_open(socket_path, flags)
+            return orig_os_open(path, flags, dir_fd=dir_fd)
+
+        with unittest.mock.patch("os.open") as os_open_mock:
+            os_open_mock.side_effect = _mocked_os_open
+            apport_binary.forward_crash_to_container(args, coredump_fd, False)
+
     def _call_apport_via_socket(
         self,
         process: psutil.Process,
@@ -829,18 +847,10 @@ class T(unittest.TestCase):
         server.bind(socket_path)
         server.listen(1)
 
-        if os.fork() == 0:
-            client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            client.connect(socket_path)
-            core_ulimit = resource.getrlimit(resource.RLIMIT_CORE)[0]
-            args = f"{process.pid} {sig} {core_ulimit} {dump_mode}"
-            fd_msg = (
-                socket.SOL_SOCKET,
-                socket.SCM_RIGHTS,
-                array.array("i", [stdin.fileno()]),
-            )
-            client.sendmsg([args.encode()], [fd_msg])
-            os._exit(0)
+        args = apport_binary.parse_arguments(
+            self._apport_args(process, sig, dump_mode)
+        )
+        self._forward_crash_to_container(socket_path, args, stdin.fileno())
 
         # call apport like systemd does via socket activation
         def child_setup():
