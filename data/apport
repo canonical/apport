@@ -99,7 +99,7 @@ def get_pid_info(pid: int):
     global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
 
     proc_pid_fd = os.open(
-        "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+        f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
     )
 
     # unhandled exceptions on missing or invalidly formatted files are okay
@@ -134,7 +134,7 @@ def get_process_starttime():
 def get_apport_starttime():
     """Get the Apport process starttime"""
 
-    with open("/proc/%s/stat" % os.getpid(), encoding="utf-8") as stat_file:
+    with open(f"/proc/{os.getpid()}/stat", encoding="utf-8") as stat_file:
         contents = stat_file.read()
     return apport.fileutils.get_starttime(contents)
 
@@ -478,15 +478,15 @@ def is_systemd_watchdog_restart(signum: int):
 
 
 def is_same_ns(pid, ns):
-    if not os.path.exists("/proc/self/ns/%s" % ns) or not os.path.exists(
-        "/proc/%s/ns/%s" % (pid, ns)
+    if not os.path.exists(f"/proc/self/ns/{ns}") or not os.path.exists(
+        f"/proc/{pid}/ns/{ns}"
     ):
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
     try:
-        if os.readlink("/proc/%s/ns/%s" % (pid, ns)) == os.readlink(
-            "/proc/self/ns/%s" % ns
+        if os.readlink(f"/proc/{pid}/ns/{ns}") == os.readlink(
+            f"/proc/self/ns/{ns}"
         ):
             # Check that the inode for both namespaces is the same
             return True
@@ -496,11 +496,11 @@ def is_same_ns(pid, ns):
         raise
 
     # check to see if the process is part of the system.slice (LP: #1870060)
-    if os.path.exists("/proc/%s/cgroup" % pid):
+    if os.path.exists(f"/proc/{pid}/cgroup"):
 
         global proc_pid_fd  # pylint: disable=global-statement
         proc_pid_fd = os.open(
-            "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
         )
 
         with open(
@@ -599,7 +599,7 @@ def forward_crash_to_container(
     # Now open the socket
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
         try:
-            sock.connect("/proc/self/fd/%s" % sock_fd)
+            sock.connect(f"/proc/self/fd/{sock_fd}")
         except OSError:
             logger.error(
                 "host pid %s crashed in a container with a broken apport",
@@ -609,11 +609,9 @@ def forward_crash_to_container(
 
         # Send main arguments only
         # Older apport in containers doesn't support positional arguments
-        args = "%s %s %s %s" % (
-            options.pid,
-            options.signal_number,
-            options.core_ulimit,
-            options.dump_mode,
+        args = (
+            f"{options.pid} {options.signal_number} "
+            f"{options.core_ulimit} {options.dump_mode}"
         )
         # Send coredump fd (defaults to 0 for stdin)
         ancillary = [
@@ -845,7 +843,7 @@ def receive_arguments_via_socket() -> argparse.Namespace:
     # Replace args by the arguments received over the socket
     args = msg.decode().split()
     if len(ucreds) >= 3:
-        args[0] = "%d" % ucreds[0]
+        args[0] = str(ucreds[0])
 
     if len(args) != 4:
         logging.getLogger().error(
@@ -1058,10 +1056,10 @@ def process_crash(options: argparse.Namespace) -> int:
     # Create crash report file descriptor for writing the report into
     # report_dir
     try:
-        report = "%s/%s.%i.crash" % (
-            apport.fileutils.report_dir,
-            info["ExecutablePath"].replace("/", "_"),
-            pidstat.st_uid,
+        report = (
+            f"{apport.fileutils.report_dir}"
+            f"/{info['ExecutablePath'].replace('/', '_')}"
+            f".{pidstat.st_uid}.crash"
         )
         if os.path.exists(report):
             apport.fileutils.increment_crash_counter(info, report)
