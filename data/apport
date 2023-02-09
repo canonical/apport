@@ -597,48 +597,48 @@ def forward_crash_to_container(
         pass
 
     # Now open the socket
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    try:
-        sock.connect("/proc/self/fd/%s" % sock_fd)
-    except OSError:
-        logger.error(
-            "host pid %s crashed in a container with a broken apport",
-            options.global_pid,
-        )
-        return
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+        try:
+            sock.connect("/proc/self/fd/%s" % sock_fd)
+        except OSError:
+            logger.error(
+                "host pid %s crashed in a container with a broken apport",
+                options.global_pid,
+            )
+            return
 
-    # Send main arguments only
-    # Older apport in containers doesn't support positional arguments
-    args = "%s %s %s %s" % (
-        options.pid,
-        options.signal_number,
-        options.core_ulimit,
-        options.dump_mode,
-    )
-    # Send coredump fd (defaults to 0 for stdin)
-    ancillary = [
-        (
-            socket.SOL_SOCKET,
-            socket.SCM_RIGHTS,
-            bytes(array.array("i", [coredump_fd])),
+        # Send main arguments only
+        # Older apport in containers doesn't support positional arguments
+        args = "%s %s %s %s" % (
+            options.pid,
+            options.signal_number,
+            options.core_ulimit,
+            options.dump_mode,
         )
-    ]
-    if has_cap_sys_admin:
-        # SCM_CREDENTIALS needs CAP_SYS_ADMIN for specifying another
-        # process ID. Checking os.geteuid() to be 0 is not enough.
-        # Send a ucred containing the global pid
-        ancillary.append(
+        # Send coredump fd (defaults to 0 for stdin)
+        ancillary = [
             (
                 socket.SOL_SOCKET,
-                socket.SCM_CREDENTIALS,
-                struct.pack("3i", options.global_pid, 0, 0),
+                socket.SCM_RIGHTS,
+                bytes(array.array("i", [coredump_fd])),
             )
-        )
-    try:
-        sock.sendmsg([args.encode()], ancillary)
-        sock.shutdown(socket.SHUT_RDWR)
-    except TimeoutError:
-        logger.error("Container apport failed to process crash within 30s")
+        ]
+        if has_cap_sys_admin:
+            # SCM_CREDENTIALS needs CAP_SYS_ADMIN for specifying another
+            # process ID. Checking os.geteuid() to be 0 is not enough.
+            # Send a ucred containing the global pid
+            ancillary.append(
+                (
+                    socket.SOL_SOCKET,
+                    socket.SCM_CREDENTIALS,
+                    struct.pack("3i", options.global_pid, 0, 0),
+                )
+            )
+        try:
+            sock.sendmsg([args.encode()], ancillary)
+            sock.shutdown(socket.SHUT_RDWR)
+        except TimeoutError:
+            logger.error("Container apport failed to process crash within 30s")
 
 
 def check_kernel_crash() -> None:
