@@ -514,7 +514,9 @@ def is_same_ns(pid, ns):
     return False
 
 
-def forward_crash_to_container(options: argparse.Namespace) -> None:
+def forward_crash_to_container(
+    options: argparse.Namespace, has_cap_sys_admin: bool = True
+) -> None:
     """Try to forward the crash to the container.
 
     If the crash came from a container, don't attempt to handle
@@ -611,20 +613,23 @@ def forward_crash_to_container(options: argparse.Namespace) -> None:
         options.core_ulimit,
         options.dump_mode,
     )
-    try:
-        sock.sendmsg(
-            [args.encode()],
-            [
-                # Send a ucred containing the global pid
-                (
-                    socket.SOL_SOCKET,
-                    socket.SCM_CREDENTIALS,
-                    struct.pack("3i", options.global_pid, 0, 0),
-                ),
-                # Send fd 0 (the coredump)
-                (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array("i", [0])),
-            ],
+    # Send fd 0 (the coredump)
+    ancillary = [
+        (socket.SOL_SOCKET, socket.SCM_RIGHTS, bytes(array.array("i", [0])))
+    ]
+    if has_cap_sys_admin:
+        # SCM_CREDENTIALS needs CAP_SYS_ADMIN for specifying another
+        # process ID. Checking os.geteuid() to be 0 is not enough.
+        # Send a ucred containing the global pid
+        ancillary.append(
+            (
+                socket.SOL_SOCKET,
+                socket.SCM_CREDENTIALS,
+                struct.pack("3i", options.global_pid, 0, 0),
+            )
         )
+    try:
+        sock.sendmsg([args.encode()], ancillary)
         sock.shutdown(socket.SHUT_RDWR)
     except TimeoutError:
         logger.error("Container apport failed to process crash within 30s")
