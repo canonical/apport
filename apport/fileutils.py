@@ -11,6 +11,7 @@
 
 import configparser
 import contextlib
+import functools
 import glob
 import http.client
 import json
@@ -417,6 +418,35 @@ def check_files_md5(sumfile):
     return mismatches
 
 
+@functools.cache
+def _get_config_parser(path: str) -> configparser.ConfigParser:
+    config = configparser.ConfigParser(interpolation=None)
+    contents = ""
+    fd = None
+    f = None
+    try:
+        fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
+        st = os.fstat(fd)
+        if stat.S_ISREG(st.st_mode):
+            f = os.fdopen(fd, "r")
+            # Limit size to prevent DoS
+            contents = f.read(500)
+    except OSError:
+        pass
+    finally:
+        if f is not None:
+            f.close()
+        elif fd is not None:
+            os.close(fd)
+
+    try:
+        config.read_string(contents)
+    except configparser.MissingSectionHeaderError:
+        pass
+
+    return config
+
+
 def get_config(section, setting, default=None, path=None, boolean=False):
     """Return a setting from user configuration.
 
@@ -430,41 +460,14 @@ def get_config(section, setting, default=None, path=None, boolean=False):
         homedir = pwd.getpwuid(os.geteuid())[5]
         path = _config_file.replace("~", homedir)
 
-    contents = ""
-    fd = None
-    f = None
-    if not get_config.config:
-        get_config.config = configparser.ConfigParser(interpolation=None)
-
-        try:
-            fd = os.open(path, os.O_NOFOLLOW | os.O_RDONLY)
-            st = os.fstat(fd)
-            if stat.S_ISREG(st.st_mode):
-                f = os.fdopen(fd, "r")
-                # Limit size to prevent DoS
-                contents = f.read(500)
-        except OSError:
-            pass
-        finally:
-            if f is not None:
-                f.close()
-            elif fd is not None:
-                os.close(fd)
-
-    try:
-        get_config.config.read_string(contents)
-    except configparser.MissingSectionHeaderError:
-        pass
+    config = _get_config_parser(path)
 
     try:
         if boolean:
-            return get_config.config.getboolean(section, setting)
-        return get_config.config.get(section, setting)
+            return config.getboolean(section, setting)
+        return config.get(section, setting)
     except (configparser.NoOptionError, configparser.NoSectionError):
         return default
-
-
-get_config.config = None
 
 
 def get_starttime(contents):
