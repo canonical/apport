@@ -1,6 +1,37 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.25.0 (2023-02-10)
+-------------------
+
+### Added
+* Add `add_tags()` and `get_tags()` to `ProblemReport`
+* Add general hook `image.py` for collecting cloud build info
+  ([LP: #1724623](https://launchpad.net/bugs/1724623))
+
+### Changed
+* Unify error message for `MalformedProblemReport`
+* Use inclusive names. This includes renaming the directory
+  `/etc/apport/blacklist.d` <!-- wokeignore:rule=blacklist --> to
+  `/etc/apport/report-ignore` and
+  `/etc/apport/whitelist.d` <!-- wokeignore:rule=whitelist --> to
+  `/etc/apport/report-only`. Keep reading the old directories for backward
+  compatibility until Apport 3.0.
+* Deprecate `apport.unicode_gettext()`. Please use `gettext.gettext()`
+  directly instead.
+
+### Fixed
+* Catch `UnicodeDecodeError` on a malformed problem report
+  ([LP: #1996040](https://launchpad.net/bugs/1996040))
+* Fix `TypeError` in `error()`: not enough arguments for format string
+  ([LP: #1562477](https://launchpad.net/bugs/1562477))
+* whoopsie-upload-all: Use `NoninteractiveHookUI` for `add_hooks_info`
+  ([LP: #2003098](https://launchpad.net/bugs/2003098))
+* tests:
+  * Mock `init_error_log` in unit tests
+  * Fix test failures with Python 3.11
+  * Fix `test_deleted_working_directory` for pytest-cov 4.0
+
 2.24.0 (2022-12-07)
 -------------------
 

@@ -45,7 +45,7 @@ import apport.logging
 import apport.REThread
 from apport.packaging_impl import impl as packaging
 
-__version__ = "2.24.0"
+__version__ = "2.25.0"
 
 
 symptom_script_dir = os.environ.get(
