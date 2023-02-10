@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 16:35+0100\n"
+"POT-Creation-Date: 2023-02-10 12:34+0100\n"
 "PO-Revision-Date: 2017-10-15 15:48+0000\n"
 "Last-Translator: Rockworld <sumoisrock@gmail.com>\n"
 "Language-Team: Thai <th@li.org>\n"
@@ -36,11 +36,11 @@ msgstr "การรายงานปัญหาระบบ"
 msgid "Please enter your password to access problem reports of system programs"
 msgstr "โปรดป้อนรหัสผ่านเพื่อเข้าถึงรายงานปัญหาของโปรแกรมระบบ"
 
-#: ../apport/ui.py:165
+#: ../apport/ui.py:166
 msgid "This package does not seem to be installed correctly"
 msgstr "ดูเหมือนว่าแพคเกจนี้จะไม่ได้ถูกติดตั้งอย่างถูกต้อง"
 
-#: ../apport/ui.py:175
+#: ../apport/ui.py:176
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -48,7 +48,7 @@ msgid ""
 "third party packages and try again."
 msgstr ""
 
-#: ../apport/ui.py:205
+#: ../apport/ui.py:206
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -60,21 +60,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:359
+#: ../apport/ui.py:369
 msgid "unknown program"
 msgstr "โปรแกรมนี้ไม่รู้จัก"
 
-#: ../apport/ui.py:362
+#: ../apport/ui.py:372
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "ขออภัย โปรแกรม \"%s\" ปิดลงโดยไม่คาดหมาย"
 
-#: ../apport/ui.py:365 ../apport/ui.py:1899
+#: ../apport/ui.py:375 ../apport/ui.py:1907
 #, python-format
 msgid "Problem in %s"
 msgstr "ปัญหาใน %s"
 
-#: ../apport/ui.py:370
+#: ../apport/ui.py:380
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -82,62 +82,62 @@ msgstr ""
 "ระบบของคุณไม่มีหน่วยความจำเหลือเพีัยงพอที่จะทำการตรวจสอบ, วิเคราะปัญหา "
 "และส่งรายงานกลับไปที่นักพัฒนาได้"
 
-#: ../apport/ui.py:430 ../apport/ui.py:448 ../apport/ui.py:621
-#: ../apport/ui.py:630 ../apport/ui.py:867 ../apport/ui.py:1677
-#: ../apport/ui.py:1860 ../apport/ui.py:1865
+#: ../apport/ui.py:440 ../apport/ui.py:458 ../apport/ui.py:631
+#: ../apport/ui.py:640 ../apport/ui.py:877 ../apport/ui.py:1685
+#: ../apport/ui.py:1868 ../apport/ui.py:1873
 msgid "Invalid problem report"
 msgstr "รายงานปัญหาไม่ถูกต้อง"
 
-#: ../apport/ui.py:431
+#: ../apport/ui.py:441
 msgid "You are not allowed to access this problem report."
 msgstr "คุณไม่ได้รับอนุญาตให้ดูรายงานปัญหานี้"
 
-#: ../apport/ui.py:439
+#: ../apport/ui.py:449
 msgid "Error"
 msgstr "ผิดพลาด"
 
-#: ../apport/ui.py:441
+#: ../apport/ui.py:451
 msgid "There is not enough disk space available to process this report."
 msgstr "พื้นที่ว่างบนดิืสไม่พอสำหรับดำเนินการกับรายงานนี้ได้"
 
-#: ../apport/ui.py:479
+#: ../apport/ui.py:489
 msgid "No PID specified"
 msgstr ""
 
-#: ../apport/ui.py:481
+#: ../apport/ui.py:491
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 
-#: ../apport/ui.py:492 ../apport/ui.py:597
+#: ../apport/ui.py:502 ../apport/ui.py:607
 msgid "Invalid PID"
 msgstr "PID ไม่ถูกต้อง"
 
-#: ../apport/ui.py:493
+#: ../apport/ui.py:503
 msgid "The specified process ID does not exist."
 msgstr ""
 
-#: ../apport/ui.py:498
+#: ../apport/ui.py:508
 msgid "Not your PID"
 msgstr ""
 
-#: ../apport/ui.py:499
+#: ../apport/ui.py:509
 msgid "The specified process ID does not belong to you."
 msgstr ""
 
-#: ../apport/ui.py:554
+#: ../apport/ui.py:564
 msgid "No package specified"
 msgstr "ไม่ได้ระบุแพกเกจ"
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:566
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "คุณต้องระบุแพกเกจสักตัวหรือเลข PID ดู --help สำหรับข้อมูลเพิ่มเติม"
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:594
 msgid "Permission denied"
 msgstr "ไม่ได้รับสิทธิ์"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:596
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -145,30 +145,30 @@ msgstr ""
 "กระบวนการที่ระบุไม่ใช่ของคุณ "
 "โปรดเรียกใช้โปรแกรมนี้ในฐานะเจ้าของกระบวนการหรือในฐานะผู้ดูแลระบบขั้นสูง"
 
-#: ../apport/ui.py:599
+#: ../apport/ui.py:609
 msgid "The specified process ID does not belong to a program."
 msgstr "ID ของกระบวนการที่ระบุไม่ใช่ของโปรแกรมใด"
 
-#: ../apport/ui.py:623
+#: ../apport/ui.py:633
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "สคริปต์อาการ %s ไม่ได้กำหนดแพกเกจที่ได้รับผลกระทบ"
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:641
 #, python-format
 msgid "Package %s does not exist"
 msgstr "ไม่มีแพกเกจ %s อยู่"
 
-#: ../apport/ui.py:660 ../apport/ui.py:872 ../apport/ui.py:905
-#: ../apport/ui.py:915
+#: ../apport/ui.py:670 ../apport/ui.py:882 ../apport/ui.py:915
+#: ../apport/ui.py:925
 msgid "Cannot create report"
 msgstr "ไม่สามารถสร้างรายงานได้"
 
-#: ../apport/ui.py:675 ../apport/ui.py:734 ../apport/ui.py:752
+#: ../apport/ui.py:685 ../apport/ui.py:744 ../apport/ui.py:762
 msgid "Updating problem report"
 msgstr "กำลังปรับข้อมูลรายงานปัญหา"
 
-#: ../apport/ui.py:677
+#: ../apport/ui.py:687
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -179,7 +179,7 @@ msgstr ""
 "\n"
 "โปรดสร้างรายงานใหม่โดยใช้ \"apport-bug\""
 
-#: ../apport/ui.py:689
+#: ../apport/ui.py:699
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -198,24 +198,24 @@ msgstr ""
 "\n"
 "คุณต้องการดำเนินการต่อไปหรือไม่?"
 
-#: ../apport/ui.py:735 ../apport/ui.py:753
+#: ../apport/ui.py:745 ../apport/ui.py:763
 msgid "No additional information collected."
 msgstr "ไม่มีการรวบรวมข้อมูลเพิ่มเติมใด ๆ"
 
-#: ../apport/ui.py:816
+#: ../apport/ui.py:826
 msgid "What kind of problem do you want to report?"
 msgstr "ปัญหาแบบใดที่คุณต้องการที่จะรายงาน?"
 
-#: ../apport/ui.py:837
+#: ../apport/ui.py:847
 msgid "Unknown symptom"
 msgstr "อาการที่ไม่รู้จัก"
 
-#: ../apport/ui.py:838
+#: ../apport/ui.py:848
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "ไม่รู้จักอาการ \"%s\""
 
-#: ../apport/ui.py:874
+#: ../apport/ui.py:884
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -226,36 +226,36 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:890
+#: ../apport/ui.py:900
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr "หลังจากที่ปิดข้อความนี้แล้ว โปรดคลิกบนหน้าต่างโปรแกรมเพื่อรายงานปัญหานี้"
 
-#: ../apport/ui.py:907 ../apport/ui.py:916
+#: ../apport/ui.py:917 ../apport/ui.py:926
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop ไม่สามารถกำหนด ID โปรเซสของหน้าต่างได้"
 
-#: ../apport/ui.py:931
+#: ../apport/ui.py:941
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr ""
 
-#: ../apport/ui.py:932
+#: ../apport/ui.py:942
 msgid "Specify package name."
 msgstr "ระบุชื่อแพกเกจ"
 
-#: ../apport/ui.py:938 ../apport/ui.py:1070
+#: ../apport/ui.py:949 ../apport/ui.py:1082
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "เพิ่มแท็กพิเศษไปในรายงาน สามารถระบุได้หลาย ๆ ครั้ง"
 
-#: ../apport/ui.py:976
+#: ../apport/ui.py:987
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:987
+#: ../apport/ui.py:998
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -265,21 +265,21 @@ msgstr ""
 "ถ้าไม่ใส่อาร์กิวเมนต์ดังกล่าว ให้แสดงรายการอาการที่รู้ว่าเกิดขึ้น "
 "(ไม่ทำงานถ้าใส่เพียงอาร์กิวเมนต์เดียว)"
 
-#: ../apport/ui.py:996
+#: ../apport/ui.py:1007
 msgid "Click a window as a target for filing a problem report."
 msgstr "คลิกหน้าต่างเพื่อเป็นเป้าหมายสำหรับรายงานปัญหา"
 
-#: ../apport/ui.py:1005
+#: ../apport/ui.py:1016
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "เริ่มทำงานในโหมดอัปเดตปัญหา สามารถใช้อาร์กิวเมนต์ --package พร้อมตัวเลือกได้"
 
-#: ../apport/ui.py:1014
+#: ../apport/ui.py:1025
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr "รายงานปัญหาเกี่ยวกับอาการ (ไม่ทำงานถ้าชื่ออาการถูกใส่เพียงอาร์กิวเมนต์)"
 
-#: ../apport/ui.py:1023
+#: ../apport/ui.py:1034
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -287,7 +287,7 @@ msgstr ""
 "ระบุชื่อแพกเกจในโหมด --file-bug ถ้าระบุ --pid นี่จะเป็นตัวเลือก "
 "(ไม่ทำงานถ้าชื่อแพกเกจถูกใส่เพียงอาร์กิวเมนต์)"
 
-#: ../apport/ui.py:1034
+#: ../apport/ui.py:1045
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -296,11 +296,11 @@ msgstr ""
 "ระบุโปรแกรมที่กำลังทำงานในโหมด --file-bug ถ้ามีการระบุ "
 "รายงานปัญหาจะประกอบด้วยข้อมูลเพิ่มเติม  (ไม่ทำงานถ้า pid ถูกใส่เพียงอาร์กิวเมนต์)"
 
-#: ../apport/ui.py:1042
+#: ../apport/ui.py:1053
 msgid "The provided pid is a hanging application."
 msgstr "pid ที่ระบุเป็นโปรแกรมที่ทำงานค้างอยู่"
 
-#: ../apport/ui.py:1050
+#: ../apport/ui.py:1061
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -309,7 +309,7 @@ msgstr ""
 "รายงานความล้มเหลวจากแฟ้ม .apport หรือ .crash ที่ให้มาแทนที่กำลังรออยู่ใน %s "
 "(ไม่ทำงานถ้าแฟ้มถูกใส่เพียงอาร์กิวเมนต์)"
 
-#: ../apport/ui.py:1060
+#: ../apport/ui.py:1071
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -318,123 +318,123 @@ msgstr ""
 "ในโหมดรายงานปัญหา บันทึกข้อมูลที่รวบรวมเป็นแฟ้มแทนที่จะรายงาน "
 "แฟ้มนี้สามารถเก็บไว้รายงานได้ทีหลังโดยใช้เครื่องอื่นได้"
 
-#: ../apport/ui.py:1078
+#: ../apport/ui.py:1090
 msgid "Print the Apport version number."
 msgstr "พิมพ์หมายเลขรุ่น Apport"
 
-#: ../apport/ui.py:1240
+#: ../apport/ui.py:1252
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "การดำเนินการนี้จะเป็นการเรียกใช้ apport-retrace ในหน้าต่างเทอร์มินัลเพื่อตรวจสอบความล้มเหลว"
 
-#: ../apport/ui.py:1244
+#: ../apport/ui.py:1256
 msgid "Run gdb session"
 msgstr "เรียกใช้วาระ gdb"
 
-#: ../apport/ui.py:1245
+#: ../apport/ui.py:1257
 msgid "Run gdb session without downloading debug symbols"
 msgstr "เรียกใช้วาระ gdb session โดยไม่ต้องดาวน์โหลดสัญลักษณ์การดีบั๊ก"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1247
+#: ../apport/ui.py:1259
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "อัปเดต %s พร้อมข้อมูลการติดตามสแตกเชิงสัญลักษณ์"
 
-#: ../apport/ui.py:1309
+#: ../apport/ui.py:1321
 msgid "Can't remember send report status settings"
 msgstr ""
 
-#: ../apport/ui.py:1313
+#: ../apport/ui.py:1325
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 
-#: ../apport/ui.py:1396 ../apport/ui.py:1409
+#: ../apport/ui.py:1408 ../apport/ui.py:1421
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "รายงานปัญหานี้จะนำไปใช้กับโปรแกรมที่ไม่ได้ติดตั้งอีกต่อไป"
 
-#: ../apport/ui.py:1433
+#: ../apport/ui.py:1445
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr "มีปัญหาเกิดขึ้นกับโปรแกรม %s ซึ่งมีการเปลี่ยนแปลงตั้งแต่เกิดความล้มเหลวขึ้น"
 
-#: ../apport/ui.py:1494 ../apport/ui.py:1618 ../apport/ui.py:1869
+#: ../apport/ui.py:1506 ../apport/ui.py:1626 ../apport/ui.py:1877
 msgid "This problem report is damaged and cannot be processed."
 msgstr "รายงานปัญหาเสียหายทำให้ไม่สามารถดำเนินการต่้อได้"
 
-#: ../apport/ui.py:1503
+#: ../apport/ui.py:1515
 msgid "This report is about a package that is not installed."
 msgstr ""
 
-#: ../apport/ui.py:1511
+#: ../apport/ui.py:1523
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "เกิดข้อผิดพลาดขณะพยายามประมวลผลการรายงานปัญหานี้:"
 
-#: ../apport/ui.py:1528
+#: ../apport/ui.py:1540
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1533
+#: ../apport/ui.py:1545
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1534
+#: ../apport/ui.py:1546
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1575
+#: ../apport/ui.py:1583
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1580
+#: ../apport/ui.py:1588
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1679
+#: ../apport/ui.py:1687
 msgid "Could not determine the package or source package name."
 msgstr "ไม่สามารถกำหนดแพกเกจหรือชื่อแพกเกจต้นฉบับได้"
 
-#: ../apport/ui.py:1704
+#: ../apport/ui.py:1712
 msgid "Unable to start web browser"
 msgstr "ไม่สามารถเริ่มเว็บเบราว์เซอร์ได้"
 
-#: ../apport/ui.py:1705
+#: ../apport/ui.py:1713
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "ไม่สามารถเริ่มเว็บเบราว์เซอร์เพื่อเปิด %s"
 
-#: ../apport/ui.py:1815
+#: ../apport/ui.py:1823
 msgid "Network problem"
 msgstr "ปัญหาเครือข่าย"
 
-#: ../apport/ui.py:1819
+#: ../apport/ui.py:1827
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "ไม่สามารถเชื่อมต่อไปที่ฐานข้อมูลความล้มเหลวได้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ"
 
-#: ../apport/ui.py:1851
+#: ../apport/ui.py:1859
 msgid "Memory exhaustion"
 msgstr "หน่วยความจำหมด"
 
-#: ../apport/ui.py:1853
+#: ../apport/ui.py:1861
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "ระบบของคุณมีหน่วยความจำไม่เพียงพอสำหรับประมวลผลการรายงานปัญหานี้"
 
-#: ../apport/ui.py:1904
+#: ../apport/ui.py:1912
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -445,11 +445,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1960 ../apport/ui.py:1972
+#: ../apport/ui.py:1968 ../apport/ui.py:1980
 msgid "Problem already known"
 msgstr "ปัญหาที่ทราบแล้ว"
 
-#: ../apport/ui.py:1962
+#: ../apport/ui.py:1970
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -458,7 +458,7 @@ msgstr ""
 "ปัญหานี้ถูกรายงานอยู่แล้วในรายงานปัญหาที่แสดงในเว็บเบราว์เซอร์ "
 "โปรดตรวจสอบว่าคุณสามารถเพิ่มข้อมูลเพิ่มเติมที่อาจเป็นประโยชน์ต่อนักพัฒนาได้หรือไม่"
 
-#: ../apport/ui.py:1974
+#: ../apport/ui.py:1982
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "ปัญหานี้ถูกรายงานให้ทางผู้พัฒนาไปแล้ว ขอขอบคุณ!"
 
@@ -480,12 +480,12 @@ msgstr "โปรดเลือก (%s):"
 msgid "(%i bytes)"
 msgstr "(%i ไบต์)"
 
-#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:406
+#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:405
 msgid "(binary data)"
 msgstr "(binary data)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:199
+#: ../kde/apport-kde.py:198
 msgid "Send problem report to the developers?"
 msgstr "ต้องการส่งรายงานปัญหาไปยังนักพัฒนาหรือไม่?"
 
@@ -518,29 +518,29 @@ msgstr "&เก็บแฟ้มรายงานไว้ส่งทีห�
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "ยกเลิกและเพิกเ&ฉยต่อการขัดข้องครั้งหน้าของโปรแกรมรุ่นนี้"
 
-#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:332 ../bin/apport-cli.py:366
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:326 ../bin/apport-cli.py:360
+#: ../bin/apport-cli.py:383
 msgid "&Cancel"
 msgstr "&ยกเลิก"
 
-#: ../bin/apport-cli.py:273
+#: ../bin/apport-cli.py:267
 msgid "Problem report file:"
 msgstr "แฟ้มรายงานปัญหา:"
 
-#: ../bin/apport-cli.py:279 ../bin/apport-cli.py:284
+#: ../bin/apport-cli.py:273 ../bin/apport-cli.py:278
 msgid "&Confirm"
 msgstr "&ยืนยัน"
 
-#: ../bin/apport-cli.py:283
+#: ../bin/apport-cli.py:277
 #, python-format
 msgid "Error: %s"
 msgstr "ผิดพลาด: %s"
 
-#: ../bin/apport-cli.py:289 ../kde/apport-kde.py:462
+#: ../bin/apport-cli.py:283 ../kde/apport-kde.py:455
 msgid "Collecting problem information"
 msgstr "กำลังรวบรวมข้อมูลของปัญหา"
 
-#: ../bin/apport-cli.py:291
+#: ../bin/apport-cli.py:285
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -548,11 +548,11 @@ msgstr ""
 "ข้อมูลที่รวบรวมมาสามารถส่งไปให้นักพัฒนาเพื่อให้ทำการปรับปรุงโปรแกรมได้\n"
 "การดำเนินการนี้จะใช้เวลาเพียงไม่กี่นาที"
 
-#: ../bin/apport-cli.py:307 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:511
+#: ../bin/apport-cli.py:301 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:504
 msgid "Uploading problem information"
 msgstr "กำลังอัปโหลดข้อมูลปัญหา"
 
-#: ../bin/apport-cli.py:309
+#: ../bin/apport-cli.py:303
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -560,40 +560,40 @@ msgstr ""
 "ข้อมูลที่รวบรวมมากำลังจะถูกส่งไปยังระบบติด\n"
 "ตามบั๊ก การดำเนินการนี้จะใช้เวลาเพียงไม่กี่นาที"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:359
 msgid "&Done"
 msgstr "&เสร็จแล้ว"
 
-#: ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:365
 msgid "none"
 msgstr "ไม่มี"
 
-#: ../bin/apport-cli.py:373
+#: ../bin/apport-cli.py:367
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "เลือกแล้ว: %s. หลายตัวเลือก:"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:384
 msgid "Choices:"
 msgstr "ตัวเลือก:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:398
 msgid "Path to file (Enter to cancel):"
 msgstr "เส้นทางมายังแฟ้ม (กด Enter เพื่อยกเลิก):"
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:404
 msgid "File does not exist."
 msgstr "แฟ้มไม่มีอยู่"
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:406
 msgid "This is a directory."
 msgstr "นี่คือไดเรกทอรี"
 
-#: ../bin/apport-cli.py:418
+#: ../bin/apport-cli.py:412
 msgid "To continue, you must visit the following URL:"
 msgstr "เพื่อดำเนินการต่อ คุณจะต้องไปยัง URL:"
 
-#: ../bin/apport-cli.py:421
+#: ../bin/apport-cli.py:415
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -601,11 +601,11 @@ msgstr ""
 "คุณสามารถเปิดโปรแกรมท่องเว็บได้แล้วตอนนี้ หรือคัดลอก URL "
 "นี้ไปยังโปรแกรมท่องเว็บบนคอมพิวเตอร์เครื่องอื่น"
 
-#: ../bin/apport-cli.py:427
+#: ../bin/apport-cli.py:421
 msgid "Launch a browser now"
 msgstr "เปิดเบราว์เซอร์เดี๋ยวนี้"
 
-#: ../bin/apport-cli.py:443
+#: ../bin/apport-cli.py:437
 msgid "No pending crash reports. Try --help for more information."
 msgstr "ไม่มีรายงานปัญหาที่รออยู่ ลองเรียกคำสั่ง --help เพื่อดูข้อมูลเพิ่มเติม"
 
@@ -837,21 +837,21 @@ msgstr "ขออภัย โปรแกรม %s หยุดทำงาน�
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "ขออภัย %s ปิดลงอย่างกะทันหัน"
 
-#: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:214 ../kde/apport-kde.py:266
+#: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:213 ../kde/apport-kde.py:265
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "ขออภัย %s ประสบปัญหาภายใน"
 
-#: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:207
+#: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:206
 msgid "Send"
 msgstr "ส่ง"
 
-#: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:666 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:660 ../gtk/apport-gtk.ui.h:11
+#: ../kde/apport-kde.py:329
 msgid "Show Details"
 msgstr "แสดงรายละเอียด"
 
-#: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:258 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:257 ../kde/apport-kde.py:275
 msgid "Continue"
 msgstr "ทำต่อไป"
 
@@ -865,38 +865,38 @@ msgstr "โปรแกรม %s หยุดตอบสนองแล้ว"
 msgid "The program \"%s\" has stopped responding."
 msgstr "โปรแกรม \"%s\" หยุดตอบสนองแล้ว"
 
-#: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:222
+#: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:221
 #, python-format
 msgid "Package: %s"
 msgstr "แพกเกจ: %s"
 
-#: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:229
+#: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:228
 msgid "Sorry, a problem occurred while installing software."
 msgstr "ขออภัย เกิดปัญหาขณะติดตั้งซอฟต์แวร์"
 
-#: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:237
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "โปรแกรม %s ประสบปัญหาภายใน"
 
-#: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:245
+#: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:244
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "โปรแกรม %s ปิดลงอย่างกะทันหัน"
 
-#: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:271
+#: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:270
 msgid "If you notice further problems, try restarting the computer."
 msgstr "ถ้าคุณประสบปัญหาเพิ่มเติม ให้ลองเริ่มการทำงานของคอมพิวเตอร์ใหม่อีกครั้ง"
 
-#: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:278
+#: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:277
 msgid "Ignore future problems of this type"
 msgstr "เพิกเฉยต่อปัญหาครั้งหน้าของประเภทนี้"
 
-#: ../gtk/apport-gtk.py:670 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:664 ../kde/apport-kde.py:326
 msgid "Hide Details"
 msgstr "ซ่อนรายละเอียด"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:552 ../kde/apport-kde.py:595
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:545 ../kde/apport-kde.py:588
 msgid "Apport"
 msgstr "Apport"
 
@@ -950,7 +950,7 @@ msgstr "กำลังรวบรวมข้อมูลซึ่งช่ว
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>กำลังอัปโหลดข้อมูลของปัญหา</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:513
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:506
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -960,27 +960,27 @@ msgstr "ข้อมูลที่รวบรวมมากำลังจะ
 msgid "Apport crash file"
 msgstr "แฟ้มความล้มเหลว Apport"
 
-#: ../kde/apport-kde.py:261
+#: ../kde/apport-kde.py:260
 msgid "Leave Closed"
 msgstr "ปล่อยให้ปิดไป"
 
-#: ../kde/apport-kde.py:262 ../kde/apport-kde.py:432
+#: ../kde/apport-kde.py:261 ../kde/apport-kde.py:425
 msgid "Relaunch"
 msgstr "เรียกใหม่"
 
-#: ../kde/apport-kde.py:355
+#: ../kde/apport-kde.py:354
 msgid "Username:"
 msgstr "ชื่อผู้ใช้:"
 
-#: ../kde/apport-kde.py:356
+#: ../kde/apport-kde.py:355
 msgid "Password:"
 msgstr "รหัสผ่าน:"
 
-#: ../kde/apport-kde.py:461
+#: ../kde/apport-kde.py:454
 msgid "Collecting Problem Information"
 msgstr "กำลังรวบรวมข้อมูลปัญหา"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:457
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -988,6 +988,6 @@ msgstr ""
 "ข้อมูลที่รวบรวมมาสามารถส่งไปให้นักพัฒนาเพื่อให้ปรับปรุงโปรแกรมได้ "
 "การกระทำนี้จะใช้เวลาเพียงไม่กี่นาที"
 
-#: ../kde/apport-kde.py:510
+#: ../kde/apport-kde.py:503
 msgid "Uploading Problem Information"
 msgstr "กำลังปรับปรุงข้อมูลของปัญหา"
