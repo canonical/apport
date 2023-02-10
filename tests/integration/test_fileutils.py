@@ -367,7 +367,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertEqual(
             apport.fileutils.get_config("main", "foo", "moo"), "moo"
         )
-        apport.fileutils.get_config.config = None  # trash cache
+        apport.fileutils._get_config_parser.cache_clear()
 
         # empty
         with tempfile.NamedTemporaryFile() as f:
@@ -376,7 +376,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             self.assertEqual(
                 apport.fileutils.get_config("main", "foo", "moo"), "moo"
             )
-            apport.fileutils.get_config.config = None  # trash cache
+            apport.fileutils._get_config_parser.cache_clear()
 
             # nonempty
             f.write(
@@ -420,7 +420,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             self.assertEqual(
                 apport.fileutils.get_config("spethial", "nope", "moo"), "moo"
             )
-            apport.fileutils.get_config.config = None  # trash cache
+            apport.fileutils._get_config_parser.cache_clear()
 
             # interpolation
             f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
@@ -432,7 +432,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             self.assertEqual(
                 apport.fileutils.get_config("inter", "test"), "%(two)s"
             )
-            apport.fileutils.get_config.config = None  # trash cache
+            apport.fileutils._get_config_parser.cache_clear()
 
     def test_shared_libraries(self):
         """shared_libraries()"""
