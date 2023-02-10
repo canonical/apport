@@ -12,12 +12,13 @@
 import re
 import subprocess
 import sys
+import typing
 
 try:
     from platform import freedesktop_os_release
 except ImportError:  # Python < 3.10
 
-    def _parse_os_release(*os_release_files):
+    def _parse_os_release(*os_release_files: str) -> typing.Dict[str, str]:
         """Parse os-release and return a parameter dictionary.
 
         This function will behave identical to
@@ -56,7 +57,7 @@ except ImportError:  # Python < 3.10
 
         return ret
 
-    def freedesktop_os_release():
+    def freedesktop_os_release() -> typing.Dict[str, str]:
         return _parse_os_release("/etc/os-release", "/usr/lib/os-release")
 
 
