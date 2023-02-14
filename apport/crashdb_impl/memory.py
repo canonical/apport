@@ -9,6 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import time
+
 import apport.crashdb
 import apport.report
 
@@ -33,6 +35,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.unretraced = set()
         self.dup_unchecked = set()
 
+        self.upload_delay = 0
+
         if "sample_data" in options:
             self.add_sample_data()
 
@@ -56,6 +60,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             self.dup_unchecked.add(crash_id)
         else:
             self.unretraced.add(crash_id)
+
+        # Simulate uploading some data
+        if self.upload_delay:
+            if progress_callback:
+                progress_callback(0, 100)
+            time.sleep(self.upload_delay)
+            if progress_callback:
+                progress_callback(100, 100)
+
         return crash_id
 
     def get_comment_url(self, report, handle):

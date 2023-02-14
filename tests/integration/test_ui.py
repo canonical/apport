@@ -632,6 +632,29 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(stdout_mock.getvalue(), apport.ui.__version__ + "\n")
 
+    def test_file_report_nodelay(self):
+        """file_report() happy path without polling"""
+        self.ui = UserInterfaceMock()
+        self.ui.report = self.report
+        previous_id = self.ui.crashdb.latest_id()
+        self.ui.file_report()
+        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
+        self.assertEqual(self.ui.msg_severity, None)
+        self.assertEqual(self.ui.msg_title, None)
+        self.assertEqual(self.ui.msg_text, None)
+
+    def test_file_report_upload_delay(self):
+        """file_report() with some polling during upload"""
+        self.ui = UserInterfaceMock()
+        self.ui.report = self.report
+        self.ui.crashdb.upload_delay = 0.2  # Arbitrary value
+        previous_id = self.ui.crashdb.latest_id()
+        self.ui.file_report()
+        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
+        self.assertEqual(self.ui.msg_severity, None)
+        self.assertEqual(self.ui.msg_title, None)
+        self.assertEqual(self.ui.msg_text, None)
+
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
         self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
