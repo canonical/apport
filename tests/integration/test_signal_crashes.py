@@ -233,7 +233,6 @@ class T(unittest.TestCase):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
-
                 time.sleep(0.5)  # give it some time to grab the lock
 
                 with subprocess.Popen(
@@ -251,7 +250,6 @@ class T(unittest.TestCase):
                     stdin=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 ) as app2:
-
                     # app should wait indefinitely for stdin, while app2 should
                     # terminate immediately (give it 5 seconds)
                     timeout = 50
@@ -414,7 +412,7 @@ class T(unittest.TestCase):
         """Packaged executables create core dumps on proper ulimits."""
         # for SEGV and ABRT we expect reports and core files
         for sig in (signal.SIGSEGV, signal.SIGABRT):
-            for (kb, exp_file) in core_ulimit_table:
+            for kb, exp_file in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
                 self.do_crash(
                     expect_corefile=exp_file,
@@ -444,7 +442,7 @@ class T(unittest.TestCase):
         os.chmod(local_exe, 0o755)
 
         for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGQUIT):
-            for (kb, exp_file) in core_ulimit_table:
+            for kb, exp_file in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
                 self.do_crash(
                     expect_corefile=exp_file,

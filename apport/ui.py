@@ -1395,7 +1395,6 @@ class UserInterface:
             self.report.get("ProblemType") != "Crash"
             and "Dependencies" in self.report
         ):
-
             if on_finished:
                 on_finished()
             return

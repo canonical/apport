@@ -173,7 +173,7 @@ class CrashDatabase:
 
             if existing:
                 # update status of existing master bugs
-                for (ex_id, _) in existing:
+                for ex_id, _ in existing:
                     self._duplicate_db_sync_status(ex_id)
                 existing = self._duplicate_search_signature(sig, crash_id)
 
@@ -186,7 +186,7 @@ class CrashDatabase:
         # older than the report's package version; if so, we have a duplicate.
         master_id = None
         master_ver = None
-        for (ex_id, ex_ver) in existing:
+        for ex_id, ex_ver in existing:
             if (
                 not ex_ver
                 or not report_package_version
@@ -416,7 +416,7 @@ class CrashDatabase:
         cur = self.duplicate_db.cursor()
 
         cur.execute("SELECT * from address_signatures ORDER BY signature")
-        for (sig, crash_id) in cur.fetchall():
+        for sig, crash_id in cur.fetchall():
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -443,7 +443,7 @@ class CrashDatabase:
         cur.execute(
             "SELECT signature, crash_id from crashes ORDER BY signature"
         )
-        for (sig, crash_id) in cur.fetchall():
+        for sig, crash_id in cur.fetchall():
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -556,7 +556,7 @@ class CrashDatabase:
         dump = {}
         cur = self.duplicate_db.cursor()
         cur.execute("SELECT * FROM crashes")
-        for (sig, crash_id, ver, last_change) in cur:
+        for sig, crash_id, ver, last_change in cur:
             if with_timestamps:
                 dump[sig] = (crash_id, ver, last_change)
             else:

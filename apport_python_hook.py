@@ -194,7 +194,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
         report["DbusErrorAnalysis"] = "no service file providing " + dbus_name
     else:
         report["DbusErrorAnalysis"] = "provided by"
-        for (service, exe, running) in services:
+        for service, exe, running in services:
             report["DbusErrorAnalysis"] += " %s (%s is %srunning)" % (
                 service,
                 exe,
