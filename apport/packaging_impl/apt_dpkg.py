@@ -901,7 +901,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # add any dependencies to the packages list
         if install_deps:
             deps = []
-            for (pkg, ver) in packages:
+            for pkg, ver in packages:
                 try:
                     cache_pkg = cache[pkg]
                 except KeyError:
@@ -941,7 +941,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         packages.append((dep[0].name, None))
             packages.extend(deps)
 
-        for (pkg, ver) in packages:
+        for pkg, ver in packages:
             try:
                 cache_pkg = cache[pkg]
             except KeyError:

@@ -1438,7 +1438,6 @@ class Report(problem_report.ProblemReport):
             and "ExecutablePath" in self
             and "StacktraceTop" in self
         ):
-
             signal_names = {
                 "4": "SIGILL",
                 "6": "SIGABRT",
@@ -1475,7 +1474,6 @@ class Report(problem_report.ProblemReport):
 
         # Python exception
         if "Traceback" in self and "ExecutablePath" in self:
-
             trace = self["Traceback"].splitlines()
 
             if len(trace) < 1:
@@ -1524,7 +1522,6 @@ class Report(problem_report.ProblemReport):
 
         # package problem
         if self.get("ProblemType") == "Package" and "Package" in self:
-
             title = "package %s failed to install/upgrade" % self["Package"]
             if self.get("ErrorMessage"):
                 title += ": " + self["ErrorMessage"].splitlines()[-1]
@@ -1532,7 +1529,6 @@ class Report(problem_report.ProblemReport):
             return title
 
         if self.get("ProblemType") == "KernelOops" and "OopsText" in self:
-
             oops = self["OopsText"]
             if oops.startswith("------------[ cut here ]------------"):
                 title = oops.split("\n", 2)[1]
@@ -1853,7 +1849,7 @@ class Report(problem_report.ProblemReport):
             ):
                 if not hasattr(self[k], "isspace"):
                     continue
-                for (pattern, repl) in replacements:
+                for pattern, repl in replacements:
                     if isinstance(self[k], bytes):
                         self[k] = pattern.sub(
                             repl, self[k].decode("UTF-8", errors="replace")
@@ -1990,7 +1986,7 @@ class Report(problem_report.ProblemReport):
         """
         self._build_proc_maps_cache()
 
-        for (start, end, elf) in self._proc_maps_cache:
+        for start, end, elf in self._proc_maps_cache:
             if start <= addr <= end:
                 return "%s+%x" % (elf, addr - start)
 

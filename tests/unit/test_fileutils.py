@@ -103,7 +103,7 @@ class T(unittest.TestCase):
             ("tcp:host=localhost,port=8100", None),
         ]
 
-        for (addr, result) in tests:
+        for addr, result in tests:
             self.assertEqual(apport.fileutils.get_dbus_socket(addr), result)
 
     def test_get_starttime(self):

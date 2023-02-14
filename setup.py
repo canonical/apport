@@ -62,7 +62,7 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
 
     def run(self):
         DistUtilsExtra.auto.clean_build_tree.run(self)
-        for (root, _, files) in os.walk("java"):
+        for root, _, files in os.walk("java"):
             for f in files:
                 if f.endswith(".jar") or f.endswith(".class"):
                     os.unlink(os.path.join(root, f))
@@ -112,7 +112,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
             os.path.join(self.install_data, "share", "apport"),
             os.path.join(self.install_data, "bin"),
         ):
-            for (path, _, files) in os.walk(d):
+            for path, _, files in os.walk(d):
                 for fname in files:
                     f = os.path.join(path, fname)
                     with open(f, encoding="utf-8") as fd:

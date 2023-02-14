@@ -102,7 +102,7 @@ class RPMPackageInfo:
         """Return list of files shipped by a package."""
         hdr = self._get_header(package)
         files = []
-        for (f, mode) in zip(hdr["filenames"], hdr["filemodes"]):
+        for f, mode in zip(hdr["filenames"], hdr["filemodes"]):
             if not stat.S_ISDIR(mode):
                 files.append(f)
         return files

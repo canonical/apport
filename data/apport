@@ -497,7 +497,6 @@ def is_same_ns(pid, ns):
 
     # check to see if the process is part of the system.slice (LP: #1870060)
     if os.path.exists(f"/proc/{pid}/cgroup"):
-
         global proc_pid_fd  # pylint: disable=global-statement
         proc_pid_fd = os.open(
             f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY

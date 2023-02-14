@@ -20,7 +20,6 @@ from apport.packaging_impl import impl as packaging
 
 
 def main(argv=None):
-
     if argv is None:
         argv = sys.argv
 
