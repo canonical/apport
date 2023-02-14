@@ -655,6 +655,18 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.msg_text, None)
 
+    def test_file_report_upload_message(self):
+        """file_report() with a message to the user"""
+        self.ui = UserInterfaceMock()
+        self.ui.report = self.report
+        self.ui.crashdb.upload_msg = ("test title", "test content")
+        previous_id = self.ui.crashdb.latest_id()
+        self.ui.file_report()
+        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
+        self.assertEqual(self.ui.msg_severity, "info")
+        self.assertEqual(self.ui.msg_title, "test title")
+        self.assertEqual(self.ui.msg_text, "test content")
+
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
         self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])

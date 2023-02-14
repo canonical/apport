@@ -61,7 +61,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return apport.crashdb.CrashDatabase.accepts(self, report)
 
-    def upload(self, report, progress_callback=None):
+    def upload(
+        self, report, progress_callback=None, user_message_callback=None
+    ):
         """Upload given problem report return a handle for it.
 
         In Debian, we use BTS, which is heavily email oriented. This method

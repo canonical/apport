@@ -673,7 +673,9 @@ class CrashDatabase:
     # Abstract functions that need to be implemented by subclasses
     #
 
-    def upload(self, report, progress_callback=None):
+    def upload(
+        self, report, progress_callback=None, user_message_callback=None
+    ):
         """Upload given problem report return a handle for it.
 
         This should happen noninteractively.
