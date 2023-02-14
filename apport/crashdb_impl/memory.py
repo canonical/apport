@@ -36,16 +36,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.dup_unchecked = set()
 
         self.upload_delay = 0
+        self.upload_msg = None
 
         if "sample_data" in options:
             self.add_sample_data()
 
-    def upload(self, report, progress_callback=None):
+    def upload(
+        self, report, progress_callback=None, user_message_callback=None
+    ):
         """Store the report and return a handle number (starting from 0).
 
         This does not support (nor need) progress callbacks.
         """
         assert self.accepts(report)
+
+        if user_message_callback and self.upload_msg:
+            user_message_callback(self.upload_msg[0], self.upload_msg[1])
 
         self.reports.append(
             {

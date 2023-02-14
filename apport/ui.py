@@ -24,6 +24,7 @@ import gzip
 import io
 import locale
 import os.path
+import queue
 import re
 import shutil
 import signal
@@ -1801,6 +1802,13 @@ class UserInterface:
         def progress_callback(sent, total):
             self.upload_progress = float(sent) / total
 
+        message_queue = queue.SimpleQueue()
+
+        def message_callback(title, text):
+            message_displayed = threading.Event()
+            message_queue.put((title, text, message_displayed))
+            message_displayed.wait()
+
         # drop internal/uninteresting keys, that start with "_"
         for k in list(self.report):
             if k.startswith("_"):
@@ -1808,14 +1816,21 @@ class UserInterface:
 
         self.ui_start_upload_progress()
         upthread = apport.REThread.REThread(
-            target=self.crashdb.upload, args=(self.report, progress_callback)
+            target=self.crashdb.upload,
+            args=(self.report, progress_callback, message_callback),
         )
         upthread.start()
         while upthread.is_alive():
             self.ui_set_upload_progress(self.upload_progress)
             try:
-                upthread.join(0.1)
+                title, text, msg_displayed = message_queue.get(
+                    block=True, timeout=0.1
+                )
+                self.ui_info_message(title, text)
+                msg_displayed.set()
                 upthread.exc_raise()
+            except queue.Empty:
+                pass
             except KeyboardInterrupt:
                 sys.exit(1)
             except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
