@@ -149,3 +149,21 @@ Crash database implementations
 
    The only supported option is `sample_data`; if set to a non-`False` value, it
    will populate the database with some example reports.
+
+ * `github` files bug reports as issues in Github using its [device flow][1].
+
+   **Options**:
+   - `repository_owner`: Name of the owner of the repository. In terms of URL:
+     github.com/repository\_owner/repository\_name.
+   - `repository_name`: Name of the repository. In terms of URL:
+     github.com/repository\_owner/repository\_name.
+   - `labels`: List of labels to add to the Github issue.
+   - `github_app_id`: The client ID obtained by registering the OAuth
+     application.
+
+   The special case of both `repository_owner` and `repository_name` being
+   `None` is reserved for snap reporting, whereby the repository to which the
+   bug is filed is determined from the `contact:` field of the snap (as listed
+   by `snap info <snap-name>`).
+
+[1]: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow
