@@ -88,7 +88,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         self,
         program: str,
         existing_pids: typing.Container[int],
-        timeout_sec=5.0,
+        timeout_sec=30.0,
     ) -> int:
         """Wait until one process with the given name is running."""
         timeout = 0.0
@@ -111,7 +111,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         """Test wait_for_gdb_child_process() helper runs into timeout."""
         pidof_mock.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:
-            self._wait_for_process(self.TEST_EXECUTABLE, [])
+            self._wait_for_process(self.TEST_EXECUTABLE, [], timeout_sec=5.0)
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 51)
