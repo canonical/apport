@@ -298,6 +298,8 @@ jobs:
           ./setup.py install --install-layout=deb --prefix=/usr --root=/
           && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
           && python3 -m coverage xml -o coverage-setup.xml
+      - name: Cleanup /var/crash/
+        run: sudo rm -f /var/crash/*.crash
       - name: Enable Apport
         run: sudo /usr/share/apport/apport --start
       - name: Run system tests
