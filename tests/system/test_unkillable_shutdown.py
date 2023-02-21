@@ -78,11 +78,15 @@ class TestUnkillableShutdown(unittest.TestCase):
         existing_pids = self._get_all_pids()
         runner = multiprocessing.Process(target=_run_test_executable)
         runner.start()
-        pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
-        yield runner
-        os.kill(pid, signal.SIGHUP)
-        runner.join(60)
-        runner.kill()
+        try:
+            pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+            try:
+                yield runner
+            finally:
+                os.kill(pid, signal.SIGHUP)
+            runner.join(60)
+        finally:
+            runner.kill()
 
     def _wait_for_process(
         self,
