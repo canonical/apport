@@ -79,6 +79,8 @@ class TestUnkillableShutdown(unittest.TestCase):
         runner = multiprocessing.Process(target=_run_test_executable)
         runner.start()
         try:
+            self.assertTrue(runner.is_alive(), runner)
+            self.assertIsNone(runner.exitcode, runner)
             pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
             try:
                 yield runner
