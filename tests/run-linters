@@ -19,7 +19,7 @@ PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! 
 
 if type black >/dev/null 2>&1; then
     echo "Running black..."
-    black --check --diff ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+    black -C --check --diff ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 else
     echo "Skipping black tests, black is not installed"
 fi

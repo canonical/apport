@@ -15,7 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - debian:bullseye-slim
           - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:kinetic
