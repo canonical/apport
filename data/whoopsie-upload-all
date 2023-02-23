@@ -82,7 +82,7 @@ def process_report(report):
     if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:
         logging.info("  skipping, not a crash")
         return None
-    if "Dependencies" in r:
+    if "Dependencies" in r and r.get("_HooksRun") != "no":
         logging.info("%s already has info collected", report)
     else:
         logging.info("Collecting info for %s...", report)
@@ -126,7 +126,7 @@ def process_report(report):
         try:
             fd = os.open(
                 report,
-                os.O_NOFOLLOW | os.O_WRONLY | os.O_APPEND | os.O_NONBLOCK,
+                os.O_NOFOLLOW | os.O_WRONLY | os.O_NONBLOCK,
             )
         except FileNotFoundError:
             # The crash report was deleted. Nothing left to do.
@@ -135,7 +135,7 @@ def process_report(report):
         if stat.S_ISREG(st.st_mode):
             with os.fdopen(fd, "wb") as f:
                 os.fchmod(fd, 0)
-                r.write(f, only_new=True)
+                r.write(f)
                 os.fchmod(fd, 0o640)
 
     # now tell whoopsie to upload the report

@@ -1097,6 +1097,9 @@ def process_crash(options: argparse.Namespace) -> int:
 
     info.add_user_info()
     info.add_os_info()
+    with contextlib.suppress(SystemError, ValueError):
+        info.add_package_info()
+    info["_HooksRun"] = "no"
 
     try:
         info.write(reportfile)

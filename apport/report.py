@@ -446,8 +446,10 @@ class Report(problem_report.ProblemReport):
         if not version:
             return
 
-        self["PackageArchitecture"] = packaging.get_architecture(package)
-        self["Dependencies"] = self._get_transitive_dependencies(package)
+        if "PackageArchitecture" not in self:
+            self["PackageArchitecture"] = packaging.get_architecture(package)
+        if "Dependencies" not in self:
+            self["Dependencies"] = self._get_transitive_dependencies(package)
 
     def add_snap_info(self, snap):
         """Add info about an installed Snap.
@@ -1124,6 +1126,7 @@ class Report(problem_report.ProblemReport):
         if ui is None:
             ui = NoninteractiveHookUI()
         ret = self._add_hooks_info(ui, package, srcpackage)
+        self.pop("_HooksRun", None)
         kill_pkttyagent()
         return ret
 
