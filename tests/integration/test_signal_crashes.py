@@ -848,7 +848,12 @@ class T(unittest.TestCase):
         args = apport_binary.parse_arguments(
             self._apport_args(process, sig, dump_mode)
         )
-        self._forward_crash_to_container(socket_path, args, stdin.fileno())
+        with unittest.mock.patch(
+            "apport.fileutils.search_map"
+        ) as search_map_mock:
+            search_map_mock.return_value = True
+            self._forward_crash_to_container(socket_path, args, stdin.fileno())
+            search_map_mock.assert_called()
 
         # call apport like systemd does via socket activation
         def child_setup():
