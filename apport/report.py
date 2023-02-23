@@ -463,13 +463,13 @@ class Report(problem_report.ProblemReport):
             snap.get("channel", "unknown"),
         )
         snapname = snap.get("name")
-        self["Snap.Changes"] = _command_output(
+        self["SnapChanges"] = _command_output(
             ["snap", "changes", "--abs-time", snapname]
         )
-        self["Snap.Connections"] = _command_output(
+        self["SnapConnections"] = _command_output(
             ["snap", "connections", snapname]
         )
-        self["Snap.Info.%s" % snapname] = _command_output(
+        self["SnapInfo.%s" % snapname] = _command_output(
             ["snap", "info", "--abs-time", snapname]
         )
         import yaml  # pylint: disable=import-outside-toplevel
@@ -480,7 +480,7 @@ class Report(problem_report.ProblemReport):
             snap_meta = yaml.safe_load(f)
         if "base" in snap_meta:
             base = snap_meta["base"]
-            self["Snap.Info.%s" % base] = _command_output(
+            self["SnapInfo.%s" % base] = _command_output(
                 ["snap", "info", "--abs-time", base]
             )
         providers = []
@@ -490,7 +490,7 @@ class Report(problem_report.ProblemReport):
                 if dp and dp not in providers:
                     providers.append(dp)
         for provider in providers:
-            self["Snap.Info.%s" % provider] = _command_output(
+            self["SnapInfo.%s" % provider] = _command_output(
                 ["snap", "info", "--abs-time", provider]
             )
         # Automatically handle snaps which have a Launchpad contact defined
