@@ -385,6 +385,29 @@ class Report(problem_report.ProblemReport):
 
         return version
 
+    def _get_transitive_dependencies(self, package: str) -> str:
+        # get set of all transitive dependencies
+        dependencies_set: set[str] = set()
+        _transitive_dependencies(package, dependencies_set)
+
+        # get dependency versions
+        dependencies = ""
+        for dep in sorted(dependencies_set):
+            try:
+                v = packaging.get_version(dep)
+            except ValueError:
+                # can happen with uninstalled alternate dependencies
+                continue
+
+            if dependencies:
+                dependencies += "\n"
+            dependencies += "%s %s%s" % (
+                dep,
+                v,
+                self._customized_package_suffix(dep),
+            )
+        return dependencies
+
     def add_package_info(self, package=None):
         """Add packaging information.
 
@@ -424,27 +447,7 @@ class Report(problem_report.ProblemReport):
             return
 
         self["PackageArchitecture"] = packaging.get_architecture(package)
-
-        # get set of all transitive dependencies
-        dependencies = set([])
-        _transitive_dependencies(package, dependencies)
-
-        # get dependency versions
-        self["Dependencies"] = ""
-        for dep in sorted(dependencies):
-            try:
-                v = packaging.get_version(dep)
-            except ValueError:
-                # can happen with uninstalled alternate dependencies
-                continue
-
-            if self["Dependencies"]:
-                self["Dependencies"] += "\n"
-            self["Dependencies"] += "%s %s%s" % (
-                dep,
-                v,
-                self._customized_package_suffix(dep),
-            )
+        self["Dependencies"] = self._get_transitive_dependencies(package)
 
     def add_snap_info(self, snap):
         """Add info about an installed Snap.
