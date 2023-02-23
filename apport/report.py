@@ -151,9 +151,7 @@ def _read_maps(proc_pid_fd):
     return maps
 
 
-def _command_output(  # pylint: disable=redefined-builtin
-    command, input=None, env=None
-):
+def _command_output(command, env=None):
     """Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
@@ -166,7 +164,6 @@ def _command_output(  # pylint: disable=redefined-builtin
             command,
             check=False,
             env=env,
-            input=input,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=1800,
