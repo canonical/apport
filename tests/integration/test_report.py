@@ -1908,7 +1908,7 @@ int main() { return f(42); }
 
     def test_command_output(self):
         out = apport.report._command_output(["echo", "hello"])
-        self.assertEqual(out, "hello\n")
+        self.assertEqual(out, "hello")
 
     def test_command_output_passes_env(self):
         fake_env = {"GCONV_PATH": "/tmp"}

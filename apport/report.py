@@ -175,13 +175,13 @@ def _command_output(
     except subprocess.TimeoutExpired as error:
         raise OSError(
             f"Error: command {str(error.cmd)} timed out"
-            f" after {error.timeout} seconds: {error.stdout}"
+            f" after {error.timeout} seconds: {error.stdout.rstrip()}"
         ) from error
     if sp.returncode == 0:
-        return sp.stdout
+        return sp.stdout.rstrip()
     raise OSError(
         "Error: command %s failed with exit code %i: %s"
-        % (str(command), sp.returncode, sp.stdout)
+        % (str(command), sp.returncode, sp.stdout.rstrip())
     )
 
 
