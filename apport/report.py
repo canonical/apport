@@ -151,7 +151,9 @@ def _read_maps(proc_pid_fd):
     return maps
 
 
-def _command_output(command, env=None):
+def _command_output(
+    command: list[str], env: typing.Optional[dict[str, str]] = None
+) -> str:
     """Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
@@ -163,23 +165,23 @@ def _command_output(command, env=None):
         sp = subprocess.run(
             command,
             check=False,
+            encoding="UTF-8",
             env=env,
+            errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=1800,
         )
     except subprocess.TimeoutExpired as error:
-        out = error.stdout.decode("UTF-8", errors="replace")
         raise OSError(
             f"Error: command {str(error.cmd)} timed out"
-            f" after {error.timeout} seconds: {out}"
+            f" after {error.timeout} seconds: {error.stdout}"
         ) from error
     if sp.returncode == 0:
         return sp.stdout
-    out = sp.stdout.decode("UTF-8", errors="replace")
     raise OSError(
         "Error: command %s failed with exit code %i: %s"
-        % (str(command), sp.returncode, out)
+        % (str(command), sp.returncode, sp.stdout)
     )
 
 
@@ -950,9 +952,7 @@ class Report(problem_report.ProblemReport):
         value_keys.append("separator")
         gdb_cmd += ["--ex", "p -99"]
 
-        out = _command_output(gdb_cmd, env=environ).decode(
-            "UTF-8", errors="replace"
-        )
+        out = _command_output(gdb_cmd, env=environ)
 
         # check for truncated stack trace
         if (

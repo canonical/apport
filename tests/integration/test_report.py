@@ -1906,10 +1906,18 @@ int main() { return f(42); }
             timestamp, time.mktime(time.strptime("2014-01-01", "%Y-%m-%d"))
         )
 
+    def test_command_output(self):
+        out = apport.report._command_output(["echo", "hello"])
+        self.assertEqual(out, "hello\n")
+
     def test_command_output_passes_env(self):
         fake_env = {"GCONV_PATH": "/tmp"}
         out = apport.report._command_output(["env"], env=fake_env)
-        self.assertIn(b"GCONV_PATH", out)
+        self.assertIn("GCONV_PATH", out)
+
+    def test_command_output_raises_error(self):
+        with self.assertRaisesRegex(OSError, "failed with exit code 1"):
+            apport.report._command_output(["false"])
 
     def test_extrapath_preferred(self):
         """If extrapath is passed it is preferred."""
