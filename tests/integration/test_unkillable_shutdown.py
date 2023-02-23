@@ -9,13 +9,18 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import contextlib
+import multiprocessing
 import os
 import shutil
+import signal
 import subprocess
 import tempfile
+import time
 import typing
 import unittest
 
+from tests.helper import pidof
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -55,7 +60,85 @@ class TestUnkillableShutdown(unittest.TestCase):
     def _get_all_pids():
         return [int(pid) for pid in os.listdir("/proc") if pid.isdigit()]
 
+    @contextlib.contextmanager
+    def _launch_process_with_different_session_id(
+        self,
+    ) -> typing.Generator[multiprocessing.Process, None, None]:
+        """Launch test executable with different session ID.
+
+        getsid() will return a different ID than the current process.
+        """
+
+        def _run_test_executable():
+            os.setsid()
+            subprocess.run(
+                [self.TEST_EXECUTABLE] + self.TEST_ARGS, check=False
+            )
+
+        existing_pids = self._get_all_pids()
+        runner = multiprocessing.Process(target=_run_test_executable)
+        runner.start()
+        try:
+            pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+            try:
+                yield runner
+            finally:
+                os.kill(pid, signal.SIGHUP)
+            runner.join(60)
+        finally:
+            runner.kill()
+
+    def _wait_for_process(
+        self,
+        program: str,
+        existing_pids: typing.Container[int],
+        timeout_sec=5.0,
+    ) -> int:
+        """Wait until one process with the given name is running."""
+        timeout = 0.0
+        while timeout < timeout_sec:
+            pids = {pid for pid in pidof(program) if pid not in existing_pids}
+            if pids:
+                self.assertEqual(len(pids), 1, pids)
+                return pids.pop()
+
+            time.sleep(0.1)
+            timeout += 0.1
+
+        self.fail(
+            f"Process {program} not started within {int(timeout)} seconds."
+        )
+
     def test_omit_all_processes(self):
         """unkillable_shutdown will write no reports."""
         self._call(omit=self._get_all_pids())
         self.assertEqual(os.listdir(self.report_dir), [])
+
+    @unittest.mock.patch("tests.integration.test_unkillable_shutdown.pidof")
+    @unittest.mock.patch("time.sleep")
+    def test_wait_for_process_timeout(self, sleep_mock, pidof_mock):
+        """Test wait_for_gdb_child_process() helper runs into timeout."""
+        pidof_mock.return_value = []
+        with unittest.mock.patch.object(self, "fail") as fail_mock:
+            self._wait_for_process(self.TEST_EXECUTABLE, [])
+        fail_mock.assert_called_once()
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 51)
+
+    def test_omit_all_processes_except_one(self):
+        """unkillable_shutdown will write exactly one report."""
+        existing_pids = self._get_all_pids()
+        with self._launch_process_with_different_session_id() as runner:
+            self._call(omit=existing_pids + [runner.pid])
+        self.assertEqual(
+            os.listdir(self.report_dir),
+            [f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.geteuid()}.crash"],
+        )
+
+    def test_write_reports(self):
+        """unkillable_shutdown will write reports."""
+        # Ensure that at least one process is honoured by unkillable_shutdown.
+        with self._launch_process_with_different_session_id():
+            self._call()
+        reports = os.listdir(self.report_dir)
+        self.assertGreater(len(reports), 0, reports)
