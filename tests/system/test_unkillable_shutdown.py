@@ -87,6 +87,7 @@ class TestUnkillableShutdown(unittest.TestCase):
             runner.join(60)
         finally:
             runner.kill()
+            runner.close()
 
     def _wait_for_process(
         self,
