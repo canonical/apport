@@ -41,10 +41,7 @@ class T(unittest.TestCase):
     # }
 
     def test__format_report(self):
-        data = {
-            "bold1": "normal1",
-            "bold2": "normal2",
-        }
+        data = {"bold1": "normal1", "bold2": "normal2"}
         expected_body = "**bold1**\nnormal1\n\n**bold2**\nnormal2\n\n"
 
         result = self.crashdb._format_report(data)
