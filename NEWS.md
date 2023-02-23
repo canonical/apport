@@ -1,6 +1,25 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.26.0 (2023-02-23)
+-------------------
+
+### Added
+* Add GitHub crash database for Windows Subsystem for Linux (WSL) and snaps
+* Report to GitHub if snap contact points to GitHub
+
+### Changed
+* test: Specify Python files for linters directly
+* Format code with black 23.1
+* Already add package info during crash (to prevent wrong package versions
+  if packages are updated between the crash and reporting)
+* Remove dots from Snap.* report keys (for consistency)
+
+### Fixed
+* Convert values for the keys `SnapChanges`, `SnapConnections`, and
+  `SnapInfo.*` from `bytes` to `str`
+* Support running signal crash via socket tests in containers
+
 2.25.0 (2023-02-10)
 -------------------
 
