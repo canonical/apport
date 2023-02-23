@@ -16,11 +16,9 @@ import shutil
 import signal
 import subprocess
 import tempfile
-import time
 import typing
 import unittest
 
-from tests.helper import pidof
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -69,17 +67,19 @@ class TestUnkillableShutdown(unittest.TestCase):
         getsid() will return a different ID than the current process.
         """
 
-        def _run_test_executable():
+        def _run_test_executable(queue: multiprocessing.Queue) -> None:
             os.setsid()
-            subprocess.run(
-                [self.TEST_EXECUTABLE] + self.TEST_ARGS, check=False
-            )
+            cmd = [self.TEST_EXECUTABLE] + self.TEST_ARGS
+            with subprocess.Popen(cmd) as test_process:
+                queue.put(test_process.pid)
 
-        existing_pids = self._get_all_pids()
-        runner = multiprocessing.Process(target=_run_test_executable)
+        queue: multiprocessing.Queue = multiprocessing.Queue()
+        runner = multiprocessing.Process(
+            target=_run_test_executable, args=(queue,)
+        )
         runner.start()
         try:
-            pid = self._wait_for_process(self.TEST_EXECUTABLE, existing_pids)
+            pid = queue.get(timeout=60)
             try:
                 yield runner
             finally:
@@ -88,42 +88,10 @@ class TestUnkillableShutdown(unittest.TestCase):
         finally:
             runner.kill()
 
-    def _wait_for_process(
-        self,
-        program: str,
-        existing_pids: typing.Container[int],
-        timeout_sec=5.0,
-    ) -> int:
-        """Wait until one process with the given name is running."""
-        timeout = 0.0
-        while timeout < timeout_sec:
-            pids = {pid for pid in pidof(program) if pid not in existing_pids}
-            if pids:
-                self.assertEqual(len(pids), 1, pids)
-                return pids.pop()
-
-            time.sleep(0.1)
-            timeout += 0.1
-
-        self.fail(
-            f"Process {program} not started within {int(timeout)} seconds."
-        )
-
     def test_omit_all_processes(self):
         """unkillable_shutdown will write no reports."""
         self._call(omit=self._get_all_pids())
         self.assertEqual(os.listdir(self.report_dir), [])
-
-    @unittest.mock.patch("tests.integration.test_unkillable_shutdown.pidof")
-    @unittest.mock.patch("time.sleep")
-    def test_wait_for_process_timeout(self, sleep_mock, pidof_mock):
-        """Test wait_for_gdb_child_process() helper runs into timeout."""
-        pidof_mock.return_value = []
-        with unittest.mock.patch.object(self, "fail") as fail_mock:
-            self._wait_for_process(self.TEST_EXECUTABLE, [])
-        fail_mock.assert_called_once()
-        sleep_mock.assert_called_with(0.1)
-        self.assertEqual(sleep_mock.call_count, 51)
 
     def test_omit_all_processes_except_one(self):
         """unkillable_shutdown will write exactly one report."""
