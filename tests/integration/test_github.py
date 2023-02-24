@@ -9,6 +9,7 @@
 
 import unittest
 from unittest.mock import ANY, Mock, patch
+from tests.helper import has_internet
 
 try:
     import apport.crashdb_impl.github
@@ -49,6 +50,7 @@ class T(unittest.TestCase):
         self.assertTrue("title" in result)
         self.assertTrue(self.crashdb.labels == set(result["labels"]))
 
+    @unittest.skipUnless(has_internet(), "internet access needed")
     @patch("apport.crashdb_impl.github.Github.api_open_issue")
     @patch("apport.crashdb_impl.github.Github.authentication_complete")
     def test_upload(self, mock_auth, mock_api):
