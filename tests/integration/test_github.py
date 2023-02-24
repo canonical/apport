@@ -31,14 +31,13 @@ class T(unittest.TestCase):
             self.crashdb.app_id, self.message_cb
         )
 
-    # Sample response:
-    # {
-    #     'device_code': '35fe1f072913d46c00ad3e4a83e57facfb758f67',
-    #     'user_code': '5A5D-7210',
-    #     'verification_uri': 'https://github.com/login/device',
-    #     'expires_in': 899,
-    #     'interval': 5
-    # }
+        self.api_auth_return_value = {
+            "verification_uri": None,
+            "user_code": 123,
+            "device_code": "d123",
+            "interval": 1,
+            "expires_in": 20,
+        }
 
     def test__format_report(self):
         data = {"bold1": "normal1", "bold2": "normal2"}
@@ -49,11 +48,13 @@ class T(unittest.TestCase):
         self.assertTrue("title" in result)
         self.assertTrue(self.crashdb.labels == set(result["labels"]))
 
+    @patch("apport.crashdb_impl.github.Github.api_authentication")
     @patch("apport.crashdb_impl.github.Github.api_open_issue")
     @patch("apport.crashdb_impl.github.Github.authentication_complete")
-    def test_upload(self, mock_auth, mock_api):
+    def test_upload(self, mock_auth, mock_api, mock_api_auth):
         mock_api.return_value = {"html_url": "doesntmatterhere"}
         mock_auth.return_value = True
+        mock_api_auth.return_value = self.api_auth_return_value
         nodata = {}
         snapdata = {"SnapGitOwner": "gimli", "SnapGitName": "axe"}
 
@@ -98,13 +99,7 @@ class T(unittest.TestCase):
 
     @patch("apport.crashdb_impl.github.Github.api_authentication")
     def test_authentication_complete(self, mock_api):
-        base_response = {
-            "verification_uri": None,
-            "user_code": 123,
-            "device_code": "d123",
-            "interval": 1,
-            "expires_in": 20,
-        }
+        base_response = self.api_auth_return_value
         mocked = [base_response.copy() for i in range(7)]
         mocked[2]["error"] = "foo"
         mocked[3]["error"] = "authorization_pending"
