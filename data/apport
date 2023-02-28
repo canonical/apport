@@ -908,7 +908,16 @@ def process_crash(options: argparse.Namespace) -> int:
     core_ulimit = options.core_ulimit
     coredump_fd = sys.stdin.fileno()
 
-    get_pid_info(options.pid)
+    try:
+        get_pid_info(options.pid)
+    except FileNotFoundError as error:
+        logger.error(
+            "%s not found. "
+            "Cannot collect crash information for process %i any more.",
+            error.filename,
+            options.pid,
+        )
+        return 1
 
     process_start = get_process_starttime()
     if not consistency_checks(options, process_start):

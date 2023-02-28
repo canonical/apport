@@ -11,6 +11,7 @@
 
 import contextlib
 import errno
+import io
 import os
 import pathlib
 import shutil
@@ -282,3 +283,22 @@ class TestApport(unittest.TestCase):
                 self.assertEqual(apport_binary.is_closing_session(), False)
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
+
+    @unittest.mock.patch.object(
+        apport_binary, "check_lock", unittest.mock.MagicMock()
+    )
+    @unittest.mock.patch.object(
+        apport_binary, "init_error_log", unittest.mock.MagicMock()
+    )
+    def test_missing_proc_pid(self) -> None:
+        """Test /proc/<pid> is already gone."""
+        fake_pid = 2147483647
+        assert not os.path.exists(f"/proc/{fake_pid}")
+        with self.assertLogs(level="ERROR") as error_logs:
+            with tempfile.NamedTemporaryFile() as stdin:
+                stdin_mock = io.FileIO(stdin.name)
+                with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
+                    self.assertEqual(
+                        apport_binary.main(["-p", str(fake_pid)]), 1
+                    )
+        self.assertIn("/proc/2147483647 not found", error_logs.output[0])
