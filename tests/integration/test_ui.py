@@ -15,6 +15,7 @@ import time
 import typing
 import unittest
 import unittest.mock
+import urllib.error
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -666,6 +667,25 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "info")
         self.assertEqual(self.ui.msg_title, "test title")
         self.assertEqual(self.ui.msg_text, "test content")
+
+    def test_file_report_http_error(self) -> None:
+        """file_report() fails with HTTPError."""
+        self.ui = UserInterfaceMock()
+        self.ui.report = self.report
+        with unittest.mock.patch.object(
+            self.ui.crashdb, "upload"
+        ) as upload_mock:
+            upload_mock.side_effect = urllib.error.HTTPError(
+                "https://example.com/", 502, "Bad Gateway", {}, None
+            )
+            self.ui.file_report()
+        self.assertEqual(self.ui.msg_severity, "error")
+        self.assertEqual(self.ui.msg_title, "Network problem")
+        self.assertEqual(
+            self.ui.msg_text,
+            "Cannot connect to crash database, please check your Internet"
+            " connection.\n\nHTTP Error 502: Bad Gateway",
+        )
 
     def test_run_report_bug_package(self):
         """run_report_bug() for a package"""
