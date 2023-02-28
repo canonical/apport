@@ -1822,34 +1822,36 @@ class UserInterface:
             args=(self.report, progress_callback, message_callback),
         )
         upthread.start()
-        while upthread.is_alive():
-            self.ui_set_upload_progress(self.upload_progress)
-            try:
-                title, text, msg_displayed = message_queue.get(
-                    block=True, timeout=0.1
-                )
-                self.ui_info_message(title, text)
-                msg_displayed.set()
-                upthread.exc_raise()
-            except queue.Empty:
-                pass
-            except KeyboardInterrupt:
-                sys.exit(1)
-            except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
-                self.ui_error_message(
-                    _("Network problem"),
-                    "%s\n\n%s"
-                    % (
-                        _(
-                            "Cannot connect to crash database,"
-                            " please check your Internet connection."
-                        ),
-                        str(error),
-                    ),
-                )
-                return
+        try:
+            while upthread.is_alive():
+                self.ui_set_upload_progress(self.upload_progress)
+                try:
+                    title, text, msg_displayed = message_queue.get(
+                        block=True, timeout=0.1
+                    )
+                    self.ui_info_message(title, text)
+                    msg_displayed.set()
+                    upthread.exc_raise()
+                except queue.Empty:
+                    pass
 
-        upthread.exc_raise()
+            upthread.exc_raise()
+        except KeyboardInterrupt:
+            sys.exit(1)
+        except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
+            self.ui_error_message(
+                _("Network problem"),
+                "%s\n\n%s"
+                % (
+                    _(
+                        "Cannot connect to crash database,"
+                        " please check your Internet connection."
+                    ),
+                    str(error),
+                ),
+            )
+            return
+
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
 
