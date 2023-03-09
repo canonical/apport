@@ -304,6 +304,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return "https://bugs.launchpad.net/bugs/" + str(crash_id)
 
     def download(self, crash_id):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
         """Download the problem report from given ID and return a Report."""
         report = apport.report.Report()
         b = self.launchpad.bugs[crash_id]
@@ -658,6 +660,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return sources[0].source_package_version
 
     def get_fixed_version(self, crash_id):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-return-statements
         """Return the package version that fixes a given crash.
 
         Return None if the crash is not yet fixed, or an empty string if the
@@ -772,6 +776,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return None
 
     def close_duplicate(self, report, crash_id, master_id):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.
@@ -1522,6 +1528,8 @@ and more
             )
 
         def test_2_update_traces(self):
+            # TODO: Split into separate test cases
+            # pylint: disable=too-many-statements
             """update_traces()"""
             r = self.crashdb.download(self.get_segv_report())
             self.assertIn("CoreDump", r)

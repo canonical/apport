@@ -562,6 +562,8 @@ class Report(problem_report.ProblemReport):
             self["UserGroups"] = "N/A"
 
     def _check_interpreted(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
         """Check if process is a script.
 
         Use ExecutablePath, ProcStatus and ProcCmdline to determine if
@@ -688,6 +690,8 @@ class Report(problem_report.ProblemReport):
         return spec.origin
 
     def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -892,6 +896,8 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def add_gdb_info(self, rootdir=None, gdb_sandbox=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -1134,6 +1140,9 @@ class Report(problem_report.ProblemReport):
         package: typing.Optional[str],
         srcpackage: typing.Optional[str],
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
+
         # determine package names, unless already given as arguments
         # avoid path traversal
         if not package:
@@ -1425,6 +1434,9 @@ class Report(problem_report.ProblemReport):
         return None
 
     def standard_title(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-many-return-statements,too-many-statements
         """Create an appropriate title for a crash database entry.
 
         This contains the topmost function name from the stack trace and the
@@ -1585,6 +1597,9 @@ class Report(problem_report.ProblemReport):
         return obsolete
 
     def crash_signature(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-return-statements
+        # pylint: disable=too-many-statements
         """Get a signature string for a crash.
 
         This is suitable for identifying duplicates.
@@ -1871,6 +1886,8 @@ class Report(problem_report.ProblemReport):
                         self[k] = pattern.sub(repl, self[k])
 
     def gdb_command(self, sandbox, gdb_sandbox=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals
         """Build gdb command for this report.
 
         This builds a gdb command for processing the given report, by setting

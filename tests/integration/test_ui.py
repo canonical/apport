@@ -2020,6 +2020,8 @@ class T(unittest.TestCase):
     )
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_run_symptom(self, stderr_mock):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """run_symptom()"""
         # unknown symptom
         self.ui = UserInterfaceMock(["ui-test", "-s", "foobar"])

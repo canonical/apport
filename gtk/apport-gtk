@@ -110,6 +110,9 @@ class GTKUserInterface(apport.ui.UserInterface):
         return spinner
 
     def ui_update_view(self, shown_keys=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
+
         # do nothing if the dialog is already destroyed when the data
         # collection finishes
         if not self.w("details_treeview").get_property("visible"):
@@ -228,6 +231,8 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
     ) -> apport.ui.Action:
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         icon = None
         self.collect_called = False
         report_type = self.report.get("ProblemType")

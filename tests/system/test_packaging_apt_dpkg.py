@@ -37,6 +37,8 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_versioned(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-locals,too-many-statements
         """install_packages() with versions and with cache"""
         release = self._setup_foonux_config(updates=True)
         wanted = {

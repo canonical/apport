@@ -123,6 +123,9 @@ class ProblemReport(collections.UserDict):
         self["Tags"] = " ".join(sorted(new_tags))
 
     def load(self, file, binary=True, key_filter=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-nested-blocks
+        # pylint: disable=too-many-statements
         """Initialize problem report from a file-like object.
 
         If binary is False, binary data is not loaded; the dictionary key is
@@ -211,6 +214,8 @@ class ProblemReport(collections.UserDict):
         self.old_keys = set(self.data.keys())
 
     def extract_keys(self, file, bin_keys, directory):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
         """Extract only one binary element from the problem report.
 
         Binary elements like kernel crash dumps can be very big. This method
@@ -361,6 +366,8 @@ class ProblemReport(collections.UserDict):
         return value
 
     def write(self, file, only_new=False):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
@@ -565,6 +572,8 @@ class ProblemReport(collections.UserDict):
         skip_keys=None,
         priority_fields=None,
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Write MIME/Multipart RFC 2822 formatted data into file.
 
         file must be a file-like object, not a path.  It needs to be opened in
