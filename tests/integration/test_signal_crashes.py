@@ -969,6 +969,8 @@ class T(unittest.TestCase):
         expect_report: bool = True,
         via_socket: bool = False,
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Generate a test crash.
 
         This runs command (by default TEST_EXECUTABLE) in cwd, lets it crash,

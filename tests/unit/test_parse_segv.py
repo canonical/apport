@@ -152,6 +152,8 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, segv.parse_disassembly, "")
 
     def test_invalid_01_disassembly(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """Require valid disassembly."""
         regs = "a 0x10"
 

@@ -176,6 +176,8 @@ def thread_collect_info(
     symptom_script=None,
     ignore_uninstalled=False,
 ):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-statements
     """Collect information about report.
 
     Encapsulate calls to add_*_info() and update given report, so that this
@@ -432,6 +434,9 @@ class UserInterface:
         return result
 
     def run_crash(self, report_file):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-return-statements
+        # pylint: disable=too-many-statements
         """Present and report a particular crash.
 
         If confirm is True, ask the user what to do about it, and offer to file
@@ -644,6 +649,9 @@ class UserInterface:
         os.kill(int(pid), signal.SIGSEGV)
 
     def run_report_bug(self, symptom_script=None):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-return-statements
+        # pylint: disable=too-many-statements
         """Report a bug.
 
         If a pid is given on the command line, the report will contain runtime
@@ -949,6 +957,8 @@ class UserInterface:
         self.run_report_bug(script)
 
     def run_argv(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-return-statements
         """Call appopriate run_* method according to command line arguments.
 
         Return True if at least one report has been processed, and False
@@ -1058,6 +1068,8 @@ class UserInterface:
         return args
 
     def parse_argv(self, argv: list[str]) -> argparse.Namespace:
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
         """Parse command line options.
 
         If a single argument is given without any options, this tries to "do
@@ -1471,6 +1483,8 @@ class UserInterface:
     def collect_info(
         self, symptom_script=None, ignore_uninstalled=False, on_finished=None
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Collect additional information.
 
         Call all the add_*_info() methods and display a progress dialog during

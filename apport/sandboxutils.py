@@ -139,6 +139,8 @@ def make_sandbox(
     log_timestamps=False,
     dynamic_origins=False,
 ):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals,too-many-statements
     """Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and

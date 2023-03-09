@@ -608,6 +608,8 @@ class T(unittest.TestCase):
         )
 
     def test_known_address_sig(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """known() for address signatures"""
         self.crashes.init_duplicate_db(":memory:")
 

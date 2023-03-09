@@ -223,6 +223,8 @@ class T(unittest.TestCase):
         unittest.mock.MagicMock(return_value=[]),
     )
     def test_attach_mac_events(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """attach_mac_events()"""
         denied_log = (
             "[  351.624338] type=1400 audit(1343775571.688:27):"

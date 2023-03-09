@@ -343,6 +343,9 @@ def print_traces(report):
 
 
 def main():
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
+    # pylint: disable=too-many-statements
     apport.memdbg("start")
 
     gettext.textdomain("apport")

@@ -19,6 +19,8 @@ import apport.hookutils
 
 
 def add_info(report, ui):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals
     nm = apport.hookutils.nonfree_kernel_modules()
     if nm:
         report["NonfreeKernelModules"] = " ".join(nm)

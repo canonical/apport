@@ -56,6 +56,8 @@ class T(unittest.TestCase):
         self.assertFalse(r.has_useful_stacktrace())
 
     def test_standard_title(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """standard_title()."""
         report = apport.report.Report()
         self.assertEqual(report.standard_title(), None)

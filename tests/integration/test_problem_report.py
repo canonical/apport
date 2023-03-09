@@ -341,7 +341,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["Before"], "xtestx")
         self.assertEqual(pr["ZAfter"], "ytesty")
 
-    def test_add_to_existing(self):
+    def test_add_to_existing(self):  # pylint: disable=too-many-statements
         """Add information to an existing report."""
         # original report
         pr = problem_report.ProblemReport()

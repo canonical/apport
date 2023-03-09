@@ -68,6 +68,8 @@ def attach_file_if_exists(
 
 
 def read_file(path, force_unicode=False):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-return-statements
     """Return the contents of the specified path.
 
     If the contents is valid UTF-8, or force_unicode is True, then the value
@@ -499,7 +501,6 @@ def _spawn_pkttyagent():
                 if event_type & select.EPOLLHUP:
                     os.close(r)
                     return
-    return
 
 
 def kill_pkttyagent():

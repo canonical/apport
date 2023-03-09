@@ -32,6 +32,9 @@ def enabled():
 
 
 def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals
+    # pylint: disable=too-many-return-statements,too-many-statements
     """Catch an uncaught exception and make a traceback."""
     # create and save a problem report. Note that exceptions in this code
     # are bad, and we probably need a per-thread reentrancy guard to
@@ -146,6 +149,8 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
 
 
 def dbus_service_unknown_analysis(exc_obj, report):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-locals
     # pylint: disable=import-outside-toplevel; for Python starup time
     import re
     import subprocess

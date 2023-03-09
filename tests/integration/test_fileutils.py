@@ -53,6 +53,8 @@ class T(unittest.TestCase):
         return [r1, r2]
 
     def test_find_package_desktopfile(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
         """find_package_desktopfile()"""
         # package without any .desktop file
         nodesktop = "bash"

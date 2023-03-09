@@ -902,6 +902,9 @@ def consistency_checks(
 
 
 def process_crash(options: argparse.Namespace) -> int:
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals
+    # pylint: disable=too-many-return-statements,too-many-statements
     """Process crash and return exit code."""
     logger = logging.getLogger()
 

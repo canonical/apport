@@ -78,6 +78,8 @@ class ParseSegv:
         return regs
 
     def parse_disassembly(self, disassembly):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
         if not self.regs:
             raise ValueError("Registers not loaded yet!?")
         lines = disassembly.splitlines()
@@ -238,6 +240,9 @@ class ParseSegv:
         raise ValueError("Could not resolve register '%s'" % (reg_orig))
 
     def calculate_arg(self, arg):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
+
         # Check for and pre-remove segment offset
         segment = 0
         if arg.startswith("%") and ":" in arg:
@@ -301,6 +306,8 @@ class ParseSegv:
         return value % 0x10000000000000000
 
     def report(self):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
         understood = False
         reason = []
         details = ["Segfault happened at: %s" % (self.line)]

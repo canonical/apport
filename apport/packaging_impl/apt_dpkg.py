@@ -626,6 +626,8 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_source_tree(
         self, srcpackage, output_dir, version=None, sandbox=None
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -744,6 +746,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         install_dbg=True,
         install_deps=False,
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-many-nested-blocks,too-many-statements
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -1440,6 +1445,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         )
 
     def _search_contents(self, file, map_cachedir, release, arch):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Search file in Contents.gz."""
         if not map_cachedir:
             if not self._contents_dir:
@@ -1679,6 +1686,9 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _build_apt_sandbox(
         self, apt_root, apt_sources, distro_name, release_codename, origins
     ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
         if not os.path.exists(os.path.join(apt_root, "var", "lib", "apt")):

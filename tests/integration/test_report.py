@@ -115,6 +115,8 @@ class T(unittest.TestCase):
         self.assertNotIn(grp.getgrgid(os.getgid()).gr_name, pr["UserGroups"])
 
     def test_add_proc_info(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """add_proc_info()."""
         # check without additional safe environment variables
         pr = apport.report.Report()
@@ -343,6 +345,8 @@ class T(unittest.TestCase):
         self.assertIn("PATH=(custom, user)", r["ProcEnviron"])
 
     def test_check_interpreted(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """_check_interpreted()."""
         restore_root = False
         if os.getuid() == 0:
@@ -1087,6 +1091,8 @@ int main() { return f(42); }
         )
 
     def test_search_bug_patterns(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """search_bug_patterns()."""
         # create some test patterns
         patterns = textwrap.dedent(
@@ -1275,6 +1281,8 @@ int main() { return f(42); }
         )
 
     def test_add_hooks_info(self):
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
         """add_hooks_info()."""
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
