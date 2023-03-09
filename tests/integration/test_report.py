@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 import atexit
 import grp
 import io

@@ -12,6 +12,8 @@ This is used on Debian and derivatives such as Ubuntu.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=too-many-lines
+
 import contextlib
 import datetime
 import glob

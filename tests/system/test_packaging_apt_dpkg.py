@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 import glob
 import gzip
 import os
