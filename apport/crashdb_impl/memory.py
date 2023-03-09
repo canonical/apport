@@ -129,7 +129,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         change_description=False,
         attachment_comment=None,
         key_filter=None,
-    ):
+    ):  # pylint: disable=too-many-arguments
         """Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see

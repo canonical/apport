@@ -312,7 +312,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         change_description=False,
         attachment_comment=None,
         key_filter=None,
-    ):
+    ):  # pylint: disable=too-many-arguments
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )

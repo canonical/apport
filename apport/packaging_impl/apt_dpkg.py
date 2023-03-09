@@ -137,7 +137,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         release_codename,
         origins,
         arch,
-    ):
+    ):  # pylint: disable=too-many-arguments
         """Build apt sandbox and return apt.Cache(rootdir=) (initialized
         lazily).
 
@@ -745,7 +745,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         origins=None,
         install_dbg=True,
         install_deps=False,
-    ):
+    ):  # pylint: disable=too-many-arguments
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         # pylint: disable=too-many-nested-blocks,too-many-statements
