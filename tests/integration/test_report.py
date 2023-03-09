@@ -21,7 +21,7 @@ from tests.paths import patch_data_dir, restore_data_dir
 
 
 class T(unittest.TestCase):
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access,too-many-public-methods
 
     @classmethod
     def setUpClass(cls):

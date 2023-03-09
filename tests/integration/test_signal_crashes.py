@@ -55,7 +55,7 @@ required_fields = [
 
 
 class T(unittest.TestCase):
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access,too-many-public-methods
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 

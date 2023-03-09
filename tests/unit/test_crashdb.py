@@ -9,7 +9,7 @@ import apport.report
 from apport.crashdb_impl.memory import CrashDatabase
 
 
-class T(unittest.TestCase):
+class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")

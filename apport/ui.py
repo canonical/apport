@@ -335,6 +335,8 @@ class Action:
 
 
 class UserInterface:
+    # TODO: Check if some methods can be made private
+    # pylint: disable=too-many-public-methods
     """Apport user interface API.
 
     This provides an abstract base class for encapsulating the workflow and

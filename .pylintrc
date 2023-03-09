@@ -27,7 +27,6 @@ disable=bad-option-value,fixme,
   duplicate-code,
   invalid-name,
   missing-docstring,
-  too-many-public-methods,
 
 
 [REPORTS]
@@ -52,3 +51,6 @@ max-args=6
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=9
+
+# Maximum number of public methods for a class (see R0904).
+max-public-methods=25

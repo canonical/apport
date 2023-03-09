@@ -184,7 +184,8 @@ class UserInterfaceMock(apport.ui.UserInterface):
     "apport.hookutils._root_command_prefix",
     unittest.mock.MagicMock(return_value=[]),
 )
-class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
+class T(unittest.TestCase):
+    # pylint: disable=too-many-instance-attributes,too-many-public-methods
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 

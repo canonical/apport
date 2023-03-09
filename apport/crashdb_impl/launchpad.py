@@ -1324,7 +1324,7 @@ if __name__ == "__main__":
         return try_to_get_from_cache
 
     class _T(unittest.TestCase):
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,too-many-public-methods
 
         # this assumes that a source package 'coreutils' exists and builds a
         # binary package 'coreutils'
