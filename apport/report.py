@@ -9,6 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=too-many-lines
+
 import atexit
 import errno
 import fnmatch

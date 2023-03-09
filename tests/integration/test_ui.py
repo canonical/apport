@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 import contextlib
 import errno
 import glob
