@@ -134,7 +134,7 @@ class ProgressDialog(Dialog):
             progress.setValue(int(value * 1000))
 
 
-class ReportDialog(Dialog):
+class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
     """Report dialog wrapper"""
 
     def __init__(self, report, allowed_to_report, ui, desktop_info):

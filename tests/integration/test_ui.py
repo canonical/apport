@@ -44,6 +44,7 @@ def mock_run_calls_except_pgrep(
 
 
 class UserInterfaceMock(apport.ui.UserInterface):
+    # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
     def __init__(self, argv: typing.Optional[list[str]] = None):
@@ -181,7 +182,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
     "apport.hookutils._root_command_prefix",
     unittest.mock.MagicMock(return_value=[]),
 )
-class T(unittest.TestCase):
+class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
