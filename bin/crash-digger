@@ -21,7 +21,7 @@ import apport
 from apport.crashdb import get_crashdb
 
 
-class CrashDigger:
+class CrashDigger:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         config_dir,
