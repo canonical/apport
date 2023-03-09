@@ -138,7 +138,7 @@ def make_sandbox(
     verbose=False,
     log_timestamps=False,
     dynamic_origins=False,
-):
+):  # pylint: disable=too-many-arguments
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-statements
     """Build a sandbox with the packages that belong to a particular report.

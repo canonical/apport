@@ -290,7 +290,7 @@ class PackageInfo:
         origins=None,
         install_dbg=True,
         install_deps=False,
-    ):
+    ):  # pylint: disable=too-many-arguments
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching

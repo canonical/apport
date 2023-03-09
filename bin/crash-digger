@@ -34,7 +34,7 @@ class CrashDigger:
         dupcheck_mode=False,
         publish_dir=None,
         crash_db=None,
-    ):
+    ):  # pylint: disable=too-many-arguments
         """Initialize pools."""
 
         self.retrace_pool = set()

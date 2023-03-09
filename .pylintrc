@@ -27,7 +27,6 @@ disable=bad-option-value,fixme,
   duplicate-code,
   invalid-name,
   missing-docstring,
-  too-many-arguments,
   too-many-instance-attributes,
   too-many-lines,
   too-many-public-methods,
@@ -46,3 +45,9 @@ score=no
 
 # Maximum number of characters on a single line.
 max-line-length=79
+
+
+[DESIGN]
+
+# Maximum number of arguments for function / method.
+max-args=6

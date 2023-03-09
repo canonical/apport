@@ -968,7 +968,7 @@ class T(unittest.TestCase):
         hook_before_apport=None,
         expect_report: bool = True,
         via_socket: bool = False,
-    ):
+    ):  # pylint: disable=too-many-arguments
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Generate a test crash.
