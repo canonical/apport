@@ -42,7 +42,7 @@ from apport.packaging import PackageInfo, freedesktop_os_release
 
 
 class __AptDpkgPackageInfo(PackageInfo):
-    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Concrete apport.packaging.PackageInfo class implementation for
     python-apt and dpkg, as found on Debian and derivatives such as Ubuntu."""
 

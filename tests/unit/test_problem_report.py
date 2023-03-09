@@ -10,7 +10,7 @@ import problem_report
 bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
-class T(unittest.TestCase):
+class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_add_tags(self):
         """Test ProblemReport.add_tags()."""
         report = problem_report.ProblemReport()
