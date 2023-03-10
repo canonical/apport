@@ -56,6 +56,22 @@ class T(unittest.TestCase):
         open_mock.assert_called_once()
         self.assertEqual(environ, {})
 
+    def test_get_process_environ_malformed(self) -> None:
+        """Test get_process_environ() with malformed /proc/<pid>/environ.
+
+        On Ubuntu 22.10 the mattermost snap had a malformed environment
+        file (see mocked value in this test). /proc/<pid>/cmdline contained:
+        /snap/mattermost-desktop/578/opt/Mattermost/mattermost-desktop
+        --no-sandbox --disable-seccomp-filter-sandbox --enable-crashpad
+        """
+        open_mock = unittest.mock.mock_open(
+            read_data="--enable-crashpad" + "\0" * 6355
+        )
+        with unittest.mock.patch("builtins.open", open_mock):
+            environ = apport.fileutils.get_process_environ(1337)
+        open_mock.assert_called_once()
+        self.assertEqual(environ, {})
+
     def test_get_recent_crashes(self):
         """get_recent_crashes()"""
         # incomplete fields

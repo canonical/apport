@@ -532,7 +532,9 @@ def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
 
     if not environ:
         return {}
-    return dict([entry.split("=", 1) for entry in environ.split("\0")])
+    return dict(
+        [entry.split("=", 1) for entry in environ.split("\0") if "=" in entry]
+    )
 
 
 def get_process_path(proc_pid_fd=None):
