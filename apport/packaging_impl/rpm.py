@@ -181,7 +181,9 @@ class RPMPackageInfo:
         a third-party source."""
         # This is a list of official keys, set by the concrete subclass
         if not self.official_keylist:
-            raise Exception("Subclass the RPM implementation for your distro!")
+            raise NotImplementedError(
+                "Subclass the RPM implementation for your distro!"
+            )
         hdr = self._get_header(package)
         if not hdr:
             return False
