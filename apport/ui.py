@@ -1564,7 +1564,6 @@ class UserInterface:
                 else:
                     self.ui_stop_info_collection_progress()
                     sys.exit(0)
-                    return
 
             # append snap tags, if this report is about the snap
             if "Snap" in self.report and "SnapTags" in self.report:

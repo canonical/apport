@@ -675,7 +675,6 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w("window_information_collection").hide()
         self.w("window_report_upload").hide()
         sys.exit(0)
-        return True
 
 
 def text_to_markup(text: str) -> str:
