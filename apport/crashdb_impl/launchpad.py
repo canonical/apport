@@ -394,7 +394,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     attachment.seek(0)
                     report[key] = attachment.read()
             else:
-                raise Exception(
+                raise NotImplementedError(
                     "Unknown attachment type: " + attachment.filename
                 )
         return report
