@@ -927,6 +927,7 @@ class Report(problem_report.ProblemReport):
             "NihAssertionMessage": "print (char*) __nih_abort_msg",
         }
         gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
+        environ["HOME"] = "/nonexistent"
         if not gdb_cmd:
             raise FileNotFoundError(
                 errno.ENOENT,
@@ -1899,7 +1900,7 @@ class Report(problem_report.ProblemReport):
         if not gdb_path:
             return "", ""
         command = [gdb_path]
-        environ = {"HOME": "/nonexistent"}
+        environ = {}
 
         if not same_arch:
             # check if we have gdb-multiarch
