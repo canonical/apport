@@ -592,7 +592,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                     cmd += w
             apport.log("Calling gdb command: " + cmd, options.timestamps)
         apport.memdbg("before calling gdb")
-        subprocess.call(gdb_cmd, env=environ)
+        subprocess.call(gdb_cmd, env=os.environ | environ)
     else:
         # regenerate gdb info
         apport.memdbg("before collecting gdb info")
