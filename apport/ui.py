@@ -1709,7 +1709,7 @@ class UserInterface:
         (r, w) = os.pipe()
         if os.fork() > 0:
             os.close(w)
-            (pid, status) = os.wait()
+            status = os.wait()[1]
             if status:
                 title = _("Unable to start web browser")
                 error = _("Unable to start web browser to open %s." % url)
