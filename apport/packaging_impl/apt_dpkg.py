@@ -1402,8 +1402,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                 fields = line.split()
                 if len(fields) >= 3 and fields[0] == "deb":
                     if fields[1].startswith("["):
-                        # options given, mirror is in third field
-                        mirror_idx = 2
+                        # mirror follows options
+                        for mirror_idx in range(1, len(fields) - 1):
+                            if fields[mirror_idx].endswith("]"):
+                                mirror_idx = mirror_idx + 1
+                                break
                     else:
                         mirror_idx = 1
                     if fields[mirror_idx].startswith("http://") or fields[
