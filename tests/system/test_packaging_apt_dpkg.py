@@ -8,6 +8,9 @@ import unittest
 
 from apt import apt_pkg
 
+from apport.packaging_impl.apt_dpkg import (
+    __AptDpkgPackageInfo as AptDpkgPackageInfo,
+)
 from apport.packaging_impl.apt_dpkg import impl
 from tests.helper import has_internet, skip_if_command_is_missing
 
@@ -1169,3 +1172,53 @@ class T(unittest.TestCase):
             '%s has unexpected machine type "%s" for architecture %s'
             % (path, machine, expected),
         )
+
+    def _setup_foonux_sources_list(self, content):
+        """Write as source.list file
+
+        content -- text to be written
+        return -- file path
+        """
+        out_dir = os.path.join(self.workdir, "setup_foonux_sources_list")
+        os.makedirs(out_dir, exist_ok=True)
+        file_path = os.path.join(out_dir, "sources.list")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return file_path
+
+    def test_get_primary_mirror_from_apt_sources(self):
+        """Test get_primary_mirror_from_apt_sources()"""
+        expected = "https://example.com/"
+        content = f"deb {expected} suite component"
+        file_name = self._setup_foonux_sources_list(content)
+        actual = AptDpkgPackageInfo._get_primary_mirror_from_apt_sources(
+            file_name
+        )
+        self.assertEqual(actual, expected)
+
+        expected = "https://example.com/"
+        content = (
+            f"deb {expected} suite component \n"
+            + "deb http://unexpected.com suite component"
+        )
+        file_name = self._setup_foonux_sources_list(content)
+        actual = AptDpkgPackageInfo._get_primary_mirror_from_apt_sources(
+            file_name
+        )
+        self.assertEqual(actual, expected)
+
+        expected = "http://example.com/"
+        content = f"deb {expected} suite component"
+        file_name = self._setup_foonux_sources_list(content)
+        actual = AptDpkgPackageInfo._get_primary_mirror_from_apt_sources(
+            file_name
+        )
+        self.assertEqual(actual, expected)
+
+        expected = "https://example.com/"
+        content = f"deb [ arch=riscv64 ] {expected} suite component"
+        file_name = self._setup_foonux_sources_list(content)
+        actual = AptDpkgPackageInfo._get_primary_mirror_from_apt_sources(
+            file_name
+        )
+        self.assertEqual(actual, expected)
