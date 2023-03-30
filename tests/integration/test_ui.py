@@ -136,7 +136,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
         self.upload_progress_active = True
 
-    def ui_set_upload_progress(self, progress):
+    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
         assert self.upload_progress_active
         self.upload_progress_pulses += 1
 

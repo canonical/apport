@@ -2075,7 +2075,7 @@ class UserInterface:
             "this function must be overridden by subclasses"
         )
 
-    def ui_set_upload_progress(self, progress):
+    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
         """Update data upload progress bar.
 
         Set the progress bar in the debug data upload progress window to the
