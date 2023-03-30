@@ -2753,3 +2753,16 @@ class T(unittest.TestCase):
             run_as_real_user(["/bin/true"])
 
         run_mock.assert_called_once_with(["/bin/true"], check=False)
+
+    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=37))
+    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=37))
+    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "0"})
+    def test_run_as_real_user_non_root(self) -> None:
+        # pylint: disable=no-self-use
+        """Test run_as_real_user() as non-root and SUDO_UID set."""
+        with unittest.mock.patch(
+            "subprocess.run", side_effect=mock_sudo_calls
+        ) as run_mock:
+            run_as_real_user(["/bin/true"])
+
+        run_mock.assert_called_once_with(["/bin/true"], check=False)

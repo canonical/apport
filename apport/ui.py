@@ -45,6 +45,7 @@ import apport.fileutils
 import apport.logging
 import apport.REThread
 from apport.packaging_impl import impl as packaging
+from apport.user_group import get_process_user_and_group
 
 __version__ = "2.26.0"
 
@@ -124,7 +125,7 @@ def run_as_real_user(args: list[str]) -> None:
     run the command with it to get the user's web browser settings.
     """
     uid = _get_env_int("SUDO_UID", _get_env_int("PKEXEC_UID"))
-    if uid is None:
+    if uid is None or not get_process_user_and_group().is_root():
         subprocess.run(args, check=False)
         return
 
