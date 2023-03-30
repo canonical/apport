@@ -22,6 +22,7 @@ import subprocess
 import sys
 import tempfile
 import termios
+import typing
 from gettext import gettext as _
 
 import apport.ui
@@ -307,7 +308,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress):
+    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
         assert self.progress is not None
         self.progress.set(progress)
 

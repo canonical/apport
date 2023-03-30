@@ -16,6 +16,7 @@ import os
 import shutil
 import subprocess
 import sys
+import typing
 from gettext import gettext as _
 
 import apport.logging
@@ -123,7 +124,7 @@ class ProgressDialog(Dialog):
         if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
             sys.exit(0)
 
-    def set(self, value=None):
+    def set(self, value: typing.Optional[float] = None) -> None:
         progress = self.findChild(QProgressBar, "progress")
         if not value:
             progress.setRange(0, 0)
@@ -509,7 +510,7 @@ class MainUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress):
+    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
         if progress:
             self.progress.set(progress)
         else:
