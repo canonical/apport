@@ -622,17 +622,23 @@ def __filter_re_process(pattern, process):
     return ""
 
 
-def recent_syslog(pattern, path=None):
+def recent_syslog(pattern, path=None, *, journald_only_system=True):
     """Extract recent system messages which match a regex.
 
     pattern should be a "re" object. By default, messages are read from
     the systemd journal, or /var/log/syslog; but when giving "path", messages
     are read from there instead.
+    The journald_only_system parameter controls the scope of messages that are
+    extracted when reading from the systemd journal. If set to True (the
+    default), only messages from the system services are extracted. If set to
+    False, all messages that the current user can see are extracted.
     """
     if path:
         command = ["tail", "-n", "10000", path]
     elif os.path.exists("/run/systemd/system"):
-        command = ["journalctl", "--system", "--quiet", "-b", "-a"]
+        command = ["journalctl", "--quiet", "-b", "-a"]
+        if journald_only_system:
+            command.append("--system")
     elif os.access("/var/log/syslog", os.R_OK):
         command = ["tail", "-n", "10000", "/var/log/syslog"]
     else:
