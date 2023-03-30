@@ -1,3 +1,4 @@
+import re
 import subprocess
 import time
 import unittest
@@ -82,3 +83,38 @@ class T(unittest.TestCase):
             apport.hookutils.path_to_key('/funny:characters!& ".txt'),
             ".funny.characters.._..txt",
         )
+
+    @unittest.mock.patch("subprocess.Popen")
+    @unittest.mock.patch(
+        "os.path.exists", unittest.mock.MagicMock(return_value=True)
+    )
+    def test_recent_syslog_journald_cmd(self, popen_mock):
+        class SkipPopen(Exception):
+            pass
+
+        popen_mock.side_effect = SkipPopen
+
+        cmd = ["journalctl", "--quiet", "-b", "-a"]
+        cmd_system_only = cmd + ["--system"]
+
+        with self.assertRaises(SkipPopen):
+            apport.hookutils.recent_syslog(re.compile("."))
+        popen_mock.assert_called_once_with(
+            cmd_system_only, stdout=unittest.mock.ANY
+        )
+
+        popen_mock.reset_mock()
+        with self.assertRaises(SkipPopen):
+            apport.hookutils.recent_syslog(
+                re.compile("."), journald_only_system=True
+            )
+        popen_mock.assert_called_once_with(
+            cmd_system_only, stdout=unittest.mock.ANY
+        )
+
+        popen_mock.reset_mock()
+        with self.assertRaises(SkipPopen):
+            apport.hookutils.recent_syslog(
+                re.compile("."), journald_only_system=False
+            )
+        popen_mock.assert_called_once_with(cmd, stdout=unittest.mock.ANY)
