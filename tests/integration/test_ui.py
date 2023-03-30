@@ -22,7 +22,7 @@ import apport.packaging
 import apport.report
 import apport.ui
 import problem_report
-from apport.ui import _
+from apport.ui import _, run_as_real_user
 from tests.helper import pidof, skip_if_command_is_missing
 from tests.paths import (
     local_test_environment,
@@ -30,7 +30,15 @@ from tests.paths import (
     restore_data_dir,
 )
 
+ORIGINAL_SUBPROCESS_RUN = subprocess.run
 logind_session = apport.Report.get_logind_session(os.getpid())
+
+
+def mock_sudo_calls(args, check=False, **kwargs):
+    """Wrap subprocess.run() doing no-ops on sudo calls."""
+    if args[0] == "sudo":
+        return subprocess.CompletedProcess(args, 0)
+    return ORIGINAL_SUBPROCESS_RUN(args, check=check, **kwargs)
 
 
 class UserInterfaceMock(apport.ui.UserInterface):
@@ -265,12 +273,16 @@ class T(unittest.TestCase):
 
     @contextlib.contextmanager
     def _run_test_executable(
-        self, exename=None
+        self,
+        exename: typing.Optional[str] = None,
+        env: typing.Optional[dict[str, str]] = None,
     ) -> typing.Generator[int, None, None]:
         if not exename:
             exename = self.TEST_EXECUTABLE
 
-        with subprocess.Popen([exename] + self.TEST_ARGS) as test_process:
+        with subprocess.Popen(
+            [exename] + self.TEST_ARGS, env=env
+        ) as test_process:
             # give the execv() some time to finish
             time.sleep(0.5)
             yield test_process.pid
@@ -2682,3 +2694,62 @@ class T(unittest.TestCase):
         with self._run_test_executable() as pid:
             pass
         self.ui.wait_for_pid(pid)
+
+    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": str(os.getuid())})
+    def test_run_as_real_user(self) -> None:
+        """Test run_as_real_user() with SUDO_UID set."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # rename test program to fake gvfsd
+            gvfsd_mock = os.path.join(tmpdir, "gvfsd")
+            shutil.copy(self.TEST_EXECUTABLE, gvfsd_mock)
+            gvfsd_env = {
+                "XDG_DATA_DIRS": "mocked XDG data dir",
+                "DBUS_SESSION_BUS_ADDRESS": "/fake/dbus/path",
+            }
+            with self._run_test_executable(gvfsd_mock, env=gvfsd_env):
+                with unittest.mock.patch(
+                    "subprocess.run", side_effect=mock_sudo_calls
+                ) as run_mock:
+                    run_as_real_user(["/bin/true"])
+
+        run_mock.assert_called_with(
+            [
+                "sudo",
+                "-H",
+                "-u",
+                f"#{os.environ.get('SUDO_UID')}",
+                "DBUS_SESSION_BUS_ADDRESS=/fake/dbus/path",
+                "XDG_DATA_DIRS=mocked XDG data dir",
+                "/bin/true",
+            ],
+            check=False,
+        )
+        self.assertEqual(run_mock.call_count, 2)
+
+    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "1337"})
+    def test_run_as_real_user_no_gvfsd(self) -> None:
+        """Test run_as_real_user() without no gvfsd process."""
+        with unittest.mock.patch(
+            "subprocess.run", side_effect=mock_sudo_calls
+        ) as run_mock:
+            run_as_real_user(["/bin/true"])
+
+        run_mock.assert_called_with(
+            ["sudo", "-H", "-u", "#1337", "/bin/true"], check=False
+        )
+        self.assertEqual(run_mock.call_count, 2)
+
+    @unittest.mock.patch.dict("os.environ", {})
+    def test_run_as_real_user_no_sudo(self) -> None:
+        # pylint: disable=no-self-use
+        """Test run_as_real_user() without sudo env variables."""
+        with unittest.mock.patch(
+            "subprocess.run", side_effect=mock_sudo_calls
+        ) as run_mock:
+            run_as_real_user(["/bin/true"])
+
+        run_mock.assert_called_once_with(["/bin/true"], check=False)

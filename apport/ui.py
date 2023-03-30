@@ -63,6 +63,78 @@ def get_pid(report):
         return None
 
 
+def _get_env_int(
+    key: str, default: typing.Optional[int] = None
+) -> typing.Optional[int]:
+    """Get an environment variable as integer.
+
+    Return None if it doesn't exist or failed to convert to integer.
+    The optional second argument can specify an alternate default.
+    """
+    try:
+        return int(os.environ[key])
+    except (KeyError, ValueError):
+        return default
+
+
+def _get_newest_process_for_user(name: str, uid: int) -> typing.Optional[int]:
+    process = subprocess.run(
+        ["pgrep", "-n", "-x", "-u", str(uid), name],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    if process.returncode != 0 or not process.stdout:
+        return None
+    return int(process.stdout.strip())
+
+
+def _get_users_environ(uid: int) -> dict[str, str]:
+    """Find D-BUS address and XDG_DATA_DIRS for the given user.
+
+    The D-BUS address and XDG_DATA_DIRS is needed for xdg-open. It is
+    incredibly hard, or alternatively, unsafe to funnel it through
+    pkexec/env/sudo, so grab it from gvfsd.
+    """
+    gvfsd_pid = _get_newest_process_for_user("gvfsd", uid)
+    if gvfsd_pid is None:
+        return {}
+
+    gvfsd_pid_fd = os.open(
+        f"/proc/{gvfsd_pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+    )
+    try:
+        gvfsd_env = apport.fileutils.get_process_environ(gvfsd_pid_fd)
+    except OSError:
+        return {}
+    finally:
+        os.close(gvfsd_pid_fd)
+
+    return {
+        key: gvfsd_env[key]
+        for key in ["DBUS_SESSION_BUS_ADDRESS", "XDG_DATA_DIRS"]
+        if key in gvfsd_env
+    }
+
+
+def run_as_real_user(args: list[str]) -> None:
+    """Call subprocess.run as real user if called via sudo/pkexec.
+
+    If we are called through pkexec/sudo, determine the real user ID and
+    run the command with it to get the user's web browser settings.
+    """
+    uid = _get_env_int("SUDO_UID", _get_env_int("PKEXEC_UID"))
+    if uid is None:
+        subprocess.run(args, check=False)
+        return
+
+    user_env = _get_users_environ(uid)
+    sudo_prefix = ["sudo", "-H", "-u", "#" + str(uid)] + [
+        f"{k}={v}" for k, v in user_env.items()
+    ]
+    subprocess.run(sudo_prefix + args, check=False)
+
+
 def still_running(pid):
     try:
         os.kill(int(pid), 0)
@@ -1726,43 +1798,9 @@ class UserInterface:
         os.setsid()
         os.close(r)
 
-        # If we are called through pkexec/sudo, determine the real user id and
-        # run the browser with it to get the user's web browser settings.
-
-        try:
-            uid = int(os.getenv("PKEXEC_UID", os.getenv("SUDO_UID")))
-            sudo_prefix = ["sudo", "-H", "-u", "#" + str(uid)]
-            # restore some environment for xdg-open; it's incredibly hard, or
-            # alternatively, unsafe to funnel it through pkexec/env/sudo, so
-            # grab it from gvfsd
-            try:
-                out = subprocess.check_output(
-                    ["pgrep", "-a", "-x", "-u", str(uid), "gvfsd"]
-                ).decode("UTF-8")
-                pid = out.splitlines()[0].split()[0]
-
-                # find the D-BUS address
-                with open("/proc/%s/environ" % pid, "rb") as f:
-                    env = f.read().split(b"\0")
-                for e in env:
-                    if e.startswith(b"DBUS_SESSION_BUS_ADDRESS="):
-                        sudo_prefix.append(
-                            "DBUS_SESSION_BUS_ADDRESS="
-                            + e.split(b"=", 1)[1].decode()
-                        )
-                    if e.startswith(b"XDG_DATA_DIRS="):
-                        sudo_prefix.append(
-                            "XDG_DATA_DIRS=" + e.split(b"=", 1)[1].decode()
-                        )
-            except (subprocess.CalledProcessError, OSError):
-                pass
-
-        except TypeError:
-            sudo_prefix = []
-
         try:
             try:
-                subprocess.call(sudo_prefix + ["xdg-open", url])
+                run_as_real_user(["xdg-open", url])
             except OSError:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
