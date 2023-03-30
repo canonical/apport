@@ -20,7 +20,7 @@ from gettext import gettext as _
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
     from PyQt5.QtGui import QIcon
-    from PyQt5.QtWidgets import QApplication, QTreeWidget
+    from PyQt5.QtWidgets import QApplication, QProgressBar, QTreeWidget
 
     PYQT5_IMPORT_ERROR = None
 except ImportError as error:
@@ -771,3 +771,12 @@ class T(unittest.TestCase):
         self.app.ui_present_report_details(False)
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
+
+    def test_ui_set_upload_progress(self):
+        self.app.ui_start_upload_progress()
+        try:
+            self.app.ui_set_upload_progress(0.5)
+            progress = self.app.progress.findChild(QProgressBar, "progress")
+            self.assertEqual(progress.value(), 500)
+        finally:
+            self.app.ui_stop_upload_progress()
