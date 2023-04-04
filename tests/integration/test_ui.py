@@ -2699,9 +2699,12 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
     @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
-    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": str(os.getuid())})
+    @unittest.mock.patch.dict(
+        "os.environ", {"SUDO_UID": str(os.getuid())}, clear=True
+    )
     def test_run_as_real_user(self) -> None:
         """Test run_as_real_user() with SUDO_UID set."""
+        pwuid = pwd.getpwuid(int(os.environ["SUDO_UID"]))
         with tempfile.TemporaryDirectory() as tmpdir:
             # rename test program to fake gvfsd
             gvfsd_mock = os.path.join(tmpdir, "gvfsd")
@@ -2717,31 +2720,50 @@ class T(unittest.TestCase):
                     run_as_real_user(["/bin/true"])
 
         run_mock.assert_called_with(
-            [
-                "sudo",
-                "-H",
-                "-u",
-                f"#{os.environ.get('SUDO_UID')}",
-                "DBUS_SESSION_BUS_ADDRESS=/fake/dbus/path",
-                "XDG_DATA_DIRS=mocked XDG data dir",
-                "/bin/true",
-            ],
+            ["/bin/true"],
             check=False,
+            env={
+                "DBUS_SESSION_BUS_ADDRESS": "/fake/dbus/path",
+                "XDG_DATA_DIRS": "mocked XDG data dir",
+                "HOME": pwuid.pw_dir,
+            },
+            user=int(os.environ["SUDO_UID"]),
+            group=pwuid.pw_gid,
+            extra_groups=os.getgrouplist(pwuid.pw_name, pwuid.pw_gid),
         )
         self.assertEqual(run_mock.call_count, 2)
 
     @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
     @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
-    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "1337"})
-    def test_run_as_real_user_no_gvfsd(self) -> None:
+    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "1337"}, clear=True)
+    @unittest.mock.patch("pwd.getpwuid")
+    def test_run_as_real_user_no_gvfsd(
+        self, getpwuid_mock: unittest.mock.MagicMock
+    ) -> None:
         """Test run_as_real_user() without no gvfsd process."""
+        getpwuid_mock.return_value = pwd.struct_passwd(
+            (
+                "testuser",
+                "x",
+                1337,
+                42,
+                "Test user,,,",
+                "/home/testuser",
+                "/bin/bash",
+            )
+        )
         with unittest.mock.patch(
             "subprocess.run", side_effect=mock_run_calls_except_pgrep
         ) as run_mock:
             run_as_real_user(["/bin/true"])
 
         run_mock.assert_called_with(
-            ["sudo", "-H", "-u", "#1337", "/bin/true"], check=False
+            ["/bin/true"],
+            check=False,
+            env={"HOME": "/home/testuser"},
+            user=1337,
+            group=42,
+            extra_groups=[42],
         )
         self.assertEqual(run_mock.call_count, 2)
 
