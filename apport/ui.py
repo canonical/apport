@@ -24,6 +24,7 @@ import gzip
 import io
 import locale
 import os.path
+import pwd
 import queue
 import re
 import shutil
@@ -129,11 +130,26 @@ def run_as_real_user(args: list[str]) -> None:
         subprocess.run(args, check=False)
         return
 
-    user_env = _get_users_environ(uid)
-    sudo_prefix = ["sudo", "-H", "-u", "#" + str(uid)] + [
-        f"{k}={v}" for k, v in user_env.items()
-    ]
-    subprocess.run(sudo_prefix + args, check=False)
+    pwuid = pwd.getpwuid(uid)
+
+    gid = _get_env_int("SUDO_GID")
+    if gid is None:
+        gid = pwuid.pw_gid
+
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if not k.startswith("SUDO_") and k != "PKEXEC_UID"
+    } | _get_users_environ(uid)
+    env["HOME"] = pwuid.pw_dir
+    subprocess.run(
+        args,
+        check=False,
+        env=env,
+        user=uid,
+        group=gid,
+        extra_groups=os.getgrouplist(pwuid.pw_name, gid),
+    )
 
 
 def still_running(pid):
