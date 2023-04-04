@@ -34,11 +34,13 @@ ORIGINAL_SUBPROCESS_RUN = subprocess.run
 logind_session = apport.Report.get_logind_session(os.getpid())
 
 
-def mock_sudo_calls(args, check=False, **kwargs):
-    """Wrap subprocess.run() doing no-ops on sudo calls."""
-    if args[0] == "sudo":
-        return subprocess.CompletedProcess(args, 0)
-    return ORIGINAL_SUBPROCESS_RUN(args, check=check, **kwargs)
+def mock_run_calls_except_pgrep(
+    args: list[str], check: bool = False, **kwargs
+) -> subprocess.CompletedProcess:
+    """Wrap subprocess.run() doing no-ops except for pgrep."""
+    if args[0] == "pgrep":
+        return ORIGINAL_SUBPROCESS_RUN(args, check=check, **kwargs)
+    return subprocess.CompletedProcess(args, 0)
 
 
 class UserInterfaceMock(apport.ui.UserInterface):
@@ -2710,7 +2712,7 @@ class T(unittest.TestCase):
             }
             with self._run_test_executable(gvfsd_mock, env=gvfsd_env):
                 with unittest.mock.patch(
-                    "subprocess.run", side_effect=mock_sudo_calls
+                    "subprocess.run", side_effect=mock_run_calls_except_pgrep
                 ) as run_mock:
                     run_as_real_user(["/bin/true"])
 
@@ -2734,7 +2736,7 @@ class T(unittest.TestCase):
     def test_run_as_real_user_no_gvfsd(self) -> None:
         """Test run_as_real_user() without no gvfsd process."""
         with unittest.mock.patch(
-            "subprocess.run", side_effect=mock_sudo_calls
+            "subprocess.run", side_effect=mock_run_calls_except_pgrep
         ) as run_mock:
             run_as_real_user(["/bin/true"])
 
@@ -2748,7 +2750,7 @@ class T(unittest.TestCase):
         # pylint: disable=no-self-use
         """Test run_as_real_user() without sudo env variables."""
         with unittest.mock.patch(
-            "subprocess.run", side_effect=mock_sudo_calls
+            "subprocess.run", side_effect=mock_run_calls_except_pgrep
         ) as run_mock:
             run_as_real_user(["/bin/true"])
 
@@ -2761,7 +2763,7 @@ class T(unittest.TestCase):
         # pylint: disable=no-self-use
         """Test run_as_real_user() as non-root and SUDO_UID set."""
         with unittest.mock.patch(
-            "subprocess.run", side_effect=mock_sudo_calls
+            "subprocess.run", side_effect=mock_run_calls_except_pgrep
         ) as run_mock:
             run_as_real_user(["/bin/true"])
 
