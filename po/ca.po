@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-23 23:16+0100\n"
-"PO-Revision-Date: 2015-04-27 21:47+0000\n"
-"Last-Translator: David Planella <david.planella@gmail.com>\n"
+"PO-Revision-Date: 2023-03-30 12:04+0000\n"
+"Last-Translator: Walter Garcia-Fontes <walter.garcia@upf.edu>\n"
 "Language-Team: Ubuntu Catalan Translators list <Ubuntu-l10n-ca@lists.ubuntu."
 "com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2023-04-11 15:04+0000\n"
+"X-Generator: Launchpad (build ce6856af661dea2cdabcc7883eecafbc1fccc4ad)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -264,7 +264,7 @@ msgstr ""
 #: ../apport/ui.py:942
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <report number>"
 
 #: ../apport/ui.py:943
 msgid "Specify package name."
@@ -281,6 +281,7 @@ msgstr ""
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:999
 msgid ""
@@ -816,15 +817,15 @@ msgstr "Esteu d'acord en enviar-los com a adjuncions? [y/n]"
 #: ../bin/apport-unpack.py:29
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <report> <target directory>"
 
 #: ../bin/apport-unpack.py:31
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Fitxer d'informe a desempaquetar"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "directori on s'ha de desempaquetar l'informe"
 
 #: ../bin/apport-unpack.py:59
 msgid "Destination directory exists and is not empty."
@@ -871,6 +872,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"l'executable que s'executa amb l'eina valgrind's memcheck per a detecció de "
+"fuites de memòria"
 
 #: ../bin/apport-valgrind.py:129
 #, python-format
