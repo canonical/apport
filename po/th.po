@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-23 23:16+0100\n"
-"PO-Revision-Date: 2017-10-15 15:48+0000\n"
+"PO-Revision-Date: 2023-03-28 16:30+0000\n"
 "Last-Translator: Rockworld <sumoisrock@gmail.com>\n"
 "Language-Team: Thai <th@li.org>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2023-04-11 15:04+0000\n"
+"X-Generator: Launchpad (build ce6856af661dea2cdabcc7883eecafbc1fccc4ad)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -102,11 +102,11 @@ msgstr "พื้นที่ว่างบนดิืสไม่พอสำ
 
 #: ../apport/ui.py:490
 msgid "No PID specified"
-msgstr ""
+msgstr "ไม่ได้ระบุ PID ไว้"
 
 #: ../apport/ui.py:492
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "คุณจำเป็นต้องระบุ PID ด้วย ดูที่ --help สำหรับข้อมูลเพิ่มเติม"
 
 #: ../apport/ui.py:503 ../apport/ui.py:608
 msgid "Invalid PID"
@@ -114,15 +114,15 @@ msgstr "PID ไม่ถูกต้อง"
 
 #: ../apport/ui.py:504
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "ID โปรเซสที่ระบุไม่มีอยู่"
 
 #: ../apport/ui.py:509
 msgid "Not your PID"
-msgstr ""
+msgstr "ไม่ใช่ PID ของคุณ"
 
 #: ../apport/ui.py:510
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "ID โปรเซสที่ระบุไม่ได้เป็นของคุณ"
 
 #: ../apport/ui.py:565
 msgid "No package specified"
@@ -344,12 +344,13 @@ msgstr "อัปเดต %s พร้อมข้อมูลการติ�
 
 #: ../apport/ui.py:1322
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "ไม่สามารถจดจำค่าตั้งสถานะการส่งรายงานได้"
 
 #: ../apport/ui.py:1326
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"การบันทึกสถานะการรายงานข้อขัดข้องล้มเหลว ไม่สามารถตั้งโหมดอัตโนมัติหรือไม่รายงานเลยได้"
 
 #: ../apport/ui.py:1408 ../apport/ui.py:1421
 msgid ""
@@ -369,7 +370,7 @@ msgstr "รายงานปัญหาเสียหายทำให้ไ
 
 #: ../apport/ui.py:1515
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "รายงานนี้เกี่ยวกับแพคเกจที่ไม่ได้ติดตั้ง"
 
 #: ../apport/ui.py:1523
 msgid "An error occurred while attempting to process this problem report:"
@@ -379,17 +380,17 @@ msgstr "เกิดข้อผิดพลาดขณะพยายามป
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
-msgstr ""
+msgstr "คุณมีแอปพลิเคชันนี้ติดตั้งอยู่สองเวอร์ชัน คุณต้องการรายงานบั๊กของเวอร์ชันไหน"
 
 #: ../apport/ui.py:1545
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1546
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s แพคเกจ deb"
 
 #: ../apport/ui.py:1586
 #, python-format
@@ -402,6 +403,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s จัดหาโดย snap ที่เผยแพร่โดย %s และไม่ได้มีการระบุที่อยู่ติดต่อไว้ ให้เยี่ยมชมกระดานสนทนาที่ "
+"https://forum.snapcraft.io/ เพื่อขอความช่วยเหลือ"
 
 #: ../apport/ui.py:1690
 msgid "Could not determine the package or source package name."
@@ -721,7 +724,7 @@ msgstr "เส้นทางที่ไปยังฐานข้อมูล
 
 #: ../bin/apport-retrace.py:200
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "ไม่ต้องเพิ่ม StacktraceSource ไว้ในรายงาน"
 
 #: ../bin/apport-retrace.py:213
 msgid "You cannot use -C without -S. Stopping."
@@ -918,7 +921,7 @@ msgstr "<big><b>ขออภัย เกิดข้อผิดพลาดภ
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "จดจำการเลือกนี้ในครั้งต่อไป"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -926,7 +929,7 @@ msgstr "เพิกเฉยต่อปัญหาในภายหลัง
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "เรียกใช้แอปพลิเคชันนี้ใหม่"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -934,7 +937,7 @@ msgstr "_ตรวจสอบในเครื่อง"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "ไม่ต้องส่งไป"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
