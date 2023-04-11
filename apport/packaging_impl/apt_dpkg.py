@@ -33,6 +33,7 @@ import urllib.parse
 import urllib.request
 
 import apt
+import aptsources.sourceslist
 
 import apport.logging
 from apport.packaging import PackageInfo, freedesktop_os_release
@@ -1395,21 +1396,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         return mismatches
 
     @staticmethod
-    def _get_primary_mirror_from_apt_sources(apt_sources):
+    def _get_primary_mirror_from_apt_sources(apt_sources: str) -> str:
         """Heuristically determine primary mirror from an apt sources.list."""
         with open(apt_sources, encoding="utf-8") as f:
             for line in f:
-                fields = line.split()
-                if len(fields) >= 3 and fields[0] == "deb":
-                    if fields[1].startswith("["):
-                        # options given, mirror is in third field
-                        mirror_idx = 2
-                    else:
-                        mirror_idx = 1
-                    if fields[mirror_idx].startswith("http://") or fields[
-                        mirror_idx
-                    ].startswith("https://"):
-                        return fields[mirror_idx]
+                source = aptsources.sourceslist.SourceEntry(line, apt_sources)
+                if source.disabled or source.invalid:
+                    continue
+                if source.type != "deb":
+                    continue
+                return source.uri
 
         raise SystemError(
             "cannot determine default mirror:"
