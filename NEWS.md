@@ -1,6 +1,34 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.26.1 (unreleased)
+-------------------
+
+### Added
+
+* Add general hook `wayland_session.py`
+
+### Changed
+
+* Allow `recent_syslog` to collect all journal messages that the user can see
+  by setting `journald_system_only=False`
+* Replace sudo by dropping privileges ourselves
+
+### Fixed
+* Catch `HTTPError` in `UserInterface.file_report`
+  ([LP: #2008638](https://launchpad.net/bugs/2008638))
+* Print proper error message if `/proc/<pid>` is gone
+  ([LP: #2008638](https://launchpad.net/bugs/2008638))
+* Safely handle malformed `/proc/<pid>/environ`
+* Use URL for debug bug pattern URL in `etc/apport/crashdb.conf`
+* Do not drop environment variables when calling GDB
+  ([LP: #2012374](https://launchpad.net/bugs/2012374))
+* apport-kde: Fix showing progress in the progress bar
+* Only open browser as user (via sudo) if running as root
+* Fix parsing options with spaces in sources.list
+  ([LP: #1822712](https://launchpad.net/bugs/1822712))
+* tests: Mock query to Github in integration test
+
 2.26.0 (2023-02-23)
 -------------------
 
