@@ -2717,7 +2717,7 @@ class T(unittest.TestCase):
                 with unittest.mock.patch(
                     "subprocess.run", side_effect=mock_run_calls_except_pgrep
                 ) as run_mock:
-                    run_as_real_user(["/bin/true"])
+                    run_as_real_user(["/bin/true"], get_user_env=True)
 
         run_mock.assert_called_with(
             ["/bin/true"],
@@ -2755,7 +2755,7 @@ class T(unittest.TestCase):
         with unittest.mock.patch(
             "subprocess.run", side_effect=mock_run_calls_except_pgrep
         ) as run_mock:
-            run_as_real_user(["/bin/true"])
+            run_as_real_user(["/bin/true"], get_user_env=True)
 
         run_mock.assert_called_with(
             ["/bin/true"],

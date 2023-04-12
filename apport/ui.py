@@ -119,15 +119,19 @@ def _get_users_environ(uid: int) -> dict[str, str]:
     }
 
 
-def run_as_real_user(args: list[str]) -> None:
+def run_as_real_user(
+    args: list[str], *, get_user_env: bool = False, **kwargs
+) -> None:
     """Call subprocess.run as real user if called via sudo/pkexec.
 
     If we are called through pkexec/sudo, determine the real user ID and
     run the command with it to get the user's web browser settings.
+    If get_user_env is set to True, the D-BUS address and XDG_DATA_DIRS
+    is grabbed from a running gvfsd and added to the process environment.
     """
     uid = _get_env_int("SUDO_UID", _get_env_int("PKEXEC_UID"))
     if uid is None or not get_process_user_and_group().is_root():
-        subprocess.run(args, check=False)
+        subprocess.run(args, check=False, **kwargs)
         return
 
     pwuid = pwd.getpwuid(uid)
@@ -140,7 +144,9 @@ def run_as_real_user(args: list[str]) -> None:
         k: v
         for k, v in os.environ.items()
         if not k.startswith("SUDO_") and k != "PKEXEC_UID"
-    } | _get_users_environ(uid)
+    }
+    if get_user_env:
+        env |= _get_users_environ(uid)
     env["HOME"] = pwuid.pw_dir
     subprocess.run(
         args,
@@ -149,6 +155,7 @@ def run_as_real_user(args: list[str]) -> None:
         user=uid,
         group=gid,
         extra_groups=os.getgrouplist(pwuid.pw_name, gid),
+        **kwargs,
     )
 
 
@@ -1817,7 +1824,7 @@ class UserInterface:
 
         try:
             try:
-                run_as_real_user(["xdg-open", url])
+                run_as_real_user(["xdg-open", url], get_user_env=True)
             except OSError:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)

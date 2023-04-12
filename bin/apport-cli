@@ -185,9 +185,8 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.in_update_view = True
         report = self._get_details()
         try:
-            subprocess.run(
+            apport.ui.run_as_real_user(
                 ["/usr/bin/sensible-pager"],
-                check=False,
                 input=report.encode("UTF-8"),
                 stdout=stdout,
             )
