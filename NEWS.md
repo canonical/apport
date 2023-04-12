@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
-2.26.1 (unreleased)
+2.26.1 (2023-04-12)
 -------------------
 
 ### Added
@@ -15,6 +15,9 @@ detailed list of changes, please see the git history.
 * Replace sudo by dropping privileges ourselves
 
 ### Fixed
+* SECURITY UPDATE: viewing an apport-cli crash with default pager could
+  escalate privilege ([LP: #2016023](https://launchpad.net/bugs/2016023)).
+  Do not run `sensible-pager` as root if using `sudo`/`pkexec`
 * Catch `HTTPError` in `UserInterface.file_report`
   ([LP: #2008638](https://launchpad.net/bugs/2008638))
 * Print proper error message if `/proc/<pid>` is gone

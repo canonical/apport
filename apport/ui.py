@@ -48,7 +48,7 @@ import apport.REThread
 from apport.packaging_impl import impl as packaging
 from apport.user_group import get_process_user_and_group
 
-__version__ = "2.26.0"
+__version__ = "2.26.1"
 
 
 symptom_script_dir = os.environ.get(
