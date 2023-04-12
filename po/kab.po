@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 23:16+0100\n"
+"POT-Creation-Date: 2023-04-12 17:42+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: yugurten <yugurten1@hotmail.fr>\n"
 "Language-Team: Kabyle <kab@li.org>\n"
@@ -40,11 +40,11 @@ msgstr ""
 "Ttxil sekcem awal-ik uffir akken ad tkecmeḍ ɣer yineqqisen n wuguren n "
 "wahilen n unagraw"
 
-#: ../apport/ui.py:167
+#: ../apport/ui.py:263
 msgid "This package does not seem to be installed correctly"
 msgstr "Akemmus ur d-ittban ara yettwasbedd akken ilaq"
 
-#: ../apport/ui.py:177
+#: ../apport/ui.py:273
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -52,7 +52,7 @@ msgid ""
 "third party packages and try again."
 msgstr ""
 
-#: ../apport/ui.py:207
+#: ../apport/ui.py:303
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -65,21 +65,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:370
+#: ../apport/ui.py:466
 msgid "unknown program"
 msgstr "ahil arussin"
 
-#: ../apport/ui.py:373
+#: ../apport/ui.py:469
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Suref-aɣ, ahil \"%s\" yemdel akka kan"
 
-#: ../apport/ui.py:376 ../apport/ui.py:1924
+#: ../apport/ui.py:472 ../apport/ui.py:1987
 #, python-format
 msgid "Problem in %s"
 msgstr "Agnu deg %s"
 
-#: ../apport/ui.py:381
+#: ../apport/ui.py:477
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -87,62 +87,62 @@ msgstr ""
 "Aselkim-inek m ur yesɛi ara ddeqs n tkatut tilellit akken ad yesleḍ ugur s "
 "wudem awurman yerna ad yazen aneqqis i yisneflayen."
 
-#: ../apport/ui.py:441 ../apport/ui.py:459 ../apport/ui.py:632
-#: ../apport/ui.py:641 ../apport/ui.py:878 ../apport/ui.py:1688
-#: ../apport/ui.py:1885 ../apport/ui.py:1890
+#: ../apport/ui.py:537 ../apport/ui.py:555 ../apport/ui.py:728
+#: ../apport/ui.py:737 ../apport/ui.py:974 ../apport/ui.py:1783
+#: ../apport/ui.py:1948 ../apport/ui.py:1953
 msgid "Invalid problem report"
 msgstr "Aneqqis n wuguren mačči d ameɣtu"
 
-#: ../apport/ui.py:442
+#: ../apport/ui.py:538
 msgid "You are not allowed to access this problem report."
 msgstr "Ur tesɛiḍ ara tasiregt ad tkecmeḍ ɣer uneqqis-a n wuguren."
 
-#: ../apport/ui.py:450
+#: ../apport/ui.py:546
 msgid "Error"
 msgstr "Tuccḍa"
 
-#: ../apport/ui.py:452
+#: ../apport/ui.py:548
 msgid "There is not enough disk space available to process this report."
 msgstr "Ulac ddeqs n tallunt n uḍebsi iwejden akken ad yekker uneqqis-agi."
 
-#: ../apport/ui.py:490
+#: ../apport/ui.py:586
 msgid "No PID specified"
 msgstr "Ulac PID i d-ittunefken"
 
-#: ../apport/ui.py:492
+#: ../apport/ui.py:588
 msgid "You need to specify a PID. See --help for more information."
 msgstr "Teḥwaǧeḍ ad d-tefkeḍ PID. Ẓer --help i wugar n telɣut."
 
-#: ../apport/ui.py:503 ../apport/ui.py:608
+#: ../apport/ui.py:599 ../apport/ui.py:704
 msgid "Invalid PID"
 msgstr "PID mačči d ameɣtu"
 
-#: ../apport/ui.py:504
+#: ../apport/ui.py:600
 msgid "The specified process ID does not exist."
 msgstr "ID i d-ittunefken ur yelli ara."
 
-#: ../apport/ui.py:509
+#: ../apport/ui.py:605
 msgid "Not your PID"
 msgstr "Mačči PID inek m"
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:606
 msgid "The specified process ID does not belong to you."
 msgstr "ID n ukala i d-ittunefken mačči d ayla-k m."
 
-#: ../apport/ui.py:565
+#: ../apport/ui.py:661
 msgid "No package specified"
 msgstr "Ulac akemmus i d-ittunefken"
 
-#: ../apport/ui.py:567
+#: ../apport/ui.py:663
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "Teḥwaǧed ad d-tefkeḍ akemmus neɣ ID. Ẓer --help i wugar n telɣut."
 
-#: ../apport/ui.py:595
+#: ../apport/ui.py:691
 msgid "Permission denied"
 msgstr "Tasiregt ur tettwaqbel ara"
 
-#: ../apport/ui.py:597
+#: ../apport/ui.py:693
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -150,30 +150,30 @@ msgstr ""
 "Akala i d-ittnefken mačči d ayla-k. Ttxil-k m selkem ahil-agi am bab n ukala "
 "neɣ am root."
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:706
 msgid "The specified process ID does not belong to a program."
 msgstr "ID n ukala i d-ittunefken mačči d ayla n wahil."
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:730
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:642
+#: ../apport/ui.py:738
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Akemmus %s ur yelli ara"
 
-#: ../apport/ui.py:671 ../apport/ui.py:883 ../apport/ui.py:916
-#: ../apport/ui.py:926
+#: ../apport/ui.py:767 ../apport/ui.py:979 ../apport/ui.py:1012
+#: ../apport/ui.py:1022
 msgid "Cannot create report"
 msgstr "Timerniwt n uneqqis d tawezɣit"
 
-#: ../apport/ui.py:686 ../apport/ui.py:745 ../apport/ui.py:763
+#: ../apport/ui.py:782 ../apport/ui.py:841 ../apport/ui.py:859
 msgid "Updating problem report"
 msgstr "Aleqqem n uneqqis n wuguren"
 
-#: ../apport/ui.py:688
+#: ../apport/ui.py:784
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -181,7 +181,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:700
+#: ../apport/ui.py:796
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -193,24 +193,24 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:746 ../apport/ui.py:764
+#: ../apport/ui.py:842 ../apport/ui.py:860
 msgid "No additional information collected."
 msgstr "Ulac tilɣa-nniḍen i d-yettwaleqḍen."
 
-#: ../apport/ui.py:827
+#: ../apport/ui.py:923
 msgid "What kind of problem do you want to report?"
 msgstr "Anwa anaw n wuguren i tebɣiḍ ad temleḍ?"
 
-#: ../apport/ui.py:848
+#: ../apport/ui.py:944
 msgid "Unknown symptom"
 msgstr "Ccira ur nettwassen ara"
 
-#: ../apport/ui.py:849
+#: ../apport/ui.py:945
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Ccira-nni %s\" ur tettwassen ara."
 
-#: ../apport/ui.py:885
+#: ../apport/ui.py:981
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -221,7 +221,7 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:901
+#: ../apport/ui.py:997
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -229,140 +229,140 @@ msgstr ""
 "Mi tmedleḍ izen-agi ttxil-k m ssit ɣef usfaylu n usnas akken ad tazneḍ "
 "aneqis fell-as."
 
-#: ../apport/ui.py:918 ../apport/ui.py:927
+#: ../apport/ui.py:1014 ../apport/ui.py:1023
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop igguma ad d-yaf ID n ukala n usfaylu"
 
-#: ../apport/ui.py:942
+#: ../apport/ui.py:1038
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr ""
 
-#: ../apport/ui.py:943
+#: ../apport/ui.py:1039
 msgid "Specify package name."
 msgstr "Sbadu isem n ukemmus."
 
-#: ../apport/ui.py:950 ../apport/ui.py:1083
+#: ../apport/ui.py:1046 ../apport/ui.py:1179
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Rnu ticreḍt-nniḍen i weneqqis. Tezmer ad d-ttunefk aṭas n tikkal."
 
-#: ../apport/ui.py:988
+#: ../apport/ui.py:1084
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:999
+#: ../apport/ui.py:1095
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
 
-#: ../apport/ui.py:1008
+#: ../apport/ui.py:1104
 msgid "Click a window as a target for filing a problem report."
 msgstr "Ssit ɣef usfaylu amzun d anican aken ad yaččar uneqqis n wugur."
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1113
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:1026
+#: ../apport/ui.py:1122
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:1035
+#: ../apport/ui.py:1131
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:1046
+#: ../apport/ui.py:1142
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:1054
+#: ../apport/ui.py:1150
 msgid "The provided pid is a hanging application."
 msgstr ""
 
-#: ../apport/ui.py:1062
+#: ../apport/ui.py:1158
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:1072
+#: ../apport/ui.py:1168
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:1091
+#: ../apport/ui.py:1187
 msgid "Print the Apport version number."
 msgstr "Siggez uḍḍun n lqem n uneqqis."
 
-#: ../apport/ui.py:1253
+#: ../apport/ui.py:1349
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Ayagi ad iskker apport-retrace deg usfaylu n tdiwent akken ad isekyed "
 "aɣelluy."
 
-#: ../apport/ui.py:1257
+#: ../apport/ui.py:1353
 msgid "Run gdb session"
 msgstr "Senker tiɣimit gdb"
 
-#: ../apport/ui.py:1258
+#: ../apport/ui.py:1354
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Selkem tiɣimit gdb war asader n yizamulen n useɣti"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1260
+#: ../apport/ui.py:1356
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:1322
+#: ../apport/ui.py:1418
 msgid "Can't remember send report status settings"
 msgstr "Ur necfi ara nuzen iɣewwaṛen n waddad n uneqqis"
 
-#: ../apport/ui.py:1326
+#: ../apport/ui.py:1422
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 
-#: ../apport/ui.py:1408 ../apport/ui.py:1421
+#: ../apport/ui.py:1504 ../apport/ui.py:1517
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Aneqqis-agi n wugur yeɛna ahil ur nettwasbedd ara."
 
-#: ../apport/ui.py:1445
+#: ../apport/ui.py:1541
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr "Ugur yeḍra-d akked wahil %s i yebeddelen segmi d-yeḍra uɣelluy."
 
-#: ../apport/ui.py:1506 ../apport/ui.py:1629 ../apport/ui.py:1894
+#: ../apport/ui.py:1602 ../apport/ui.py:1724 ../apport/ui.py:1957
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Aneqqis-agi n wugur yerreẓ yerna ulamek ara yettusekker."
 
-#: ../apport/ui.py:1515
+#: ../apport/ui.py:1611
 msgid "This report is about a package that is not installed."
 msgstr "Aneqqis-a ɣef ukemmus ur nettwasbedd ara."
 
-#: ../apport/ui.py:1523
+#: ../apport/ui.py:1619
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Teḍra-d tuccḍa mi neɛreḍ ad nsekker aneqqis-agi n wugur:"
 
-#: ../apport/ui.py:1540
+#: ../apport/ui.py:1636
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
@@ -370,63 +370,63 @@ msgstr ""
 "Tesɛiḍ sin n yileqman i snas-a yettwasbedden, anwa i tebɣiḍ ad temleḍ abug "
 "fell-as?"
 
-#: ../apport/ui.py:1545
+#: ../apport/ui.py:1641
 #, python-format
 msgid "%s snap"
 msgstr "snap %s"
 
-#: ../apport/ui.py:1546
+#: ../apport/ui.py:1642
 #, python-format
 msgid "%s deb package"
 msgstr "Akemmus deb %s"
 
-#: ../apport/ui.py:1586
+#: ../apport/ui.py:1681
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1591
+#: ../apport/ui.py:1686
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1785
 msgid "Could not determine the package or source package name."
 msgstr "Ulamek tifin n ukemmus neɣ aɣbalu n yisem n ukemmus."
 
-#: ../apport/ui.py:1715
+#: ../apport/ui.py:1810
 msgid "Unable to start web browser"
 msgstr "Ulamek asekker n yiminig n web"
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1811
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Ulamek asekker n yiminig n web akken ad yeldi %s."
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1904
 msgid "Network problem"
 msgstr "Ugur n uẓeṭṭa"
 
-#: ../apport/ui.py:1844
+#: ../apport/ui.py:1908
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Ulamek tuqqna ɣer uzadur n yisefka n yiɣelluyen, ttxil-k m elken tuqqna "
 "internet inek m."
 
-#: ../apport/ui.py:1876
+#: ../apport/ui.py:1939
 msgid "Memory exhaustion"
 msgstr ""
 
-#: ../apport/ui.py:1878
+#: ../apport/ui.py:1941
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Anagraw-inek m ur yesɛi ara ddeqs n tkatut akken ad isekker aneqqis-agi n "
 "uɣelluy."
 
-#: ../apport/ui.py:1929
+#: ../apport/ui.py:1992
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -437,44 +437,44 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1985 ../apport/ui.py:1997
+#: ../apport/ui.py:2048 ../apport/ui.py:2060
 msgid "Problem already known"
 msgstr "Ugur yetwassen yakan"
 
-#: ../apport/ui.py:1987
+#: ../apport/ui.py:2050
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1999
+#: ../apport/ui.py:2062
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Ugur-a dayen yettwamla i yineflayen. Tanemmirt!"
 
-#: ../bin/apport-cli.py:84
+#: ../bin/apport-cli.py:85
 msgid "Press any key to continue..."
 msgstr "Sit ɣef tsarut tebɣiḍ akken ad tkemmleḍ..."
 
-#: ../bin/apport-cli.py:91
+#: ../bin/apport-cli.py:92
 msgid "What would you like to do? Your options are:"
 msgstr "D acu i tebɣiḍ ad tgeḍ? Tesɛiḍ ad tferneḍ gar:"
 
-#: ../bin/apport-cli.py:104
+#: ../bin/apport-cli.py:105
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Ttxil fren (%s):"
 
-#: ../bin/apport-cli.py:172
+#: ../bin/apport-cli.py:173
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i n yibiten)"
 
-#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:405
+#: ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:170 ../kde/apport-kde.py:405
 msgid "(binary data)"
 msgstr "(isefka imisinen)"
 
-#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:209 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:198
 msgid "Send problem report to the developers?"
 msgstr "Tuzzna n uneqqis n wuguren i yineflayen?"
@@ -808,72 +808,72 @@ msgstr "Mel ugur..."
 msgid "Report a malfunction to the developers"
 msgstr "Azen aneqqis ɣef yir tiddin i yisneflayen"
 
-#: ../gtk/apport-gtk.py:185
+#: ../gtk/apport-gtk.py:186
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Suref-aɣ, yela-d uḥbas ur netturaǧu ara n usnas %s."
 
-#: ../gtk/apport-gtk.py:188
+#: ../gtk/apport-gtk.py:189
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Suref-aɣ, yela-d uḥbas ur netturaǧu ara n %s."
 
-#: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:213 ../kde/apport-kde.py:265
+#: ../gtk/apport-gtk.py:194 ../kde/apport-kde.py:213 ../kde/apport-kde.py:265
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Surfaɣ, %s yemlal-e tuccḍa tagensant."
 
-#: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:206
+#: ../gtk/apport-gtk.py:217 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:206
 msgid "Send"
 msgstr "Azen"
 
-#: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:660 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:235 ../gtk/apport-gtk.py:661 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:329
 msgid "Show Details"
 msgstr "Sken talqayt"
 
-#: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:257 ../kde/apport-kde.py:275
+#: ../gtk/apport-gtk.py:248 ../kde/apport-kde.py:257 ../kde/apport-kde.py:275
 msgid "Continue"
 msgstr "Kemmel"
 
-#: ../gtk/apport-gtk.py:271
+#: ../gtk/apport-gtk.py:272
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Asnas %s yeḥbes ur d-yettarra ara."
 
-#: ../gtk/apport-gtk.py:275
+#: ../gtk/apport-gtk.py:276
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Ahil \"%s\" yeḥbes ur d-yettarra ara."
 
-#: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:221
+#: ../gtk/apport-gtk.py:293 ../kde/apport-kde.py:221
 #, python-format
 msgid "Package: %s"
 msgstr "Akemmus: %s"
 
-#: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:228
+#: ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:228
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Suref-aɣ, tella-d tuccḍa deg usebded n useɣẓan."
 
-#: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:237
+#: ../gtk/apport-gtk.py:311 ../gtk/apport-gtk.py:335 ../kde/apport-kde.py:237
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Asnas %s yemmuger-d tuccḍa tagensant."
 
-#: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:244
+#: ../gtk/apport-gtk.py:317 ../kde/apport-kde.py:244
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Yella-d uneḥbus ur netturaǧu ara n wesnas %s."
 
-#: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:270
+#: ../gtk/apport-gtk.py:348 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:270
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Ma temmugreḍ-d uguren sya d asawen, ɛreḍ ad talseḍ asenker i uselkim."
 
-#: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:277
+#: ../gtk/apport-gtk.py:353 ../kde/apport-kde.py:277
 msgid "Ignore future problems of this type"
 msgstr "Anef i wuguren i d-itteddun n wanaw-a"
 
-#: ../gtk/apport-gtk.py:664 ../kde/apport-kde.py:326
+#: ../gtk/apport-gtk.py:665 ../kde/apport-kde.py:326
 msgid "Hide Details"
 msgstr "Ffer talqayt"
 

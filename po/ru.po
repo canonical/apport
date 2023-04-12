@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 23:16+0100\n"
+"POT-Creation-Date: 2023-04-12 17:42+0200\n"
 "PO-Revision-Date: 2019-11-01 10:51+0000\n"
 "Last-Translator: Sandro <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -39,11 +39,11 @@ msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Введите свой пароль для доступа к отчётам об ошибках в системных программах"
 
-#: ../apport/ui.py:167
+#: ../apport/ui.py:263
 msgid "This package does not seem to be installed correctly"
 msgstr "Возможно, этот пакет установлен неправильно"
 
-#: ../apport/ui.py:177
+#: ../apport/ui.py:273
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -54,7 +54,7 @@ msgstr ""
 "индексов доступных пакетов. Если это не помогает, тогда удалите "
 "соответствующие сторонние пакеты и попробуйте ещё раз."
 
-#: ../apport/ui.py:207
+#: ../apport/ui.py:303
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -67,21 +67,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:370
+#: ../apport/ui.py:466
 msgid "unknown program"
 msgstr "неизвестная программа"
 
-#: ../apport/ui.py:373
+#: ../apport/ui.py:469
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Извините, программа %s аварийно завершила свою работу"
 
-#: ../apport/ui.py:376 ../apport/ui.py:1924
+#: ../apport/ui.py:472 ../apport/ui.py:1987
 #, python-format
 msgid "Problem in %s"
 msgstr "Неполадка в %s"
 
-#: ../apport/ui.py:381
+#: ../apport/ui.py:477
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -89,66 +89,66 @@ msgstr ""
 "В вашем компьютере недостаточно свободной памяти, чтобы автоматически "
 "проанализировать неполадку и отправить отчет разработчикам."
 
-#: ../apport/ui.py:441 ../apport/ui.py:459 ../apport/ui.py:632
-#: ../apport/ui.py:641 ../apport/ui.py:878 ../apport/ui.py:1688
-#: ../apport/ui.py:1885 ../apport/ui.py:1890
+#: ../apport/ui.py:537 ../apport/ui.py:555 ../apport/ui.py:728
+#: ../apport/ui.py:737 ../apport/ui.py:974 ../apport/ui.py:1783
+#: ../apport/ui.py:1948 ../apport/ui.py:1953
 msgid "Invalid problem report"
 msgstr "Неверный отчёт об ошибке"
 
-#: ../apport/ui.py:442
+#: ../apport/ui.py:538
 msgid "You are not allowed to access this problem report."
 msgstr "У вас нет доступа к отчёту о неполадке."
 
-#: ../apport/ui.py:450
+#: ../apport/ui.py:546
 msgid "Error"
 msgstr "Ошибка"
 
-#: ../apport/ui.py:452
+#: ../apport/ui.py:548
 msgid "There is not enough disk space available to process this report."
 msgstr "Недостаточно места на диске для обработки этого отчёта."
 
-#: ../apport/ui.py:490
+#: ../apport/ui.py:586
 msgid "No PID specified"
 msgstr "Не указан идентификатор процесса (PID)"
 
-#: ../apport/ui.py:492
+#: ../apport/ui.py:588
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 "Необходимо указать идентификатор процесса (PID). Смотрите --help для "
 "получения дополнительной информации."
 
-#: ../apport/ui.py:503 ../apport/ui.py:608
+#: ../apport/ui.py:599 ../apport/ui.py:704
 msgid "Invalid PID"
 msgstr "Неверный PID"
 
-#: ../apport/ui.py:504
+#: ../apport/ui.py:600
 msgid "The specified process ID does not exist."
 msgstr "Указанный ID процесса не существует."
 
-#: ../apport/ui.py:509
+#: ../apport/ui.py:605
 msgid "Not your PID"
 msgstr "Не ваш PID"
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:606
 msgid "The specified process ID does not belong to you."
 msgstr "Указанный ID процесса не принадлежит вам."
 
-#: ../apport/ui.py:565
+#: ../apport/ui.py:661
 msgid "No package specified"
 msgstr "Не указан пакет"
 
-#: ../apport/ui.py:567
+#: ../apport/ui.py:663
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Необходимо указать пакет или PID. Запустите программу с ключом --help для "
 "получения дополнительной информации."
 
-#: ../apport/ui.py:595
+#: ../apport/ui.py:691
 msgid "Permission denied"
 msgstr "В доступе отказано"
 
-#: ../apport/ui.py:597
+#: ../apport/ui.py:693
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -156,30 +156,30 @@ msgstr ""
 "Указанный процесс запущен другим пользователем. Запустите эту программу с "
 "правами владельца процесса или администратора системы."
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:706
 msgid "The specified process ID does not belong to a program."
 msgstr "Указанный PID принадлежит другому процессу."
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:730
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Симптоматический скрипт %s не может определить затронутый пакет"
 
-#: ../apport/ui.py:642
+#: ../apport/ui.py:738
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Пакет %s не существует"
 
-#: ../apport/ui.py:671 ../apport/ui.py:883 ../apport/ui.py:916
-#: ../apport/ui.py:926
+#: ../apport/ui.py:767 ../apport/ui.py:979 ../apport/ui.py:1012
+#: ../apport/ui.py:1022
 msgid "Cannot create report"
 msgstr "Невозможно создать отчет"
 
-#: ../apport/ui.py:686 ../apport/ui.py:745 ../apport/ui.py:763
+#: ../apport/ui.py:782 ../apport/ui.py:841 ../apport/ui.py:859
 msgid "Updating problem report"
 msgstr "Обновление отчета о проблеме"
 
-#: ../apport/ui.py:688
+#: ../apport/ui.py:784
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -189,7 +189,7 @@ msgstr ""
 "Вы не являетесь отправителем или получателем отчета об этой проблеме, "
 "возможно отчет уже существует или уже был закрыт."
 
-#: ../apport/ui.py:700
+#: ../apport/ui.py:796
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -210,24 +210,24 @@ msgstr ""
 "\n"
 "Вы действительно хотите продолжить?"
 
-#: ../apport/ui.py:746 ../apport/ui.py:764
+#: ../apport/ui.py:842 ../apport/ui.py:860
 msgid "No additional information collected."
 msgstr "Дополнительная информация не была собрана."
 
-#: ../apport/ui.py:827
+#: ../apport/ui.py:923
 msgid "What kind of problem do you want to report?"
 msgstr "О какой проблеме вы бы хотели сообщить?"
 
-#: ../apport/ui.py:848
+#: ../apport/ui.py:944
 msgid "Unknown symptom"
 msgstr "Неизвестный симптом"
 
-#: ../apport/ui.py:849
+#: ../apport/ui.py:945
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Симптом «%s» не известен"
 
-#: ../apport/ui.py:885
+#: ../apport/ui.py:981
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -246,7 +246,7 @@ msgstr ""
 "Запустите его и найдите интересующее приложение на вкладке Процессы. "
 "Идентификатор процесса — номер, указанный в столбце ID."
 
-#: ../apport/ui.py:901
+#: ../apport/ui.py:997
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -254,31 +254,31 @@ msgstr ""
 "После закрытия этого сообщения, пожалуйста, щелкните по окну приложения, "
 "чтобы сообщить о проблеме."
 
-#: ../apport/ui.py:918 ../apport/ui.py:927
+#: ../apport/ui.py:1014 ../apport/ui.py:1023
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop не удалось определить ID процесса этого окна"
 
-#: ../apport/ui.py:942
+#: ../apport/ui.py:1038
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr "%(prog)s <номер отчёта>"
 
-#: ../apport/ui.py:943
+#: ../apport/ui.py:1039
 msgid "Specify package name."
 msgstr "Задайте имя пакета."
 
-#: ../apport/ui.py:950 ../apport/ui.py:1083
+#: ../apport/ui.py:1046 ../apport/ui.py:1179
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Добавить дополнительный тег в отчет. Может быть указан несколько раз."
 
-#: ../apport/ui.py:988
+#: ../apport/ui.py:1084
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%(prog)s [параметры] [симптом|pid|пакет|путь к программе|.apport/.crash файл]"
 
-#: ../apport/ui.py:999
+#: ../apport/ui.py:1095
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -289,17 +289,17 @@ msgstr ""
 "отображает список известных симптомов. (Применяется, когда передан "
 "единственный аргумент.)"
 
-#: ../apport/ui.py:1008
+#: ../apport/ui.py:1104
 msgid "Click a window as a target for filing a problem report."
 msgstr "Щелкните по целевому окну для заполнения отчёта о проблеме."
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1113
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Запустить в режиме обновления ошибки. Может принимать дополнительный ключ --"
 "package."
 
-#: ../apport/ui.py:1026
+#: ../apport/ui.py:1122
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -307,7 +307,7 @@ msgstr ""
 "Отправить отчёт об ошибке с симптомом. (Применяется, когда название симптома "
 "передано в качестве единственного параметра.)"
 
-#: ../apport/ui.py:1035
+#: ../apport/ui.py:1131
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -315,7 +315,7 @@ msgstr ""
 "Указать имя пакета в режиме --file-bug. Необязательно, если указан --pid. "
 "(Применяется, когда имя пакета передано в качестве единственного параметра.)"
 
-#: ../apport/ui.py:1046
+#: ../apport/ui.py:1142
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -325,11 +325,11 @@ msgstr ""
 "отчет будет содержать больше информации. (Подразумевается, что pid — "
 "единственный указанный аргумент.)"
 
-#: ../apport/ui.py:1054
+#: ../apport/ui.py:1150
 msgid "The provided pid is a hanging application."
 msgstr "Указанный идентификатор принадлежит процессу, который не отвечает."
 
-#: ../apport/ui.py:1062
+#: ../apport/ui.py:1158
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -339,7 +339,7 @@ msgstr ""
 "ожидаемых в %s. (Применяется, когда файл передан в качестве единственного "
 "параметра.)"
 
-#: ../apport/ui.py:1072
+#: ../apport/ui.py:1168
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -348,48 +348,48 @@ msgstr ""
 "При работе в режиме отправки отчета, сохраняет информацию в файле вместо ее "
 "отправки. Этот файл можно будет отправить позднее или с другого компьютера."
 
-#: ../apport/ui.py:1091
+#: ../apport/ui.py:1187
 msgid "Print the Apport version number."
 msgstr "Напечатать номер версии Apport."
 
-#: ../apport/ui.py:1253
+#: ../apport/ui.py:1349
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Будет произведён запуск «apport-retrace» в окне терминала для выполнения "
 "проверки аварийного завершения работы."
 
-#: ../apport/ui.py:1257
+#: ../apport/ui.py:1353
 msgid "Run gdb session"
 msgstr "Запустить сеанс gdb"
 
-#: ../apport/ui.py:1258
+#: ../apport/ui.py:1354
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Запустить сеанс gdb, не выполняя загрузку отладочных символов"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1260
+#: ../apport/ui.py:1356
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Обновить %s с полным отслеживанием символического стека"
 
-#: ../apport/ui.py:1322
+#: ../apport/ui.py:1418
 msgid "Can't remember send report status settings"
 msgstr "Не удаётся запомнить настройки статуса отправки отчёта"
 
-#: ../apport/ui.py:1326
+#: ../apport/ui.py:1422
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 "Не удалось сохранить состояние отчета о сбое. Не удается установить режим "
 "авто или никогда."
 
-#: ../apport/ui.py:1408 ../apport/ui.py:1421
+#: ../apport/ui.py:1504 ../apport/ui.py:1517
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Этот отчет о проблеме относится к программе, которая не установлена."
 
-#: ../apport/ui.py:1445
+#: ../apport/ui.py:1541
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -398,19 +398,19 @@ msgstr ""
 "Неполадка произошла с программой %s, в которую были внесены изменения с "
 "момента её аварийного завершения работы."
 
-#: ../apport/ui.py:1506 ../apport/ui.py:1629 ../apport/ui.py:1894
+#: ../apport/ui.py:1602 ../apport/ui.py:1724 ../apport/ui.py:1957
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Этот отчёт о неполадке повреждён и не может быть обработан."
 
-#: ../apport/ui.py:1515
+#: ../apport/ui.py:1611
 msgid "This report is about a package that is not installed."
 msgstr "Это отчёт о пакете, который не установлен."
 
-#: ../apport/ui.py:1523
+#: ../apport/ui.py:1619
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Произошла ошибка при попытке обработать это сообщение о неполадке:"
 
-#: ../apport/ui.py:1540
+#: ../apport/ui.py:1636
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
@@ -418,24 +418,24 @@ msgstr ""
 "У вас установлено две версии этого приложения. Об ошибке в какой из них вы "
 "хотите сообщить?"
 
-#: ../apport/ui.py:1545
+#: ../apport/ui.py:1641
 #, python-format
 msgid "%s snap"
 msgstr "%s snap-пакет"
 
-#: ../apport/ui.py:1546
+#: ../apport/ui.py:1642
 #, python-format
 msgid "%s deb package"
 msgstr "%s deb-пакет"
 
-#: ../apport/ui.py:1586
+#: ../apport/ui.py:1681
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 "%s предоставлен в виде snap-пакета и опубликован %s. Для получения помощи "
 "свяжитесь с ними по %s."
 
-#: ../apport/ui.py:1591
+#: ../apport/ui.py:1686
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -444,39 +444,39 @@ msgstr ""
 "%s предоставлен в виде snap-пакета и опубликован %s. Контактный адрес не "
 "указан. Для получения помощи посетите форум https://forum.snapcraft.io/."
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1785
 msgid "Could not determine the package or source package name."
 msgstr "Не удалось определить имя пакета или имя пакета с исходным кодом."
 
-#: ../apport/ui.py:1715
+#: ../apport/ui.py:1810
 msgid "Unable to start web browser"
 msgstr "Не удалось запустить веб-браузер"
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1811
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Не удалось запустить веб-браузер, чтобы открыть %s."
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1904
 msgid "Network problem"
 msgstr "Неполадка с сетью"
 
-#: ../apport/ui.py:1844
+#: ../apport/ui.py:1908
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Не удается подключиться к базе данных по сбоям, пожалуйста, проверьте "
 "подключение к Интернету."
 
-#: ../apport/ui.py:1876
+#: ../apport/ui.py:1939
 msgid "Memory exhaustion"
 msgstr "Недостаток памяти"
 
-#: ../apport/ui.py:1878
+#: ../apport/ui.py:1941
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "В системе недостаточно памяти для обработки этого отчёта об ошибке."
 
-#: ../apport/ui.py:1929
+#: ../apport/ui.py:1992
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -487,11 +487,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1985 ../apport/ui.py:1997
+#: ../apport/ui.py:2048 ../apport/ui.py:2060
 msgid "Problem already known"
 msgstr "О неполадке уже известно"
 
-#: ../apport/ui.py:1987
+#: ../apport/ui.py:2050
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -501,33 +501,33 @@ msgstr ""
 "браузере. Пожалуйста, проверьте, можете ли вы добавить в него иную полезную "
 "информацию, которая могла бы помочь разработчикам."
 
-#: ../apport/ui.py:1999
+#: ../apport/ui.py:2062
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
 
-#: ../bin/apport-cli.py:84
+#: ../bin/apport-cli.py:85
 msgid "Press any key to continue..."
 msgstr "Чтобы продолжить, нажмите любую клавишу..."
 
-#: ../bin/apport-cli.py:91
+#: ../bin/apport-cli.py:92
 msgid "What would you like to do? Your options are:"
 msgstr "Что вы хотите сделать? Возможные варианты:"
 
-#: ../bin/apport-cli.py:104
+#: ../bin/apport-cli.py:105
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Пожалуйста, выберите (%s):"
 
-#: ../bin/apport-cli.py:172
+#: ../bin/apport-cli.py:173
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i байт)"
 
-#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:169 ../kde/apport-kde.py:405
+#: ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:170 ../kde/apport-kde.py:405
 msgid "(binary data)"
 msgstr "(двоичные данные)"
 
-#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.py:209 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:198
 msgid "Send problem report to the developers?"
 msgstr "Отправить отчёт об ошибке разработчикам?"
@@ -897,75 +897,75 @@ msgstr "Сообщить о неполадке..."
 msgid "Report a malfunction to the developers"
 msgstr "Сообщить о недоработке разработчикам"
 
-#: ../gtk/apport-gtk.py:185
+#: ../gtk/apport-gtk.py:186
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Извините, приложение %s внезапно завершилось."
 
-#: ../gtk/apport-gtk.py:188
+#: ../gtk/apport-gtk.py:189
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Извините, %s было непредвиденно закрыто."
 
-#: ../gtk/apport-gtk.py:193 ../kde/apport-kde.py:213 ../kde/apport-kde.py:265
+#: ../gtk/apport-gtk.py:194 ../kde/apport-kde.py:213 ../kde/apport-kde.py:265
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Извините, возникла внутренняя ошибка %s."
 
-#: ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:206
+#: ../gtk/apport-gtk.py:217 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:206
 msgid "Send"
 msgstr "Отправить"
 
-#: ../gtk/apport-gtk.py:234 ../gtk/apport-gtk.py:660 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:235 ../gtk/apport-gtk.py:661 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:329
 msgid "Show Details"
 msgstr "Показать подробности"
 
-#: ../gtk/apport-gtk.py:247 ../kde/apport-kde.py:257 ../kde/apport-kde.py:275
+#: ../gtk/apport-gtk.py:248 ../kde/apport-kde.py:257 ../kde/apport-kde.py:275
 msgid "Continue"
 msgstr "Продолжить"
 
-#: ../gtk/apport-gtk.py:271
+#: ../gtk/apport-gtk.py:272
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Приложение «%s» перестало отвечать."
 
-#: ../gtk/apport-gtk.py:275
+#: ../gtk/apport-gtk.py:276
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Программа «%s» перестала отвечать."
 
-#: ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:221
+#: ../gtk/apport-gtk.py:293 ../kde/apport-kde.py:221
 #, python-format
 msgid "Package: %s"
 msgstr "Пакет: %s"
 
-#: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:228
+#: ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:228
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Извините, обнаружена неполадка во время установки программного обеспечения."
 
-#: ../gtk/apport-gtk.py:310 ../gtk/apport-gtk.py:334 ../kde/apport-kde.py:237
+#: ../gtk/apport-gtk.py:311 ../gtk/apport-gtk.py:335 ../kde/apport-kde.py:237
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "В приложении %s произошла внутренняя ошибка."
 
-#: ../gtk/apport-gtk.py:316 ../kde/apport-kde.py:244
+#: ../gtk/apport-gtk.py:317 ../kde/apport-kde.py:244
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Приложение %s внезапно закрылось."
 
-#: ../gtk/apport-gtk.py:347 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:270
+#: ../gtk/apport-gtk.py:348 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:270
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "При возникновении этой неполадки в дальнейшем попробуйте перезапустить "
 "компьютер."
 
-#: ../gtk/apport-gtk.py:352 ../kde/apport-kde.py:277
+#: ../gtk/apport-gtk.py:353 ../kde/apport-kde.py:277
 msgid "Ignore future problems of this type"
 msgstr "Игнорировать этот тип неполадок в дальнейшем"
 
-#: ../gtk/apport-gtk.py:664 ../kde/apport-kde.py:326
+#: ../gtk/apport-gtk.py:665 ../kde/apport-kde.py:326
 msgid "Hide Details"
 msgstr "Скрыть подробности"
 
