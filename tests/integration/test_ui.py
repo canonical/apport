@@ -2767,7 +2767,7 @@ class T(unittest.TestCase):
         )
         self.assertEqual(run_mock.call_count, 2)
 
-    @unittest.mock.patch.dict("os.environ", {})
+    @unittest.mock.patch.dict("os.environ", {}, clear=True)
     def test_run_as_real_user_no_sudo(self) -> None:
         # pylint: disable=no-self-use
         """Test run_as_real_user() without sudo env variables."""
