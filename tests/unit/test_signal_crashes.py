@@ -88,6 +88,13 @@ class TestApport(unittest.TestCase):
             finally:
                 del os.environ["APPORT_LOCK_FILE"]
 
+    def test_refine_core_ulimit_huge(self) -> None:
+        """Test refine_core_ulimit() with huge limit."""
+        options = apport_binary.parse_arguments(
+            ["-p", str(os.getpid()), "-c", str(pow(2, 64))]
+        )
+        self.assertEqual(apport_binary.refine_core_ulimit(options), -1)
+
     @unittest.mock.patch("os.isatty")
     def test_init_error_log_is_tty(
         self, isatty_mock: unittest.mock.MagicMock
