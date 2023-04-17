@@ -83,7 +83,7 @@ def main():
         else:
             with open(args.report, "rb") as f:
                 pr.extract_keys(f, bin_keys, args.target_directory)
-    except OSError as error:
+    except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
 
 
