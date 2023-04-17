@@ -106,6 +106,26 @@ class T(unittest.TestCase):
         )
         self.assertEqual(process.stdout, "")
 
+    def test_broken_core_dump(self):
+        """Test unpacking a report file that has a malformed CoreDump entry."""
+        with tempfile.NamedTemporaryFile("wb") as report_file:
+            report_file.write(
+                b"CoreDump: base64\n H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
+                b" 7Z0LYFPV/cdP0rQ\n"
+            )
+            report_file.flush()
+            process = self._call_apport_unpack(
+                [report_file.name, self.unpack_dir]
+            )
+
+        self.assertEqual(process.returncode, 1)
+        self.assertEqual(
+            process.stderr,
+            "ERROR: Malformed problem report: Incorrect padding. "
+            "Is this a proper .crash text file?\n",
+        )
+        self.assertEqual(process.stdout, "")
+
     def _call_apport_unpack(self, argv: list) -> subprocess.CompletedProcess:
         return subprocess.run(
             ["apport-unpack"] + argv,
