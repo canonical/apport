@@ -57,6 +57,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             return
 
         try:
+            import contextlib
             import io
             import os
             import re
@@ -117,6 +118,10 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             pass
         if pr.check_ignored():
             return
+
+        with contextlib.suppress(SystemError, ValueError):
+            pr.add_package_info()
+        pr["_HooksRun"] = "no"
 
         report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
         try:
