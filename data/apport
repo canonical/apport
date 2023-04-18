@@ -435,7 +435,7 @@ def is_closing_session() -> bool:
         os.setresuid(real_uid, real_uid, -1)
         os.setresgid(real_gid, real_gid, -1)
 
-    logger.error("debug: session gdbus call: %s", out.decode("UTF-8"))
+    logger.debug("session gdbus call: %s", out.decode("UTF-8").rstrip())
     return out.startswith(b"(false,")
 
 
