@@ -123,7 +123,7 @@ def get_pid_info(pid: int):
     )
 
 
-def get_process_starttime():
+def get_process_starttime() -> int:
     """Get the starttime of the process using proc_pid_fd"""
 
     with open("stat", opener=proc_pid_opener, encoding="utf-8") as stat_file:
@@ -131,7 +131,7 @@ def get_process_starttime():
     return apport.fileutils.get_starttime(contents)
 
 
-def get_apport_starttime():
+def get_apport_starttime() -> int:
     """Get the Apport process starttime"""
 
     with open(f"/proc/{os.getpid()}/stat", encoding="utf-8") as stat_file:
