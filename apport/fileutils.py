@@ -470,7 +470,7 @@ def get_config(section, setting, default=None, path=None, boolean=False):
         return default
 
 
-def get_starttime(contents):
+def get_starttime(contents: str) -> int:
     """Extract the starttime from the contents of a stat file."""
     # 22nd field in a stat file is the time the process started after
     # system boot in clock ticks. In order to prevent filename
