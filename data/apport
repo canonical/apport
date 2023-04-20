@@ -80,13 +80,7 @@ def check_lock():
         signal.signal(signal.SIGALRM, original_handler)
 
 
-(pidstat, crash_uid, crash_gid, cwd, proc_pid_fd) = (
-    None,
-    None,
-    None,
-    None,
-    None,
-)
+(pidstat, crash_uid, crash_gid, proc_pid_fd) = (None, None, None, None)
 
 
 def proc_pid_opener(path, flags):
@@ -106,7 +100,7 @@ def get_pid_info(pid: int):
     """Read /proc information about pid"""
 
     # pylint: disable=global-statement
-    global pidstat, crash_uid, crash_gid, cwd, proc_pid_fd
+    global pidstat, crash_uid, crash_gid, proc_pid_fd
 
     proc_pid_fd = os.open(
         f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
@@ -127,10 +121,6 @@ def get_pid_info(pid: int):
 
     assert crash_uid is not None, "failed to parse Uid"
     assert crash_gid is not None, "failed to parse Gid"
-
-    cwd = os.open(
-        "cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd
-    )
 
 
 def get_process_starttime() -> int:
@@ -243,6 +233,10 @@ def write_user_coredump(
     if pidstat.st_uid != crash_uid or pidstat.st_gid != crash_gid:
         logger.error("disabling core dump for suid/sgid/unreadable executable")
         return
+
+    cwd = os.open(
+        "cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd
+    )
 
     try:
         # Limit number of core files to prevent DoS
