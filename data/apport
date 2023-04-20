@@ -252,7 +252,7 @@ def write_user_coredump(
     except OSError:
         return
 
-    logger.error("writing core dump to %s (limit: %s)", core_path, str(limit))
+    logger.info("writing core dump to %s (limit: %s)", core_path, str(limit))
 
     written = 0
 
@@ -269,7 +269,7 @@ def write_user_coredump(
             os.close(core_file)
             os.unlink(core_path, dir_fd=cwd)
             return
-        logger.error("writing core dump %s of size %i", core_path, core_size)
+        logger.info("writing core dump %s of size %i", core_path, core_size)
         os.write(core_file, r["CoreDump"])
     else:
         block = os.read(coredump_fd, 1048576)
@@ -726,7 +726,7 @@ def parse_arguments(args: list[str]):
 
 def main(args: list[str]) -> int:
     init_error_log()
-    logging.basicConfig(format=LOG_FORMAT)
+    logging.basicConfig(format=LOG_FORMAT, level=logging.INFO)
 
     # systemd socket activation
     if "LISTEN_FDS" in os.environ:
@@ -944,7 +944,7 @@ def process_crash(options: argparse.Namespace) -> int:
     if not consistency_checks(options, process_start):
         return 0
 
-    logger.error(
+    logger.info(
         "called for pid %s, signal %s, core limit %s, dump mode %s",
         options.pid,
         options.signal_number,
@@ -997,14 +997,14 @@ def process_crash(options: argparse.Namespace) -> int:
         os.unlink(hanging)
 
     if "InterpreterPath" in info:
-        logger.error(
+        logger.info(
             'script: %s, interpreted by %s (command line "%s")',
             info["ExecutablePath"],
             info["InterpreterPath"],
             info["ProcCmdline"],
         )
     else:
-        logger.error(
+        logger.info(
             'executable: %s (command line "%s")',
             info["ExecutablePath"],
             info["ProcCmdline"],
@@ -1033,7 +1033,7 @@ def process_crash(options: argparse.Namespace) -> int:
         return 0
 
     if info.check_ignored():
-        logger.error(
+        logger.info(
             "executable version is in denylist or not in allowlist, ignoring"
         )
         return 0
@@ -1115,7 +1115,7 @@ def process_crash(options: argparse.Namespace) -> int:
 
     # make the report writable now, when it's completely written
     os.fchmod(fd, 0o640)
-    logger.error("wrote report %s", report)
+    logger.info("wrote report %s", report)
 
     # Check if the user wants a core file. We need to create that
     # from the written report, as we can only read stdin once and
