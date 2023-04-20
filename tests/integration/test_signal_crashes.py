@@ -205,10 +205,11 @@ class T(unittest.TestCase):
             self.assertIn(k, allowed_vars)
 
         # UserGroups only has system groups
+        sys_gid_max = apport.fileutils.get_sys_gid_max()
         for g in pr["UserGroups"].split():
             if g == "N/A":
                 continue
-            self.assertLess(grp.getgrnam(g).gr_gid, 500)
+            self.assertLessEqual(grp.getgrnam(g).gr_gid, sys_gid_max)
 
         self.assertNotIn("root", pr["UserGroups"])
 
