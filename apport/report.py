@@ -550,10 +550,11 @@ class Report(problem_report.ProblemReport):
         """
         # Use effective uid in case privileges were dropped
         user = pwd.getpwuid(os.geteuid())[0]
+        sys_gid_max = apport.fileutils.get_sys_gid_max()
         groups = [
             name
             for name, p, gid, memb in grp.getgrall()
-            if user in memb and gid < 1000
+            if user in memb and gid <= sys_gid_max
         ]
         groups.sort()
         if groups:

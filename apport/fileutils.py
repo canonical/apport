@@ -14,10 +14,12 @@ import contextlib
 import functools
 import glob
 import http.client
+import io
 import json
 import operator
 import os
 import pwd
+import re
 import socket
 import stat
 import subprocess
@@ -249,6 +251,47 @@ def mark_report_seen(report):
             delete_report(report)
 
 
+_LOGIN_DEFS_RE = re.compile(
+    r"^\s*(?P<name>[A-Z0-9_]+)\s+(?P<quote>[\"\']?)(?P<value>.*)(?P=quote)\s*$"
+)
+
+
+def _parse_login_defs(lines: io.TextIOWrapper) -> typing.Dict[str, str]:
+    defs = {}
+    for line in lines:
+        match = _LOGIN_DEFS_RE.match(line)
+        if not match:
+            continue
+        defs[match.group("name")] = match.group("value")
+    return defs
+
+
+@functools.cache
+def get_login_defs() -> typing.Dict[str, str]:
+    """Parse /etc/login.defs and return a dictionary with its content."""
+    try:
+        with open("/etc/login.defs", encoding="utf-8") as login_defs_file:
+            return _parse_login_defs(login_defs_file)
+    except FileNotFoundError:
+        return {}
+
+
+def get_sys_gid_max() -> int:
+    """Return maximum system group ID (SYS_GID_MAX from /etc/login.defs)."""
+    try:
+        return int(get_login_defs()["SYS_GID_MAX"])
+    except (KeyError, ValueError):
+        return 999
+
+
+def get_sys_uid_max() -> int:
+    """Return maximum system user ID (SYS_UID_MAX from /etc/login.defs)."""
+    try:
+        return int(get_login_defs()["SYS_UID_MAX"])
+    except (KeyError, ValueError):
+        return 999
+
+
 def get_all_reports():
     """Return a list with all report files accessible to the calling user."""
     reports = []
@@ -284,14 +327,17 @@ def get_new_reports():
 def get_all_system_reports():
     """Get all system reports.
 
-    Return a list with all report files which belong to a system user (i. e.
-    uid < 500 according to LSB).
+    Return a list with all report files which belong to a system user.
+    The maximum system user group ID is taken from SYS_UID_MAX from
+    /etc/login.defs (defaults to 999 on Debian based systems and LSB
+    specifies 499 in "User ID Ranges").
     """
     reports = []
+    sys_uid_max = get_sys_uid_max()
     for r in glob.glob(os.path.join(report_dir, "*.crash")):
         try:
             st = os.stat(r)
-            if st.st_size > 0 and st.st_uid < 500:
+            if st.st_size > 0 and st.st_uid <= sys_uid_max:
                 # filter out guest session crashes;
                 # they might have a system UID
                 try:
@@ -313,7 +359,9 @@ def get_new_system_reports():
     """Get new system reports.
 
     Return a list with all report files which have not yet been processed
-    and belong to a system user (i. e. uid < 500 according to LSB).
+    and belong to a system user. The maximum system user group ID is taken
+    from SYS_UID_MAX from /etc/login.defs (defaults to 999 on Debian based
+    systems and LSB specifies 499 in "User ID Ranges").
     """
     return [r for r in get_all_system_reports() if not seen_report(r)]
 

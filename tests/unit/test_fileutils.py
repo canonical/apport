@@ -37,6 +37,73 @@ class T(unittest.TestCase):
             apport.fileutils.likely_packaged("/var/lib/foo"), False
         )
 
+    def test_get_login_defs(self) -> None:
+        """Test get_login_defs()."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.mock_open(
+            read_data="#\n"
+            "# /etc/login.defs\n"
+            "#\n"
+            "MAIL_DIR        /var/mail\n"
+            "#MAIL_FILE      .mail\n"
+            "UID_MIN			 1000\n"
+            "UID_MAX			60000\n"
+        )
+        with unittest.mock.patch("builtins.open", open_mock):
+            login_defs = apport.fileutils.get_login_defs()
+        open_mock.assert_called_once()
+        self.assertEqual(
+            login_defs,
+            {"MAIL_DIR": "/var/mail", "UID_MIN": "1000", "UID_MAX": "60000"},
+        )
+
+    def test_get_login_defs_missing(self) -> None:
+        """Test get_login_defs() with /etc/login.defs not present."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.MagicMock(side_effect=FileNotFoundError)
+        with unittest.mock.patch("builtins.open", open_mock):
+            login_defs = apport.fileutils.get_login_defs()
+        open_mock.assert_called_once()
+        self.assertEqual(login_defs, {})
+
+    def test_get_sys_gid_max(self) -> None:
+        """Test get_sys_gid_max()."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.mock_open(read_data="SYS_GID_MAX 1337\n")
+        with unittest.mock.patch("builtins.open", open_mock):
+            sys_gid_max = apport.fileutils.get_sys_gid_max()
+        open_mock.assert_called_once()
+        self.assertEqual(sys_gid_max, 1337)
+
+    def test_get_sys_gid_max_default(self) -> None:
+        """Test get_sys_gid_max() returning the default."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.MagicMock(side_effect=FileNotFoundError)
+        with unittest.mock.patch("builtins.open", open_mock):
+            sys_gid_max = apport.fileutils.get_sys_gid_max()
+        open_mock.assert_called_once()
+        self.assertEqual(sys_gid_max, 999)
+
+    def test_get_sys_uid_max(self) -> None:
+        """Test get_sys_uid_max()."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.mock_open(read_data="SYS_UID_MAX 937\n")
+        with unittest.mock.patch("builtins.open", open_mock):
+            sys_gid_max = apport.fileutils.get_sys_uid_max()
+        open_mock.assert_called_once()
+        self.assertEqual(sys_gid_max, 937)
+
+    def test_get_sys_uid_max_default(self) -> None:
+        """Test get_sys_uid_max() returning the default."""
+        apport.fileutils.get_login_defs.cache_clear()
+        open_mock = unittest.mock.mock_open(
+            read_data="MAIL_DIR        /var/mail\n"
+        )
+        with unittest.mock.patch("builtins.open", open_mock):
+            sys_gid_max = apport.fileutils.get_sys_uid_max()
+        open_mock.assert_called_once()
+        self.assertEqual(sys_gid_max, 999)
+
     def test_get_process_environ(self) -> None:
         open_mock = unittest.mock.mock_open(
             read_data="SHELL=/bin/bash\0TERM=xterm-256color\0LANGUAGE=en\0"
