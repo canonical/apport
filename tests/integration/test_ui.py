@@ -1500,11 +1500,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
         sensitive_strings = [
             os.uname().nodename,
             p.pw_name,
-            p.pw_gecos,
+            p.pw_gecos.split(",")[0],
             p.pw_dir,
             os.getcwd(),
         ]
-        return sensitive_strings
+        return [s for s in sensitive_strings if s]
 
     def test_run_crash_anonymity(self):
         """run_crash() anonymization"""
