@@ -1494,6 +1494,18 @@ class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
         self.assertIn("KernelDebug", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "KernelCrash")
 
+    @staticmethod
+    def _get_sensitive_strings() -> list[str]:
+        p = pwd.getpwuid(os.getuid())
+        sensitive_strings = [
+            os.uname().nodename,
+            p.pw_name,
+            p.pw_gecos,
+            p.pw_dir,
+            os.getcwd(),
+        ]
+        return sensitive_strings
+
     def test_run_crash_anonymity(self):
         """run_crash() anonymization"""
         r = self._gen_test_crash()
@@ -1519,16 +1531,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
         self.ui.report.write(dump)
         report = dump.getvalue().decode("UTF-8")
 
-        p = pwd.getpwuid(os.getuid())
-        bad_strings = [
-            os.uname().nodename,
-            p.pw_name,
-            p.pw_gecos,
-            p.pw_dir,
-            os.getcwd(),
-        ]
-
-        for s in bad_strings:
+        for s in self._get_sensitive_strings():
             self.assertNotIn(
                 s,
                 report,
