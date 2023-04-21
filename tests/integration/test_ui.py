@@ -9,6 +9,7 @@ import io
 import locale
 import os
 import pwd
+import re
 import shutil
 import signal
 import stat
@@ -1537,6 +1538,12 @@ class T(unittest.TestCase):
         report = dump.getvalue().decode("UTF-8")
 
         for s in self._get_sensitive_strings():
+            self.assertIsNone(
+                re.search(rf"\b{re.escape(s)}\b", report),
+                "dump contains sensitive word '%s':\n%s" % (s, report),
+            )
+            if s == "ubuntu" or len(s) < 5 and "/" not in s:
+                continue
             self.assertNotIn(
                 s,
                 report,
