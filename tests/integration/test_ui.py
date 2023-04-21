@@ -522,7 +522,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
         self.ui.collect_info()
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
-    def _write_crashdb_config_hook(self, crashdb: str, bash_hook: str = None):
+    def _write_crashdb_config_hook(
+        self, crashdb: str, bash_hook: typing.Optional[str] = None
+    ) -> None:
         """Write source_bash.py hook that sets CrashDB"""
         with open(
             os.path.join(self.hookdir, "source_bash.py"), "w", encoding="utf-8"
