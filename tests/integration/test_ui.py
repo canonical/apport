@@ -1520,7 +1520,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-instance-attributes
         report = dump.getvalue().decode("UTF-8")
 
         p = pwd.getpwuid(os.getuid())
-        bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
+        bad_strings = [
+            os.uname().nodename,
+            p.pw_name,
+            p.pw_gecos,
+            p.pw_dir,
+            os.getcwd(),
+        ]
 
         for s in bad_strings:
             self.assertNotIn(
