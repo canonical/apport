@@ -474,7 +474,7 @@ def is_systemd_watchdog_restart(signum: int):
         return False
 
 
-def is_same_ns(pid, ns):
+def is_same_ns(pid: int, ns: str) -> bool:
     if not os.path.exists(f"/proc/self/ns/{ns}") or not os.path.exists(
         f"/proc/{pid}/ns/{ns}"
     ):
@@ -494,14 +494,7 @@ def is_same_ns(pid, ns):
 
     # check to see if the process is part of the system.slice (LP: #1870060)
     if os.path.exists(f"/proc/{pid}/cgroup"):
-        global proc_pid_fd  # pylint: disable=global-statement
-        proc_pid_fd = os.open(
-            f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-        )
-
-        with open(
-            "cgroup", opener=proc_pid_opener, encoding="utf-8"
-        ) as cgroup:
+        with open(f"/proc/{pid}/cgroup", encoding="utf-8") as cgroup:
             for line in cgroup:
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
