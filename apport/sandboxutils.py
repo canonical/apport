@@ -227,8 +227,8 @@ def make_sandbox(
         pkg_list = (
             report.get("Package", "") + "\n" + report.get("Dependencies", "")
         )
-        m = re.compile(r"\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]")
-        origins = set(m.findall(pkg_list))
+        match = re.compile(r"\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]")
+        origins = set(match.findall(pkg_list))
         if origins:
             apport.logging.log("Origins: %s" % origins)
 

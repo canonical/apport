@@ -18,10 +18,10 @@ from tests.helper import import_module_from_file, skip_if_command_is_missing
 from tests.paths import is_local_source_directory, local_test_environment
 
 if is_local_source_directory():
-    apport_cli_path = "bin/apport-cli"
+    APPORT_CLI_PATH = "bin/apport-cli"
 else:
-    apport_cli_path = "/usr/bin/apport-cli"
-apport_cli = import_module_from_file(pathlib.Path(apport_cli_path))
+    APPORT_CLI_PATH = "/usr/bin/apport-cli"
+apport_cli = import_module_from_file(pathlib.Path(APPORT_CLI_PATH))
 
 
 class TestApportCli(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestApportCli(unittest.TestCase):
         os.environ.update(cls.orig_environ)
 
     def setUp(self):
-        self.app = apport_cli.CLIUserInterface([apport_cli_path])
+        self.app = apport_cli.CLIUserInterface([APPORT_CLI_PATH])
         self.app.report = apport.report.Report()
         self.app.report.add_os_info()
         self.app.report["ExecutablePath"] = "/bin/bash"

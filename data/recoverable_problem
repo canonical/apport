@@ -67,15 +67,15 @@ def main():
     report.add_os_info()
     report.add_user_info()
 
-    ds = report.get("DuplicateSignature", "")
+    duplicate_signature = report.get("DuplicateSignature", "")
     exec_path = report.get("ExecutablePath", "")
-    if exec_path and ds:
-        report["DuplicateSignature"] = "%s:%s" % (exec_path, ds)
+    if exec_path and duplicate_signature:
+        report["DuplicateSignature"] = f"{exec_path}:{duplicate_signature}"
 
     # Write the final report
     try:
-        with apport.fileutils.make_report_file(report) as f:
-            report.write(f)
+        with apport.fileutils.make_report_file(report) as report_file:
+            report.write(report_file)
     except OSError as error:
         apport.fatal("Cannot create report: %s", str(error))
 

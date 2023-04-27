@@ -117,9 +117,9 @@ class Github:
                 "Authentication not started. Use a with statement to do so"
             )
 
-        t = time.time()
-        waittime = self.__cooldown - (t - self.__last_request)
-        if t + waittime > self.__expiry:
+        current_time = time.time()
+        waittime = self.__cooldown - (current_time - self.__last_request)
+        if current_time + waittime > self.__expiry:
             self.message_callback(
                 "Failed login",
                 "Github authentication expired. Please try again.",

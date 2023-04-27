@@ -7,7 +7,7 @@ import unittest
 from tests.helper import pidof, read_shebang
 
 
-class T(unittest.TestCase):
+class TestHelper(unittest.TestCase):
     def test_pidof_non_existing_program(self):
         self.assertEqual(pidof("non-existing"), set())
 

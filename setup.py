@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 # distutils-extra needs porting, pylint: disable=deprecated-module
 import distutils.command.build
 import distutils.command.clean

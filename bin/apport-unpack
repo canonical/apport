@@ -12,6 +12,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 import argparse
 import gettext
 import gzip
@@ -35,17 +38,17 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_report(report: str) -> problem_report.ProblemReport:
-    pr = problem_report.ProblemReport()
-    if report == "-":
-        pr.load(sys.stdin, binary=False)
-    elif report.endswith(".gz"):
-        with gzip.open(report, "rb") as f:
-            pr.load(f, binary=False)
+def load_report(report_filename: str) -> problem_report.ProblemReport:
+    report = problem_report.ProblemReport()
+    if report_filename == "-":
+        report.load(sys.stdin, binary=False)
+    elif report_filename.endswith(".gz"):
+        with gzip.open(report_filename, "rb") as report_file:
+            report.load(report_file, binary=False)
     else:
-        with open(report, "rb") as f:
-            pr.load(f, binary=False)
-    return pr
+        with open(report_filename, "rb") as report_file:
+            report.load(report_file, binary=False)
+    return report
 
 
 def main():
@@ -64,25 +67,25 @@ def main():
 
     bin_keys = []
     try:
-        pr = load_report(args.report)
+        report = load_report(args.report)
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
-    for key, value in pr.items():
+    for key, value in report.items():
         if value is None:
             bin_keys.append(key)
             continue
-        with open(os.path.join(args.target_directory, key), "wb") as f:
+        with open(os.path.join(args.target_directory, key), "wb") as key_file:
             if isinstance(value, str):
-                f.write(value.encode("UTF-8"))
+                key_file.write(value.encode("UTF-8"))
             else:
-                f.write(value)
+                key_file.write(value)
     try:
         if args.report.endswith(".gz"):
-            with gzip.open(args.report, "rb") as f:
-                pr.extract_keys(f, bin_keys, args.target_directory)
+            with gzip.open(args.report, "rb") as key_file:
+                report.extract_keys(key_file, bin_keys, args.target_directory)
         else:
-            with open(args.report, "rb") as f:
-                pr.extract_keys(f, bin_keys, args.target_directory)
+            with open(args.report, "rb") as key_file:
+                report.extract_keys(key_file, bin_keys, args.target_directory)
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
 

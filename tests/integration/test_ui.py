@@ -1,4 +1,6 @@
 # pylint: disable=too-many-lines
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
 
 import contextlib
 import errno

@@ -21,9 +21,9 @@ import apport.hookutils
 def add_info(report, ui):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals
-    nm = apport.hookutils.nonfree_kernel_modules()
-    if nm:
-        report["NonfreeKernelModules"] = " ".join(nm)
+    nonfree_modules = apport.hookutils.nonfree_kernel_modules()
+    if nonfree_modules:
+        report["NonfreeKernelModules"] = " ".join(nonfree_modules)
 
     # check for low space
     mounts = {"/": "system", "/var": "/var", "/tmp": "/tmp"}
@@ -35,10 +35,10 @@ def add_info(report, ui):
 
     for mount, mount_name in mounts.items():
         try:
-            st = os.statvfs(mount)
+            stat = os.statvfs(mount)
         except FileNotFoundError:
             continue
-        free_mb = st.f_bavail * st.f_frsize / 1000000
+        free_mb = stat.f_bavail * stat.f_frsize / 1000000
 
         if free_mb < treshold:
             report["UnreportableReason"] = (

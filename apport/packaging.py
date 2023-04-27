@@ -260,8 +260,8 @@ class PackageInfo:
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         """
         try:
-            with open(self.configuration, encoding="utf-8") as f:
-                conf = f.read()
+            with open(self.configuration, encoding="utf-8") as config_file:
+                conf = config_file.read()
         except OSError:
             # if the file does not exist, assume it's enabled
             return True
@@ -360,14 +360,14 @@ class PackageInfo:
         work, but might be slow for your backend, so you might want to
         reimplement this.
         """
-        for p in self.package_name_glob("*"):
-            if not self.is_distro_package(p):
+        for package in self.package_name_glob("*"):
+            if not self.is_distro_package(package):
                 continue
             try:
-                self.get_version(p)
+                self.get_version(package)
                 continue
             except ValueError:
-                return p
+                return package
         return None
 
     _os_version = None

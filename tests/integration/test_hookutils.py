@@ -1,3 +1,6 @@
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 import locale
 import os
 import re

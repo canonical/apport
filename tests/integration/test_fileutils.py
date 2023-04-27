@@ -1,3 +1,6 @@
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 import os
 import pwd
 import shutil

@@ -23,8 +23,8 @@ def enabled():
         # pylint: disable=import-outside-toplevel; for Python starup time
         import re
 
-        with open(CONFIG, encoding="utf-8") as f:
-            conf = f.read()
+        with open(CONFIG, encoding="utf-8") as config_file:
+            conf = config_file.read()
         return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
     except OSError:
         # if the file does not exist, assume it's enabled
@@ -82,7 +82,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
         if not likely_packaged(binary):
             return
 
-        pr = apport.report.Report()
+        report = apport.report.Report()
 
         # special handling of dbus-python exceptions
         if hasattr(exc_obj, "get_dbus_name"):
@@ -93,35 +93,35 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
                 # (LP #914220)
                 return
             if name == "org.freedesktop.DBus.Error.ServiceUnknown":
-                dbus_service_unknown_analysis(exc_obj, pr)
+                dbus_service_unknown_analysis(exc_obj, report)
             else:
-                pr["_PythonExceptionQualifier"] = name
+                report["_PythonExceptionQualifier"] = name
 
         # disambiguate OSErrors with errno:
         if exc_type == OSError and exc_obj.errno is not None:
-            pr["_PythonExceptionQualifier"] = str(exc_obj.errno)
+            report["_PythonExceptionQualifier"] = str(exc_obj.errno)
 
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
         tb_file = io.StringIO()
         traceback.print_exception(exc_type, exc_obj, exc_tb, file=tb_file)
-        pr["Traceback"] = tb_file.getvalue().strip()
-        pr.add_proc_info(extraenv=["PYTHONPATH", "PYTHONHOME"])
-        pr.add_user_info()
+        report["Traceback"] = tb_file.getvalue().strip()
+        report.add_proc_info(extraenv=["PYTHONPATH", "PYTHONHOME"])
+        report.add_user_info()
         # override the ExecutablePath with the script that was actually running
-        pr["ExecutablePath"] = binary
-        if "ExecutableTimestamp" in pr:
-            pr["ExecutableTimestamp"] = str(int(os.stat(binary).st_mtime))
+        report["ExecutablePath"] = binary
+        if "ExecutableTimestamp" in report:
+            report["ExecutableTimestamp"] = str(int(os.stat(binary).st_mtime))
         try:
-            pr["PythonArgs"] = "%r" % sys.argv
+            report["PythonArgs"] = "%r" % sys.argv
         except AttributeError:
             pass
-        if pr.check_ignored():
+        if report.check_ignored():
             return
 
         with contextlib.suppress(SystemError, ValueError):
-            pr.add_package_info()
-        pr["_HooksRun"] = "no"
+            report.add_package_info()
+        report["_HooksRun"] = "no"
 
         report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
         try:
@@ -133,8 +133,8 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
         # get the uid for now, user name later
         pr_filename = f"{report_dir}/{mangled_program}.{os.getuid()}.crash"
         if os.path.exists(pr_filename):
-            increment_crash_counter(pr, pr_filename)
-            if should_skip_crash(pr, pr_filename):
+            increment_crash_counter(report, pr_filename)
+            if should_skip_crash(report, pr_filename):
                 return
             # remove the old file, so that we can create the new one with
             # os.O_CREAT|os.O_EXCL
@@ -143,8 +143,8 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
         with os.fdopen(
             os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),
             "wb",
-        ) as f:
-            pr.write(f)
+        ) as report_file:
+            report.write(report_file)
 
     finally:
         # resume original processing to get the default behaviour,
@@ -163,11 +163,11 @@ def dbus_service_unknown_analysis(exc_obj, report):
     from glob import glob
 
     # determine D-BUS name
-    m = re.search(
+    match = re.search(
         r"name\s+(\S+)\s+was not provided by any .service",
         exc_obj.get_dbus_message(),
     )
-    if not m:
+    if not match:
         if sys.stderr:
             sys.stderr.write(
                 "Error: cannot parse D-BUS name from exception: "
@@ -175,28 +175,28 @@ def dbus_service_unknown_analysis(exc_obj, report):
             )
             return
 
-    dbus_name = m.group(1)
+    dbus_name = match.group(1)
 
     # determine .service file and Exec name for the D-BUS name
     services = []  # tuples of (service file, exe name, running)
-    for f in glob("/usr/share/dbus-1/*services/*.service"):
-        cp = ConfigParser(interpolation=None)
-        cp.read(f, encoding="UTF-8")
+    for service_file in glob("/usr/share/dbus-1/*services/*.service"):
+        service = ConfigParser(interpolation=None)
+        service.read(service_file, encoding="UTF-8")
         try:
-            if cp.get("D-BUS Service", "Name") == dbus_name:
-                exe = cp.get("D-BUS Service", "Exec")
+            if service.get("D-BUS Service", "Name") == dbus_name:
+                exe = service.get("D-BUS Service", "Exec")
                 running = (
                     subprocess.call(
                         ["pidof", "-sx", exe], stdout=subprocess.PIPE
                     )
                     == 0
                 )
-                services.append((f, exe, running))
+                services.append((service_file, exe, running))
         except (NoSectionError, NoOptionError):
             if sys.stderr:
                 sys.stderr.write(
                     "Invalid D-BUS .service file %s: %s"
-                    % (f, exc_obj.get_dbus_message())
+                    % (service_file, exc_obj.get_dbus_message())
                 )
             continue
 

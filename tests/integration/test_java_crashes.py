@@ -20,7 +20,7 @@ from tests.paths import get_data_directory, local_test_environment
 
 
 @skip_if_command_is_missing("java")
-class T(unittest.TestCase):
+class TestJavaCrashes(unittest.TestCase):
     def setUp(self):
         self.env = os.environ | local_test_environment()
         datadir = get_data_directory()
@@ -91,19 +91,21 @@ class T(unittest.TestCase):
         """Check that we have one crash report, and verify its contents."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "did not create a crash report")
-        r = apport.report.Report()
-        with open(reports[0], "rb") as f:
-            r.load(f)
-        self.assertEqual(r["ProblemType"], "Crash")
-        self.assertTrue(r["ProcCmdline"].startswith("java -classpath"), r)
+        report = apport.report.Report()
+        with open(reports[0], "rb") as report_file:
+            report.load(report_file)
+        self.assertEqual(report["ProblemType"], "Crash")
         self.assertTrue(
-            r["StackTrace"].startswith(
+            report["ProcCmdline"].startswith("java -classpath"), report
+        )
+        self.assertTrue(
+            report["StackTrace"].startswith(
                 "java.lang.RuntimeException: Can't catch this"
             )
         )
         if ".jar!" in main_file:
-            self.assertEqual(r["MainClassUrl"], "jar:file:" + main_file)
+            self.assertEqual(report["MainClassUrl"], "jar:file:" + main_file)
         else:
-            self.assertEqual(r["MainClassUrl"], "file:" + main_file)
-        self.assertIn("DistroRelease", r)
-        self.assertIn("ProcCwd", r)
+            self.assertEqual(report["MainClassUrl"], "file:" + main_file)
+        self.assertIn("DistroRelease", report)
+        self.assertIn("ProcCwd", report)

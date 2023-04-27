@@ -36,13 +36,13 @@ def main():
     # read from the JVM process a sequence of key, value delimited by null
     # bytes
     items = sys.stdin.read().split("\0")
-    d = {}
+    data = {}
     while items:
         key = items.pop(0)
         if not items:
             break
         value = items.pop(0)
-        d[key] = value
+        data[key] = value
 
     # create report
     report = apport.report.Report(problem_type="Crash")
@@ -57,7 +57,7 @@ def main():
     report.add_user_info()
 
     # add in data which was fed to us from the JVM process
-    for key, value in d.items():
+    for key, value in data.items():
         report[key] = value
 
     # Add an ExecutablePath pointing to the file where the main class resides
@@ -81,8 +81,8 @@ def main():
     report["Title"] = make_title(report)
 
     try:
-        with apport.fileutils.make_report_file(report) as f:
-            report.write(f)
+        with apport.fileutils.make_report_file(report) as report_file:
+            report.write(report_file)
     except OSError as error:
         apport.fatal("Cannot create report: %s", str(error))
     return 0

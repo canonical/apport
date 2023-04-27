@@ -15,6 +15,9 @@
 #    w3m, lynx: do not work
 #    elinks: works
 
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 import errno
 import os
 import re

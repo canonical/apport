@@ -75,16 +75,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # Frame the report in the format the BTS understands
         try:
-            (buggyPackage, buggyVersion) = report["Package"].split(" ")
+            (buggy_package, buggy_version) = report["Package"].split(" ")
         except (KeyError, ValueError):
             return False
 
         with tempfile.NamedTemporaryFile() as temp:
             temp.file.write(
-                ("Package: " + buggyPackage + "\n").encode("UTF-8")
+                ("Package: " + buggy_package + "\n").encode("UTF-8")
             )
             temp.file.write(
-                ("Version: " + buggyVersion + "\n\n\n").encode("UTF-8")
+                ("Version: " + buggy_version + "\n\n\n").encode("UTF-8")
             )
             temp.file.write(
                 ("=============================\n\n").encode("UTF-8")
@@ -116,13 +116,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         msg.add_header("X-Debbugs-CC", self.options["sender"])
         msg.add_header("Usertag", "apport-%s" % report["ProblemType"].lower())
 
-        s = smtplib.SMTP(self.options["smtphost"])
-        s.sendmail(
+        smtp = smtplib.SMTP(self.options["smtphost"])
+        smtp.sendmail(
             self.options["sender"],
             self.options["recipient"],
             msg.as_string().encode("UTF-8"),
         )
-        s.quit()
+        smtp.quit()
         return True
 
     def get_comment_url(self, report, handle):

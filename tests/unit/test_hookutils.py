@@ -7,7 +7,7 @@ import unittest.mock
 import apport.hookutils
 
 
-class T(unittest.TestCase):
+class TestHookutils(unittest.TestCase):
     @unittest.mock.patch("apport.hookutils.root_command_output")
     def test_attach_dmesg(self, root_command_output_mock):
         """attach_dmesg()"""
