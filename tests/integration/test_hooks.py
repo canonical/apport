@@ -11,8 +11,10 @@
 
 import datetime
 import os
+import pathlib
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -22,6 +24,9 @@ from tests.paths import get_data_directory, local_test_environment
 
 
 class T(unittest.TestCase):
+    data_dir: pathlib.Path
+    env: dict[str, str]
+
     @classmethod
     def setUpClass(cls):
         cls.data_dir = get_data_directory()
@@ -39,6 +44,17 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = self.orig_report_dir
 
         shutil.rmtree(self.workdir)
+
+    def test_general_hook_generic(self) -> None:
+        """Test running general-hooks/generic.py."""
+        process = subprocess.run(
+            [sys.executable, self.data_dir / "general-hooks" / "generic.py"],
+            check=True,
+            env=self.env,
+            encoding="utf-8",
+            stdout=subprocess.PIPE,
+        )
+        self.assertIn("ProblemType: Crash", process.stdout)
 
     def test_package_hook_nologs(self):
         """package_hook without any log files."""

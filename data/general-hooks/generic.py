@@ -16,9 +16,11 @@ import re
 
 import apport.fileutils
 import apport.hookutils
+import apport.ui
+from problem_report import ProblemReport
 
 
-def add_info(report, ui):
+def add_info(report: ProblemReport, ui: apport.ui.HookUI) -> None:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals
     nm = apport.hookutils.nonfree_kernel_modules()
@@ -125,7 +127,7 @@ Do you want to continue the report process anyway?
 
 
 if __name__ == "__main__":
-    r = {}
-    add_info(r, None)
+    r = ProblemReport()
+    add_info(r, apport.ui.NoninteractiveHookUI())
     for key, value in r.items():
         print(f"{key}: {value}")
