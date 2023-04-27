@@ -202,6 +202,16 @@ class CLIUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
+    def _save_report_in_temp_directory(self) -> str:
+        assert self.report
+        prefix = "apport."
+        if "Package" in self.report:
+            prefix += self.report["Package"].split()[0] + "."
+        (fd, report_file) = tempfile.mkstemp(prefix=prefix, suffix=".apport")
+        with os.fdopen(fd, "wb") as f:
+            self.report.write(f)
+        return report_file
+
     def ui_present_report_details(
         self, allowed_to_report=True, modal_for=None
     ) -> apport.ui.Action:
@@ -255,15 +265,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             if response == save:
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
-                    prefix = "apport."
-                    if "Package" in self.report:
-                        prefix += self.report["Package"].split()[0] + "."
-                    (fd, self.report_file) = tempfile.mkstemp(
-                        prefix=prefix, suffix=".apport"
-                    )
-                    with os.fdopen(fd, "wb") as f:
-                        self.report.write(f)
-
+                    self.report_file = self._save_report_in_temp_directory()
                 print(_("Problem report file:") + " " + self.report_file)
 
             return return_value

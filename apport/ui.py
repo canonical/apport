@@ -348,8 +348,8 @@ class UserInterface:
     def __init__(self, argv: list[str]):
         """Initialize program state and parse command line options."""
         self.gettext_domain = "apport"
-        self.report = None
-        self.report_file = None
+        self.report: typing.Optional[apport.report.Report] = None
+        self.report_file: typing.Optional[str] = None
         self.cur_package = None
         self.offer_restart = False
         self.specified_a_pkg = False

@@ -9,9 +9,11 @@
 
 """Command line Apport user interface tests."""
 
+import io
 import os
 import pathlib
 import unittest
+from gettext import gettext as _
 
 import apport.report
 from tests.helper import import_module_from_file, skip_if_command_is_missing
@@ -61,3 +63,15 @@ class TestApportCli(unittest.TestCase):
             "11\n\n",
             report,
         )
+
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_save_report_in_temp_directory(
+        self, stdout_mock: io.StringIO
+    ) -> None:
+        self.app.report["Package"] = "bash"
+        with unittest.mock.patch.object(
+            apport_cli.CLIDialog, "run"
+        ) as run_mock:
+            run_mock.return_value = 4
+            self.app.ui_present_report_details()
+        self.assertIn(_("Problem report file:"), stdout_mock.getvalue())
