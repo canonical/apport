@@ -18,7 +18,7 @@ from tests.paths import local_test_environment
 
 
 @skip_if_command_is_missing("valgrind")
-class T(unittest.TestCase):
+class TestApportValgrind(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()
@@ -102,8 +102,8 @@ void makeleak(void){
     /*free(leak);*/
 }"""
 
-        with open("memleak.c", "w", encoding="utf-8") as fd:
-            fd.write(code)
+        with open("memleak.c", "w", encoding="utf-8") as soure_file:
+            soure_file.write(code)
         cmd = ["gcc", "-Wall", "-Werror", "-g", "memleak.c", "-o", "memleak"]
         self.assertEqual(
             subprocess.call(cmd), 0, "compiling memleak.c failed."
@@ -148,6 +148,6 @@ void makeleak(void){
             "A log file %s should exist but does not" % logpath,
         )
 
-        with open(logpath, encoding="utf-8") as f:
-            log = f.read()
+        with open(logpath, encoding="utf-8") as log_file:
+            log = log_file.read()
             self.assertIn(exepath, log)

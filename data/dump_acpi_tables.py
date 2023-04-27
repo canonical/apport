@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 import os
 import stat
 import sys

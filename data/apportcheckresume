@@ -27,48 +27,48 @@ def main(argv=None):
         if not packaging.enabled():
             return -1
 
-        pr = apport.report.Report(problem_type="KernelOops")
+        report = apport.report.Report(problem_type="KernelOops")
 
         libdir = "/var/lib/pm-utils"
         flagfile = libdir + "/status"
         stresslog = libdir + "/stress.log"
         hanglog = libdir + "/resume-hang.log"
 
-        pr.add_os_info()
-        pr.add_proc_info()
-        pr.add_user_info()
-        pr.add_package(apport.packaging.get_kernel_package())
+        report.add_os_info()
+        report.add_proc_info()
+        report.add_user_info()
+        report.add_package(apport.packaging.get_kernel_package())
 
         # grab the contents of the suspend/resume flag file
-        attach_file_if_exists(pr, flagfile, "Failure")
+        attach_file_if_exists(report, flagfile, "Failure")
 
         # grab the contents of the suspend/hibernate log file
-        attach_file_if_exists(pr, "/var/log/pm-suspend.log", "SleepLog")
+        attach_file_if_exists(report, "/var/log/pm-suspend.log", "SleepLog")
 
         # grab the contents of the suspend/resume stress test log if present.
-        attach_file_if_exists(pr, stresslog, "StressLog")
+        attach_file_if_exists(report, stresslog, "StressLog")
 
         # Ensure we are appropriately tagged.
-        if "Failure" in pr:
-            pr.add_tags(["resume ", pr["Failure"]])
+        if "Failure" in report:
+            report.add_tags(["resume ", report["Failure"]])
 
             # Record the failure mode.
-            pr["Failure"] += "/resume"
+            report["Failure"] += "/resume"
 
         # If we had a late hang pull in the resume-hang logfile.  Also
         # add an additional tag so we can pick these out.
         if os.path.exists(hanglog):
-            attach_file_if_exists(pr, hanglog, "ResumeHangLog")
-            pr.add_tags(["resume-late-hang"])
+            attach_file_if_exists(report, hanglog, "ResumeHangLog")
+            report.add_tags(["resume-late-hang"])
 
         # Generate a sensible report message.
-        if pr.get("Failure") == "suspend/resume":
-            pr["Annotation"] = _(
+        if report.get("Failure") == "suspend/resume":
+            report["Annotation"] = _(
                 "This occurred during a previous suspend,"
                 " and prevented the system from resuming properly."
             )
         else:
-            pr["Annotation"] = _(
+            report["Annotation"] = _(
                 "This occurred during a previous hibernation,"
                 " and prevented the system from resuming properly."
             )
@@ -76,13 +76,13 @@ def main(argv=None):
         # If we had a late hang make sure the dialog is clear that they may
         # not have noticed.  Also update the bug title so we notice.
         if os.path.exists(hanglog):
-            pr["Annotation"] += "  " + _(
+            report["Annotation"] += "  " + _(
                 "The resume processing hung very near the end"
                 " and will have appeared to have completed normally."
             )
-            pr["Failure"] = "late resume"
+            report["Failure"] = "late resume"
 
-        if pr.check_ignored():
+        if report.check_ignored():
             return 0
 
         nowtime = datetime.datetime.now()
@@ -93,7 +93,7 @@ def main(argv=None):
             os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),
             "wb",
         ) as report_file:
-            pr.write(report_file)
+            report.write(report_file)
         return 0
     except Exception:
         print("apportcheckresume failed")

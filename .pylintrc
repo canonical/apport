@@ -10,6 +10,12 @@ extension-pkg-whitelist=apt_pkg  # wokeignore:rule=whitelist
 persistent=no
 
 
+[BASIC]
+
+# Good variable names which should always be accepted, separated by a comma.
+good-names=i,j,k,lp,ui,_
+
+
 [MESSAGES CONTROL]
 
 # Disable the message, report, category or checker with the given id(s). You
@@ -25,7 +31,6 @@ disable=bad-option-value,fixme,
   # TODO: Fix all following disabled checks!
   consider-using-f-string,
   duplicate-code,
-  invalid-name,
   missing-docstring,
 
 

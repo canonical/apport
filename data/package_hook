@@ -65,27 +65,27 @@ def main():
     options = parse_args()
 
     # create report
-    pr = apport.Report("Package")
-    pr.add_package(options.package)
-    pr["SourcePackage"] = apport.packaging.get_source(options.package)
-    pr["ErrorMessage"] = (sys.stdin, False)
+    report = apport.Report("Package")
+    report.add_package(options.package)
+    report["SourcePackage"] = apport.packaging.get_source(options.package)
+    report["ErrorMessage"] = (sys.stdin, False)
 
     if options.tags:
-        pr.add_tags(options.tags)
+        report.add_tags(options.tags)
 
     for line in options.logs or []:
         if os.path.isfile(line):
-            pr[mkattrname(line)] = (line,)
+            report[mkattrname(line)] = (line,)
         elif os.path.isdir(line):
-            for f in os.listdir(line):
-                path = os.path.join(line, f)
+            for log_file in os.listdir(line):
+                path = os.path.join(line, log_file)
                 if os.path.isfile(path):
-                    pr[mkattrname(path)] = (path,)
+                    report[mkattrname(path)] = (path,)
 
     # write report
     try:
-        with apport.fileutils.make_report_file(pr) as f:
-            pr.write(f)
+        with apport.fileutils.make_report_file(report) as report_file:
+            report.write(report_file)
     except OSError as error:
         apport.fatal("Cannot create report: %s", str(error))
 

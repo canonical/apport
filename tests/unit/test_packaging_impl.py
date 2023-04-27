@@ -6,7 +6,7 @@ import unittest.mock
 from apport.packaging_impl import determine_packaging_implementation
 
 
-class T(unittest.TestCase):
+class TestPackagingImpl(unittest.TestCase):
     @unittest.mock.patch("apport.packaging_impl.freedesktop_os_release")
     def test_determine_ubuntu(self, os_release_mock):
         os_release_mock.return_value = {

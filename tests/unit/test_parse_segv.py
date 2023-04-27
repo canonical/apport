@@ -131,7 +131,7 @@ DISASM = """\
 """
 
 
-class T(unittest.TestCase):
+class TestHookParseSegv(unittest.TestCase):
     """Test Segfault Parser."""
 
     def test_invalid_00_registers(self):

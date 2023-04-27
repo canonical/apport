@@ -9,6 +9,10 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
+
 import os
 import shutil
 import tempfile

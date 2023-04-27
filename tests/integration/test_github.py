@@ -19,7 +19,7 @@ except ImportError as error:
 
 
 @unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
-class T(unittest.TestCase):
+class TestGitHub(unittest.TestCase):
     # pylint: disable=protected-access
 
     def setUp(self):
@@ -58,9 +58,9 @@ class T(unittest.TestCase):
         nodata = {}
         snapdata = {"SnapGitOwner": "gimli", "SnapGitName": "axe"}
 
-        with self.github as g:
-            self.crashdb.github = g
-            self.crashdb_barren.github = g
+        with self.github as github:
+            self.crashdb.github = github
+            self.crashdb_barren.github = github
 
             # Snap fields are not set and the database specifies no
             # norepository_{owner,name}
@@ -111,21 +111,21 @@ class T(unittest.TestCase):
         # No __enter__, no authentication data
         self.assertRaises(RuntimeError, self.github.authentication_complete)
         self.message_cb.assert_not_called()
-        with self.github as g:
+        with self.github as github:
             # Error message missing
-            self.assertRaises(RuntimeError, g.authentication_complete)
+            self.assertRaises(RuntimeError, github.authentication_complete)
             self.message_cb.assert_called_with("Login required", ANY)
             # Error message awry
-            self.assertRaises(RuntimeError, g.authentication_complete)
+            self.assertRaises(RuntimeError, github.authentication_complete)
             # Still not authorized
-            self.assertFalse(g.authentication_complete())
+            self.assertFalse(github.authentication_complete())
             # Slow down!
-            self.assertFalse(g.authentication_complete())
+            self.assertFalse(github.authentication_complete())
             # Access token OK
-            self.assertTrue(g.authentication_complete())
-        with self.github as g:
+            self.assertTrue(github.authentication_complete())
+        with self.github as github:
             # Expired (requires __enter__ again to update __expiry).
-            self.assertRaises(RuntimeError, g.authentication_complete)
+            self.assertRaises(RuntimeError, github.authentication_complete)
             self.message_cb.assert_called_with(
                 "Failed login",
                 "Github authentication expired. Please try again.",

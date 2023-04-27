@@ -9,11 +9,11 @@ except ImportError as error:
     IMPORT_ERROR = error
 
 
-some_id = "a654870577ad2a2ab5b1"
+SOME_ID = "a654870577ad2a2ab5b1"
 
 
 @unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
-class T(unittest.TestCase):
+class TestGitHubQuery(unittest.TestCase):
     def setUp(self):
         self.crashdb = self._get_gh_database("Lorem", "Ipsum")
         self.message_cb = Mock()
@@ -23,10 +23,10 @@ class T(unittest.TestCase):
 
     def test_api_authentication(self):
         """Test if we can contact Github authentication service."""
-        with self.github as g:
-            data = {"client_id": some_id, "scope": "public_repo"}
+        with self.github as github:
+            data = {"client_id": SOME_ID, "scope": "public_repo"}
             url = "https://github.com/login/device/code"
-            response = g.api_authentication(url, data)
+            response = github.api_authentication(url, data)
             # Sample response:
             # {
             #     'device_code': '35fe1f072913d46c00ad3e4a83e57facfb758f67',
@@ -49,7 +49,7 @@ class T(unittest.TestCase):
                 "impl": "github",
                 "repository_owner": repository_owner,
                 "repository_name": repository_name,
-                "github_app_id": some_id,
+                "github_app_id": SOME_ID,
                 "labels": ["apport"],
             },
         )

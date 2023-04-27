@@ -41,8 +41,8 @@ def memdbg(checkpoint):
         return
 
     memstat = {}
-    with open("/proc/self/status", encoding="utf-8") as f:
-        for line in f:
+    with open("/proc/self/status", encoding="utf-8") as status_file:
+        for line in status_file:
             if line.startswith("Vm"):
                 (field, size, _) = line.split()
                 memstat[field[:-1]] = int(size) / 1024.0

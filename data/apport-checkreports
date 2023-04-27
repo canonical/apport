@@ -12,6 +12,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 import argparse
 import sys
 
@@ -38,8 +41,8 @@ else:
     reports = get_new_reports()
 
 if len(reports) > 0:
-    for r in reports:
-        print(r.split(".")[0].split("_")[-1])
+    for report in reports:
+        print(report.split(".")[0].split("_")[-1])
     if apport.packaging.enabled():
         sys.exit(0)
     else:

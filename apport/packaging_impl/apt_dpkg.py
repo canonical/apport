@@ -13,6 +13,8 @@ This is used on Debian and derivatives such as Ubuntu.
 # the full text of the license.
 
 # pylint: disable=too-many-lines
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
 
 import contextlib
 import datetime

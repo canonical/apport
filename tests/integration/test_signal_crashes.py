@@ -8,6 +8,8 @@
 # the full text of the license.
 
 # pylint: disable=too-many-lines
+# TODO: Address following pylint complaints
+# pylint: disable=invalid-name
 
 import argparse
 import collections

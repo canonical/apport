@@ -21,7 +21,7 @@ import apport.report
 from tests.paths import get_data_directory, local_test_environment
 
 
-class T(unittest.TestCase):
+class TestRecoverableProblem(unittest.TestCase):
     def setUp(self):
         self.env = os.environ | local_test_environment()
         self.report_dir = tempfile.mkdtemp()

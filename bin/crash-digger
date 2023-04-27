@@ -9,6 +9,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 import argparse
 import errno
 import os
@@ -313,11 +316,11 @@ def main():
 
     if opts.lockfile:
         try:
-            f = os.open(
+            lock_file = os.open(
                 opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666
             )
-            os.write(f, ("%u\n" % os.getpid()).encode())
-            os.close(f)
+            os.write(lock_file, ("%u\n" % os.getpid()).encode())
+            os.close(lock_file)
         except OSError as error:
             if error.errno == errno.EEXIST:
                 sys.exit(0)
