@@ -1925,6 +1925,20 @@ int main() { return f(42); }
         out = apport.report._command_output(["env"], env=fake_env)
         self.assertIn("GCONV_PATH", out)
 
+    def test_command_output_timeout(self):
+        with self.assertRaisesRegex(
+            OSError, "timed out after 0.1 seconds: fail$"
+        ):
+            apport.report._command_output(
+                ["sh", "-c", "echo fail; sleep 3600"], timeout=0.1
+            )
+
+    def test_command_output_timeout_no_output(self):
+        with self.assertRaisesRegex(
+            OSError, "timed out after 0.1 seconds with no stdout"
+        ):
+            apport.report._command_output(["sleep", "3600"], timeout=0.1)
+
     def test_command_output_raises_error(self):
         with self.assertRaisesRegex(OSError, "failed with exit code 1"):
             apport.report._command_output(["false"])

@@ -154,7 +154,9 @@ def _read_maps(proc_pid_fd):
 
 
 def _command_output(
-    command: list[str], env: typing.Optional[dict[str, str]] = None
+    command: list[str],
+    env: typing.Optional[dict[str, str]] = None,
+    timeout: float = 1800,
 ) -> str:
     """Run command and capture its output.
 
@@ -172,12 +174,16 @@ def _command_output(
             errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            timeout=1800,
+            timeout=timeout,
         )
     except subprocess.TimeoutExpired as error:
+        if error.stdout:
+            output = f": {error.stdout.decode().rstrip()}"
+        else:
+            output = " with no stdout"
         raise OSError(
             f"Error: command {str(error.cmd)} timed out"
-            f" after {error.timeout} seconds: {error.stdout.rstrip()}"
+            f" after {error.timeout} seconds{output}"
         ) from error
     if sp.returncode == 0:
         return sp.stdout.rstrip()
