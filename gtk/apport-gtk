@@ -233,6 +233,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     ) -> apport.ui.Action:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        assert self.report
         icon = None
         self.collect_called = False
         report_type = self.report.get("ProblemType")
