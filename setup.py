@@ -33,7 +33,7 @@ class build_java_subdir(distutils.core.Command):
     """Java crash handler build command."""
 
     description = "Compile java components of Apport"
-    user_options = []
+    user_options: list[tuple[str, str, str]] = []
 
     def initialize_options(self):
         pass
@@ -137,7 +137,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
 #
 
 optional_data_files = []
-cmdclass = {"install": install_fix_hashbangs}
+cmdclass: dict[str, object] = {"install": install_fix_hashbangs}
 
 # if we have Java available, build the Java crash handler
 try:

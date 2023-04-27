@@ -20,6 +20,8 @@ from tests.paths import local_test_environment
 
 
 class TestApportUnpack(unittest.TestCase):
+    env: dict[str, str]
+
     @classmethod
     def setUpClass(cls):
         cls.env = (
