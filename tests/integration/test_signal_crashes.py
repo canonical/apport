@@ -788,6 +788,31 @@ class T(unittest.TestCase):
             report["ExecutablePath"], os.path.realpath("/bin/ping")
         )
 
+    @unittest.mock.patch("os.readlink")
+    def test_is_not_same_ns(
+        self, readlink_mock: unittest.mock.MagicMock
+    ) -> None:
+        readlink_mock.side_effect = ["mnt:[1]", "mnt:[2]"]
+        open_mock = unittest.mock.mock_open(read_data="0::/user.slice\n")
+        command = [self.TEST_EXECUTABLE] + self.TEST_ARGS
+        with subprocess.Popen(command) as test_process, unittest.mock.patch(
+            "builtins.open", open_mock
+        ):
+            try:
+                same_ns = apport_binary.is_same_ns(test_process.pid, "mnt")
+                self.assertFalse(same_ns)
+            finally:
+                test_process.kill()
+        readlink_mock.assert_has_calls(
+            [
+                unittest.mock.call(f"/proc/{test_process.pid}/ns/mnt"),
+                unittest.mock.call("/proc/self/ns/mnt"),
+            ]
+        )
+        open_mock.assert_called_with(
+            f"/proc/{test_process.pid}/cgroup", encoding="utf-8"
+        )
+
     #
     # Helper methods
     #
