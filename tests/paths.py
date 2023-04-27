@@ -9,7 +9,7 @@ _DATADIR = _SRCDIR / "data"
 
 
 def get_data_directory(
-    local_path: typing.Optional[os.PathLike] = None,
+    local_path: typing.Optional[str] = None,
 ) -> pathlib.Path:
     """Return absolute path for apport's data directory.
 
