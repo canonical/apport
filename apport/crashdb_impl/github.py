@@ -11,9 +11,9 @@
 
 import json
 import time
+import urllib.parse
+import urllib.request
 from dataclasses import dataclass
-
-import requests
 
 import apport
 import apport.crashdb
@@ -32,25 +32,18 @@ class Github:
         self.__expiry = None
         self.message_callback = message_callback
 
-    @staticmethod
-    def _stringify(data: dict) -> str:
-        """Takes a dict and returns it as a string for POSTing."""
-        string = ""
-        for key, value in data.items():
-            string = f"{string}&{key}={value}"
-        return string
-
     def _post(self, url: str, data: str):
         """Posts the given data to the given URL.
         Uses auth token if available"""
         headers = {"Accept": "application/vnd.github.v3+json"}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
+        request = urllib.request.Request(
+            url, data=data.encode("utf-8"), headers=headers, method="POST"
+        )
         try:
-            result = requests.post(
-                url, headers=headers, data=data, timeout=5.0
-            )
-        except requests.RequestException as err:
+            response = urllib.request.urlopen(request, timeout=5.0)
+        except urllib.error.URLError as err:
             self.message_callback(
                 "Failed connection",
                 f"Failed connection to {url}.\n"
@@ -60,11 +53,14 @@ class Github:
         finally:
             self.__last_request = time.time()
 
-        result.raise_for_status()  # Not using UI: the user can't do much here
-        return json.loads(result.text)
+        if 400 <= response.status < 600:
+            # Not using UI: the user can't do much here
+            raise urllib.request.HTTPError(code=response.status)
+
+        return json.loads(response.read())
 
     def api_authentication(self, url: str, data: dict):
-        return self._post(url, self._stringify(data))
+        return self._post(url, urllib.parse.urlencode(data))
 
     def api_open_issue(self, owner: str, repo: str, data: dict):
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
