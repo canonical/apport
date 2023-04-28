@@ -60,6 +60,13 @@ else
     echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
 fi
 
+if type mypy >/dev/null 2>&1; then
+    echo "Running mypy..."
+    mypy --ignore-missing-imports ${PYTHON_FILES}
+else
+    echo "Skipping mypy tests, mypy is not installed"
+fi
+
 if type pylint >/dev/null 2>&1; then
     echo "Running pylint..."
     pylint ${PYTHON_FILES} ${PYTHON_SCRIPTS}

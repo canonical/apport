@@ -698,8 +698,14 @@ class T(unittest.TestCase):
         with unittest.mock.patch.object(
             self.ui.crashdb, "upload"
         ) as upload_mock:
+            # False positive for hdrs in urllib.error.HTTPError
+            # See https://github.com/python/typeshed/issues/10092
             upload_mock.side_effect = urllib.error.HTTPError(
-                "https://example.com/", 502, "Bad Gateway", {}, None
+                "https://example.com/",
+                502,
+                "Bad Gateway",
+                {},  # type: ignore
+                fp=None,
             )
             self.ui.file_report()
         self.assertEqual(self.ui.msg_severity, "error")

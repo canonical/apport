@@ -152,11 +152,12 @@ def run_as_real_user(
     if get_user_env:
         env |= _get_users_environ(uid)
     env["HOME"] = pwuid.pw_dir
+    # mypy on Ubuntu 22.04 and 22.10 does not know user and groups
     subprocess.run(
         args,
         check=False,
         env=env,
-        user=uid,
+        user=uid,  # type: ignore
         group=gid,
         extra_groups=os.getgrouplist(pwuid.pw_name, gid),
         **kwargs,
