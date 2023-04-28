@@ -495,7 +495,7 @@ def is_same_ns(pid: int, ns: str) -> bool:
         raise
 
     # check to see if the process is part of the system.slice (LP: #1870060)
-    if os.path.exists(f"/proc/{pid}/cgroup"):
+    with contextlib.suppress(FileNotFoundError):
         with open(f"/proc/{pid}/cgroup", encoding="utf-8") as cgroup:
             for line in cgroup:
                 fields = line.split(":")
