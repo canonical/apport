@@ -60,17 +60,21 @@ except ImportError as error:
 
 
 # TODO: Avoid fiddling with internals of Qt to add translation support
-# pylint: disable=protected-access
-def translate(self, prop):
+def translate(self, prop, notr=None):
+    # pylint: disable=unused-argument
     """Reimplement method from uic to change it to use gettext."""
+    text = prop.text
 
-    if prop.get("notr", None) == "true":
-        return self._cstring(prop)
-    if prop.text is None:
+    if text is None:
         return ""
+
+    if prop.get("notr", notr) == "true":
+        return text
+
     return _(prop.text)
 
 
+# pylint: disable=protected-access
 uic.properties.Properties._string = translate
 # pylint: enable=protected-access
 
