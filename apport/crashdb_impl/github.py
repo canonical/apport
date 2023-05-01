@@ -43,11 +43,6 @@ class Github:
         )
         try:
             with urllib.request.urlopen(request, timeout=5.0) as response:
-                if 400 <= response.status < 600:
-                    # Not using UI: the user can't do much here
-                    raise urllib.request.HTTPError(
-                        url, response.status, "", headers, None
-                    )
                 return json.loads(response.read())
         except urllib.error.URLError as err:
             self.message_callback(
