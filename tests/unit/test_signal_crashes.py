@@ -9,7 +9,6 @@
 
 """Unit tests for data/apport."""
 
-import contextlib
 import errno
 import io
 import os
@@ -18,7 +17,6 @@ import shutil
 import sys
 import tempfile
 import time
-import typing
 import unittest
 
 import apport.fileutils
@@ -44,13 +42,6 @@ class TestApport(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.workdir)
         apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
         self.report_dir = pathlib.Path(apport.fileutils.report_dir)
-
-    @staticmethod
-    @contextlib.contextmanager
-    def _open_dir(path: str) -> typing.Generator[int, None, None]:
-        dir_fd = os.open(path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-        yield dir_fd
-        os.close(dir_fd)
 
     @unittest.mock.patch("subprocess.run")
     def test_check_kernel_crash(self, run_mock):
@@ -173,9 +164,13 @@ class TestApport(unittest.TestCase):
 
     def test_consistency_checks_replaced_process(self):
         """Test consistency_checks() for a replaced crash process ID."""
-        options = apport_binary.parse_arguments(["-p", str(os.getpid())])
+        pid = os.getpid()
+        options = apport_binary.parse_arguments(["-p", str(pid)])
         now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
-        self.assertFalse(apport_binary.consistency_checks(options, now))
+        with apport_binary.ProcPid(pid) as proc_pid:
+            self.assertFalse(
+                apport_binary.consistency_checks(options, now, proc_pid)
+            )
 
     def test_consistency_checks_mismatching_uid(self):
         """Test consistency_checks() for a mitmatching UID."""
@@ -190,9 +185,12 @@ class TestApport(unittest.TestCase):
                 str(os.getgid() + 1),
             ]
         )
-        # TODO: Get rid of global variables from get_pid_info
-        apport_binary.get_pid_info(pid)
-        self.assertFalse(apport_binary.consistency_checks(options, 1))
+        with apport_binary.ProcPid(pid) as proc_pid:
+            # TODO: Get rid of global variables from get_pid_info
+            apport_binary.get_pid_info(proc_pid)
+            self.assertFalse(
+                apport_binary.consistency_checks(options, 1, proc_pid)
+            )
 
     def test_stop(self):
         """Test stopping Apport crash handler."""
@@ -223,10 +221,10 @@ class TestApport(unittest.TestCase):
             env.write_text(
                 "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
             )
-            with self._open_dir(tmpdir) as proc_pid_fd:
-                # TODO: Get rid of global variables from get_pid_info
-                apport_binary.proc_pid_fd = proc_pid_fd
-                self.assertEqual(apport_binary.is_closing_session(), True)
+            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
+                self.assertEqual(
+                    apport_binary.is_closing_session(proc_pid), True
+                )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 
@@ -235,20 +233,20 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DISPLAY=:0\0")
-            with self._open_dir(tmpdir) as proc_pid_fd:
-                # TODO: Get rid of global variables from get_pid_info
-                apport_binary.proc_pid_fd = proc_pid_fd
-                self.assertEqual(apport_binary.is_closing_session(), False)
+            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
+                self.assertEqual(
+                    apport_binary.is_closing_session(proc_pid), False
+                )
 
     def test_is_closing_session_no_determine_socket(self) -> None:
         """Test is_closing_session() cannot determine D-Bus socket."""
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:/run/user/42/bus\0")
-            with self._open_dir(tmpdir) as proc_pid_fd:
-                # TODO: Get rid of global variables from get_pid_info
-                apport_binary.proc_pid_fd = proc_pid_fd
-                self.assertEqual(apport_binary.is_closing_session(), False)
+            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
+                self.assertEqual(
+                    apport_binary.is_closing_session(proc_pid), False
+                )
 
     def test_is_closing_session_socket_not_exists(self) -> None:
         """Test is_closing_session() where D-Bus socket does not exist."""
@@ -258,10 +256,10 @@ class TestApport(unittest.TestCase):
             env.write_text(
                 "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
             )
-            with self._open_dir(tmpdir) as proc_pid_fd:
-                # TODO: Get rid of global variables from get_pid_info
-                apport_binary.proc_pid_fd = proc_pid_fd
-                self.assertEqual(apport_binary.is_closing_session(), False)
+            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
+                self.assertEqual(
+                    apport_binary.is_closing_session(proc_pid), False
+                )
 
     @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
     @unittest.mock.patch("os.setresuid", unittest.mock.MagicMock())
@@ -284,10 +282,10 @@ class TestApport(unittest.TestCase):
             env.write_text(
                 "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
             )
-            with self._open_dir(tmpdir) as proc_pid_fd:
-                # TODO: Get rid of global variables from get_pid_info
-                apport_binary.proc_pid_fd = proc_pid_fd
-                self.assertEqual(apport_binary.is_closing_session(), False)
+            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
+                self.assertEqual(
+                    apport_binary.is_closing_session(proc_pid), False
+                )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 

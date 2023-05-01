@@ -49,6 +49,31 @@ import apport.report
 LOG_FORMAT = "%(levelname)s: apport (pid %(process)s) %(asctime)s: %(message)s"
 
 
+class ProcPid(contextlib.ContextDecorator):
+    """Context manager to access /proc/<pid>."""
+
+    def __init__(self, pid: int, path: typing.Optional[str] = None) -> None:
+        self.path = path or f"/proc/{pid}"
+        self.fd: typing.Optional[int] = None
+
+    def __enter__(self):
+        self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+        return self
+
+    def __exit__(self, *exc):
+        if self.fd is not None:
+            os.close(self.fd)
+        return False
+
+    def _opener(self, path, flags: int) -> int:
+        return os.open(path, flags, dir_fd=self.fd)
+
+    def open(self, file: str) -> io.TextIOWrapper:
+        """Open file relative to /proc/<pid> and return a stream."""
+        assert self.fd is not None
+        return open(file, encoding="utf-8", opener=self._opener)
+
+
 def check_lock():
     """Abort if another instance of apport is already running.
 
@@ -84,42 +109,34 @@ def check_lock():
         signal.signal(signal.SIGALRM, original_handler)
 
 
-(pidstat, crash_uid, crash_gid, proc_pid_fd) = (None, None, None, None)
-
-
-def proc_pid_opener(path, flags):
-    return os.open(path, flags, dir_fd=proc_pid_fd)
+(pidstat, crash_uid, crash_gid) = (None, None, None)
 
 
 def get_core_path(
-    options: argparse.Namespace, timestamp: typing.Optional[int] = None
+    options: argparse.Namespace,
+    proc_pid: ProcPid,
+    timestamp: typing.Optional[int] = None,
 ) -> str:
     """Get the path to the core file."""
     return apport.fileutils.get_core_path(
-        options.pid, options.executable_path, crash_uid, timestamp, proc_pid_fd
+        options.pid, options.executable_path, crash_uid, timestamp, proc_pid.fd
     )[1]
 
 
-def get_pid_info(pid: int):
+def get_pid_info(proc_pid: ProcPid) -> None:
     """Read /proc information about pid"""
 
     # pylint: disable=global-statement
-    global pidstat, crash_uid, crash_gid, proc_pid_fd
-
-    proc_pid_fd = os.open(
-        f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-    )
+    global pidstat, crash_uid, crash_gid
 
     # unhandled exceptions on missing or invalidly formatted files are okay
     # here -- we want to know in the log file
-    pidstat = os.stat("stat", dir_fd=proc_pid_fd)
+    pidstat = os.stat("stat", dir_fd=proc_pid.fd)
 
     # determine UID and GID of the target process; do *not* use the owner of
     # /proc/pid/stat, as that will be root for setuid or unreadable programs!
     # (this matters when suid_dumpable is enabled)
-    with open(
-        "status", opener=proc_pid_opener, encoding="utf-8"
-    ) as status_file:
+    with proc_pid.open("status") as status_file:
         contents = status_file.read()
     (crash_uid, crash_gid) = apport.fileutils.get_uid_and_gid(contents)
 
@@ -127,10 +144,10 @@ def get_pid_info(pid: int):
     assert crash_gid is not None, "failed to parse Gid"
 
 
-def get_process_starttime() -> int:
+def get_process_starttime(proc_pid: ProcPid) -> int:
     """Get the starttime of the process using proc_pid_fd"""
 
-    with open("stat", opener=proc_pid_opener, encoding="utf-8") as stat_file:
+    with proc_pid.open("stat") as stat_file:
         contents = stat_file.read()
     return apport.fileutils.get_starttime(contents)
 
@@ -215,8 +232,13 @@ def setup_signals():
 
 
 def write_user_coredump(
-    core_path: str, limit, coredump_fd=None, from_report=None
-):
+    core_path: str,
+    limit: int,
+    proc_pid: ProcPid,
+    coredump_fd=None,
+    from_report=None,
+) -> None:
+    # pylint: disable=too-many-arguments
     """Write the core into a directory if ulimit requests it."""
     logger = logging.getLogger()
 
@@ -239,7 +261,7 @@ def write_user_coredump(
         return
 
     cwd = os.open(
-        "cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid_fd
+        "cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid.fd
     )
 
     try:
@@ -367,14 +389,15 @@ def _run_with_output_limit_and_timeout(
     return stdout, stderr
 
 
-def is_closing_session() -> bool:
+def is_closing_session(proc_pid: ProcPid) -> bool:
     """Check if pid is in a closing user session.
 
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     """
     logger = logging.getLogger()
-    env = apport.fileutils.get_process_environ(proc_pid_fd)
+    assert proc_pid.fd is not None
+    env = apport.fileutils.get_process_environ(proc_pid.fd)
     dbus_addr = env.get("DBUS_SESSION_BUS_ADDRESS")
     if dbus_addr is None:
         logger.error(
@@ -438,7 +461,7 @@ def is_closing_session() -> bool:
     return out.startswith(b"(false,")
 
 
-def is_systemd_watchdog_restart(signum: int):
+def is_systemd_watchdog_restart(signum: int, proc_pid: ProcPid) -> bool:
     """Check if this is a restart by systemd's watchdog"""
 
     if signum != int(signal.SIGABRT) or not os.path.isdir(
@@ -447,7 +470,7 @@ def is_systemd_watchdog_restart(signum: int):
         return False
 
     try:
-        with open("cgroup", opener=proc_pid_opener, encoding="utf-8") as f:
+        with proc_pid.open("cgroup") as f:
             for line in f:
                 if "name=systemd:" in line:
                     unit = line.split("/")[-1].strip()
@@ -859,7 +882,7 @@ def receive_arguments_via_socket() -> argparse.Namespace:
 
 
 def consistency_checks(
-    options: argparse.Namespace, process_start: int
+    options: argparse.Namespace, process_start: int, proc_pid: ProcPid
 ) -> bool:
     """Run consistency checks and return True if all pass."""
     logger = logging.getLogger()
@@ -881,10 +904,10 @@ def consistency_checks(
 
     # check if the executable was modified after the process started (e. g.
     # package got upgraded in between).
-    exe_mtime = os.stat("exe", dir_fd=proc_pid_fd).st_mtime
-    process_mtime = os.lstat("cmdline", dir_fd=proc_pid_fd).st_mtime
+    exe_mtime = os.stat("exe", dir_fd=proc_pid.fd).st_mtime
+    process_mtime = os.lstat("cmdline", dir_fd=proc_pid.fd).st_mtime
     if (
-        not os.path.exists(os.readlink("exe", dir_fd=proc_pid_fd))
+        not os.path.exists(os.readlink("exe", dir_fd=proc_pid.fd))
         or exe_mtime > process_mtime
     ):
         logger.error("executable was modified after program start, ignoring")
@@ -916,18 +939,11 @@ def refine_core_ulimit(options: argparse.Namespace) -> int:
 
 
 def process_crash(options: argparse.Namespace) -> int:
-    # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals
-    # pylint: disable=too-many-return-statements,too-many-statements
-    """Process crash and return exit code."""
-    logger = logging.getLogger()
-
-    coredump_fd = sys.stdin.fileno()
-
     try:
-        get_pid_info(options.pid)
+        with ProcPid(options.pid) as proc_pid:
+            return process_crash_with_proc_pid(options, proc_pid)
     except FileNotFoundError as error:
-        logger.error(
+        logging.getLogger().error(
             "%s not found. "
             "Cannot collect crash information for process %i any more.",
             error.filename,
@@ -935,8 +951,21 @@ def process_crash(options: argparse.Namespace) -> int:
         )
         return 1
 
-    process_start = get_process_starttime()
-    if not consistency_checks(options, process_start):
+
+def process_crash_with_proc_pid(
+    options: argparse.Namespace, proc_pid: ProcPid
+) -> int:
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals
+    # pylint: disable=too-many-return-statements,too-many-statements
+    """Process crash and return exit code."""
+    logger = logging.getLogger()
+
+    coredump_fd = sys.stdin.fileno()
+    get_pid_info(proc_pid)
+
+    process_start = get_process_starttime(proc_pid)
+    if not consistency_checks(options, process_start, proc_pid):
         return 0
 
     logger.info(
@@ -949,11 +978,11 @@ def process_crash(options: argparse.Namespace) -> int:
 
     core_ulimit = refine_core_ulimit(options)
 
-    core_path = get_core_path(options, process_start)
+    core_path = get_core_path(options, proc_pid, process_start)
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
     if options.signal_number == int(signal.SIGQUIT):
-        write_user_coredump(core_path, core_ulimit, coredump_fd)
+        write_user_coredump(core_path, core_ulimit, proc_pid, coredump_fd)
         return 0
 
     info = apport.report.Report("Crash")
@@ -969,14 +998,14 @@ def process_crash(options: argparse.Namespace) -> int:
     ):
         info["ExecutablePath"] = options.executable_path
     else:
-        info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
+        info["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid.fd)
 
     # Drop privileges temporarily to make sure that we don't
     # include information in the crash report that the user should
     # not be allowed to access.
     drop_privileges()
 
-    info.add_proc_info(proc_pid_fd=proc_pid_fd)
+    info.add_proc_info(proc_pid_fd=proc_pid.fd)
 
     if "ExecutablePath" not in info:
         logger.error("could not determine ExecutablePath, aborting")
@@ -1013,7 +1042,7 @@ def process_crash(options: argparse.Namespace) -> int:
             logger.error("executable does not belong to a package, ignoring")
             # check if the user wants a core dump
             recover_privileges()
-            write_user_coredump(core_path, core_ulimit, coredump_fd)
+            write_user_coredump(core_path, core_ulimit, proc_pid, coredump_fd)
             return 0
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
@@ -1024,7 +1053,7 @@ def process_crash(options: argparse.Namespace) -> int:
             options.signal_number,
         )
         recover_privileges()
-        write_user_coredump(core_path, core_ulimit, coredump_fd)
+        write_user_coredump(core_path, core_ulimit, proc_pid, coredump_fd)
         return 0
 
     if info.check_ignored():
@@ -1038,13 +1067,13 @@ def process_crash(options: argparse.Namespace) -> int:
     recover_privileges()
 
     # Do not check closing session for root processes
-    if crash_uid != 0 and crash_gid != 0 and is_closing_session():
+    if crash_uid != 0 and crash_gid != 0 and is_closing_session(proc_pid):
         logger.error("happens for shutting down session, ignoring")
         return 0
 
     # ignore systemd watchdog kills; most often they don't tell us the
     # actual reason (kernel hang, etc.), LP #1433320
-    if is_systemd_watchdog_restart(options.signal_number):
+    if is_systemd_watchdog_restart(options.signal_number, proc_pid):
         logger.error("Ignoring systemd watchdog restart")
         return 0
 
@@ -1061,7 +1090,9 @@ def process_crash(options: argparse.Namespace) -> int:
             skip_msg = apport.fileutils.should_skip_crash(info, report)
             if skip_msg:
                 logger.error("%s", skip_msg)
-                write_user_coredump(core_path, core_ulimit, coredump_fd)
+                write_user_coredump(
+                    core_path, core_ulimit, proc_pid, coredump_fd
+                )
                 return 0
             # remove the old file, so that we can create the new one
             # with os.O_CREAT|os.O_EXCL
@@ -1118,7 +1149,9 @@ def process_crash(options: argparse.Namespace) -> int:
     # the written core file when core_ulimit is > 0 and smaller
     # than the core size.
     reportfile.seek(0)
-    write_user_coredump(core_path, core_ulimit, from_report=reportfile)
+    write_user_coredump(
+        core_path, core_ulimit, proc_pid, from_report=reportfile
+    )
     return 0
 
 
