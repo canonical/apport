@@ -42,7 +42,13 @@ class Github:
             url, data=data.encode("utf-8"), headers=headers, method="POST"
         )
         try:
-            response = urllib.request.urlopen(request, timeout=5.0)
+            with urllib.request.urlopen(request, timeout=5.0) as response:
+                if 400 <= response.status < 600:
+                    # Not using UI: the user can't do much here
+                    raise urllib.request.HTTPError(
+                        url, response.status, "", headers, None
+                    )
+                return json.loads(response.read())
         except urllib.error.URLError as err:
             self.message_callback(
                 "Failed connection",
@@ -52,12 +58,6 @@ class Github:
             raise err
         finally:
             self.__last_request = time.time()
-
-        if 400 <= response.status < 600:
-            # Not using UI: the user can't do much here
-            raise urllib.request.HTTPError(code=response.status)
-
-        return json.loads(response.read())
 
     def api_authentication(self, url: str, data: dict):
         return self._post(url, urllib.parse.urlencode(data))
