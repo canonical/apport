@@ -391,8 +391,8 @@ class ProblemReport(collections.UserDict):
         Files are written in RFC822 format.
         """
         self._assert_bin_mode(file)
-        
-        asckeys, binkeys = self.sort_keys()
+
+        asckeys, binkeys = self.sort_keys(only_new)
 
         # write the ASCII keys first
         for k in asckeys:
@@ -521,8 +521,8 @@ class ProblemReport(collections.UserDict):
 
                 file.write(base64.b64encode(block))
                 file.write(b"\n")
-    
-    def sort_keys(self):
+
+    def sort_keys(self, only_new):
         """
         sort keys into ASCII non-ASCII/binary attachment ones, so that
         the base64 ones appear last in the report
