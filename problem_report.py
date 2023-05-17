@@ -392,7 +392,7 @@ class ProblemReport(collections.UserDict):
         """
         self._assert_bin_mode(file)
 
-        asckeys, binkeys = self.sort_keys(only_new)
+        asckeys, binkeys = self._get_sorted_keys(only_new)
 
         # write the ASCII keys first
         for k in asckeys:
@@ -522,7 +522,9 @@ class ProblemReport(collections.UserDict):
                 file.write(base64.b64encode(block))
                 file.write(b"\n")
 
-    def sort_keys(self, only_new):
+    def _get_sorted_keys(
+        self, only_new: bool
+    ) -> typing.Tuple[list[str], list[str]]:
         """
         sort keys into ASCII non-ASCII/binary attachment ones, so that
         the base64 ones appear last in the report
@@ -555,7 +557,7 @@ class ProblemReport(collections.UserDict):
             asckeys.insert(0, "ProblemType")
         binkeys.sort()
         return asckeys, binkeys
-    
+
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
 
