@@ -525,8 +525,7 @@ class ProblemReport(collections.UserDict):
     def _get_sorted_keys(
         self, only_new: bool
     ) -> typing.Tuple[list[str], list[str]]:
-        """
-        sort keys into ASCII non-ASCII/binary attachment ones, so that
+        """Sort keys into ASCII non-ASCII/binary attachment ones, so that
         the base64 ones appear last in the report
         """
         asckeys = []
