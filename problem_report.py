@@ -392,35 +392,7 @@ class ProblemReport(collections.UserDict):
         """
         self._assert_bin_mode(file)
 
-        # sort keys into ASCII non-ASCII/binary attachment ones, so that
-        # the base64 ones appear last in the report
-        asckeys = []
-        binkeys = []
-        for k in self.data.keys():
-            if only_new and k in self.old_keys:
-                continue
-            v = self.data[k]
-            if hasattr(v, "find"):
-                if self.is_binary(v):
-                    binkeys.append(k)
-                else:
-                    asckeys.append(k)
-            else:
-                if (
-                    not isinstance(v, CompressedValue)
-                    and len(v) >= 2
-                    and not v[1]
-                ):
-                    # force uncompressed
-                    asckeys.append(k)
-                else:
-                    binkeys.append(k)
-
-        asckeys.sort()
-        if "ProblemType" in asckeys:
-            asckeys.remove("ProblemType")
-            asckeys.insert(0, "ProblemType")
-        binkeys.sort()
+        asckeys, binkeys = self._get_sorted_keys(only_new)
 
         # write the ASCII keys first
         for k in asckeys:
@@ -549,6 +521,41 @@ class ProblemReport(collections.UserDict):
 
                 file.write(base64.b64encode(block))
                 file.write(b"\n")
+
+    def _get_sorted_keys(
+        self, only_new: bool
+    ) -> typing.Tuple[list[str], list[str]]:
+        """Sort keys into ASCII non-ASCII/binary attachment ones, so that
+        the base64 ones appear last in the report
+        """
+        asckeys = []
+        binkeys = []
+        for k in self.data.keys():
+            if only_new and k in self.old_keys:
+                continue
+            v = self.data[k]
+            if hasattr(v, "find"):
+                if self.is_binary(v):
+                    binkeys.append(k)
+                else:
+                    asckeys.append(k)
+            else:
+                if (
+                    not isinstance(v, CompressedValue)
+                    and len(v) >= 2
+                    and not v[1]
+                ):
+                    # force uncompressed
+                    asckeys.append(k)
+                else:
+                    binkeys.append(k)
+
+        asckeys.sort()
+        if "ProblemType" in asckeys:
+            asckeys.remove("ProblemType")
+            asckeys.insert(0, "ProblemType")
+        binkeys.sort()
+        return asckeys, binkeys
 
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
