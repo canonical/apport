@@ -394,45 +394,8 @@ class ProblemReport(collections.UserDict):
 
         asckeys, binkeys = self._get_sorted_keys(only_new)
 
-        # write the ASCII keys first
         for k in asckeys:
-            v = self.data[k]
-
-            # if it's a tuple, we have a file reference; read the contents
-            if not hasattr(v, "find"):
-                if len(v) >= 3 and v[2] is not None:
-                    limit = v[2]
-                else:
-                    limit = None
-
-                fail_on_empty = len(v) >= 4 and v[3]
-
-                if hasattr(v[0], "read"):
-                    v = v[0].read()  # file-like object
-                else:
-                    with open(v[0], "rb") as f:  # file name
-                        v = f.read()
-
-                if fail_on_empty and len(v) == 0:
-                    raise OSError("did not get any data for field " + k)
-
-                if limit is not None and len(v) > limit:
-                    del self.data[k]
-                    continue
-
-            if isinstance(v, str):
-                # unicode → str
-                v = v.encode("UTF-8")
-
-            file.write(k.encode("ASCII"))
-            if b"\n" in v:
-                # multiline value
-                file.write(b":\n ")
-                file.write(v.replace(b"\n", b"\n "))
-            else:
-                file.write(b": ")
-                file.write(v)
-            file.write(b"\n")
+            self._write_key_and_ascii_value_to_file(file, k)
 
         # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
@@ -556,6 +519,47 @@ class ProblemReport(collections.UserDict):
             asckeys.insert(0, "ProblemType")
         binkeys.sort()
         return asckeys, binkeys
+
+    def _write_key_and_ascii_value_to_file(
+        self, file: typing.BinaryIO, key: str
+    ) -> None:
+        v = self.data[key]
+
+        # if it's a tuple, we have a file reference; read the contents
+        if not hasattr(v, "find"):
+            if len(v) >= 3 and v[2] is not None:
+                limit = v[2]
+            else:
+                limit = None
+
+            fail_on_empty = len(v) >= 4 and v[3]
+
+            if hasattr(v[0], "read"):
+                v = v[0].read()  # file-like object
+            else:
+                with open(v[0], "rb") as f:  # file name
+                    v = f.read()
+
+            if fail_on_empty and len(v) == 0:
+                raise OSError("did not get any data for field " + key)
+
+            if limit is not None and len(v) > limit:
+                del self.data[key]
+                return
+
+        if isinstance(v, str):
+            # unicode → str
+            v = v.encode("UTF-8")
+
+        file.write(key.encode("ASCII"))
+        if b"\n" in v:
+            # multiline value
+            file.write(b":\n ")
+            file.write(v.replace(b"\n", b"\n "))
+        else:
+            file.write(b": ")
+            file.write(v)
+        file.write(b"\n")
 
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
