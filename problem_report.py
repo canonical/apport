@@ -391,6 +391,29 @@ class ProblemReport(collections.UserDict):
         header += b"\n "
         return header
 
+    def _write_case_direct_value(self, file, k, v):
+        file.write(self._make_header(k))
+
+        crc = zlib.crc32(b"")
+        bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
+
+        crc = zlib.crc32(v, crc)
+        outblock = bc.compress(v)
+        if outblock:
+            file.write(base64.b64encode(outblock))
+            file.write(b"\n ")
+
+        # flush compressor and write the rest
+        size = len(v)
+        block = bc.flush()
+        # append gzip trailer: crc (32 bit) and size (32 bit)
+        if crc:
+            block += struct.pack("<L", crc & 0xFFFFFFFF)
+            block += struct.pack("<L", size & 0xFFFFFFFF)
+
+        file.write(base64.b64encode(block))
+        file.write(b"\n")
+
     def write(self, file, only_new=False):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -431,28 +454,7 @@ class ProblemReport(collections.UserDict):
 
             # direct value
             if hasattr(v, "find"):
-                file.write(self._make_header(k))
-
-                crc = zlib.crc32(b"")
-                bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
-
-                size = len(v)
-                crc = zlib.crc32(v, crc)
-                outblock = bc.compress(v)
-                if outblock:
-                    file.write(base64.b64encode(outblock))
-                    file.write(b"\n ")
-
-                # flush compressor and write the rest
-
-                block = bc.flush()
-                # append gzip trailer: crc (32 bit) and size (32 bit)
-                if crc:
-                    block += struct.pack("<L", crc & 0xFFFFFFFF)
-                    block += struct.pack("<L", size & 0xFFFFFFFF)
-
-                file.write(base64.b64encode(block))
-                file.write(b"\n")
+                self._write_case_direct_value(file, k, v)
 
             # file reference
             else:
