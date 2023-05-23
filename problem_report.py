@@ -376,6 +376,21 @@ class ProblemReport(collections.UserDict):
         block += b"\n"
         file.write(block)
 
+    @staticmethod
+    def _make_header(k):
+        header = k.encode("ASCII")
+        header += b": base64\n "
+
+        gzip_header = (
+            GZIP_HEADER_START
+            + b"\010\000\000\000\000\002\377"
+            + k.encode("UTF-8")
+            + b"\000"
+        )
+        header += base64.b64encode(gzip_header)
+        header += b"\n "
+        return header
+
     def write(self, file, only_new=False):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -416,19 +431,7 @@ class ProblemReport(collections.UserDict):
 
             # direct value
             if hasattr(v, "find"):
-                header = k.encode("ASCII")
-                header += b": base64\n "
-
-                gzip_header = (
-                    GZIP_HEADER_START
-                    + b"\010\000\000\000\000\002\377"
-                    + k.encode("UTF-8")
-                    + b"\000"
-                )
-                header += base64.b64encode(gzip_header)
-                header += b"\n "
-
-                file.write(header)
+                file.write(self._make_header(k))
 
                 crc = zlib.crc32(b"")
                 bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
@@ -455,19 +458,7 @@ class ProblemReport(collections.UserDict):
             else:
                 curr_pos = file.tell()
 
-                header = k.encode("ASCII")
-                header += b": base64\n "
-
-                gzip_header = (
-                    GZIP_HEADER_START
-                    + b"\010\000\000\000\000\002\377"
-                    + k.encode("UTF-8")
-                    + b"\000"
-                )
-                header += base64.b64encode(gzip_header)
-                header += b"\n "
-
-                file.write(header)
+                file.write(self._make_header(k))
 
                 crc = zlib.crc32(b"")
                 bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
