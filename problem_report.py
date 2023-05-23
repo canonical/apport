@@ -431,10 +431,7 @@ class ProblemReport(collections.UserDict):
             if hasattr(v, "find"):
                 size += len(v)
                 crc = zlib.crc32(v, crc)
-                outblock = bc.compress(v)
-                if outblock:
-                    file.write(base64.b64encode(outblock))
-                    file.write(b"\n ")
+                file.write(self._make_compressed_block(v, bc))
             # file reference
             else:
                 if len(v) >= 3 and v[2] is not None:
@@ -458,10 +455,7 @@ class ProblemReport(collections.UserDict):
                             crc = None
                             break
                     if block:
-                        outblock = bc.compress(block)
-                        if outblock:
-                            file.write(base64.b64encode(outblock))
-                            file.write(b"\n ")
+                        file.write(self._make_compressed_block(block, bc))
                     else:
                         break
                 if not hasattr(v[0], "read"):
@@ -484,6 +478,16 @@ class ProblemReport(collections.UserDict):
 
                 file.write(base64.b64encode(block))
                 file.write(b"\n")
+
+    @staticmethod
+    def _make_compressed_block(v: bytes, bc: zlib.compressobj) -> bytes:
+        block = b""
+        outblock = bc.compress(v)
+        if not outblock:
+            return block
+        block += base64.b64encode(outblock)
+        block += b"\n "
+        return block
 
     def _get_sorted_keys(
         self, only_new: bool
