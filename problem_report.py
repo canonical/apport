@@ -368,6 +368,73 @@ class ProblemReport(collections.UserDict):
                 return value
         return value
 
+    def _write_case_file_reference(self, file, k, v):
+        
+        # record current position to roll back to
+        curr_pos = file.tell()
+
+        file.write(self._make_header(k))
+
+        crc = zlib.crc32(b"")
+        bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
+        size = 0
+        
+        if len(v) >= 3 and v[2] is not None:
+            limit = v[2]
+        else:
+            limit = None
+
+        if hasattr(v[0], "read"):
+            f = v[0]  # file-like object
+        else:
+            # hard to change, pylint: disable=consider-using-with
+            f = open(v[0], "rb")  # file name
+
+        while True:
+            block = f.read(1048576)
+            size += len(block)
+            crc = zlib.crc32(block, crc)
+            if limit is not None:
+                if size > limit:
+                    # roll back
+                    file.seek(curr_pos)
+                    file.truncate(curr_pos)
+                    del self.data[k]
+                    crc = None
+                    break
+            if block:
+                outblock = bc.compress(block)
+                if outblock:
+                    file.write(base64.b64encode(outblock))
+                    file.write(b"\n ")
+            else:
+                break
+
+        if not hasattr(v[0], "read"):
+            f.close()
+
+        self._check_size(k, v, size)
+
+        # flush compressor and write the rest
+        if not limit or size <= limit:
+            block = bc.flush()
+            # append gzip trailer: crc (32 bit) and size (32 bit)
+            if crc:
+                block += struct.pack("<L", crc & 0xFFFFFFFF)
+                block += struct.pack("<L", size & 0xFFFFFFFF)
+
+            file.write(base64.b64encode(block))
+            file.write(b"\n")
+
+    @staticmethod
+    def _check_size(k, v, size):
+        if len(v) >= 4 and v[3]:
+            if size == 0:
+                raise OSError(
+                    "did not get any data for field %s from %s"
+                    % (k, str(v[0]))
+                )
+
     @staticmethod
     def _write_case_compressed_value(file, k, v):
         block = k.encode("ASCII")
@@ -450,71 +517,14 @@ class ProblemReport(collections.UserDict):
             # CompressedValue
             if isinstance(v, CompressedValue):
                 self._write_case_compressed_value(file, k, v)
-                continue
 
             # direct value
-            if hasattr(v, "find"):
+            elif hasattr(v, "find"):
                 self._write_case_direct_value(file, k, v)
 
             # file reference
             else:
-                curr_pos = file.tell()
-
-                file.write(self._make_header(k))
-
-                crc = zlib.crc32(b"")
-                bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
-
-                size = 0
-                if len(v) >= 3 and v[2] is not None:
-                    limit = v[2]
-                else:
-                    limit = None
-
-                if hasattr(v[0], "read"):
-                    f = v[0]  # file-like object
-                else:
-                    # hard to change, pylint: disable=consider-using-with
-                    f = open(v[0], "rb")  # file name
-                while True:
-                    block = f.read(1048576)
-                    size += len(block)
-                    crc = zlib.crc32(block, crc)
-                    if limit is not None:
-                        if size > limit:
-                            # roll back
-                            file.seek(curr_pos)
-                            file.truncate(curr_pos)
-                            del self.data[k]
-                            crc = None
-                            break
-                    if block:
-                        outblock = bc.compress(block)
-                        if outblock:
-                            file.write(base64.b64encode(outblock))
-                            file.write(b"\n ")
-                    else:
-                        break
-                if not hasattr(v[0], "read"):
-                    f.close()
-
-                if len(v) >= 4 and v[3]:
-                    if size == 0:
-                        raise OSError(
-                            "did not get any data for field %s from %s"
-                            % (k, str(v[0]))
-                        )
-
-                # flush compressor and write the rest
-                if not limit or size <= limit:
-                    block = bc.flush()
-                    # append gzip trailer: crc (32 bit) and size (32 bit)
-                    if crc:
-                        block += struct.pack("<L", crc & 0xFFFFFFFF)
-                        block += struct.pack("<L", size & 0xFFFFFFFF)
-
-                    file.write(base64.b64encode(block))
-                    file.write(b"\n")
+                self._write_case_file_reference(file, k, v)
 
     def _get_sorted_keys(
         self, only_new: bool
