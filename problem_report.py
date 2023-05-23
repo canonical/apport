@@ -368,6 +368,14 @@ class ProblemReport(collections.UserDict):
                 return value
         return value
 
+    @staticmethod
+    def _write_case_compressed_value(file, k, v):
+        block = k.encode("ASCII")
+        block += b": base64\n "
+        block += base64.b64encode(v.gzipvalue)
+        block += b"\n"
+        file.write(block)
+
     def write(self, file, only_new=False):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -403,11 +411,7 @@ class ProblemReport(collections.UserDict):
 
             # CompressedValue
             if isinstance(v, CompressedValue):
-                block = k.encode("ASCII")
-                block += b": base64\n "
-                block += base64.b64encode(v.gzipvalue)
-                block += b"\n"
-                file.write(block)
+                self._write_case_compressed_value(file, k, v)
                 continue
 
             # direct value
