@@ -368,6 +368,93 @@ class ProblemReport(collections.UserDict):
                 return value
         return value
 
+    def _case_complex_value(self, k, v):
+        limit = None
+        size = 0
+
+        mainblock = k.encode("ASCII")
+        mainblock += b": base64\n "
+
+        # write gzip header
+        gzip_header = (
+            GZIP_HEADER_START
+            + b"\010\000\000\000\000\002\377"
+            + k.encode("UTF-8")
+            + b"\000"
+        )
+        mainblock += base64.b64encode(gzip_header)
+        mainblock += b"\n "
+        crc = zlib.crc32(b"")
+
+        bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
+        
+        # direct value
+        if hasattr(v, "find"):
+            size += len(v)
+            crc = zlib.crc32(v, crc)
+
+            compressblock = bc.compress(v)
+            if compressblock:
+                mainblock += base64.b64encode(compressblock)
+                mainblock += b"\n "
+
+        # file reference
+        else:
+            if len(v) >= 3 and v[2] is not None:
+                limit = v[2]
+
+            if hasattr(v[0], "read"):
+                f = v[0]  # file-like object
+            else:
+                # hard to change, pylint: disable=consider-using-with
+                f = open(v[0], "rb")  # file name
+            while True:
+                block = f.read(1048576)
+                size += len(block)
+                crc = zlib.crc32(block, crc)
+                if limit is not None:
+                    if size > limit:
+                        # roll back
+                        # don't need to roll back, because nothing was written
+                        return None
+                if block:
+                    compressblock = bc.compress(block)
+                    if compressblock:
+                        mainblock += base64.b64encode(compressblock)
+                        mainblock += b"\n "
+                else:
+                    break
+            if not hasattr(v[0], "read"):
+                f.close()
+
+            if len(v) >= 4 and v[3]:
+                if size == 0:
+                    raise OSError(
+                        "did not get any data for field %s from %s"
+                        % (k, str(v[0]))
+                    )
+
+        # flush compressor and write the rest
+        if not limit or size <= limit:
+            block = bc.flush()
+            # append gzip trailer: crc (32 bit) and size (32 bit)
+            if crc:
+                block += struct.pack("<L", crc & 0xFFFFFFFF)
+                block += struct.pack("<L", size & 0xFFFFFFFF)
+
+            mainblock += base64.b64encode(block)
+            mainblock += b"\n"
+
+        return mainblock
+
+    @staticmethod
+    def _case_compressed_value(k, v):
+        block = k.encode("ASCII")
+        block += b": base64\n "
+        block += base64.b64encode(v.gzipvalue)
+        block += b"\n"
+        return block
+
     def write(self, file, only_new=False):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -400,84 +487,16 @@ class ProblemReport(collections.UserDict):
         # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
             v = self.data[k]
-            limit = None
-            size = 0
 
-            curr_pos = file.tell()
-            file.write(k.encode("ASCII"))
-            file.write(b": base64\n ")
-
-            # CompressedValue
             if isinstance(v, CompressedValue):
-                file.write(base64.b64encode(v.gzipvalue))
-                file.write(b"\n")
-                continue
-
-            # write gzip header
-            gzip_header = (
-                GZIP_HEADER_START
-                + b"\010\000\000\000\000\002\377"
-                + k.encode("UTF-8")
-                + b"\000"
-            )
-            file.write(base64.b64encode(gzip_header))
-            file.write(b"\n ")
-            crc = zlib.crc32(b"")
-
-            bc = zlib.compressobj(
-                6, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0
-            )
-            # direct value
-            if hasattr(v, "find"):
-                size += len(v)
-                crc = zlib.crc32(v, crc)
-                file.write(self._make_compressed_block(v, bc))
-            # file reference
+                r = self._case_compressed_value(k, v)
             else:
-                if len(v) >= 3 and v[2] is not None:
-                    limit = v[2]
-
-                if hasattr(v[0], "read"):
-                    f = v[0]  # file-like object
-                else:
-                    # hard to change, pylint: disable=consider-using-with
-                    f = open(v[0], "rb")  # file name
-                while True:
-                    block = f.read(1048576)
-                    size += len(block)
-                    crc = zlib.crc32(block, crc)
-                    if limit is not None:
-                        if size > limit:
-                            # roll back
-                            file.seek(curr_pos)
-                            file.truncate(curr_pos)
-                            del self.data[k]
-                            crc = None
-                            break
-                    if block:
-                        file.write(self._make_compressed_block(block, bc))
-                    else:
-                        break
-                if not hasattr(v[0], "read"):
-                    f.close()
-
-                if len(v) >= 4 and v[3]:
-                    if size == 0:
-                        raise OSError(
-                            "did not get any data for field %s from %s"
-                            % (k, str(v[0]))
-                        )
-
-            # flush compressor and write the rest
-            if not limit or size <= limit:
-                block = bc.flush()
-                # append gzip trailer: crc (32 bit) and size (32 bit)
-                if crc:
-                    block += struct.pack("<L", crc & 0xFFFFFFFF)
-                    block += struct.pack("<L", size & 0xFFFFFFFF)
-
-                file.write(base64.b64encode(block))
-                file.write(b"\n")
+                r = self._case_complex_value(k, v)
+            
+            if r is None:
+                del self.data[k]
+            else:
+                file.write(r)
 
     @staticmethod
     def _make_compressed_block(v: bytes, bc: zlib.compressobj) -> bytes:
