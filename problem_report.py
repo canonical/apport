@@ -349,6 +349,32 @@ class ProblemReport(collections.UserDict):
 
         return decompressor, value
 
+    def _file_write_loop(self, file, f, limit, curr_pos, k):
+        crc = zlib.crc32(b"")
+        bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
+
+        size = 0
+        while True:
+            block = f.read(1048576)
+            size += len(block)
+            crc = zlib.crc32(block, crc)
+            if limit is not None:
+                if size > limit:
+                    # roll back
+                    file.seek(curr_pos)
+                    file.truncate(curr_pos)
+                    del self.data[k]
+                    crc = None
+                    return None
+            if block:
+                outblock = bc.compress(block)
+                if outblock:
+                    file.write(base64.b64encode(outblock))
+                    file.write(b"\n ")
+            else:
+                break
+        return bc, crc, size
+
     @staticmethod
     def is_binary(string):
         """Check if the given strings contains binary data."""
@@ -369,16 +395,11 @@ class ProblemReport(collections.UserDict):
         return value
 
     def _write_case_file_reference(self, file, k, v):
-        
         # record current position to roll back to
         curr_pos = file.tell()
 
         file.write(self._make_header(k))
 
-        crc = zlib.crc32(b"")
-        bc = zlib.compressobj(6, wbits=-zlib.MAX_WBITS)
-        size = 0
-        
         if len(v) >= 3 and v[2] is not None:
             limit = v[2]
         else:
@@ -386,32 +407,15 @@ class ProblemReport(collections.UserDict):
 
         if hasattr(v[0], "read"):
             f = v[0]  # file-like object
+            r = self._file_write_loop(file, f, limit, curr_pos, k)
         else:
             # hard to change, pylint: disable=consider-using-with
-            f = open(v[0], "rb")  # file name
-
-        while True:
-            block = f.read(1048576)
-            size += len(block)
-            crc = zlib.crc32(block, crc)
-            if limit is not None:
-                if size > limit:
-                    # roll back
-                    file.seek(curr_pos)
-                    file.truncate(curr_pos)
-                    del self.data[k]
-                    crc = None
-                    break
-            if block:
-                outblock = bc.compress(block)
-                if outblock:
-                    file.write(base64.b64encode(outblock))
-                    file.write(b"\n ")
-            else:
-                break
-
-        if not hasattr(v[0], "read"):
-            f.close()
+            with open(v[0], "rb") as f:
+                r = self._file_write_loop(file, f, limit, curr_pos, k)
+        if r is None:
+            return
+        # else
+        bc, crc, size = r
 
         self._check_size(k, v, size)
 
