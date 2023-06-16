@@ -225,7 +225,7 @@ class ProblemReport(collections.UserDict):
         extracts directly files without loading the report into memory.
         """
         self._assert_bin_mode(file)
-        # support singe key and collection of keys
+        # support single key and collection of keys
         if isinstance(bin_keys, str):
             bin_keys = [bin_keys]
         key = None

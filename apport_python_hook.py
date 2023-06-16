@@ -20,7 +20,7 @@ def enabled():
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
     try:
-        # pylint: disable=import-outside-toplevel; for Python starup time
+        # pylint: disable=import-outside-toplevel; for Python startup time
         import re
 
         with open(CONFIG, encoding="utf-8") as config_file:
@@ -156,7 +156,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
 def dbus_service_unknown_analysis(exc_obj, report):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-locals
-    # pylint: disable=import-outside-toplevel; for Python starup time
+    # pylint: disable=import-outside-toplevel; for Python startup time
     import re
     import subprocess
     from configparser import ConfigParser, NoOptionError, NoSectionError
@@ -217,7 +217,7 @@ def install():
     # Record before the program can mutate sys.argv and can call os.chdir().
     binary = sys.argv[0]
     if binary and not binary.startswith("/"):
-        # pylint: disable=import-outside-toplevel; for Python starup time
+        # pylint: disable=import-outside-toplevel; for Python startup time
         import os
 
         try:

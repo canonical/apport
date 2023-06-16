@@ -141,7 +141,7 @@ class T(unittest.TestCase):
             pr.extract_keys,
             report,
             "Bin",
-            os.path.join(self.workdir, "nonexistant"),
+            os.path.join(self.workdir, "nonexistent"),
         )
         # Test exception handling: Non-binary and nonexistent key
         tests = [

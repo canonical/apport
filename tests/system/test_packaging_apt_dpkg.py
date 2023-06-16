@@ -631,7 +631,7 @@ class T(unittest.TestCase):
         # Wanted are superseded versions from -updates or -security.
         wanted = {
             "distro-info-data": "0.43ubuntu1.9",  # arch all
-            "libc6": "2.31-0ubuntu9.4",  # -dbg, arch specfic
+            "libc6": "2.31-0ubuntu9.4",  # -dbg, arch specific
             "qemu-utils": "1:4.2-3ubuntu6.1",  # -dbgsym, arch specific
         }
         obsolete = impl.install_packages(

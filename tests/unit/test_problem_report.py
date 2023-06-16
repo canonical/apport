@@ -92,16 +92,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertRaises(TypeError, pr.__setitem__, "a", 1)
         self.assertRaises(TypeError, pr.__setitem__, "a", (1,))
         self.assertRaises(
-            TypeError, pr.__setitem__, "a", ("/tmp/nonexistant", "")
+            TypeError, pr.__setitem__, "a", ("/tmp/nonexistent", "")
         )
         self.assertRaises(
             TypeError,
             pr.__setitem__,
             "a",
-            ("/tmp/nonexistant", False, 0, True, "bogus"),
+            ("/tmp/nonexistent", False, 0, True, "bogus"),
         )
-        self.assertRaises(TypeError, pr.__setitem__, "a", ["/tmp/nonexistant"])
-        self.assertRaises(KeyError, pr.__getitem__, "Nonexistant")
+        self.assertRaises(TypeError, pr.__setitem__, "a", ["/tmp/nonexistent"])
+        self.assertRaises(KeyError, pr.__getitem__, "Nonexistent")
 
     def test_write(self):
         """write() and proper formatting."""

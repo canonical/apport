@@ -965,7 +965,7 @@ class UserInterface:
     def run_argv(self):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-return-statements
-        """Call appopriate run_* method according to command line arguments.
+        """Call appropriate run_* method according to command line arguments.
 
         Return True if at least one report has been processed, and False
         otherwise.

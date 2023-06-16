@@ -506,7 +506,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertNotIn("Stack pointer not within stack segment", details)
 
     def test_segv_dest_missing(self):
-        """Handle destintation in missing VMA."""
+        """Handle destination in missing VMA."""
         reg = REGS + "esp            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
@@ -521,7 +521,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("writing unknown VMA", reason)
 
     def test_segv_dest_null(self):
-        """Handle destintation in NULL VMA."""
+        """Handle destination in NULL VMA."""
         reg = REGS + "esp            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
