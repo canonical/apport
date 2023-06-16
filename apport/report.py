@@ -512,7 +512,7 @@ class Report(problem_report.ProblemReport):
 
         Parse project (e.g. 'subiquity') or source package string
         (e.g. 'ubuntu/+source/gnome-calculator') from snap 'contact'.
-        Additionaly, extract any tag/tags defined in the contact URL.
+        Additionally, extract any tag/tags defined in the contact URL.
         """
         # Launchpad
         p = (

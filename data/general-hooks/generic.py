@@ -33,7 +33,7 @@ def add_info(report: ProblemReport, ui: apport.ui.HookUI) -> None:
     home = os.getenv("HOME")
     if home:
         mounts[home] = "home"
-    treshold = 50
+    threshold = 50
 
     for mount, mount_name in mounts.items():
         try:
@@ -42,7 +42,7 @@ def add_info(report: ProblemReport, ui: apport.ui.HookUI) -> None:
             continue
         free_mb = stat.f_bavail * stat.f_frsize / 1000000
 
-        if free_mb < treshold:
+        if free_mb < threshold:
             report["UnreportableReason"] = (
                 f"Your {mount_name} partition has less than {free_mb} MB"
                 f" of free space available, which leads to problems using"

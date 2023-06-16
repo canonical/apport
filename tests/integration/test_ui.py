@@ -2620,7 +2620,7 @@ class T(unittest.TestCase):
         self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
-        # no upload happend
+        # no upload happened
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.upload_progress_pulses, 0)
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)

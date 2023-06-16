@@ -562,7 +562,7 @@ def attach_root_command_outputs(report, command_map):
     Just like root_command_output, this passes the command through pkexec,
     unless the caller is already root.
 
-    This is preferrable to using root_command_output() multiple times, as that
+    This is preferable to using root_command_output() multiple times, as that
     will ask for the password every time.
     """
     wrapper_path = os.path.join(

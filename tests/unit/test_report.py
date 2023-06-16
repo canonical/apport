@@ -760,7 +760,6 @@ PID: 0      TASK: c073c180  CPU: 0   COMMAND: "swapper"
    2192      1   1  f65b3ed0  IN   0.0    1976    532  dd
    2194      1   1  f6b5a5b0  IN   0.1    3996   2712  klogd
    2217      1   0  f6b74b60  IN   0.1    3008   1120  dbus-daemon
-   2248      1   0  f65b7110  IN   0.2    6896   4304  hald
    2251      1   1  f65b3240  IN   0.1   19688   2604  console-kit-dae
 RUNQUEUES[0]: c6002320
  RT PRIO_ARRAY: c60023c0

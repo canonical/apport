@@ -1,6 +1,10 @@
 [tool.black]
 line-length = 79
 
+[tool.codespell]
+skip = ".git,*.click,*.gif,*.po,*.png"
+ignore-words-list = "buildd"
+
 [tool.isort]
 line_length = 79
 profile = "black"

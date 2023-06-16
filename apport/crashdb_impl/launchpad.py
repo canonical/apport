@@ -79,7 +79,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - project: Name of the project in Launchpad
           (Note that exactly one of "distro" or "project" must be given.)
         - launchpad_instance: If set, this uses the given launchpad instance
-          instead of production (optional). This can be overriden or set by
+          instead of production (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_INSTANCE environment. For example: "qastaging" or
           "staging".
         - cache_dir: Path to a permanent cache directory; by default it uses a
@@ -1388,7 +1388,7 @@ if __name__ == "__main__":
 
             # add some binary gibberish which isn't UTF-8
             r["ShortGibberish"] = ' "]\xb6"\n'
-            r["LongGibberish"] = "a\nb\nc\nd\ne\n\xff\xff\xff\n\f"
+            r["LongGibberish"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
 
             # create a bug for the report
             bug_target = self._get_bug_target(self.crashdb, r)
@@ -1635,7 +1635,7 @@ and more
             r[
                 "ThreadStacktrace"
             ] = '"]\xb6"\n'  # not interpretable as UTF-8, LP #353805
-            r["StacktraceSource"] = "a\nb\nc\nd\ne\n\xff\xff\xff\n\f"
+            r["StacktraceSource"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
             self.crashdb.update_traces(self.get_segv_report(), r, "tests")
 
         def test_get_comment_url(self):
@@ -2146,7 +2146,7 @@ and more
                 title=report.get("Title", report.standard_title()),
             )
 
-            # nwo add the attachments
+            # now add the attachments
             for part in msg_iter:
                 assert not part.is_multipart()
                 bug.addAttachment(

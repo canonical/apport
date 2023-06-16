@@ -1720,7 +1720,7 @@ int main() { return f(42); }
         orig_denylist_dir = apport.report._DENYLIST_DIR
         apport.report._DENYLIST_DIR = tempfile.mkdtemp()
         orig_ignore_file = apport.report._ignore_file
-        apport.report._ignore_file = "/nonexistant"
+        apport.report._ignore_file = "/nonexistent"
         try:
             bash_rep = apport.report.Report()
             bash_rep["ExecutablePath"] = "/bin/bash"
@@ -1778,7 +1778,7 @@ int main() { return f(42); }
         orig_allowlist_dir = apport.report._ALLOWLIST_DIR
         apport.report._ALLOWLIST_DIR = tempfile.mkdtemp()
         orig_ignore_file = apport.report.apport.report._ignore_file
-        apport.report.apport.report._ignore_file = "/nonexistant"
+        apport.report.apport.report._ignore_file = "/nonexistent"
         try:
             bash_rep = apport.report.Report()
             bash_rep["ExecutablePath"] = "/bin/bash"

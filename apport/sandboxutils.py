@@ -149,7 +149,7 @@ def make_sandbox(
     some extra ones, for the distro release and architecture of the report.
 
     For unpackaged executables, there are no Dependencies. Packages for shared
-    libaries are unpacked.
+    libraries are unpacked.
 
     report is an apport.Report object to build a sandbox for. Presence of the
     Package field determines whether to determine dependencies through

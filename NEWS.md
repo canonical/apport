@@ -357,7 +357,7 @@ detailed list of changes, please see the git history.
 
 2.20.11 (2019-05-16)
 --------------------
-  * SECURITY UPDATE: Ensure that we propely handle crashes that originate from
+  * SECURITY UPDATE: Ensure that we properly handle crashes that originate from
     a PID namespace. Thanks to Sander Bos for discovering this issue.
     (CVE-2018-6552, [LP: #1746668](https://launchpad.net/bugs/1746668))
   * backends/packaging-apt-dpkg.py: switch to using python3-launchpadlib to
@@ -370,7 +370,7 @@ detailed list of changes, please see the git history.
   * apport/ui.py: Handle old reports generated pre-apport with "remember"
     option. If the option isn't there, consider as false.
     ([LP: #1791324](https://launchpad.net/bugs/1791324))
-  * apport/report.py: End our gdb batch script with a separator, to accomodate
+  * apport/report.py: End our gdb batch script with a separator, to accommodate
     new exit codes from gdb 8.2.50. Thanks Steve Langasek!
   * data/apport: Introduce support for non-positional arguments so we
     can easily extend core_pattern in the future
@@ -592,7 +592,7 @@ detailed list of changes, please see the git history.
 2.20.3 (2016-07-28)
 -------------------
  * problem_report.py: Fail with proper exception when trying to assign a list
-   to a report key, or when trying to assing a tuple with more than 4 entries.
+   to a report key, or when trying to assign a tuple with more than 4 entries.
    ([LP: #1596713](https://launchpad.net/bugs/1596713))
  * test_backend_apt_dpkg.py: Install GPG key for ddebs.ubuntu.com to avoid apt
    authentication errors.
@@ -728,7 +728,7 @@ detailed list of changes, please see the git history.
 -------------------
  * test_hooks.py: Adjust for gcc executable names that don't include the minor
    version number.
- * When determinining the logind session and $XDG_SESSION_ID is not set, fall
+ * When determining the logind session and $XDG_SESSION_ID is not set, fall
    back to reading it from /proc/pid/cgroup.
  * whoopsie-upload-all: Intercept OSError too (e. g. "No space left on
    device"). ([LP: #1476258](https://launchpad.net/bugs/1476258))
@@ -799,7 +799,7 @@ detailed list of changes, please see the git history.
    privileges.
    Thanks to Philip Pettersson for discovering this issue!
    (CVE-2015-1325, [LP: #1453900](https://launchpad.net/bugs/1453900))
- * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
+ * apportcheckresume: Fix typo of "occurred", thanks Matthew Paul Thomas.
    ([LP: #1448636](https://launchpad.net/bugs/1448636))
  * signal_crashes test: Fix test_crash_setuid_* to look at whether
    suid_dumpable was enabled.
@@ -1245,7 +1245,7 @@ Bug fixes:
  * ui.py: Check if options for updating and reporting a new bug get used
    together, and give a proper error message in this case.
    ([LP: #1071905](https://launchpad.net/bugs/1071905))
- * apport: Fix "Exectuable" typo, leading to reports not being synced on
+ * apport: Fix typo of "Executable", leading to reports not being synced on
    upstart crashes. Thanks James Hunt.
    ([LP: #1203744](https://launchpad.net/bugs/1203744))
  * Rename apport-gtk-mime.desktop to apport-gtk.desktop and drop the
@@ -1621,7 +1621,7 @@ Improvements:
    the bug creation from a blob by manually creating the comment and
    attachments ourselves, and just assume that storeblob works on production.
    Also change the structure to allow running every test individually.
- * crash-digger: Add --crash-db option to specify a non-default crash databae
+ * crash-digger: Add --crash-db option to specify a non-default crash database
    name. ([LP: #1003506](https://launchpad.net/bugs/1003506))
  * apport-gtk: Add --hanging option to specify the process ID of a hanging
    application. If the user chooses to report this error, apport will terminate
@@ -1636,7 +1636,7 @@ Bug fixes:
  * Fix PEP-8 violations picked up by latest pep8 checker.
  * ui.py: Do not ignore certain exceptions during upload which are not likely
    to be a network error.
- * launchpad.py: Recongize Launchpad projects for bug query and marking
+ * launchpad.py: Recognize Launchpad projects for bug query and marking
    operations. ([LP: #1003506](https://launchpad.net/bugs/1003506))
  * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
  * apport-retrace: Turn StacktraceSource generation back on, now that it works
@@ -1682,7 +1682,7 @@ Bug fixes:
 2.2.3 (2012-06-15):
 -------------------
 Bug fixes:
- * test/run: Do not run pep8 and pyflakes when running against the sytem
+ * test/run: Do not run pep8 and pyflakes when running against the system
    installed Apport.
  * test_backend_apt_dpkg.py: For the "are we online" check, verify that we can
    download from http://ddebs.ubuntu.com/, not just whether we have a default
@@ -2361,7 +2361,7 @@ Bug fixes:
  - apport-retrace: Pass correct executable path to gdb in --gdb with --sandbox
    mode.
  - apport-retrace: Do not leave behind temporary directories on errors.
- - apport-retrace: Drop assertion failure for existance of "Stacktrace". This
+ - apport-retrace: Drop assertion failure for existence of "Stacktrace". This
    isn't present in the case of gdb crashing, and there is not much we can do
    about it. This should not break the retracer.
  - apport/report.py: Unwind XError() from stack traces for the "StacktraceTop"
@@ -2388,7 +2388,7 @@ Bug fixes:
    own. This ensures that the apt and dpkg status is up to date, and avoids
    downloading the package indexes multiple times.
    ([LP: #847951](https://launchpad.net/bugs/847951))
- - apport-retrace: Give proper error mesage instead of AssertionError crash if
+ - apport-retrace: Give proper error message instead of AssertionError crash if
    a report does not contain standard Apport format data.
    ([LP: #843221](https://launchpad.net/bugs/843221))
  - fileutils.py, get_new_reports(): Fix crash if report file disappears in the
@@ -3135,7 +3135,7 @@ New features:
    packages.
  - KDE frontend implementation of ui_question_userpass(), for crash databases
    which need to ask for credentials.
- - hookutils.py: New funtion attach_wifi() to add wireless network related
+ - hookutils.py: New function attach_wifi() to add wireless network related
    information to reports.
 
 Important bug fixes:

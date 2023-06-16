@@ -349,7 +349,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # now mark the python crash as fixed
         self.crashes.reports[3]["fixed_version"] = "4.1"
 
-        # ID#4 is dup of ID#3, but happend in version 5 -> regression
+        # ID#4 is dup of ID#3, but happened in version 5 -> regression
         self.crashes.close_duplicate(
             self.crashes.download(4), 4, None
         )  # reset
