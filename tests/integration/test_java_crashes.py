@@ -104,8 +104,8 @@ class TestJavaCrashes(unittest.TestCase):
             )
         )
         if ".jar!" in main_file:
-            self.assertEqual(report["MainClassUrl"], "jar:file:" + main_file)
+            self.assertEqual(report["MainClassUrl"], f"jar:file:{main_file}")
         else:
-            self.assertEqual(report["MainClassUrl"], "file:" + main_file)
+            self.assertEqual(report["MainClassUrl"], f"file:{main_file}")
         self.assertIn("DistroRelease", report)
         self.assertIn("ProcCwd", report)

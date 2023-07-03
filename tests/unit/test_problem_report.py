@@ -450,11 +450,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # still small enough for inline text
         pr["Largeline"] = "A" * 999
-        pr["LargeMultiline"] = "A" * 120 + "\n" + "B" * 90
+        pr["LargeMultiline"] = f"{'A' * 120}\n{'B' * 90}"
 
         # too big for inline text, these become attachments
         pr["Hugeline"] = "A" * 10000
-        pr["HugeMultiline"] = "A" * 900 + "\n" + "B" * 900 + "\n" + "C" * 900
+        pr["HugeMultiline"] = f"{'A' * 900}\n{'B' * 900}\n{'C' * 900}"
         out = io.BytesIO()
         pr.write_mime(out)
         out.seek(0)

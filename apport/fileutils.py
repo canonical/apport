@@ -200,8 +200,8 @@ def seen_report(report):
 
 
 def mark_report_upload(report):
-    upload = "%s.upload" % report.rsplit(".", 1)[0]
-    uploaded = "%s.uploaded" % report.rsplit(".", 1)[0]
+    upload = f"{report.rsplit('.', 1)[0]}.upload"
+    uploaded = f"{report.rsplit('.', 1)[0]}.uploaded"
     # if uploaded exists and is older than the report remove it and upload
     if os.path.exists(uploaded) and os.path.exists(upload):
         report_st = os.stat(report)
@@ -219,7 +219,7 @@ def mark_hanging_process(report, pid):
         raise ValueError("report does not have the ExecutablePath attribute")
 
     uid = os.geteuid()
-    base = "%s.%s.%s.hanging" % (subject, str(uid), pid)
+    base = f"{subject}.{str(uid)}.{pid}.hanging"
     path = os.path.join(report_dir, base)
     with open(path, "a", encoding="utf-8"):
         pass
@@ -436,7 +436,7 @@ def make_report_file(report, uid=None):
     if not uid:
         uid = os.geteuid()
 
-    path = os.path.join(report_dir, "%s.%s.crash" % (subject, str(uid)))
+    path = os.path.join(report_dir, f"{subject}.{str(uid)}.crash")
     return open(path, "xb")
 
 
@@ -610,7 +610,7 @@ def get_core_path(
         timestamp = "unknown"
     else:
         if timestamp is None:
-            with open("/proc/%s/stat" % pid, encoding="utf-8") as stat_file:
+            with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
                 stat_contents = stat_file.read()
             timestamp = get_starttime(stat_contents)
 
@@ -623,13 +623,7 @@ def get_core_path(
 
     # This is similar to systemd-coredump, but with the exe name instead
     # of the command name
-    core_name = "core.%s.%s.%s.%s.%s" % (
-        exe,
-        uid,
-        get_boot_id(),
-        str(pid),
-        str(timestamp),
-    )
+    core_name = f"core.{exe}.{uid}.{get_boot_id()}.{str(pid)}.{str(timestamp)}"
 
     core_path = os.path.join(core_dir, core_name)
 
@@ -746,7 +740,7 @@ def links_with_shared_library(path, lib):
         return True
 
     for linked_lib in libs:
-        if linked_lib.startswith(lib + ".so."):
+        if linked_lib.startswith(f"{lib}.so."):
             return True
 
     return False

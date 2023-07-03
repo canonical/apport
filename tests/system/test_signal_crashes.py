@@ -101,7 +101,7 @@ class T(unittest.TestCase):
 
         # move aside current ignore file
         if os.path.exists(self.ifpath):
-            os.rename(self.ifpath, self.ifpath + ".apporttest")
+            os.rename(self.ifpath, f"{self.ifpath}.apporttest")
 
         # do not write core files by default
         resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
@@ -124,7 +124,7 @@ class T(unittest.TestCase):
         # clean up our ignore file
         if os.path.exists(self.ifpath):
             os.unlink(self.ifpath)
-        orig_ignore_file = self.ifpath + ".apporttest"
+        orig_ignore_file = f"{self.ifpath}.apporttest"
         if os.path.exists(orig_ignore_file):
             os.rename(orig_ignore_file, self.ifpath)
 
@@ -267,7 +267,7 @@ class T(unittest.TestCase):
         if args is None:
             args = self.TEST_ARGS
 
-        assert os.access(command, os.X_OK), command + " is not executable"
+        assert os.access(command, os.X_OK), f"{command} is not executable"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
@@ -280,7 +280,7 @@ class T(unittest.TestCase):
 
         # wait until child process has execv()ed properly
         while True:
-            with open("/proc/%i/cmdline" % process.pid, encoding="utf-8") as f:
+            with open(f"/proc/{process.pid}/cmdline", encoding="utf-8") as f:
                 cmdline = f.read()
             if "test_signal" in cmdline:
                 time.sleep(0.1)

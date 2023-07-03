@@ -123,7 +123,7 @@ class CrashDatabase:
         cur.execute("PRAGMA integrity_check")
         result = cur.fetchall()
         if result != [("ok",)]:
-            raise SystemError("Corrupt duplicate db:" + str(result))
+            raise SystemError(f"Corrupt duplicate db:{result}")
 
         try:
             cur.execute("SELECT format FROM version")
@@ -133,11 +133,11 @@ class CrashDatabase:
                 # first db format did not have version table yet
                 result = [0]
         if result[0] > self.format_version:
-            raise SystemError("duplicate DB has unknown format %i" % result[0])
+            raise SystemError(f"duplicate DB has unknown format {result[0]}")
         if result[0] < self.format_version:
             print(
-                "duplicate db has format %i, upgrading to %i"
-                % (result[0], self.format_version)
+                f"duplicate db has format {result[0]},"
+                f" upgrading to {self.format_version}"
             )
             self._duplicate_db_upgrade(result[0])
 
@@ -413,7 +413,7 @@ class CrashDatabase:
 
         # first create the temporary new dir; if that fails, nothing has been
         # changed and we fail early
-        out = publish_dir + ".new"
+        out = f"{publish_dir}.new"
         os.mkdir(out)
 
         # crash addresses
@@ -438,7 +438,7 @@ class CrashDatabase:
                     os.path.join(addr_base, cur_hash), "w", encoding="utf-8"
                 )
 
-            cur_file.write("%i %s\n" % (crash_id, sig))
+            cur_file.write(f"{crash_id} {sig}\n")
 
         if cur_file:
             cur_file.close()
@@ -463,17 +463,17 @@ class CrashDatabase:
                     cur_file.close()
                 cur_file = open(os.path.join(sig_base, cur_hash), "wb")
 
-            cur_file.write(("%i %s\n" % (crash_id, sig)).encode("UTF-8"))
+            cur_file.write(f"{crash_id} {sig}\n".encode("UTF-8"))
 
         if cur_file:
             cur_file.close()
 
         # switch over tree; this is as atomic as we can be with directories
         if os.path.exists(publish_dir):
-            os.rename(publish_dir, publish_dir + ".old")
+            os.rename(publish_dir, f"{publish_dir}.old")
         os.rename(out, publish_dir)
-        if os.path.exists(publish_dir + ".old"):
-            shutil.rmtree(publish_dir + ".old")
+        if os.path.exists(f"{publish_dir}.old"):
+            shutil.rmtree(f"{publish_dir}.old")
 
     def _duplicate_db_upgrade(self, cur_format):
         """Upgrade database to current format."""
@@ -598,8 +598,8 @@ class CrashDatabase:
         # crash got rejected
         if real_fixed_version == "invalid":
             print(
-                "DEBUG: bug %i was invalidated, removing from database"
-                % crash_id
+                f"DEBUG: bug {crash_id} was invalidated,"
+                f" removing from database"
             )
             self.duplicate_db_remove(crash_id)
             return
@@ -607,8 +607,8 @@ class CrashDatabase:
         # crash got fixed
         if not db_fixed_version and real_fixed_version:
             print(
-                "DEBUG: bug %i got fixed in version %s, updating database"
-                % (crash_id, real_fixed_version)
+                f"DEBUG: bug {crash_id} got fixed"
+                f" in version {real_fixed_version}, updating database"
             )
             self.duplicate_db_fixed(crash_id, real_fixed_version)
             return
@@ -616,9 +616,8 @@ class CrashDatabase:
         # crash got reopened
         if db_fixed_version and not real_fixed_version:
             print(
-                "DEBUG: bug %i got reopened,"
-                " dropping fixed version %s from database"
-                % (crash_id, db_fixed_version)
+                f"DEBUG: bug {crash_id} got reopened,"
+                f" dropping fixed version {db_fixed_version} from database"
             )
             self.duplicate_db_fixed(crash_id, real_fixed_version)
             return
@@ -629,9 +628,8 @@ class CrashDatabase:
         if existing:
             if existing != crash_id:
                 raise SystemError(
-                    "ID %i has signature %s, but database"
-                    " already has that signature for ID %i"
-                    % (crash_id, sig, existing)
+                    f"ID {crash_id} has signature {sig}, but database"
+                    f" already has that signature for ID {existing}"
                 )
         else:
             cur = self.duplicate_db.cursor()
@@ -947,7 +945,7 @@ def get_crashdb(auth_file, name=None, conf=None):
         exec(compile(f.read(), conf, "exec"), settings)
 
     # Load third parties crashdb.conf
-    confdDir = conf + ".d"
+    confdDir = f"{conf}.d"
     if os.path.isdir(confdDir):
         for cf in os.listdir(confdDir):
             cfpath = os.path.join(confdDir, cf)
@@ -961,9 +959,7 @@ def get_crashdb(auth_file, name=None, conf=None):
                         )
                 except Exception as error:  # pylint: disable=broad-except
                     # ignore broken files
-                    sys.stderr.write(
-                        "Invalid file %s: %s\n" % (cfpath, str(error))
-                    )
+                    sys.stderr.write(f"Invalid file {cfpath}: {error}\n")
 
     if not name:
         name = settings["default"]
@@ -977,7 +973,7 @@ def load_crashdb(auth_file, spec):
     spec is a crash db configuration dictionary as described in get_crashdb().
     """
     m = __import__(
-        "apport.crashdb_impl." + spec["impl"],
+        f"apport.crashdb_impl.{spec['impl']}",
         globals(),
         locals(),
         ["CrashDatabase"],

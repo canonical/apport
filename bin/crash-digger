@@ -65,14 +65,14 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
-            apport.log("Available releases: %s" % str(self.releases), True)
+            apport.log(f"Available releases: {str(self.releases)}", True)
         else:
             self.releases = None
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
             # this verified DB integrity; make a backup now
-            shutil.copy2(self.dup_db, self.dup_db + ".backup")
+            shutil.copy2(self.dup_db, f"{self.dup_db}.backup")
 
     def fill_pool(self):
         """Query crash db for new IDs to process."""
@@ -80,14 +80,13 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
             apport.log(
-                "fill_pool: dup check pool now: %s" % str(self.dupcheck_pool),
+                f"fill_pool: dup check pool now: {str(self.dupcheck_pool)}",
                 True,
             )
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
             apport.log(
-                "fill_pool: retrace pool now: %s" % str(self.retrace_pool),
-                True,
+                f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True
             )
 
     def retrace_next(self):
@@ -95,8 +94,8 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
 
         crash_id = self.retrace_pool.pop()
         apport.log(
-            "retracing %s#%i (left in pool: %i)"
-            % ("LP: " if self.lp else "", crash_id, len(self.retrace_pool)),
+            f"retracing {'LP: ' if self.lp else ''}#{crash_id}"
+            f" (left in pool: {len(self.retrace_pool)})",
             True,
         )
 
@@ -110,8 +109,8 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             return
         if rel not in self.releases:
             apport.log(
-                "crash is release %s which does not have a config available,"
-                " skipping" % rel,
+                f"crash is release {rel} which does not have a config"
+                f" available, skipping",
                 True,
             )
             return
@@ -139,8 +138,8 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         )
         if result != 0:
             apport.log(
-                "retracing %s#%i failed with status: %i"
-                % ("LP: " if self.lp else "", crash_id, result),
+                f"retracing {'LP: ' if self.lp else ''}#{crash_id} failed"
+                f" with status: {result}",
                 True,
             )
             if result == 99:
@@ -155,8 +154,8 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
 
         crash_id = self.dupcheck_pool.pop()
         apport.log(
-            "checking %s#%i for duplicate (left in pool: %i)"
-            % ("LP: " if self.lp else "", crash_id, len(self.dupcheck_pool)),
+            f"checking {'LP: ' if self.lp else ''}#{crash_id} for duplicate"
+            f" (left in pool: {len(self.dupcheck_pool)})",
             True,
         )
 
@@ -174,33 +173,24 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
                 str(error)
                 == "bug description must contain standard apport format data"
             ):
-                apport.log("Cannot download report: " + str(error), True)
+                apport.log(f"Cannot download report: {str(error)}", True)
                 apport.error(
                     "Cannot download report %s: %s", crash_id, str(error)
                 )
                 return
-            apport.log("Cannot download report: " + str(error), True)
+            apport.log(f"Cannot download report: {str(error)}", True)
             apport.error("Cannot download report %i: %s", crash_id, str(error))
             return
 
         res = self.crashdb.check_duplicate(crash_id, report)
         if res:
             if res[1] is None:
-                apport.log(
-                    "Report is a duplicate of #%i (not fixed yet)" % res[0],
-                    True,
-                )
+                version = "not fixed yet"
             elif res[1] == "":
-                apport.log(
-                    "Report is a duplicate of #%i (fixed in latest version)"
-                    % res[0],
-                    True,
-                )
+                version = "fixed in latest version"
             else:
-                apport.log(
-                    "Report is a duplicate of #%i (fixed in version %s)" % res,
-                    True,
-                )
+                version = f"fixed in version {res[1]}"
+            apport.log(f"Report is a duplicate of #{res[0]} ({version})", True)
         else:
             apport.log("Duplicate check negative", True)
 
@@ -319,7 +309,7 @@ def main():
             lock_file = os.open(
                 opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666
             )
-            os.write(lock_file, ("%u\n" % os.getpid()).encode())
+            os.write(lock_file, (f"{os.getpid()}\n").encode())
             os.close(lock_file)
         except OSError as error:
             if error.errno == errno.EEXIST:

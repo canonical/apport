@@ -679,9 +679,7 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.app.report["SourcePackage"], apport.packaging.get_source(pkg)
         )
-        self.assertEqual(
-            self.app.report["Package"], "%s (not installed)" % pkg
-        )
+        self.assertEqual(self.app.report["Package"], f"{pkg} (not installed)")
 
     @unittest.mock.patch.object(
         MainUserInterface, "open_url", unittest.mock.MagicMock()
@@ -740,7 +738,7 @@ class T(unittest.TestCase):
 
         # create source package hook, as otherwise there is nothing to collect
         with open(
-            os.path.join(self.hook_dir, "source_%s.py" % source_pkg),
+            os.path.join(self.hook_dir, f"source_{source_pkg}.py"),
             "w",
             encoding="utf-8",
         ) as f:

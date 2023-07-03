@@ -450,7 +450,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_src_missing(self):
         """Handle source in missing VMA."""
-        reg = REGS + "ecx            0x0006af24   0xbfc6af24"
+        reg = f"{REGS}ecx            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
         # Valid crash
@@ -477,7 +477,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_src_null(self):
         """Handle source in NULL VMA."""
-        reg = REGS + "ecx            0x00000024   0xbfc6af24"
+        reg = f"{REGS}ecx            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
@@ -492,7 +492,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_src_not_readable(self):
         """Handle source not in readable VMA."""
-        reg = REGS + "ecx            0x0026c080   0xbfc6af24"
+        reg = f"{REGS}ecx            0x0026c080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
@@ -507,7 +507,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_dest_missing(self):
         """Handle destination in missing VMA."""
-        reg = REGS + "esp            0x0006af24   0xbfc6af24"
+        reg = f"{REGS}esp            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
@@ -522,7 +522,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_dest_null(self):
         """Handle destination in NULL VMA."""
-        reg = REGS + "esp            0x00000024   0xbfc6af24"
+        reg = f"{REGS}esp            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
 
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
@@ -537,7 +537,7 @@ class TestHookParseSegv(unittest.TestCase):
 
     def test_segv_dest_not_writable(self):
         """Handle destination not in writable VMA."""
-        reg = REGS + "esp            0x08048080   0xbfc6af24"
+        reg = f"{REGS}esp            0x08048080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, reason, details = segv.report()
@@ -561,7 +561,7 @@ class TestHookParseSegv(unittest.TestCase):
     def test_segv_stack_failure(self):
         """Handle walking off the stack."""
         # Triggered via "push"
-        reg = REGS + "esp            0xbfc56ff0   0xbfc56ff0"
+        reg = f"{REGS}esp            0xbfc56ff0   0xbfc56ff0"
         disasm = "0x08083547 <main+7>:    push  %eax"
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()
@@ -573,7 +573,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
 
         # Triggered via "call"
-        reg = REGS + "esp            0xbfc56fff   0xbfc56fff"
+        reg = f"{REGS}esp            0xbfc56fff   0xbfc56fff"
         disasm = "0x08083547 <main+7>:    callq  0x08083540"
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()
@@ -586,7 +586,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("Stack memory exhausted", details)
 
         # Triggered via unknown reason
-        reg = REGS + "esp            0xdfc56000   0xdfc56000"
+        reg = f"{REGS}esp            0xdfc56000   0xdfc56000"
         disasm = """0x08083540 <main+0>:    mov    $1,%rcx"""
         segv = parse_segv.ParseSegv(reg, disasm, MAPS)
         understood, _, details = segv.report()

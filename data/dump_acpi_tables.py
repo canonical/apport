@@ -13,7 +13,7 @@ def dump_acpi_table(filename, tablename, out):
     if not os.access(filename, os.R_OK):
         return
 
-    out.write("%s @ 0x0000000000000000\n" % tablename[0:4])
+    out.write(f"{tablename[0:4]} @ 0x0000000000000000\n")
     n = 0
     with open(filename, "rb") as f:
         hex_str = ""
@@ -23,25 +23,25 @@ def dump_acpi_table(filename, tablename, out):
                 val = ord(byte)
                 if (n & 15) == 0:
                     if n > 65535:
-                        hex_str = "   %4.4X: " % n
+                        hex_str = f"   {n:04X}: "
                     else:
-                        hex_str = "    %4.4X: " % n
+                        hex_str = f"    {n:04X}: "
                     ascii_str = ""
 
-                hex_str = hex_str + "%2.2X " % val
+                hex_str = f"{hex_str}{val:02X} "
 
                 if (val < 32) or (val > 126):
-                    ascii_str = ascii_str + "."
+                    ascii_str = f"{ascii_str}."
                 else:
                     ascii_str = ascii_str + chr(val)
                 n = n + 1
                 if (n & 15) == 0:
-                    out.write("%s %s\n" % (hex_str, ascii_str))
+                    out.write(f"{hex_str} {ascii_str}\n")
                 byte = f.read(1)
         finally:
             if (n % 16) != 0:
                 hex_str += "   " * (16 - n % 16)
-                out.write("%s %s\n" % (hex_str, ascii_str))
+                out.write(f"{hex_str} {ascii_str}\n")
 
     out.write("\n")
 

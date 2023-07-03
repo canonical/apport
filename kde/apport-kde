@@ -89,7 +89,7 @@ class Dialog(QDialog):
 
         self.setWindowTitle(title)
         if self.findChild(QLabel, "heading"):
-            self.findChild(QLabel, "heading").setText("<h2>%s</h2>" % heading)
+            self.findChild(QLabel, "heading").setText(f"<h2>{heading}</h2>")
         self.findChild(QLabel, "text").setText(text)
 
     def on_buttons_clicked(self, button):
@@ -600,7 +600,7 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon.fromTheme("apport"))
     translator = QTranslator()
     translator.load(
-        "qtbase_" + QLocale.system().name(),
+        f"qtbase_{QLocale.system().name()}",
         QLibraryInfo.location(QLibraryInfo.TranslationsPath),
     )
     app.installTranslator(translator)

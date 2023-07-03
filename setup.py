@@ -109,7 +109,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
     def run(self):
         DistUtilsExtra.auto.install_auto.run(self)
         self._fix_symlinks_in_bash_completion()
-        new_hashbang = "#!%s\n" % sys.executable.rsplit(".", 1)[0]
+        new_hashbang = f"#!{sys.executable.rsplit('.', 1)[0]}\n"
 
         for d in (
             os.path.join(self.install_data, "share", "apport"),

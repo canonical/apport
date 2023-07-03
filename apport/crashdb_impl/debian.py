@@ -80,12 +80,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return False
 
         with tempfile.NamedTemporaryFile() as temp:
-            temp.file.write(
-                ("Package: " + buggy_package + "\n").encode("UTF-8")
-            )
-            temp.file.write(
-                ("Version: " + buggy_version + "\n\n\n").encode("UTF-8")
-            )
+            temp.file.write(f"Package: {buggy_package}\n".encode("UTF-8"))
+            temp.file.write(f"Version: {buggy_version}\n\n\n".encode("UTF-8"))
             temp.file.write(
                 ("=============================\n\n").encode("UTF-8")
             )
@@ -114,7 +110,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # Subscribe the submitted to the bug report
         msg.add_header("X-Debbugs-CC", self.options["sender"])
-        msg.add_header("Usertag", "apport-%s" % report["ProblemType"].lower())
+        msg.add_header("Usertag", f"apport-{report['ProblemType'].lower()}")
 
         smtp = smtplib.SMTP(self.options["smtphost"])
         smtp.sendmail(

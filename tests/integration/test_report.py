@@ -1561,9 +1561,9 @@ int main() { return f(42); }
             r = apport.report.Report()
             r["Package"] = "foo-bin 0.2"
             r["SourcePackage"] = "foo"
-            r["ExecutablePath"] = (
-                "%s/foolabs.example.com/foo/bin/frob" % apport.report._opt_dir
-            )
+            r[
+                "ExecutablePath"
+            ] = f"{apport.report._opt_dir}/foolabs.example.com/foo/bin/frob"
 
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(r["SourceHook"], "1")
@@ -1850,14 +1850,15 @@ int main() { return f(42); }
         self.assertEqual(report.obsolete_packages(), ["coreutils", "cron"])
 
         report["Dependencies"] = (
-            "coreutils %s [modified: /bin/mount]\ncron 0\n"
-            % apport.packaging.get_available_version("coreutils")
+            f"coreutils {apport.packaging.get_available_version('coreutils')}"
+            f" [modified: /bin/mount]\ncron 0\n"
         )
         self.assertEqual(report.obsolete_packages(), ["cron"])
 
-        report["Dependencies"] = "coreutils %s\ncron %s\n" % (
-            apport.packaging.get_available_version("coreutils"),
-            apport.packaging.get_available_version("cron"),
+        report["Dependencies"] = (
+            f"coreutils"
+            f" {apport.packaging.get_available_version('coreutils')}\n"
+            f"cron {apport.packaging.get_available_version('cron')}\n"
         )
         self.assertEqual(report.obsolete_packages(), [])
 
@@ -1896,7 +1897,7 @@ int main() { return f(42); }
 
     def test_get_logind_session_fd(self):
         proc_pid_fd = os.open(
-            "/proc/%s" % os.getpid(), os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            f"/proc/{os.getpid()}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
         )
         self.addCleanup(os.close, proc_pid_fd)
         ret = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)

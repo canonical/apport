@@ -26,7 +26,7 @@ def make_title(report):
     lines = report["StackTrace"].split("\n")
     message = lines[0].strip()
     stackframe = lines[1].strip()
-    return "%s in %s" % (message, stackframe)
+    return f"{message} in {stackframe}"
 
 
 def main():

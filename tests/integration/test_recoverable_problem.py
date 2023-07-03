@@ -79,7 +79,7 @@ class TestRecoverableProblem(unittest.TestCase):
             report = apport.report.Report()
             report.load(report_path)
             self.assertEqual(report["hello"], "there")
-            self.assertIn("Pid:\t%d" % os.getpid(), report["ProcStatus"])
+            self.assertIn(f"Pid:\t{os.getpid()}", report["ProcStatus"])
 
     def test_recoverable_problem_dupe_sig(self):
         """recoverable_problem duplicate signature includes ExecutablePath"""
@@ -89,10 +89,8 @@ class TestRecoverableProblem(unittest.TestCase):
             report = apport.report.Report()
             report.load(report_path)
             exec_path = report.get("ExecutablePath")
-            self.assertEqual(
-                report["DuplicateSignature"], "%s:ds" % (exec_path)
-            )
-            self.assertIn("Pid:\t%d" % os.getpid(), report["ProcStatus"])
+            self.assertEqual(report["DuplicateSignature"], f"{exec_path}:ds")
+            self.assertIn(f"Pid:\t{os.getpid()}", report["ProcStatus"])
 
     def test_invalid_data(self):
         """recoverable_problem with invalid data"""

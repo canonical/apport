@@ -95,7 +95,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._contents_mapping_obj
 
         mapping_file = os.path.join(
-            configdir, "contents_mapping-%s-%s.pickle" % (release, arch)
+            configdir, f"contents_mapping-{release}-{arch}.pickle"
         )
         if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
             os.remove(mapping_file)
@@ -109,7 +109,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def _save_contents_mapping(self, configdir, release, arch):
         mapping_file = os.path.join(
-            configdir, "contents_mapping-%s-%s.pickle" % (release, arch)
+            configdir, f"contents_mapping-{release}-{arch}.pickle"
         )
         if self._contents_mapping_obj is not None:
             try:
@@ -174,14 +174,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             return self._cache()[package]
         except KeyError:
-            raise ValueError("package %s does not exist" % package) from None
+            raise ValueError(f"package {package} does not exist") from None
 
     def get_version(self, package):
         """Return the installed version of a package."""
         pkg = self._apt_pkg(package)
         inst = pkg.installed
         if not inst:
-            raise ValueError("package %s does not exist" % package)
+            raise ValueError(f"package {package} does not exist")
         return inst.version
 
     def get_available_version(self, package):
@@ -207,7 +207,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._apt_pkg(package).installed.source_name
         if self._apt_pkg(package).candidate:
             return self._apt_pkg(package).candidate.source_name
-        raise ValueError("package %s does not exist" % package)
+        raise ValueError(f"package {package} does not exist")
 
     def get_package_origin(self, package):
         """Return package origin.
@@ -386,7 +386,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._apt_pkg(package).installed.architecture or "unknown"
         if self._apt_pkg(package).candidate:
             return self._apt_pkg(package).candidate.architecture or "unknown"
-        raise ValueError("package %s does not exist" % package)
+        raise ValueError(f"package {package} does not exist")
 
     def get_files(self, package):
         """Return list of files shipped by a package."""
@@ -398,12 +398,12 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
         # get the maximum mtime of package files that we consider unmodified
-        listfile = "/var/lib/dpkg/info/%s:%s.list" % (
-            package,
-            self.get_system_architecture(),
+        listfile = (
+            f"/var/lib/dpkg/info/{package}"
+            f":{self.get_system_architecture()}.list"
         )
         if not os.path.exists(listfile):
-            listfile = "/var/lib/dpkg/info/%s.list" % package
+            listfile = f"/var/lib/dpkg/info/{package}.list"
         try:
             s = os.stat(listfile)
             if not stat.S_ISREG(s.st_mode):
@@ -414,12 +414,12 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # create a list of files with a newer timestamp for md5sum'ing
         sums = b""
-        sumfile = "/var/lib/dpkg/info/%s:%s.md5sums" % (
-            package,
-            self.get_system_architecture(),
+        sumfile = (
+            f"/var/lib/dpkg/info/{package}"
+            f":{self.get_system_architecture()}.md5sums"
         )
         if not os.path.exists(sumfile):
-            sumfile = "/var/lib/dpkg/info/%s.md5sums" % package
+            sumfile = f"/var/lib/dpkg/info/{package}.md5sums"
             if not os.path.exists(sumfile):
                 # some packages do not ship md5sums
                 return []
@@ -440,7 +440,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         )
                         continue
                     s = os.stat(
-                        ("/" + words[-1].decode("UTF-8")).encode("UTF-8")
+                        f"/{words[-1].decode('UTF-8')}".encode("UTF-8")
                     )
                     if max(s.st_mtime, s.st_ctime) <= max_time:
                         continue
@@ -489,7 +489,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     if calculated_md5sum != default_md5sum:
                         modified[path] = contents
                 except OSError as error:
-                    modified[path] = "[inaccessible: %s]" % str(error)
+                    modified[path] = f"[inaccessible: {str(error)}]"
             else:
                 modified[path] = "[deleted]"
 
@@ -573,9 +573,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         # doesn't reflect that so strip the /usr from the path
         if not match and file.startswith("/usr"):
             file = file[4:]
-            match = self.__fgrep_files("%s" % file, likely_lists)
+            match = self.__fgrep_files(f"{file}", likely_lists)
             if not match:
-                match = self.__fgrep_files("%s" % file, all_lists)
+                match = self.__fgrep_files(f"{file}", all_lists)
 
         if match:
             return os.path.splitext(os.path.basename(match))[0].split(":")[0]
@@ -609,7 +609,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         )
         multiarch_triple = dpkg.stdout.decode().strip()
 
-        return "/lib/%s:/lib" % multiarch_triple
+        return f"/lib/{multiarch_triple}:/lib"
 
     def set_mirror(self, url):
         """Explicitly set a distribution mirror URL for operations that need to
@@ -671,7 +671,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # fetch source tree
         argv = ["apt-get", "-qq", "--assume-yes", "source", srcpackage]
         if version:
-            argv[-1] += "=" + version
+            argv[-1] += f"={version}"
         try:
             if subprocess.call(argv, cwd=output_dir, env=env) != 0:
                 if not version:
@@ -709,7 +709,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # find top level directory
         root = None
-        for d in glob.glob(os.path.join(output_dir, srcpackage + "-*")):
+        for d in glob.glob(os.path.join(output_dir, f"{srcpackage}-*")):
             if os.path.isdir(d):
                 root = d
         assert root, "could not determine source tree root directory"
@@ -735,7 +735,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         This is used when the user reports a bug against the "linux" package.
         """
         # TODO: Ubuntu specific
-        return "linux-image-" + os.uname()[2]
+        return f"linux-image-{os.uname()[2]}"
 
     def install_packages(
         self,
@@ -827,7 +827,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._current_release_codename = f.read().strip()
 
         if not os.path.exists(apt_sources):
-            raise SystemError("%s does not exist" % apt_sources)
+            raise SystemError(f"{apt_sources} does not exist")
 
         # create apt sandbox
         if cache_dir:
@@ -916,10 +916,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                 try:
                     cache_pkg = cache[pkg]
                 except KeyError:
-                    m = "package %s does not exist, ignoring" % pkg.replace(
-                        "%", "%%"
+                    m = (
+                        f"package {pkg.replace('%', '%%')} does not exist,"
+                        f" ignoring"
                     )
-                    obsolete += m + "\n"
+                    obsolete += f"{m}\n"
                     apport.logging.warning("%s", m)
                     continue
                 for dep in cache_pkg.candidate.dependencies:
@@ -956,10 +957,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 cache_pkg = cache[pkg]
             except KeyError:
-                m = "package %s does not exist, ignoring" % pkg.replace(
-                    "%", "%%"
+                m = (
+                    f"package {pkg.replace('%', '%%')} does not exist,"
+                    f" ignoring"
                 )
-                obsolete += m + "\n"
+                obsolete += f"{m}\n"
                 apport.logging.warning("%s", m)
                 continue
 
@@ -976,15 +978,15 @@ class __AptDpkgPackageInfo(PackageInfo):
                         apt.apt_pkg.AcquireFile(
                             fetcher,
                             lp_url,
-                            hash="sha1:%s" % sha1sum,
+                            hash=f"sha1:{sha1sum}",
                             destdir=archivedir,
                         )
                     )
                     lp_cache[pkg] = ver
                 else:
                     obsolete += (
-                        "%s version %s required, but %s is available\n"
-                        % (pkg, ver, cache_pkg.candidate.version)
+                        f"{pkg} version {ver} required,"
+                        f" but {cache_pkg.candidate.version} is available\n"
                     )
                     ver = cache_pkg.candidate.version
 
@@ -1033,7 +1035,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             # libpam-modules and libpam-mkhomedir in artful
                             if p == candidate.package.name:
                                 continue
-                            debs = os.path.join(archivedir, "%s_*.deb" % p)
+                            debs = os.path.join(archivedir, f"{p}_*.deb")
                             for path in glob.glob(debs):
                                 ver = self._deb_version(path)
                                 if apt.apt_pkg.check_dep(
@@ -1046,9 +1048,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                 pass
                         del providers
                     else:
-                        debs = os.path.join(
-                            archivedir, "%s_*.deb" % conflict[0]
-                        )
+                        debs = os.path.join(archivedir, f"{conflict[0]}_*.deb")
                         for path in glob.glob(debs):
                             ver = self._deb_version(path)
                             if apt.apt_pkg.check_dep(
@@ -1062,7 +1062,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             if candidate.architecture != "all" and install_dbg:
                 try:
-                    dbg_pkg = pkg + "-dbg"
+                    dbg_pkg = f"{pkg}-dbg"
                     dbg = cache[dbg_pkg]
                     pkg_found = False
                     # try to get the same version as pkg
@@ -1079,7 +1079,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     apt.apt_pkg.AcquireFile(
                                         fetcher,
                                         lp_url,
-                                        hash="sha1:%s" % sha1sum,
+                                        hash=f"sha1:{sha1sum}",
                                         destdir=archivedir,
                                     )
                                 )
@@ -1094,9 +1094,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                             dbg.candidate = dbg.versions[candidate.version]
                         except KeyError:
                             obsolete += (
-                                "outdated -dbg package for %s:"
-                                " package version %s -dbg version %s\n"
-                                % (pkg, ver, dbg.candidate.version)
+                                f"outdated -dbg package for {pkg}:"
+                                f" package version {ver}"
+                                f" -dbg version {dbg.candidate.version}\n"
                             )
                     real_pkgs.add(dbg_pkg)
                 except KeyError:
@@ -1149,7 +1149,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                             apt.apt_pkg.AcquireFile(
                                                 fetcher,
                                                 lp_url,
-                                                hash="sha1:%s" % sha1sum,
+                                                hash=f"sha1:{sha1sum}",
                                                 destdir=archivedir,
                                             )
                                         )
@@ -1168,7 +1168,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             real_pkgs.add(p)
                     else:
                         pkg_found = False
-                        dbgsym_pkg = pkg + "-dbgsym"
+                        dbgsym_pkg = f"{pkg}-dbgsym"
                         try:
                             dbgsym = cache[dbgsym_pkg]
                             real_pkgs.add(dbgsym_pkg)
@@ -1189,7 +1189,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                             apt.apt_pkg.AcquireFile(
                                                 fetcher,
                                                 lp_url,
-                                                hash="sha1:%s" % sha1sum,
+                                                hash=f"sha1:{sha1sum}",
                                                 destdir=archivedir,
                                             )
                                         )
@@ -1202,13 +1202,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     ]
                                 except KeyError:
                                     obsolete += (
-                                        "outdated debug symbol package"
-                                        " for %s: package version %s"
-                                        " dbgsym version %s\n"
-                                    ) % (
-                                        pkg,
-                                        candidate.version,
-                                        dbgsym.candidate.version,
+                                        f"outdated debug symbol package"
+                                        f" for {pkg}: package version"
+                                        f" {candidate.version}"
+                                        f" dbgsym version"
+                                        f" {dbgsym.candidate.version}\n"
                                     )
 
                         except KeyError:
@@ -1221,7 +1219,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         apt.apt_pkg.AcquireFile(
                                             fetcher,
                                             lp_url,
-                                            hash="sha1:%s" % sha1sum,
+                                            hash=f"sha1:{sha1sum}",
                                             destdir=archivedir,
                                         )
                                     )
@@ -1229,8 +1227,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     pkg_found = True
                             if not pkg_found:
                                 obsolete += (
-                                    "no debug symbol package found for %s\n"
-                                    % pkg
+                                    f"no debug symbol package found"
+                                    f" for {pkg}\n"
                                 )
 
         # unpack packages, weed out the ones that are already installed (for
@@ -1338,7 +1336,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # check bookkeeping that apt fetcher really got everything
         assert (
             not real_pkgs
-        ), "apt fetcher did not fetch these packages: " + " ".join(real_pkgs)
+        ), f"apt fetcher did not fetch these packages: {' '.join(real_pkgs)}"
 
         if permanent_rootdir:
             self._save_virtual_mapping(aptroot)
@@ -1418,8 +1416,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 return source.uri
 
         raise SystemError(
-            "cannot determine default mirror:"
-            " %s does not contain a valid deb line" % apt_sources
+            f"cannot determine default mirror:"
+            f" {apt_sources} does not contain a valid deb line"
         )
 
     def _get_mirror(self):
@@ -1470,7 +1468,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # devel release as they will be old and empty
         for pocket in ["-proposed", "", "-security", "-updates"]:
             contents_filename = os.path.join(
-                map_cachedir, "%s%s-Contents-%s.gz" % (release, pocket, arch)
+                map_cachedir, f"{release}{pocket}-Contents-{arch}.gz"
             )
             # check if map exists and is younger than a day; if not, we need
             # to refresh it
@@ -1482,11 +1480,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 age = None
 
             if age is None or age >= 86400:
-                url = "%s/dists/%s%s/Contents-%s.gz" % (
-                    self._get_mirror(),
-                    release,
-                    pocket,
-                    arch,
+                url = (
+                    f"{self._get_mirror()}/dists"
+                    f"/{release}{pocket}/Contents-{arch}.gz"
                 )
                 if age:
                     # HTTPConnection requires server name e.g.
@@ -1540,7 +1536,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
-                with gzip.open("%s" % contents_filename, "rb") as contents:
+                with gzip.open(f"{contents_filename}", "rb") as contents:
                     line_num = 0
                     for line in contents:
                         line_num += 1
@@ -1667,15 +1663,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                     continue
                 break
             if user and ppa_name:
-                ppa_line = "deb http://ppa.launchpad.net/%s/%s/%s %s main" % (
-                    user,
-                    ppa_name,
-                    distro,
-                    release_codename,
+                ppa_line = (
+                    f"deb http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+                    f" {release_codename} main"
                 )
                 debug_url = (
-                    "http://ppa.launchpad.net/%s/%s/%s/dists/%s/main/debug"
-                    % (user, ppa_name, distro, release_codename)
+                    f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+                    f"/dists/{release_codename}/main/debug"
                 )
                 try:
                     with contextlib.closing(
@@ -1685,7 +1679,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     add_debug = " main/debug"
                 except (urllib.error.URLError, urllib.error.HTTPError):
                     add_debug = ""
-                return ppa_line + add_debug + "\ndeb-src" + ppa_line[3:] + "\n"
+                return f"{ppa_line + add_debug}\ndeb-src{ppa_line[3:]}\n"
         return None
 
     def _build_apt_sandbox(
@@ -1713,8 +1707,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         list_d = os.path.join(apt_root, "etc", "apt", "sources.list.d")
         if os.path.exists(list_d):
             shutil.rmtree(list_d)
-        if os.path.isdir(apt_sources + ".d"):
-            shutil.copytree(apt_sources + ".d", list_d)
+        if os.path.isdir(f"{apt_sources}.d"):
+            shutil.copytree(f"{apt_sources}.d", list_d)
         else:
             os.makedirs(list_d)
         with open(apt_sources, encoding="utf-8") as src:
@@ -1735,17 +1729,17 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if origin == "unknown":
                     continue
                 origin_path = None
-                if os.path.isdir(apt_sources + ".d"):
+                if os.path.isdir(f"{apt_sources}.d"):
                     # check to see if there is a sources.list file for the
                     # origin, if there isn't try using a sources.list file
                     # w/o LP-PPA-
                     origin_path = os.path.join(
-                        apt_sources + ".d", origin + ".list"
+                        f"{apt_sources}.d", f"{origin}.list"
                     )
                     if not os.path.exists(origin_path) and "LP-PPA" in origin:
                         origin_path = os.path.join(
-                            apt_sources + ".d",
-                            origin.strip("LP-PPA-") + ".list",
+                            f"{apt_sources}.d",
+                            f"{origin.strip('LP-PPA-')}.list",
                         )
                         if not os.path.exists(origin_path):
                             origin_path = None
@@ -1765,7 +1759,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             "etc",
                             "apt",
                             "sources.list.d",
-                            origin + ".list",
+                            f"{origin}.list",
                         ),
                         "a",
                         encoding="utf-8",
@@ -1798,8 +1792,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         if os.path.exists(trusted_d):
             shutil.rmtree(trusted_d)
 
-        if os.path.exists(trusted_gpg + ".d"):
-            shutil.copytree(trusted_gpg + ".d", trusted_d)
+        if os.path.exists(f"{trusted_gpg}.d"):
+            shutil.copytree(f"{trusted_gpg}.d", trusted_d)
         elif os.path.exists("/etc/apt/trusted.gpg.d"):
             shutil.copytree("/etc/apt/trusted.gpg.d", trusted_d)
         else:
@@ -1829,7 +1823,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 argv = [
                     "apt-key",
                     "--keyring",
-                    os.path.join(trusted_d, "%s.gpg" % origin),
+                    os.path.join(trusted_d, f"{origin}.gpg"),
                     "adv",
                     "--quiet",
                     "--keyserver",

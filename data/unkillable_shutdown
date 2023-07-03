@@ -96,9 +96,9 @@ def do_report(pid, omit_pids):
     report["Tags"] = "shutdown-hang"
     report["Title"] = "does not terminate at computer shutdown"
     if "ExecutablePath" in report:
-        report["Title"] = (
-            os.path.basename(report["ExecutablePath"]) + " " + report["Title"]
-        )
+        report[
+            "Title"
+        ] = f"{os.path.basename(report['ExecutablePath'])} {report['Title']}"
     report["Processes"] = apport.hookutils.command_output(["ps", "aux"])
     report["InitctlList"] = apport.hookutils.command_output(
         ["initctl", "list"]

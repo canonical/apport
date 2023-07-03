@@ -185,7 +185,7 @@ class T(unittest.TestCase):
             os.makedirs(mapdir)
             with gzip.open(
                 os.path.join(
-                    mapdir, "Contents-%s.gz" % impl.get_system_architecture()
+                    mapdir, f"Contents-{impl.get_system_architecture()}.gz"
                 ),
                 "w",
             ) as f:
@@ -200,12 +200,12 @@ bin/true                                                admin/superutils
 
             # test Contents.gz for -updates pocket
             mapdir = os.path.join(
-                basedir, "dists", impl.get_distro_codename() + "-updates"
+                basedir, "dists", f"{impl.get_distro_codename()}-updates"
             )
             os.makedirs(mapdir)
             with gzip.open(
                 os.path.join(
-                    mapdir, "Contents-%s.gz" % impl.get_system_architecture()
+                    mapdir, f"Contents-{impl.get_system_architecture()}.gz"
                 ),
                 "w",
             ) as f:
@@ -215,7 +215,7 @@ bin/true                                                admin/superutils
                 )
 
             # use this as a mirror
-            impl.set_mirror("file://" + basedir)
+            impl.set_mirror(f"file://{basedir}")
 
             self.assertEqual(
                 impl.get_file_package("usr/bin/frob", False), None
@@ -242,7 +242,7 @@ bin/true                                                admin/superutils
             )
 
             # valid mirror, test cache directory
-            impl.set_mirror("file://" + basedir)
+            impl.set_mirror(f"file://{basedir}")
             cache_dir = os.path.join(basedir, "cache")
             os.mkdir(cache_dir)
             self.assertEqual(
@@ -321,7 +321,7 @@ usr/bin/frob                                            foo/frob
                 )
 
             # use this as a mirror
-            impl.set_mirror("file://" + basedir)
+            impl.set_mirror(f"file://{basedir}")
 
             # must not match system architecture
             self.assertEqual(
@@ -400,7 +400,7 @@ usr/bin/frob                                            foo/frob
             )
 
             # valid mirror, test caching
-            impl.set_mirror("file://" + basedir)
+            impl.set_mirror(f"file://{basedir}")
             cache_dir = os.path.join(basedir, "cache")
             os.mkdir(cache_dir)
             self.assertEqual(

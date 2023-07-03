@@ -142,10 +142,10 @@ void makeleak(void){
         logpath = os.path.join(self.workdir, "unpackaged-exe.log")
 
         cmd = ["apport-valgrind", "--no-sandbox", "-l", logpath, exepath]
-        self.assertEqual(self._call(cmd), (0, os.getcwd() + "\n", ""))
+        self.assertEqual(self._call(cmd), (0, f"{os.getcwd()}\n", ""))
         self.assertTrue(
             os.path.exists(logpath),
-            "A log file %s should exist but does not" % logpath,
+            f"A log file {logpath} should exist but does not",
         )
 
         with open(logpath, encoding="utf-8") as log_file:

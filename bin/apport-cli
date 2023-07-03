@@ -35,7 +35,7 @@ class CLIDialog:
     """Command line dialog wrapper."""
 
     def __init__(self, heading, text):
-        self.heading = "\n*** " + heading + "\n"
+        self.heading = f"\n*** {heading}\n"
         self.text = text
         self.keys = []
         self.buttons = []
@@ -94,7 +94,7 @@ class CLIDialog:
                 else:
                     print(_("What would you like to do? Your options are:"))
                 for index, button in enumerate(self.buttons):
-                    print("  %s: %s" % (self.keys[index], button))
+                    print(f"  {self.keys[index]}: {button}")
 
                 if len(self.keys) <= 10:
                     # A 10 option prompt would can still be a single character
@@ -139,7 +139,7 @@ class CLIProgressDialog(CLIDialog):
             return
 
         if progress is not None:
-            sys.stdout.write("\r%u%%" % (progress * 100))
+            sys.stdout.write(f"\r{progress * 100}%")
         else:
             sys.stdout.write(".")
         sys.stdout.flush()
@@ -162,7 +162,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             # ignore internal keys
             if key.startswith("_"):
                 continue
-            details += "== %s =================================\n" % key
+            details += f"== {key} =================================\n"
             # string value
             keylen = len(self.report[key])
             if (
@@ -269,7 +269,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
                     self.report_file = self._save_report_in_temp_directory()
-                print(_("Problem report file:") + " " + self.report_file)
+                print(f"{_('Problem report file:')} {self.report_file}")
 
             return return_value
 
@@ -398,7 +398,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         """
-        print("\n***  " + text)
+        print(f"\n***  {text}")
         while True:
             sys.stdout.write(_("Path to file (Enter to cancel):"))
             sys.stdout.write(" ")
@@ -413,14 +413,12 @@ class CLIUserInterface(apport.ui.UserInterface):
                 return f
 
     def open_url(self, url):
-        text = "%s\n\n  %s\n\n%s" % (
-            _("To continue, you must visit the following URL:"),
-            url,
-            _(
-                "You can launch a browser now,"
-                " or copy this URL into a browser on another computer."
-            ),
+        header = _("To continue, you must visit the following URL:")
+        footer = _(
+            "You can launch a browser now,"
+            " or copy this URL into a browser on another computer."
         )
+        text = f"{header}\n\n  {url}\n\n{footer}"
 
         answer = self.ui_question_choice(
             text, [_("Launch a browser now")], False

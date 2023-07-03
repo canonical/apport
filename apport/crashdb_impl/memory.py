@@ -86,11 +86,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         SourcePackage.
         """
         if "SourcePackage" in report:
-            return "http://%s.bugs.example.com/%i" % (
-                report["SourcePackage"],
-                handle,
+            return (
+                f"http://{report['SourcePackage']}.bugs.example.com/{handle}"
             )
-        return "http://bugs.example.com/%i" % handle
+        return f"http://bugs.example.com/{handle}"
 
     def get_id_url(self, report, crash_id):
         """Return URL for a given report ID.
@@ -217,9 +216,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         already marked as fixed (having ID 'master').
         """
         assert self.reports[master]["fixed_version"] is not None
-        self.reports[crash_id]["comment"] = (
-            "regression, already fixed in #%i" % master
-        )
+        self.reports[crash_id][
+            "comment"
+        ] = f"regression, already fixed in #{master}"
 
     def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""

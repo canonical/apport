@@ -31,7 +31,7 @@ def needed_packages(report):
 
     # first, grab the versions that we captured at crash time
     for line in (
-        report.get("Package", "") + "\n" + report.get("Dependencies", "")
+        f"{report.get('Package', '')}\n{report.get('Dependencies', '')}"
     ).splitlines():
         if not line.strip():
             continue
@@ -52,7 +52,7 @@ def report_package_versions(report):
     """Return package -> version dictionary from report."""
     pkg_vers = {}
     for line in (
-        report.get("Package", "") + "\n" + report.get("Dependencies", "")
+        f"{report.get('Package', '')}\n{report.get('Dependencies', '')}"
     ).splitlines():
         if not line.strip():
             continue
@@ -117,8 +117,7 @@ def needed_runtime_packages(
         if pkg:
             if verbose:
                 apport.logging.log(
-                    "dynamically loaded %s needs package %s, queueing"
-                    % (line, pkg)
+                    f"dynamically loaded {line} needs package {pkg}, queueing"
                 )
             pkgs.add(pkg)
         else:
@@ -225,12 +224,12 @@ def make_sandbox(
     origins = None
     if dynamic_origins:
         pkg_list = (
-            report.get("Package", "") + "\n" + report.get("Dependencies", "")
+            f"{report.get('Package', '')}\n{report.get('Dependencies', '')}"
         )
         match = re.compile(r"\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]")
         origins = set(match.findall(pkg_list))
         if origins:
-            apport.logging.log("Origins: %s" % origins)
+            apport.logging.log(f"Origins: {origins}")
 
     # unpack packages, if any, using cache and sandbox
     try:
@@ -293,7 +292,7 @@ def make_sandbox(
                     pkg = "systemd"
             if pkg:
                 apport.logging.log(
-                    "Installing extra package %s to get %s" % (pkg, path),
+                    f"Installing extra package {pkg} to get {path}",
                     log_timestamps,
                 )
                 pkgs.append((pkg, pkg_versions.get(pkg)))

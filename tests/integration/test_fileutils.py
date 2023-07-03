@@ -116,24 +116,24 @@ class T(unittest.TestCase):
             self.assertEqual(
                 apport.fileutils.find_package_desktopfile(nodesktop),
                 None,
-                "no-desktop package %s" % nodesktop,
+                f"no-desktop package {nodesktop}",
             )
         if multidesktop:
             self.assertEqual(
                 apport.fileutils.find_package_desktopfile(multidesktop),
                 None,
-                "multi-desktop package %s" % multidesktop,
+                f"multi-desktop package {multidesktop}",
             )
         if onedesktop:
             d = apport.fileutils.find_package_desktopfile(onedesktop)
-            self.assertNotEqual(d, None, "one-desktop package %s" % onedesktop)
+            self.assertNotEqual(d, None, f"one-desktop package {onedesktop}")
             self.assertTrue(os.path.exists(d))
             self.assertTrue(d.endswith(".desktop"))
         if nodisplay:
             self.assertEqual(
                 apport.fileutils.find_package_desktopfile(nodisplay),
                 None,
-                "NoDisplay package %s" % nodisplay,
+                f"NoDisplay package {nodisplay}",
             )
 
     def test_find_file_package(self):
@@ -176,7 +176,7 @@ class T(unittest.TestCase):
         pr["ExecutablePath"] = "/bin/bash"
         apport.fileutils.mark_hanging_process(pr, "1")
         uid = str(os.getuid())
-        base = "_bin_bash.%s.1.hanging" % uid
+        base = f"_bin_bash.{uid}.1.hanging"
         expected = os.path.join(apport.fileutils.report_dir, base)
         self.assertTrue(os.path.exists(expected))
 
@@ -305,7 +305,7 @@ class T(unittest.TestCase):
         with apport.fileutils.make_report_file(pr) as f:
             path = f.name
             self.assertTrue(
-                path.startswith("%s/bash" % apport.fileutils.report_dir), path
+                path.startswith(f"{apport.fileutils.report_dir}/bash"), path
             )
             os.unlink(path)
 
@@ -313,7 +313,7 @@ class T(unittest.TestCase):
         with apport.fileutils.make_report_file(pr) as f:
             path = f.name
             self.assertTrue(
-                path.startswith("%s/_bin_bash" % apport.fileutils.report_dir),
+                path.startswith(f"{apport.fileutils.report_dir}/_bin_bash"),
                 path,
             )
 
@@ -337,10 +337,9 @@ class T(unittest.TestCase):
         # use one relative and one absolute path in checksums file
         with open(sumfile, "w", encoding="utf-8") as fd:
             fd.write(
-                """2e41290da2fa3f68bd3313174467e3b5  %s
-f6423dfbc4faf022e58b4d3f5ff71a70  %s
+                f"""2e41290da2fa3f68bd3313174467e3b5  {f1[1:]}
+f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
 """
-                % (f1[1:], f2)
             )
         self.assertEqual(
             apport.fileutils.check_files_md5(sumfile), [], "correct md5sums"
@@ -492,7 +491,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         (core_name, core_path) = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test", uid=234, timestamp=222222
         )
-        expected = "core._usr_bin_test.234." + boot_id + ".123.222222"
+        expected = f"core._usr_bin_test.234.{boot_id}.123.222222"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
@@ -501,7 +500,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         (core_name, core_path) = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test.sh", uid=234, timestamp=222222
         )
-        expected = "core._usr_bin_test_sh.234." + boot_id + ".123.222222"
+        expected = f"core._usr_bin_test_sh.234.{boot_id}.123.222222"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
@@ -510,7 +509,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         (core_name, core_path) = apport.fileutils.get_core_path(
             pid=123, exe=None, uid=234, timestamp=222222
         )
-        expected = "core.unknown.234." + boot_id + ".123.222222"
+        expected = f"core.unknown.234.{boot_id}.123.222222"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
@@ -520,11 +519,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
             pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
         )
         expected = (
-            "core._usr_bin_test."
-            + str(os.getuid())
-            + "."
-            + boot_id
-            + ".123.222222"
+            f"core._usr_bin_test.{str(os.getuid())}.{boot_id}.123.222222"
         )
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)

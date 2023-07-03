@@ -178,7 +178,7 @@ class T(unittest.TestCase):
             pr["ProcCmdline"],
             " ".join([self.TEST_EXECUTABLE] + self.TEST_ARGS),
         )
-        self.assertEqual(pr["Signal"], "%i" % signal.SIGSEGV)
+        self.assertEqual(pr["Signal"], f"{signal.SIGSEGV}")
 
         # check safe environment subset
         allowed_vars = [
@@ -363,8 +363,7 @@ class T(unittest.TestCase):
         )
 
         leak = os.path.join(
-            apport.fileutils.report_dir,
-            "_usr_bin_perl.%i.crash" % (os.getuid()),
+            apport.fileutils.report_dir, f"_usr_bin_perl.{os.getuid()}.crash"
         )
         pr = apport.Report()
         with open(leak, "rb") as f:
@@ -379,7 +378,7 @@ class T(unittest.TestCase):
         """Limitation of crash report flood."""
         count = 0
         while count < 7:
-            sys.stderr.write("%i " % count)
+            sys.stderr.write(f"{count} ")
             sys.stderr.flush()
             self.do_crash()
             reports = apport.fileutils.get_new_reports()
@@ -463,7 +462,7 @@ class T(unittest.TestCase):
         # as that allows us to intercept and replace the report and tinker with
         # the core dump
 
-        inject_report = self.test_report + ".inject"
+        inject_report = f"{self.test_report}.inject"
         with open(inject_report, "w", encoding="utf-8") as f:
             # \x01pwned
             f.write(
@@ -962,7 +961,7 @@ class T(unittest.TestCase):
         if args is None:
             args = self.TEST_ARGS
 
-        assert os.access(command, os.X_OK), command + " is not executable"
+        assert os.access(command, os.X_OK), f"{command} is not executable"
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
@@ -975,7 +974,7 @@ class T(unittest.TestCase):
 
         # wait until child process has execv()ed properly
         while True:
-            with open("/proc/%i/cmdline" % process.pid, encoding="utf-8") as f:
+            with open(f"/proc/{process.pid}/cmdline", encoding="utf-8") as f:
                 cmdline = f.read()
             if "test_signal" in cmdline:
                 time.sleep(0.1)
@@ -1106,8 +1105,8 @@ class T(unittest.TestCase):
                     os.unlink(core_path)
                 except OSError as error:
                     sys.stderr.write(
-                        "WARNING: cannot clean up core file %s: %s\n"
-                        % (core_path, str(error))
+                        f"WARNING: cannot clean up core file {core_path}:"
+                        f" {str(error)}\n"
                     )
 
                 self.fail("leaves unexpected core file behind")

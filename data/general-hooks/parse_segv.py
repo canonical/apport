@@ -102,8 +102,7 @@ class ParseSegv:
         else:
             # Could not identify this instruction line
             raise ValueError(
-                'Could not parse PC "%s" from disassembly line: %s'
-                % (pc_str, line)
+                f'Could not parse PC "{pc_str}" from disassembly line: {line}'
             )
         logging.debug("pc: 0x%08x", pc)
 
@@ -115,7 +114,7 @@ class ParseSegv:
             return line, pc, None, None, None
         # Handle wrapped lines
         if full_insn_str == "" and lines[1].startswith(" "):
-            line = line + " " + lines[1].strip()
+            line = f"{line} {lines[1].strip()}"
             full_insn_str = line.split(":", 1)[1].strip()
 
         insn_parts = full_insn_str.split()
@@ -162,7 +161,7 @@ class ParseSegv:
         ]:
             for reg in ["rsp", "esp"]:
                 if reg in self.regs:
-                    dest = "(%%%s)" % (reg)
+                    dest = f"(%{reg})"
                     break
 
         return line, pc, insn, src, dest
@@ -180,9 +179,9 @@ class ParseSegv:
                 alarmist = "NULL"
             return (
                 False,
-                "%s (0x%08x) not located in a known VMA region"
-                " (needed %s region)!" % (name, addr, perm_name[perm][0]),
-                "%s %s VMA" % (perm_name[perm][1], alarmist),
+                f"{name} (0x{addr:08x}) not located in a known VMA region"
+                f" (needed {perm_name[perm][0]} region)!",
+                f"{perm_name[perm][1]} {alarmist} VMA",
             )
         if perm not in vma["perms"]:
             alarmist = ""
@@ -191,28 +190,17 @@ class ParseSegv:
                     alarmist = "writable "
                 else:
                     alarmist = "non-writable "
-            short = "%s %sVMA %s" % (perm_name[perm][1], alarmist, vma["name"])
+            short = f"{perm_name[perm][1]} {alarmist}VMA {vma['name']}"
 
             return (
                 False,
-                "%s (0x%08x) in non-%s VMA region: 0x%08x-0x%08x %s %s"
-                % (
-                    name,
-                    addr,
-                    perm_name[perm][0],
-                    vma["start"],
-                    vma["end"],
-                    vma["perms"],
-                    vma["name"],
-                ),
+                f"{name} (0x{addr:08x}) in non-{perm_name[perm][0]} VMA"
+                f" region: 0x{vma['start']:08x}-0x{vma['end']:08x}"
+                f" {vma['perms']} {vma['name']}",
                 short,
             )
 
-        return (
-            True,
-            "%s (0x%08x) ok" % (name, addr),
-            "%s ok" % (perm_name[perm][1]),
-        )
+        return (True, f"{name} (0x{addr:08x}) ok", f"{perm_name[perm][1]} ok")
 
     def register_value(self, reg):
         reg_orig = reg
@@ -225,22 +213,22 @@ class ParseSegv:
 
         if len(reg) == 2 and reg.endswith("l"):
             mask |= 0xFF00
-            reg = "%sx" % reg[0]
+            reg = f"{reg[0]}x"
         if reg in self.regs:
             return self.regs[reg] & ~mask
 
         if len(reg) == 2 and reg.endswith("x"):
             mask |= 0xFFFF0000
-            reg = "e%s" % reg
+            reg = f"e{reg}"
         if reg in self.regs:
             return self.regs[reg] & ~mask
 
         if len(reg) == 3 and reg.startswith("e"):
             mask |= 0xFFFFFFFF00000000
-            reg = "r%s" % reg[1:]
+            reg = f"r{reg[1:]}"
         if reg in self.regs:
             return self.regs[reg] & ~mask
-        raise ValueError("Could not resolve register '%s'" % (reg_orig))
+        raise ValueError(f"Could not resolve register '{reg_orig}'")
 
     def calculate_arg(self, arg):
         # TODO: Split into smaller functions/methods
@@ -270,7 +258,7 @@ class ParseSegv:
                 add = self.regs[offset[1:]]
             else:
                 if not offset.startswith("0x"):
-                    raise ValueError("Unknown offset literal: %s" % (parts[0]))
+                    raise ValueError(f"Unknown offset literal: {parts[0]}")
                 add = int(offset[2:], 16) * sign
         else:
             add = 0
@@ -313,7 +301,7 @@ class ParseSegv:
         # pylint: disable=too-many-branches,too-many-statements
         understood = False
         reason = []
-        details = ["Segfault happened at: %s" % (self.line)]
+        details = [f"Segfault happened at: {self.line}"]
 
         # Verify PC is in an executable region
         valid, out, short = self.validate_vma("x", self.pc, "PC")
@@ -324,7 +312,7 @@ class ParseSegv:
 
         if self.insn in ["lea", "leal"]:
             # Short-circuit for instructions that do not cause vma access
-            details.append("insn (%s) does not access VMA" % (self.insn))
+            details.append(f"insn ({self.insn}) does not access VMA")
         else:
             # Verify source is readable
             if self.src:
@@ -333,11 +321,11 @@ class ParseSegv:
                     and (self.src[0] in ["%", "$", "*"])
                     and not self.src.startswith("*%")
                 ):
-                    details.append('source "%s" ok' % (self.src))
+                    details.append(f'source "{self.src}" ok')
                 else:
                     addr = self.calculate_arg(self.src)
                     valid, out, short = self.validate_vma(
-                        "r", addr, 'source "%s"' % (self.src)
+                        "r", addr, f'source "{self.src}"'
                     )
                     details.append(out)
                     if not valid:
@@ -347,11 +335,11 @@ class ParseSegv:
             # Verify destination is writable
             if self.dest:
                 if ":" not in self.dest and (self.dest[0] in ["%", "$", "*"]):
-                    details.append('destination "%s" ok' % (self.dest))
+                    details.append(f'destination "{self.dest}" ok')
                 else:
                     addr = self.calculate_arg(self.dest)
                     valid, out, short = self.validate_vma(
-                        "w", addr, 'destination "%s"' % (self.dest)
+                        "w", addr, f'destination "{self.dest}"'
                     )
                     details.append(out)
                     if not valid:
@@ -360,8 +348,9 @@ class ParseSegv:
 
         # Handle I/O port operations
         if self.insn in ["out", "in"] and not understood:
-            msg = "disallowed I/O port operation on port %d" % (
-                self.register_value(self.src)
+            msg = (
+                f"disallowed I/O port operation"
+                f" on port {self.register_value(self.src)}"
             )
             reason.append(msg)
             details.append(msg)
@@ -403,9 +392,9 @@ def add_info(report):
     needed = ["Signal", "Architecture", "Disassembly", "ProcMaps", "Registers"]
     for field in needed:
         if field not in report:
-            report["SegvAnalysis"] = 'Skipped: missing required field "%s"' % (
-                field
-            )
+            report[
+                "SegvAnalysis"
+            ] = f'Skipped: missing required field "{field}"'
             return
 
     # Only run on segv for x86 and x86_64...
@@ -421,7 +410,7 @@ def add_info(report):
             report["SegvReason"] = reason
         report["SegvAnalysis"] = details
     except Exception as error:  # pylint: disable=broad-except
-        report["SegvAnalysis"] = "Failure: %s" % (str(error))
+        report["SegvAnalysis"] = f"Failure: {str(error)}"
 
 
 def main():
@@ -429,8 +418,8 @@ def main():
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
         print(
-            "  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt"
-            % (sys.argv[0])
+            f"  Usage:"
+            f" {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt"
         )
         sys.exit(0)
 
@@ -442,7 +431,7 @@ def main():
         maps = maps_file.read()
     segv = ParseSegv(registers, disassembly, maps)
     understood, reason, details = segv.report()
-    print("%s\n\n%s" % (reason, details))
+    print(f"{reason}\n\n{details}")
     rc = 0
     if not understood:
         rc = 1

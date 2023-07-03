@@ -107,7 +107,7 @@ def read_file(path, force_unicode=False):
         except UnicodeDecodeError:
             return contents
     except OSError as error:
-        return "Error: " + str(error)
+        return f"Error: {str(error)}"
 
 
 def attach_file(report, path, key=None, overwrite=True, force_unicode=False):
@@ -145,7 +145,7 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
         if conffiles and path not in conffiles:
             continue
 
-        key = "modified.conffile." + path_to_key(path)
+        key = f"modified.conffile.{path_to_key(path)}"
         if isinstance(contents, str) and (
             contents == "[deleted]" or contents.startswith("[inaccessible")
         ):
@@ -154,9 +154,8 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
 
         if ui:
             response = ui.yesno(
-                'It seems you have modified the contents of "%s".  '
-                "Would you like to add the contents of it to your bug report?"
-                % path
+                f'It seems you have modified the contents of "{path}".  '
+                f"Would you like to add the contents of it to your bug report?"
             )
             if response:
                 report[key] = contents
@@ -166,7 +165,7 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
             report[key] = "[modified]"
 
         mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
-        report["mtime.conffile." + path_to_key(path)] = mtime.isoformat()
+        report[f"mtime.conffile.{path_to_key(path)}"] = mtime.isoformat()
 
 
 def attach_upstart_overrides(report, package):
@@ -179,7 +178,7 @@ def attach_upstart_overrides(report, package):
     for file in files:
         if os.path.exists(file) and file.startswith("/etc/init/"):
             override = file.replace(".conf", ".override")
-            key = "upstart." + override.replace("/etc/init/", "")
+            key = f"upstart.{override.replace('/etc/init/', '')}"
             attach_file_if_exists(report, override, key)
 
 
@@ -195,7 +194,7 @@ def attach_upstart_logs(report, package):
             continue
         if f.startswith("/usr/share/upstart/sessions/"):
             log = os.path.basename(f).replace(".conf", ".log")
-            key = "upstart." + log
+            key = f"upstart.{log}"
             try:
                 log = os.path.join(
                     os.environ["XDG_CACHE_HOME"], "upstart", log
@@ -212,8 +211,8 @@ def attach_upstart_logs(report, package):
 
         if f.startswith("/usr/share/applications/") and f.endswith(".desktop"):
             desktopname = os.path.splitext(os.path.basename(f))[0]
-            key = "upstart.application." + desktopname
-            log = "application-%s.log" % desktopname
+            key = f"upstart.application.{desktopname}"
+            log = f"application-{desktopname}.log"
             try:
                 log = os.path.join(
                     os.environ["XDG_CACHE_HOME"], "upstart", log
@@ -242,7 +241,7 @@ def attach_dmi(report):
     dmi_dir = "/sys/class/dmi/id"
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
-            p = os.path.realpath("%s/%s" % (dmi_dir, f))
+            p = os.path.realpath(f"{dmi_dir}/{f}")
             st = os.stat(p)
             # ignore the root-only ones, since they have serial numbers
             if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):
@@ -255,7 +254,7 @@ def attach_dmi(report):
             except OSError:
                 continue
             if value:
-                report["dmi." + f.replace("_", ".")] = value
+                report[f"dmi.{f.replace('_', '.')}"] = value
 
 
 def attach_hardware(report):
@@ -308,10 +307,9 @@ def attach_hardware(report):
 
     # Use the hardware information to create a machine type.
     if "dmi.sys.vendor" in report and "dmi.product.name" in report:
-        report["MachineType"] = "%s %s" % (
-            report["dmi.sys.vendor"],
-            report["dmi.product.name"],
-        )
+        report[
+            "MachineType"
+        ] = "{report['dmi.sys.vendor']} {report['dmi.product.name']}"
 
     if command_available("prtconf"):
         report["Prtconf"] = command_output(["prtconf"])
@@ -357,24 +355,23 @@ def attach_alsa_old(report):
                     cards.append(int(fields[0]))
 
     for card in cards:
-        key = "Card%d.Amixer.info" % card
+        key = f"Card{card}.Amixer.info"
         report[key] = command_output(["amixer", "-c", str(card), "info"])
-        key = "Card%d.Amixer.values" % card
+        key = f"Card{card}.Amixer.values"
         report[key] = command_output(["amixer", "-c", str(card)])
 
-        for codecpath in glob.glob("/proc/asound/card%d/codec*" % card):
+        for codecpath in glob.glob(f"/proc/asound/card{card}/codec*"):
             if os.path.isfile(codecpath):
                 codec = os.path.basename(codecpath)
-                key = "Card%d.Codecs.%s" % (card, path_to_key(codec))
+                key = f"Card{card}.Codecs.{path_to_key(codec)}"
                 attach_file(report, codecpath, key=key)
             elif os.path.isdir(codecpath):
                 codec = os.path.basename(codecpath)
                 for name in os.listdir(codecpath):
                     path = os.path.join(codecpath, name)
-                    key = "Card%d.Codecs.%s.%s" % (
-                        card,
-                        path_to_key(codec),
-                        path_to_key(name),
+                    key = (
+                        f"Card{card}.Codecs"
+                        f".{path_to_key(codec)}.{path_to_key(name)}"
                     )
                     attach_file(report, path, key)
 
@@ -451,7 +448,7 @@ def command_output(
             env=env,
         )
     except OSError as error:
-        return "Error: " + str(error)
+        return f"Error: {str(error)}"
 
     if sp.returncode == 0:
         res = sp.stdout.strip()
@@ -583,8 +580,7 @@ def attach_root_command_outputs(report, command_map):
                 # use "| cat" here, so that we can end commands with 2>&1
                 # (otherwise it would have the wrong redirection order)
                 script.write(
-                    "%s | cat > %s\n"
-                    % (command, os.path.join(workdir, keyname))
+                    f"{command} | cat > {os.path.join(workdir, keyname)}\n"
                 )
 
         # run script
@@ -790,7 +786,7 @@ def attach_gsettings_schema(report, schema):
                     b"favorite-apps",
                 ]:
                     value = "redacted by apport"
-                cur_value += "%s %s %s\n" % (schema_name, key, value)
+                cur_value += f"{schema_name} {key} {value}\n"
 
     report["GsettingsChanges"] = cur_value
 
@@ -947,7 +943,7 @@ def attach_mac_events(report, profiles=None):
     if "AuditLog" not in report and os.path.exists("/var/run/auditd.pid"):
         attach_root_command_outputs(
             report,
-            {"AuditLog": 'egrep "' + mac_regex + '" /var/log/audit/audit.log'},
+            {"AuditLog": f'egrep "{mac_regex}" /var/log/audit/audit.log'},
         )
 
     attach_file_if_exists(
@@ -973,7 +969,7 @@ def attach_mac_events(report, profiles=None):
             continue
 
         for search_profile in profiles:
-            if re.match("^" + search_profile + "$", profile):
+            if re.match(f"^{search_profile}$", profile):
                 report.add_tags(["apparmor"])
                 break
 
@@ -1013,8 +1009,7 @@ def package_versions(*packages):
             versions.append((package, version))
 
     package_width = max(len(version[0]) for version in versions)
-    fmt = "%%-%ds %%s" % package_width
-    return "\n".join([fmt % v for v in versions])
+    return "\n".join([f"{p:<{package_width}s} {v}" for (p, v) in versions])
 
 
 def _get_module_license(module):
@@ -1071,7 +1066,7 @@ def __drm_con_info(con):
         if f == "edid":
             val = base64.b64encode(val)
             f += "-base64"
-        info += "%s: %s\n" % (f, val.decode("UTF-8", errors="replace"))
+        info += f"{f}: {val.decode('UTF-8', errors='replace')}\n"
     return info
 
 
@@ -1087,7 +1082,7 @@ def attach_drm_info(report):
         con = os.path.join(drm_dir, f)
         if os.path.exists(os.path.join(con, "enabled")):
             # DRM can set an arbitrary string for its connector paths.
-            report["DRM." + path_to_key(f)] = __drm_con_info(con)
+            report[f"DRM.{path_to_key(f)}"] = __drm_con_info(con)
 
 
 def in_session_of_problem(report):
@@ -1124,7 +1119,7 @@ def in_session_of_problem(report):
     # determine session creation time
     try:
         session_start_time = os.stat(
-            "/run/systemd/sessions/" + session_id
+            f"/run/systemd/sessions/{session_id}"
         ).st_mtime
     except OSError:
         return None
