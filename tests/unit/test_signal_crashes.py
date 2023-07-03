@@ -20,6 +20,7 @@ import time
 import unittest
 
 import apport.fileutils
+import apport.user_group
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
@@ -167,29 +168,33 @@ class TestApport(unittest.TestCase):
         pid = os.getpid()
         options = apport_binary.parse_arguments(["-p", str(pid)])
         now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
+        crash_user = apport.user_group.get_process_user_and_group()
         with apport_binary.ProcPid(pid) as proc_pid:
             self.assertFalse(
-                apport_binary.consistency_checks(options, now, proc_pid)
+                apport_binary.consistency_checks(
+                    options, now, proc_pid, crash_user
+                )
             )
 
     def test_consistency_checks_mismatching_uid(self):
         """Test consistency_checks() for a mitmatching UID."""
         pid = os.getpid()
+        crash_user = apport.user_group.get_process_user_and_group()
         options = apport_binary.parse_arguments(
             [
                 "-p",
                 str(pid),
                 "-u",
-                str(os.getuid() + 1),
+                str(crash_user.uid + 1),
                 "-g",
-                str(os.getgid() + 1),
+                str(crash_user.gid + 1),
             ]
         )
         with apport_binary.ProcPid(pid) as proc_pid:
-            # TODO: Get rid of global variables from get_pid_info
-            apport_binary.get_pid_info(proc_pid)
             self.assertFalse(
-                apport_binary.consistency_checks(options, 1, proc_pid)
+                apport_binary.consistency_checks(
+                    options, 1, proc_pid, crash_user
+                )
             )
 
     def test_stop(self):
@@ -216,6 +221,7 @@ class TestApport(unittest.TestCase):
         """Test is_closing_session()."""
         path_exist_mock.return_value = True
         run_mock.return_value = (b"(false,)\n", b"some stderr output\n")
+        crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text(
@@ -223,34 +229,40 @@ class TestApport(unittest.TestCase):
             )
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid), True
+                    apport_binary.is_closing_session(proc_pid, crash_user),
+                    True,
                 )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 
     def test_is_closing_session_no_environ(self) -> None:
         """Test is_closing_session() with no DBUS_SESSION_BUS_ADDRESS."""
+        crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DISPLAY=:0\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid), False
+                    apport_binary.is_closing_session(proc_pid, crash_user),
+                    False,
                 )
 
     def test_is_closing_session_no_determine_socket(self) -> None:
         """Test is_closing_session() cannot determine D-Bus socket."""
+        crash_user = apport.user_group.UserGroupID(42, 42)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:/run/user/42/bus\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid), False
+                    apport_binary.is_closing_session(proc_pid, crash_user),
+                    False,
                 )
 
     def test_is_closing_session_socket_not_exists(self) -> None:
         """Test is_closing_session() where D-Bus socket does not exist."""
         assert not os.path.exists("/run/user/1337/bus")
+        crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text(
@@ -258,7 +270,8 @@ class TestApport(unittest.TestCase):
             )
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid), False
+                    apport_binary.is_closing_session(proc_pid, crash_user),
+                    False,
                 )
 
     @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
@@ -277,6 +290,7 @@ class TestApport(unittest.TestCase):
         run_mock.side_effect = OSError(
             errno.ENOENT, "No such file or directory: 'gdbus'"
         )
+        crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text(
@@ -284,7 +298,8 @@ class TestApport(unittest.TestCase):
             )
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid), False
+                    apport_binary.is_closing_session(proc_pid, crash_user),
+                    False,
                 )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
