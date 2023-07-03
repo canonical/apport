@@ -32,6 +32,7 @@ class T(unittest.TestCase):
 
         crashdb_conf = os.path.join(self.workdir, "crashdb.conf")
         with open(crashdb_conf, "w", encoding="utf-8") as f:
+            # pylint: disable=consider-using-f-string
             f.write(
                 textwrap.dedent(
                     """\
@@ -106,7 +107,7 @@ class T(unittest.TestCase):
                 self.lock_file,
             ]
         )
-        self.assertEqual(err, "", "no error messages:\n" + err)
+        self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
         self.assertIn("retracing #0", out)
         self.assertIn("retracing #1", out)
@@ -135,7 +136,7 @@ class T(unittest.TestCase):
     def test_crashes_error(self):
         """Crash retracing if apport-retrace fails on bug #1."""
         # make apport-retrace fail on bug 1
-        os.rename(self.apport_retrace, self.apport_retrace + ".bak")
+        os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write(
                 textwrap.dedent(
@@ -187,12 +188,12 @@ class T(unittest.TestCase):
         self.assertIn("dup.db -v 2\n", retrace_log)
         self.assertFalse(os.path.exists(self.lock_file))
 
-        os.rename(self.apport_retrace + ".bak", self.apport_retrace)
+        os.rename(f"{self.apport_retrace}.bak", self.apport_retrace)
 
     def test_crashes_transient_error(self):
         """Crash retracing if apport-retrace reports a transient error."""
         # make apport-retrace fail on bug 1
-        os.rename(self.apport_retrace, self.apport_retrace + ".bak")
+        os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write(
                 textwrap.dedent(
@@ -249,7 +250,7 @@ class T(unittest.TestCase):
                 self.lock_file,
             ]
         )
-        self.assertEqual(err, "", "no error messages:\n" + err)
+        self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertNotIn("#1", out, "signal crashes are not retraced")
         self.assertNotIn("#2", out, "signal crashes are not retraced")
         self.assertIn("checking #3 for duplicate", out)
@@ -274,7 +275,7 @@ class T(unittest.TestCase):
                 self.lock_file,
             ]
         )
-        self.assertEqual(err, "", "no error messages:\n" + err)
+        self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertIn("ApportRetraceError", out)
 
     def test_publish_db(self):
@@ -293,7 +294,7 @@ class T(unittest.TestCase):
                 os.path.join(self.workdir, "dupdb"),
             ]
         )
-        self.assertEqual(err, "", "no error messages:\n" + err)
+        self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertIn("retracing #0", out)
 
         self.assertTrue(
@@ -315,7 +316,7 @@ class T(unittest.TestCase):
                 "empty",
             ]
         )
-        self.assertEqual(err, "", "no error messages:\n" + err)
+        self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertNotIn("retracing #", out)
         self.assertNotIn("crash is", out)
         self.assertNotIn("failed with status", out)
@@ -333,6 +334,6 @@ class T(unittest.TestCase):
                 "nonexisting",
             ]
         )
-        self.assertEqual(out, "", "no output messages:\n" + out)
+        self.assertEqual(out, "", f"no output messages:\n{out}")
         self.assertNotIn("Traceback", err)
         self.assertIn("nonexisting", err)

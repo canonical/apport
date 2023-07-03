@@ -271,18 +271,12 @@ class ProblemReport(collections.UserDict):
                 else:
                     break
         if missing_keys:
-            raise KeyError(
-                "Cannot find %s in report" % ", ".join(missing_keys)
-            )
+            raise KeyError(f"Cannot find {', '.join(missing_keys)} in report")
         if False in b64_block.values():
-            raise ValueError(
-                "%s has no binary content"
-                % [
-                    item
-                    for item, element in b64_block.items()
-                    if element is False
-                ]
-            )
+            items = [
+                item for item, element in b64_block.items() if element is False
+            ]
+            raise ValueError(f"{items} has no binary content")
 
     def get_tags(self) -> set[str]:
         """Return the set of tags."""
@@ -470,8 +464,8 @@ class ProblemReport(collections.UserDict):
                 if len(v) >= 4 and v[3]:
                     if size == 0:
                         raise OSError(
-                            "did not get any data for field %s from %s"
-                            % (k, str(v[0]))
+                            f"did not get any data"
+                            f" for field {k} from {str(v[0])}"
                         )
 
             # flush compressor and write the rest
@@ -735,8 +729,8 @@ class ProblemReport(collections.UserDict):
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
             raise ValueError(
-                "key '%s' contains invalid characters"
-                " (only numbers, letters, '.', '_', and '-' are allowed)" % k
+                f"key '{k}' contains invalid characters"
+                f" (only numbers, letters, '.', '_', and '-' are allowed)"
             )
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool, [, max_size [, fail_on_empty]]]))
@@ -753,8 +747,8 @@ class ProblemReport(collections.UserDict):
             )
         ):
             raise TypeError(
-                "value for key %s must be a string, CompressedValue,"
-                " or a file reference" % k
+                f"value for key {k} must be a string, CompressedValue,"
+                f" or a file reference"
             )
 
         return self.data.__setitem__(k, v)

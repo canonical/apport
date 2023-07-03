@@ -17,7 +17,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")
         self.crashes = CrashDatabase(
-            None, {"sample_data": "1", "dupdb_url": "file://" + self.dupdb_dir}
+            None, {"sample_data": "1", "dupdb_url": f"file://{self.dupdb_dir}"}
         )
 
         self.assertEqual(

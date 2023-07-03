@@ -108,10 +108,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not auth:
             lp_instance = options.get("launchpad_instance")
             if lp_instance:
-                auth = (
-                    default_credentials_path
-                    + "."
-                    + lp_instance.split("://", 1)[-1]
+                auth = ".".join(
+                    (default_credentials_path, lp_instance.split("://", 1)[-1])
                 )
             else:
                 auth = default_credentials_path
@@ -128,10 +126,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             ), 'Need to have either "project" or "distro" option'
 
         if "architecture" in options:
-            self.arch_tag = "need-%s-retrace" % options["architecture"]
+            self.arch_tag = f"need-{options['architecture']}-retrace"
         else:
             self.arch_tag = (
-                "need-%s-retrace" % packaging.get_system_architecture()
+                f"need-{packaging.get_system_architecture()}-retrace"
             )
         self.options = options
         self.auth = auth
@@ -155,9 +153,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if Launchpad is None:
             sys.stderr.write(
-                "ERROR: The launchpadlib Python %s module is not installed."
-                " Please install the python3-launchpadlib package!\n"
-                % sys.version[0]
+                f"ERROR: The launchpadlib Python {sys.version[0]} module"
+                f" is not installed."
+                f" Please install the python3-launchpadlib package!\n"
             )
             sys.exit(1)
 
@@ -196,7 +194,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         for t in tasks:
             if t.bug_target_name.lower() == self.distro or re.match(
-                r"^.+\(%s.*\)$" % self.distro, t.bug_target_name.lower()
+                rf"^.+\({self.distro}.*\)$", t.bug_target_name.lower()
             ):
                 yield t
 
@@ -274,27 +272,21 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             project = self.options.get("project")
 
         if project:
-            return "https://bugs.%s/%s/+filebug/%s?%s" % (
-                hostname,
-                project,
-                handle,
-                urllib.parse.urlencode(args),
+            return (
+                f"https://bugs.{hostname}/{project}/+filebug/{handle}"
+                f"?{urllib.parse.urlencode(args)}"
             )
 
         if "SourcePackage" in report:
-            return "https://bugs.%s/%s/+source/%s/+filebug/%s?%s" % (
-                hostname,
-                self.distro,
-                report["SourcePackage"],
-                handle,
-                urllib.parse.urlencode(args),
+            return (
+                f"https://bugs.{hostname}/{self.distro}/+source"
+                f"/{report['SourcePackage']}/+filebug/{handle}"
+                f"?{urllib.parse.urlencode(args)}"
             )
 
-        return "https://bugs.%s/%s/+filebug/%s?%s" % (
-            hostname,
-            self.distro,
-            handle,
-            urllib.parse.urlencode(args),
+        return (
+            f"https://bugs.{hostname}/{self.distro}/+filebug/{handle}"
+            f"?{urllib.parse.urlencode(args)}"
         )
 
     def get_id_url(self, report, crash_id):
@@ -305,7 +297,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         Return None if URL is not available or cannot be determined.
         """
-        return "https://bugs.launchpad.net/bugs/" + str(crash_id)
+        return f"https://bugs.launchpad.net/bugs/{str(crash_id)}"
 
     def download(self, crash_id):
         # TODO: Split into smaller functions/methods
@@ -366,7 +358,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 report["ProblemType"] = "Package"
             else:
                 raise ValueError(
-                    "cannot determine ProblemType from tags: " + str(b.tags)
+                    f"cannot determine ProblemType from tags: {str(b.tags)}"
                 )
 
         report.add_tags(b.tags)
@@ -401,7 +393,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     report[key] = attachment.read()
             else:
                 raise NotImplementedError(
-                    "Unknown attachment type: " + attachment.filename
+                    f"Unknown attachment type: {attachment.filename}"
                 )
         return report
 
@@ -475,7 +467,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # text can be empty if you are only adding an attachment to a bug
             if text:
                 if change_description:
-                    bug.description = bug.description + "\n--- \n" + text
+                    bug.description = f"{bug.description}\n--- \n{text}"
                     bug.lp_save()
                 else:
                     if not comment:
@@ -560,8 +552,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_affected_packages(self, crash_id):
         """Return list of affected source packages for given ID."""
         bug_target_re = re.compile(
-            r"/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$"
-            % self.distro
+            rf"/{self.distro}/(?:(?P<suite>[^/]+)/)?\+source"
+            rf"/(?P<source>[^/]+)$"
         )
 
         bug = self.launchpad.bugs[crash_id]
@@ -692,7 +684,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         tasks = list(b.bug_tasks)  # just fetch it once
 
         if self.distro:
-            distro_identifier = "(%s)" % self.distro.lower()
+            distro_identifier = f"({self.distro.lower()})"
             fixed_tasks = list(
                 filter(
                     lambda task: task.status == "Fix Released"
@@ -791,7 +783,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if master_id:
             assert (
                 crash_id != master_id
-            ), "cannot mark bug %s as a duplicate of itself" % str(crash_id)
+            ), f"cannot mark bug {str(crash_id)} as a duplicate of itself"
 
             # check whether the master itself is a dup
             master = self.launchpad.bugs[master_id]
@@ -826,15 +818,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # fresh bug object, LP#336866 workaround
             bug = self.launchpad.bugs[crash_id]
             bug.newMessage(
-                content="Thank you for taking the time to report this crash"
-                " and helping to make this software better.  This particular"
-                " crash has already been reported and is a duplicate of bug"
-                " #%i, so is being marked as such.  Please look at the other"
-                " bug report to see if there is any missing information that"
-                " you can provide, or to see if there is a workaround for the"
-                " bug.  Additionally, any further discussion regarding the bug"
-                " should occur in the other report.  Please continue to report"
-                " any other bugs you may find." % master_id,
+                content=f"Thank you for taking the time to report this crash"
+                f" and helping to make this software better.  This particular"
+                f" crash has already been reported and is a duplicate of bug"
+                f" #{master_id}, so is being marked as such.  Please look at"
+                f" the other bug report to see if there is any missing"
+                f" information that you can provide, or to see if there is a"
+                f" workaround for the bug.  Additionally, any further"
+                f" discussion regarding the bug should occur in the other"
+                f" report.  Please continue to report any other bugs you may"
+                f" find.",
                 subject="This bug is a duplicate",
             )
 
@@ -881,7 +874,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 self.update(
                     master_id,
                     report,
-                    "Updated stack trace from duplicate bug %i" % crash_id,
+                    f"Updated stack trace from duplicate bug {crash_id}",
                     key_filter=[
                         "Stacktrace",
                         "ThreadStacktrace",
@@ -946,11 +939,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         bug = self.launchpad.bugs[crash_id]
         bug.newMessage(
-            content="This crash has the same stack trace characteristics as"
-            " bug #%i. However, the latter was already fixed in an earlier"
-            " package version than the one in this report. This might be"
-            " a regression or because the problem is in a dependent package."
-            % master,
+            content=f"This crash has the same stack trace characteristics as"
+            f" bug #{master}. However, the latter was already fixed in an"
+            f" earlier package version than the one in this report. This might"
+            f" be a regression or because the problem is in a dependent"
+            f" package.",
             subject="Possible regression detected",
         )
         # fresh bug object, LP#336866 workaround
@@ -1061,7 +1054,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report["DuplicateOf"] = url
 
         try:
-            with urllib.request.urlopen(url + "/+text") as f:
+            with urllib.request.urlopen(f"{url}/+text") as f:
                 line = f.readline()
                 if not line.startswith(b"bug:"):
                     # presumably a 404 etc. page,
@@ -1101,10 +1094,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # use a url hack here, it is faster
         # pylint: disable=protected-access
-        person = "%s~%s" % (
-            self.launchpad._root_uri,
-            self.options.get("triaging_team", "ubuntu-crashes-universe"),
-        )
+        team = self.options.get("triaging_team", "ubuntu-crashes-universe")
+        person = f"{self.launchpad._root_uri}~{team}"
         if not person.replace(str(self.launchpad._root_uri), "").strip(
             "~"
         ) in [
@@ -1119,14 +1110,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         # set reprocessing tags
         hdr = {}
-        hdr["Tags"] = "apport-%s" % report["ProblemType"].lower()
+        hdr["Tags"] = f"apport-{report['ProblemType'].lower()}"
         a = report.get("PackageArchitecture")
         if not a or a == "all":
             a = report.get("Architecture")
         if a:
-            hdr["Tags"] += " " + a
+            hdr["Tags"] += f" {a}"
         if "Tags" in report:
-            hdr["Tags"] += " " + self._filter_tag_names(report["Tags"])
+            hdr["Tags"] += f" {self._filter_tag_names(report['Tags'])}"
 
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
@@ -1141,7 +1132,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     "LaunchpadSubscribe",
                     self.options.get("initial_subscriber", "apport"),
                 )
-                hdr["Tags"] += " need-%s-retrace" % a
+                hdr["Tags"] += f" need-{a}-retrace"
             elif "Traceback" in report:
                 hdr["Private"] = "yes"
                 hdr["Subscribers"] = "apport"
@@ -1262,7 +1253,7 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     'staging.launchpad.net' to use another instance for testing.
     """
     ticket = None
-    url = "https://%s/+storeblob" % hostname
+    url = f"https://{hostname}/+storeblob"
 
     global _https_upload_callback  # pylint: disable=global-statement
     _https_upload_callback = progress_callback
@@ -1289,7 +1280,7 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     # defaults to x-www-form-urlencoded
     req = urllib.request.Request(url, data_flat.getvalue())
     req.add_header(
-        "Content-Type", "multipart/form-data; boundary=" + data.get_boundary()
+        "Content-Type", f"multipart/form-data; boundary={data.get_boundary()}"
     )
     opener = urllib.request.build_opener(HTTPSProgressHandler)
     result = opener.open(req)
@@ -1355,11 +1346,11 @@ if __name__ == "__main__":
             project = self.crashdb.launchpad.projects[name]
             if not project:
                 self.crashdb.launchpad.projects.new_project(
-                    description=name + "description",
+                    description=f"{name}description",
                     display_name=name,
                     name=name,
-                    summary=name + "summary",
-                    title=name + "title",
+                    summary=f"{name}summary",
+                    title=f"{name}title",
                 )
 
         @property
@@ -1398,8 +1389,8 @@ if __name__ == "__main__":
             self.assertTrue(crash_id > 0)
 
             sys.stderr.write(
-                "(Created SEGV report: https://%s/bugs/%i) "
-                % (self.hostname, crash_id)
+                f"(Created SEGV report:"
+                f" https://{self.hostname}/bugs/{crash_id}) "
             )
             return crash_id
 
@@ -1433,8 +1424,8 @@ NameError: global name 'weird' is not defined"""
             crash_id = self._file_bug(bug_target, r)
             self.assertTrue(crash_id > 0)
             sys.stderr.write(
-                "(Created Python report: https://%s/bugs/%i) "
-                % (self.hostname, crash_id)
+                f"(Created Python report:"
+                f" https://{self.hostname}/bugs/{crash_id}) "
             )
             return crash_id
 
@@ -1468,8 +1459,8 @@ and more
                 target=self.crashdb.lp_distro,
             )
             sys.stderr.write(
-                "(Created uncommon description: https://%s/bugs/%i) "
-                % (self.hostname, bug.id)
+                f"(Created uncommon description:"
+                f" https://{self.hostname}/bugs/{bug.id}) "
             )
 
             return bug.id
@@ -1507,7 +1498,7 @@ and more
             self.assertEqual(r["Signal"], "11")
             self.assertTrue(r["ExecutablePath"].endswith("/crash"))
             self.assertEqual(r["SourcePackage"], self.test_srcpackage)
-            self.assertTrue(r["Package"].startswith(self.test_package + " "))
+            self.assertTrue(r["Package"].startswith(f"{self.test_package} "))
             self.assertIn("f (x=42)", r["Stacktrace"])
             self.assertIn("f (x=42)", r["StacktraceTop"])
             self.assertIn("f (x=42)", r["ThreadStacktrace"])
@@ -1999,7 +1990,7 @@ and more
                 title="ubuntu distro retrace bug for fakearch",
             )
             print(
-                "fake arch bug: https://staging.launchpad.net/bugs/%i" % bug.id
+                f"fake arch bug: https://staging.launchpad.net/bugs/{bug.id}"
             )
 
             fakearch_unretraced_after = fakearch_db.get_unretraced()
@@ -2300,7 +2291,7 @@ NameError: global name 'weird' is not defined"""
             try:
                 for b in range(first_dup, first_dup + 13):
                     count += 1
-                    sys.stderr.write("%i " % b)
+                    sys.stderr.write(f"{b} ")
                     db.close_duplicate(
                         apport.report.Report(), b, self.get_segv_report()
                     )
@@ -2317,7 +2308,7 @@ NameError: global name 'weird' is not defined"""
                         self.assertTrue(has_escalation_subscription)
             finally:
                 for b in range(first_dup, first_dup + count):
-                    sys.stderr.write("R%i " % b)
+                    sys.stderr.write(f"R{b} ")
                     db.close_duplicate(apport.report.Report(), b, None)
             sys.stderr.write("\n")
 

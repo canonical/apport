@@ -34,7 +34,7 @@ try:
     from gi.repository import GdkX11, GLib, Gtk, Wnck
 except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
-    sys.stderr.write("Cannot start: %s\n" % str(error))
+    sys.stderr.write(f"Cannot start: {str(error)}\n")
     sys.exit(1)
 
 have_display = os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")
@@ -211,8 +211,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.collect_called = True
             self.ui_update_view()
         self.w("title_label").set_label(
-            "<big><b>%s</b></big>"
-            % _("Send problem report to the developers?")
+            f"<big><b>{_('Send problem report to the developers?')}</b></big>"
         )
         self.w("title_label").show()
         self.w("subtitle_label").hide()
@@ -248,7 +247,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         if self.allowed_to_report:
             self.w("remember_send_report_choice").show()
             self.w("send_problem_notice_label").set_label(
-                "<b>%s</b>" % self.w("send_problem_notice_label").get_label()
+                f"<b>{self.w('send_problem_notice_label').get_label()}</b>"
             )
             self.w("send_problem_notice_label").show()
             self.w("dont_send_button").grab_focus()
@@ -283,7 +282,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = "distributor-logo"
                 name = os.path.basename(self.report["ExecutablePath"])
                 title = _('The program "%s" has stopped responding.') % name
-            self.w("title_label").set_label("<big><b>%s</b></big>" % title)
+            self.w("title_label").set_label(f"<big><b>{title}</b></big>")
         elif not self.report_file or report_type == "Bug":
             self.w("remember_send_report_choice").hide()
             self.w("send_problem_notice_label").hide()
@@ -292,7 +291,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w("ignore_future_problems").set_active(False)
             self.w("ignore_future_problems").hide()
             self.w("title_label").set_label(
-                "<big><b>%s</b></big>" % self.get_system_application_title()
+                f"<big><b>{self.get_system_application_title()}</b></big>"
             )
             self.w("subtitle_label").hide()
             icon = "distributor-logo"
@@ -324,7 +323,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                     )
                 else:
                     t = _("The application %s has closed unexpectedly.") % n
-                self.w("title_label").set_label("<big><b>%s</b></big>" % t)
+                self.w("title_label").set_label(f"<big><b>{t}</b></big>")
                 self.w("subtitle_label").hide()
 
                 pid = apport.ui.get_pid(self.report)
@@ -349,7 +348,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 else:
                     title_text = self.get_system_application_title()
                 self.w("title_label").set_label(
-                    "<big><b>%s</b></big>" % title_text
+                    f"<big><b>{title_text}</b></big>"
                 )
                 self.w("subtitle_label").show()
                 self.w("subtitle_label").set_label(

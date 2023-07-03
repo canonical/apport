@@ -391,7 +391,7 @@ class T(unittest.TestCase):
         # test with only ProcCmdline
         p = os.path.join(apport.fileutils.report_dir, "ProcCmdline")
         r = os.path.join(apport.fileutils.report_dir, "Custom")
-        self.report["ProcCmdline"] = "touch " + p
+        self.report["ProcCmdline"] = f"touch {p}"
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
 
@@ -402,7 +402,7 @@ class T(unittest.TestCase):
         os.unlink(p)
 
         # test with RespawnCommand
-        self.report["RespawnCommand"] = "touch " + r
+        self.report["RespawnCommand"] = f"touch {r}"
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
 
@@ -654,7 +654,7 @@ class T(unittest.TestCase):
         """run_report_bug() as "ubuntu-bug" with version argument"""
         self.ui = UserInterfaceMock(["ubuntu-bug", "-v"])
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(stdout_mock.getvalue(), apport.ui.__version__ + "\n")
+        self.assertEqual(stdout_mock.getvalue(), f"{apport.ui.__version__}\n")
 
     def test_file_report_nodelay(self):
         """file_report() happy path without polling"""
@@ -727,7 +727,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
         self.assertEqual(
             self.ui.opened_url,
-            "http://bash.bugs.example.com/%i" % self.ui.crashdb.latest_id(),
+            f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -770,8 +770,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(
             self.ui.opened_url,
-            "http://coreutils.bugs.example.com/%i"
-            % self.ui.crashdb.latest_id(),
+            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
         self.assertTrue(self.ui.present_details_shown)
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -976,8 +975,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(
             self.ui.opened_url,
-            "http://coreutils.bugs.example.com/%i"
-            % self.ui.crashdb.latest_id(),
+            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
         self.assertFalse(self.ui.ic_progress_active)
         self.assertNotEqual(self.ui.ic_progress_pulses, 0)
@@ -1099,7 +1097,7 @@ class T(unittest.TestCase):
         self.assertIn(
             "It stinks.",
             self.ui.msg_text,
-            "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
@@ -1125,7 +1123,7 @@ class T(unittest.TestCase):
         self.assertIn(
             "It stinks.",
             self.ui.msg_text,
-            "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
@@ -1183,7 +1181,7 @@ class T(unittest.TestCase):
             )
             bad_hook.flush()
 
-            self.report["ExecutablePath"] = "/opt/../" + hook_dir
+            self.report["ExecutablePath"] = f"/opt/../{hook_dir}"
             self.report["Package"] = os.path.splitext(bad_hook.name)[
                 0
             ].replace(hook_dir, "")
@@ -1227,7 +1225,7 @@ class T(unittest.TestCase):
         self.assertIn(
             "memory",
             self.ui.msg_text,
-            "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
 
     def test_run_crash_preretraced(self):
@@ -1254,12 +1252,8 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.ui.msg_severity,
             None,
-            "has %s message: %s: %s"
-            % (
-                self.ui.msg_severity,
-                str(self.ui.msg_title),
-                str(self.ui.msg_text),
-            ),
+            f"has {self.ui.msg_severity} message:"
+            f" {self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertEqual(self.ui.msg_title, None)
         self.assertTrue(self.ui.present_details_shown)
@@ -1292,12 +1286,8 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.ui.msg_severity,
             None,
-            "has %s message: %s: %s"
-            % (
-                self.ui.msg_severity,
-                str(self.ui.msg_title),
-                str(self.ui.msg_text),
-            ),
+            f"has {self.ui.msg_severity} message:"
+            f" {self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertTrue(
             self.ui.opened_url.startswith("http://coreutils.bugs.example.com")
@@ -1377,12 +1367,12 @@ class T(unittest.TestCase):
         self.assertIn(
             self.ui.report["ExecutablePath"],
             self.ui.msg_text,
-            "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertIn(
             "changed",
             self.ui.msg_text,
-            "%s: %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
@@ -1421,7 +1411,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(
             self.ui.opened_url,
-            "http://bash.bugs.example.com/%i" % self.ui.crashdb.latest_id(),
+            f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
         self.assertTrue(self.ui.present_details_shown)
 
@@ -1475,7 +1465,7 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.ui.msg_severity,
             None,
-            "error: %s - %s" % (self.ui.msg_title, self.ui.msg_text),
+            f"error: {self.ui.msg_title} - {self.ui.msg_text}",
         )
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, None)
@@ -1491,13 +1481,12 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.ui.msg_severity,
             None,
-            str(self.ui.msg_title) + " " + str(self.ui.msg_text),
+            f"{str(self.ui.msg_title)} {str(self.ui.msg_text)}",
         )
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(
             self.ui.opened_url,
-            "http://%s.bugs.example.com/%i"
-            % (src_pkg, self.ui.crashdb.latest_id()),
+            f"http://{src_pkg}.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
         self.assertTrue(self.ui.present_details_shown)
 
@@ -1546,14 +1535,12 @@ class T(unittest.TestCase):
         for s in self._get_sensitive_strings():
             self.assertIsNone(
                 re.search(rf"\b{re.escape(s)}\b", report),
-                "dump contains sensitive word '%s':\n%s" % (s, report),
+                f"dump contains sensitive word '{s}':\n{report}",
             )
             if s == "ubuntu" or len(s) < 5 and "/" not in s:
                 continue
             self.assertNotIn(
-                s,
-                report,
-                "dump contains sensitive string: %s:\n%s" % (s, report),
+                s, report, f"dump contains sensitive string: {s}:\n{report}"
             )
 
     def test_run_crash_anonymity_order(self):
@@ -1729,8 +1716,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(
             self.ui.opened_url,
-            "http://coreutils.bugs.example.com/%i"
-            % self.ui.crashdb.latest_id(),
+            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
         # internal key should not be uploaded to the crash db
         r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
@@ -1893,7 +1879,7 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
-            os.path.join(self.hookdir, "source_%s.py" % source_pkg),
+            os.path.join(self.hookdir, f"source_{source_pkg}.py"),
             "w",
             encoding="utf-8",
         ) as f:
@@ -1907,7 +1893,7 @@ class T(unittest.TestCase):
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertEqual(
-            self.ui.report["Package"], "%s (not installed)" % source_pkg
+            self.ui.report["Package"], f"{source_pkg} (not installed)"
         )
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1918,7 +1904,7 @@ class T(unittest.TestCase):
         ) as hook:
             hook.write(
                 "def add_info(report, ui):\n%s\n"
-                % "\n".join(["    " + line for line in code.splitlines()])
+                % "\n".join([f"    {line}" for line in code.splitlines()])
             )
         self.ui.args.package = "coreutils"
         self.ui.run_report_bug()
@@ -2299,12 +2285,12 @@ class T(unittest.TestCase):
         for suffix in (".crash", ".apport"):
             _chk(
                 "apport-cli",
-                "/tmp/f oo" + suffix,
+                f"/tmp/f oo{suffix}",
                 {
                     "filebug": False,
                     "package": None,
                     "pid": None,
-                    "crash_file": "/tmp/f oo" + suffix,
+                    "crash_file": f"/tmp/f oo{suffix}",
                     "symptom": None,
                     "update_report": None,
                     "save": None,
@@ -2458,12 +2444,12 @@ class T(unittest.TestCase):
         # .crash/.apport files; check correct handling of spaces
         for suffix in (".crash", ".apport"):
             _chk(
-                ["/tmp/f oo" + suffix],
+                [f"/tmp/f oo{suffix}"],
                 {
                     "filebug": False,
                     "package": None,
                     "pid": None,
-                    "crash_file": "/tmp/f oo" + suffix,
+                    "crash_file": f"/tmp/f oo{suffix}",
                     "symptom": None,
                     "update_report": None,
                     "save": None,
@@ -2565,7 +2551,7 @@ class T(unittest.TestCase):
             )
             # this will only work for running the tests in the source tree
             if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
-                os.environ["PATH"] += src_bindir + ":" + orig_path
+                os.environ["PATH"] += f"{src_bindir}:{orig_path}"
                 self.assertEqual(self.ui.can_examine_locally(), True)
             else:
                 # if we run tests in installed system, we just check that

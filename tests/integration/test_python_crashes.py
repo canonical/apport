@@ -149,7 +149,7 @@ func(42)
             pr["ExecutableTimestamp"], str(int(os.stat(script).st_mtime))
         )
         self.assertEqual(
-            pr["PythonArgs"], "['%s', 'testarg1', 'testarg2']" % script
+            pr["PythonArgs"], f"['{script}', 'testarg1', 'testarg2']"
         )
         self.assertTrue(pr["Traceback"].startswith("Traceback"))
         self.assertIn(
@@ -304,7 +304,7 @@ func(42)
         """Assert that there are no crash reports."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(
-            len(reports), 0, "no crash reports present (cwd: %s)" % os.getcwd()
+            len(reports), 0, f"no crash reports present (cwd: {os.getcwd()})"
         )
 
     def test_deleted_working_directory(self):
@@ -485,9 +485,7 @@ func(42)
         pr = self._load_report()
         # we expect it to append errno
         exe = pr["ExecutablePath"]
-        self.assertEqual(
-            pr.crash_signature(), "%s:OSError(99):%s@11:g" % (exe, exe)
-        )
+        self.assertEqual(pr.crash_signature(), f"{exe}:OSError(99):{exe}@11:g")
 
     def test_generic_os_error_no_errno(self):
         """Raise OSError without errno and no known subclass."""
@@ -504,9 +502,7 @@ func(42)
         pr = self._load_report()
         # we expect it to not stumble over the missing errno
         exe = pr["ExecutablePath"]
-        self.assertEqual(
-            pr.crash_signature(), "%s:OSError:%s@11:g" % (exe, exe)
-        )
+        self.assertEqual(pr.crash_signature(), f"{exe}:OSError:{exe}@11:g")
 
     def test_getcwd_error(self):
         """Raise FileNotFoundError on os.getcwd() call."""
@@ -549,7 +545,7 @@ func(42)
         # in the subclass
         exe = pr["ExecutablePath"]
         self.assertEqual(
-            pr.crash_signature(), "%s:FileNotFoundError:%s@11:g" % (exe, exe)
+            pr.crash_signature(), f"{exe}:FileNotFoundError:{exe}@11:g"
         )
 
     def _load_report(self):

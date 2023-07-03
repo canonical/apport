@@ -119,8 +119,8 @@ options = parse_options()
 
 try:
     apport.memdbg("start")
-    apport.memdbg("Executable: " + options.exe)
-    apport.memdbg("Command arguments: " + str(options))
+    apport.memdbg(f"Executable: {options.exe}")
+    apport.memdbg(f"Command arguments: {str(options)}")
 
     gettext.textdomain("apport")
 
@@ -195,10 +195,10 @@ try:
     # prep to run valgrind
     argv = ["valgrind"]
     argv += ["-v", "--tool=memcheck", "--leak-check=full", "--num-callers=40"]
-    argv += ["--log-file=%s" % options.log]
+    argv += [f"--log-file={options.log}"]
     argv += ["--track-origins=yes"]
     if not options.no_sandbox:
-        argv += ["--extra-debuginfo-path=%s/usr/lib/debug/" % debugrootdir]
+        argv += [f"--extra-debuginfo-path={debugrootdir}/usr/lib/debug/"]
     argv += [exepath]
 
     apport.memdbg("before calling valgrind")

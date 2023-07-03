@@ -32,7 +32,7 @@ class T(unittest.TestCase):
         def _build_ko(license_name):
             ko_filename = os.path.join(self.workdir, f"{license_name}.ko")
             with tempfile.NamedTemporaryFile(
-                mode="w+", prefix="%s-" % (license_name), suffix=".S"
+                mode="w+", prefix=f"{license_name}-", suffix=".S"
             ) as asm:
                 asm.write(
                     f'.section .modinfo\n.string "license={license_name}"\n'
@@ -381,7 +381,7 @@ class T(unittest.TestCase):
         data = apport.hookutils.recent_syslog(re.compile("kernel"), path=log)
         mem_after = self._get_mem_usage()
         delta_kb = mem_after - mem_before
-        sys.stderr.write("[Δ %i kB] " % delta_kb)
+        sys.stderr.write(f"[Δ {delta_kb} kB] ")
         self.assertLess(delta_kb, 5000)
 
         self.assertTrue(

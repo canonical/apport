@@ -27,11 +27,11 @@ pr.add_os_info()
 vmcore_path = os.path.join(apport.fileutils.report_dir, "vmcore")
 # only accept plain files here, not symlinks; otherwise we might recursively
 # include the report, or similar DoS attacks
-if os.path.exists(vmcore_path + ".log"):
+if os.path.exists(f"{vmcore_path}.log"):
     try:
-        log_fd = os.open(vmcore_path + ".log", os.O_RDONLY | os.O_NOFOLLOW)
+        log_fd = os.open(f"{vmcore_path}.log", os.O_RDONLY | os.O_NOFOLLOW)
         pr["VmCoreLog"] = (os.fdopen(log_fd, "rb"),)
-        os.unlink(vmcore_path + ".log")
+        os.unlink(f"{vmcore_path}.log")
     except OSError as error:
         apport.fatal("Cannot open vmcore log: %s", str(error))
 
@@ -61,7 +61,7 @@ else:
             # compare against euid here so that we can test this as non-root
             if os.lstat(timedir).st_uid != os.geteuid():
                 apport.fatal("%s has unsafe permissions, ignoring", timedir)
-            report_name = package + "-" + timestamp + ".crash"
+            report_name = f"{package}-{timestamp}.crash"
             try:
                 crash_report = os.path.join(
                     apport.fileutils.report_dir, report_name

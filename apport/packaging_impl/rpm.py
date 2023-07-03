@@ -54,10 +54,10 @@ class RPMPackageInfo:
             raise ValueError
         # Note - "version" here seems to refer to the full EVR, so..
         if not hdr["e"]:
-            return hdr["v"] + "-" + hdr["r"]
+            return f"{hdr['v']}-{hdr['r']}"
         if not hdr["v"] or not hdr["r"]:
             return None
-        return hdr["e"] + ":" + hdr["v"] + "-" + hdr["r"]
+        return f"{hdr['e']}:{hdr['v']}-{hdr['r']}"
 
     def get_available_version(self, package):
         """Return the latest available version of a package."""
@@ -263,7 +263,7 @@ class RPMPackageInfo:
         argument."""
         matches = self.ts.dbMatch(tag, arg)
         if matches.count() == 0:
-            raise ValueError("Could not find package with %s: %s" % (tag, arg))
+            raise ValueError(f"Could not find package with {tag}: {arg}")
         return matches
 
     @staticmethod
@@ -287,15 +287,15 @@ class RPMPackageInfo:
             qlen = qlen - 1
 
         if qlen == 0:
-            raise ValueError("No headers found for this envra: %s" % envra)
+            raise ValueError(f"No headers found for this envra: {envra}")
         return h
 
     @staticmethod
     def _make_envra_from_header(h):
         """Generate an ENVRA string from an rpm header."""
-        nvra = "%s-%s-%s.%s" % (h["n"], h["v"], h["r"], h["arch"])
+        nvra = f"{h['n']}-{h['v']}-{h['r']}.{h['arch']}"
         if h["e"]:
-            envra = "%s:%s" % (h["e"], nvra)
+            envra = f"{h['e']}:{nvra}"
         else:
             envra = nvra
         return envra

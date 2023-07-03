@@ -271,19 +271,19 @@ def get_code(srcdir, filename, line, context=5):
 
     files = find_file_dir(filename, srcdir, 1)
     if not files:
-        return "  [Error: %s was not found in source tree]\n" % filename
+        return f"  [Error: {filename} was not found in source tree]\n"
 
     result = ""
     lineno = 0
     # make enough room for all line numbers
-    format_str = "  %%%ii: %%s" % len(str(line + context))
+    width = len(str(line + context))
 
     with open(files[0], "rb") as f:
         for ln in f:
             ln = ln.decode("UTF8", errors="replace")
             lineno += 1
             if line - context <= lineno <= line + context:
-                result += format_str % (lineno, ln)
+                result += f"  {lineno:{width}d}: {ln}"
 
     return result
 
@@ -315,17 +315,14 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report["Stacktrace"].splitlines():
             m = src_frame.match(frame)
             if m:
-                result += (
-                    frame
-                    + "\n"
-                    + get_code(
-                        srcdir, os.path.basename(m.group(1)), int(m.group(2))
-                    )
+                code = get_code(
+                    srcdir, os.path.basename(m.group(1)), int(m.group(2))
                 )
+                result += f"{frame}\n{code}"
             else:
                 m = other_frame.search(frame)
                 if m:
-                    result += frame + "\n"
+                    result += f"{frame}\n"
 
         report["StacktraceSource"] = result
     finally:
@@ -402,19 +399,18 @@ def main():
                 )
                 crashdb.mark_retrace_failed(
                     options.report,
-                    """Thank you for your report!
+                    f"""Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed, since the report is ill-formed. Perhaps the report data got
 modified?
 
-  %s
+  {str(error)}
 
 If you encounter the crash again, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
-"""
-                    % str(error),
+""",
                 )
                 sys.exit(0)
             else:
@@ -480,10 +476,9 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     if options.sandbox:
         if options.sandbox_dir:
-            sandbox_dir = "%s/%s/%s/report-sandbox/" % (
-                options.sandbox_dir,
-                report["DistroRelease"],
-                report["Architecture"],
+            sandbox_dir = (
+                f"{options.sandbox_dir}/{report['DistroRelease']}"
+                f"/{report['Architecture']}/report-sandbox/"
             )
         else:
             sandbox_dir = None
@@ -519,10 +514,9 @@ Thank you for your understanding, and sorry for the inconvenience!
             # ExecPath
             fake_report["ProcMaps"] = "\n\n"
             if options.sandbox_dir:
-                gdb_sandbox_dir = "%s/%s/%s/gdb-sandbox/" % (
-                    options.sandbox_dir,
-                    report["DistroRelease"],
-                    system_arch,
+                gdb_sandbox_dir = (
+                    f"{options.sandbox_dir}/{report['DistroRelease']}"
+                    f"/{system_arch}/gdb-sandbox/"
                 )
             else:
                 gdb_sandbox_dir = None
@@ -543,16 +537,16 @@ Thank you for your understanding, and sorry for the inconvenience!
         if report["DistroRelease"][-5:] in ("18.04", "20.04"):
             if gdb_sandbox and sandbox:
                 machine = report["Uname"].split()[-1]
-                target = "%s-linux-gnu" % machine
-                if not os.path.exists("/usr/lib/debug/.dwz/%s" % target):
+                target = f"{machine}-linux-gnu"
+                if not os.path.exists(f"/usr/lib/debug/.dwz/{target}"):
                     # don't create a broken symlink
                     if os.path.exists(
-                        "%s/usr/lib/debug/.dwz/%s" % (sandbox, target)
+                        f"{sandbox}/usr/lib/debug/.dwz/{target}"
                     ):
                         try:
                             os.symlink(
-                                "%s/usr/lib/debug/.dwz/%s" % (sandbox, target),
-                                "/usr/lib/debug/.dwz/%s" % target,
+                                f"{sandbox}/usr/lib/debug/.dwz/{target}",
+                                f"/usr/lib/debug/.dwz/{target}",
                             )
                         except PermissionError:
                             print(
@@ -564,15 +558,13 @@ Thank you for your understanding, and sorry for the inconvenience!
                             )
                             sys.exit(0)
                         except FileExistsError:
-                            if os.readlink(
-                                "/usr/lib/debug/.dwz/%s" % target
-                            ) == "%s/usr/lib/debug/.dwz/%s" % (
-                                sandbox,
-                                target,
+                            if (
+                                os.readlink(f"/usr/lib/debug/.dwz/{target}")
+                                == f"{sandbox}/usr/lib/debug/.dwz/{target}"
                             ):
                                 pass
                 else:
-                    if not os.path.islink("/usr/lib/debug/.dwz/%s" % target):
+                    if not os.path.islink(f"/usr/lib/debug/.dwz/{target}"):
                         print(
                             "apport is unlikely to produce a quality retrace"
                             " if it can not create a symlink in the host"
@@ -593,10 +585,10 @@ Thank you for your understanding, and sorry for the inconvenience!
                 if cmd:
                     cmd += " "
                 if " " in w:
-                    cmd += "'" + w + "'"
+                    cmd += f"'{w}'"
                 else:
                     cmd += w
-            apport.log("Calling gdb command: " + cmd, options.timestamps)
+            apport.log(f"Calling gdb command: {cmd}", options.timestamps)
         apport.memdbg("before calling gdb")
         subprocess.call(gdb_cmd, env=os.environ | environ)
     else:
@@ -631,10 +623,10 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     # Cleanup the .dwz machine symlink for LP: #1818918
     if gdb_sandbox and sandbox and target:
-        if os.path.exists(
-            "/usr/lib/debug/.dwz/%s" % target
-        ) and os.path.islink("/usr/lib/debug/.dwz/%s" % target):
-            os.unlink("/usr/lib/debug/.dwz/%s" % target)
+        if os.path.exists(f"/usr/lib/debug/.dwz/{target}") and os.path.islink(
+            f"/usr/lib/debug/.dwz/{target}"
+        ):
+            os.unlink(f"/usr/lib/debug/.dwz/{target}")
 
     modified = False
 
@@ -665,23 +657,15 @@ Thank you for your understanding, and sorry for the inconvenience!
                     res = crashdb.check_duplicate(int(crashid), report)
                     if res:
                         if res[1] is None:
-                            apport.log(
-                                "Report is a duplicate of #%i (not fixed yet)"
-                                % res[0],
-                                options.timestamps,
-                            )
+                            version = "not fixed yet"
                         elif res[1] == "":
-                            apport.log(
-                                "Report is a duplicate of #%i"
-                                " (fixed in latest version)" % res[0],
-                                options.timestamps,
-                            )
+                            version = "fixed in latest version"
                         else:
-                            apport.log(
-                                "Report is a duplicate of #%i"
-                                " (fixed in version %s)" % res,
-                                options.timestamps,
-                            )
+                            version = f"fixed in version {res[1]}"
+                        apport.log(
+                            f"Report is a duplicate of #{res[0]} ({version})",
+                            options.timestamps,
+                        )
                         update_bug = False
                     else:
                         apport.log(
@@ -705,23 +689,20 @@ Thank you for your understanding, and sorry for the inconvenience!
 
                     if not report.has_useful_stacktrace():
                         if outdated_msg:
-                            invalid_msg = (
-                                """Thank you for your report!
+                            invalid_msg = f"""Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed (it does not generate a useful symbolic stack trace). This
 might be caused by some outdated packages which were installed on your system
 at the time of the report:
 
-%s
+{outdated_msg}
 
 Please upgrade your system to the latest package versions. If you still
 encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                                % outdated_msg
-                            )
                             apport.log(
                                 "No crash signature and outdated packages,"
                                 " invalidating report",

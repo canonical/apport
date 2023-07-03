@@ -57,11 +57,10 @@ class TestApportValgrind(unittest.TestCase):
 
         self.assertTrue(
             os.path.exists(sandbox),
-            "A sandbox directory %s was specified but was not created"
-            % sandbox,
+            f"A sandbox directory {sandbox} was specified but was not created",
         )
 
         self.assertTrue(
             os.path.exists(cache),
-            "A cache directory %s was specified but was not created" % cache,
+            f"A cache directory {cache} was specified but was not created",
         )

@@ -6,7 +6,7 @@ import time
 def log(message, timestamp=False):
     """Log the given string to stdout. Prepend timestamp if requested."""
     if timestamp:
-        sys.stdout.write("%s: " % time.strftime("%x %X"))
+        sys.stdout.write(f"{time.strftime('%x %X')}: ")
     print(message)
 
 
@@ -48,6 +48,6 @@ def memdbg(checkpoint):
                 memstat[field[:-1]] = int(size) / 1024.0
 
     sys.stderr.write(
-        "Size: %.1f MB, RSS: %.1f MB, Stk: %.1f MB @ %s\n"
-        % (memstat["VmSize"], memstat["VmRSS"], memstat["VmStk"], checkpoint)
+        f"Size: {memstat['VmSize']:.1f} MB, RSS: {memstat['VmRSS']:.1f} MB,"
+        f" Stk: {memstat['VmStk']:.1f} MB @ {checkpoint}\n"
     )

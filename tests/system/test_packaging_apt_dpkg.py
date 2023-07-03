@@ -111,7 +111,7 @@ class T(unittest.TestCase):
         self.assertIn(f"libc6-dbg {wanted['libc6']}", pkglist)
         self.assertIn(f"libcurl4 {wanted['libcurl4']}", pkglist)
         self.assertIn(f"libcurl4-dbgsym {wanted['libcurl4']}", pkglist)
-        self.assertIn("tzdata " + sandbox_ver("tzdata"), pkglist)
+        self.assertIn(f"tzdata {sandbox_ver('tzdata')}", pkglist)
         self.assertEqual(len(pkglist), 7, str(pkglist))
 
         # does not clobber config dir
@@ -797,7 +797,7 @@ class T(unittest.TestCase):
         # changes
         self.assertTrue(
             res.endswith("/base-files-12ubuntu4"),
-            "unexpected version: " + res.split("/")[-1],
+            f"unexpected version: {res.split('/')[-1]}",
         )
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -826,7 +826,7 @@ class T(unittest.TestCase):
         upstream_version = wanted_version.split("-", maxsplit=1)[0]
         self.assertTrue(
             res.endswith(f"/{wanted_package}-{upstream_version}"),
-            "unexpected version: " + res.split("/")[-1],
+            f"unexpected version: {res.split('/')[-1]}",
         )
 
     @skip_if_command_is_missing("gpg")
@@ -844,7 +844,7 @@ class T(unittest.TestCase):
         )
         with open(
             os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
+                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
             ),
             encoding="utf-8",
         ) as f:
@@ -900,7 +900,7 @@ class T(unittest.TestCase):
         )
         with open(
             os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
+                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
             ),
             encoding="utf-8",
         ) as f:
@@ -950,11 +950,11 @@ class T(unittest.TestCase):
             os.path.join(self.configdir, release, "sources.list"),
             "ubuntu",
             "jammy",
-            origins=["LP-PPA-%s" % ppa],
+            origins=[f"LP-PPA-{ppa}"],
         )
         with open(
             os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", ppa + ".list"
+                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
             ),
             encoding="utf-8",
         ) as f:
@@ -1068,7 +1068,7 @@ class T(unittest.TestCase):
         with open(
             os.path.join(config_release_dir, "codename"), "w", encoding="utf-8"
         ) as f:
-            f.write("%s" % release)
+            f.write(f"{release}")
 
         # install GPG key for ddebs
         keyring_dir = os.path.join(config_release_dir, "trusted.gpg.d")
@@ -1172,6 +1172,6 @@ class T(unittest.TestCase):
         self.assertIn(
             archmap[expected],
             machine,
-            '%s has unexpected machine type "%s" for architecture %s'
-            % (path, machine, expected),
+            f'{path} has unexpected machine type "{machine}"'
+            f" for architecture {expected}",
         )

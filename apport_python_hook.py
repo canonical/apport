@@ -113,7 +113,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
         if "ExecutableTimestamp" in report:
             report["ExecutableTimestamp"] = str(int(os.stat(binary).st_mtime))
         try:
-            report["PythonArgs"] = "%r" % sys.argv
+            report["PythonArgs"] = f"{sys.argv!r}"
         except AttributeError:
             pass
         if report.check_ignored():
@@ -195,21 +195,19 @@ def dbus_service_unknown_analysis(exc_obj, report):
         except (NoSectionError, NoOptionError):
             if sys.stderr:
                 sys.stderr.write(
-                    "Invalid D-BUS .service file %s: %s"
-                    % (service_file, exc_obj.get_dbus_message())
+                    f"Invalid D-BUS .service file {service_file}:"
+                    f" {exc_obj.get_dbus_message()}"
                 )
             continue
 
     if not services:
-        report["DbusErrorAnalysis"] = "no service file providing " + dbus_name
+        report["DbusErrorAnalysis"] = f"no service file providing {dbus_name}"
     else:
         report["DbusErrorAnalysis"] = "provided by"
         for service, exe, running in services:
-            report["DbusErrorAnalysis"] += " %s (%s is %srunning)" % (
-                service,
-                exe,
-                ("" if running else "not "),
-            )
+            report[
+                "DbusErrorAnalysis"
+            ] += f" {service} ({exe} is {'' if running else 'not '}running)"
 
 
 def install():

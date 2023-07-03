@@ -113,7 +113,7 @@ def _read_proc_link(path, pid=None, dir_fd=None):
     if dir_fd is not None:
         return os.readlink(path, dir_fd=dir_fd)
 
-    return os.readlink("/proc/%s/%s" % (pid, path))
+    return os.readlink(f"/proc/{pid}/{path}")
 
 
 def _read_proc_file(path, pid=None, dir_fd=None):
@@ -127,7 +127,7 @@ def _read_proc_file(path, pid=None, dir_fd=None):
                 path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd
             )
         else:
-            proc_file = "/proc/%s/%s" % (pid, path)
+            proc_file = f"/proc/{pid}/{path}"
 
         with io.open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
@@ -190,8 +190,8 @@ def _command_output(
     if sp.returncode == 0:
         return sp.stdout.rstrip()
     raise OSError(
-        "Error: command %s failed with exit code %i: %s"
-        % (str(command), sp.returncode, sp.stdout.rstrip())
+        f"Error: command {command} failed with exit code {sp.returncode}:"
+        f" {sp.stdout.rstrip()}"
     )
 
 
@@ -358,12 +358,12 @@ class Report(problem_report.ProblemReport):
         suffix = ""
         mod = packaging.get_modified_files(package)
         if mod:
-            suffix += " [modified: %s]" % " ".join(mod)
+            suffix += f" [modified: {' '.join(mod)}]"
         try:
             if not packaging.is_distro_package(package):
                 origin = packaging.get_package_origin(package)
                 if origin:
-                    suffix += " [origin: %s]" % origin
+                    suffix += f" [origin: {origin}]"
                 else:
                     suffix += " [origin: unknown]"
         except ValueError:
@@ -386,10 +386,9 @@ class Report(problem_report.ProblemReport):
         except ValueError:
             # package not installed
             version = None
-        self["Package"] = "%s %s%s" % (
-            package,
-            version or "(not installed)",
-            self._customized_package_suffix(package),
+        self["Package"] = (
+            f"{package} {version or '(not installed)'}"
+            f"{self._customized_package_suffix(package)}"
         )
 
         return version
@@ -410,11 +409,7 @@ class Report(problem_report.ProblemReport):
 
             if dependencies:
                 dependencies += "\n"
-            dependencies += "%s %s%s" % (
-                dep,
-                v,
-                self._customized_package_suffix(dep),
-            )
+            dependencies += f"{dep} {v}{self._customized_package_suffix(dep)}"
         return dependencies
 
     def add_package_info(self, package=None):
@@ -467,10 +462,9 @@ class Report(problem_report.ProblemReport):
         It adds a SnapSource: field, if the snap has a Launchpad contact
         defined.
         """
-        self["Snap"] = "%s %s (%s)" % (
-            snap.get("name"),
-            snap.get("version"),
-            snap.get("channel", "unknown"),
+        self["Snap"] = (
+            f"{snap.get('name')} {snap.get('version')}"
+            f" ({snap.get('channel', 'unknown')})"
         )
         snapname = snap.get("name")
         self["SnapChanges"] = _command_output(
@@ -479,18 +473,18 @@ class Report(problem_report.ProblemReport):
         self["SnapConnections"] = _command_output(
             ["snap", "connections", snapname]
         )
-        self["SnapInfo.%s" % snapname] = _command_output(
+        self[f"SnapInfo.{snapname}"] = _command_output(
             ["snap", "info", "--abs-time", snapname]
         )
         import yaml  # pylint: disable=import-outside-toplevel
 
         with open(
-            "/snap/%s/current/meta/snap.yaml" % snapname, encoding="utf-8"
+            f"/snap/{snapname}/current/meta/snap.yaml", encoding="utf-8"
         ) as f:
             snap_meta = yaml.safe_load(f)
         if "base" in snap_meta:
             base = snap_meta["base"]
-            self["SnapInfo.%s" % base] = _command_output(
+            self[f"SnapInfo.{base}"] = _command_output(
                 ["snap", "info", "--abs-time", base]
             )
         providers = []
@@ -500,7 +494,7 @@ class Report(problem_report.ProblemReport):
                 if dp and dp not in providers:
                     providers.append(dp)
         for provider in providers:
-            self["SnapInfo.%s" % provider] = _command_output(
+            self[f"SnapInfo.{provider}"] = _command_output(
                 ["snap", "info", "--abs-time", provider]
             )
         # Automatically handle snaps which have a Launchpad contact defined
@@ -543,10 +537,11 @@ class Report(problem_report.ProblemReport):
         - Uname: uname -srm output
         """
         if "DistroRelease" not in self:
-            self["DistroRelease"] = "%s %s" % apport.packaging.get_os_version()
+            osname, osversion = apport.packaging.get_os_version()
+            self["DistroRelease"] = f"{osname} {osversion}"
         if "Uname" not in self:
             u = os.uname()
-            self["Uname"] = "%s %s %s" % (u[0], u[2], u[4])
+            self["Uname"] = f"{u[0]} {u[2]} {u[4]}"
         if "Architecture" not in self:
             self["Architecture"] = packaging.get_system_architecture()
 
@@ -623,10 +618,9 @@ class Report(problem_report.ProblemReport):
                     self["InterpreterPath"] = self["ExecutablePath"]
                     self["ExecutablePath"] = path
                 else:
-                    self["UnreportableReason"] = (
-                        "Cannot determine path of python module %s"
-                        % cmdargs[2]
-                    )
+                    self[
+                        "UnreportableReason"
+                    ] = f"Cannot determine path of python module {cmdargs[2]}"
                 return
 
             del cmdargs[1]
@@ -734,7 +728,7 @@ class Report(problem_report.ProblemReport):
             pid = str(pid)
             try:
                 proc_pid_fd = os.open(
-                    "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+                    f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
             except PermissionError as error:
                 raise ValueError("not accessible") from error
@@ -767,13 +761,11 @@ class Report(problem_report.ProblemReport):
                     raise ValueError("invalid process") from error
                 raise
         for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
-            if self["ExecutablePath"].startswith("/%s/" % p):
-                self["ExecutablePath"] = self["ExecutablePath"][
-                    len("/%s" % p) :
-                ]
+            if self["ExecutablePath"].startswith(f"/{p}/"):
+                self["ExecutablePath"] = self["ExecutablePath"][len(f"/{p}") :]
                 break
         if not os.path.exists(self["ExecutablePath"]):
-            raise ValueError("%s does not exist" % self["ExecutablePath"])
+            raise ValueError(f"{self['ExecutablePath']} does not exist")
 
         # check if we have an interpreted program
         self._check_interpreted()
@@ -846,7 +838,7 @@ class Report(problem_report.ProblemReport):
                 pid = os.getpid()
             pid = str(pid)
             proc_pid_fd = os.open(
-                "/proc/%s" % pid, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+                f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
             )
 
         try:
@@ -886,7 +878,7 @@ class Report(problem_report.ProblemReport):
                 os.close(fd)
                 unlink_core = True
             kver = self["Uname"].split()[1]
-            command = ["crash", "/usr/lib/debug/boot/vmlinux-%s" % kver, core]
+            command = ["crash", f"/usr/lib/debug/boot/vmlinux-{kver}", core]
             try:
                 crash = subprocess.run(
                     command,
@@ -1161,16 +1153,16 @@ class Report(problem_report.ProblemReport):
         if package:
             package = package.split()[0]
             if "/" in package:
-                self["UnreportableReason"] = "invalid Package: %s" % package
+                self["UnreportableReason"] = f"invalid Package: {package}"
                 return None
         if not srcpackage:
             srcpackage = self.get("SourcePackage")
         if srcpackage:
             srcpackage = srcpackage.split()[0]
             if "/" in srcpackage:
-                self["UnreportableReason"] = (
-                    "invalid SourcePackage: %s" % package
-                )
+                self[
+                    "UnreportableReason"
+                ] = f"invalid SourcePackage: {package}"
                 return None
 
         hook_dirs = [PACKAGE_HOOK_DIR]
@@ -1214,9 +1206,7 @@ class Report(problem_report.ProblemReport):
         if srcpackage:
             for hook_dir in hook_dirs:
                 if _run_hook(
-                    self,
-                    ui,
-                    os.path.join(hook_dir, "source_%s.py" % srcpackage),
+                    self, ui, os.path.join(hook_dir, f"source_{srcpackage}.py")
                 ):
                     return True
 
@@ -1306,7 +1296,7 @@ class Report(problem_report.ProblemReport):
                 dom = xml.dom.minidom.parseString(contents)
             except xml.parsers.expat.ExpatError as error:
                 raise ValueError(
-                    "%s has invalid format: %s" % (_ignore_file, str(error))
+                    f"{_ignore_file} has invalid format: {str(error)}"
                 ) from error
 
         # remove whitespace so that writing back the XML does not accumulate
@@ -1463,9 +1453,9 @@ class Report(problem_report.ProblemReport):
             and "ExecutablePath" in self
             and "AssertionMessage" in self
         ):
-            return "%s assert failure: %s" % (
-                os.path.basename(self["ExecutablePath"]),
-                self["AssertionMessage"],
+            return (
+                f"{os.path.basename(self['ExecutablePath'])} assert failure:"
+                f" {self['AssertionMessage']}"
             )
 
         # signal crash
@@ -1484,7 +1474,7 @@ class Report(problem_report.ProblemReport):
 
             fn = self.stacktrace_top_function()
             if fn:
-                fn = " in %s()" % fn
+                fn = f" in {fn}()"
             else:
                 fn = ""
 
@@ -1496,16 +1486,15 @@ class Report(problem_report.ProblemReport):
                 and self["PackageArchitecture"] != "all"
             ):
                 arch_mismatch = (
-                    " [non-native %s package]" % self["PackageArchitecture"]
+                    f" [non-native {self['PackageArchitecture']} package]"
                 )
 
-            return "%s crashed with %s%s%s" % (
-                os.path.basename(self["ExecutablePath"]),
-                signal_names.get(
-                    self.get("Signal"), "signal " + self.get("Signal")
-                ),
-                fn,
-                arch_mismatch,
+            signal_name = signal_names.get(
+                self.get("Signal"), "signal " + self.get("Signal")
+            )
+            return (
+                f"{os.path.basename(self['ExecutablePath'])}"
+                f" crashed with {signal_name}{fn}{arch_mismatch}"
             )
 
         # Python exception
@@ -1515,9 +1504,9 @@ class Report(problem_report.ProblemReport):
             if len(trace) < 1:
                 return None
             if len(trace) < 3:
-                return "%s crashed with %s" % (
-                    os.path.basename(self["ExecutablePath"]),
-                    trace[0],
+                return (
+                    f"{os.path.basename(self['ExecutablePath'])}"
+                    f" crashed with {trace[0]}"
                 )
 
             trace_re = re.compile(r'^\s*File\s*"(\S+)".* in (.+)$')
@@ -1534,7 +1523,7 @@ class Report(problem_report.ProblemReport):
             path = os.path.basename(self["ExecutablePath"])
             last_line = trace[-1]
             exception = last_line.split(":")[0]
-            m = re.match("^%s: (.+)$" % re.escape(exception), last_line)
+            m = re.match(f"^{re.escape(exception)}: (.+)$", last_line)
             if m:
                 message = m.group(1)
             else:
@@ -1547,18 +1536,18 @@ class Report(problem_report.ProblemReport):
                     # Maybe use os.path.basename?
                     context = module_path
             else:
-                context = "%s()" % function
+                context = f"{function}()"
 
-            title = "%s crashed with %s in %s" % (path, exception, context)
+            title = f"{path} crashed with {exception} in {context}"
 
             if message:
-                title += ": %s" % message
+                title += f": {message}"
 
             return title
 
         # package problem
         if self.get("ProblemType") == "Package" and "Package" in self:
-            title = "package %s failed to install/upgrade" % self["Package"]
+            title = f"package {self['Package']} failed to install/upgrade"
             if self.get("ErrorMessage"):
                 title += ": " + self["ErrorMessage"].splitlines()[-1]
 
@@ -1654,7 +1643,7 @@ class Report(problem_report.ProblemReport):
 
         # signal crashes
         if "StacktraceTop" in self and "Signal" in self:
-            sig = "%s:%s" % (self["ExecutablePath"], self["Signal"])
+            sig = f"{self['ExecutablePath']}:{self['Signal']}"
             bt_fn_re = re.compile(
                 r"^(?:([\w:~]+).*|(<signal handler called>)\s*)$"
             )
@@ -1700,11 +1689,11 @@ class Report(problem_report.ProblemReport):
                         f = m.group(1)
                         if os.path.islink(f):
                             f = os.path.realpath(f)
-                        sig += ":%s@%s" % (f, m.group(2))
+                        sig += f":{f}@{m.group(2)}"
 
             exc_name = trace[-1].split(":")[0]
             try:
-                exc_name += "(%s)" % self["_PythonExceptionQualifier"]
+                exc_name += f"({self['_PythonExceptionQualifier']})"
             except KeyError:
                 pass
             return self["ExecutablePath"] + ":" + exc_name + sig
@@ -1714,9 +1703,9 @@ class Report(problem_report.ProblemReport):
                 # Suspend / resume failure
                 sig = self["Failure"]
                 if self.get("MachineType"):
-                    sig += ":%s" % self["MachineType"]
+                    sig += f":{self['MachineType']}"
                 if self.get("dmi.bios.version"):
-                    sig += ":%s" % self["dmi.bios.version"]
+                    sig += f":{self['dmi.bios.version']}"
                 return sig
 
         # KernelOops crashes
@@ -1729,8 +1718,8 @@ class Report(problem_report.ProblemReport):
                     if parsed:
                         match = parsed.group(1)
                         assert match, (
-                            "could not parse expected problem type line: %s"
-                            % line
+                            f"could not parse expected"
+                            f" problem type line: {line}"
                         )
                         parts.append(match)
 
@@ -1759,7 +1748,7 @@ class Report(problem_report.ProblemReport):
         parsed = re.search(r"\[.*\] (.*)$", line)
         if parsed:
             match = parsed.group(1)
-            assert match, "could not parse expected call trace line: %s" % line
+            assert match, f"could not parse expected call trace line: {line}"
             if match[0] != "?":
                 return match
         return None
@@ -1826,11 +1815,7 @@ class Report(problem_report.ProblemReport):
         if (failed == 0 and len(stack) < 3) or (failed > 0 and len(stack) < 6):
             return None
 
-        return "%s:%s:%s" % (
-            self["ExecutablePath"],
-            self["Signal"],
-            ":".join(stack),
-        )
+        return f"{self['ExecutablePath']}:{self['Signal']}:{':'.join(stack)}"
 
     def anonymize(self):
         """Remove user identifying strings from the report.
@@ -1846,10 +1831,10 @@ class Report(problem_report.ProblemReport):
             p = pwd.getpwuid(os.geteuid())
             if len(p[0]) >= 2:
                 replacements.append(
-                    (re.compile(r"\b%s\b" % re.escape(p[0])), "username")
+                    (re.compile(rf"\b{re.escape(p[0])}\b"), "username")
                 )
             replacements.append(
-                (re.compile(r"\b%s\b" % re.escape(p[5])), "/home/username")
+                (re.compile(rf"\b{re.escape(p[5])}\b"), "/home/username")
             )
 
             for s in p[4].split(","):
@@ -1857,7 +1842,7 @@ class Report(problem_report.ProblemReport):
                 if len(s) > 2:
                     replacements.append(
                         (
-                            re.compile(r"(\b|\s)%s\b" % re.escape(s)),
+                            re.compile(rf"(\b|\s){re.escape(s)}\b"),
                             r"\1User Name",
                         )
                     )
@@ -1865,7 +1850,7 @@ class Report(problem_report.ProblemReport):
         hostname = os.uname()[1]
         if len(hostname) >= 2:
             replacements.append(
-                (re.compile(r"\b%s\b" % re.escape(hostname)), "hostname")
+                (re.compile(rf"\b{re.escape(hostname)}\b"), "hostname")
             )
 
         try:
@@ -1947,41 +1932,40 @@ class Report(problem_report.ProblemReport):
             # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += [
                 "--ex",
-                "set debug-file-directory %s/usr/lib/debug" % sandbox,
+                f"set debug-file-directory {sandbox}/usr/lib/debug",
                 "--ex",
                 "set solib-absolute-prefix " + sandbox,
                 "--ex",
                 "add-auto-load-safe-path " + sandbox,
                 # needed to fix /lib64/ld-linux-x86-64.so.2 broken symlink
                 "--ex",
-                "set solib-search-path %s/lib/%s:%s/usr/lib/%s"
-                % (sandbox, native_multiarch, sandbox, native_multiarch),
+                f"set solib-search-path {sandbox}/lib/{native_multiarch}"
+                f":{sandbox}/usr/lib/{native_multiarch}",
             ]
             if gdb_sandbox:
-                ld_lib_path = "%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib" % (
-                    gdb_sandbox,
-                    gdb_sandbox,
-                    native_multiarch,
-                    gdb_sandbox,
-                    native_multiarch,
-                    gdb_sandbox,
+                ld_lib_path = (
+                    f"{gdb_sandbox}/lib"
+                    f":{gdb_sandbox}/lib/{native_multiarch}"
+                    f":{gdb_sandbox}/usr/lib/{native_multiarch}"
+                    f":{gdb_sandbox}/usr/lib"
                 )
-                pyhome = "%s/usr" % gdb_sandbox
+                pyhome = f"{gdb_sandbox}/usr"
                 # env settings need to be modified for gdb in a sandbox
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
-                    "GCONV_PATH": "%s/usr/lib/%s/gconv"
-                    % (gdb_sandbox, native_multiarch),
+                    "GCONV_PATH": (
+                        f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv"
+                    ),
                 }
                 command.insert(
                     0,
-                    "%s/lib/%s/ld-linux-x86-64.so.2"
-                    % (gdb_sandbox, native_multiarch),
+                    f"{gdb_sandbox}"
+                    f"/lib/{native_multiarch}/ld-linux-x86-64.so.2",
                 )
                 command += [
                     "--ex",
-                    "set data-directory %s/usr/share/gdb" % gdb_sandbox,
+                    f"set data-directory {gdb_sandbox}/usr/share/gdb",
                 ]
             if not os.path.exists(sandbox + executable):
                 if executable.startswith("/usr"):
@@ -1989,7 +1973,7 @@ class Report(problem_report.ProblemReport):
                         executable = executable[3:]
             executable = sandbox + executable
 
-        command += ["--ex", 'file "%s"' % executable]
+        command += ["--ex", f'file "{executable}"']
 
         if "CoreDump" in self:
             if hasattr(self["CoreDump"], "find"):
@@ -2029,7 +2013,7 @@ class Report(problem_report.ProblemReport):
 
         for start, end, elf in self._proc_maps_cache:
             if start <= addr <= end:
-                return "%s+%x" % (elf, addr - start)
+                return f"{elf}+{addr - start:x}"
 
         return None
 
@@ -2076,7 +2060,7 @@ class Report(problem_report.ProblemReport):
         if proc_pid_fd is not None:
             cgroup_file = os.open("cgroup", os.O_RDONLY, dir_fd=proc_pid_fd)
         else:
-            cgroup_file = "/proc/%s/cgroup" % pid
+            cgroup_file = f"/proc/{pid}/cgroup"
 
         # determine cgroup
         try:

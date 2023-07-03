@@ -53,7 +53,7 @@ class T(unittest.TestCase):
         )
         self.assertTrue(
             exc[-1].startswith("ZeroDivisionError"),
-            "not a ZeroDivisionError:" + str(exc),
+            f"not a ZeroDivisionError:{str(exc)}",
         )
         self.assertIn("\n    return x / y\n", exc[-2])
 

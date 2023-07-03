@@ -403,7 +403,7 @@ class UserInterface:
         else:
             reports = apport.fileutils.get_new_reports()
             proc_pid_fd = os.open(
-                "/proc/%s" % os.getpid(),
+                f"/proc/{os.getpid()}",
                 os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
             )
             logind_session = apport.Report.get_logind_session(
@@ -480,17 +480,13 @@ class UserInterface:
                 heading = (
                     _('Sorry, the program "%s" closed unexpectedly') % subject
                 )
+                footer = _(
+                    "Your computer does not have enough free "
+                    "memory to automatically analyze the problem "
+                    "and send a report to the developers."
+                )
                 self.ui_error_message(
-                    _("Problem in %s") % subject,
-                    "%s\n\n%s"
-                    % (
-                        heading,
-                        _(
-                            "Your computer does not have enough free "
-                            "memory to automatically analyze the problem "
-                            "and send a report to the developers."
-                        ),
-                    ),
+                    _("Problem in %s") % subject, f"{heading}\n\n{footer}"
                 )
                 return
 
@@ -687,7 +683,7 @@ class UserInterface:
         if self.args.pid:
             try:
                 proc_pid_fd = os.open(
-                    "/proc/%s" % self.args.pid,
+                    f"/proc/{self.args.pid}",
                     os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
@@ -840,12 +836,12 @@ class UserInterface:
             except ValueError:
                 if not os.path.exists(
                     os.path.join(
-                        apport.report.PACKAGE_HOOK_DIR, "source_%s.py" % p
+                        apport.report.PACKAGE_HOOK_DIR, f"source_{p}.py"
                     )
                 ):
                     print(
-                        "Package %s not installed and no hook available,"
-                        " ignoring" % p
+                        f"Package {p} not installed and no hook available,"
+                        f" ignoring"
                     )
                     continue
             self.collect_info(ignore_uninstalled=True)
@@ -1260,28 +1256,28 @@ class UserInterface:
                 snap = apport.fileutils.find_snap(issue.split("/")[-1])
                 if not snap:
                     parser.error(
-                        "%s is provided by a snap. No contact address"
-                        " has been provided; visit the forum at"
-                        " https://forum.snapcraft.io/ for help." % issue
+                        f"{issue} is provided by a snap. No contact address"
+                        f" has been provided; visit the forum at"
+                        f" https://forum.snapcraft.io/ for help."
                     )
                 elif snap.get("contact", ""):
                     parser.error(
-                        "%s is provided by a snap published by %s."
-                        " Contact them via %s for help."
-                        % (issue, snap["developer"], snap["contact"])
+                        f"{issue} is provided by a snap published by"
+                        f" {snap['developer']}. Contact them"
+                        f" via {snap['contact']} for help."
                     )
                 else:
                     parser.error(
-                        "%s is provided by a snap published by %s."
-                        " No contact address has been provided; visit the"
-                        " forum at https://forum.snapcraft.io/ for help."
-                        % (issue, snap["developer"])
+                        f"{issue} is provided by a snap published by"
+                        f" {snap['developer']}. No contact address"
+                        f" has been provided; visit the forum"
+                        f" at https://forum.snapcraft.io/ for help."
                     )
                 sys.exit(1)
             else:
                 pkg = packaging.get_file_package(issue)
                 if not pkg:
-                    parser.error("%s does not belong to a package." % issue)
+                    parser.error(f"{issue} does not belong to a package.")
                     sys.exit(1)
             args.filebug = True
             args.package = pkg
@@ -1381,10 +1377,8 @@ class UserInterface:
         if response is None:
             return
 
-        retrace_with_download = (
-            "apport-retrace -S system -C %s -v "
-            % os.path.expanduser("~/.cache/apport/retrace")
-        )
+        cache_dir = os.path.expanduser("~/.cache/apport/retrace")
+        retrace_with_download = f"apport-retrace -S system -C {cache_dir} -v "
         retrace_no_download = "apport-retrace "
         filearg = "'" + self.report_file.replace("'", "'\\''") + "'"
 
@@ -1433,16 +1427,13 @@ class UserInterface:
                 ]
             )
         except (OSError, subprocess.CalledProcessError) as error:
+            msg = _(
+                "Saving crash reporting state failed."
+                " Can't set auto or never reporting mode."
+            )
             self.ui_error_message(
                 _("Can't remember send report status settings"),
-                "%s\n\n%s"
-                % (
-                    _(
-                        "Saving crash reporting state failed."
-                        " Can't set auto or never reporting mode."
-                    ),
-                    str(error),
-                ),
+                f"{msg}\n\n{str(error)}",
             )
 
     def check_report_crashdb(self):
@@ -1458,17 +1449,17 @@ class UserInterface:
                 assert "impl" in spec
             except (AssertionError, SyntaxError, ValueError) as error:
                 self.report["UnreportableReason"] = (
-                    "A package hook defines an invalid crash database"
-                    " definition:\n%s\n%s" % (self.report["CrashDB"], error)
+                    f"A package hook defines an invalid crash database"
+                    f" definition:\n{self.report['CrashDB']}\n{error}"
                 )
                 return False
             try:
                 self.crashdb = apport.crashdb.load_crashdb(None, spec)
             except (ImportError, KeyError):
                 self.report["UnreportableReason"] = (
-                    "A package hook wants to send this report to the crash"
-                    ' database "%s" which does not exist.'
-                    % self.report["CrashDB"]
+                    f"A package hook wants to send this report to the crash"
+                    f' database "{self.report["CrashDB"]}"'
+                    f" which does not exist."
                 )
 
         else:
@@ -1479,9 +1470,9 @@ class UserInterface:
                 )
             except (ImportError, KeyError):
                 self.report["UnreportableReason"] = (
-                    "A package hook wants to send this report to the crash"
-                    ' database "%s" which does not exist.'
-                    % self.report["CrashDB"]
+                    f"A package hook wants to send this report to the crash"
+                    f' database "{self.report["CrashDB"]}"'
+                    f" which does not exist."
                 )
                 return False
 
@@ -1526,7 +1517,7 @@ class UserInterface:
                     " which is not installed any more."
                 )
                 if exe_path:
-                    msg = "%s (%s)" % (msg, self.report["ExecutablePath"])
+                    msg = f"{msg} ({self.report['ExecutablePath']})"
                 self.report["UnreportableReason"] = msg
                 if on_finished:
                     on_finished()
@@ -1538,10 +1529,9 @@ class UserInterface:
                         "This problem report applies to a program"
                         " which is not installed any more."
                     )
-                    self.report["UnreportableReason"] = "%s (%s)" % (
-                        msg,
-                        self.report["InterpreterPath"],
-                    )
+                    self.report[
+                        "UnreportableReason"
+                    ] = f"{msg} ({self.report['InterpreterPath']})"
                     if on_finished:
                         on_finished()
                     return
@@ -1618,13 +1608,13 @@ class UserInterface:
                     icthread.exc_raise()
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken core dumps
-                    self.report["UnreportableReason"] = "%s\n\n%s" % (
-                        _(
-                            "This problem report is damaged"
-                            " and cannot be processed."
-                        ),
-                        repr(error),
+                    msg = _(
+                        "This problem report is damaged"
+                        " and cannot be processed."
                     )
+                    self.report[
+                        "UnreportableReason"
+                    ] = f"{msg}\n\n{repr(error)}"
                     self.report["_MarkForUpload"] = "False"
                 except ValueError:  # package does not exist
                     if "UnreportableReason" not in self.report:
@@ -1740,13 +1730,13 @@ class UserInterface:
                     bpthread.exc_raise()
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken gz values
-                    self.report["UnreportableReason"] = "%s\n\n%s" % (
-                        _(
-                            "This problem report is damaged"
-                            " and cannot be processed."
-                        ),
-                        repr(error),
+                    msg = _(
+                        "This problem report is damaged"
+                        " and cannot be processed."
                     )
+                    self.report[
+                        "UnreportableReason"
+                    ] = f"{msg}\n\n{repr(error)}"
                 if bpthread.return_value():
                     self.report["_KnownReport"] = bpthread.return_value()
 
@@ -1829,7 +1819,7 @@ class UserInterface:
             status = os.wait()[1]
             if status:
                 title = _("Unable to start web browser")
-                error = _("Unable to start web browser to open %s." % url)
+                error = _(f"Unable to start web browser to open {url}.")
                 message = os.fdopen(r).readline()
                 if message:
                     error += "\n" + message
@@ -1921,16 +1911,12 @@ class UserInterface:
         except KeyboardInterrupt:
             sys.exit(1)
         except (smtplib.SMTPConnectError, urllib.error.URLError) as error:
+            msg = _(
+                "Cannot connect to crash database,"
+                " please check your Internet connection."
+            )
             self.ui_error_message(
-                _("Network problem"),
-                "%s\n\n%s"
-                % (
-                    _(
-                        "Cannot connect to crash database,"
-                        " please check your Internet connection."
-                    ),
-                    str(error),
-                ),
+                _("Network problem"), f"{msg}\n\n{str(error)}"
             )
             return
 
@@ -1970,16 +1956,9 @@ class UserInterface:
             return False
         except (TypeError, ValueError, AssertionError, zlib.error) as error:
             self.report = None
+            msg = _("This problem report is damaged and cannot be processed.")
             self.ui_error_message(
-                _("Invalid problem report"),
-                "%s\n\n%s"
-                % (
-                    _(
-                        "This problem report is damaged"
-                        " and cannot be processed."
-                    ),
-                    repr(error),
-                ),
+                _("Invalid problem report"), f"{msg}\n\n{repr(error)}"
             )
             return False
 
@@ -2041,7 +2020,7 @@ class UserInterface:
             cp.read(desktop_file, encoding="UTF-8")
         except configparser.Error as error:
             sys.stderr.write(
-                "Warning! %s is broken: %s\n" % (desktop_file, str(error))
+                f"Warning! {desktop_file} is broken: {str(error)}\n"
             )
             return None
         if not cp.has_section("Desktop Entry"):

@@ -51,8 +51,7 @@ except ImportError:  # Python < 3.10
                 errno = error.errno
         else:
             raise OSError(
-                errno,
-                "Unable to read files {}".format(", ".join(os_release_files)),
+                errno, f"Unable to read files {', '.join(os_release_files)}"
             )
 
         return ret

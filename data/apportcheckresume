@@ -30,9 +30,9 @@ def main(argv=None):
         report = apport.report.Report(problem_type="KernelOops")
 
         libdir = "/var/lib/pm-utils"
-        flagfile = libdir + "/status"
-        stresslog = libdir + "/stress.log"
-        hanglog = libdir + "/resume-hang.log"
+        flagfile = f"{libdir}/status"
+        stresslog = f"{libdir}/stress.log"
+        hanglog = f"{libdir}/resume-hang.log"
 
         report.add_os_info()
         report.add_proc_info()
@@ -86,8 +86,8 @@ def main(argv=None):
             return 0
 
         nowtime = datetime.datetime.now()
-        pr_filename = "/var/crash/susres.%s.crash" % (
-            str(nowtime).replace(" ", "_")
+        pr_filename = (
+            f"/var/crash/susres.{str(nowtime).replace(' ', '_')}.crash"
         )
         with os.fdopen(
             os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),

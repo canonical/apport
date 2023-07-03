@@ -28,14 +28,14 @@ def command_dump(crashdb, _):
     for sig, (crash_id, version, lastchange) in crashdb.duplicate_db_dump(
         True
     ).items():
-        sys.stdout.write("%7i: %s " % (crash_id, sig))
+        sys.stdout.write(f"{crash_id:7d}: {sig} ")
         if version == "":
             sys.stdout.write("[fixed] ")
         elif version:
-            sys.stdout.write("[fixed in: %s] " % version)
+            sys.stdout.write(f"[fixed in: {version}] ")
         else:
             sys.stdout.write("[open] ")
-        print("last change: %s" % str(lastchange))
+        print(f"last change: {str(lastchange)}")
 
 
 def command_changeid(crashdb, args):

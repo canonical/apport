@@ -80,7 +80,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(r["ProblemType"], "Package")
         self.assertEqual(
-            r["Package"], "bash " + apport.packaging.get_version("bash")
+            r["Package"], f"bash {apport.packaging.get_version('bash')}"
         )
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
@@ -105,7 +105,7 @@ class T(unittest.TestCase):
             r.load(f)
 
         self.assertEqual(r["ProblemType"], "Package")
-        self.assertEqual(r["Package"], pkg + " (not installed)")
+        self.assertEqual(r["Package"], f"{pkg} (not installed)")
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
     def test_package_hook_logs(self):
@@ -252,7 +252,7 @@ class T(unittest.TestCase):
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
-        dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
+        dmesgfile = os.path.join(vmcore_dir, f"dmesg.{timedir}")
         with open(dmesgfile, "wt", encoding="utf-8") as dmesg:
             dmesg.write("1" * 100)
 
@@ -326,7 +326,7 @@ class T(unittest.TestCase):
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
-        dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
+        dmesgfile = os.path.join(vmcore_dir, f"dmesg.{timedir}")
         os.symlink("../kernel.crash", dmesgfile)
 
         self.assertNotEqual(
@@ -347,13 +347,13 @@ class T(unittest.TestCase):
             datetime.datetime.now(), "%Y%m%d%H%M"
         )
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
-        os.mkdir(vmcore_dir + ".real")
+        os.mkdir(f"{vmcore_dir}.real")
         # pretend that a user tries information disclosure by pre-creating a
         # symlink to another dir
-        os.symlink(vmcore_dir + ".real", vmcore_dir)
+        os.symlink(f"{vmcore_dir}.real", vmcore_dir)
         os.lchown(vmcore_dir, 65534, 65534)
 
-        dmesgfile = os.path.join(vmcore_dir, "dmesg." + timedir)
+        dmesgfile = os.path.join(vmcore_dir, f"dmesg.{timedir}")
         with open(dmesgfile, "wt", encoding="utf-8") as dmesg:
             dmesg.write("1" * 100)
 
@@ -384,11 +384,11 @@ class T(unittest.TestCase):
         ver_fields = gcc.stdout.splitlines()[0].split()[3].split(".")
         # try major/minor first
         gcc_ver = ".".join(ver_fields[:2])
-        gcc_path = "/usr/bin/gcc-" + gcc_ver
+        gcc_path = f"/usr/bin/gcc-{gcc_ver}"
         if not os.path.exists(gcc_path):
             # fall back to only major
             gcc_ver = ver_fields[0]
-            gcc_path = "/usr/bin/gcc-" + gcc_ver
+            gcc_path = f"/usr/bin/gcc-{gcc_ver}"
 
         subprocess.run(
             [gcc_path, "--version"], check=True, stdout=subprocess.PIPE
@@ -432,7 +432,7 @@ class T(unittest.TestCase):
 
             r.add_package_info()
 
-        self.assertEqual(r["Package"].split()[0], "gcc-" + gcc_version)
+        self.assertEqual(r["Package"].split()[0], f"gcc-{gcc_version}")
         self.assertNotEqual(r["Package"].split()[1], "")  # has package version
         self.assertIn("libc", r["Dependencies"])
 
@@ -495,7 +495,7 @@ class T(unittest.TestCase):
 
         r.add_package_info()
 
-        self.assertEqual(r["Package"].split()[0], "gcc-" + gcc_version)
+        self.assertEqual(r["Package"].split()[0], f"gcc-{gcc_version}")
 
     def test_kernel_oops_hook(self):
         test_source = """------------[ cut here ]------------

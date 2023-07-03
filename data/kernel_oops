@@ -38,7 +38,7 @@ pr["SourcePackage"] = "linux"
 
 pr["OopsText"] = oops
 u = os.uname()
-pr["Uname"] = "%s %s %s" % (u[0], u[2], u[4])
+pr["Uname"] = f"{u[0]} {u[2]} {u[4]}"
 
 # write report
 try:
