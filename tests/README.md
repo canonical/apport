@@ -23,12 +23,6 @@ at most) and do not interact with the outside system. All outside access is
 mocked. The unit tests can be run from the top directory by calling:
 
 ```
-python3 -m unittest tests/unit/test_*.py
-```
-
-or with pytest:
-
-```
 python3 -m pytest tests/unit/
 ```
 
@@ -41,12 +35,6 @@ execute relatively quickly (a few seconds per test at most) and interact with
 the outside system in a non invasive manner. Temporary directories are created
 in case the test needs to write to them. The integration tests can be run from
 the top directory by calling:
-
-```
-python3 -m unittest tests/integration/test_*.py
-```
-
-or with pytest:
 
 ```
 python3 -m pytest tests/integration/
@@ -64,12 +52,6 @@ These tests can be skipped by setting the environment variable
 [test_python_crashes.py](./system/test_python_crashes.py) need a running D-Bus
 daemon. Whit a D-Bus daemon running, the system tests can be run from the top
 directory by calling:
-
-```
-GDK_BACKEND=x11 xvfb-run python3 -m unittest tests/system/test_*.py
-```
-
-or with pytest:
 
 ```
 GDK_BACKEND=x11 xvfb-run python3 -m pytest tests/system/
