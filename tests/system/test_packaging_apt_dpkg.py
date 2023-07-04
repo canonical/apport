@@ -1072,7 +1072,7 @@ class T(unittest.TestCase):
 
         # install GPG key for ddebs
         keyring_dir = os.path.join(config_release_dir, "trusted.gpg.d")
-        self._copy_ubunut_keyrings(keyring_dir)
+        self._copy_ubuntu_keyrings(keyring_dir)
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
@@ -1087,7 +1087,7 @@ class T(unittest.TestCase):
         """Strip epoch from Debian package version."""
         return version.split(":", maxsplit=1)[-1]
 
-    def _copy_ubunut_keyrings(self, keyring_dir: str) -> None:
+    def _copy_ubuntu_keyrings(self, keyring_dir: str) -> None:
         """Copy the archive and debug symbol archive keyring."""
         os.makedirs(keyring_dir, exist_ok=True)
         try:
