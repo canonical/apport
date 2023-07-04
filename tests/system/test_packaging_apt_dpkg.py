@@ -125,6 +125,7 @@ def test_install_packages_versioned(configdir, cachedir, rootdir):
         "armhf",
         "codename",
         "sources.list",
+        "sources.list.d",
         "trusted.gpg.d",
     ]
     assert sorted(os.listdir(os.path.join(configdir, release, "armhf"))) == [
@@ -231,6 +232,7 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir):
         "armhf",
         "codename",
         "sources.list",
+        "sources.list.d",
         "trusted.gpg.d",
     ]
     assert sorted(os.listdir(os.path.join(configdir, release, "armhf"))) == [
@@ -879,7 +881,8 @@ def _setup_foonux_config(configdir, updates=False, release="jammy", ppa=False):
     versions = {"focal": "20.04", "jammy": "22.04"}
     distro_release = f"Foonux {versions[release]}"
     config_release_dir = os.path.join(configdir, distro_release)
-    os.mkdir(config_release_dir)
+    sources_dir = os.path.join(config_release_dir, "sources.list.d")
+    os.makedirs(sources_dir)
     _write_source_file(
         os.path.join(config_release_dir, "sources.list"),
         _ubuntu_archive_uri(),
@@ -887,18 +890,13 @@ def _setup_foonux_config(configdir, updates=False, release="jammy", ppa=False):
         updates,
     )
     if ppa:
-        os.mkdir(os.path.join(config_release_dir, "sources.list.d"))
-        with open(
-            os.path.join(config_release_dir, "sources.list.d", "fooser-bar-ppa.list"),
-            "w",
-            encoding="utf-8",
-        ) as f:
-            f.write(
-                f"deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-                f" {release} main main/debug\n"
-                f"deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-                f" {release} main\n"
-            )
+        _write_source_file(
+            os.path.join(sources_dir, "fooser-bar-ppa.list"),
+            "http://ppa.launchpad.net/fooser/bar-ppa/ubuntu",
+            release,
+            False,
+            ppa=True,
+        )
     os.mkdir(os.path.join(config_release_dir, "armhf"))
     _write_source_file(
         os.path.join(config_release_dir, "armhf", "sources.list"),
@@ -955,15 +953,16 @@ def _copy_ubuntu_keyrings(keyring_dir: str) -> None:
 
 
 def _write_source_file(
-    sources_filename: str, uri: str, release: str, updates: bool
+    sources_filename: str, uri: str, release: str, updates: bool, ppa: bool = False
 ) -> None:
     """Write sources.list file."""
     with open(sources_filename, "w", encoding="utf-8") as sources_file:
         sources_file.write(
-            f"deb {uri} {release} main\n"
+            f"deb {uri} {release} main {'main/debug' if ppa else ''}\n"
             f"deb-src {uri} {release} main\n"
-            f"deb http://ddebs.ubuntu.com/ {release} main\n"
         )
+        if not ppa:
+            sources_file.write(f"deb http://ddebs.ubuntu.com/ {release} main\n")
         if updates:
             sources_file.write(
                 f"deb {uri} {release}-updates main\n"
