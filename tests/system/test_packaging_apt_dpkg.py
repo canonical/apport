@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import textwrap
 import typing
 
 import pytest
@@ -863,9 +864,52 @@ def _ubuntu_archive_uri(arch=None):
     return "http://ports.ubuntu.com/ubuntu-ports"
 
 
+def _write_deb822_file(
+    sources_filename: str, uri: str, release: str, updates: bool, ppa: bool = False
+) -> None:
+    with open(sources_filename, "w", encoding="utf-8") as sources_file:
+        updates_suite = f"{release}-updates" if updates else ""
+        sources_file.write(
+            textwrap.dedent(
+                f"""\
+                    Types: deb deb-src
+                    URIs: {uri}
+                    Suites:
+                     {release} {updates_suite}
+                    Components: main
+                    """
+            )
+        )
+
+        sources_file.write("\n")
+
+        if ppa:
+            sources_file.write(
+                textwrap.dedent(
+                    f"""\
+                        Types: deb
+                        URIs: {uri}
+                        Suites: {release}
+                        Components: main/debug"""
+                )
+            )
+        else:
+            sources_file.write(
+                textwrap.dedent(
+                    f"""\
+                        Types: deb
+                        URIs: http://ddebs.ubuntu.com/
+                        Suites:
+                         {release} {updates_suite}
+                        Components: main
+                        """
+                )
+            )
+
+
 def _setup_foonux_config(
     configdir: str,
-    apt_style: typing.Literal["one-line"],
+    apt_style: typing.Literal["deb822", "one-line"],
     updates: bool = False,
     release: str = "jammy",
     ppa: bool = False,
@@ -887,7 +931,28 @@ def _setup_foonux_config(
     armhf_sources = os.path.join(armhf_dir, "sources.list.d")
     os.makedirs(sources_dir)
     os.makedirs(armhf_sources)
-    if apt_style == "one-line":
+    if apt_style == "deb822":
+        _write_deb822_file(
+            os.path.join(sources_dir, "foonux.sources"),
+            _ubuntu_archive_uri(),
+            release,
+            updates,
+        )
+        if ppa:
+            _write_deb822_file(
+                os.path.join(sources_dir, "fooser-bar-ppa.sources"),
+                "http://ppa.launchpad.net/fooser/bar-ppa/ubuntu",
+                release,
+                False,
+                ppa=True,
+            )
+        _write_deb822_file(
+            os.path.join(armhf_sources, "armhf.sources"),
+            _ubuntu_archive_uri("armhf"),
+            release,
+            updates,
+        )
+    else:
         _write_source_file(
             os.path.join(config_release_dir, "sources.list"),
             _ubuntu_archive_uri(),
@@ -912,6 +977,7 @@ def _setup_foonux_config(
         f.write(f"{release}")
 
     # install GPG key for ddebs
+    # TODO: figure out a way to do it in the new deb822 world
     keyring_dir = os.path.join(config_release_dir, "trusted.gpg.d")
     _copy_ubuntu_keyrings(keyring_dir)
     # Create an architecture specific symlink, otherwise it cannot be
