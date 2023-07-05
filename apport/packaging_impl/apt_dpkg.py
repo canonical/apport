@@ -36,6 +36,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Optional
 
 import apt
 from aptsources.sourceslist import SourceEntry
@@ -1549,6 +1550,46 @@ class __AptDpkgPackageInfo(PackageInfo):
                 pass
         return None
 
+    def _analyze_ppa_origin_string(
+        self, origin: str, distro: str
+    ) -> Optional[tuple[str, str]]:
+        if not origin.startswith("LP-PPA-"):
+            return None
+
+        components = origin.split("-")[2:]
+        # If the PPA is unnamed, it will not appear in origin information
+        # but is named ppa in Launchpad.
+        try_ppa = True
+        if len(components) == 1:
+            components.append("ppa")
+            try_ppa = False
+
+        index = 1
+        while index < len(components):
+            # For an origin we can't tell where the user name ends and the
+            # PPA name starts, so split on each "-" until we find a PPA
+            # that exists.
+            user = str.join("-", components[:index])
+            ppa_name = str.join("-", components[index:])
+            try:
+                with contextlib.closing(
+                    urllib.request.urlopen(
+                        self._ppa_archive_url(
+                            user=user, distro=distro, ppa_name=ppa_name
+                        )
+                    )
+                ) as response:
+                    response.read()
+                    return user, ppa_name
+            except (urllib.error.URLError, urllib.error.HTTPError):
+                index += 1
+                if index == len(components):
+                    if try_ppa:
+                        components.append("ppa")
+                        try_ppa = False
+                        index = 2
+        return None
+
     def create_ppa_source_from_origin(self, origin, distro, release_codename):
         """For an origin from a Launchpad PPA create sources.list content.
 
@@ -1561,61 +1602,25 @@ class __AptDpkgPackageInfo(PackageInfo):
         Return a string containing content suitable for writing to a
         sources.list file, or None if the origin is not a Launchpad PPA.
         """
-        if origin.startswith("LP-PPA-"):
-            components = origin.split("-")[2:]
-            # If the PPA is unnamed, it will not appear in origin information
-            # but is named ppa in Launchpad.
-            try_ppa = True
-            if len(components) == 1:
-                components.append("ppa")
-                try_ppa = False
-
-            index = 1
-            while index < len(components):
-                # For an origin we can't tell where the user name ends and the
-                # PPA name starts, so split on each "-" until we find a PPA
-                # that exists.
-                user = str.join("-", components[:index])
-                ppa_name = str.join("-", components[index:])
-                try:
-                    with contextlib.closing(
-                        urllib.request.urlopen(
-                            self._ppa_archive_url(
-                                user=user, distro=distro, ppa_name=ppa_name
-                            )
-                        )
-                    ) as response:
-                        response.read()
-                except (urllib.error.URLError, urllib.error.HTTPError):
-                    index += 1
-                    if index == len(components):
-                        if try_ppa:
-                            components.append("ppa")
-                            try_ppa = False
-                            index = 2
-                        else:
-                            user = None
-                    continue
-                break
-            if user and ppa_name:
-                ppa_line = (
-                    f"deb http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
-                    f" {release_codename} main"
-                )
-                debug_url = (
-                    f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
-                    f"/dists/{release_codename}/main/debug"
-                )
-                try:
-                    with contextlib.closing(
-                        urllib.request.urlopen(debug_url)
-                    ) as response:
-                        response.read()
-                    add_debug = " main/debug"
-                except (urllib.error.URLError, urllib.error.HTTPError):
-                    add_debug = ""
-                return f"{ppa_line + add_debug}\ndeb-src{ppa_line[3:]}\n"
-        return None
+        ppa_data = self._analyze_ppa_origin_string(origin, distro)
+        if not ppa_data:
+            return None
+        user, ppa_name = ppa_data
+        ppa_line = (
+            f"deb http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+            f" {release_codename} main"
+        )
+        debug_url = (
+            f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+            f"/dists/{release_codename}/main/debug"
+        )
+        try:
+            with contextlib.closing(urllib.request.urlopen(debug_url)) as response:
+                response.read()
+            add_debug = " main/debug"
+        except (urllib.error.URLError, urllib.error.HTTPError):
+            add_debug = ""
+        return f"{ppa_line + add_debug}\ndeb-src{ppa_line[3:]}\n"
 
     def _build_apt_sandbox(
         self, apt_root, apt_dir, distro_name, release_codename, origins
