@@ -444,7 +444,7 @@ deb http://secondary.mirror tuxy extra
             )
             f.flush()
             self.assertEqual(
-                impl._get_primary_mirror_from_apt_sources(s),
+                impl._get_primary_mirror_from_apt_sources(self.workdir),
                 "http://binary.mirror/tuxy",
             )
 
@@ -459,21 +459,23 @@ deb http://secondary.mirror tuxy extra
             )
             f.flush()
             self.assertEqual(
-                impl._get_primary_mirror_from_apt_sources(s),
+                impl._get_primary_mirror_from_apt_sources(self.workdir),
                 "http://binary.mirror/tuxy",
             )
 
         # empty file
         with open(s, "w", encoding="utf-8") as f:
             f.flush()
-        self.assertRaises(SystemError, impl._get_primary_mirror_from_apt_sources, s)
+        self.assertRaises(
+            SystemError, impl._get_primary_mirror_from_apt_sources, self.workdir
+        )
 
     def test_mirror_from_apt_sources_with_options(self) -> None:
         """Test _get_primary_mirror_from_apt_sources() with options"""
         sources = pathlib.Path(self.workdir) / "sources.list"
         expected = "https://example.com/"
         sources.write_text(f"deb [ arch=riscv64 ] {expected} suite component")
-        actual = impl._get_primary_mirror_from_apt_sources(str(sources))
+        actual = impl._get_primary_mirror_from_apt_sources(self.workdir)
         self.assertEqual(actual, expected)
 
     def test_get_modified_conffiles(self):

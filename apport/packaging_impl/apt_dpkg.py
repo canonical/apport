@@ -38,10 +38,33 @@ import urllib.parse
 import urllib.request
 
 import apt
-import aptsources.sourceslist
+from aptsources.sourceslist import SourceEntry
 
 import apport.logging
 from apport.packaging import PackageInfo
+
+
+def _load_all_sources(apt_dir: str) -> list[SourceEntry]:
+    """Given an APT configuration directory (e.g. /etc/apt/), loads up all
+    the source data in one easy-to-consume list.
+    """
+    sources_d = os.path.join(apt_dir, "sources.list.d")
+    if os.path.exists(sources_d):
+        to_inspect = sorted([os.path.join(sources_d, f) for f in os.listdir(sources_d)])
+    else:
+        to_inspect = []
+
+    sources_old_file = os.path.join(apt_dir, "sources.list")
+    if os.path.exists(sources_old_file):
+        to_inspect[0:0] = [sources_old_file]
+
+    sources = []
+    for path in to_inspect:
+        if path.endswith(".list"):
+            with open(path, encoding="utf-8") as f:
+                sources.extend([SourceEntry(line, path) for line in f])
+
+    return sources
 
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -793,7 +816,11 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             # set mirror for get_file_package()
             try:
-                self.set_mirror(self._get_primary_mirror_from_apt_sources(apt_sources))
+                self.set_mirror(
+                    self._get_primary_mirror_from_apt_sources(
+                        os.path.dirname(apt_sources)
+                    )
+                )
             except SystemError as error:
                 apport.logging.warning("cannot determine mirror: %s", str(error))
 
@@ -1334,20 +1361,18 @@ class __AptDpkgPackageInfo(PackageInfo):
         return mismatches
 
     @staticmethod
-    def _get_primary_mirror_from_apt_sources(apt_sources: str) -> str:
+    def _get_primary_mirror_from_apt_sources(apt_dir: str) -> str:
         """Heuristically determine primary mirror from an apt sources.list."""
-        with open(apt_sources, encoding="utf-8") as f:
-            for line in f:
-                source = aptsources.sourceslist.SourceEntry(line, apt_sources)
-                if source.disabled or source.invalid:
-                    continue
-                if source.type != "deb":
-                    continue
-                return source.uri
+        sources = _load_all_sources(apt_dir)
+        for source in sources:
+            if source.disabled or source.invalid:
+                continue
+            if source.type == "deb":
+                return source.uri or ""
 
         raise SystemError(
-            f"cannot determine default mirror:"
-            f" {apt_sources} does not contain a valid deb line"
+            "cannot determine default mirror:"
+            f" couldn't find configured source contains the `deb` type in {apt_dir}"
         )
 
     def _get_mirror(self):
@@ -1357,9 +1382,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         configuration.
         """
         if not self._mirror:
-            self._mirror = self._get_primary_mirror_from_apt_sources(
-                "/etc/apt/sources.list"
-            )
+            self._mirror = self._get_primary_mirror_from_apt_sources("/etc/apt")
         return self._mirror
 
     def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
