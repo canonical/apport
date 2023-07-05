@@ -1590,7 +1590,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                         index = 2
         return None
 
-    def create_ppa_source_from_origin(self, origin, distro, release_codename):
+    def create_ppa_source_from_origin(
+        self, origin: str, distro: str, release_codename: str
+    ) -> Optional[list[SourceEntry]]:
         """For an origin from a Launchpad PPA create sources.list content.
 
         distro is the distribution for which content is being created e.g.
@@ -1599,9 +1601,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         release_codename is the codename of the release for which content is
         being created e.g. trusty.
 
-        Return a string containing content suitable for writing to a
-        sources.list file, or None if the origin is not a Launchpad PPA.
-        """
+        Returns None if the origin is not a Launchpad PPA, a list of source
+        entry objects otherwise."""
         ppa_data = self._analyze_ppa_origin_string(origin, distro)
         if not ppa_data:
             return None
@@ -1620,7 +1621,10 @@ class __AptDpkgPackageInfo(PackageInfo):
             add_debug = " main/debug"
         except (urllib.error.URLError, urllib.error.HTTPError):
             add_debug = ""
-        return f"{ppa_line + add_debug}\ndeb-src{ppa_line[3:]}\n"
+        return [
+            SourceEntry(ppa_line + add_debug),
+            SourceEntry(f"deb-src {ppa_line[4:]}"),
+        ]
 
     @staticmethod
     def _find_source_file_from_origin(origin: str, src_list_d: str) -> Optional[str]:
@@ -1696,7 +1700,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             os.makedirs(trusted_d)
 
         if origins:
-            source_list_content = ""
             # map an origin to a Launchpad username and PPA name
             origin_data = {}
             for origin in origins:
@@ -1707,7 +1710,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 origin_path = self._find_source_file_from_origin(origin, src_list_d)
                 if origin_path:
                     with open(origin_path, encoding="utf-8") as src_ext:
-                        source_list_content = src_ext.read()
+                        source_list_content = [SourceEntry(line) for line in src_ext]
                 else:
                     source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
@@ -1720,14 +1723,14 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "a",
                         encoding="utf-8",
                     ) as dest:
-                        dest.write(source_list_content)
-                    for line in source_list_content.splitlines():
-                        if line.startswith("#"):
+                        dest.write(
+                            "\n".join([str(entry) for entry in source_list_content])
+                        )
+                    for entry in source_list_content:
+                        if not entry.uri or "ppa.launchpad.net" not in entry.uri:
                             continue
-                        if "ppa.launchpad.net" not in line:
-                            continue
-                        user = line.split()[1].split("/")[3]
-                        ppa = line.split()[1].split("/")[4]
+                        user = entry.uri.split("/")[3]
+                        ppa = entry.uri.split("/")[4]
                         origin_data[origin] = (user, ppa)
                 else:
                     apport.logging.warning(
