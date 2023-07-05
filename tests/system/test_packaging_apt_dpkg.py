@@ -661,11 +661,7 @@ def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
     os.mkdir(out_dir)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
-        rootdir,
-        os.path.join(configdir, release, "sources.list"),
-        "ubuntu",
-        "jammy",
-        origins=None,
+        rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=None
     )
     res = impl.get_source_tree("base-files", out_dir, sandbox=rootdir)
     assert os.path.isdir(os.path.join(res, "debian"))
@@ -683,11 +679,7 @@ def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
     os.mkdir(out_dir)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
-        rootdir,
-        os.path.join(configdir, release, "sources.list"),
-        "ubuntu",
-        "jammy",
-        origins=None,
+        rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=None
     )
     res = impl.get_source_tree(
         wanted_package, out_dir, version=wanted_version, sandbox=rootdir
@@ -707,11 +699,7 @@ def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
     release = _setup_foonux_config(configdir, apt_style)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
-        rootdir,
-        os.path.join(configdir, release, "sources.list"),
-        "ubuntu",
-        "jammy",
-        origins=[ppa],
+        rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=[ppa]
     )
     with open(
         os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
@@ -761,11 +749,7 @@ def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
     release = _setup_foonux_config(configdir, apt_style, ppa=True)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
-        rootdir,
-        os.path.join(configdir, release, "sources.list"),
-        "ubuntu",
-        "jammy",
-        origins=[ppa],
+        rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=[ppa]
     )
     with open(
         os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
@@ -810,7 +794,7 @@ def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
         rootdir,
-        os.path.join(configdir, release, "sources.list"),
+        os.path.join(configdir, release),
         "ubuntu",
         "jammy",
         origins=[f"LP-PPA-{ppa}"],

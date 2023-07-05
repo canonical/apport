@@ -160,7 +160,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _sandbox_cache(
         self,
         aptroot,
-        apt_sources,
+        apt_dir,
         fetchProgress,
         distro_name,
         release_codename,
@@ -175,7 +175,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         if not self._sandbox_apt_cache or arch != self._sandbox_apt_cache_arch:
             self._build_apt_sandbox(
-                aptroot, apt_sources, distro_name, release_codename, origins
+                aptroot, apt_dir, distro_name, release_codename, origins
             )
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
@@ -802,25 +802,23 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not architecture:
             architecture = self.get_system_architecture()
         if not configdir:
-            apt_sources = "/etc/apt/sources.list"
+            apt_dir = "/etc/apt"
             self._current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
-            apt_sources = os.path.join(configdir, release, "sources.list")
+            apt_dir = os.path.join(configdir, release)
             if architecture != self.get_system_architecture():
-                arch_apt_sources = os.path.join(
-                    configdir, release, architecture, "sources.list"
-                )
-                if os.path.exists(arch_apt_sources):
-                    apt_sources = arch_apt_sources
+                arch_apt_dir = os.path.join(configdir, release, architecture)
+                arch_old_sources = os.path.join(arch_apt_dir, "sources.list")
+                arch_sources_dir = os.path.join(arch_apt_dir, "sources.list.d")
+                if os.path.exists(arch_old_sources) or (
+                    os.path.exists(arch_sources_dir) and os.listdir(arch_sources_dir)
+                ):
+                    apt_dir = arch_apt_dir
 
             # set mirror for get_file_package()
             try:
-                self.set_mirror(
-                    self._get_primary_mirror_from_apt_sources(
-                        os.path.dirname(apt_sources)
-                    )
-                )
+                self.set_mirror(self._get_primary_mirror_from_apt_sources(apt_dir))
             except SystemError as error:
                 apport.logging.warning("cannot determine mirror: %s", str(error))
 
@@ -829,9 +827,6 @@ class __AptDpkgPackageInfo(PackageInfo):
                 os.path.join(configdir, release, "codename"), encoding="utf-8"
             ) as f:
                 self._current_release_codename = f.read().strip()
-
-        if not os.path.exists(apt_sources):
-            raise SystemError(f"{apt_sources} does not exist")
 
         # create apt sandbox
         if cache_dir:
@@ -863,7 +858,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not tmp_aptroot:
             cache = self._sandbox_cache(
                 aptroot,
-                apt_sources,
+                apt_dir,
                 fetchProgress,
                 self.get_distro_name(),
                 self._current_release_codename,
@@ -873,7 +868,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             self._build_apt_sandbox(
                 aptroot,
-                apt_sources,
+                apt_dir,
                 self.get_distro_name(),
                 self._current_release_codename,
                 origins,
@@ -1623,7 +1618,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return None
 
     def _build_apt_sandbox(
-        self, apt_root, apt_sources, distro_name, release_codename, origins
+        self, apt_root, apt_dir, distro_name, release_codename, origins
     ):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -1640,20 +1635,42 @@ class __AptDpkgPackageInfo(PackageInfo):
             os.makedirs(os.path.join(apt_root, "etc", "apt", "preferences.d"))
 
         # install apt sources
-        list_d = os.path.join(apt_root, "etc", "apt", "sources.list.d")
-        if os.path.exists(list_d):
-            shutil.rmtree(list_d)
-        if os.path.isdir(f"{apt_sources}.d"):
-            shutil.copytree(f"{apt_sources}.d", list_d)
+        src_list_d = os.path.join(apt_dir, "sources.list.d")
+        dst_list_d = os.path.join(apt_root, "etc", "apt", "sources.list.d")
+        if os.path.exists(dst_list_d):
+            shutil.rmtree(dst_list_d)
+        if os.path.isdir(src_list_d):
+            shutil.copytree(src_list_d, dst_list_d)
         else:
-            os.makedirs(list_d)
-        with open(apt_sources, encoding="utf-8") as src:
-            with open(
-                os.path.join(apt_root, "etc", "apt", "sources.list"),
-                "w",
-                encoding="utf-8",
-            ) as dest:
-                dest.write(src.read())
+            os.makedirs(dst_list_d)
+        old_sources = os.path.join(apt_dir, "sources.list")
+        if os.path.exists(old_sources):
+            with open(old_sources, encoding="utf-8") as src:
+                with open(
+                    os.path.join(apt_root, "etc", "apt", "sources.list"),
+                    "w",
+                    encoding="utf-8",
+                ) as dest:
+                    dest.write(src.read())
+
+        # install apt keyrings; prefer the ones from the config dir, fall back
+        # to system
+        trusted_gpg = os.path.join(apt_dir, "trusted.gpg")
+        if os.path.exists(trusted_gpg):
+            shutil.copy(trusted_gpg, os.path.join(apt_root, "etc", "apt"))
+        elif os.path.exists("/etc/apt/trusted.gpg"):
+            shutil.copy("/etc/apt/trusted.gpg", os.path.join(apt_root, "etc", "apt"))
+
+        trusted_d = os.path.join(apt_root, "etc", "apt", "trusted.gpg.d")
+        if os.path.exists(trusted_d):
+            shutil.rmtree(trusted_d)
+
+        if os.path.exists(f"{trusted_gpg}.d"):
+            shutil.copytree(f"{trusted_gpg}.d", trusted_d)
+        elif os.path.exists("/etc/apt/trusted.gpg.d"):
+            shutil.copytree("/etc/apt/trusted.gpg.d", trusted_d)
+        else:
+            os.makedirs(trusted_d)
 
         if origins:
             source_list_content = ""
@@ -1665,14 +1682,14 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if origin == "unknown":
                     continue
                 origin_path = None
-                if os.path.isdir(f"{apt_sources}.d"):
+                if os.path.isdir(src_list_d):
                     # check to see if there is a sources.list file for the
                     # origin, if there isn't try using a sources.list file
                     # w/o LP-PPA-
-                    origin_path = os.path.join(f"{apt_sources}.d", f"{origin}.list")
+                    origin_path = os.path.join(src_list_d, f"{origin}.list")
                     if not os.path.exists(origin_path) and "LP-PPA" in origin:
                         origin_path = os.path.join(
-                            f"{apt_sources}.d", f"{origin.strip('LP-PPA-')}.list"
+                            src_list_d, f"{origin.strip('LP-PPA-')}.list"
                         )
                         if not os.path.exists(origin_path):
                             origin_path = None
@@ -1707,27 +1724,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         "Could not find or create source config for %s", origin
                     )
 
-        # install apt keyrings; prefer the ones from the config dir, fall back
-        # to system
-        trusted_gpg = os.path.join(os.path.dirname(apt_sources), "trusted.gpg")
-        if os.path.exists(trusted_gpg):
-            shutil.copy(trusted_gpg, os.path.join(apt_root, "etc", "apt"))
-        elif os.path.exists("/etc/apt/trusted.gpg"):
-            shutil.copy("/etc/apt/trusted.gpg", os.path.join(apt_root, "etc", "apt"))
-
-        trusted_d = os.path.join(apt_root, "etc", "apt", "trusted.gpg.d")
-        if os.path.exists(trusted_d):
-            shutil.rmtree(trusted_d)
-
-        if os.path.exists(f"{trusted_gpg}.d"):
-            shutil.copytree(f"{trusted_gpg}.d", trusted_d)
-        elif os.path.exists("/etc/apt/trusted.gpg.d"):
-            shutil.copytree("/etc/apt/trusted.gpg.d", trusted_d)
-        else:
-            os.makedirs(trusted_d)
-
-        # install apt keyrings for PPAs
-        if origins and source_list_content:
+            # install apt keyrings for PPAs
             for origin, (ppa_user, ppa_name) in origin_data.items():
                 ppa_archive_url = self._ppa_archive_url(
                     user=urllib.parse.quote(ppa_user),
