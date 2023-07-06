@@ -14,7 +14,11 @@ import unittest.mock
 
 import apt
 
-from apport.packaging_impl.apt_dpkg import impl
+from apport.packaging_impl.apt_dpkg import (
+    WITH_DEB822_SUPPORT,
+    _parse_deb822_sources,
+    impl,
+)
 
 
 @unittest.mock.patch(
@@ -77,3 +81,30 @@ class TestPackagingAptDpkg(unittest.TestCase):
         self.assertEqual(impl.is_distro_package("apport"), True)
         getitem_mock.assert_called_once_with("apport")
         exists_mock.assert_called_once_with("/etc/system-image/channel.ini")
+
+    @unittest.skipIf(not WITH_DEB822_SUPPORT, "no deb822 support")
+    @unittest.mock.patch(
+        "builtins.open",
+        new_callable=unittest.mock.mock_open,
+        read_data="""
+Types: deb deb-src
+URIs: http://example.com
+Suites: foo foo-bar
+Components: main
+
+
+Types: deb
+URIs: http://example2.com
+Suites:
+ baz
+Components: main
+
+
+""",
+    )
+    def test_parse_deb822_sources_extra_lines(self, mock_file):
+        entries = _parse_deb822_sources("foo_bar.sources")
+        mock_file.assert_called_with("foo_bar.sources", encoding="utf-8")
+        self.assertEqual(len(entries), 2)
+        self.assertEqual(entries[0].uris[0], "http://example.com")
+        self.assertEqual(entries[1].suites[0], "baz")
