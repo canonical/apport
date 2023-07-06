@@ -16,6 +16,12 @@ This is used on Debian and derivatives such as Ubuntu.
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+# From Python 3.12 on, it doesn't try to evaluate type signatures at runtime
+# anymore. This behaviour is helpful to us as apt_sl.Deb822SourceEntry isn't
+# always a valid type, so use the __future__ mechanism to have this behaviour
+# in older versions as well.
+from __future__ import annotations
+
 import contextlib
 import datetime
 import glob
@@ -39,13 +45,42 @@ import urllib.request
 from typing import Optional
 
 import apt
+import aptsources.sourceslist as apt_sl
 from aptsources.sourceslist import SourceEntry
 
 import apport.logging
 from apport.packaging import PackageInfo
 
+WITH_DEB822_SUPPORT = hasattr(apt_sl, "Deb822SourceEntry")
 
-def _load_all_sources(apt_dir: str) -> list[SourceEntry]:
+
+# pylint: disable-next=no-member
+def _parse_deb822_sources(source: str) -> list[apt_sl.Deb822SourceEntry]:
+    if not WITH_DEB822_SUPPORT:
+        return []
+
+    sections = []
+    current = []
+    with open(source, encoding="utf-8") as f:
+        for line in f.read().split("\n"):
+            line = line.rstrip()
+            if line:
+                current.append(line)
+            else:
+                if not current:
+                    continue
+                # pylint: disable-next=no-member
+                sections.append(apt_sl.Deb822SourceEntry("\n".join(current), source))
+                current = []
+
+        if current:
+            # pylint: disable-next=no-member
+            sections.append(apt_sl.Deb822SourceEntry("\n".join(current), source))
+        return sections
+
+
+# pylint: disable-next=no-member
+def _load_all_sources(apt_dir: str) -> list[apt_sl.Deb822SourceEntry | SourceEntry]:
     """Given an APT configuration directory (e.g. /etc/apt/), loads up all
     the source data in one easy-to-consume list.
     """
@@ -64,6 +99,8 @@ def _load_all_sources(apt_dir: str) -> list[SourceEntry]:
         if path.endswith(".list"):
             with open(path, encoding="utf-8") as f:
                 sources.extend([SourceEntry(line, path) for line in f])
+        elif path.endswith(".sources") and WITH_DEB822_SUPPORT:
+            sources.extend(_parse_deb822_sources(path))
 
     return sources
 
@@ -1363,8 +1400,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         for source in sources:
             if source.disabled or source.invalid:
                 continue
-            if source.type == "deb":
-                return source.uri or ""
+            # TODO: remove the typeched branch once python-apt commit
+            # bdcb2550cb6f623f4556bf6581a040642f29dd28 is available
+            # in a proper release
+            if isinstance(source, SourceEntry):
+                if source.type == "deb":
+                    return source.uri or ""
+            else:
+                if "deb" in source.types:
+                    return source.uris[0]
 
         raise SystemError(
             "cannot determine default mirror:"
@@ -1635,8 +1679,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             # origin, if there isn't try using a sources.list file
             # w/o LP-PPA-
             candidates = [os.path.join(src_list_d, f"{origin}.list")]
+            if WITH_DEB822_SUPPORT:
+                candidates[0:0] = [os.path.join(src_list_d, f"{origin}.source")]
             if "LP-PPA" in origin:
                 stripped = origin.strip("LP-PPA-")
+                if WITH_DEB822_SUPPORT:
+                    candidates.append(os.path.join(f"{stripped}.source"))
                 candidates.append(os.path.join(f"{stripped}.list"))
 
             for path in candidates:
@@ -1708,23 +1756,29 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if origin == "unknown":
                     continue
                 origin_path = self._find_source_file_from_origin(origin, src_list_d)
+                extension = ".sources"
                 if origin_path:
-                    with open(origin_path, encoding="utf-8") as src_ext:
-                        source_list_content = [SourceEntry(line) for line in src_ext]
+                    if origin_path.endswith(".list"):
+                        extension = ".list"
+                        with open(origin_path, encoding="utf-8") as src:
+                            source_list_content = [SourceEntry(line) for line in src]
+                    else:
+                        source_list_content = _parse_deb822_sources(origin_path)
                 else:
                     source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
                     )
+                    extension = ".list"
                 if source_list_content:
                     with open(
                         os.path.join(
-                            apt_root, "etc", "apt", "sources.list.d", f"{origin}.list"
+                            apt_root, "etc", "apt", "sources.list.d", origin + extension
                         ),
                         "a",
                         encoding="utf-8",
                     ) as dest:
                         dest.write(
-                            "\n".join([str(entry) for entry in source_list_content])
+                            "\n".join([f"{entry}\n" for entry in source_list_content])
                         )
                     for entry in source_list_content:
                         if not entry.uri or "ppa.launchpad.net" not in entry.uri:

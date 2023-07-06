@@ -14,13 +14,28 @@ import typing
 import pytest
 from apt import apt_pkg
 
-from apport.packaging_impl.apt_dpkg import impl
+from apport.packaging_impl.apt_dpkg import (
+    WITH_DEB822_SUPPORT,
+    _parse_deb822_sources,
+    impl,
+)
 from tests.helper import has_internet, skip_if_command_is_missing
 
 if shutil.which("dpkg") is None:
     pytest.skip("dpkg not installed", allow_module_level=True)
 
-pytestmark = pytest.mark.parametrize("apt_style", [("one-line")])
+pytestmark = pytest.mark.parametrize(
+    "apt_style",
+    [
+        "one-line",
+        pytest.param(
+            "deb822",
+            marks=pytest.mark.skipif(
+                not WITH_DEB822_SUPPORT, reason="deb822 not supported on this system"
+            ),
+        ),
+    ],
+)
 
 
 @pytest.fixture(name="workdir")
@@ -815,7 +830,16 @@ def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
             " jammy main" in sources
         )
     else:
-        pass
+        ppasource = os.path.join(
+            rootdir, "etc", "apt", "sources.list.d", f"{ppa}.sources"
+        )
+        entries = _parse_deb822_sources(ppasource)
+
+        assert [
+            e
+            for e in entries
+            if "deb-src" in e.types and "jammy" in e.suites and "main" in e.comps
+        ]
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
