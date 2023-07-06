@@ -1634,9 +1634,10 @@ class __AptDpkgPackageInfo(PackageInfo):
                         index = 2
         return None
 
+    # pylint: disable-next=no-member
     def create_ppa_source_from_origin(
         self, origin: str, distro: str, release_codename: str
-    ) -> Optional[list[SourceEntry]]:
+    ) -> Optional[list[apt_sl.Deb822SourceEntry | SourceEntry]]:
         """For an origin from a Launchpad PPA create sources.list content.
 
         distro is the distribution for which content is being created e.g.
@@ -1651,24 +1652,46 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not ppa_data:
             return None
         user, ppa_name = ppa_data
-        ppa_line = (
-            f"deb http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
-            f" {release_codename} main"
-        )
         debug_url = (
             f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
             f"/dists/{release_codename}/main/debug"
         )
-        try:
-            with contextlib.closing(urllib.request.urlopen(debug_url)) as response:
-                response.read()
-            add_debug = " main/debug"
-        except (urllib.error.URLError, urllib.error.HTTPError):
-            add_debug = ""
-        return [
-            SourceEntry(ppa_line + add_debug),
-            SourceEntry(f"deb-src {ppa_line[4:]}"),
-        ]
+
+        if WITH_DEB822_SUPPORT:
+            main_entry = apt_sl.Deb822SourceEntry(None, "")
+            main_entry.uris = [f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"]
+            main_entry.types = ["deb", "deb-src"]
+            main_entry.comps = ["main"]
+            main_entry.suites = [release_codename]
+
+            try:
+                with contextlib.closing(urllib.request.urlopen(debug_url)) as response:
+                    response.read()
+                debug_entry = apt_sl.Deb822SourceEntry(None, "")
+                debug_entry.uris = [
+                    f"http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+                ]
+                debug_entry.types = ["deb"]
+                debug_entry.comps = ["main/debug"]
+                debug_entry.suites = [release_codename]
+                return [main_entry, debug_entry]
+            except (urllib.error.URLError, urllib.error.HTTPError):
+                return [main_entry]
+        else:
+            ppa_line = (
+                f"deb http://ppa.launchpad.net/{user}/{ppa_name}/{distro}"
+                f" {release_codename} main"
+            )
+            try:
+                with contextlib.closing(urllib.request.urlopen(debug_url)) as response:
+                    response.read()
+                add_debug = " main/debug"
+            except (urllib.error.URLError, urllib.error.HTTPError):
+                add_debug = ""
+            return [
+                SourceEntry(ppa_line + add_debug),
+                SourceEntry(f"deb-src {ppa_line[4:]}"),
+            ]
 
     @staticmethod
     def _find_source_file_from_origin(origin: str, src_list_d: str) -> Optional[str]:
@@ -1768,7 +1791,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
                     )
-                    extension = ".list"
+                    if not WITH_DEB822_SUPPORT:
+                        extension = ".list"
                 if source_list_content:
                     with open(
                         os.path.join(
