@@ -717,19 +717,43 @@ def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
     impl._build_apt_sandbox(
         rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=[ppa]
     )
-    with open(
-        os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
-        encoding="utf-8",
-    ) as f:
-        sources = f.read().splitlines()
-    assert (
-        "deb http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu"
-        " jammy main main/debug" in sources
-    )
-    assert (
-        "deb-src http://ppa.launchpad.net"
-        "/daisy-pluckers/daisy-seeds/ubuntu jammy main" in sources
-    )
+    if WITH_DEB822_SUPPORT:
+        ppasource = os.path.join(
+            rootdir, "etc", "apt", "sources.list.d", f"{ppa}.sources"
+        )
+        entries = _parse_deb822_sources(ppasource)
+        assert [
+            e
+            for e in entries
+            if {"deb", "deb-src"} == set(e.types)
+            and "jammy" in e.suites
+            and "main" in e.comps
+            and "http://ppa.launchpad.net/"
+            "daisy-pluckers/daisy-seeds/ubuntu" in e.uris
+        ]
+        assert [
+            e
+            for e in entries
+            if "deb" in e.types
+            and "jammy" in e.suites
+            and "main/debug" in e.comps
+            and "http://ppa.launchpad.net/"
+            "daisy-pluckers/daisy-seeds/ubuntu" in e.uris
+        ]
+    else:
+        with open(
+            os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
+            encoding="utf-8",
+        ) as f:
+            sources = f.read().splitlines()
+        assert (
+            "deb http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu"
+            " jammy main main/debug" in sources
+        )
+        assert (
+            "deb-src http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu"
+            " jammy main" in sources
+        )
 
     gpg = subprocess.run(
         [
@@ -767,19 +791,43 @@ def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
     impl._build_apt_sandbox(
         rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=[ppa]
     )
-    with open(
-        os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
-        encoding="utf-8",
-    ) as f:
-        sources = f.read().splitlines()
-    assert (
-        "deb http://ppa.launchpad.net"
-        "/apport-hackers/apport-autopkgtests/ubuntu jammy main main/debug" in sources
-    )
-    assert (
-        "deb-src http://ppa.launchpad.net"
-        "/apport-hackers/apport-autopkgtests/ubuntu jammy main" in sources
-    )
+    if WITH_DEB822_SUPPORT:
+        ppasource = os.path.join(
+            rootdir, "etc", "apt", "sources.list.d", f"{ppa}.sources"
+        )
+        entries = _parse_deb822_sources(ppasource)
+        assert [
+            e
+            for e in entries
+            if {"deb", "deb-src"} == set(e.types)
+            and "jammy" in e.suites
+            and "main" in e.comps
+            and "http://ppa.launchpad.net/"
+            "apport-hackers/apport-autopkgtests/ubuntu" in e.uris
+        ]
+        assert [
+            e
+            for e in entries
+            if "deb" in e.types
+            and "jammy" in e.suites
+            and "main/debug" in e.comps
+            and "http://ppa.launchpad.net/"
+            "apport-hackers/apport-autopkgtests/ubuntu" in e.uris
+        ]
+    else:
+        with open(
+            os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
+            encoding="utf-8",
+        ) as f:
+            sources = f.read().splitlines()
+        assert (
+            "deb http://ppa.launchpad.net/apport-hackers/apport-autopkgtests/ubuntu"
+            " jammy main main/debug" in sources
+        )
+        assert (
+            "deb-src http://ppa.launchpad.net/apport-hackers/apport-autopkgtests/ubuntu"
+            " jammy main" in sources
+        )
 
     gpg = subprocess.run(
         [
