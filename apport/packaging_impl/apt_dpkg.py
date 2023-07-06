@@ -1622,6 +1622,24 @@ class __AptDpkgPackageInfo(PackageInfo):
             add_debug = ""
         return f"{ppa_line + add_debug}\ndeb-src{ppa_line[3:]}\n"
 
+    @staticmethod
+    def _find_source_file_from_origin(origin: str, src_list_d: str) -> Optional[str]:
+        """Find a possible source file matching the Origin field of a
+        given package (i.e. a PPA)"""
+        if os.path.isdir(src_list_d):
+            # check to see if there is a sources.list file for the
+            # origin, if there isn't try using a sources.list file
+            # w/o LP-PPA-
+            candidates = [os.path.join(src_list_d, f"{origin}.list")]
+            if "LP-PPA" in origin:
+                stripped = origin.strip("LP-PPA-")
+                candidates.append(os.path.join(f"{stripped}.list"))
+
+            for path in candidates:
+                if os.path.exists(path):
+                    return path
+        return None
+
     def _build_apt_sandbox(
         self, apt_root, apt_dir, distro_name, release_codename, origins
     ):
@@ -1686,20 +1704,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # an origin
                 if origin == "unknown":
                     continue
-                origin_path = None
-                if os.path.isdir(src_list_d):
-                    # check to see if there is a sources.list file for the
-                    # origin, if there isn't try using a sources.list file
-                    # w/o LP-PPA-
-                    origin_path = os.path.join(src_list_d, f"{origin}.list")
-                    if not os.path.exists(origin_path) and "LP-PPA" in origin:
-                        origin_path = os.path.join(
-                            src_list_d, f"{origin.strip('LP-PPA-')}.list"
-                        )
-                        if not os.path.exists(origin_path):
-                            origin_path = None
-                    elif not os.path.exists(origin_path):
-                        origin_path = None
+                origin_path = self._find_source_file_from_origin(origin, src_list_d)
                 if origin_path:
                     with open(origin_path, encoding="utf-8") as src_ext:
                         source_list_content = src_ext.read()
