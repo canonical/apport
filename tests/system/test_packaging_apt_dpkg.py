@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import typing
 
 import pytest
 from apt import apt_pkg
@@ -17,6 +18,8 @@ from tests.helper import has_internet, skip_if_command_is_missing
 
 if shutil.which("dpkg") is None:
     pytest.skip("dpkg not installed", allow_module_level=True)
+
+pytestmark = pytest.mark.parametrize("apt_style", [("one-line")])
 
 
 @pytest.fixture(name="workdir")
@@ -67,11 +70,11 @@ def reset_impl():
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_versioned(configdir, cachedir, rootdir):
+def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-locals,too-many-statements
     """install_packages() with versions and with cache"""
-    release = _setup_foonux_config(configdir, updates=True)
+    release = _setup_foonux_config(configdir, apt_style, updates=True)
     wanted = {
         "coreutils": "8.32-4.1ubuntu1",
         "libc6": "2.35-0ubuntu3",
@@ -121,17 +124,18 @@ def test_install_packages_versioned(configdir, cachedir, rootdir):
 
     # does not clobber config dir
     assert os.listdir(configdir) == [release]
-    assert sorted(os.listdir(os.path.join(configdir, release))) == [
-        "armhf",
-        "codename",
-        "sources.list",
-        "sources.list.d",
-        "trusted.gpg.d",
-    ]
-    assert sorted(os.listdir(os.path.join(configdir, release, "armhf"))) == [
-        "sources.list",
-        "trusted.gpg.d",
-    ]
+
+    expected_content = {"sources.list.d", "trusted.gpg.d"}
+    # old-style apt sources have the old file present
+    if apt_style == "one-line":
+        expected_content.add("sources.list")
+
+    assert set(os.listdir(os.path.join(configdir, release))) == (
+        expected_content | {"armhf", "codename"}
+    )
+    assert (
+        set(os.listdir(os.path.join(configdir, release, "armhf"))) == expected_content
+    )
 
     # caches packages, and their versions are as expected
     cache = os.listdir(
@@ -206,9 +210,9 @@ def test_install_packages_versioned(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_unversioned(configdir, cachedir, rootdir):
+def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
     """install_packages() without versions and no cache"""
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     obsolete = impl.install_packages(
         rootdir,
         configdir,
@@ -228,17 +232,18 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir):
 
     # does not clobber config dir
     assert os.listdir(configdir) == [release]
-    assert sorted(os.listdir(os.path.join(configdir, release))) == [
-        "armhf",
-        "codename",
-        "sources.list",
-        "sources.list.d",
-        "trusted.gpg.d",
-    ]
-    assert sorted(os.listdir(os.path.join(configdir, release, "armhf"))) == [
-        "sources.list",
-        "trusted.gpg.d",
-    ]
+
+    expected_content = {"sources.list.d", "trusted.gpg.d"}
+    # old-style apt sources have the old file present
+    if apt_style == "one-line":
+        expected_content.add("sources.list")
+
+    assert set(os.listdir(os.path.join(configdir, release))) == (
+        expected_content | {"armhf", "codename"}
+    )
+    assert (
+        set(os.listdir(os.path.join(configdir, release, "armhf"))) == expected_content
+    )
 
     # no cache
     assert os.listdir(cachedir) == []
@@ -253,9 +258,9 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_dependencies(configdir, rootdir):
+def test_install_packages_dependencies(configdir, rootdir, apt_style):
     """Test install packages's dependencies."""
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     # coreutils should always depend on libc6
     result = impl.install_packages(
         rootdir,
@@ -278,7 +283,8 @@ def test_install_packages_dependencies(configdir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_system(cachedir, workdir, rootdir):
+def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
+    # pylint: disable=unused-argument
     """install_packages() with system configuration"""
     # trigger an unrelated package query here to get the cache set up,
     # reproducing an install failure when the internal caches are not
@@ -328,10 +334,10 @@ def test_install_packages_system(cachedir, workdir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_error(configdir, cachedir, rootdir):
+def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
     """install_packages() with errors"""
     # sources.list with invalid format
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     with open(
         os.path.join(configdir, release, "sources.list"), "w", encoding="utf-8"
     ) as f:
@@ -360,9 +366,9 @@ def test_install_packages_error(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir):
+def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_style):
     """install_packages() with a permanent sandbox"""
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     zonetab = os.path.join(rootdir, "usr/share/zoneinfo/zone.tab")
 
     impl.install_packages(
@@ -467,10 +473,12 @@ def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_permanent_sandbox_repack(configdir, cachedir, rootdir):
+def test_install_packages_permanent_sandbox_repack(
+    configdir, cachedir, rootdir, apt_style
+):
     # Both packages needs to conflict with each other, because they
     # ship the same file.
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     impl.install_packages(
         rootdir,
         configdir,
@@ -510,9 +518,9 @@ def test_install_packages_permanent_sandbox_repack(configdir, cachedir, rootdir)
 @pytest.mark.skipif(
     impl.get_system_architecture() == "armhf", reason="native armhf architecture"
 )
-def test_install_packages_armhf(configdir, cachedir, rootdir):
+def test_install_packages_armhf(configdir, cachedir, rootdir, apt_style):
     """install_packages() for foreign architecture armhf"""
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     wanted_version = "2.35-0ubuntu0"
     got_version = "2.35-0ubuntu3"
     obsolete = impl.install_packages(
@@ -543,9 +551,9 @@ def test_install_packages_armhf(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_from_launchpad(configdir, cachedir, rootdir):
+def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style):
     """install_packages() using packages only available on Launchpad"""
-    release = _setup_foonux_config(configdir, release="focal")
+    release = _setup_foonux_config(configdir, apt_style, release="focal")
     # Wanted are superseded versions from -updates or -security.
     wanted = {
         "distro-info-data": "0.43ubuntu1.9",  # arch all
@@ -605,9 +613,9 @@ def test_install_packages_from_launchpad(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_old_packages(configdir, cachedir, rootdir):
+def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
     """Sandbox will install older package versions from launchpad."""
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "libcurl4"
     wanted_version = "7.81.0-1"  # pre-release version
     obsolete = impl.install_packages(
@@ -647,8 +655,8 @@ def test_install_old_packages(configdir, cachedir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_get_source_tree_sandbox(configdir, workdir, rootdir):
-    release = _setup_foonux_config(configdir)
+def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
+    release = _setup_foonux_config(configdir, apt_style)
     out_dir = os.path.join(workdir, "out")
     os.mkdir(out_dir)
     # pylint: disable=protected-access
@@ -667,8 +675,8 @@ def test_get_source_tree_sandbox(configdir, workdir, rootdir):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir):
-    release = _setup_foonux_config(configdir)
+def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
+    release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "curl"
     wanted_version = "7.81.0-1ubuntu1.2"  # superseded -security version
     out_dir = os.path.join(workdir, "out")
@@ -693,10 +701,10 @@ def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir):
 
 @skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_create_sources_for_a_named_ppa(configdir, rootdir):
+def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
     """Add sources.list entries for a named PPA."""
     ppa = "LP-PPA-daisy-pluckers-daisy-seeds"
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
         rootdir,
@@ -747,10 +755,10 @@ def test_create_sources_for_a_named_ppa(configdir, rootdir):
 
 @skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_create_sources_for_an_unnamed_ppa(configdir, rootdir):
+def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
     """Add sources.list entries for an unnamed PPA."""
     ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-    release = _setup_foonux_config(configdir, ppa=True)
+    release = _setup_foonux_config(configdir, apt_style, ppa=True)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
         rootdir,
@@ -795,10 +803,10 @@ def test_create_sources_for_an_unnamed_ppa(configdir, rootdir):
     assert "" == apt_keys
 
 
-def test_use_sources_for_a_ppa(configdir, rootdir):
+def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
     """Use a sources.list.d file for a PPA."""
     ppa = "fooser-bar-ppa"
-    release = _setup_foonux_config(configdir, ppa=True)
+    release = _setup_foonux_config(configdir, apt_style, ppa=True)
     # pylint: disable=protected-access
     impl._build_apt_sandbox(
         rootdir,
@@ -807,28 +815,31 @@ def test_use_sources_for_a_ppa(configdir, rootdir):
         "jammy",
         origins=[f"LP-PPA-{ppa}"],
     )
-    with open(
-        os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
-        encoding="utf-8",
-    ) as f:
-        sources = f.read().splitlines()
-    assert (
-        "deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-        " jammy main main/debug" in sources
-    )
-    assert (
-        "deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-        " jammy main" in sources
-    )
+    if apt_style == "one-line":
+        with open(
+            os.path.join(rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
+            encoding="utf-8",
+        ) as f:
+            sources = f.read().splitlines()
+        assert (
+            "deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
+            " jammy main main/debug" in sources
+        )
+        assert (
+            "deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
+            " jammy main" in sources
+        )
+    else:
+        pass
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_package_from_a_ppa(configdir, cachedir, rootdir):
+def test_install_package_from_a_ppa(configdir, cachedir, rootdir, apt_style):
     """Install a package from a PPA."""
     # Needs apport package in https://launchpad.net
     # /~apport-hackers/+archive/ubuntu/apport-autopkgtests
     ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
-    release = _setup_foonux_config(configdir)
+    release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "apport"
     wanted_version = "2.20.11-0ubuntu82.1~ppa2"
     obsolete = impl.install_packages(
@@ -868,7 +879,13 @@ def _ubuntu_archive_uri(arch=None):
     return "http://ports.ubuntu.com/ubuntu-ports"
 
 
-def _setup_foonux_config(configdir, updates=False, release="jammy", ppa=False):
+def _setup_foonux_config(
+    configdir: str,
+    apt_style: typing.Literal["one-line"],
+    updates: bool = False,
+    release: str = "jammy",
+    ppa: bool = False,
+):
     """Set up directories and configuration for install_packages()
 
     If ppa is True, then a sources.list file for a PPA will be created
@@ -882,28 +899,31 @@ def _setup_foonux_config(configdir, updates=False, release="jammy", ppa=False):
     distro_release = f"Foonux {versions[release]}"
     config_release_dir = os.path.join(configdir, distro_release)
     sources_dir = os.path.join(config_release_dir, "sources.list.d")
+    armhf_dir = os.path.join(config_release_dir, "armhf")
+    armhf_sources = os.path.join(armhf_dir, "sources.list.d")
     os.makedirs(sources_dir)
-    _write_source_file(
-        os.path.join(config_release_dir, "sources.list"),
-        _ubuntu_archive_uri(),
-        release,
-        updates,
-    )
-    if ppa:
+    os.makedirs(armhf_sources)
+    if apt_style == "one-line":
         _write_source_file(
-            os.path.join(sources_dir, "fooser-bar-ppa.list"),
-            "http://ppa.launchpad.net/fooser/bar-ppa/ubuntu",
+            os.path.join(config_release_dir, "sources.list"),
+            _ubuntu_archive_uri(),
             release,
-            False,
-            ppa=True,
+            updates,
         )
-    os.mkdir(os.path.join(config_release_dir, "armhf"))
-    _write_source_file(
-        os.path.join(config_release_dir, "armhf", "sources.list"),
-        _ubuntu_archive_uri("armhf"),
-        release,
-        updates,
-    )
+        if ppa:
+            _write_source_file(
+                os.path.join(sources_dir, "fooser-bar-ppa.list"),
+                "http://ppa.launchpad.net/fooser/bar-ppa/ubuntu",
+                release,
+                False,
+                ppa=True,
+            )
+        _write_source_file(
+            os.path.join(armhf_dir, "sources.list"),
+            _ubuntu_archive_uri("armhf"),
+            release,
+            updates,
+        )
     with open(os.path.join(config_release_dir, "codename"), "w", encoding="utf-8") as f:
         f.write(f"{release}")
 
@@ -913,7 +933,7 @@ def _setup_foonux_config(configdir, updates=False, release="jammy", ppa=False):
     # Create an architecture specific symlink, otherwise it cannot be
     # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
     # that looks for trusted.gpg.d relative to sources.list.
-    keyring_arch_dir = os.path.join(config_release_dir, "armhf", "trusted.gpg.d")
+    keyring_arch_dir = os.path.join(armhf_dir, "trusted.gpg.d")
     os.symlink("../trusted.gpg.d", keyring_arch_dir)
     return distro_release
 
