@@ -11,10 +11,7 @@
 
 import os
 
-_BUILD_INFO_KEY_MAPPING = {
-    "build_name": "CloudBuildName",
-    "serial": "CloudSerial",
-}
+_BUILD_INFO_KEY_MAPPING = {"build_name": "CloudBuildName", "serial": "CloudSerial"}
 
 
 def _add_cloud_build_info(report):

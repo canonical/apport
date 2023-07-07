@@ -40,9 +40,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
         getitem_mock = apt_cache_mock.return_value.__getitem__
         getitem_mock.return_value = unittest.mock.MagicMock(
             spec=apt.Package,
-            installed=unittest.mock.MagicMock(
-                spec=apt.package.Version, version=None
-            ),
+            installed=unittest.mock.MagicMock(spec=apt.package.Version, version=None),
         )
         self.assertEqual(impl.is_distro_package("7zip"), False)
         getitem_mock.assert_called_once_with("7zip")
@@ -52,11 +50,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
         """is_distro_package() for a PPA package."""
         version = unittest.mock.MagicMock(
             spec=apt.package.Version,
-            origins=[
-                unittest.mock.MagicMock(
-                    spec=apt.package.Origin, origin="LP-PPA"
-                )
-            ],
+            origins=[unittest.mock.MagicMock(spec=apt.package.Origin, origin="LP-PPA")],
             version="0.5.0-0ppa1",
         )
         getitem_mock = apt_cache_mock.return_value.__getitem__
@@ -72,9 +66,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
         """is_distro_package() for a system image without cache."""
         version = unittest.mock.MagicMock(
             spec=apt.package.Version,
-            origins=[
-                unittest.mock.MagicMock(spec=apt.package.Origin, origin="")
-            ],
+            origins=[unittest.mock.MagicMock(spec=apt.package.Origin, origin="")],
             version="2.23.1-0ubuntu4",
         )
         getitem_mock = apt_cache_mock.return_value.__getitem__

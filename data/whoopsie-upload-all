@@ -173,9 +173,7 @@ def wait_uploaded(stamps, timeout):
 
     Return True if all reports were uploaded, False if there are some missing.
     """
-    logging.info(
-        "Waiting for whoopsie to upload reports (timeout: %d s)", timeout
-    )
+    logging.info("Waiting for whoopsie to upload reports (timeout: %d s)", timeout)
 
     while timeout >= 0:
         # determine missing stamps
@@ -207,9 +205,7 @@ def main() -> None:
         help="seconds to wait for whoopsie to upload the reports"
         " (default: do not wait)",
     )
-    parser.add_argument(
-        "--loglevel", default="info", help="log level (default: info)"
-    )
+    parser.add_argument("--loglevel", default="info", help="log level (default: info)")
     opts = parser.parse_args()
 
     numeric_level = getattr(logging, opts.loglevel.upper(), None)

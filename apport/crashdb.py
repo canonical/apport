@@ -87,18 +87,14 @@ class CrashDatabase:
         self.format_version = 3
 
         init = (
-            not os.path.exists(path)
-            or path == ":memory:"
-            or os.path.getsize(path) == 0
+            not os.path.exists(path) or path == ":memory:" or os.path.getsize(path) == 0
         )
         self.duplicate_db = dbapi2.connect(path, timeout=7200)
 
         if init:
             cur = self.duplicate_db.cursor()
             cur.execute("CREATE TABLE version (format INTEGER NOT NULL)")
-            cur.execute(
-                "INSERT INTO version VALUES (?)", [self.format_version]
-            )
+            cur.execute("INSERT INTO version VALUES (?)", [self.format_version])
 
             cur.execute(
                 """CREATE TABLE crashes (
@@ -160,9 +156,7 @@ class CrashDatabase:
         it can be explicitly passed to this function if it is already
         available.
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         if not report:
             report = self.download(crash_id)
@@ -197,8 +191,7 @@ class CrashDatabase:
             if (
                 not ex_ver
                 or not report_package_version
-                or packaging.compare_versions(report_package_version, ex_ver)
-                < 0
+                or packaging.compare_versions(report_package_version, ex_ver) < 0
             ):
                 master_id = ex_id
                 master_ver = ex_ver
@@ -246,9 +239,7 @@ class CrashDatabase:
         # if we don't have one already
         if sig:
             cur = self.duplicate_db.cursor()
-            cur.execute(
-                "SELECT count(*) FROM crashes WHERE crash_id == ?", [crash_id]
-            )
+            cur.execute("SELECT count(*) FROM crashes WHERE crash_id == ?", [crash_id])
             count_id = cur.fetchone()[0]
             if count_id == 0:
                 cur.execute(
@@ -341,9 +332,7 @@ class CrashDatabase:
         version specifies the package version the crash was fixed in (None for
         'still unfixed').
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
         n = cur.execute(
@@ -360,22 +349,16 @@ class CrashDatabase:
 
         This happens when a report got rejected or manually duplicated.
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
         cur.execute("DELETE FROM crashes WHERE crash_id = ?", [crash_id])
-        cur.execute(
-            "DELETE FROM address_signatures WHERE crash_id = ?", [crash_id]
-        )
+        cur.execute("DELETE FROM address_signatures WHERE crash_id = ?", [crash_id])
         self.duplicate_db.commit()
 
     def duplicate_db_change_master_id(self, old_id, new_id):
         """Change a crash ID."""
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
         cur.execute(
@@ -407,9 +390,7 @@ class CrashDatabase:
         then moved to the given name in an almost atomic way.
         """
         # hard to change, pylint: disable=consider-using-with
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         # first create the temporary new dir; if that fails, nothing has been
         # changed and we fail early
@@ -449,9 +430,7 @@ class CrashDatabase:
         cur_hash = None
         cur_file = None
 
-        cur.execute(
-            "SELECT signature, crash_id from crashes ORDER BY signature"
-        )
+        cur.execute("SELECT signature, crash_id from crashes ORDER BY signature")
         for sig, crash_id in cur.fetchall():
             h = self.duplicate_sig_hash(sig)
             if h is None:
@@ -480,9 +459,7 @@ class CrashDatabase:
         # Format 3 added a primary key which can't be done as an upgrade in
         # SQLite
         if cur_format < 3:
-            raise SystemError(
-                "Cannot upgrade database from format earlier than 3"
-            )
+            raise SystemError("Cannot upgrade database from format earlier than 3")
 
         cur = self.duplicate_db.cursor()
 
@@ -538,8 +515,7 @@ class CrashDatabase:
         cur = self.duplicate_db.cursor()
 
         cur.execute(
-            "SELECT crash_id FROM address_signatures WHERE signature == ?",
-            [sig],
+            "SELECT crash_id FROM address_signatures WHERE signature == ?", [sig]
         )
         existing_ids = cur.fetchall()
         assert len(existing_ids) <= 1
@@ -558,9 +534,7 @@ class CrashDatabase:
 
         This is mainly useful for debugging and test suites.
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         dump = {}
         cur = self.duplicate_db.cursor()
@@ -580,14 +554,10 @@ class CrashDatabase:
         An invalid ID gets removed from the duplicate db, and a crash which got
         fixed is marked as such in the database.
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
-        cur.execute(
-            "SELECT fixed_version FROM crashes WHERE crash_id = ?", [crash_id]
-        )
+        cur.execute("SELECT fixed_version FROM crashes WHERE crash_id = ?", [crash_id])
         db_fixed_version = cur.fetchone()
         if not db_fixed_version:
             return
@@ -597,10 +567,7 @@ class CrashDatabase:
 
         # crash got rejected
         if real_fixed_version == "invalid":
-            print(
-                f"DEBUG: bug {crash_id} was invalidated,"
-                f" removing from database"
-            )
+            print(f"DEBUG: bug {crash_id} was invalidated," f" removing from database")
             self.duplicate_db_remove(crash_id)
             return
 
@@ -634,8 +601,7 @@ class CrashDatabase:
         else:
             cur = self.duplicate_db.cursor()
             cur.execute(
-                "INSERT INTO address_signatures VALUES (?, ?)",
-                (_u(sig), crash_id),
+                "INSERT INTO address_signatures VALUES (?, ?)", (_u(sig), crash_id)
             )
             self.duplicate_db.commit()
 
@@ -645,9 +611,7 @@ class CrashDatabase:
         This is necessary when having to mark a bug as a duplicate if it
         already is in the duplicate DB.
         """
-        assert (
-            self.duplicate_db
-        ), "init_duplicate_db() needs to be called before"
+        assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         cur = self.duplicate_db.cursor()
         cur.execute("DELETE FROM crashes WHERE crash_id = ?", [dup])
@@ -680,9 +644,7 @@ class CrashDatabase:
     # Abstract functions that need to be implemented by subclasses
     #
 
-    def upload(
-        self, report, progress_callback=None, user_message_callback=None
-    ):
+    def upload(self, report, progress_callback=None, user_message_callback=None):
         """Upload given problem report return a handle for it.
 
         This should happen noninteractively.
@@ -936,9 +898,7 @@ def get_crashdb(auth_file, name=None, conf=None):
       'bug_pattern_url', 'dupdb_url', and 'problem_types'.
     """
     if not conf:
-        conf = os.environ.get(
-            "APPORT_CRASHDB_CONF", "/etc/apport/crashdb.conf"
-        )
+        conf = os.environ.get("APPORT_CRASHDB_CONF", "/etc/apport/crashdb.conf")
     settings = {}
     with open(conf, encoding="utf-8") as f:
         # legacy, pylint: disable=exec-used
@@ -953,10 +913,7 @@ def get_crashdb(auth_file, name=None, conf=None):
                 try:
                     with open(cfpath, encoding="utf-8") as f:
                         # legacy, pylint: disable=exec-used
-                        exec(
-                            compile(f.read(), cfpath, "exec"),
-                            settings["databases"],
-                        )
+                        exec(compile(f.read(), cfpath, "exec"), settings["databases"])
                 except Exception as error:  # pylint: disable=broad-except
                     # ignore broken files
                     sys.stderr.write(f"Invalid file {cfpath}: {error}\n")
@@ -973,9 +930,6 @@ def load_crashdb(auth_file, spec):
     spec is a crash db configuration dictionary as described in get_crashdb().
     """
     m = __import__(
-        f"apport.crashdb_impl.{spec['impl']}",
-        globals(),
-        locals(),
-        ["CrashDatabase"],
+        f"apport.crashdb_impl.{spec['impl']}", globals(), locals(), ["CrashDatabase"]
     )
     return m.CrashDatabase(auth_file, spec)

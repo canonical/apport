@@ -37,9 +37,7 @@ class TestApportValgrind(unittest.TestCase):
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
-    @unittest.skipIf(
-        MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory"
-    )
+    @unittest.skipIf(MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory")
     def test_sandbox_cache_options(self):
         """apport-valgrind creates a user specified sandbox and cache"""
         sandbox = os.path.join(self.workdir, "test-sandbox")

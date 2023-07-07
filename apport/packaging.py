@@ -50,9 +50,7 @@ except ImportError:  # Python < 3.10
             except OSError as error:
                 errno = error.errno
         else:
-            raise OSError(
-                errno, f"Unable to read files {', '.join(os_release_files)}"
-            )
+            raise OSError(errno, f"Unable to read files {', '.join(os_release_files)}")
 
         return ret
 
@@ -159,12 +157,7 @@ class PackageInfo:
         return {}
 
     def get_file_package(
-        self,
-        file,
-        uninstalled=False,
-        map_cachedir=None,
-        release=None,
-        arch=None,
+        self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
     ):
         """Return the package a file belongs to.
 
@@ -215,9 +208,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_source_tree(
-        self, srcpackage, output_dir, version=None, sandbox=None
-    ):
+    def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -395,9 +386,7 @@ class PackageInfo:
                 self._os_version = (name, version)
                 return self._os_version
         except OSError as error:
-            sys.stderr.write(
-                f"{error}. Falling back to calling 'lsb_release -sir'."
-            )
+            sys.stderr.write(f"{error}. Falling back to calling 'lsb_release -sir'.")
 
         # fall back to lsb_release
         lsb_release = subprocess.run(

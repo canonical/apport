@@ -62,31 +62,22 @@ class T(unittest.TestCase):
 
         def sandbox_ver(pkg):
             with gzip.open(
-                os.path.join(
-                    self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz"
-                )
+                os.path.join(self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
             ) as f:
                 return f.readline().decode().split()[1][1:-1]
 
         self.assertEqual(obsolete, "")
 
         # packages get installed
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
         self.assert_elf_arch(
-            os.path.join(self.rootdir, "usr/bin/stat"),
-            impl.get_system_architecture(),
+            os.path.join(self.rootdir, "usr/bin/stat"), impl.get_system_architecture()
         )
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/lib/debug/.build-id")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/lib/debug/.build-id"))
         )
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab"))
         )
         for library in ("libc6", "libcurl4"):
             copyright_filename = f"usr/share/doc/{library}/copyright"
@@ -101,9 +92,7 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver("libcurl4"), wanted["libcurl4"])
         self.assertGreater(sandbox_ver("tzdata"), "2022a")
 
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"coreutils {wanted['coreutils']}", pkglist)
         self.assertIn(f"coreutils-dbgsym {wanted['coreutils']}", pkglist)
@@ -128,13 +117,7 @@ class T(unittest.TestCase):
         # caches packages, and their versions are as expected
         cache = os.listdir(
             os.path.join(
-                self.cachedir,
-                release,
-                "apt",
-                "var",
-                "cache",
-                "apt",
-                "archives",
+                self.cachedir, release, "apt", "var", "cache", "apt", "archives"
             )
         )
         cache_versions = {}
@@ -145,9 +128,7 @@ class T(unittest.TestCase):
             except ValueError:
                 pass  # not a .deb, ignore
         self.assertEqual(cache_versions["coreutils"], wanted["coreutils"])
-        self.assertEqual(
-            cache_versions["coreutils-dbgsym"], wanted["coreutils"]
-        )
+        self.assertEqual(cache_versions["coreutils-dbgsym"], wanted["coreutils"])
         self.assertEqual(cache_versions["libc6"], wanted["libc6"])
         self.assertEqual(cache_versions["libc6-dbg"], wanted["libc6"])
         self.assertEqual(cache_versions["libcurl4"], wanted["libcurl4"])
@@ -165,22 +146,16 @@ class T(unittest.TestCase):
             self.cachedir,
         )
         self.assertEqual(obsolete, "")
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
 
         # complains about obsolete packages
         result = impl.install_packages(
             self.rootdir, self.configdir, release, [("aspell-doc", "1.1")]
         )
-        self.assertIn(
-            "aspell-doc version 1.1 required, but 0.60.8-4build1", result
-        )
+        self.assertIn("aspell-doc version 1.1 required, but 0.60.8-4build1", result)
         # ... but installs the current version anyway
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/share/info/aspell.info.gz")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/share/info/aspell.info.gz"))
         )
         self.assertGreaterEqual(sandbox_ver("aspell-doc"), "0.60.8")
 
@@ -194,16 +169,12 @@ class T(unittest.TestCase):
 
         # can interleave with other operations
         dpkg = subprocess.run(
-            ["dpkg-query", "-Wf${Version}", "dash"],
-            check=True,
-            stdout=subprocess.PIPE,
+            ["dpkg-query", "-Wf${Version}", "dash"], check=True, stdout=subprocess.PIPE
         )
         dash_version = dpkg.stdout.decode()
 
         self.assertEqual(impl.get_version("dash"), dash_version)
-        self.assertRaises(
-            ValueError, impl.get_available_version, "buggerbogger"
-        )
+        self.assertRaises(ValueError, impl.get_available_version, "buggerbogger")
 
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, "usr/bin/stat"))
@@ -216,12 +187,8 @@ class T(unittest.TestCase):
             False,
             self.cachedir,
         )
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/dpkg"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/dpkg")))
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_unversioned(self):
@@ -237,22 +204,15 @@ class T(unittest.TestCase):
         )
 
         self.assertEqual(obsolete, "")
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
         self.assert_elf_arch(
-            os.path.join(self.rootdir, "usr/bin/stat"),
-            impl.get_system_architecture(),
+            os.path.join(self.rootdir, "usr/bin/stat"), impl.get_system_architecture()
         )
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/lib/debug/.build-id")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/lib/debug/.build-id"))
         )
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/share/zoneinfo/zone.tab"))
         )
 
         # does not clobber config dir
@@ -270,9 +230,7 @@ class T(unittest.TestCase):
         self.assertEqual(os.listdir(self.cachedir), [])
 
         # keeps track of package versions
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
         self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
         self.assertIn("coreutils-dbgsym 8.32-4.1ubuntu1", pkglist)
@@ -295,9 +253,7 @@ class T(unittest.TestCase):
         )
 
         # check packages.txt for a dependency
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
         self.assertIn("coreutils 8.32-4.1ubuntu1", pkglist)
         self.assertIn("libc6 2.35-0ubuntu3", pkglist)
@@ -328,9 +284,7 @@ class T(unittest.TestCase):
 
         self.assertTrue(os.path.exists(os.path.join(rootdir, "usr/bin/stat")))
         self.assertTrue(
-            os.path.exists(
-                os.path.join(rootdir, "usr/share/zoneinfo/zone.tab")
-            )
+            os.path.exists(os.path.join(rootdir, "usr/share/zoneinfo/zone.tab"))
         )
 
         # complains about obsolete packages
@@ -340,9 +294,7 @@ class T(unittest.TestCase):
 
         # caches packages
         cache = os.listdir(
-            os.path.join(
-                cachedir, "system", "apt", "var", "cache", "apt", "archives"
-            )
+            os.path.join(cachedir, "system", "apt", "var", "cache", "apt", "archives")
         )
         cache_names = [p.split("_")[0] for p in cache]
         self.assertIn("coreutils", cache_names)
@@ -360,9 +312,7 @@ class T(unittest.TestCase):
             )
         finally:
             os.chdir(orig_cwd)
-            self.assertTrue(
-                os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
-            )
+            self.assertTrue(os.path.exists(os.path.join(rootdir, "usr/bin/stat")))
 
     @unittest.skipUnless(has_internet(), "online test")
     def test_install_packages_error(self):
@@ -370,15 +320,12 @@ class T(unittest.TestCase):
         # sources.list with invalid format
         release = self._setup_foonux_config()
         with open(
-            os.path.join(self.configdir, release, "sources.list"),
-            "w",
-            encoding="utf-8",
+            os.path.join(self.configdir, release, "sources.list"), "w", encoding="utf-8"
         ) as f:
             f.write("bogus format")
 
         with self.assertRaisesRegex(
-            SystemError,
-            "^E:Type 'bogus' is not known .* sources could not be read.$",
+            SystemError, "^E:Type 'bogus' is not known .* sources could not be read.$"
         ):
             impl.install_packages(
                 self.rootdir,
@@ -391,9 +338,7 @@ class T(unittest.TestCase):
 
         # sources.list with wrong server
         with open(
-            os.path.join(self.configdir, release, "sources.list"),
-            "w",
-            encoding="utf-8",
+            os.path.join(self.configdir, release, "sources.list"), "w", encoding="utf-8"
         ) as f:
             f.write("deb http://archive.ubuntu.com/nosuchdistro/ jammy main\n")
 
@@ -449,18 +394,12 @@ class T(unittest.TestCase):
             "coreutils was not downloaded.",
         )
         self.assertEqual(
-            os.path.getctime(tzdata[0]),
-            tzdata_written,
-            "tzdata downloaded twice.",
+            os.path.getctime(tzdata[0]), tzdata_written, "tzdata downloaded twice."
         )
         self.assertEqual(
-            zonetab_written,
-            os.path.getctime(zonetab),
-            "zonetab written twice.",
+            zonetab_written, os.path.getctime(zonetab), "zonetab written twice."
         )
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
 
         # Prevent packages from downloading.
         orig_apt_proxy = apt_pkg.config.get("Acquire::http::Proxy")
@@ -597,16 +536,10 @@ class T(unittest.TestCase):
             f" but {got_version} is available\n",
         )
 
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/stat")))
+        self.assert_elf_arch(os.path.join(self.rootdir, "usr/bin/stat"), "armhf")
         self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/stat"))
-        )
-        self.assert_elf_arch(
-            os.path.join(self.rootdir, "usr/bin/stat"), "armhf"
-        )
-        self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/share/doc/libc6/copyright")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/share/doc/libc6/copyright"))
         )
         # caches packages
         cache = os.listdir(
@@ -662,30 +595,21 @@ class T(unittest.TestCase):
             )
         )
         self.assertTrue(
-            os.path.exists(
-                os.path.join(self.rootdir, "usr/lib/debug/.build-id")
-            )
+            os.path.exists(os.path.join(self.rootdir, "usr/lib/debug/.build-id"))
         )
-        self.assertTrue(
-            os.path.exists(os.path.join(self.rootdir, "usr/bin/qemu-img"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir, "usr/bin/qemu-img")))
 
         # their versions are as expected
         self.assertEqual(
-            sandbox_ver("distro-info-data", debian=False),
-            wanted["distro-info-data"],
+            sandbox_ver("distro-info-data", debian=False), wanted["distro-info-data"]
         )
         self.assertEqual(sandbox_ver("libc6"), wanted["libc6"])
         self.assertEqual(sandbox_ver("libc6-dbg"), wanted["libc6"])
 
         # keeps track of package versions
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
-        self.assertIn(
-            f"distro-info-data {wanted['distro-info-data']}", pkglist
-        )
+        self.assertIn(f"distro-info-data {wanted['distro-info-data']}", pkglist)
         self.assertIn(f"libc6 {wanted['libc6']}", pkglist)
         self.assertIn(f"libc6-dbg {wanted['libc6']}", pkglist)
         self.assertIn(f"qemu-utils {wanted['qemu-utils']}", pkglist)
@@ -694,13 +618,7 @@ class T(unittest.TestCase):
         # caches packages, and their versions are as expected
         cache = os.listdir(
             os.path.join(
-                self.cachedir,
-                release,
-                "apt",
-                "var",
-                "cache",
-                "apt",
-                "archives",
+                self.cachedir, release, "apt", "var", "cache", "apt", "archives"
             )
         )
 
@@ -713,9 +631,7 @@ class T(unittest.TestCase):
                 cache_versions.append((name, ver))
             except ValueError:
                 pass  # not a .deb, ignore
-        self.assertIn(
-            ("distro-info-data", wanted["distro-info-data"]), cache_versions
-        )
+        self.assertIn(("distro-info-data", wanted["distro-info-data"]), cache_versions)
         self.assertIn(("libc6-dbg", wanted["libc6"]), cache_versions)
         self.assertIn(
             ("qemu-utils-dbgsym", self._strip_epoch(wanted["qemu-utils"])),
@@ -741,9 +657,7 @@ class T(unittest.TestCase):
 
         def sandbox_ver(pkg):
             with gzip.open(
-                os.path.join(
-                    self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz"
-                )
+                os.path.join(self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
             ) as f:
                 return f.readline().decode().split()[1][1:-1]
 
@@ -751,9 +665,7 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # keeps track of package version
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
@@ -773,9 +685,7 @@ class T(unittest.TestCase):
         self.assertEqual(sandbox_ver(wanted_package), wanted_version)
 
         # the old versions is tracked
-        with open(
-            os.path.join(self.rootdir, "packages.txt"), encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.rootdir, "packages.txt"), encoding="utf-8") as f:
             pkglist = f.read().splitlines()
         self.assertIn(f"{wanted_package} {wanted_version}", pkglist)
 
@@ -815,10 +725,7 @@ class T(unittest.TestCase):
             origins=None,
         )
         res = impl.get_source_tree(
-            wanted_package,
-            out_dir,
-            version=wanted_version,
-            sandbox=self.rootdir,
+            wanted_package, out_dir, version=wanted_version, sandbox=self.rootdir
         )
         self.assertTrue(os.path.isdir(os.path.join(res, "debian")))
         # this needs to be updated when the release in _setup_foonux_config
@@ -843,9 +750,7 @@ class T(unittest.TestCase):
             origins=[ppa],
         )
         with open(
-            os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
-            ),
+            os.path.join(self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
             encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
@@ -899,9 +804,7 @@ class T(unittest.TestCase):
             origins=[ppa],
         )
         with open(
-            os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
-            ),
+            os.path.join(self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
             encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
@@ -953,9 +856,7 @@ class T(unittest.TestCase):
             origins=[f"LP-PPA-{ppa}"],
         )
         with open(
-            os.path.join(
-                self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"
-            ),
+            os.path.join(self.rootdir, "etc", "apt", "sources.list.d", f"{ppa}.list"),
             encoding="utf-8",
         ) as f:
             sources = f.read().splitlines()
@@ -965,9 +866,7 @@ class T(unittest.TestCase):
             sources,
         )
         self.assertIn(
-            "deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu"
-            " jammy main",
-            sources,
+            "deb-src http://ppa.launchpad.net/fooser/bar-ppa/ubuntu jammy main", sources
         )
 
     @unittest.skipUnless(has_internet(), "online test")
@@ -993,9 +892,7 @@ class T(unittest.TestCase):
 
         def sandbox_ver(pkg):
             with gzip.open(
-                os.path.join(
-                    self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz"
-                )
+                os.path.join(self.rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
             ) as f:
                 return f.readline().decode().split()[1][1:-1]
 
@@ -1003,12 +900,8 @@ class T(unittest.TestCase):
 
     def _get_library_path(self, library_name: str, root_dir: str = "/") -> str:
         """Find library path regardless of the architecture."""
-        libraries = glob.glob(
-            os.path.join(root_dir, "usr/lib/*", library_name)
-        )
-        self.assertEqual(
-            len(libraries), 1, f"glob for {library_name}: {libraries!r}"
-        )
+        libraries = glob.glob(os.path.join(root_dir, "usr/lib/*", library_name))
+        self.assertEqual(len(libraries), 1, f"glob for {library_name}: {libraries!r}")
         return libraries[0]
 
     @staticmethod
@@ -1076,9 +969,7 @@ class T(unittest.TestCase):
         # Create an architecture specific symlink, otherwise it cannot be
         # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
         # that looks for trusted.gpg.d relative to sources.list.
-        keyring_arch_dir = os.path.join(
-            config_release_dir, "armhf", "trusted.gpg.d"
-        )
+        keyring_arch_dir = os.path.join(config_release_dir, "armhf", "trusted.gpg.d")
         os.symlink("../trusted.gpg.d", keyring_arch_dir)
         return distro_release
 
@@ -1091,19 +982,14 @@ class T(unittest.TestCase):
         """Copy the archive and debug symbol archive keyring."""
         os.makedirs(keyring_dir, exist_ok=True)
         try:
-            shutil.copy(
-                "/usr/share/keyrings/ubuntu-archive-keyring.gpg", keyring_dir
-            )
+            shutil.copy("/usr/share/keyrings/ubuntu-archive-keyring.gpg", keyring_dir)
         except FileNotFoundError as error:  # pragma: no cover
-            self.skipTest(
-                f"{error.filename} missing. Please install ubuntu-keyring!"
-            )
+            self.skipTest(f"{error.filename} missing. Please install ubuntu-keyring!")
 
         dbgsym_keyring = "/usr/share/keyrings/ubuntu-dbgsym-keyring.gpg"
         if not os.path.isfile(dbgsym_keyring):
             self.skipTest(  # pragma: no cover
-                f"{dbgsym_keyring} missing. "
-                f"Please install ubuntu-dbgsym-keyring!"
+                f"{dbgsym_keyring} missing. " f"Please install ubuntu-dbgsym-keyring!"
             )
         # Convert from GPG keybox database format to OpenPGP Public Key format
         output_dbgsym_keyring = os.path.join(

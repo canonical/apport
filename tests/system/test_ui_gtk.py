@@ -50,9 +50,7 @@ else:
     GTKUserInterface = None
 
 
-@unittest.skipIf(
-    GI_IMPORT_ERROR, f"gi Python module not available: {GI_IMPORT_ERROR}"
-)
+@unittest.skipIf(GI_IMPORT_ERROR, f"gi Python module not available: {GI_IMPORT_ERROR}")
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     POLLING_INTERVAL_MS = 10
 
@@ -130,16 +128,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.report["ProblemType"] = "KernelCrash"
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("Sorry, %s has experienced an internal error.") % self.distro,
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -148,9 +142,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertFalse(self.app.w("subtitle_label").get_property("visible"))
-        self.assertFalse(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
+        self.assertFalse(self.app.w("ignore_future_problems").get_property("visible"))
 
     def test_package_crash_layout(self):
         """Display crash dialog for a failed package installation.
@@ -169,16 +161,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("Sorry, a problem occurred while installing software."),
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -188,8 +176,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
         self.assertEqual(
-            self.app.w("subtitle_label").get_text(),
-            _("Package: apport 1.2.3~0ubuntu1"),
+            self.app.w("subtitle_label").get_text(), _("Package: apport 1.2.3~0ubuntu1")
         )
 
     def test_regular_crash_thread_layout(self):
@@ -244,16 +231,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.app.report["DesktopFile"] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -263,9 +246,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertFalse(self.app.w("subtitle_label").get_property("visible"))
-        self.assertTrue(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
+        self.assertTrue(self.app.w("ignore_future_problems").get_property("visible"))
         self.assertTrue(
             self.app.w("ignore_future_problems")
             .get_label()
@@ -307,16 +288,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.app.report["DesktopFile"] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -325,9 +302,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertFalse(self.app.w("subtitle_label").get_property("visible"))
-        self.assertTrue(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
+        self.assertTrue(self.app.w("ignore_future_problems").get_property("visible"))
         self.assertTrue(
             self.app.w("ignore_future_problems")
             .get_label()
@@ -370,16 +345,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.app.report["DesktopFile"] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -423,23 +394,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.app.report["DesktopFile"] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("The application Apport has stopped responding."),
         )
         self.assertEqual(
             self.app.w("subtitle_label").get_text(),
-            _(
-                "You can wait to see if it wakes up, or close or "
-                "relaunch it."
-            ),
+            _("You can wait to see if it wakes up, or close or relaunch it."),
         )
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -448,9 +412,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
-        self.assertFalse(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
+        self.assertFalse(self.app.w("ignore_future_problems").get_property("visible"))
 
     def test_system_crash_layout(self):
         """Display crash dialog for a system application crash.
@@ -472,9 +434,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.report["Package"] = "bash 5"
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("Sorry, %s has experienced an internal error.") % self.distro,
@@ -484,9 +444,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             _("If you notice further problems, try restarting the computer."),
         )
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -494,13 +452,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("dont_send_button").get_property("visible"))
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
+        self.assertTrue(self.app.w("ignore_future_problems").get_property("visible"))
         self.assertTrue(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
-        self.assertTrue(
-            self.app.w("ignore_future_problems")
-            .get_label()
-            .endswith("of this type")
+            self.app.w("ignore_future_problems").get_label().endswith("of this type")
         )
 
     def test_system_crash_from_console_layout(self):
@@ -519,17 +473,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """
         self.app.report["ProblemType"] = "Crash"
         self.app.report["Package"] = "bash 5"
-        self.app.report[
-            "ProcEnviron"
-        ] = "LANGUAGE=en_GB:en\nSHELL=/bin/sh\nTERM=xterm"
+        self.app.report["ProcEnviron"] = "LANGUAGE=en_GB:en\nSHELL=/bin/sh\nTERM=xterm"
         self.app.report["ExecutablePath"] = "/usr/bin/apport"
         # This will be set by apport/ui.py in load_report()
         self.app.cur_package = "apport"
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         self.assertEqual(
             self.app.w("title_label").get_text(),
             _("Sorry, the application apport has stopped unexpectedly."),
@@ -539,9 +489,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             _("If you notice further problems, try restarting the computer."),
         )
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -559,9 +507,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         # no crash counter
-        self.assertFalse(
-            self.app.w("ignore_future_problems").get_property("visible")
-        )
+        self.assertFalse(self.app.w("ignore_future_problems").get_property("visible"))
 
     @unittest.mock.patch.object(
         GTKUserInterface, "can_examine_locally", unittest.mock.MagicMock()
@@ -624,9 +570,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertTrue(self.app.w("dont_send_button").get_property("visible"))
-        self.assertTrue(
-            self.app.w("details_scrolledwindow").get_property("visible")
-        )
+        self.assertTrue(self.app.w("details_scrolledwindow").get_property("visible"))
         self.assertTrue(self.app.w("dialog_crash_new").get_resizable())
 
     def test_apport_bug_package_layout_load_file(self):
@@ -653,9 +597,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("continue_button").get_property("visible"))
         self.assertEqual(self.app.w("continue_button").get_label(), _("Send"))
         self.assertTrue(self.app.w("dont_send_button").get_property("visible"))
-        self.assertTrue(
-            self.app.w("details_scrolledwindow").get_property("visible")
-        )
+        self.assertTrue(self.app.w("details_scrolledwindow").get_property("visible"))
         self.assertTrue(self.app.w("dialog_crash_new").get_resizable())
 
     def test_recoverable_crash_layout(self):
@@ -689,17 +631,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.app.report["DesktopFile"] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(
-            self.app.w("dialog_crash_new").get_title(), self.distro
-        )
+        self.assertEqual(self.app.w("dialog_crash_new").get_title(), self.distro)
         msg = "The application Apport has experienced an internal error."
         self.assertEqual(self.app.w("title_label").get_text(), msg)
         msg = "Some developer-specified error text."
         self.assertEqual(self.app.w("subtitle_label").get_text(), msg)
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
-        self.assertTrue(
-            self.app.w("send_problem_notice_label").get_property("visible")
-        )
+        self.assertTrue(self.app.w("send_problem_notice_label").get_property("visible"))
         remember_send_error_report = self.app.w("remember_send_report_choice")
         self.assertTrue(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
@@ -717,21 +655,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertFalse(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     @unittest.mock.patch.object(
         GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
     )
     @unittest.mock.patch.object(
         GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
     )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_crash_nodetails(self):
         """Crash report without showing details"""
@@ -771,21 +704,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     @unittest.mock.patch.object(
         GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
     )
     @unittest.mock.patch.object(
         GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
     )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_crash_details(self):
         """Crash report with showing details"""
@@ -837,9 +765,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     @unittest.mock.patch.object(
         GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
     )
@@ -847,8 +773,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
     )
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_broken_crash_details(self):
         """Broken crash report with showing details."""
@@ -913,12 +838,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
@@ -953,12 +875,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertIn("libc", r["Dependencies"])
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_kerneloops_nodetails(self):
         """Kernel oops report without showing details"""
@@ -1043,9 +962,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
         self.assertEqual(self.app.report["Package"], f"{pkg} (not installed)")
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     def test_update_report(self):
         """Updating an existing report."""
         self.app.report_file = None
@@ -1079,9 +996,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
     def test_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
@@ -1154,9 +1069,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 return True  # pragma: no cover
 
             data["orig_size"] = self.app.w("dialog_crash_new").get_size()
-            data["orig_resizable"] = self.app.w(
-                "dialog_crash_new"
-            ).get_resizable()
+            data["orig_resizable"] = self.app.w("dialog_crash_new").get_resizable()
             self.app.w("show_details").clicked()
             GLib.timeout_add(200, hide_details, data)
             return False
@@ -1167,9 +1080,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 return True  # pragma: no cover
 
             data["detail_size"] = self.app.w("dialog_crash_new").get_size()
-            data["detail_resizable"] = self.app.w(
-                "dialog_crash_new"
-            ).get_resizable()
+            data["detail_resizable"] = self.app.w("dialog_crash_new").get_resizable()
             self.app.w("show_details").clicked()
             GLib.timeout_add(200, details_hidden, data)
             return False
@@ -1180,9 +1091,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 return True  # pragma: no cover
 
             data["hidden_size"] = self.app.w("dialog_crash_new").get_size()
-            data["hidden_resizable"] = self.app.w(
-                "dialog_crash_new"
-            ).get_resizable()
+            data["hidden_resizable"] = self.app.w("dialog_crash_new").get_resizable()
             Gtk.main_quit()
             return False
 
@@ -1215,8 +1124,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # unicode arguments
         GLib.timeout_add(self.POLLING_INTERVAL_MS, close, 0)
         self.app.ui_info_message(
-            b"title \xe2\x99\xaa".decode("UTF-8"),
-            b"text \xe2\x99\xaa".decode("UTF-8"),
+            b"title \xe2\x99\xaa".decode("UTF-8"), b"text \xe2\x99\xaa".decode("UTF-8")
         )
 
         # with URLs
@@ -1264,9 +1172,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         for url in urls:
             with self.subTest(url=url):
                 self.assertEqual(
-                    apport_gtk.text_to_markup(
-                        f"Contact them via {url} for help."
-                    ),
+                    apport_gtk.text_to_markup(f"Contact them via {url} for help."),
                     f'Contact them via <a href="{url}">{url}</a> for help.',
                 )
 

@@ -17,28 +17,18 @@ class T(unittest.TestCase):
         get_files_mock.return_value = [
             "/usr/share/applications/non-existing/blueman.desktop"
         ]
-        self.assertEqual(
-            apport.fileutils.find_package_desktopfile("blueman"), None
-        )
+        self.assertEqual(apport.fileutils.find_package_desktopfile("blueman"), None)
         get_files_mock.assert_called_once_with("blueman")
 
     def test_likely_packaged(self):
         """likely_packaged()"""
         self.assertEqual(apport.fileutils.likely_packaged("/bin/bash"), True)
-        self.assertEqual(
-            apport.fileutils.likely_packaged("/usr/bin/foo"), True
-        )
-        self.assertEqual(
-            apport.fileutils.likely_packaged("/usr/local/bin/foo"), False
-        )
-        self.assertEqual(
-            apport.fileutils.likely_packaged("/home/test/bin/foo"), False
-        )
+        self.assertEqual(apport.fileutils.likely_packaged("/usr/bin/foo"), True)
+        self.assertEqual(apport.fileutils.likely_packaged("/usr/local/bin/foo"), False)
+        self.assertEqual(apport.fileutils.likely_packaged("/home/test/bin/foo"), False)
         self.assertEqual(apport.fileutils.likely_packaged("/tmp/foo"), False)
         # ignore crashes in /var/lib (LP#122859, LP#414368)
-        self.assertEqual(
-            apport.fileutils.likely_packaged("/var/lib/foo"), False
-        )
+        self.assertEqual(apport.fileutils.likely_packaged("/var/lib/foo"), False)
 
     def test_get_login_defs(self) -> None:
         """Test get_login_defs()."""
@@ -56,8 +46,7 @@ class T(unittest.TestCase):
             login_defs = apport.fileutils.get_login_defs()
         open_mock.assert_called_once()
         self.assertEqual(
-            login_defs,
-            {"MAIL_DIR": "/var/mail", "UID_MIN": "1000", "UID_MAX": "60000"},
+            login_defs, {"MAIL_DIR": "/var/mail", "UID_MIN": "1000", "UID_MAX": "60000"}
         )
 
     def test_get_login_defs_missing(self) -> None:
@@ -99,9 +88,7 @@ class T(unittest.TestCase):
     def test_get_sys_uid_max_default(self) -> None:
         """Test get_sys_uid_max() returning the default."""
         apport.fileutils.get_login_defs.cache_clear()
-        open_mock = unittest.mock.mock_open(
-            read_data="MAIL_DIR        /var/mail\n"
-        )
+        open_mock = unittest.mock.mock_open(read_data="MAIL_DIR        /var/mail\n")
         with unittest.mock.patch("builtins.open", open_mock):
             sys_gid_max = apport.fileutils.get_sys_uid_max()
         open_mock.assert_called_once()
@@ -115,8 +102,7 @@ class T(unittest.TestCase):
             environ = apport.fileutils.get_process_environ(1337)
         open_mock.assert_called_once()
         self.assertEqual(
-            environ,
-            {"LANGUAGE": "en", "SHELL": "/bin/bash", "TERM": "xterm-256color"},
+            environ, {"LANGUAGE": "en", "SHELL": "/bin/bash", "TERM": "xterm-256color"}
         )
 
     def test_get_process_environ_empty(self) -> None:
@@ -134,9 +120,7 @@ class T(unittest.TestCase):
         /snap/mattermost-desktop/578/opt/Mattermost/mattermost-desktop
         --no-sandbox --disable-seccomp-filter-sandbox --enable-crashpad
         """
-        open_mock = unittest.mock.mock_open(
-            read_data="--enable-crashpad" + "\0" * 6355
-        )
+        open_mock = unittest.mock.mock_open(read_data="--enable-crashpad" + "\0" * 6355)
         with unittest.mock.patch("builtins.open", open_mock):
             environ = apport.fileutils.get_process_environ(1337)
         open_mock.assert_called_once()
@@ -148,9 +132,7 @@ class T(unittest.TestCase):
         r = io.BytesIO(b"""ProblemType: Crash""")
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
-        r = io.BytesIO(
-            b"""ProblemType: Crash\nDate: Wed Aug 01 00:00:01 1990\n"""
-        )
+        r = io.BytesIO(b"""ProblemType: Crash\nDate: Wed Aug 01 00:00:01 1990\n""")
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # ancient report
@@ -163,16 +145,12 @@ class T(unittest.TestCase):
 
         # old report (one day + one hour ago)
         date = time.ctime(time.mktime(time.localtime()) - 25 * 3600)
-        r = io.BytesIO(
-            f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode()
-        )
+        r = io.BytesIO(f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode())
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # current report (one hour ago)
         date = time.ctime(time.mktime(time.localtime()) - 3600)
-        r = io.BytesIO(
-            f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode()
-        )
+        r = io.BytesIO(f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode())
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 3)
 
     def test_get_dbus_socket(self):

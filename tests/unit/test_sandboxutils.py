@@ -32,9 +32,7 @@ class TestSandboxutils(unittest.TestCase):
         return report
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
-    def test_make_sandbox(
-        self, packaging_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_make_sandbox(self, packaging_mock: unittest.mock.MagicMock) -> None:
         """make_sandbox() for a sample report."""
         packaging_mock.install_packages.return_value = "obsolete\n"
         report = self._get_sample_report()

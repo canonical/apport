@@ -28,13 +28,9 @@ from apport import fatal
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        usage=_("%(prog)s <report> <target directory>")
-    )
+    parser = argparse.ArgumentParser(usage=_("%(prog)s <report> <target directory>"))
     parser.add_argument("report", help=_("Report file to unpack"))
-    parser.add_argument(
-        "target_directory", help=_("directory to unpack report to")
-    )
+    parser.add_argument("target_directory", help=_("directory to unpack report to"))
     return parser.parse_args()
 
 

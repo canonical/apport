@@ -24,9 +24,7 @@ class TestApportUnpack(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.env = (
-            os.environ | local_test_environment() | {"LANGUAGE": "C.UTF-8"}
-        )
+        cls.env = os.environ | local_test_environment() | {"LANGUAGE": "C.UTF-8"}
         cls.workdir = tempfile.mkdtemp()
 
         # create problem report file with all possible data types
@@ -84,9 +82,7 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(process.stdout, "")
         self.assertTrue(process.stderr.startswith("usage:"), process.stderr)
 
-        process = self._call_apport_unpack(
-            ["/nonexisting.crash", self.unpack_dir]
-        )
+        process = self._call_apport_unpack(["/nonexisting.crash", self.unpack_dir])
         self.assertEqual(process.returncode, 1)
         self.assertIn("/nonexisting.crash", process.stderr)
         self.assertEqual(process.stdout, "")
@@ -95,9 +91,7 @@ class TestApportUnpack(unittest.TestCase):
         with tempfile.NamedTemporaryFile("wb") as report_file:
             report_file.write(b"AB\xfc:CD\n")
             report_file.flush()
-            process = self._call_apport_unpack(
-                [report_file.name, self.unpack_dir]
-            )
+            process = self._call_apport_unpack([report_file.name, self.unpack_dir])
 
         self.assertEqual(process.returncode, 1)
         self.assertEqual(
@@ -116,9 +110,7 @@ class TestApportUnpack(unittest.TestCase):
                 b" 7Z0LYFPV/cdP0rQ\n"
             )
             report_file.flush()
-            process = self._call_apport_unpack(
-                [report_file.name, self.unpack_dir]
-            )
+            process = self._call_apport_unpack([report_file.name, self.unpack_dir])
 
         self.assertEqual(process.returncode, 1)
         self.assertEqual(

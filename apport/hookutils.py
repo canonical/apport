@@ -45,9 +45,7 @@ def path_to_key(path):
     return _invalid_key_chars_re.sub(".", path.replace(" ", "_"))
 
 
-def attach_file_if_exists(
-    report, path, key=None, overwrite=True, force_unicode=False
-):
+def attach_file_if_exists(report, path, key=None, overwrite=True, force_unicode=False):
     """Attach file contents if file exists.
 
     If key is not specified, the key name will be derived from the file
@@ -196,14 +194,10 @@ def attach_upstart_logs(report, package):
             log = os.path.basename(f).replace(".conf", ".log")
             key = f"upstart.{log}"
             try:
-                log = os.path.join(
-                    os.environ["XDG_CACHE_HOME"], "upstart", log
-                )
+                log = os.path.join(os.environ["XDG_CACHE_HOME"], "upstart", log)
             except KeyError:
                 try:
-                    log = os.path.join(
-                        os.environ["HOME"], ".cache", "upstart", log
-                    )
+                    log = os.path.join(os.environ["HOME"], ".cache", "upstart", log)
                 except KeyError:
                     continue
 
@@ -214,14 +208,10 @@ def attach_upstart_logs(report, package):
             key = f"upstart.application.{desktopname}"
             log = f"application-{desktopname}.log"
             try:
-                log = os.path.join(
-                    os.environ["XDG_CACHE_HOME"], "upstart", log
-                )
+                log = os.path.join(os.environ["XDG_CACHE_HOME"], "upstart", log)
             except KeyError:
                 try:
-                    log = os.path.join(
-                        os.environ["HOME"], ".cache", "upstart", log
-                    )
+                    log = os.path.join(os.environ["HOME"], ".cache", "upstart", log)
                 except KeyError:
                     continue
 
@@ -289,9 +279,7 @@ def attach_hardware(report):
     report["Lsusb-t"] = command_output(["lsusb", "-t"])
     report["ProcModules"] = command_output(["sort", "/proc/modules"])
     report["UdevDb"] = command_output(["udevadm", "info", "--export-db"])
-    report["acpidump"] = root_command_output(
-        ["/usr/share/apport/dump_acpi_tables.py"]
-    )
+    report["acpidump"] = root_command_output(["/usr/share/apport/dump_acpi_tables.py"])
 
     # anonymize partition labels
     labels = report["UdevDb"]
@@ -328,13 +316,9 @@ def attach_alsa_old(report):
     for systems where alsa-info is not installed
     (i e, *buntu 12.04 and earlier)
     """
+    attach_file_if_exists(report, os.path.expanduser("~/.asoundrc"), "UserAsoundrc")
     attach_file_if_exists(
-        report, os.path.expanduser("~/.asoundrc"), "UserAsoundrc"
-    )
-    attach_file_if_exists(
-        report,
-        os.path.expanduser("~/.asoundrc.asoundconf"),
-        "UserAsoundrcAsoundconf",
+        report, os.path.expanduser("~/.asoundrc.asoundconf"), "UserAsoundrcAsoundconf"
     )
     attach_file_if_exists(report, "/etc/asound.conf")
     attach_file_if_exists(report, "/proc/asound/version", "AlsaVersion")
@@ -563,9 +547,7 @@ def attach_root_command_outputs(report, command_map):
     will ask for the password every time.
     """
     wrapper_path = os.path.join(
-        os.path.abspath(
-            os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
-        ),
+        os.path.abspath(os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")),
         "root_info_wrapper",
     )
     workdir = tempfile.mkdtemp()
@@ -579,9 +561,7 @@ def attach_root_command_outputs(report, command_map):
                 ), "command must be a string (shell command)"
                 # use "| cat" here, so that we can end commands with 2>&1
                 # (otherwise it would have the wrong redirection order)
-                script.write(
-                    f"{command} | cat > {os.path.join(workdir, keyname)}\n"
-                )
+                script.write(f"{command} | cat > {os.path.join(workdir, keyname)}\n")
 
         # run script
         subprocess.run(
@@ -758,9 +738,7 @@ def attach_gsettings_schema(report, schema):
     env = os.environ.copy()
     env["XDG_CONFIG_HOME"] = "/nonexisting"
     with subprocess.Popen(
-        ["gsettings", "list-recursively", schema],
-        env=env,
-        stdout=subprocess.PIPE,
+        ["gsettings", "list-recursively", schema], env=env, stdout=subprocess.PIPE
     ) as gsettings:
         for line in gsettings.stdout:
             try:
@@ -827,9 +805,7 @@ def attach_network(report):
     report["IpRoute"] = command_output(["ip", "route"])
     report["IpAddr"] = command_output(["ip", "addr"])
     report["PciNetwork"] = pci_devices(PCI_NETWORK)
-    attach_file_if_exists(
-        report, "/etc/network/interfaces", key="IfupdownConfig"
-    )
+    attach_file_if_exists(report, "/etc/network/interfaces", key="IfupdownConfig")
 
     for var in ("http_proxy", "ftp_proxy", "no_proxy"):
         if var in os.environ:
@@ -864,9 +840,7 @@ def attach_wifi(report):
         iw_output = "N/A"
     report["CRDA"] = iw_output
 
-    attach_file_if_exists(
-        report, "/var/log/wpa_supplicant.log", key="WpaSupplicantLog"
-    )
+    attach_file_if_exists(report, "/var/log/wpa_supplicant.log", key="WpaSupplicantLog")
 
 
 def attach_printing(report):
@@ -883,9 +857,7 @@ def attach_printing(report):
     if ppds:
         nicknames = command_output(["fgrep", "-H", "*NickName"] + ppds)
         report["PpdFiles"] = re.sub(
-            r'/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"',
-            r"\g<1>: \g<2>",
-            nicknames,
+            r'/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', r"\g<1>: \g<2>", nicknames
         )
 
     report["PrintingPackages"] = package_versions(
@@ -942,13 +914,10 @@ def attach_mac_events(report, profiles=None):
 
     if "AuditLog" not in report and os.path.exists("/var/run/auditd.pid"):
         attach_root_command_outputs(
-            report,
-            {"AuditLog": f'egrep "{mac_regex}" /var/log/audit/audit.log'},
+            report, {"AuditLog": f'egrep "{mac_regex}" /var/log/audit/audit.log'}
         )
 
-    attach_file_if_exists(
-        report, "/proc/version_signature", "ProcVersionSignature"
-    )
+    attach_file_if_exists(report, "/proc/version_signature", "ProcVersionSignature")
     attach_file(report, "/proc/cmdline", "ProcCmdline")
 
     for match in re.findall(
@@ -962,9 +931,7 @@ def attach_mac_events(report, profiles=None):
             if match[0] == '"':
                 profile = match[1:-1]
             else:
-                profile = bytes.fromhex(match).decode(
-                    "UTF-8", errors="replace"
-                )
+                profile = bytes.fromhex(match).decode("UTF-8", errors="replace")
         except (IndexError, ValueError):
             continue
 
@@ -1118,9 +1085,7 @@ def in_session_of_problem(report):
 
     # determine session creation time
     try:
-        session_start_time = os.stat(
-            f"/run/systemd/sessions/{session_id}"
-        ).st_mtime
+        session_start_time = os.stat(f"/run/systemd/sessions/{session_id}").st_mtime
     except OSError:
         return None
 

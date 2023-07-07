@@ -112,9 +112,7 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         self.assertEqual(
             stat.S_IMODE(os.stat(reports[0]).st_mode),
             0o640,
@@ -140,17 +138,12 @@ func(42)
             "UserGroups",
         ]
         self.assertTrue(
-            set(expected_keys).issubset(set(pr.keys())),
-            "report has necessary fields",
+            set(expected_keys).issubset(set(pr.keys())), "report has necessary fields"
         )
         self.assertIn("bin/python", pr["InterpreterPath"])
         self.assertEqual(pr["ExecutablePath"], script)
-        self.assertEqual(
-            pr["ExecutableTimestamp"], str(int(os.stat(script).st_mtime))
-        )
-        self.assertEqual(
-            pr["PythonArgs"], f"['{script}', 'testarg1', 'testarg2']"
-        )
+        self.assertEqual(pr["ExecutableTimestamp"], str(int(os.stat(script).st_mtime)))
+        self.assertEqual(pr["PythonArgs"], f"['{script}', 'testarg1', 'testarg2']")
         self.assertTrue(pr["Traceback"].startswith("Traceback"))
         self.assertIn(
             "func\n    raise Exception(b'This should happen.", pr["Traceback"]
@@ -162,9 +155,7 @@ func(42)
 
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         self.assertEqual(
             stat.S_IMODE(os.stat(reports[0]).st_mode),
             0o640,
@@ -192,9 +183,7 @@ func(42)
 
         # load report for this
         reports = apport.fileutils.get_new_reports()
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         pr1 = apport.Report()
         with open(reports[0], "rb") as f:
             pr1.load(f)
@@ -207,11 +196,7 @@ func(42)
 
         # run script through symlink name
         process = subprocess.run(
-            [script_link],
-            check=False,
-            env=self.env,
-            stderr=subprocess.PIPE,
-            text=True,
+            [script_link], check=False, env=self.env, stderr=subprocess.PIPE, text=True
         )
         self.assertEqual(
             process.returncode,
@@ -222,9 +207,7 @@ func(42)
 
         # get report for symlinked crash
         reports = apport.fileutils.get_new_reports()
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         pr2 = apport.Report()
         with open(reports[0], "rb") as f:
             pr2.load(f)
@@ -242,9 +225,7 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         self.assertEqual(
             stat.S_IMODE(os.stat(reports[0]).st_mode),
             0o640,
@@ -269,8 +250,7 @@ func(42)
             "UserGroups",
         ]
         self.assertTrue(
-            set(expected_keys).issubset(set(pr.keys())),
-            "report has necessary fields",
+            set(expected_keys).issubset(set(pr.keys())), "report has necessary fields"
         )
         self.assertIn("bin/python", pr["InterpreterPath"])
         self.assertEqual(pr["ExecutablePath"], script)
@@ -288,9 +268,7 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
 
         pr = apport.report.Report()
         with open(reports[0], "rb") as f:
@@ -458,9 +436,7 @@ func(42)
                 if not reports:
                     break
                 self.assertEqual(
-                    len(reports),
-                    1,
-                    "crashed Python program produced one report",
+                    len(reports), 1, "crashed Python program produced one report"
                 )
                 apport.fileutils.mark_report_seen(reports[0])
                 count += 1
@@ -524,9 +500,7 @@ func(42)
                 )
                 pr = self._load_report()
                 self.assertIn(":FileNotFoundError:", pr.crash_signature())
-                self.assertIn(
-                    "os.getcwd()\nFileNotFoundError", pr["Traceback"]
-                )
+                self.assertIn("os.getcwd()\nFileNotFoundError", pr["Traceback"])
 
     def test_subclassed_os_error(self):
         """Raise OSError with known subclass."""
@@ -544,16 +518,12 @@ func(42)
         # we expect it to not append errno, as it's already encoded
         # in the subclass
         exe = pr["ExecutablePath"]
-        self.assertEqual(
-            pr.crash_signature(), f"{exe}:FileNotFoundError:{exe}@11:g"
-        )
+        self.assertEqual(pr.crash_signature(), f"{exe}:FileNotFoundError:{exe}@11:g")
 
     def _load_report(self):
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         pr = apport.Report()
         with open(reports[0], "rb") as f:
             pr.load(f)

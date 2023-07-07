@@ -65,9 +65,7 @@ class TestApport(unittest.TestCase):
             del os.environ["APPORT_LOCK_FILE"]
 
     @unittest.mock.patch("fcntl.lockf")
-    def test_check_lock_taken(
-        self, lockf_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_check_lock_taken(self, lockf_mock: unittest.mock.MagicMock) -> None:
         """Test check_lock() with lock file taken by other process."""
         # Since this is a unit test, let the mock raise an exception instead
         # of letting the fcntl.lockf call run into the timeout signal.
@@ -88,9 +86,7 @@ class TestApport(unittest.TestCase):
         self.assertEqual(apport_binary.refine_core_ulimit(options), -1)
 
     @unittest.mock.patch("os.isatty")
-    def test_init_error_log_is_tty(
-        self, isatty_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_init_error_log_is_tty(self, isatty_mock: unittest.mock.MagicMock) -> None:
         """Test init_error_log() doing nothing on a TTY."""
         isatty_mock.return_value = True
         stderr = sys.stderr
@@ -102,9 +98,7 @@ class TestApport(unittest.TestCase):
     @unittest.mock.patch("builtins.__import__")
     def test_receive_arguments_via_socket_import_error(self, import_mock):
         """Test receive_arguments_via_socket() fail to import systemd."""
-        import_mock.side_effect = ModuleNotFoundError(
-            "No module named 'systemd'"
-        )
+        import_mock.side_effect = ModuleNotFoundError("No module named 'systemd'")
         with self.assertRaisesRegex(SystemExit, "^0$"):
             apport_binary.receive_arguments_via_socket()
 
@@ -124,9 +118,7 @@ class TestApport(unittest.TestCase):
         apport_binary, "init_error_log", unittest.mock.MagicMock()
     )
     @unittest.mock.patch.object(
-        apport_binary,
-        "is_same_ns",
-        unittest.mock.MagicMock(return_value=False),
+        apport_binary, "is_same_ns", unittest.mock.MagicMock(return_value=False)
     )
     @unittest.mock.patch.object(apport_binary, "forward_crash_to_container")
     def test_main_forward_crash_to_container(self, forward_mock):
@@ -171,9 +163,7 @@ class TestApport(unittest.TestCase):
         crash_user = apport.user_group.get_process_user_and_group()
         with apport_binary.ProcPid(pid) as proc_pid:
             self.assertFalse(
-                apport_binary.consistency_checks(
-                    options, now, proc_pid, crash_user
-                )
+                apport_binary.consistency_checks(options, now, proc_pid, crash_user)
             )
 
     def test_consistency_checks_mismatching_uid(self):
@@ -192,9 +182,7 @@ class TestApport(unittest.TestCase):
         )
         with apport_binary.ProcPid(pid) as proc_pid:
             self.assertFalse(
-                apport_binary.consistency_checks(
-                    options, 1, proc_pid, crash_user
-                )
+                apport_binary.consistency_checks(options, 1, proc_pid, crash_user)
             )
 
     def test_stop(self):
@@ -209,9 +197,7 @@ class TestApport(unittest.TestCase):
 
     @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
     @unittest.mock.patch("os.setresuid", unittest.mock.MagicMock())
-    @unittest.mock.patch.object(
-        apport_binary, "_run_with_output_limit_and_timeout"
-    )
+    @unittest.mock.patch.object(apport_binary, "_run_with_output_limit_and_timeout")
     @unittest.mock.patch("os.path.exists")
     def test_is_closing_session(
         self,
@@ -224,13 +210,10 @@ class TestApport(unittest.TestCase):
         crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
-            env.write_text(
-                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
-            )
+            env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user),
-                    True,
+                    apport_binary.is_closing_session(proc_pid, crash_user), True
                 )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
@@ -243,8 +226,7 @@ class TestApport(unittest.TestCase):
             env.write_text("DISPLAY=:0\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user),
-                    False,
+                    apport_binary.is_closing_session(proc_pid, crash_user), False
                 )
 
     def test_is_closing_session_no_determine_socket(self) -> None:
@@ -255,8 +237,7 @@ class TestApport(unittest.TestCase):
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:/run/user/42/bus\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user),
-                    False,
+                    apport_binary.is_closing_session(proc_pid, crash_user), False
                 )
 
     def test_is_closing_session_socket_not_exists(self) -> None:
@@ -265,20 +246,15 @@ class TestApport(unittest.TestCase):
         crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
-            env.write_text(
-                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
-            )
+            env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user),
-                    False,
+                    apport_binary.is_closing_session(proc_pid, crash_user), False
                 )
 
     @unittest.mock.patch("os.setresgid", unittest.mock.MagicMock())
     @unittest.mock.patch("os.setresuid", unittest.mock.MagicMock())
-    @unittest.mock.patch.object(
-        apport_binary, "_run_with_output_limit_and_timeout"
-    )
+    @unittest.mock.patch.object(apport_binary, "_run_with_output_limit_and_timeout")
     @unittest.mock.patch("os.path.exists")
     def test_is_closing_session_gdbus_failure(
         self,
@@ -293,20 +269,15 @@ class TestApport(unittest.TestCase):
         crash_user = apport.user_group.UserGroupID(1337, 1337)
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
-            env.write_text(
-                "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0"
-            )
+            env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
             with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
                 self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user),
-                    False,
+                    apport_binary.is_closing_session(proc_pid, crash_user), False
                 )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 
-    @unittest.mock.patch.object(
-        apport_binary, "check_lock", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(apport_binary, "check_lock", unittest.mock.MagicMock())
     @unittest.mock.patch.object(
         apport_binary, "init_error_log", unittest.mock.MagicMock()
     )
@@ -318,7 +289,5 @@ class TestApport(unittest.TestCase):
             with tempfile.NamedTemporaryFile() as stdin:
                 stdin_mock = io.FileIO(stdin.name)
                 with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
-                    self.assertEqual(
-                        apport_binary.main(["-p", str(fake_pid)]), 1
-                    )
+                    self.assertEqual(apport_binary.main(["-p", str(fake_pid)]), 1)
         self.assertIn("/proc/2147483647 not found", error_logs.output[0])

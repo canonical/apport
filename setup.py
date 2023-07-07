@@ -17,8 +17,7 @@ try:
     import DistUtilsExtra.auto
 except ImportError:
     sys.stderr.write(
-        "To build Apport you need"
-        " https://launchpad.net/python-distutils-extra\n"
+        "To build Apport you need https://launchpad.net/python-distutils-extra\n"
     )
     sys.exit(1)
 
@@ -49,8 +48,7 @@ class build_java_subdir(distutils.core.Command):
         javac = ["javac", "-source", release, "-target", release]
         subprocess.check_call(javac + glob.glob("com/ubuntu/apport/*.java"))
         subprocess.check_call(
-            ["jar", "cvf", "apport.jar"]
-            + glob.glob("com/ubuntu/apport/*.class")
+            ["jar", "cvf", "apport.jar"] + glob.glob("com/ubuntu/apport/*.class")
         )
         subprocess.check_call(javac + ["testsuite/crash.java"])
         subprocess.check_call(
@@ -84,16 +82,12 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
             except OSError:
                 continue
             dest = os.path.join(
-                self.install_data,
-                BASH_COMPLETIONS,
-                os.path.basename(completion),
+                self.install_data, BASH_COMPLETIONS, os.path.basename(completion)
             )
             if not os.path.exists(dest):
                 continue
 
-            distutils.log.info(
-                "Convert %s into a symlink to %s...", dest, source
-            )
+            distutils.log.info("Convert %s into a symlink to %s...", dest, source)
             os.remove(dest)
             os.symlink(source, dest)
 
@@ -143,9 +137,7 @@ cmdclass: dict[str, object] = {"install": install_fix_hashbangs}
 try:
     subprocess.check_call(["javac", "-version"], stderr=subprocess.PIPE)
 
-    distutils.command.build.build.sub_commands.append(
-        ("build_java_subdir", None)
-    )
+    distutils.command.build.build.sub_commands.append(("build_java_subdir", None))
     optional_data_files.append(("share/java", ["java/apport.jar"]))
     cmdclass["build_java_subdir"] = build_java_subdir
     cmdclass["clean"] = clean_java_subdir
@@ -162,8 +154,7 @@ try:
         universal_newlines=True,
     ).strip()
     systemd_tmpfiles_dir = subprocess.check_output(
-        ["pkg-config", "--variable=tmpfilesdir", "systemd"],
-        universal_newlines=True,
+        ["pkg-config", "--variable=tmpfilesdir", "systemd"], universal_newlines=True
     ).strip()
 except subprocess.CalledProcessError:
     # hardcoded fallback path

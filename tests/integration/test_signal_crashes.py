@@ -97,9 +97,7 @@ class T(unittest.TestCase):
         )
         apport.report._ignore_file = os.environ["APPORT_IGNORE_FILE"]
 
-        os.environ["APPORT_LOCK_FILE"] = os.path.join(
-            self.workdir, "apport.lock"
-        )
+        os.environ["APPORT_LOCK_FILE"] = os.path.join(self.workdir, "apport.lock")
 
         # do not write core files by default
         resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
@@ -156,9 +154,7 @@ class T(unittest.TestCase):
         # a subsequent crash does not alter unseen report
         self.do_crash()
         st2 = os.stat(self.test_report)
-        self.assertEqual(
-            st, st2, "original unseen report did not get overwritten"
-        )
+        self.assertEqual(st, st2, "original unseen report did not get overwritten")
 
         # a subsequent crash alters seen report
         apport.fileutils.mark_report_seen(self.test_report)
@@ -170,13 +166,11 @@ class T(unittest.TestCase):
         with open(self.test_report, "rb") as f:
             pr.load(f)
         self.assertTrue(
-            set(required_fields).issubset(set(pr.keys())),
-            "report has required fields",
+            set(required_fields).issubset(set(pr.keys())), "report has required fields"
         )
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertEqual(
-            pr["ProcCmdline"],
-            " ".join([self.TEST_EXECUTABLE] + self.TEST_ARGS),
+            pr["ProcCmdline"], " ".join([self.TEST_EXECUTABLE] + self.TEST_ARGS)
         )
         self.assertEqual(pr["Signal"], f"{signal.SIGSEGV}")
 
@@ -266,9 +260,7 @@ class T(unittest.TestCase):
                         timeout -= 1
 
                     self.assertGreater(
-                        timeout,
-                        0,
-                        "second apport instance terminates immediately",
+                        timeout, 0, "second apport instance terminates immediately"
                     )
                     self.assertFalse(
                         app.poll(), "first apport instance is still running"
@@ -327,10 +319,7 @@ class T(unittest.TestCase):
         env = os.environ.copy()
         env["APPORT_LOG_FILE"] = log
         app = subprocess.run(
-            [str(APPORT_PATH)],
-            check=False,
-            env=env,
-            preexec_fn=close_stdin_and_stderr,
+            [str(APPORT_PATH)], check=False, env=env, preexec_fn=close_stdin_and_stderr
         )
 
         self.assertEqual(app.returncode, 2)
@@ -358,9 +347,7 @@ class T(unittest.TestCase):
                 "sleep(10);\n"
             )
         os.chmod(local_exe, 0o755)
-        self.do_crash(
-            command=local_exe, args=[], expected_command=f"..{local_exe}"
-        )
+        self.do_crash(command=local_exe, args=[], expected_command=f"..{local_exe}")
 
         leak = os.path.join(
             apport.fileutils.report_dir, f"_usr_bin_perl.{os.getuid()}.crash"
@@ -387,9 +374,7 @@ class T(unittest.TestCase):
             apport.fileutils.mark_report_seen(self.test_report)
             count += 1
         self.assertGreater(count, 1, "gets at least 2 repeated crashes")
-        self.assertLess(
-            count, 7, "stops flooding after less than 7 repeated crashes"
-        )
+        self.assertLess(count, 7, "stops flooding after less than 7 repeated crashes")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_nonreadable_exe(self):
@@ -408,9 +393,7 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        self.do_crash(
-            command=myexe, expect_corefile=False, uid=8, suid_dumpable=2
-        )
+        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
 
     def test_core_dump_packaged(self):
         """Packaged executables create core dumps on proper ulimits."""
@@ -433,9 +416,7 @@ class T(unittest.TestCase):
     def test_core_dump_packaged_sigquit(self):
         """Packaged executables create core files, no report for SIGQUIT."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(
-            expect_corefile=True, expect_report=False, sig=signal.SIGQUIT
-        )
+        self.do_crash(expect_corefile=True, expect_report=False, sig=signal.SIGQUIT)
 
     def test_core_dump_unpackaged(self):
         """Unpackaged executables create core dumps on proper ulimits."""
@@ -505,9 +486,7 @@ class T(unittest.TestCase):
             os._exit(os.EX_OK)
 
         # do_crash verifies that we get the original core, not the injected one
-        self.do_crash(
-            expect_corefile=True, hook_before_apport=inject_bogus_report
-        )
+        self.do_crash(expect_corefile=True, hook_before_apport=inject_bogus_report)
 
     def test_ignore(self):
         """Ignore executables."""
@@ -562,15 +541,11 @@ class T(unittest.TestCase):
             err = app.stderr.decode()
             self.assertEqual(app.returncode, 0, err)
             if os.getuid() > 0:
-                self.assertIn(
-                    "executable was modified after program start", err
-                )
+                self.assertIn("executable was modified after program start", err)
             else:
                 with open("/var/log/apport.log", encoding="utf-8") as f:
                     lines = f.readlines()
-                self.assertIn(
-                    "executable was modified after program start", lines[-1]
-                )
+                self.assertIn("executable was modified after program start", lines[-1])
         finally:
             test_proc.kill()
             test_proc.wait()
@@ -698,9 +673,7 @@ class T(unittest.TestCase):
         # core files
         self.do_crash(command=myexe, uid=8, suid_dumpable=2)
 
-    @unittest.skipUnless(
-        os.path.exists("/bin/ping"), "this test needs /bin/ping"
-    )
+    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self):
         """Report generation for setuid program which drops root."""
@@ -709,9 +682,7 @@ class T(unittest.TestCase):
 
         # if a user can crash a suid root binary, it should not create
         # core files
-        self.do_crash(
-            command="/bin/ping", args=["127.0.0.1"], uid=8, suid_dumpable=2
-        )
+        self.do_crash(command="/bin/ping", args=["127.0.0.1"], uid=8, suid_dumpable=2)
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self):
@@ -762,9 +733,7 @@ class T(unittest.TestCase):
             via_socket=True,
         )
 
-    @unittest.skipUnless(
-        os.path.exists("/bin/ping"), "this test needs /bin/ping"
-    )
+    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop_via_socket(self):
         """Report generation via socket for setuid program which drops root."""
@@ -783,14 +752,10 @@ class T(unittest.TestCase):
         with open(self.test_report, "rb") as report_file:
             report.load(report_file)
         self.assertEqual(report["Signal"], "11")
-        self.assertEqual(
-            report["ExecutablePath"], os.path.realpath("/bin/ping")
-        )
+        self.assertEqual(report["ExecutablePath"], os.path.realpath("/bin/ping"))
 
     @unittest.mock.patch("os.readlink")
-    def test_is_not_same_ns(
-        self, readlink_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_is_not_same_ns(self, readlink_mock: unittest.mock.MagicMock) -> None:
         readlink_mock.side_effect = ["mnt:[1]", "mnt:[2]"]
         open_mock = unittest.mock.mock_open(read_data="0::/user.slice\n")
         command = [self.TEST_EXECUTABLE] + self.TEST_ARGS
@@ -817,9 +782,7 @@ class T(unittest.TestCase):
     #
 
     @staticmethod
-    def _apport_args(
-        process: psutil.Process, sig: int, dump_mode: int
-    ) -> list[str]:
+    def _apport_args(process: psutil.Process, sig: int, dump_mode: int) -> list[str]:
         return [
             f"-p{process.pid}",
             f"-s{sig}",
@@ -833,11 +796,7 @@ class T(unittest.TestCase):
         ]
 
     def _call_apport(
-        self,
-        process: psutil.Process,
-        sig: int,
-        dump_mode: int,
-        stdin: typing.IO,
+        self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
         cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
         subprocess.check_call(cmd, stdin=stdin)
@@ -860,11 +819,7 @@ class T(unittest.TestCase):
             apport_binary.forward_crash_to_container(args, coredump_fd, False)
 
     def _call_apport_via_socket(
-        self,
-        process: psutil.Process,
-        sig: int,
-        dump_mode: int,
-        stdin: typing.IO,
+        self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
         socket_path = os.path.join(self.workdir, "apport.socket")
 
@@ -874,12 +829,8 @@ class T(unittest.TestCase):
         server.bind(socket_path)
         server.listen(1)
 
-        args = apport_binary.parse_arguments(
-            self._apport_args(process, sig, dump_mode)
-        )
-        with unittest.mock.patch(
-            "apport.fileutils.search_map"
-        ) as search_map_mock:
+        args = apport_binary.parse_arguments(self._apport_args(process, sig, dump_mode))
+        with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
             search_map_mock.return_value = True
             self._forward_crash_to_container(socket_path, args, stdin.fileno())
             search_map_mock.assert_called()
@@ -927,9 +878,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(gdb.stdout.strip(), "")
 
     def _check_report(
-        self,
-        expect_report: bool = True,
-        expected_owner: typing.Optional[int] = None,
+        self, expect_report: bool = True, expected_owner: typing.Optional[int] = None
     ) -> None:
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
@@ -938,9 +887,7 @@ class T(unittest.TestCase):
         if expected_owner is None:
             expected_owner = os.geteuid()
 
-        self.assertEqual(
-            apport.fileutils.get_all_reports(), [self.test_report]
-        )
+        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         st = os.stat(self.test_report)
         self.assertEqual(
             stat.S_IMODE(st.st_mode),
@@ -1078,22 +1025,16 @@ class T(unittest.TestCase):
             gdb.communicate()
 
         if expect_corefile:
-            self.assertTrue(
-                os.path.exists(core_path), "leaves wanted core file"
-            )
+            self.assertTrue(os.path.exists(core_path), "leaves wanted core file")
             try:
                 # check core file permissions
                 st = os.stat(core_path)
                 self.assertEqual(
-                    stat.S_IMODE(st.st_mode),
-                    0o400,
-                    "core file has correct permissions",
+                    stat.S_IMODE(st.st_mode), 0o400, "core file has correct permissions"
                 )
                 if expect_corefile_owner is not None:
                     self.assertEqual(
-                        st.st_uid,
-                        expect_corefile_owner,
-                        "core file has correct owner",
+                        st.st_uid, expect_corefile_owner, "core file has correct owner"
                     )
 
                 self._check_core_file_is_valid(core_path, command)
@@ -1134,8 +1075,7 @@ class T(unittest.TestCase):
         args = " ".join(f" {a}" for a in args)
         if uid is not None:
             args = (
-                f" --reuid={uid} --clear-groups "
-                f"/bin/sh -c 'exec {command}{args}'"
+                f" --reuid={uid} --clear-groups " f"/bin/sh -c 'exec {command}{args}'"
             )
             command = "/usr/bin/setpriv"
             gdb_args += ["--ex", "set follow-fork-mode child"]
@@ -1153,8 +1093,7 @@ class T(unittest.TestCase):
     def _get_report_filename(command: str) -> str:
         return os.path.join(
             apport.fileutils.report_dir,
-            f"{os.path.realpath(command).replace('/', '_')}"
-            f".{os.getuid()}.crash",
+            f"{os.path.realpath(command).replace('/', '_')}" f".{os.getuid()}.crash",
         )
 
     def check_report_coredump(self, report_path):
@@ -1182,8 +1121,7 @@ class T(unittest.TestCase):
             timeout += 0.1
         else:
             self.fail(
-                f"Core file {core_file} not created "
-                f"within {int(timeout)} seconds."
+                f"Core file {core_file} not created " f"within {int(timeout)} seconds."
             )
 
         gdb_process = psutil.Process(gdb_pid)
@@ -1205,9 +1143,7 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_core_file_core_not_created(
-        self, sleep_mock, exists_mock
-    ):
+    def test_wait_for_core_file_core_not_created(self, sleep_mock, exists_mock):
         """Test wait_for_core_file() helper runs into timeout for core file."""
         exists_mock.return_value = False
         with self.assertRaises(AssertionError):
@@ -1218,9 +1154,7 @@ class T(unittest.TestCase):
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_core_file_timeout(
-        self, sleep_mock, process_mock, exists_mock
-    ):
+    def test_wait_for_core_file_timeout(self, sleep_mock, process_mock, exists_mock):
         """Test wait_for_core_file() helper runs into timeout."""
         popenfile = collections.namedtuple("popenfile", ["path"])
         exists_mock.return_value = True
@@ -1231,9 +1165,7 @@ class T(unittest.TestCase):
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 600)
 
-    def wait_for_gdb_child_process(
-        self, gdb_pid: int, command: str
-    ) -> psutil.Process:
+    def wait_for_gdb_child_process(self, gdb_pid: int, command: str) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
         timeout = 0.0
@@ -1263,9 +1195,7 @@ class T(unittest.TestCase):
         child = unittest.mock.MagicMock(spec=psutil.Process)
         child.status.side_effect = ["tracing-stop", "sleeping"]
         child.cmdline.return_value = [self.TEST_EXECUTABLE] + self.TEST_ARGS
-        with unittest.mock.patch(
-            "psutil.Process", spec=psutil.Process
-        ) as process_mock:
+        with unittest.mock.patch("psutil.Process", spec=psutil.Process) as process_mock:
             process_mock.return_value.children.side_effect = [
                 [],
                 [child],  # child not started (tracing-stop)
@@ -1277,9 +1207,7 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_child_process_timeout(
-        self, sleep_mock, process_mock
-    ):
+    def test_wait_for_gdb_child_process_timeout(self, sleep_mock, process_mock):
         """Test wait_for_gdb_child_process() helper runs into timeout."""
         process_mock.return_value.children.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:

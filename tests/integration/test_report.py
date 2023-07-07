@@ -45,8 +45,7 @@ class T(unittest.TestCase):
             elapsed_time += 0.1
 
         self.fail(
-            f"/proc/{pid}/cmdline not readable within"
-            f" {int(elapsed_time)} seconds."
+            f"/proc/{pid}/cmdline not readable within" f" {int(elapsed_time)} seconds."
         )
 
     @unittest.mock.patch("time.sleep")
@@ -128,9 +127,9 @@ class T(unittest.TestCase):
         pr.add_proc_info()
         self.assertEqual(pr.pid, os.getpid())
         self.assertTrue(
-            set(
-                ["ProcEnviron", "ProcMaps", "ProcCmdline", "ProcMaps"]
-            ).issubset(set(pr.keys())),
+            set(["ProcEnviron", "ProcMaps", "ProcCmdline", "ProcMaps"]).issubset(
+                set(pr.keys())
+            ),
             "report has required fields",
         )
         if "LANG" in os.environ:
@@ -141,8 +140,7 @@ class T(unittest.TestCase):
         self.assertNotIn("PWD", pr["ProcEnviron"])
         self.assertRegex(pr["ExecutablePath"], r".*\.py$")
         self.assertEqual(
-            int(pr["ExecutableTimestamp"]),
-            int(os.stat(pr["ExecutablePath"]).st_mtime),
+            int(pr["ExecutableTimestamp"]), int(os.stat(pr["ExecutablePath"]).st_mtime)
         )
 
         # check with one additional safe environment variable
@@ -159,17 +157,13 @@ class T(unittest.TestCase):
             os.setresuid(8, 8, -1)
             restore_root = True
         pr = apport.report.Report()
-        self.assertRaises(
-            ValueError, pr.add_proc_info, 1
-        )  # EPERM for init process
+        self.assertRaises(ValueError, pr.add_proc_info, 1)  # EPERM for init process
         if restore_root:
             os.setresuid(0, 0, -1)
 
         self.assertEqual(pr.pid, 1)
         self.assertIn("Pid:\t1", pr["ProcStatus"])
-        self.assertTrue(
-            pr["ProcEnviron"].startswith("Error:"), pr["ProcEnviron"]
-        )
+        self.assertTrue(pr["ProcEnviron"].startswith("Error:"), pr["ProcEnviron"])
         self.assertNotIn("InterpreterPath", pr)
 
         # check escaping of ProcCmdline
@@ -184,18 +178,14 @@ class T(unittest.TestCase):
             pr.add_proc_info(pid=cat.pid)
             self.assertEqual(pr.pid, cat.pid)
             cat.communicate(b"\n")
-        self.assertEqual(
-            pr["ProcCmdline"], "cat /foo\\ bar \\\\h \\\\\\ \\\\ -"
-        )
+        self.assertEqual(pr["ProcCmdline"], "cat /foo\\ bar \\\\h \\\\\\ \\\\ -")
         self.assertEqual(pr["ExecutablePath"], "/usr/bin/cat")
         self.assertNotIn("InterpreterPath", pr)
         self.assertIn("/bin/cat", pr["ProcMaps"])
         self.assertIn("[stack]", pr["ProcMaps"])
 
         # check correct handling of executable symlinks
-        assert os.path.islink(
-            "/bin/sh"
-        ), "/bin/sh needs to be a symlink for this test"
+        assert os.path.islink("/bin/sh"), "/bin/sh needs to be a symlink for this test"
         with subprocess.Popen(["sh"], stdin=subprocess.PIPE) as shell:
             self.wait_for_proc_cmdline(shell.pid)
             pr = apport.report.Report()
@@ -210,9 +200,7 @@ class T(unittest.TestCase):
         )
 
         # check correct handling of interpreted executables: shell
-        with subprocess.Popen(
-            ["zgrep", "foo"], stdin=subprocess.PIPE
-        ) as zgrep:
+        with subprocess.Popen(["zgrep", "foo"], stdin=subprocess.PIPE) as zgrep:
             self.wait_for_proc_cmdline(zgrep.pid)
             pr = apport.report.Report()
             pr.add_proc_info(pid=zgrep.pid)
@@ -220,12 +208,10 @@ class T(unittest.TestCase):
         self.assertTrue(pr["ExecutablePath"].endswith("bin/zgrep"))
         with open(pr["ExecutablePath"], encoding="utf-8") as fd:
             self.assertEqual(
-                pr["InterpreterPath"],
-                os.path.realpath(fd.readline().strip()[2:]),
+                pr["InterpreterPath"], os.path.realpath(fd.readline().strip()[2:])
             )
         self.assertEqual(
-            int(pr["ExecutableTimestamp"]),
-            int(os.stat(pr["ExecutablePath"]).st_mtime),
+            int(pr["ExecutableTimestamp"]), int(os.stat(pr["ExecutablePath"]).st_mtime)
         )
         self.assertIn("[stack]", pr["ProcMaps"])
 
@@ -552,8 +538,7 @@ class T(unittest.TestCase):
         finally:
             sys.argv = orig_argv
         self.assertTrue(
-            pr["ExecutablePath"].endswith("unittest/__main__.py"),
-            pr["ExecutablePath"],
+            pr["ExecutablePath"].endswith("unittest/__main__.py"), pr["ExecutablePath"]
         )
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/python")
         self.assertNotIn("UnreportableReason", pr)
@@ -571,9 +556,7 @@ class T(unittest.TestCase):
             "\0/var/log/nanny.log\0-y\0/usr/share/nanny/daemon/nanny.tap"
         )
         pr._check_interpreted()
-        self.assertEqual(
-            pr["ExecutablePath"], "/usr/share/nanny/daemon/nanny.tap"
-        )
+        self.assertEqual(pr["ExecutablePath"], "/usr/share/nanny/daemon/nanny.tap")
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/twistd")
 
         # LP#625039
@@ -601,8 +584,7 @@ class T(unittest.TestCase):
         )
         pr._check_interpreted()
         self.assertEqual(
-            pr["ExecutablePath"],
-            "/usr/share/vodafone-mobile-connect/gtk-tap.py",
+            pr["ExecutablePath"], "/usr/share/vodafone-mobile-connect/gtk-tap.py"
         )
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/twistd")
 
@@ -658,9 +640,7 @@ int main() { return f(42); }
                 fd.write(code)
             try:
                 subprocess.run(
-                    ["gcc"]
-                    + extra_gcc_args
-                    + ["-g", "crash.c", "-o", "crash"],
+                    ["gcc"] + extra_gcc_args + ["-g", "crash.c", "-o", "crash"],
                     check=True,
                 )
             except FileNotFoundError as error:
@@ -709,9 +689,7 @@ int main() { return f(42); }
             time.sleep(0.5)
             count += 1
         assert os.path.exists(core_path)
-        subprocess.run(
-            ["readelf", "-n", core_path], check=True, stdout=subprocess.PIPE
-        )
+        subprocess.run(["readelf", "-n", core_path], check=True, stdout=subprocess.PIPE)
 
     def _validate_gdb_fields(self, pr):
         self.assertIn("Stacktrace", pr)
@@ -790,8 +768,7 @@ int main() { return f(42); }
         self.assertNotIn("Stacktrace", pr)
         self.assertNotIn("StacktraceTop", pr)
         self.assertIn(
-            "not a core dump: file format not recognized",
-            pr["UnreportableReason"],
+            "not a core dump: file format not recognized", pr["UnreportableReason"]
         )
 
     def test_add_gdb_info_short_core_file(self):
@@ -811,9 +788,7 @@ int main() { return f(42); }
 
         self.assertNotIn("Stacktrace", pr)
         self.assertNotIn("StacktraceTop", pr)
-        self.assertTrue(
-            pr["UnreportableReason"].startswith("Invalid core dump")
-        )
+        self.assertTrue(pr["UnreportableReason"].startswith("Invalid core dump"))
 
     @unittest.mock.patch("gzip.GzipFile.read")
     def test_add_gdb_info_damaged_gz_core(self, mock_gzread):
@@ -828,8 +803,7 @@ int main() { return f(42); }
         with open(core, "rb") as f:
             pr["CoreDump"] = problem_report.CompressedValue(f.read())
         mock_gzread.side_effect = EOFError(
-            "Compressed file ended before the "
-            "end-of-stream marker was reached"
+            "Compressed file ended before the end-of-stream marker was reached"
         )
         self.assertRaises(EOFError, pr.add_gdb_info)
         self.assertTrue(mock_gzread.called)
@@ -867,23 +841,18 @@ int main() { return f(42); }
                 pr.load(f)
         pr.add_hooks_info()
         self.assertIn(
-            'Skipped: missing required field "Architecture"',
-            pr["SegvAnalysis"],
+            'Skipped: missing required field "Architecture"', pr["SegvAnalysis"]
         )
 
         pr.add_os_info()
         pr.add_hooks_info()
-        self.assertIn(
-            'Skipped: missing required field "ProcMaps"', pr["SegvAnalysis"]
-        )
+        self.assertIn('Skipped: missing required field "ProcMaps"', pr["SegvAnalysis"])
 
         pr.add_proc_info()
         pr.add_hooks_info()
         if pr["Architecture"] in ["amd64", "i386"]:
             # data/general-hooks/parse_segv.py only runs for x86 and x86_64
-            self.assertIn(
-                "not located in a known VMA region", pr["SegvAnalysis"]
-            )
+            self.assertIn("not located in a known VMA region", pr["SegvAnalysis"])
 
     def test_add_gdb_info_script(self):
         """add_gdb_info() with a script."""
@@ -956,16 +925,11 @@ int main() { return f(42); }
         )
         self._validate_gdb_fields(pr)
         self.assertIn(
-            "crash.c:2: main: Assertion `1 < 0' failed.",
-            pr["AssertionMessage"],
+            "crash.c:2: main: Assertion `1 < 0' failed.", pr["AssertionMessage"]
         )
-        self.assertFalse(
-            pr["AssertionMessage"].startswith("$"), pr["AssertionMessage"]
-        )
+        self.assertFalse(pr["AssertionMessage"].startswith("$"), pr["AssertionMessage"])
         self.assertNotIn("= 0x", pr["AssertionMessage"])
-        self.assertFalse(
-            pr["AssertionMessage"].endswith("\\n"), pr["AssertionMessage"]
-        )
+        self.assertFalse(pr["AssertionMessage"].endswith("\\n"), pr["AssertionMessage"])
 
         # abort with internal error
         pr = self._generate_sigsegv_report(
@@ -984,16 +948,11 @@ int main() { return f(42); }
         )
         self._validate_gdb_fields(pr)
         self.assertIn(
-            "** buffer overflow detected ***: terminated",
-            pr["AssertionMessage"],
+            "** buffer overflow detected ***: terminated", pr["AssertionMessage"]
         )
-        self.assertFalse(
-            pr["AssertionMessage"].startswith("$"), pr["AssertionMessage"]
-        )
+        self.assertFalse(pr["AssertionMessage"].startswith("$"), pr["AssertionMessage"])
         self.assertNotIn("= 0x", pr["AssertionMessage"])
-        self.assertFalse(
-            pr["AssertionMessage"].endswith("\\n"), pr["AssertionMessage"]
-        )
+        self.assertFalse(pr["AssertionMessage"].endswith("\\n"), pr["AssertionMessage"])
 
         # abort without assertion
         pr = self._generate_sigsegv_report(
@@ -1090,9 +1049,7 @@ int main() { return f(42); }
             os.unlink("core")
 
         self._validate_gdb_fields(pr)
-        self.assertIn(
-            "Assertion failed in main: 1 < 0", pr["AssertionMessage"]
-        )
+        self.assertIn("Assertion failed in main: 1 < 0", pr["AssertionMessage"])
 
     def test_search_bug_patterns(self):
         # TODO: Split into separate test cases
@@ -1163,13 +1120,11 @@ int main() { return f(42); }
 
             # positive match cases
             self.assertEqual(
-                r_bash.search_bug_patterns(pattern_url),
-                "http://bugtracker.net/bugs/1",
+                r_bash.search_bug_patterns(pattern_url), "http://bugtracker.net/bugs/1"
             )
             r_bash["Foo"] = "write_goodbye"
             self.assertEqual(
-                r_bash.search_bug_patterns(pattern_url),
-                "http://bugtracker.net/bugs/2",
+                r_bash.search_bug_patterns(pattern_url), "http://bugtracker.net/bugs/2"
             )
             self.assertEqual(
                 r_coreutils.search_bug_patterns(pattern_url),
@@ -1186,9 +1141,7 @@ int main() { return f(42); }
 
             # also works for CompressedValues
             r_bash_compressed = r_bash.copy()
-            r_bash_compressed["Foo"] = problem_report.CompressedValue(
-                b"bazaar"
-            )
+            r_bash_compressed["Foo"] = problem_report.CompressedValue(b"bazaar")
             self.assertEqual(
                 r_bash_compressed.search_bug_patterns(pattern_url),
                 "http://bugtracker.net/bugs/1",
@@ -1534,9 +1487,7 @@ int main() { return f(42); }
             )
             os.makedirs(opt_hook_dir)
             with open(
-                os.path.join(opt_hook_dir, "source_foo.py"),
-                "w",
-                encoding="utf-8",
+                os.path.join(opt_hook_dir, "source_foo.py"), "w", encoding="utf-8"
             ) as fd:
                 fd.write(
                     textwrap.dedent(
@@ -1648,17 +1599,11 @@ int main() { return f(42); }
         """mark_ignore() and check_ignored()."""
         orig_ignore_file = apport.report.apport.report._ignore_file
         workdir = tempfile.mkdtemp()
-        apport.report.apport.report._ignore_file = os.path.join(
-            workdir, "ignore.xml"
-        )
+        apport.report.apport.report._ignore_file = os.path.join(workdir, "ignore.xml")
         try:
-            with open(
-                os.path.join(workdir, "bash"), "w", encoding="utf-8"
-            ) as fd:
+            with open(os.path.join(workdir, "bash"), "w", encoding="utf-8") as fd:
                 fd.write("bash")
-            with open(
-                os.path.join(workdir, "crap"), "w", encoding="utf-8"
-            ) as fd:
+            with open(os.path.join(workdir, "crap"), "w", encoding="utf-8") as fd:
                 fd.write("crap")
 
             bash_rep = apport.report.Report()
@@ -1688,9 +1633,7 @@ int main() { return f(42); }
 
             # poke crap so that it has a newer timestamp
             time.sleep(1)
-            with open(
-                os.path.join(workdir, "crap"), "w", encoding="utf-8"
-            ) as fd:
+            with open(os.path.join(workdir, "crap"), "w", encoding="utf-8") as fd:
                 fd.write("crapnew")
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), False)
@@ -1741,9 +1684,7 @@ int main() { return f(42); }
 
             # no ignores on nonmatching paths
             with open(
-                os.path.join(apport.report._DENYLIST_DIR, "bl1"),
-                "w",
-                encoding="utf-8",
+                os.path.join(apport.report._DENYLIST_DIR, "bl1"), "w", encoding="utf-8"
             ) as fd:
                 fd.write("/bin/bas\n/bin/bashh\nbash\nbin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1751,9 +1692,7 @@ int main() { return f(42); }
 
             # ignore crap now
             with open(
-                os.path.join(apport.report._DENYLIST_DIR, "bl_2"),
-                "w",
-                encoding="utf-8",
+                os.path.join(apport.report._DENYLIST_DIR, "bl_2"), "w", encoding="utf-8"
             ) as fd:
                 fd.write("/bin/crap\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1761,9 +1700,7 @@ int main() { return f(42); }
 
             # ignore bash now
             with open(
-                os.path.join(apport.report._DENYLIST_DIR, "bl1"),
-                "a",
-                encoding="utf-8",
+                os.path.join(apport.report._DENYLIST_DIR, "bl1"), "a", encoding="utf-8"
             ) as fd:
                 fd.write("/bin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
@@ -1799,9 +1736,7 @@ int main() { return f(42); }
 
             # accepts matching paths
             with open(
-                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"),
-                "w",
-                encoding="utf-8",
+                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"), "w", encoding="utf-8"
             ) as fd:
                 fd.write("/bin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), False)
@@ -1819,9 +1754,7 @@ int main() { return f(42); }
 
             # only complete matches accepted
             with open(
-                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"),
-                "w",
-                encoding="utf-8",
+                os.path.join(apport.report._ALLOWLIST_DIR, "wl1"), "w", encoding="utf-8"
             ) as fd:
                 fd.write("/bin/bas\n/bin/bashh\nbash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
@@ -1841,9 +1774,7 @@ int main() { return f(42); }
         self.assertEqual(report.obsolete_packages(), ["bash"])
         report["Package"] = "bash 0 [modified: /bin/bash]"
         self.assertEqual(report.obsolete_packages(), ["bash"])
-        report["Package"] = "bash " + apport.packaging.get_available_version(
-            "bash"
-        )
+        report["Package"] = "bash " + apport.packaging.get_available_version("bash")
         self.assertEqual(report.obsolete_packages(), [])
 
         report["Dependencies"] = "coreutils 0\ncron 0\n"
@@ -1869,9 +1800,7 @@ int main() { return f(42); }
         pr = apport.report.Report()
         pr.add_proc_info()
         self.assertEqual(pr._address_to_offset(0), None)
-        res = pr._address_to_offset(
-            int(pr["ProcMaps"].split("-", 1)[0], 16) + 5
-        )
+        res = pr._address_to_offset(int(pr["ProcMaps"].split("-", 1)[0], 16) + 5)
         self.assertEqual(res.split("+", 1)[1], "5")
         self.assertIn("python", res.split("+", 1)[0])
 
@@ -1929,9 +1858,7 @@ int main() { return f(42); }
         self.assertIn("GCONV_PATH", out)
 
     def test_command_output_timeout(self):
-        with self.assertRaisesRegex(
-            OSError, "timed out after 0.1 seconds: fail$"
-        ):
+        with self.assertRaisesRegex(OSError, "timed out after 0.1 seconds: fail$"):
             apport.report._command_output(
                 ["sh", "-c", "echo fail; sleep 3600"], timeout=0.1
             )

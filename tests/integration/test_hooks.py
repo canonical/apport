@@ -67,9 +67,7 @@ class T(unittest.TestCase):
             env=self.env,
             input=b"something is wrong",
         )
-        self.assertEqual(
-            ph.returncode, 0, "package_hook finished successfully"
-        )
+        self.assertEqual(ph.returncode, 0, "package_hook finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
@@ -79,9 +77,7 @@ class T(unittest.TestCase):
             r.load(f)
 
         self.assertEqual(r["ProblemType"], "Package")
-        self.assertEqual(
-            r["Package"], f"bash {apport.packaging.get_version('bash')}"
-        )
+        self.assertEqual(r["Package"], f"bash {apport.packaging.get_version('bash')}")
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
     def test_package_hook_uninstalled(self):
@@ -93,9 +89,7 @@ class T(unittest.TestCase):
             env=self.env,
             input=b"something is wrong",
         )
-        self.assertEqual(
-            ph.returncode, 0, "package_hook finished successfully"
-        )
+        self.assertEqual(ph.returncode, 0, "package_hook finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
@@ -110,19 +104,13 @@ class T(unittest.TestCase):
 
     def test_package_hook_logs(self):
         """package_hook with a log dir and a log file."""
-        with open(
-            os.path.join(self.workdir, "log_1.log"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.workdir, "log_1.log"), "w", encoding="utf-8") as f:
             f.write("Log 1\nbla")
-        with open(
-            os.path.join(self.workdir, "log2"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.workdir, "log2"), "w", encoding="utf-8") as f:
             f.write("Yet\nanother\nlog")
         os.mkdir(os.path.join(self.workdir, "logsub"))
         with open(
-            os.path.join(self.workdir, "logsub", "notme.log"),
-            "w",
-            encoding="utf-8",
+            os.path.join(self.workdir, "logsub", "notme.log"), "w", encoding="utf-8"
         ) as f:
             f.write("not me!")
 
@@ -140,9 +128,7 @@ class T(unittest.TestCase):
             env=self.env,
             input=b"something is wrong",
         )
-        self.assertEqual(
-            ph.returncode, 0, "package_hook finished successfully"
-        )
+        self.assertEqual(ph.returncode, 0, "package_hook finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
@@ -181,12 +167,8 @@ class T(unittest.TestCase):
             "-t",
             "verybad,dist-upgrade",
         ]
-        ph = subprocess.run(
-            cmd, check=False, env=self.env, input=b"something is wrong"
-        )
-        self.assertEqual(
-            ph.returncode, 0, "package_hook finished successfully"
-        )
+        ph = subprocess.run(cmd, check=False, env=self.env, input=b"something is wrong")
+        self.assertEqual(ph.returncode, 0, "package_hook finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "package_hook created a report")
@@ -199,9 +181,7 @@ class T(unittest.TestCase):
 
     def test_kernel_crashdump_kexec(self):
         """kernel_crashdump using kexec-tools."""
-        with open(
-            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
-        ) as vmcore:
+        with open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb") as vmcore:
             vmcore.write(b"\x01" * 100)
         with open(
             os.path.join(apport.fileutils.report_dir, "vmcore.log"),
@@ -246,9 +226,7 @@ class T(unittest.TestCase):
 
     def test_kernel_crashdump_kdump(self):
         """kernel_crashdump using kdump-tools."""
-        timedir = datetime.datetime.strftime(
-            datetime.datetime.now(), "%Y%m%d%H%M"
-        )
+        timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
@@ -298,19 +276,13 @@ class T(unittest.TestCase):
         We must only accept plain files, otherwise vmcore.log might be a
         symlink to the .crash file, which would recursively fill itself.
         """
-        with open(
-            os.path.join(apport.fileutils.report_dir, "vmcore"), "wb"
-        ) as vmcore:
+        with open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb") as vmcore:
             vmcore.write(b"\x01" * 100)
-        os.symlink(
-            "vmcore", os.path.join(apport.fileutils.report_dir, "vmcore.log")
-        )
+        os.symlink("vmcore", os.path.join(apport.fileutils.report_dir, "vmcore.log"))
 
         self.assertNotEqual(
             subprocess.call(
-                self.data_dir / "kernel_crashdump",
-                env=self.env,
-                stderr=subprocess.PIPE,
+                self.data_dir / "kernel_crashdump", env=self.env, stderr=subprocess.PIPE
             ),
             0,
             "kernel_crashdump unexpectedly succeeded",
@@ -320,9 +292,7 @@ class T(unittest.TestCase):
 
     def test_kernel_crashdump_kdump_log_symlink(self):
         """Attempt DoS with dmesg symlink with kdump-tools."""
-        timedir = datetime.datetime.strftime(
-            datetime.datetime.now(), "%Y%m%d%H%M"
-        )
+        timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(vmcore_dir)
 
@@ -331,9 +301,7 @@ class T(unittest.TestCase):
 
         self.assertNotEqual(
             subprocess.call(
-                self.data_dir / "kernel_crashdump",
-                env=self.env,
-                stderr=subprocess.PIPE,
+                self.data_dir / "kernel_crashdump", env=self.env, stderr=subprocess.PIPE
             ),
             0,
             "kernel_crashdump unexpectedly succeeded",
@@ -343,9 +311,7 @@ class T(unittest.TestCase):
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_kernel_crashdump_kdump_log_dir_symlink(self):
         """Attempted DoS with dmesg dir symlink with kdump-tools."""
-        timedir = datetime.datetime.strftime(
-            datetime.datetime.now(), "%Y%m%d%H%M"
-        )
+        timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
         os.mkdir(f"{vmcore_dir}.real")
         # pretend that a user tries information disclosure by pre-creating a
@@ -359,9 +325,7 @@ class T(unittest.TestCase):
 
         self.assertNotEqual(
             subprocess.call(
-                self.data_dir / "kernel_crashdump",
-                env=self.env,
-                stderr=subprocess.PIPE,
+                self.data_dir / "kernel_crashdump", env=self.env, stderr=subprocess.PIPE
             ),
             0,
             "kernel_crashdump unexpectedly succeeded",
@@ -373,10 +337,7 @@ class T(unittest.TestCase):
         as a tuple."""
         try:
             gcc = subprocess.run(
-                ["gcc", "--version"],
-                check=True,
-                stdout=subprocess.PIPE,
-                text=True,
+                ["gcc", "--version"], check=True, stdout=subprocess.PIPE, text=True
             )
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
@@ -390,9 +351,7 @@ class T(unittest.TestCase):
             gcc_ver = ver_fields[0]
             gcc_path = f"/usr/bin/gcc-{gcc_ver}"
 
-        subprocess.run(
-            [gcc_path, "--version"], check=True, stdout=subprocess.PIPE
-        )
+        subprocess.run([gcc_path, "--version"], check=True, stdout=subprocess.PIPE)
 
         return (gcc_ver, gcc_path)
 
@@ -407,11 +366,7 @@ class T(unittest.TestCase):
 
             self.assertEqual(
                 subprocess.call(
-                    [
-                        self.data_dir / "gcc_ice_hook",
-                        gcc_path,
-                        test_source.name,
-                    ],
+                    [self.data_dir / "gcc_ice_hook", gcc_path, test_source.name],
                     env=self.env,
                 ),
                 0,
@@ -426,9 +381,7 @@ class T(unittest.TestCase):
                 r.load(f)
             self.assertEqual(r["ProblemType"], "Crash")
             self.assertEqual(r["ExecutablePath"], gcc_path)
-            self.assertEqual(
-                r["PreprocessedSource"], test_source.read().decode()
-            )
+            self.assertEqual(r["PreprocessedSource"], test_source.read().decode())
 
             r.add_package_info()
 
@@ -447,11 +400,7 @@ class T(unittest.TestCase):
 
             self.assertEqual(
                 subprocess.call(
-                    [
-                        self.data_dir / "gcc_ice_hook",
-                        gcc_path,
-                        test_source.name,
-                    ],
+                    [self.data_dir / "gcc_ice_hook", gcc_path, test_source.name],
                     env=self.env,
                 ),
                 0,
@@ -478,9 +427,7 @@ class T(unittest.TestCase):
             env=self.env,
             input=test_source.encode(),
         )
-        self.assertEqual(
-            hook.returncode, 0, "gcc_ice_hook finished successfully"
-        )
+        self.assertEqual(hook.returncode, 0, "gcc_ice_hook finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "gcc_ice_hook created a report")
@@ -515,9 +462,7 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4\
             env=self.env,
             input=test_source.encode(),
         )
-        self.assertEqual(
-            hook.returncode, 0, "kernel_oops finished successfully"
-        )
+        self.assertEqual(hook.returncode, 0, "kernel_oops finished successfully")
 
         reps = apport.fileutils.get_new_reports()
         self.assertEqual(len(reps), 1, "kernel_oops created a report")

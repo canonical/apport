@@ -34,7 +34,7 @@ fi
 if type pycodestyle >/dev/null 2>&1; then
     echo "Running pycodestyle..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle --max-line-length=79 -r --ignore=E203,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+    pycodestyle --max-line-length=88 -r --ignore=E203,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 else
     echo "Skipping pycodestyle tests, pycodestyle is not installed"
 fi

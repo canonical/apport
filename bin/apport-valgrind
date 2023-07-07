@@ -78,8 +78,7 @@ def parse_options():
         "--verbose",
         action="store_true",
         help=_(
-            "report download/install progress when installing packages "
-            "into sandbox"
+            "report download/install progress when installing packages into sandbox"
         ),
     )
     parser.add_argument(
@@ -128,9 +127,7 @@ try:
     exepath = shutil.which(options.exe)
     exepath = os.path.abspath(exepath)
     if not exepath:
-        sys.stderr.write(
-            _("Error: %s is not an executable. Stopping.") % options.exe
-        )
+        sys.stderr.write(_("Error: %s is not an executable. Stopping.") % options.exe)
         sys.stderr.write("\n")
         sys.exit(1)
 except (KeyboardInterrupt, SystemExit):

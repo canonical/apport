@@ -63,9 +63,7 @@ else:
                 apport.fatal("%s has unsafe permissions, ignoring", timedir)
             report_name = f"{package}-{timestamp}.crash"
             try:
-                crash_report = os.path.join(
-                    apport.fileutils.report_dir, report_name
-                )
+                crash_report = os.path.join(apport.fileutils.report_dir, report_name)
                 dmesg_fd = os.open(dmesg_file, os.O_RDONLY | os.O_NOFOLLOW)
                 pr["VmCoreDmesg"] = (os.fdopen(dmesg_fd, "rb"),)
                 with open(crash_report, "xb") as f:

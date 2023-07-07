@@ -86,12 +86,9 @@ def main(argv=None):
             return 0
 
         nowtime = datetime.datetime.now()
-        pr_filename = (
-            f"/var/crash/susres.{str(nowtime).replace(' ', '_')}.crash"
-        )
+        pr_filename = f"/var/crash/susres.{str(nowtime).replace(' ', '_')}.crash"
         with os.fdopen(
-            os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),
-            "wb",
+            os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), "wb"
         ) as report_file:
             report.write(report_file)
         return 0

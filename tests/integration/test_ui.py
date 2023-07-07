@@ -29,11 +29,7 @@ import apport.ui
 import problem_report
 from apport.ui import _, run_as_real_user
 from tests.helper import pidof, skip_if_command_is_missing
-from tests.paths import (
-    local_test_environment,
-    patch_data_dir,
-    restore_data_dir,
-)
+from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
 logind_session = apport.Report.get_logind_session(os.getpid())
@@ -184,8 +180,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
 
 
 @unittest.mock.patch(
-    "apport.hookutils._root_command_prefix",
-    unittest.mock.MagicMock(return_value=[]),
+    "apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[])
 )
 class T(unittest.TestCase):
     # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -214,9 +209,7 @@ class T(unittest.TestCase):
         apport.ui.symptom_script_dir = os.path.join(self.workdir, "symptoms")
         os.mkdir(apport.ui.symptom_script_dir)
         self.orig_ignore_file = apport.report._ignore_file
-        apport.report._ignore_file = os.path.join(
-            self.workdir, "apport-ignore.xml"
-        )
+        apport.report._ignore_file = os.path.join(self.workdir, "apport-ignore.xml")
         os.mknod(apport.report._ignore_file)
 
         self.ui = UserInterfaceMock()
@@ -227,9 +220,7 @@ class T(unittest.TestCase):
         self.report["Package"] = "libfoo1 1-1"
         self.report["SourcePackage"] = "foo"
         self.report["Foo"] = "A" * 1000
-        self.report["CoreDump"] = problem_report.CompressedValue(
-            b"\x01" * 100000
-        )
+        self.report["CoreDump"] = problem_report.CompressedValue(b"\x01" * 100000)
 
         # write demo report into temporary file
         # closed in tearDown, pylint: disable=consider-using-with
@@ -289,9 +280,7 @@ class T(unittest.TestCase):
         if not exename:
             exename = self.TEST_EXECUTABLE
 
-        with subprocess.Popen(
-            [exename] + self.TEST_ARGS, env=env
-        ) as test_process:
+        with subprocess.Popen([exename] + self.TEST_ARGS, env=env) as test_process:
             # give the execv() some time to finish
             time.sleep(0.5)
             yield test_process.pid
@@ -359,8 +348,7 @@ class T(unittest.TestCase):
         self.assertEqual(set(self.ui.report.keys()), set(self.report.keys()))
         self.assertEqual(self.ui.report["Package"], self.report["Package"])
         self.assertEqual(
-            self.ui.report["CoreDump"].get_value(),
-            self.report["CoreDump"].get_value(),
+            self.ui.report["CoreDump"].get_value(), self.report["CoreDump"].get_value()
         )
         self.assertEqual(self.ui.msg_title, None)
 
@@ -444,9 +432,7 @@ class T(unittest.TestCase):
         # add some tuple values, for robustness testing (might be added by
         # apport hooks)
         self.ui.report["Fstab"] = ("/etc/fstab", True)
-        self.ui.report["CompressedValue"] = problem_report.CompressedValue(
-            b"Test"
-        )
+        self.ui.report["CompressedValue"] = problem_report.CompressedValue(b"Test")
         self.ui.collect_info()
         self.assertTrue(
             set(
@@ -483,14 +469,10 @@ class T(unittest.TestCase):
             # wait for ui_pulse_info_collection_progress() call
             while self.ui.ic_progress_pulses == progress_pulses:
                 time.sleep(0.01)
-            return apport.report.Report.search_bug_patterns(
-                self.ui.report, url
-            )
+            return apport.report.Report.search_bug_patterns(self.ui.report, url)
 
         with unittest.mock.patch.object(
-            self.ui.report,
-            "search_bug_patterns",
-            side_effect=search_bug_patterns,
+            self.ui.report, "search_bug_patterns", side_effect=search_bug_patterns
         ) as search_bug_patterns_mock:
             self.ui.collect_info()
 
@@ -546,9 +528,7 @@ class T(unittest.TestCase):
 
     def test_collect_info_crashdb_spec(self):
         """collect_info() with package hook that defines a CrashDB"""
-        self._write_crashdb_config_hook(
-            "{ 'impl': 'memory', 'local_opt': '1' }", "Moo"
-        )
+        self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt': '1' }", "Moo")
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
@@ -570,9 +550,7 @@ class T(unittest.TestCase):
     def test_collect_info_crashdb_errors(self):
         """collect_info() with package hook setting a broken CrashDB field"""
         # nonexisting implementation
-        self._write_crashdb_config_hook(
-            "{ 'impl': 'nonexisting', 'local_opt': '1' }"
-        )
+        self._write_crashdb_config_hook("{ 'impl': 'nonexisting', 'local_opt': '1' }")
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
         self.ui.collect_info()
@@ -695,17 +673,11 @@ class T(unittest.TestCase):
         """file_report() fails with HTTPError."""
         self.ui = UserInterfaceMock()
         self.ui.report = self.report
-        with unittest.mock.patch.object(
-            self.ui.crashdb, "upload"
-        ) as upload_mock:
+        with unittest.mock.patch.object(self.ui.crashdb, "upload") as upload_mock:
             # False positive for hdrs in urllib.error.HTTPError
             # See https://github.com/python/typeshed/issues/10092
             upload_mock.side_effect = urllib.error.HTTPError(
-                "https://example.com/",
-                502,
-                "Bad Gateway",
-                {},  # type: ignore
-                fp=None,
+                "https://example.com/", 502, "Bad Gateway", {}, fp=None  # type: ignore
             )
             self.ui.file_report()
         self.assertEqual(self.ui.msg_severity, "error")
@@ -758,9 +730,7 @@ class T(unittest.TestCase):
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcMaps", self.ui.report)
-        self.assertEqual(
-            self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE
-        )
+        self.assertEqual(self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertNotIn("ProcCmdline", self.ui.report)  # privacy!
         self.assertIn("ProcEnviron", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
@@ -913,10 +883,7 @@ class T(unittest.TestCase):
             ) as gdb:
                 timeout = 10.0
                 while timeout > 0:
-                    pids = (
-                        pidof(self.TEST_EXECUTABLE)
-                        - self.running_test_executables
-                    )
+                    pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
                     if pids:
                         pid = pids.pop()
                         break
@@ -924,9 +891,7 @@ class T(unittest.TestCase):
                     timeout -= 0.01
                 else:
                     gdb.kill()
-                    self.fail(
-                        f"{self.TEST_EXECUTABLE} not started within 10 seconds"
-                    )
+                    self.fail(f"{self.TEST_EXECUTABLE} not started within 10 seconds")
 
                 # generate crash report
                 r = apport.Report()
@@ -991,8 +956,7 @@ class T(unittest.TestCase):
         self.assertTrue(len(self.ui.report["CoreDump"]) > 10000)
         self.assertTrue(
             self.ui.report["Title"].startswith(
-                f"{os.path.basename(self.TEST_EXECUTABLE)}"
-                f" crashed with SIGSEGV"
+                f"{os.path.basename(self.TEST_EXECUTABLE)}" f" crashed with SIGSEGV"
             )
         )
 
@@ -1060,12 +1024,8 @@ class T(unittest.TestCase):
         self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.hookutils.attach_conffiles", unittest.mock.MagicMock())
     def test_run_crash_argv_file(self):
         """run_crash() through a file specified on the command line"""
         # valid
@@ -1084,9 +1044,7 @@ class T(unittest.TestCase):
 
         # unreportable
         self.report["Package"] = "bash"
-        self.report["UnreportableReason"] = b"It stinks. \xe2\x99\xa5".decode(
-            "UTF-8"
-        )
+        self.report["UnreportableReason"] = b"It stinks. \xe2\x99\xa5".decode("UTF-8")
         self.update_report_file()
 
         argv = ["ui-test", "-c", self.report_file.name]
@@ -1095,9 +1053,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertIn(
-            "It stinks.",
-            self.ui.msg_text,
-            f"{self.ui.msg_title}: {self.ui.msg_text}",
+            "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
@@ -1107,9 +1063,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     def test_run_crash_unreportable(self):
         """run_crash() on a crash with the UnreportableReason field"""
         self.report["UnreportableReason"] = "It stinks."
@@ -1121,23 +1075,18 @@ class T(unittest.TestCase):
         self.ui.run_crash(self.report_file.name)
 
         self.assertIn(
-            "It stinks.",
-            self.ui.msg_text,
-            f"{self.ui.msg_title}: {self.ui.msg_text}",
+            "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
-    @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     def test_run_crash_malicious_crashdb(self):
         """run_crash() on a crash with malicious CrashDB"""
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
-        self.report["CrashDB"] = (
-            "{'impl': 'memory',"
-            " 'crash_config': open('/tmp/pwned', 'w').close()}"
-        )
+        self.report[
+            "CrashDB"
+        ] = "{'impl': 'memory', 'crash_config': open('/tmp/pwned', 'w').close()}"
         self.update_report_file()
         self.ui.present_details_response = apport.ui.Action(report=True)
 
@@ -1146,21 +1095,15 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists("/tmp/pwned"))
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
-    @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     def test_run_crash_malicious_package(self):
         """Package: path traversal"""
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
-            bad_hook.write(
-                b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
-            )
+            bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
             bad_hook.flush()
 
             self.report["ExecutablePath"] = "/bin/bash"
-            self.report["Package"] = (
-                "../" * 20 + os.path.splitext(bad_hook.name)[0]
-            )
+            self.report["Package"] = "../" * 20 + os.path.splitext(bad_hook.name)[0]
             self.update_report_file()
             self.ui.present_details_response = apport.ui.Action(report=True)
 
@@ -1173,18 +1116,14 @@ class T(unittest.TestCase):
         """ExecutablePath: path traversal"""
         hook_dir = "/tmp/share/apport/package-hooks"
         os.makedirs(hook_dir, exist_ok=True)
-        with tempfile.NamedTemporaryFile(
-            dir=hook_dir, suffix=".py"
-        ) as bad_hook:
-            bad_hook.write(
-                b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()"
-            )
+        with tempfile.NamedTemporaryFile(dir=hook_dir, suffix=".py") as bad_hook:
+            bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
             bad_hook.flush()
 
             self.report["ExecutablePath"] = f"/opt/../{hook_dir}"
-            self.report["Package"] = os.path.splitext(bad_hook.name)[
-                0
-            ].replace(hook_dir, "")
+            self.report["Package"] = os.path.splitext(bad_hook.name)[0].replace(
+                hook_dir, ""
+            )
             self.update_report_file()
             self.ui.present_details_response = apport.ui.Action(report=True)
 
@@ -1223,9 +1162,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "error")
         self.assertIn(
-            "memory",
-            self.ui.msg_text,
-            f"{self.ui.msg_title}: {self.ui.msg_text}",
+            "memory", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
 
     def test_run_crash_preretraced(self):
@@ -1330,9 +1267,7 @@ class T(unittest.TestCase):
         r = apport.Report()
         r["ExecutablePath"] = "/bin/nonexisting"
         r["InterpreterPath"] = "/usr/bin/python"
-        r[
-            "Traceback"
-        ] = "ZeroDivisionError: integer division or modulo by zero"
+        r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
 
         self.ui.run_crash(report_file)
 
@@ -1343,9 +1278,7 @@ class T(unittest.TestCase):
         r = apport.Report()
         r["ExecutablePath"] = "/bin/sh"
         r["InterpreterPath"] = "/usr/bin/nonexisting"
-        r[
-            "Traceback"
-        ] = "ZeroDivisionError: integer division or modulo by zero"
+        r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
 
         self.ui.run_crash(report_file)
 
@@ -1370,9 +1303,7 @@ class T(unittest.TestCase):
             f"{self.ui.msg_title}: {self.ui.msg_text}",
         )
         self.assertIn(
-            "changed",
-            self.ui.msg_text,
-            f"{self.ui.msg_title}: {self.ui.msg_text}",
+            "changed", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
@@ -1435,9 +1366,7 @@ class T(unittest.TestCase):
 
         # set up hook
         with open(
-            os.path.join(self.hookdir, f"source_{src_pkg}.py"),
-            "w",
-            encoding="utf-8",
+            os.path.join(self.hookdir, f"source_{src_pkg}.py"), "w", encoding="utf-8"
         ) as hook:
             hook.write(
                 textwrap.dedent(
@@ -1510,9 +1439,7 @@ class T(unittest.TestCase):
     def test_run_crash_anonymity(self):
         """run_crash() anonymization"""
         r = self._gen_test_crash()
-        utf8_val = (
-            b"\xc3\xa4 " + os.uname()[1].encode("UTF-8") + b" \xe2\x99\xa5 "
-        )
+        utf8_val = b"\xc3\xa4 " + os.uname()[1].encode("UTF-8") + b" \xe2\x99\xa5 "
         r["ProcUnicodeValue"] = utf8_val.decode("UTF-8")
         r["ProcByteArrayValue"] = utf8_val
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -1562,19 +1489,16 @@ class T(unittest.TestCase):
                 #1  0x10000001 in main () at crash.c:40
                 """
             )
-            self["ProcMaps"] = (
-                "10000000-DEADBEF0 r-xp 00000000 08:02 100000"
-                "           /bin/crash\n"
-            )
+            self[
+                "ProcMaps"
+            ] = "10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash\n"
             assert self.crash_signature_addresses() is not None
 
         try:
             r = self._gen_test_crash()
             apport.report.Report.add_gdb_info = fake_add_gdb_info
             r["ProcAuxInfo"] = "my 0xDEADBEEF"
-            report_file = os.path.join(
-                apport.fileutils.report_dir, "test.crash"
-            )
+            report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
             with open(report_file, "wb") as f:
                 r.write(f)
 
@@ -1606,9 +1530,7 @@ class T(unittest.TestCase):
             r["ProcInfo1"] = "my ed"
             r["ProcInfo2"] = '"ed.localnet"'
             r["ProcInfo3"] = "education"
-            report_file = os.path.join(
-                apport.fileutils.report_dir, "test.crash"
-            )
+            report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
             with open(report_file, "wb") as f:
                 r.write(f)
 
@@ -1619,15 +1541,12 @@ class T(unittest.TestCase):
 
             self.assertTrue(
                 self.ui.report["Title"].startswith(
-                    f"{os.path.basename(self.TEST_EXECUTABLE)}"
-                    f" crashed with SIGSEGV"
+                    f"{os.path.basename(self.TEST_EXECUTABLE)}" f" crashed with SIGSEGV"
                 ),
                 self.ui.report["Title"],
             )
             self.assertEqual(self.ui.report["ProcInfo1"], "my hostname")
-            self.assertEqual(
-                self.ui.report["ProcInfo2"], '"hostname.localnet"'
-            )
+            self.assertEqual(self.ui.report["ProcInfo2"], '"hostname.localnet"')
             self.assertEqual(self.ui.report["ProcInfo3"], "education")
         finally:
             os.uname = orig_uname
@@ -1651,9 +1570,7 @@ class T(unittest.TestCase):
             r["ProcInfo1"] = "That was Joe (Hacker and friends"
             r["ProcInfo2"] = "Call +1 234!"
             r["ProcInfo3"] = "(Hacker should stay"
-            report_file = os.path.join(
-                apport.fileutils.report_dir, "test.crash"
-            )
+            report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
             with open(report_file, "wb") as f:
                 r.write(f)
 
@@ -1666,9 +1583,7 @@ class T(unittest.TestCase):
                 self.ui.report["ProcInfo1"], "That was User Name and friends"
             )
             self.assertEqual(self.ui.report["ProcInfo2"], "Call User Name!")
-            self.assertEqual(
-                self.ui.report["ProcInfo3"], "(Hacker should stay"
-            )
+            self.assertEqual(self.ui.report["ProcInfo3"], "(Hacker should stay")
         finally:
             pwd.getpwuid = orig_getpwuid
             os.getuid = orig_getuid
@@ -1733,25 +1648,20 @@ class T(unittest.TestCase):
         cur_date = r["Date"]
         r["Tag"] = "cur"
         self.assertEqual(r["_LogindSession"], logind_session[0])
-        with open(
-            os.path.join(apport.fileutils.report_dir, "cur.crash"), "wb"
-        ) as f:
+        with open(os.path.join(apport.fileutils.report_dir, "cur.crash"), "wb") as f:
             r.write(f)
 
         # old crash report
         r["Date"] = time.asctime(time.localtime(logind_session[1] - 1))
         r["Tag"] = "old"
-        with open(
-            os.path.join(apport.fileutils.report_dir, "old.crash"), "wb"
-        ) as f:
+        with open(os.path.join(apport.fileutils.report_dir, "old.crash"), "wb") as f:
             r.write(f)
 
         # old crash report without session
         del r["_LogindSession"]
         r["Tag"] = "oldnosession"
         with open(
-            os.path.join(apport.fileutils.report_dir, "oldnosession.crash"),
-            "wb",
+            os.path.join(apport.fileutils.report_dir, "oldnosession.crash"), "wb"
         ) as f:
             r.write(f)
         del r
@@ -1879,9 +1789,7 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
-            os.path.join(self.hookdir, f"source_{source_pkg}.py"),
-            "w",
-            encoding="utf-8",
+            os.path.join(self.hookdir, f"source_{source_pkg}.py"), "w", encoding="utf-8"
         ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
@@ -1892,9 +1800,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
-        self.assertEqual(
-            self.ui.report["Package"], f"{source_pkg} (not installed)"
-        )
+        self.assertEqual(self.ui.report["Package"], f"{source_pkg} (not installed)")
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
 
@@ -2031,9 +1937,7 @@ class T(unittest.TestCase):
             ),
         )
 
-    @unittest.mock.patch(
-        "apport.hookutils.attach_conffiles", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch("apport.hookutils.attach_conffiles", unittest.mock.MagicMock())
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_run_symptom(self, stderr_mock):
         # TODO: Split into separate test cases
@@ -2047,9 +1951,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "error")
 
         # does not determine package
-        self._write_symptom_script(
-            "nopkg.py", "def run(report, ui):\n    pass\n"
-        )
+        self._write_symptom_script("nopkg.py", "def run(report, ui):\n    pass\n")
         self.ui = UserInterfaceMock(["ui-test", "-s", "nopkg"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -2057,9 +1959,7 @@ class T(unittest.TestCase):
         self.assertIn("did not determine the affected package", err)
 
         # does not define run()
-        self._write_symptom_script(
-            "norun.py", "def something(x, y):\n    return 1\n"
-        )
+        self._write_symptom_script("norun.py", "def something(x, y):\n    return 1\n")
         self.ui = UserInterfaceMock(["ui-test", "-s", "norun"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -2067,9 +1967,7 @@ class T(unittest.TestCase):
         self.assertIn("norun.py crashed:", err)
 
         # crashing script
-        self._write_symptom_script(
-            "crash.py", "def run(report, ui):\n    return 1/0\n"
-        )
+        self._write_symptom_script("crash.py", "def run(report, ui):\n    return 1/0\n")
         self.ui = UserInterfaceMock(["ui-test", "-s", "crash"])
         stderr_mock.truncate(0)
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -2160,8 +2058,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertIn("kind of problem", self.ui.msg_text)
         self.assertEqual(
-            set(self.ui.msg_choices),
-            set(["bar", "foo does not work", "Other problem"]),
+            set(self.ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
         )
 
         # cancelled
@@ -2530,9 +2427,7 @@ class T(unittest.TestCase):
         )
 
         # mutually exclusive options
-        self.assertRaises(
-            SystemExit, _chk, ["-c", "/tmp/foo.report", "-u", "1234"], {}
-        )
+        self.assertRaises(SystemExit, _chk, ["-c", "/tmp/foo.report", "-u", "1234"], {})
 
     def test_can_examine_locally_crash(self):
         """can_examine_locally() for a crash report"""
@@ -2546,8 +2441,7 @@ class T(unittest.TestCase):
             self.assertEqual(self.ui.can_examine_locally(), False)
 
             src_bindir = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                "bin",
+                os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
             )
             # this will only work for running the tests in the source tree
             if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
@@ -2717,9 +2611,7 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
     @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
-    @unittest.mock.patch.dict(
-        "os.environ", {"SUDO_UID": str(os.getuid())}, clear=True
-    )
+    @unittest.mock.patch.dict("os.environ", {"SUDO_UID": str(os.getuid())}, clear=True)
     def test_run_as_real_user(self) -> None:
         """Test run_as_real_user() with SUDO_UID set."""
         pwuid = pwd.getpwuid(int(os.environ["SUDO_UID"]))
@@ -2760,15 +2652,7 @@ class T(unittest.TestCase):
     ) -> None:
         """Test run_as_real_user() without no gvfsd process."""
         getpwuid_mock.return_value = pwd.struct_passwd(
-            (
-                "testuser",
-                "x",
-                1337,
-                42,
-                "Test user,,,",
-                "/home/testuser",
-                "/bin/bash",
-            )
+            ("testuser", "x", 1337, 42, "Test user,,,", "/home/testuser", "/bin/bash")
         )
         with unittest.mock.patch(
             "subprocess.run", side_effect=mock_run_calls_except_pgrep

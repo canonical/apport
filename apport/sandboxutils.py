@@ -38,9 +38,7 @@ def needed_packages(report):
         try:
             (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.logging.warning(
-                "invalid Package/Dependencies line: %s", line
-            )
+            apport.logging.warning("invalid Package/Dependencies line: %s", line)
             # invalid line, ignore
             continue
         pkgs[pkg] = version
@@ -59,9 +57,7 @@ def report_package_versions(report):
         try:
             (pkg, version) = line.split()[:2]
         except ValueError:
-            apport.logging.warning(
-                "invalid Package/Dependencies line: %s", line
-            )
+            apport.logging.warning("invalid Package/Dependencies line: %s", line)
             # invalid line, ignore
             continue
         pkg_vers[pkg] = version
@@ -69,9 +65,7 @@ def report_package_versions(report):
     return pkg_vers
 
 
-def needed_runtime_packages(
-    report, pkgmap_cache_dir, pkg_versions, verbose=False
-):
+def needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose=False):
     """Determine necessary runtime packages for given report.
 
     This determines libraries dynamically loaded at runtime in two cases:
@@ -99,9 +93,7 @@ def needed_runtime_packages(
                 libs.add(lib)
     else:
         # 'ProcMaps' key is absent in apport-valgrind use case
-        libs = apport.fileutils.shared_libraries(
-            report["ExecutablePath"]
-        ).values()
+        libs = apport.fileutils.shared_libraries(report["ExecutablePath"]).values()
     if not os.path.exists(pkgmap_cache_dir):
         os.makedirs(pkgmap_cache_dir)
 
@@ -223,9 +215,7 @@ def make_sandbox(
 
     origins = None
     if dynamic_origins:
-        pkg_list = (
-            f"{report.get('Package', '')}\n{report.get('Dependencies', '')}"
-        )
+        pkg_list = f"{report.get('Package', '')}\n{report.get('Dependencies', '')}"
         match = re.compile(r"\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]")
         origins = set(match.findall(pkg_list))
         if origins:
@@ -267,9 +257,7 @@ def make_sandbox(
             apport.logging.fatal("%s", str(error))
 
     pkg_versions = report_package_versions(report)
-    pkgs = needed_runtime_packages(
-        report, pkgmap_cache_dir, pkg_versions, verbose
-    )
+    pkgs = needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose)
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
@@ -292,8 +280,7 @@ def make_sandbox(
                     pkg = "systemd"
             if pkg:
                 apport.logging.log(
-                    f"Installing extra package {pkg} to get {path}",
-                    log_timestamps,
+                    f"Installing extra package {pkg} to get {path}", log_timestamps
                 )
                 pkgs.append((pkg, pkg_versions.get(pkg)))
             else:
@@ -324,16 +311,13 @@ def make_sandbox(
     # sandbox, and we call gdb/valgrind on the binary outside the sandbox.
     if "Package" in report:
         for path in ("InterpreterPath", "ExecutablePath"):
-            if path in report and not os.path.exists(
-                sandbox_dir + report[path]
-            ):
+            if path in report and not os.path.exists(sandbox_dir + report[path]):
                 if report[path].startswith("/usr"):
                     if os.path.exists(sandbox_dir + report[path][4:]):
                         report[path] = report[path][4:]
                     else:
                         apport.logging.fatal(
-                            "%s %s does not exist"
-                            " (report specified package %s)",
+                            "%s %s does not exist (report specified package %s)",
                             path,
                             sandbox_dir + report[path],
                             report["Package"],

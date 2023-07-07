@@ -79,9 +79,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         column = Gtk.TreeViewColumn("Report", Gtk.CellRendererText(), text=0)
         self.w("details_treeview").append_column(column)
-        self.spinner = self.add_spinner_over_treeview(
-            self.w("details_overlay")
-        )
+        self.spinner = self.add_spinner_over_treeview(self.w("details_overlay"))
 
         self.argv = argv
         self.md = None
@@ -165,10 +163,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                     v = v.decode("UTF-8", errors="replace")
                 self.tree_model.set_value(valiter, 0, v)
                 # expand the row if the value has less than 5 lines
-                if (
-                    len(list(filter(lambda c: c == "\n", self.report[key])))
-                    < 4
-                ):
+                if len(list(filter(lambda c: c == "\n", self.report[key]))) < 4:
                     self.w("details_treeview").expand_row(
                         self.tree_model.get_path(keyiter), False
                     )
@@ -314,13 +309,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 n = self.desktop_info["name"]
                 n = GLib.markup_escape_text(n)
                 if report_type == "RecoverableProblem":
-                    t = (
-                        _(
-                            "The application %s has experienced "
-                            "an internal error."
-                        )
-                        % n
-                    )
+                    t = _("The application %s has experienced an internal error.") % n
                 else:
                     t = _("The application %s has closed unexpectedly.") % n
                 self.w("title_label").set_label(f"<big><b>{t}</b></big>")
@@ -339,23 +328,15 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = "distributor-logo"
                 if report_type == "RecoverableProblem":
                     title_text = (
-                        _(
-                            "The application %s has experienced "
-                            "an internal error."
-                        )
+                        _("The application %s has experienced an internal error.")
                         % self.cur_package
                     )
                 else:
                     title_text = self.get_system_application_title()
-                self.w("title_label").set_label(
-                    f"<big><b>{title_text}</b></big>"
-                )
+                self.w("title_label").set_label(f"<big><b>{title_text}</b></big>")
                 self.w("subtitle_label").show()
                 self.w("subtitle_label").set_label(
-                    _(
-                        "If you notice further problems, "
-                        "try restarting the computer."
-                    )
+                    _("If you notice further problems, try restarting the computer.")
                 )
                 self.w("ignore_future_problems").set_label(
                     _("Ignore future problems of this type")
@@ -415,9 +396,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         d = self.w("dialog_crash_new")
         if "DistroRelease" in self.report:
             d.set_title(self.report["DistroRelease"].split()[0])
-        d.set_resizable(
-            self.w("details_scrolledwindow").get_property("visible")
-        )
+        d.set_resizable(self.w("details_scrolledwindow").get_property("visible"))
         d.show()
         # don't steal focus when being called without arguments (i. e.
         # automatically launched)
@@ -448,9 +427,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if self.w("ignore_future_problems").get_active():
                 return_value.ignore = True
 
-            return_value.remember = self.w(
-                "remember_send_report_choice"
-            ).get_active()
+            return_value.remember = self.w("remember_send_report_choice").get_active()
 
             if widget == self.w("continue_button"):
                 return_value.report = self.allowed_to_report
@@ -464,9 +441,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         Gtk.main()
         return return_value
 
-    def _ui_message_dialog(
-        self, title, text, _type, buttons=Gtk.ButtonsType.CLOSE
-    ):
+    def _ui_message_dialog(self, title, text, _type, buttons=Gtk.ButtonsType.CLOSE):
         self.md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if "http://" in text or "https://" in text:
             self.md.set_markup(text_to_markup(text))

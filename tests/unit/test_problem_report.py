@@ -91,9 +91,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertRaises(ValueError, pr.__setitem__, "a b", "1")
         self.assertRaises(TypeError, pr.__setitem__, "a", 1)
         self.assertRaises(TypeError, pr.__setitem__, "a", (1,))
-        self.assertRaises(
-            TypeError, pr.__setitem__, "a", ("/tmp/nonexistent", "")
-        )
+        self.assertRaises(TypeError, pr.__setitem__, "a", ("/tmp/nonexistent", ""))
         self.assertRaises(
             TypeError,
             pr.__setitem__,
@@ -364,9 +362,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.load(io.BytesIO(bin_report), binary="compressed")
         self.assertEqual(pr.has_removed_fields(), False)
         self.assertEqual(len(pr["File"]), 31)
-        self.assertEqual(
-            pr["File"].get_value(), b"AB" * 10 + b"\0" * 10 + b"Z"
-        )
+        self.assertEqual(pr["File"].get_value(), b"AB" * 10 + b"\0" * 10 + b"Z")
         out = io.BytesIO()
         pr["File"].write(out)
         out.seek(0)
@@ -444,9 +440,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["SimpleLineEnd"] = "bar\n"
         pr["TwoLine"] = "first\nsecond\n"
         pr["InlineMargin"] = "first\nsecond\nthird\nfourth\nfifth\n"
-        pr[
-            "Multiline"
-        ] = " foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n"
+        pr["Multiline"] = " foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n"
 
         # still small enough for inline text
         pr["Largeline"] = "A" * 999
@@ -517,9 +511,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(parts[3].get_content_type(), "text/plain")
         self.assertEqual(parts[3].get_content_charset(), "utf-8")
         self.assertEqual(parts[3].get_filename(), "Hugeline.txt")
-        self.assertEqual(
-            parts[3].get_payload(decode=True), pr["Hugeline"].encode()
-        )
+        self.assertEqual(parts[3].get_payload(decode=True), pr["Hugeline"].encode())
 
         # fifth part should be the Multiline: field as attachment
         self.assertTrue(not parts[4].is_multipart())
@@ -544,9 +536,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["Simple"] = "bar"
         pr["TwoLine"] = "first\nsecond\n"
         out = io.BytesIO()
-        pr.write_mime(
-            out, extra_headers={"Greeting": "hello world", "Foo": "Bar"}
-        )
+        pr.write_mime(out, extra_headers={"Greeting": "hello world", "Foo": "Bar"})
         out.seek(0)
 
         msg = email.message_from_binary_file(out)

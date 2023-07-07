@@ -95,9 +95,7 @@ class T(unittest.TestCase):
         )
         apport.report._ignore_file = os.environ["APPORT_IGNORE_FILE"]
 
-        os.environ["APPORT_LOCK_FILE"] = os.path.join(
-            self.workdir, "apport.lock"
-        )
+        os.environ["APPORT_LOCK_FILE"] = os.path.join(self.workdir, "apport.lock")
 
         # move aside current ignore file
         if os.path.exists(self.ifpath):
@@ -249,12 +247,9 @@ class T(unittest.TestCase):
         with open("/var/log/apport.log", encoding="utf-8") as logfile:
             apport_log = logfile.read().strip()
         reports = apport.fileutils.get_all_reports()
+        self.assertEqual(reports, [self.test_report], f"Apport log:\n{apport_log}")
         self.assertEqual(
-            reports, [self.test_report], f"Apport log:\n{apport_log}"
-        )
-        self.assertEqual(
-            reports[0],
-            f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash",
+            reports[0], f"/var/crash/{self.TEST_EXECUTABLE.replace('/', '_')}.0.crash"
         )
 
     def create_test_process(self, command=None, uid=None, args=None):

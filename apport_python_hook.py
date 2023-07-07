@@ -141,8 +141,7 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
             os.unlink(pr_filename)
 
         with os.fdopen(
-            os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640),
-            "wb",
+            os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), "wb"
         ) as report_file:
             report.write(report_file)
 
@@ -164,8 +163,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
 
     # determine D-BUS name
     match = re.search(
-        r"name\s+(\S+)\s+was not provided by any .service",
-        exc_obj.get_dbus_message(),
+        r"name\s+(\S+)\s+was not provided by any .service", exc_obj.get_dbus_message()
     )
     if not match:
         if sys.stderr:
@@ -186,10 +184,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
             if service.get("D-BUS Service", "Name") == dbus_name:
                 exe = service.get("D-BUS Service", "Exec")
                 running = (
-                    subprocess.call(
-                        ["pidof", "-sx", exe], stdout=subprocess.PIPE
-                    )
-                    == 0
+                    subprocess.call(["pidof", "-sx", exe], stdout=subprocess.PIPE) == 0
                 )
                 services.append((service_file, exe, running))
         except (NoSectionError, NoOptionError):

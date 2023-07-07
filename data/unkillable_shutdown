@@ -32,8 +32,7 @@ def parse_argv():
         action="append",
         default=[],
         dest="omit_pids",
-        help="Ignore a particular process ID"
-        " (can be specified multiple times)",
+        help="Ignore a particular process ID (can be specified multiple times)",
     )
     return parser.parse_args()
 
@@ -74,9 +73,7 @@ def orphaned_processes(omit_pids):
                 # kernel thread or similar, silently ignore
                 continue
             apport.warning(
-                "Could not read information about pid %s: %s",
-                process,
-                str(error),
+                "Could not read information about pid %s: %s", process, str(error)
             )
             continue
 
@@ -100,9 +97,7 @@ def do_report(pid, omit_pids):
             "Title"
         ] = f"{os.path.basename(report['ExecutablePath'])} {report['Title']}"
     report["Processes"] = apport.hookutils.command_output(["ps", "aux"])
-    report["InitctlList"] = apport.hookutils.command_output(
-        ["initctl", "list"]
-    )
+    report["InitctlList"] = apport.hookutils.command_output(["initctl", "list"])
     if omit_pids:
         report["OmitPids"] = " ".join(omit_pids)
 
@@ -110,9 +105,7 @@ def do_report(pid, omit_pids):
         with apport.fileutils.make_report_file(report) as report_file:
             report.write(report_file)
     except FileExistsError as error:
-        apport.warning(
-            "Cannot create report: %s already exists", error.filename
-        )
+        apport.warning("Cannot create report: %s already exists", error.filename)
     except OSError as error:
         apport.fatal("Cannot create report: %s", str(error))
 

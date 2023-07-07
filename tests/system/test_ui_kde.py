@@ -43,9 +43,7 @@ else:
     MainUserInterface = None
 
 
-@unittest.skipIf(
-    PYQT5_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}"
-)
+@unittest.skipIf(PYQT5_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}")
 class T(unittest.TestCase):
     COLLECTING_DIALOG = unittest.mock.call(
         str(apport_kde_path.parent),
@@ -383,9 +381,7 @@ class T(unittest.TestCase):
         self.assertFalse(self.app.dialog.closed_button.isVisible())
         self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
         self.assertTrue(
-            str(self.app.dialog.ignore_future_problems.text()).endswith(
-                "of this type"
-            )
+            str(self.app.dialog.ignore_future_problems.text()).endswith("of this type")
         )
 
     def test_apport_bug_package_layout(self):
@@ -407,8 +403,7 @@ class T(unittest.TestCase):
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
-            _("Send problem report to the developers?"),
+            self.app.dialog.heading.text(), _("Send problem report to the developers?")
         )
         self.assertFalse(self.app.dialog.text.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
@@ -499,12 +494,9 @@ class T(unittest.TestCase):
     @unittest.mock.patch.object(
         MainUserInterface, "open_url", unittest.mock.MagicMock()
     )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_1_crash_nodetails(self):
         """Crash report without showing details"""
@@ -517,9 +509,7 @@ class T(unittest.TestCase):
             QTimer.singleShot(1000, cont)  # pragma: no cover
 
         QTimer.singleShot(1000, cont)
-        with wrap_object(
-            apport_kde.ProgressDialog, "__init__"
-        ) as progress_dialog:
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
             self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
@@ -543,12 +533,9 @@ class T(unittest.TestCase):
     @unittest.mock.patch.object(
         MainUserInterface, "open_url", unittest.mock.MagicMock()
     )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_1_crash_details(self):
         """Crash report with showing details"""
@@ -576,9 +563,7 @@ class T(unittest.TestCase):
             QTimer.singleShot(200, cont)  # pragma: no cover
 
         QTimer.singleShot(200, show_details)
-        with wrap_object(
-            apport_kde.ProgressDialog, "__init__"
-        ) as progress_dialog:
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
             self.app.run_crash(self.app.report_file)
 
         # we should have reported one crash
@@ -600,12 +585,9 @@ class T(unittest.TestCase):
     @unittest.mock.patch.object(
         MainUserInterface, "open_url", unittest.mock.MagicMock()
     )
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
     @unittest.mock.patch(
-        "apport.report.Report.add_gdb_info", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report",
-        unittest.mock.MagicMock(return_value=True),
+        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
     )
     def test_1_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
@@ -619,9 +601,7 @@ class T(unittest.TestCase):
 
         QTimer.singleShot(1000, cont)
         self.app.crashdb.options["problem_types"] = ["bug"]
-        with wrap_object(
-            apport_kde.ProgressDialog, "__init__"
-        ) as progress_dialog:
+        with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
             self.app.run_crash(self.app.report_file)
 
         # we should not have reported the crash

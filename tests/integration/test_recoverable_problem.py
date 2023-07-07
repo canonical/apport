@@ -95,9 +95,7 @@ class TestRecoverableProblem(unittest.TestCase):
     def test_invalid_data(self):
         """recoverable_problem with invalid data"""
         self.assertRaises(
-            subprocess.CalledProcessError,
-            self.call_recoverable_problem,
-            "hello",
+            subprocess.CalledProcessError, self.call_recoverable_problem, "hello"
         )
 
         self.assertRaises(

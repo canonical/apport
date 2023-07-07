@@ -255,13 +255,9 @@ class ProblemReport(collections.UserDict):
                             for line in file:
                                 # continuation line
                                 if line.startswith(b" "):
-                                    assert (
-                                        key is not None and value is not None
-                                    )
+                                    assert key is not None and value is not None
                                     if b64_block[key]:
-                                        bd, line_value = self._decompress_line(
-                                            line, bd
-                                        )
+                                        bd, line_value = self._decompress_line(line, bd)
                                         if line_value:
                                             out.write(line_value)
                                 else:
@@ -273,9 +269,7 @@ class ProblemReport(collections.UserDict):
         if missing_keys:
             raise KeyError(f"Cannot find {', '.join(missing_keys)} in report")
         if False in b64_block.values():
-            items = [
-                item for item, element in b64_block.items() if element is False
-            ]
+            items = [item for item, element in b64_block.items() if element is False]
             raise ValueError(f"{items} has no binary content")
 
     def get_tags(self) -> set[str]:
@@ -322,9 +316,7 @@ class ProblemReport(collections.UserDict):
             if isinstance(value, CompressedValue):
                 # check gzip header; if absent, we have legacy zlib
                 # data
-                if value.gzipvalue == b"" and not block.startswith(
-                    GZIP_HEADER_START
-                ):
+                if value.gzipvalue == b"" and not block.startswith(GZIP_HEADER_START):
                     value.legacy_zlib = True
                 value.gzipvalue += block
             else:
@@ -332,9 +324,7 @@ class ProblemReport(collections.UserDict):
                 # skip gzip header, if present
                 if block.startswith(GZIP_HEADER_START):
                     decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
-                    value = decompressor.decompress(
-                        cls._strip_gzip_header(block)
-                    )
+                    value = decompressor.decompress(cls._strip_gzip_header(block))
                 else:
                     # legacy zlib-only format used default block
                     # size
@@ -464,8 +454,7 @@ class ProblemReport(collections.UserDict):
                 if len(v) >= 4 and v[3]:
                     if size == 0:
                         raise OSError(
-                            f"did not get any data"
-                            f" for field {k} from {str(v[0])}"
+                            f"did not get any data" f" for field {k} from {str(v[0])}"
                         )
 
             # flush compressor and write the rest
@@ -479,9 +468,7 @@ class ProblemReport(collections.UserDict):
                 file.write(base64.b64encode(block))
                 file.write(b"\n")
 
-    def _get_sorted_keys(
-        self, only_new: bool
-    ) -> typing.Tuple[list[str], list[str]]:
+    def _get_sorted_keys(self, only_new: bool) -> typing.Tuple[list[str], list[str]]:
         """Sort keys into ASCII non-ASCII/binary attachment ones, so that
         the base64 ones appear last in the report
         """
@@ -497,11 +484,7 @@ class ProblemReport(collections.UserDict):
                 else:
                     asckeys.append(k)
             else:
-                if (
-                    not isinstance(v, CompressedValue)
-                    and len(v) >= 2
-                    and not v[1]
-                ):
+                if not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]:
                     # force uncompressed
                     asckeys.append(k)
                 else:
@@ -671,9 +654,7 @@ class ProblemReport(collections.UserDict):
             if attach_value:
                 att = email.mime.base.MIMEBase("application", "x-gzip")
                 if k.endswith(".gz"):
-                    att.add_header(
-                        "Content-Disposition", "attachment", filename=k
-                    )
+                    att.add_header("Content-Disposition", "attachment", filename=k)
                 else:
                     att.add_header(
                         "Content-Disposition", "attachment", filename=k + ".gz"
@@ -704,9 +685,7 @@ class ProblemReport(collections.UserDict):
                     # too large, separate attachment
                     att = email.mime.text.MIMEText(v, _charset="UTF-8")
                     att.add_header(
-                        "Content-Disposition",
-                        "attachment",
-                        filename=k + ".txt",
+                        "Content-Disposition", "attachment", filename=k + ".txt"
                     )
                     attachments.append(att)
 
@@ -784,6 +763,4 @@ class ProblemReport(collections.UserDict):
     @staticmethod
     def _assert_bin_mode(file):
         """Assert that given file object is in binary mode."""
-        assert not hasattr(
-            file, "encoding"
-        ), "file stream must be in binary mode"
+        assert not hasattr(file, "encoding"), "file stream must be in binary mode"
