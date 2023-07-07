@@ -55,9 +55,7 @@ from apport.user_group import get_process_user_and_group
 __version__ = "2.26.1"
 
 
-symptom_script_dir = os.environ.get(
-    "APPORT_SYMPTOMS_DIR", "/usr/share/apport/symptoms"
-)
+symptom_script_dir = os.environ.get("APPORT_SYMPTOMS_DIR", "/usr/share/apport/symptoms")
 PF_KTHREAD = 0x200000
 
 
@@ -123,9 +121,7 @@ def _get_users_environ(uid: int) -> dict[str, str]:
     }
 
 
-def run_as_real_user(
-    args: list[str], *, get_user_env: bool = False, **kwargs
-) -> None:
+def run_as_real_user(args: list[str], *, get_user_env: bool = False, **kwargs) -> None:
     """Call subprocess.run as real user if called via sudo/pkexec.
 
     If we are called through pkexec/sudo, determine the real user ID and
@@ -174,12 +170,7 @@ def still_running(pid):
 
 
 def thread_collect_info(
-    report,
-    reportfile,
-    package,
-    ui,
-    symptom_script=None,
-    ignore_uninstalled=False,
+    report, reportfile, package, ui, symptom_script=None, ignore_uninstalled=False
 ):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-statements
@@ -216,9 +207,7 @@ def thread_collect_info(
                     symptom_script,
                 )
                 return
-            report["Symptom"] = os.path.splitext(
-                os.path.basename(symptom_script)
-            )[0]
+            report["Symptom"] = os.path.splitext(os.path.basename(symptom_script))[0]
         except StopIteration:
             sys.exit(0)
         except Exception:  # pylint: disable=broad-except
@@ -228,13 +217,10 @@ def thread_collect_info(
 
     if not package:
         if "ExecutablePath" in report:
-            package = apport.fileutils.find_file_package(
-                report["ExecutablePath"]
-            )
+            package = apport.fileutils.find_file_package(report["ExecutablePath"])
         else:
             raise KeyError(
-                "called without a package,"
-                " and report does not have ExecutablePath"
+                "called without a package, and report does not have ExecutablePath"
             )
 
     # check if the package name relates to an installed snap
@@ -403,12 +389,9 @@ class UserInterface:
         else:
             reports = apport.fileutils.get_new_reports()
             proc_pid_fd = os.open(
-                f"/proc/{os.getpid()}",
-                os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
+                f"/proc/{os.getpid()}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
             )
-            logind_session = apport.Report.get_logind_session(
-                proc_pid_fd=proc_pid_fd
-            )
+            logind_session = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
 
         for f in reports:
             if not self.load_report(f):
@@ -477,9 +460,7 @@ class UserInterface:
                 subject = os.path.basename(
                     self.report.get("ExecutablePath", _("unknown program"))
                 )
-                heading = (
-                    _('Sorry, the program "%s" closed unexpectedly') % subject
-                )
+                heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 footer = _(
                     "Your computer does not have enough free "
                     "memory to automatically analyze the problem "
@@ -559,9 +540,7 @@ class UserInterface:
                 )
                 sys.exit(1)
             elif error.errno == errno.EIO:
-                self.ui_error_message(
-                    _("Invalid problem report"), error.strerror
-                )
+                self.ui_error_message(_("Invalid problem report"), error.strerror)
                 sys.exit(1)
             raise
 
@@ -592,10 +571,7 @@ class UserInterface:
         if not self.args.pid:
             self.ui_error_message(
                 _("No PID specified"),
-                _(
-                    "You need to specify a PID."
-                    " See --help for more information."
-                ),
+                _("You need to specify a PID. See --help for more information."),
             )
             return False
 
@@ -604,8 +580,7 @@ class UserInterface:
         except ValueError as error:
             if str(error) == "invalid process":
                 self.ui_error_message(
-                    _("Invalid PID"),
-                    _("The specified process ID does not exist."),
+                    _("Invalid PID"), _("The specified process ID does not exist.")
                 )
                 sys.exit(1)
             elif str(error) == "not accessible":
@@ -619,9 +594,7 @@ class UserInterface:
         self.cur_package = apport.fileutils.find_file_package(path)
         self.report.add_os_info()
         allowed_to_report = apport.fileutils.allowed_to_report()
-        response = self.ui_present_report_details(
-            allowed_to_report, modal_for=pid
-        )
+        response = self.ui_present_report_details(allowed_to_report, modal_for=pid)
         if response.report:
             apport.fileutils.mark_hanging_process(self.report, pid)
             os.kill(int(pid), signal.SIGABRT)
@@ -683,8 +656,7 @@ class UserInterface:
         if self.args.pid:
             try:
                 proc_pid_fd = os.open(
-                    f"/proc/{self.args.pid}",
-                    os.O_RDONLY | os.O_PATH | os.O_DIRECTORY,
+                    f"/proc/{self.args.pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
                 with io.open(stat_file, encoding="utf-8") as f:
@@ -713,10 +685,7 @@ class UserInterface:
                     return False
                 self.ui_error_message(
                     _("Invalid PID"),
-                    _(
-                        "The specified process ID does not belong"
-                        " to a program."
-                    ),
+                    _("The specified process ID does not belong to a program."),
                 )
                 return False
         else:
@@ -737,10 +706,7 @@ class UserInterface:
                 if not self.cur_package:
                     self.ui_error_message(
                         _("Invalid problem report"),
-                        _(
-                            "Symptom script %s did not determine"
-                            " an affected package"
-                        )
+                        _("Symptom script %s did not determine an affected package")
                         % symptom_script,
                     )
                 else:
@@ -835,13 +801,10 @@ class UserInterface:
                 packaging.get_version(p)
             except ValueError:
                 if not os.path.exists(
-                    os.path.join(
-                        apport.report.PACKAGE_HOOK_DIR, f"source_{p}.py"
-                    )
+                    os.path.join(apport.report.PACKAGE_HOOK_DIR, f"source_{p}.py")
                 ):
                     print(
-                        f"Package {p} not installed and no hook available,"
-                        f" ignoring"
+                        f"Package {p} not installed and no hook available," f" ignoring"
                     )
                     continue
             self.collect_info(ignore_uninstalled=True)
@@ -849,8 +812,7 @@ class UserInterface:
 
         if not info_collected:
             self.ui_info_message(
-                _("Updating problem report"),
-                _("No additional information collected."),
+                _("Updating problem report"), _("No additional information collected.")
             )
             return False
 
@@ -867,8 +829,7 @@ class UserInterface:
 
         if len(self.report) == 0:
             self.ui_info_message(
-                _("Updating problem report"),
-                _("No additional information collected."),
+                _("Updating problem report"), _("No additional information collected.")
             )
             return False
 
@@ -915,9 +876,7 @@ class UserInterface:
                 )
                 continue
             symptom_names.append(os.path.splitext(os.path.basename(script))[0])
-            symptom_descriptions.append(
-                symb.get("description", symptom_names[-1])
-            )
+            symptom_descriptions.append(symb.get("description", symptom_names[-1]))
 
         if not symptom_names:
             return False
@@ -939,9 +898,7 @@ class UserInterface:
         if ch is not None:
             symptom = symptom_names[ch[0]]
             if symptom:
-                self.run_report_bug(
-                    os.path.join(symptom_script_dir, symptom + ".py")
-                )
+                self.run_report_bug(os.path.join(symptom_script_dir, symptom + ".py"))
             else:
                 return False
 
@@ -1023,10 +980,7 @@ class UserInterface:
                 except ValueError:
                     self.ui_error_message(
                         _("Cannot create report"),
-                        _(
-                            "xprop failed to determine"
-                            " process ID of the window"
-                        ),
+                        _("xprop failed to determine process ID of the window"),
                     )
                     return True
                 return self.run_report_bug()
@@ -1055,10 +1009,7 @@ class UserInterface:
             action="append",
             default=[],
             dest="tags",
-            help=_(
-                "Add an extra tag to the report."
-                " Can be specified multiple times."
-            ),
+            help=_("Add an extra tag to the report. Can be specified multiple times."),
         )
         parser.add_argument("update_report", metavar="report_number", type=int)
         args = parser.parse_args(argv[1:])
@@ -1124,9 +1075,7 @@ class UserInterface:
             type=int,
             dest="update_report",
             help=suppress
-            or _(
-                "Start in bug updating mode. Can take an optional --package."
-            ),
+            or _("Start in bug updating mode. Can take an optional --package."),
         )
         parser.add_argument(
             "-s",
@@ -1190,10 +1139,7 @@ class UserInterface:
             action="append",
             default=[],
             dest="tags",
-            help=_(
-                "Add an extra tag to the report."
-                " Can be specified multiple times."
-            ),
+            help=_("Add an extra tag to the report. Can be specified multiple times."),
         )
         parser.add_argument(
             "-v",
@@ -1368,8 +1314,7 @@ class UserInterface:
                 _("Run gdb session"),
                 _("Run gdb session without downloading debug symbols"),
                 # TRANSLATORS: %s contains the crash report file name
-                _("Update %s with fully symbolic stack trace")
-                % self.report_file,
+                _("Update %s with fully symbolic stack trace") % self.report_file,
             ],
             False,
         )
@@ -1421,8 +1366,7 @@ class UserInterface:
                     "-o",
                     "/com/ubuntu/WhoopsiePreferences",
                     "-m",
-                    "com.ubuntu.WhoopsiePreferences"
-                    ".SetAutomaticallyReportCrashes",
+                    "com.ubuntu.WhoopsiePreferences.SetAutomaticallyReportCrashes",
                     "true",
                 ]
             )
@@ -1465,9 +1409,7 @@ class UserInterface:
         else:
             # DB name
             try:
-                self.crashdb = apport.crashdb.get_crashdb(
-                    None, self.report["CrashDB"]
-                )
+                self.crashdb = apport.crashdb.get_crashdb(None, self.report["CrashDB"])
             except (ImportError, KeyError):
                 self.report["UnreportableReason"] = (
                     f"A package hook wants to send this report to the crash"
@@ -1498,11 +1440,9 @@ class UserInterface:
 
         # skip if we already ran (we might load a processed report)
         if (
-            self.report.get("ProblemType") == "Crash"
-            and "Stacktrace" in self.report
+            self.report.get("ProblemType") == "Crash" and "Stacktrace" in self.report
         ) or (
-            self.report.get("ProblemType") != "Crash"
-            and "Dependencies" in self.report
+            self.report.get("ProblemType") != "Crash" and "Dependencies" in self.report
         ):
             if on_finished:
                 on_finished()
@@ -1537,10 +1477,7 @@ class UserInterface:
                     return
 
         # check if binary changed since the crash happened
-        if (
-            "ExecutablePath" in self.report
-            and "ExecutableTimestamp" in self.report
-        ):
+        if "ExecutablePath" in self.report and "ExecutableTimestamp" in self.report:
             orig_time = int(self.report["ExecutableTimestamp"])
             del self.report["ExecutableTimestamp"]
             cur_time = int(os.stat(self.report["ExecutablePath"]).st_mtime)
@@ -1608,19 +1545,13 @@ class UserInterface:
                     icthread.exc_raise()
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken core dumps
-                    msg = _(
-                        "This problem report is damaged"
-                        " and cannot be processed."
-                    )
-                    self.report[
-                        "UnreportableReason"
-                    ] = f"{msg}\n\n{repr(error)}"
+                    msg = _("This problem report is damaged and cannot be processed.")
+                    self.report["UnreportableReason"] = f"{msg}\n\n{repr(error)}"
                     self.report["_MarkForUpload"] = "False"
                 except ValueError:  # package does not exist
                     if "UnreportableReason" not in self.report:
                         self.report["UnreportableReason"] = _(
-                            "This report is about a package"
-                            " that is not installed."
+                            "This report is about a package that is not installed."
                         )
                         self.report["_MarkForUpload"] = "False"
                 except Exception as error:  # pylint: disable=broad-except
@@ -1680,8 +1611,7 @@ class UserInterface:
             if (
                 "Snap" in self.report
                 and (
-                    "SnapSource" not in self.report
-                    and "SnapGitName" not in self.report
+                    "SnapSource" not in self.report and "SnapGitName" not in self.report
                 )
                 and "UnreportableReason" not in self.report
                 and self.specified_a_pkg
@@ -1700,10 +1630,7 @@ class UserInterface:
                     ) % (snap["name"], snap["developer"])
                 self.report["_MarkForUpload"] = "False"
 
-            if (
-                "UnreportableReason" in self.report
-                or not self.check_report_crashdb()
-            ):
+            if "UnreportableReason" in self.report or not self.check_report_crashdb():
                 self.ui_stop_info_collection_progress()
                 if on_finished:
                     on_finished()
@@ -1730,13 +1657,8 @@ class UserInterface:
                     bpthread.exc_raise()
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken gz values
-                    msg = _(
-                        "This problem report is damaged"
-                        " and cannot be processed."
-                    )
-                    self.report[
-                        "UnreportableReason"
-                    ] = f"{msg}\n\n{repr(error)}"
+                    msg = _("This problem report is damaged and cannot be processed.")
+                    self.report["UnreportableReason"] = f"{msg}\n\n{repr(error)}"
                 if bpthread.return_value():
                     self.report["_KnownReport"] = bpthread.return_value()
 
@@ -1762,9 +1684,7 @@ class UserInterface:
 
             # anonymize; needs to happen after duplicate checking, otherwise we
             # might damage the stack trace
-            anonymize_thread = apport.REThread.REThread(
-                target=self.report.anonymize
-            )
+            anonymize_thread = apport.REThread.REThread(target=self.report.anonymize)
             anonymize_thread.start()
             while anonymize_thread.is_alive():
                 self.ui_pulse_info_collection_progress()
@@ -1784,18 +1704,13 @@ class UserInterface:
                         and "Dependencies" not in self.report
                     )
                     or (
-                        not self.report.get("ProblemType", "").startswith(
-                            "Kernel"
-                        )
+                        not self.report.get("ProblemType", "").startswith("Kernel")
                         and "Package" not in self.report
                     )
                 ) and not self._is_snap():
                     self.ui_error_message(
                         _("Invalid problem report"),
-                        _(
-                            "Could not determine the package"
-                            " or source package name."
-                        ),
+                        _("Could not determine the package or source package name."),
                     )
                     # TODO This is not called consistently,
                     # is it really needed?
@@ -1856,9 +1771,7 @@ class UserInterface:
         if not self.crashdb.accepts(self.report):
             return
         # drop PackageArchitecture if equal to Architecture
-        if self.report.get("PackageArchitecture") == self.report.get(
-            "Architecture"
-        ):
+        if self.report.get("PackageArchitecture") == self.report.get("Architecture"):
             try:
                 del self.report["PackageArchitecture"]
             except KeyError:
@@ -1915,9 +1828,7 @@ class UserInterface:
                 "Cannot connect to crash database,"
                 " please check your Internet connection."
             )
-            self.ui_error_message(
-                _("Network problem"), f"{msg}\n\n{str(error)}"
-            )
+            self.ui_error_message(_("Network problem"), f"{msg}\n\n{str(error)}")
             return
 
         ticket = upthread.return_value()
@@ -2000,9 +1911,7 @@ class UserInterface:
 
         Return None if report cannot be associated to a .desktop file.
         """
-        if "DesktopFile" in self.report and os.path.exists(
-            self.report["DesktopFile"]
-        ):
+        if "DesktopFile" in self.report and os.path.exists(self.report["DesktopFile"]):
             desktop_file = self.report["DesktopFile"]
         else:
             try:
@@ -2019,9 +1928,7 @@ class UserInterface:
         try:
             cp.read(desktop_file, encoding="UTF-8")
         except configparser.Error as error:
-            sys.stderr.write(
-                f"Warning! {desktop_file} is broken: {str(error)}\n"
-            )
+            sys.stderr.write(f"Warning! {desktop_file} is broken: {str(error)}\n")
             return None
         if not cp.has_section("Desktop Entry"):
             return None
@@ -2058,10 +1965,7 @@ class UserInterface:
         else:
             self.ui_info_message(
                 _("Problem already known"),
-                _(
-                    "This problem was already reported to developers."
-                    " Thank you!"
-                ),
+                _("This problem was already reported to developers. Thank you!"),
             )
 
         return True
@@ -2087,21 +1991,15 @@ class UserInterface:
           the crashed application ('restart'), or ignore further crashes
           ('ignore').
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_info_message(self, title, text):
         """Show an information message box with given title and text."""
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_error_message(self, title, text):
         """Show an error message box with given title and text."""
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_start_info_collection_progress(self):
         """Open a indefinite progress bar for data collection.
@@ -2109,33 +2007,25 @@ class UserInterface:
         This tells the user to wait while debug information is being
         collected.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_pulse_info_collection_progress(self):
         """Advance the data collection progress bar.
 
         This function is called every 100 ms.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_stop_info_collection_progress(self):
         """Close debug data collection progress window."""
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_start_upload_progress(self):
         """Open progress bar for data upload.
 
         This tells the user to wait while debug information is being uploaded.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
         """Update data upload progress bar.
@@ -2145,15 +2035,11 @@ class UserInterface:
 
         This function is called every 100 ms.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_stop_upload_progress(self):
         """Close debug data upload progress window."""
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_shutdown(self):
         """Called right before terminating the program.
@@ -2166,9 +2052,7 @@ class UserInterface:
 
         Check if a terminal application is available and can be launched.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_run_terminal(self, command):
         """Run command in a terminal window.
@@ -2176,9 +2060,7 @@ class UserInterface:
         Run given command in a terminal window; raise an
         exception if terminal cannot be opened.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     #
     # Additional UI dialogs; these are not required by Apport itself, but can
@@ -2191,9 +2073,7 @@ class UserInterface:
         Return True if the user selected "Yes", False if selected "No" or
         "None" on cancel/dialog closing.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_question_choice(self, text, options, multiple):
         """Show an question with predefined choices.
@@ -2205,18 +2085,14 @@ class UserInterface:
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
     def ui_question_file(self, text):
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         """
-        raise NotImplementedError(
-            "this function must be overridden by subclasses"
-        )
+        raise NotImplementedError("this function must be overridden by subclasses")
 
 
 class HookUI:
@@ -2272,9 +2148,7 @@ class HookUI:
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         """
-        return self._trigger_ui_request(
-            "ui_question_choice", text, options, multiple
-        )
+        return self._trigger_ui_request("ui_question_choice", text, options, multiple)
 
     def file(self, text):
         """Show a file selector dialog.
@@ -2314,9 +2188,7 @@ class HookUI:
 
         assert not self._response_event.is_set()
         self._request_event.clear()
-        self._response = getattr(self.ui, self._request_fn)(
-            *self._request_args
-        )
+        self._response = getattr(self.ui, self._request_fn)(*self._request_args)
         self._response_event.set()
 
 

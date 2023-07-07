@@ -56,18 +56,14 @@ class TestJavaCrashes(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        self.assertNotEqual(
-            java.returncode, 0, "crash must exit with nonzero code"
-        )
+        self.assertNotEqual(java.returncode, 0, "crash must exit with nonzero code")
         self.assertIn("Can't catch this", java.stderr.decode())
 
         self._check_crash_report(str(crash_class))
 
     def test_crash_jar(self):
         """Crash in a .jar file."""
-        self.assertTrue(
-            self.crash_jar_path.exists(), f"{self.crash_jar_path} missing"
-        )
+        self.assertTrue(self.crash_jar_path.exists(), f"{self.crash_jar_path} missing")
         java = subprocess.run(
             [
                 "java",
@@ -80,9 +76,7 @@ class TestJavaCrashes(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        self.assertNotEqual(
-            java.returncode, 0, "crash must exit with nonzero code"
-        )
+        self.assertNotEqual(java.returncode, 0, "crash must exit with nonzero code")
         self.assertIn("Can't catch this", java.stderr.decode())
 
         self._check_crash_report(f"{self.crash_jar_path}!/crash.class")
@@ -95,9 +89,7 @@ class TestJavaCrashes(unittest.TestCase):
         with open(reports[0], "rb") as report_file:
             report.load(report_file)
         self.assertEqual(report["ProblemType"], "Crash")
-        self.assertTrue(
-            report["ProcCmdline"].startswith("java -classpath"), report
-        )
+        self.assertTrue(report["ProcCmdline"].startswith("java -classpath"), report)
         self.assertTrue(
             report["StackTrace"].startswith(
                 "java.lang.RuntimeException: Can't catch this"

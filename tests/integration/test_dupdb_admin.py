@@ -51,9 +51,7 @@ class TestDupdbAdmin(unittest.TestCase):
             stderr=subprocess.PIPE,
             text=True,
         )
-        self.assertEqual(
-            process.returncode, expected_returncode, process.stderr
-        )
+        self.assertEqual(process.returncode, expected_returncode, process.stderr)
         if process.returncode == 0:
             self.assertEqual(process.stderr, "")
         if expected_stdout is not None:
@@ -91,9 +89,7 @@ class TestDupdbAdmin(unittest.TestCase):
             " [open]",
             lines[0],
         )
-        self.assertIn(
-            "2: /usr/bin/broken:11:h:g:f:e:d [fixed in: 42]", lines[1]
-        )
+        self.assertIn("2: /usr/bin/broken:11:h:g:f:e:d [fixed in: 42]", lines[1])
 
     def test_changeid(self):
         self.assertEqual(self.crashes.check_duplicate(2), None)

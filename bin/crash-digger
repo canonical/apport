@@ -80,14 +80,11 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
             apport.log(
-                f"fill_pool: dup check pool now: {str(self.dupcheck_pool)}",
-                True,
+                f"fill_pool: dup check pool now: {str(self.dupcheck_pool)}", True
             )
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
-            apport.log(
-                f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True
-            )
+            apport.log(f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True)
 
     def retrace_next(self):
         """Grab an ID from the retrace pool and retrace it."""
@@ -102,9 +99,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         try:
             rel = self.crashdb.get_distro_release(crash_id)
         except ValueError:
-            apport.log(
-                "could not determine release -- no DistroRelease field?", True
-            )
+            apport.log("could not determine release -- no DistroRelease field?", True)
             self.crashdb.mark_retraced(crash_id)
             return
         if rel not in self.releases:
@@ -133,9 +128,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             argv.append("-v")
         argv.append(str(crash_id))
 
-        result = subprocess.call(
-            argv, stdout=sys.stdout, stderr=subprocess.STDOUT
-        )
+        result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
             apport.log(
                 f"retracing {'LP: ' if self.lp else ''}#{crash_id} failed"
@@ -169,14 +162,9 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             AssertionError,
             zlib.error,
         ) as error:
-            if (
-                str(error)
-                == "bug description must contain standard apport format data"
-            ):
+            if str(error) == "bug description must contain standard apport format data":
                 apport.log(f"Cannot download report: {str(error)}", True)
-                apport.error(
-                    "Cannot download report %s: %s", crash_id, str(error)
-                )
+                apport.error("Cannot download report %s: %s", crash_id, str(error))
                 return
             apport.log(f"Cannot download report: {str(error)}", True)
             apport.error("Cannot download report %i: %s", crash_id, str(error))
@@ -233,8 +221,7 @@ def parse_options():
         "-a",
         "--auth",
         dest="auth_file",
-        help="Path to a file with the crash database authentication"
-        " information.",
+        help="Path to a file with the crash database authentication information.",
     )
     parser.add_argument(
         "-l",

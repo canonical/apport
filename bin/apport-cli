@@ -105,8 +105,7 @@ class CLIDialog:
                 else:
                     multi_char = True
                 response = self.raw_input_char(
-                    _("Please choose (%s):") % ("/".join(self.keys)),
-                    multi_char,
+                    _("Please choose (%s):") % ("/".join(self.keys)), multi_char
                 )
                 try:
                     return self.keys.index(response.upper()) + 1
@@ -189,9 +188,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         report = self._get_details()
         try:
             apport.ui.run_as_real_user(
-                ["/usr/bin/sensible-pager"],
-                input=report.encode("UTF-8"),
-                stdout=stdout,
+                ["/usr/bin/sensible-pager"], input=report.encode("UTF-8"), stdout=stdout
             )
         except OSError as error:
             # ignore broken pipe (premature quit)
@@ -228,8 +225,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
 
         complete = dialog.addbutton(
-            _("&Send report (%s)")
-            % self.format_filesize(self.get_complete_size())
+            _("&Send report (%s)") % self.format_filesize(self.get_complete_size())
         )
 
         if self.can_examine_locally():
@@ -239,10 +235,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         view = dialog.addbutton(_("&View report"))
         save = dialog.addbutton(
-            _(
-                "&Keep report file for sending later"
-                " or copying to somewhere else"
-            )
+            _("&Keep report file for sending later or copying to somewhere else")
         )
         ignore = dialog.addbutton(
             _("Cancel and &ignore future crashes of this program version")
@@ -368,9 +361,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                     cur = ", ".join([str(r + 1) for r in result])
                 else:
                     cur = _("none")
-                response = dialog.run(
-                    _("Selected: %s. Multiple choices:") % cur
-                )
+                response = dialog.run(_("Selected: %s. Multiple choices:") % cur)
                 if response == cancel:
                     return None
                 if response == done:
@@ -420,9 +411,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
         text = f"{header}\n\n  {url}\n\n{footer}"
 
-        answer = self.ui_question_choice(
-            text, [_("Launch a browser now")], False
-        )
+        answer = self.ui_question_choice(text, [_("Launch a browser now")], False)
         if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
 

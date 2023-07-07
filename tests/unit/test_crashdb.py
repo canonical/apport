@@ -29,9 +29,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # indeed equal and exist
         assert self.crashes.download(
             3
-        ).crash_signature(), (
-            "test-suite internal check: Python crash sigs exist"
-        )
+        ).crash_signature(), "test-suite internal check: Python crash sigs exist"
         self.assertEqual(
             self.crashes.download(3).crash_signature(),
             self.crashes.download(4).crash_signature(),
@@ -86,9 +84,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
             db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
             self.assertEqual(db.options["dyn_option"], "4")
-            db = apport.crashdb.get_crashdb(
-                None, "on_thefly", crashdb_conf.name
-            )
+            db = apport.crashdb.get_crashdb(None, "on_thefly", crashdb_conf.name)
             self.assertNotIn("dyn_opion", db.options)
             self.assertEqual(db.options["whoami"], "dynname")
 
@@ -97,9 +93,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # by default crash DBs accept any type
         self.assertTrue(self.crashes.accepts(apport.report.Report("Crash")))
         self.assertTrue(self.crashes.accepts(apport.report.Report("Bug")))
-        self.assertTrue(
-            self.crashes.accepts(apport.report.Report("weirdtype"))
-        )
+        self.assertTrue(self.crashes.accepts(apport.report.Report("weirdtype")))
 
     def test_accepts_problem_types(self):
         """accepts(): problem_types option in crashdb.conf."""
@@ -169,9 +163,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         r["FooBar"] = "Bogus"
         r["StacktraceTop"] = "Fresh!"
 
-        self.crashes.update(
-            1, r, "muhaha", key_filter=["FooBar", "StacktraceTop"]
-        )
+        self.crashes.update(1, r, "muhaha", key_filter=["FooBar", "StacktraceTop"])
         self.assertEqual(self.crashes.reports[1]["comment"], "muhaha")
         self.assertEqual(self.crashes.download(1)["Package"], "libfoo1 1.2-4")
         self.assertEqual(self.crashes.download(1)["StacktraceTop"], "Fresh!")
@@ -223,8 +215,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.crashes.mark_regression(4, 3)
         self.assertEqual(
-            self.crashes.reports[4]["comment"],
-            "regression, already fixed in #3",
+            self.crashes.reports[4]["comment"], "regression, already fixed in #3"
         )
         self.assertEqual(self.crashes.duplicate_of(3), None)
         self.assertEqual(self.crashes.duplicate_of(4), None)
@@ -285,10 +276,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """check_duplicate() and known()"""
         # db not yet initialized
         self.assertRaises(
-            AssertionError,
-            self.crashes.check_duplicate,
-            0,
-            self.crashes.download(0),
+            AssertionError, self.crashes.check_duplicate, 0, self.crashes.download(0)
         )
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
 
@@ -350,14 +338,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.crashes.reports[3]["fixed_version"] = "4.1"
 
         # ID#4 is dup of ID#3, but happened in version 5 -> regression
-        self.crashes.close_duplicate(
-            self.crashes.download(4), 4, None
-        )  # reset
+        self.crashes.close_duplicate(self.crashes.download(4), 4, None)  # reset
         self.assertEqual(self.crashes.check_duplicate(4), None)
         self.assertEqual(self.crashes.duplicate_of(4), None)
         self.assertEqual(
-            self.crashes.reports[4]["comment"],
-            "regression, already fixed in #3",
+            self.crashes.reports[4]["comment"], "regression, already fixed in #3"
         )
 
         # check DB consistency; ID#4 is a regression, thus appears as the new
@@ -490,9 +475,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.crashes.init_duplicate_db(":memory:")
         self.assertEqual(self.crashes.check_duplicate(5), None)
 
-        self.assertEqual(
-            self.crashes.duplicate_db_dump(), {"Code42Blue": (5, None)}
-        )
+        self.assertEqual(self.crashes.duplicate_db_dump(), {"Code42Blue": (5, None)})
 
         # this one has a standard crash_signature
         self.assertEqual(self.crashes.check_duplicate(0), None)
@@ -523,8 +506,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # report from ID#1 is a dup of #0
         self.assertEqual(
-            self.crashes.check_duplicate(2, self.crashes.download(1)),
-            (0, None),
+            self.crashes.check_duplicate(2, self.crashes.download(1)), (0, None)
         )
 
     def test_check_duplicate_multiple_masters(self):
@@ -554,8 +536,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         s["Package"] = "bash 5"
         s.crash_signature = lambda: "/bin/bash:11:__getch:read:main"
         s.crash_signature_addresses = (
-            lambda: "/bin/bash:11:/lib/libc.so+BEEF:/lib/libc.so+123"
-            ":/bin/bash+DEAD"
+            lambda: "/bin/bash:11:/lib/libc.so+BEEF:/lib/libc.so+123" ":/bin/bash+DEAD"
         )
         self.assertEqual(
             self.crashes.get_comment_url(s, self.crashes.upload(s)),
@@ -591,8 +572,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # sig DB should only have a now
         self.assertEqual(
-            self.crashes.duplicate_db_dump(),
-            {"/bin/bash:11:read:main": (5, None)},
+            self.crashes.duplicate_db_dump(), {"/bin/bash:11:read:main": (5, None)}
         )
 
         # addr DB should have both possible patterns on a
@@ -643,9 +623,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         r_id = self.crashes.upload(r)
         self.assertEqual(self.crashes.check_duplicate(r_id), None)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(
-            self.crashes.known(r), self.crashes.get_comment_url(r, r_id)
-        )
+        self.assertEqual(self.crashes.known(r), self.crashes.get_comment_url(r, r_id))
 
         # another report with same address signature
         r2 = apport.report.Report()
@@ -669,15 +647,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             """
         )
 
-        self.assertEqual(
-            r.crash_signature_addresses(), r2.crash_signature_addresses()
-        )
+        self.assertEqual(r.crash_signature_addresses(), r2.crash_signature_addresses())
 
         # DB knows about this already
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(
-            self.crashes.known(r2), self.crashes.get_comment_url(r, r_id)
-        )
+        self.assertEqual(self.crashes.known(r2), self.crashes.get_comment_url(r, r_id))
 
         # if it gets uploaded anyway, duplicate it properly
         r2_id = self.crashes.upload(r2)
@@ -724,19 +698,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # now both r and r3 address sigs should be known as r_id
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(
-            self.crashes.known(r), self.crashes.get_comment_url(r, r_id)
-        )
-        self.assertEqual(
-            self.crashes.known(r3), self.crashes.get_comment_url(r3, r_id)
-        )
+        self.assertEqual(self.crashes.known(r), self.crashes.get_comment_url(r, r_id))
+        self.assertEqual(self.crashes.known(r3), self.crashes.get_comment_url(r3, r_id))
 
         # changing ID also works on address signatures
         self.crashes.duplicate_db_change_master_id(r_id, r3_id)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(
-            self.crashes.known(r), self.crashes.get_comment_url(r, r3_id)
-        )
+        self.assertEqual(self.crashes.known(r), self.crashes.get_comment_url(r, r3_id))
         self.assertEqual(
             self.crashes.known(r3), self.crashes.get_comment_url(r3, r3_id)
         )
@@ -767,12 +735,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.crashes.check_duplicate(1), None)
 
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(
-            self.crashes.known(symb), "http://foo.bugs.example.com/0"
-        )
-        self.assertEqual(
-            self.crashes.known(addr), "http://foo.bugs.example.com/1"
-        )
+        self.assertEqual(self.crashes.known(symb), "http://foo.bugs.example.com/0")
+        self.assertEqual(self.crashes.known(addr), "http://foo.bugs.example.com/1")
 
     def test_change_master_id(self):
         """duplicate_db_change_master_id()"""

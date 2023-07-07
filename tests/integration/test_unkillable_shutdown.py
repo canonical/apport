@@ -74,9 +74,7 @@ class TestUnkillableShutdown(unittest.TestCase):
                 queue.put(test_process.pid)
 
         queue: multiprocessing.Queue = multiprocessing.Queue()
-        runner = multiprocessing.Process(
-            target=_run_test_executable, args=(queue,)
-        )
+        runner = multiprocessing.Process(target=_run_test_executable, args=(queue,))
         runner.start()
         try:
             pid = queue.get(timeout=60)

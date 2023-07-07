@@ -73,8 +73,7 @@ class TestApportValgrind(unittest.TestCase):
         os.chdir(self.workdir)
         self.assertEqual(self._call(cmd), (0, "", ""))
         self.assertTrue(
-            os.path.exists("valgrind.log"),
-            msg="Expected valgrind.log file not found.",
+            os.path.exists("valgrind.log"), msg="Expected valgrind.log file not found."
         )
 
     def test_intentional_mem_leak_detection(self):
@@ -105,9 +104,7 @@ void makeleak(void){
         with open("memleak.c", "w", encoding="utf-8") as soure_file:
             soure_file.write(code)
         cmd = ["gcc", "-Wall", "-Werror", "-g", "memleak.c", "-o", "memleak"]
-        self.assertEqual(
-            subprocess.call(cmd), 0, "compiling memleak.c failed."
-        )
+        self.assertEqual(subprocess.call(cmd), 0, "compiling memleak.c failed.")
 
         self.assertTrue(os.path.exists("memleak"))
 
@@ -144,8 +141,7 @@ void makeleak(void){
         cmd = ["apport-valgrind", "--no-sandbox", "-l", logpath, exepath]
         self.assertEqual(self._call(cmd), (0, f"{os.getcwd()}\n", ""))
         self.assertTrue(
-            os.path.exists(logpath),
-            f"A log file {logpath} should exist but does not",
+            os.path.exists(logpath), f"A log file {logpath} should exist but does not"
         )
 
         with open(logpath, encoding="utf-8") as log_file:

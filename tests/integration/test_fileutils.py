@@ -46,9 +46,7 @@ class T(unittest.TestCase):
         os.chmod(r1, 0o600)
         os.chmod(r2, 0o600)
         if create_inaccessible:
-            ri = os.path.join(
-                apport.fileutils.report_dir, "inaccessible.crash"
-            )
+            ri = os.path.join(apport.fileutils.report_dir, "inaccessible.crash")
             with open(ri, "w", encoding="utf-8") as fd:
                 fd.write("inaccessible")
             os.chmod(ri, 0)
@@ -138,15 +136,9 @@ class T(unittest.TestCase):
 
     def test_find_file_package(self):
         """find_file_package()"""
-        self.assertEqual(
-            apport.fileutils.find_file_package("/bin/bash"), "bash"
-        )
-        self.assertEqual(
-            apport.fileutils.find_file_package("/bin/cat"), "coreutils"
-        )
-        self.assertEqual(
-            apport.fileutils.find_file_package("/nonexisting"), None
-        )
+        self.assertEqual(apport.fileutils.find_file_package("/bin/bash"), "bash")
+        self.assertEqual(apport.fileutils.find_file_package("/bin/cat"), "coreutils")
+        self.assertEqual(apport.fileutils.find_file_package("/nonexisting"), None)
 
     def test_seen(self):
         """get_new_reports() and seen_report()"""
@@ -154,11 +146,7 @@ class T(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [
-                r
-                for r in self._create_reports(True)
-                if "inaccessible" not in r
-            ]
+            tr = [r for r in self._create_reports(True) if "inaccessible" not in r]
         self.assertEqual(set(apport.fileutils.get_new_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -211,11 +199,7 @@ class T(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [
-                r
-                for r in self._create_reports(True)
-                if "inaccessible" not in r
-            ]
+            tr = [r for r in self._create_reports(True) if "inaccessible" not in r]
         self.assertEqual(set(apport.fileutils.get_all_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -230,35 +214,19 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
         if os.getuid() == 0:
             tr = self._create_reports(True)
-            self.assertEqual(
-                set(apport.fileutils.get_all_system_reports()), set(tr)
-            )
-            self.assertEqual(
-                set(apport.fileutils.get_new_system_reports()), set(tr)
-            )
+            self.assertEqual(set(apport.fileutils.get_all_system_reports()), set(tr))
+            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set(tr))
 
             # now mark them as seen and check again
             for r in tr:
                 apport.fileutils.mark_report_seen(r)
 
-            self.assertEqual(
-                set(apport.fileutils.get_all_system_reports()), set(tr)
-            )
-            self.assertEqual(
-                set(apport.fileutils.get_new_system_reports()), set([])
-            )
+            self.assertEqual(set(apport.fileutils.get_all_system_reports()), set(tr))
+            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
         else:
-            tr = [
-                r
-                for r in self._create_reports(True)
-                if "inaccessible" not in r
-            ]
-            self.assertEqual(
-                set(apport.fileutils.get_all_system_reports()), set([])
-            )
-            self.assertEqual(
-                set(apport.fileutils.get_new_system_reports()), set([])
-            )
+            tr = [r for r in self._create_reports(True) if "inaccessible" not in r]
+            self.assertEqual(set(apport.fileutils.get_all_system_reports()), set([]))
+            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
 
     @unittest.mock.patch.object(os, "stat")
     @unittest.mock.patch.object(pwd, "getpwuid")
@@ -313,8 +281,7 @@ class T(unittest.TestCase):
         with apport.fileutils.make_report_file(pr) as f:
             path = f.name
             self.assertTrue(
-                path.startswith(f"{apport.fileutils.report_dir}/_bin_bash"),
-                path,
+                path.startswith(f"{apport.fileutils.report_dir}/_bin_bash"), path
             )
 
         # file exists already, should fail now
@@ -368,30 +335,23 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         # nonexisting
         apport.fileutils._config_file = "/nonexisting"
         self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-        self.assertEqual(
-            apport.fileutils.get_config("main", "foo", "moo"), "moo"
-        )
+        self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
         apport.fileutils._get_config_parser.cache_clear()
 
         # empty
         with tempfile.NamedTemporaryFile() as f:
             apport.fileutils._config_file = f.name
             self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-            self.assertEqual(
-                apport.fileutils.get_config("main", "foo", "moo"), "moo"
-            )
+            self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
             apport.fileutils._get_config_parser.cache_clear()
 
             # nonempty
             f.write(
-                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n"
-                b"[spethial]\none= 99\n"
+                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n" b"[spethial]\none= 99\n"
             )
             f.flush()
             self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
-            self.assertEqual(
-                apport.fileutils.get_config("main", "foo", "moo"), "moo"
-            )
+            self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
             self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
             self.assertEqual(
                 apport.fileutils.get_config("main", "one", default="moo"), "1"
@@ -407,17 +367,11 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
                 apport.fileutils.get_config("main", "b3", boolean=True), None
             )
             self.assertEqual(
-                apport.fileutils.get_config(
-                    "main", "b3", default=False, boolean=True
-                ),
+                apport.fileutils.get_config("main", "b3", default=False, boolean=True),
                 False,
             )
-            self.assertEqual(
-                apport.fileutils.get_config("spethial", "one"), "99"
-            )
-            self.assertEqual(
-                apport.fileutils.get_config("spethial", "two"), None
-            )
+            self.assertEqual(apport.fileutils.get_config("spethial", "one"), "99")
+            self.assertEqual(apport.fileutils.get_config("spethial", "two"), None)
             self.assertEqual(
                 apport.fileutils.get_config("spethial", "one", "moo"), "99"
             )
@@ -430,12 +384,8 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             f.write(b"[inter]\none=1\ntwo = TWO\ntest = %(two)s\n")
             f.flush()
             self.assertEqual(apport.fileutils.get_config("inter", "one"), "1")
-            self.assertEqual(
-                apport.fileutils.get_config("inter", "two"), "TWO"
-            )
-            self.assertEqual(
-                apport.fileutils.get_config("inter", "test"), "%(two)s"
-            )
+            self.assertEqual(apport.fileutils.get_config("inter", "two"), "TWO")
+            self.assertEqual(apport.fileutils.get_config("inter", "test"), "%(two)s")
             apport.fileutils._get_config_parser.cache_clear()
 
     def test_shared_libraries(self):
@@ -449,9 +399,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             self.assertNotIn("vdso", library_name, libs)
             self.assertTrue(os.path.exists(library_path))
 
-        self.assertEqual(
-            apport.fileutils.shared_libraries("/non/existing"), {}
-        )
+        self.assertEqual(apport.fileutils.shared_libraries("/non/existing"), {})
         self.assertEqual(apport.fileutils.shared_libraries("/etc"), {})
         self.assertEqual(apport.fileutils.shared_libraries("/etc/passwd"), {})
 
@@ -461,14 +409,10 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             apport.fileutils.links_with_shared_library(sys.executable, "libc")
         )
         self.assertTrue(
-            apport.fileutils.links_with_shared_library(
-                sys.executable, "libc.so.6"
-            )
+            apport.fileutils.links_with_shared_library(sys.executable, "libc.so.6")
         )
         self.assertFalse(
-            apport.fileutils.links_with_shared_library(
-                sys.executable, "libc.so.7"
-            )
+            apport.fileutils.links_with_shared_library(sys.executable, "libc.so.7")
         )
         self.assertFalse(
             apport.fileutils.links_with_shared_library(sys.executable, "libd")
@@ -476,9 +420,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         self.assertFalse(
             apport.fileutils.links_with_shared_library("/non/existing", "libc")
         )
-        self.assertFalse(
-            apport.fileutils.links_with_shared_library("/etc", "libc")
-        )
+        self.assertFalse(apport.fileutils.links_with_shared_library("/etc", "libc"))
         self.assertFalse(
             apport.fileutils.links_with_shared_library("/etc/passwd", "libc")
         )
@@ -518,9 +460,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         (core_name, core_path) = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
         )
-        expected = (
-            f"core._usr_bin_test.{str(os.getuid())}.{boot_id}.123.222222"
-        )
+        expected = f"core._usr_bin_test.{str(os.getuid())}.{boot_id}.123.222222"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
@@ -529,17 +469,12 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         """clean_core_directory()"""
         fake_uid = 5150
         extra_core_files = 4
-        num_core_files = (
-            apport.fileutils.max_corefiles_per_uid + extra_core_files
-        )
+        num_core_files = apport.fileutils.max_corefiles_per_uid + extra_core_files
 
         # Create some test files
         for x in range(num_core_files):
             core_path = apport.fileutils.get_core_path(
-                pid=123 + x,
-                exe="/usr/bin/test",
-                uid=fake_uid,
-                timestamp=222222 + x,
+                pid=123 + x, exe="/usr/bin/test", uid=fake_uid, timestamp=222222 + x
             )[1]
             with open(core_path, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff")
@@ -554,12 +489,9 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
 
         # Make sure we have the proper number of test files
         self.assertEqual(
-            num_core_files,
-            len(apport.fileutils.find_core_files_by_uid(fake_uid)),
+            num_core_files, len(apport.fileutils.find_core_files_by_uid(fake_uid))
         )
-        self.assertEqual(
-            1, len(apport.fileutils.find_core_files_by_uid(fake_uid + 1))
-        )
+        self.assertEqual(1, len(apport.fileutils.find_core_files_by_uid(fake_uid + 1)))
 
         # Clean out the directory
         apport.fileutils.clean_core_directory(fake_uid)
@@ -570,9 +502,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             apport.fileutils.max_corefiles_per_uid - 1,
             len(apport.fileutils.find_core_files_by_uid(fake_uid)),
         )
-        self.assertEqual(
-            1, len(apport.fileutils.find_core_files_by_uid(fake_uid + 1))
-        )
+        self.assertEqual(1, len(apport.fileutils.find_core_files_by_uid(fake_uid + 1)))
 
         # Make sure we deleted the oldest ones
         for x in range(apport.fileutils.max_corefiles_per_uid - 1):

@@ -27,14 +27,7 @@ import apport.ui
 
 try:
     from PyQt5 import uic
-    from PyQt5.QtCore import (
-        QByteArray,
-        QLibraryInfo,
-        QLocale,
-        Qt,
-        QTimer,
-        QTranslator,
-    )
+    from PyQt5.QtCore import QByteArray, QLibraryInfo, QLocale, Qt, QTimer, QTranslator
     from PyQt5.QtGui import QIcon, QMovie, QPainter
     from PyQt5.QtWidgets import (
         QApplication,
@@ -53,8 +46,7 @@ try:
 except ImportError as error:
     # this can happen while upgrading python packages
     apport.logging.fatal(
-        "Could not import module, is a package upgrade in progress?"
-        "  Error: %s",
+        "Could not import module, is a package upgrade in progress?  Error: %s",
         str(error),
     )
 
@@ -120,9 +112,7 @@ class ProgressDialog(Dialog):
     """Progress dialog wrapper"""
 
     def __init__(self, ui_data_path, title, heading, text):
-        Dialog.__init__(
-            self, ui_data_path, "progress.ui", title, heading, text
-        )
+        Dialog.__init__(self, ui_data_path, "progress.ui", title, heading, text)
 
         self.setMaximumSize(1, 1)
 
@@ -179,9 +169,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
         self.spinner = QLabel("", parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
         self.movie = QMovie(
-            os.path.join(ui.ui_data_path, "spinner.gif"),
-            QByteArray(),
-            self.spinner,
+            os.path.join(ui.ui_data_path, "spinner.gif"), QByteArray(), self.spinner
         )
         self.spinner.setMovie(self.movie)
         self.spinner.setVisible(False)
@@ -243,10 +231,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
                 icon = desktop_info.get("icon")
                 if report_type == "RecoverableProblem":
                     self.heading.setText(
-                        _(
-                            "The application %s has experienced"
-                            " an internal error."
-                        )
+                        _("The application %s has experienced an internal error.")
                         % desktop_info["name"]
                     )
                 else:
@@ -276,10 +261,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
                 )
                 self.text.show()
                 self.text.setText(
-                    _(
-                        "If you notice further problems, "
-                        "try restarting the computer."
-                    )
+                    _("If you notice further problems, try restarting the computer.")
                 )
                 self.closed_button.hide()
                 self.continue_button.setText(_("Continue"))
@@ -418,9 +400,7 @@ class MainUserInterface(apport.ui.UserInterface):
         self, allowed_to_report=True, modal_for=None
     ) -> apport.ui.Action:
         desktop_info = self.get_desktop_entry()
-        self.dialog = ReportDialog(
-            self.report, allowed_to_report, self, desktop_info
-        )
+        self.dialog = ReportDialog(self.report, allowed_to_report, self, desktop_info)
 
         response = self.dialog.exec_()
 
@@ -532,10 +512,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_question_yesno(self, text):
         response = QMessageBox.question(
-            None,
-            "",
-            text,
-            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+            None, "", text, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
         )
         if response == QMessageBox.Yes:
             return True

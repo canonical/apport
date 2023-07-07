@@ -49,12 +49,8 @@ class T(unittest.TestCase):
         pr["Large"].write(out)
         self.assertEqual(out.getvalue(), large_val)
 
-        pr["Multiline"] = problem_report.CompressedValue(
-            b"\1\1\1\n\2\2\n\3\3\3"
-        )
-        self.assertEqual(
-            pr["Multiline"].splitlines(), [b"\1\1\1", b"\2\2", b"\3\3\3"]
-        )
+        pr["Multiline"] = problem_report.CompressedValue(b"\1\1\1\n\2\2\n\3\3\3")
+        self.assertEqual(pr["Multiline"].splitlines(), [b"\1\1\1", b"\2\2", b"\3\3\3"])
 
         # test writing of reports with CompressedValues
         out = io.BytesIO()
@@ -128,9 +124,7 @@ class T(unittest.TestCase):
         pr["Bin"] = problem_report.CompressedValue()
         pr["Bin"].set_value(bin_data)
         pr["Large"] = problem_report.CompressedValue(large_val)
-        pr["Multiline"] = problem_report.CompressedValue(
-            b"\1\1\1\n\2\2\n\3\3\3"
-        )
+        pr["Multiline"] = problem_report.CompressedValue(b"\1\1\1\n\2\2\n\3\3\3")
 
         report = io.BytesIO()
         pr.write(report)
@@ -152,9 +146,7 @@ class T(unittest.TestCase):
         ]
         for exc, keys_arg in tests:
             report.seek(0)
-            self.assertRaises(
-                exc, pr.extract_keys, report, keys_arg, self.workdir
-            )
+            self.assertRaises(exc, pr.extract_keys, report, keys_arg, self.workdir)
 
         # Check valid single elements
         tests = {
@@ -405,9 +397,7 @@ class T(unittest.TestCase):
                 with open("/proc/mounts", encoding="utf-8") as f:
                     for line in f:
                         mount, _, options = line.split(" ")[1:4]
-                        if mount == directory and "noatime" in options.split(
-                            ","
-                        ):
+                        if mount == directory and "noatime" in options.split(","):
                             skip_atime = True
                             break
                 break

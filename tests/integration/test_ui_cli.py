@@ -65,13 +65,9 @@ class TestApportCli(unittest.TestCase):
         )
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
-    def test_save_report_in_temp_directory(
-        self, stdout_mock: io.StringIO
-    ) -> None:
+    def test_save_report_in_temp_directory(self, stdout_mock: io.StringIO) -> None:
         self.app.report["Package"] = "bash"
-        with unittest.mock.patch.object(
-            apport_cli.CLIDialog, "run"
-        ) as run_mock:
+        with unittest.mock.patch.object(apport_cli.CLIDialog, "run") as run_mock:
             run_mock.return_value = 4
             self.app.ui_present_report_details()
         self.assertIn(_("Problem report file:"), stdout_mock.getvalue())

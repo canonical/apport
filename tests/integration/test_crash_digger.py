@@ -56,9 +56,7 @@ class T(unittest.TestCase):
         os.mkdir(os.path.join(self.config_dir, "Testux 1.0"))
         os.mkdir(os.path.join(self.config_dir, "Testux 2.2"))
 
-        self.apport_retrace_log = os.path.join(
-            self.workdir, "apport-retrace.log"
-        )
+        self.apport_retrace_log = os.path.join(self.workdir, "apport-retrace.log")
 
         self.apport_retrace = os.path.join(self.workdir, "apport-retrace")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
@@ -113,9 +111,7 @@ class T(unittest.TestCase):
         self.assertIn("retracing #1", out)
         self.assertIn("retracing #2", out)
         self.assertIn(
-            "crash is release FooLinux Pi/2"
-            " which does not have a config available",
-            out,
+            "crash is release FooLinux Pi/2 which does not have a config available", out
         )
         self.assertNotIn("failed with status", out)
         self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
@@ -129,9 +125,7 @@ class T(unittest.TestCase):
         self.assertIn("dup.db -v 2\n", retrace_log)
         self.assertFalse(os.path.exists(self.lock_file))
 
-        self.assertFalse(
-            os.path.isdir(os.path.join(self.workdir, "dupdb", "sig"))
-        )
+        self.assertFalse(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
     def test_crashes_error(self):
         """Crash retracing if apport-retrace fails on bug #1."""
@@ -171,9 +165,7 @@ class T(unittest.TestCase):
         self.assertIn("retracing #1", out)
         self.assertIn("retracing #2", out)
         self.assertIn(
-            "crash is release FooLinux Pi/2"
-            " which does not have a config available",
-            out,
+            "crash is release FooLinux Pi/2 which does not have a config available", out
         )
         self.assertNotIn("#0 failed with status", out)
         self.assertIn("#1 failed with status: 1", out)
@@ -225,9 +217,7 @@ class T(unittest.TestCase):
         self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
         self.assertIn("retracing #0", out)
         self.assertIn("retracing #1", out)
-        self.assertNotIn(
-            "retracing #2", out, "should not continue after errors"
-        )
+        self.assertNotIn("retracing #2", out, "should not continue after errors")
         self.assertIn("transient error reported; halting", out)
 
         with open(self.apport_retrace_log, encoding="utf-8") as f:
@@ -297,9 +287,7 @@ class T(unittest.TestCase):
         self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertIn("retracing #0", out)
 
-        self.assertTrue(
-            os.path.isdir(os.path.join(self.workdir, "dupdb", "sig"))
-        )
+        self.assertTrue(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
     def test_alternate_crashdb(self):
         """Alternate crash database name."""

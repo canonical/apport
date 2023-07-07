@@ -123,9 +123,7 @@ def _read_proc_file(path, pid=None, dir_fd=None):
     """
     try:
         if dir_fd is not None:
-            proc_file = os.open(
-                path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd
-            )
+            proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
         else:
             proc_file = f"/proc/{pid}/{path}"
 
@@ -213,10 +211,7 @@ def _check_bug_pattern(report, pattern):
             if key not in report:
                 return None
             c.normalize()
-            if (
-                c.hasChildNodes()
-                and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE
-            ):
+            if c.hasChildNodes() and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
                 regexp = c.childNodes[0].nodeValue
                 v = report[key]
                 if isinstance(v, problem_report.CompressedValue):
@@ -279,9 +274,7 @@ def _run_hook(report, ui, hook):
     except StopIteration:
         return True
     except Exception:  # pylint: disable=broad-except
-        hookname = os.path.splitext(os.path.basename(hook))[0].replace(
-            "-", "_"
-        )
+        hookname = os.path.splitext(os.path.basename(hook))[0].replace("-", "_")
         report["HookError_" + hookname] = traceback.format_exc()
         apport.logging.error("hook %s crashed:", hook)
         traceback.print_exc()
@@ -427,15 +420,10 @@ class Report(problem_report.ProblemReport):
         """
         if not package:
             # the kernel does not have a executable path but a package
-            if (
-                "ExecutablePath" not in self
-                and self["ProblemType"] == "KernelCrash"
-            ):
+            if "ExecutablePath" not in self and self["ProblemType"] == "KernelCrash":
                 package = self["Package"]
             else:
-                package = apport.fileutils.find_file_package(
-                    self["ExecutablePath"]
-                )
+                package = apport.fileutils.find_file_package(self["ExecutablePath"])
             if not package:
                 return
 
@@ -470,17 +458,13 @@ class Report(problem_report.ProblemReport):
         self["SnapChanges"] = _command_output(
             ["snap", "changes", "--abs-time", snapname]
         )
-        self["SnapConnections"] = _command_output(
-            ["snap", "connections", snapname]
-        )
+        self["SnapConnections"] = _command_output(["snap", "connections", snapname])
         self[f"SnapInfo.{snapname}"] = _command_output(
             ["snap", "info", "--abs-time", snapname]
         )
         import yaml  # pylint: disable=import-outside-toplevel
 
-        with open(
-            f"/snap/{snapname}/current/meta/snap.yaml", encoding="utf-8"
-        ) as f:
+        with open(f"/snap/{snapname}/current/meta/snap.yaml", encoding="utf-8") as f:
             snap_meta = yaml.safe_load(f)
         if "base" in snap_meta:
             base = snap_meta["base"]
@@ -584,9 +568,7 @@ class Report(problem_report.ProblemReport):
         # check if we consider ExecutablePath an interpreter; we have to do
         # this, otherwise 'gedit /tmp/foo.txt' would be detected as interpreted
         # script as well
-        if not any(
-            filter(lambda i: fnmatch.fnmatch(exebasename, i), interpreters)
-        ):
+        if not any(filter(lambda i: fnmatch.fnmatch(exebasename, i), interpreters)):
             return
 
         # first, determine process name
@@ -608,11 +590,7 @@ class Report(problem_report.ProblemReport):
         # filter out interpreter options
         while len(cmdargs) >= 2 and cmdargs[1].startswith("-"):
             # check for -m
-            if (
-                name.startswith("python")
-                and cmdargs[1] == "-m"
-                and len(cmdargs) >= 3
-            ):
+            if name.startswith("python") and cmdargs[1] == "-m" and len(cmdargs) >= 3:
                 path = self._python_module_path(cmdargs[2])
                 if path:
                     self["InterpreterPath"] = self["ExecutablePath"]
@@ -655,9 +633,7 @@ class Report(problem_report.ProblemReport):
             if exe:
                 self["ExecutablePath"] = exe
             else:
-                self[
-                    "UnreportableReason"
-                ] = "Cannot determine twistd client program"
+                self["UnreportableReason"] = "Cannot determine twistd client program"
 
     def _twistd_executable(self):
         """Determine the twistd client program from ProcCmdline."""
@@ -741,19 +717,13 @@ class Report(problem_report.ProblemReport):
             self["ProcCwd"] = _read_proc_link("cwd", pid, proc_pid_fd)
         except OSError:
             pass
-        self.add_proc_environ(
-            pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv
-        )
+        self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
         self["ProcStatus"] = _read_proc_file("status", pid, proc_pid_fd)
-        self["ProcCmdline"] = _read_proc_file(
-            "cmdline", pid, proc_pid_fd
-        ).rstrip("\0")
+        self["ProcCmdline"] = _read_proc_file("cmdline", pid, proc_pid_fd).rstrip("\0")
         self["ProcMaps"] = _read_maps(proc_pid_fd)
         if "ExecutablePath" not in self:
             try:
-                self["ExecutablePath"] = _read_proc_link(
-                    "exe", pid, proc_pid_fd
-                )
+                self["ExecutablePath"] = _read_proc_link("exe", pid, proc_pid_fd)
             except PermissionError as error:
                 raise ValueError("not accessible") from error
             except OSError as error:
@@ -770,9 +740,7 @@ class Report(problem_report.ProblemReport):
         # check if we have an interpreted program
         self._check_interpreted()
 
-        self["ExecutableTimestamp"] = str(
-            int(os.stat(self["ExecutablePath"]).st_mtime)
-        )
+        self["ExecutableTimestamp"] = str(int(os.stat(self["ExecutablePath"]).st_mtime))
 
         # make ProcCmdline ASCII friendly, do shell escaping
         self["ProcCmdline"] = (
@@ -842,9 +810,7 @@ class Report(problem_report.ProblemReport):
             )
 
         try:
-            environ = _Environment(
-                apport.fileutils.get_process_environ(proc_pid_fd)
-            )
+            environ = _Environment(apport.fileutils.get_process_environ(proc_pid_fd))
         except OSError as error:
             self["ProcEnviron"] = f"Error: {error}"
             return
@@ -1016,8 +982,7 @@ class Report(problem_report.ProblemReport):
         if "AssertionMessage" in self:
             # chop off "$n = 0x...." prefix, drop empty ones
             m = re.match(
-                r'^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$',
-                self["AssertionMessage"],
+                r'^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$', self["AssertionMessage"]
             )
             if m:
                 self["AssertionMessage"] = m.group(1)
@@ -1056,8 +1021,7 @@ class Report(problem_report.ProblemReport):
         unwinding = False
         unwinding_xerror = False
         bt_fn_re = re.compile(
-            r"^#(\d+)\s+"
-            r"(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$"
+            r"^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$"
         )
         bt_fn_noaddr_re = re.compile(
             r"^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$"
@@ -1107,9 +1071,7 @@ class Report(problem_report.ProblemReport):
 
             frame = m.group(2) or m.group(3)
             function = frame.split()[0]
-            if depth < len(toptrace) and not ignore_functions_re.match(
-                function
-            ):
+            if depth < len(toptrace) and not ignore_functions_re.match(function):
                 toptrace[depth] = frame
                 depth += 1
         self["StacktraceTop"] = "\n".join(toptrace).strip()
@@ -1160,9 +1122,7 @@ class Report(problem_report.ProblemReport):
         if srcpackage:
             srcpackage = srcpackage.split()[0]
             if "/" in srcpackage:
-                self[
-                    "UnreportableReason"
-                ] = f"invalid SourcePackage: {package}"
+                self["UnreportableReason"] = f"invalid SourcePackage: {package}"
                 return None
 
         hook_dirs = [PACKAGE_HOOK_DIR]
@@ -1197,9 +1157,7 @@ class Report(problem_report.ProblemReport):
         # binary package hook
         if package:
             for hook_dir in hook_dirs:
-                if _run_hook(
-                    self, ui, os.path.join(hook_dir, package + ".py")
-                ):
+                if _run_hook(self, ui, os.path.join(hook_dir, package + ".py")):
                     return True
 
         # source package hook
@@ -1288,9 +1246,7 @@ class Report(problem_report.ProblemReport):
 
         if contents == "":
             # create a document from scratch
-            dom = xml.dom.getDOMImplementation().createDocument(
-                None, "apport", None
-            )
+            dom = xml.dom.getDOMImplementation().createDocument(None, "apport", None)
         else:
             try:
                 dom = xml.dom.minidom.parseString(contents)
@@ -1416,9 +1372,7 @@ class Report(problem_report.ProblemReport):
         if not self.get("StacktraceTop"):
             return False
 
-        unknown_fn = [
-            f.startswith("??") for f in self["StacktraceTop"].splitlines()
-        ]
+        unknown_fn = [f.startswith("??") for f in self["StacktraceTop"].splitlines()]
 
         if len(unknown_fn) < 3:
             return unknown_fn.count(True) == 0
@@ -1459,11 +1413,7 @@ class Report(problem_report.ProblemReport):
             )
 
         # signal crash
-        if (
-            "Signal" in self
-            and "ExecutablePath" in self
-            and "StacktraceTop" in self
-        ):
+        if "Signal" in self and "ExecutablePath" in self and "StacktraceTop" in self:
             signal_names = {
                 "4": "SIGILL",
                 "6": "SIGABRT",
@@ -1485,9 +1435,7 @@ class Report(problem_report.ProblemReport):
                 and self["Architecture"] != self["PackageArchitecture"]
                 and self["PackageArchitecture"] != "all"
             ):
-                arch_mismatch = (
-                    f" [non-native {self['PackageArchitecture']} package]"
-                )
+                arch_mismatch = f" [non-native {self['PackageArchitecture']} package]"
 
             signal_name = signal_names.get(
                 self.get("Signal"), "signal " + self.get("Signal")
@@ -1644,9 +1592,7 @@ class Report(problem_report.ProblemReport):
         # signal crashes
         if "StacktraceTop" in self and "Signal" in self:
             sig = f"{self['ExecutablePath']}:{self['Signal']}"
-            bt_fn_re = re.compile(
-                r"^(?:([\w:~]+).*|(<signal handler called>)\s*)$"
-            )
+            bt_fn_re = re.compile(r"^(?:([\w:~]+).*|(<signal handler called>)\s*)$")
 
             lines = self["StacktraceTop"].splitlines()
             if len(lines) < 2:
@@ -1718,8 +1664,7 @@ class Report(problem_report.ProblemReport):
                     if parsed:
                         match = parsed.group(1)
                         assert match, (
-                            f"could not parse expected"
-                            f" problem type line: {line}"
+                            f"could not parse expected" f" problem type line: {line}"
                         )
                         parts.append(match)
 
@@ -1771,11 +1716,7 @@ class Report(problem_report.ProblemReport):
 
         Return None when signature cannot be determined.
         """
-        if (
-            "ProcMaps" not in self
-            or "Stacktrace" not in self
-            or "Signal" not in self
-        ):
+        if "ProcMaps" not in self or "Stacktrace" not in self or "Signal" not in self:
             return None
         if "Errno 13" in self["ProcMaps"]:
             return None
@@ -1830,9 +1771,7 @@ class Report(problem_report.ProblemReport):
             # Use effective uid in case privileges were dropped
             p = pwd.getpwuid(os.geteuid())
             if len(p[0]) >= 2:
-                replacements.append(
-                    (re.compile(rf"\b{re.escape(p[0])}\b"), "username")
-                )
+                replacements.append((re.compile(rf"\b{re.escape(p[0])}\b"), "username"))
             replacements.append(
                 (re.compile(rf"\b{re.escape(p[5])}\b"), "/home/username")
             )
@@ -1841,17 +1780,12 @@ class Report(problem_report.ProblemReport):
                 s = s.strip()
                 if len(s) > 2:
                     replacements.append(
-                        (
-                            re.compile(rf"(\b|\s){re.escape(s)}\b"),
-                            r"\1User Name",
-                        )
+                        (re.compile(rf"(\b|\s){re.escape(s)}\b"), r"\1User Name")
                     )
 
         hostname = os.uname()[1]
         if len(hostname) >= 2:
-            replacements.append(
-                (re.compile(rf"\b{re.escape(hostname)}\b"), "hostname")
-            )
+            replacements.append((re.compile(rf"\b{re.escape(hostname)}\b"), "hostname"))
 
         try:
             del self["ProcCwd"]
@@ -1954,19 +1888,12 @@ class Report(problem_report.ProblemReport):
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
-                    "GCONV_PATH": (
-                        f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv"
-                    ),
+                    "GCONV_PATH": (f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv"),
                 }
                 command.insert(
-                    0,
-                    f"{gdb_sandbox}"
-                    f"/lib/{native_multiarch}/ld-linux-x86-64.so.2",
+                    0, f"{gdb_sandbox}" f"/lib/{native_multiarch}/ld-linux-x86-64.so.2"
                 )
-                command += [
-                    "--ex",
-                    f"set data-directory {gdb_sandbox}/usr/share/gdb",
-                ]
+                command += ["--ex", f"set data-directory {gdb_sandbox}/usr/share/gdb"]
             if not os.path.exists(sandbox + executable):
                 if executable.startswith("/usr"):
                     if os.path.exists(sandbox + executable[3:]):
@@ -2077,9 +2004,7 @@ class Report(problem_report.ProblemReport):
                 else:
                     return None
             # determine session creation time
-            session_start_time = os.stat(
-                "/run/systemd/sessions/" + my_session
-            ).st_mtime
+            session_start_time = os.stat("/run/systemd/sessions/" + my_session).st_mtime
         except OSError:
             return None
 

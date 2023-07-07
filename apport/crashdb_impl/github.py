@@ -47,9 +47,7 @@ class Github:
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
         try:
-            result = requests.post(
-                url, headers=headers, data=data, timeout=5.0
-            )
+            result = requests.post(url, headers=headers, data=data, timeout=5.0)
         except requests.RequestException as err:
             self.message_callback(
                 "Failed connection",
@@ -89,9 +87,7 @@ class Github:
         url = response["verification_uri"]
         code = response["user_code"]
 
-        self.message_callback(
-            "Login required", prompt.format(url=url, code=code)
-        )
+        self.message_callback("Login required", prompt.format(url=url, code=code))
 
         self.__authentication_data = {
             "client_id": self.__client_id,
@@ -121,8 +117,7 @@ class Github:
         waittime = self.__cooldown - (current_time - self.__last_request)
         if current_time + waittime > self.__expiry:
             self.message_callback(
-                "Failed login",
-                "Github authentication expired. Please try again.",
+                "Failed login", "Github authentication expired. Please try again."
             )
             raise RuntimeError("Github authentication expired")
         if waittime > 0:
@@ -183,10 +178,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return github
 
     def upload(
-        self,
-        report: apport.Report,
-        progress_callback=None,
-        user_message_callback=None,
+        self, report: apport.Report, progress_callback=None, user_message_callback=None
     ) -> IssueHandle:
         """Upload given problem report return a handle for it.
         In Github, we open an issue.
@@ -199,9 +191,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             raise RuntimeError("Failed to login to Github")
 
         data = self._format_report(report)
-        if not (
-            self.repository_name is None and self.repository_owner is None
-        ):
+        if not (self.repository_name is None and self.repository_owner is None):
             response = self.github.api_open_issue(
                 self.repository_owner, self.repository_name, data
             )
@@ -216,9 +206,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return IssueHandle(url=response["html_url"])
 
-    def get_comment_url(
-        self, report: apport.Report, handle: IssueHandle
-    ) -> str:
+    def get_comment_url(self, report: apport.Report, handle: IssueHandle) -> str:
         """Return a URL that should be opened after report has been uploaded
         and upload() returned handle.
         """

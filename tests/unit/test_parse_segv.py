@@ -289,9 +289,7 @@ class TestHookParseSegv(unittest.TestCase):
 
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertTrue(
-            "disallowed I/O port operation on port 3" in reason, reason
-        )
+        self.assertTrue("disallowed I/O port operation on port 3" in reason, reason)
 
     def test_invalid_02_maps(self):
         """Require valid maps."""
@@ -359,24 +357,14 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertFalse(understood, details)
 
         # Verify calculations
-        self.assertEqual(
-            segv.calculate_arg("(%ecx)"), 0xBFC6AF40, segv.regs["ecx"]
-        )
-        self.assertEqual(
-            segv.calculate_arg("0x10(%ecx)"), 0xBFC6AF50, segv.regs["ecx"]
-        )
+        self.assertEqual(segv.calculate_arg("(%ecx)"), 0xBFC6AF40, segv.regs["ecx"])
+        self.assertEqual(segv.calculate_arg("0x10(%ecx)"), 0xBFC6AF50, segv.regs["ecx"])
         self.assertEqual(
             segv.calculate_arg("-0x20(%ecx)"), 0xBFC6AF20, segv.regs["ecx"]
         )
-        self.assertEqual(
-            segv.calculate_arg("%fs:(%ecx)"), 0xBFC6AF44, segv.regs["ecx"]
-        )
-        self.assertEqual(
-            segv.calculate_arg("0x3404403"), 0x3404403, "0x3404403"
-        )
-        self.assertEqual(
-            segv.calculate_arg("*0x40(%edi)"), 0x80834C0, segv.regs["edi"]
-        )
+        self.assertEqual(segv.calculate_arg("%fs:(%ecx)"), 0xBFC6AF44, segv.regs["ecx"])
+        self.assertEqual(segv.calculate_arg("0x3404403"), 0x3404403, "0x3404403")
+        self.assertEqual(segv.calculate_arg("*0x40(%edi)"), 0x80834C0, segv.regs["edi"])
         self.assertEqual(
             segv.calculate_arg("(%edx,%ebx,1)"), 0x26EFF5, segv.regs["ebx"]
         )
@@ -403,18 +391,14 @@ class TestHookParseSegv(unittest.TestCase):
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertIn(
-            "PC (0x00083540) not located in a known VMA region", details
-        )
+        self.assertIn("PC (0x00083540) not located in a known VMA region", details)
         self.assertIn("executing unknown VMA", reason)
 
         disasm = """0x00083544:"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertIn(
-            "PC (0x00083544) not located in a known VMA region", details
-        )
+        self.assertIn("PC (0x00083544) not located in a known VMA region", details)
         self.assertIn("executing unknown VMA", reason)
 
     def test_segv_pc_null(self):
@@ -423,9 +407,7 @@ class TestHookParseSegv(unittest.TestCase):
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
-        self.assertIn(
-            "PC (0x00000540) not located in a known VMA region", details
-        )
+        self.assertIn("PC (0x00000540) not located in a known VMA region", details)
         self.assertIn("executing NULL VMA", reason)
 
     def test_segv_pc_nx_writable(self):
@@ -444,9 +426,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn("PC (0x00dfb000) in non-executable VMA region:", details)
-        self.assertIn(
-            "executing non-writable VMA /lib/libreadline.so.5.2", reason
-        )
+        self.assertIn("executing non-writable VMA /lib/libreadline.so.5.2", reason)
 
     def test_segv_src_missing(self):
         """Handle source in missing VMA."""
@@ -458,8 +438,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'source "-0x4(%ecx)" (0x0006af20)'
-            " not located in a known VMA region",
+            'source "-0x4(%ecx)" (0x0006af20) not located in a known VMA region',
             details,
         )
         self.assertIn("reading unknown VMA", reason)
@@ -470,8 +449,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'source "*%ecx" (0x0006af24) not located in a known VMA region',
-            details,
+            'source "*%ecx" (0x0006af24) not located in a known VMA region', details
         )
         self.assertIn("reading unknown VMA", reason)
 
@@ -484,8 +462,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'source "-0x4(%ecx)" (0x00000020)'
-            " not located in a known VMA region",
+            'source "-0x4(%ecx)" (0x00000020) not located in a known VMA region',
             details,
         )
         self.assertIn("reading NULL VMA", reason)
@@ -498,8 +475,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'source "-0x4(%ecx)" (0x0026c07c) in non-readable VMA region:',
-            details,
+            'source "-0x4(%ecx)" (0x0026c07c) in non-readable VMA region:', details
         )
         self.assertIn("reading VMA /lib/tls/i686/cmov/libc-2.9.so", reason)
         self.assertNotIn("Stack memory exhausted", details)
@@ -514,8 +490,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'destination "(%esp)" (0x0006af24)'
-            " not located in a known VMA region",
+            'destination "(%esp)" (0x0006af24) not located in a known VMA region',
             details,
         )
         self.assertIn("writing unknown VMA", reason)
@@ -529,8 +504,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'destination "(%esp)" (0x00000024)'
-            " not located in a known VMA region",
+            'destination "(%esp)" (0x00000024) not located in a known VMA region',
             details,
         )
         self.assertIn("writing NULL VMA", reason)
@@ -543,8 +517,7 @@ class TestHookParseSegv(unittest.TestCase):
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
         self.assertIn(
-            'destination "(%esp)" (0x08048080) in non-writable VMA region:',
-            details,
+            'destination "(%esp)" (0x08048080) in non-writable VMA region:', details
         )
         self.assertIn("writing VMA /usr/bin/gdb", reason)
 

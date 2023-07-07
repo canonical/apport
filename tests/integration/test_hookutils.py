@@ -34,13 +34,9 @@ class T(unittest.TestCase):
             with tempfile.NamedTemporaryFile(
                 mode="w+", prefix=f"{license_name}-", suffix=".S"
             ) as asm:
-                asm.write(
-                    f'.section .modinfo\n.string "license={license_name}"\n'
-                )
+                asm.write(f'.section .modinfo\n.string "license={license_name}"\n')
                 asm.flush()
-                subprocess.check_call(
-                    ["/usr/bin/as", asm.name, "-o", ko_filename]
-                )
+                subprocess.check_call(["/usr/bin/as", asm.name, "-o", ko_filename])
             return ko_filename
 
         good_ko = _build_ko("GPL")
@@ -120,9 +116,7 @@ class T(unittest.TestCase):
         link = os.path.join(self.workdir, "dirsymlink")
         os.symlink("/etc", link)
         report = {}
-        apport.hookutils.attach_file(
-            report, os.path.join(link, "passwd"), "DirSymlink"
-        )
+        apport.hookutils.attach_file(report, os.path.join(link, "passwd"), "DirSymlink")
         self.assertEqual(list(report), ["DirSymlink"])
         self.assertTrue(report["DirSymlink"].startswith("Error: "))
 
@@ -142,9 +136,7 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file(
             report, "/etc/issue", ".etc.passwd", overwrite=False
         )
-        self.assertEqual(
-            sorted(report.keys()), [".etc.passwd", ".etc.passwd_"]
-        )
+        self.assertEqual(sorted(report.keys()), [".etc.passwd", ".etc.passwd_"])
         self.assertEqual(report[".etc.passwd"], passwd_contents)
         self.assertEqual(report[".etc.passwd_"], issue_contents)
 
@@ -158,12 +150,8 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file(report, myfile, key="data")
         self.assertEqual(report["data"], b"a\xc3\xb6b\xffx")
 
-        apport.hookutils.attach_file(
-            report, myfile, key="data", force_unicode=True
-        )
-        self.assertEqual(
-            report["data"], b"a\xc3\xb6b\xef\xbf\xbdx".decode("UTF-8")
-        )
+        apport.hookutils.attach_file(report, myfile, key="data", force_unicode=True)
+        self.assertEqual(report["data"], b"a\xc3\xb6b\xef\xbf\xbdx".decode("UTF-8"))
 
     def test_attach_file_if_exists(self):
         """attach_file_if_exists()"""
@@ -203,23 +191,16 @@ class T(unittest.TestCase):
     def test_recent_syslog(self):
         """recent_syslog"""
         self.assertEqual(
-            apport.hookutils.recent_syslog(
-                re.compile("."), path="/nonexisting"
-            ),
-            "",
+            apport.hookutils.recent_syslog(re.compile("."), path="/nonexisting"), ""
         )
         self.assertEqual(
-            apport.hookutils.recent_syslog(
-                re.compile("ThisCantPossiblyHitAnything")
-            ),
+            apport.hookutils.recent_syslog(re.compile("ThisCantPossiblyHitAnything")),
             "",
         )
         if os.path.exists("/run/systemd/system") or os.access(
             "/var/log/syslog", os.R_OK
         ):
-            self.assertNotEqual(
-                len(apport.hookutils.recent_syslog(re.compile("."))), 0
-            )
+            self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile("."))), 0)
 
     @unittest.mock.patch(
         "apport.hookutils._root_command_prefix",
@@ -391,9 +372,7 @@ class T(unittest.TestCase):
         self.assertLess(len(data), 1000000)
 
     @unittest.skipIf(
-        apport.hookutils.apport.hookutils.in_session_of_problem(
-            apport.report.Report()
-        )
+        apport.hookutils.apport.hookutils.in_session_of_problem(apport.report.Report())
         is None,
         "no logind session",
     )
@@ -428,9 +407,7 @@ class T(unittest.TestCase):
     def test_xsession_errors(self):
         """xsession_errors()"""
         with open(
-            os.path.join(self.workdir, ".xsession-errors"),
-            "w",
-            encoding="UTF-8",
+            os.path.join(self.workdir, ".xsession-errors"), "w", encoding="UTF-8"
         ) as f:
             f.write(
                 """\

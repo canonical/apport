@@ -63,8 +63,7 @@ class RPMPackageInfo:
         """Return the latest available version of a package."""
         # used in report.py, which is used by the frontends
         raise NotImplementedError(
-            "method must be implemented by distro-specific"
-            " RPMPackageInfo subclass"
+            "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
     def get_dependencies(self, package):
@@ -140,12 +139,7 @@ class RPMPackageInfo:
         return modified
 
     def get_file_package(
-        self,
-        file,
-        uninstalled=False,
-        map_cachedir=None,
-        release=None,
-        arch=None,
+        self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
     ):
         """Return the package a file belongs to.
 
@@ -162,8 +156,7 @@ class RPMPackageInfo:
         # The policy for handling files which belong to multiple packages
         # depends on the distro
         raise NotImplementedError(
-            "method must be implemented by distro-specific"
-            " RPMPackageInfo subclass"
+            "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
     @staticmethod
@@ -209,9 +202,7 @@ class RPMPackageInfo:
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
-    def get_source_tree(
-        self, srcpackage, output_dir, version=None, sandbox=None
-    ):
+    def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -230,8 +221,7 @@ class RPMPackageInfo:
         """
         # Used only by apport-retrace.
         raise NotImplementedError(
-            "method must be implemented by distro-specific"
-            " RPMPackageInfo subclass"
+            "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
     def compare_versions(self, ver1, ver2):
@@ -245,8 +235,7 @@ class RPMPackageInfo:
         # you can implement this function yourself. Probably you've got
         # equivalent code in whatever your distro uses instead of yum anyway.
         raise NotImplementedError(
-            "method must be implemented by distro-specific"
-            " RPMPackageInfo subclass"
+            "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
     def package_name_glob(self, nameglob):

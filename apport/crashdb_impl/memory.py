@@ -44,9 +44,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if "sample_data" in options:
             self.add_sample_data()
 
-    def upload(
-        self, report, progress_callback=None, user_message_callback=None
-    ):
+    def upload(self, report, progress_callback=None, user_message_callback=None):
         """Store the report and return a handle number (starting from 0).
 
         This does not support (nor need) progress callbacks.
@@ -57,12 +55,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             user_message_callback(self.upload_msg[0], self.upload_msg[1])
 
         self.reports.append(
-            {
-                "report": report,
-                "fixed_version": None,
-                "dup_of": None,
-                "comment": "",
-            }
+            {"report": report, "fixed_version": None, "dup_of": None, "comment": ""}
         )
         crash_id = len(self.reports) - 1
         if "Traceback" in report:
@@ -86,9 +79,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         SourcePackage.
         """
         if "SourcePackage" in report:
-            return (
-                f"http://{report['SourcePackage']}.bugs.example.com/{handle}"
-            )
+            return f"http://{report['SourcePackage']}.bugs.example.com/{handle}"
         return f"http://bugs.example.com/{handle}"
 
     def get_id_url(self, report, crash_id):
@@ -216,9 +207,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         already marked as fixed (having ID 'master').
         """
         assert self.reports[master]["fixed_version"] is not None
-        self.reports[crash_id][
-            "comment"
-        ] = f"regression, already fixed in #{master}"
+        self.reports[crash_id]["comment"] = f"regression, already fixed in #{master}"
 
     def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""

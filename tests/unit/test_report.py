@@ -39,10 +39,9 @@ class T(unittest.TestCase):
         ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
         self.assertTrue(r.has_useful_stacktrace())
 
-        r["StacktraceTop"] = (
-            "read () from /lib/libc.6.so\nfoo (i=1)"
-            " from /usr/lib/libfoo.so\n?? ()"
-        )
+        r[
+            "StacktraceTop"
+        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()"
         self.assertTrue(r.has_useful_stacktrace())
 
         r["StacktraceTop"] = (
@@ -76,9 +75,7 @@ class T(unittest.TestCase):
             baz()
             """
         )
-        self.assertEqual(
-            report.standard_title(), "bash crashed with SIGSEGV in foo()"
-        )
+        self.assertEqual(report.standard_title(), "bash crashed with SIGSEGV in foo()")
 
         # unnamed signal crash
         report["Signal"] = "42"
@@ -88,9 +85,7 @@ class T(unittest.TestCase):
 
         # do not crash on empty StacktraceTop
         report["StacktraceTop"] = ""
-        self.assertEqual(
-            report.standard_title(), "bash crashed with signal 42"
-        )
+        self.assertEqual(report.standard_title(), "bash crashed with signal 42")
 
         # do not create bug title with unknown function name
         report["StacktraceTop"] = "??()\nfoo()"
@@ -100,17 +95,14 @@ class T(unittest.TestCase):
 
         # if we do not know any function name, don't mention ??
         report["StacktraceTop"] = "??()\n??()"
-        self.assertEqual(
-            report.standard_title(), "bash crashed with signal 42"
-        )
+        self.assertEqual(report.standard_title(), "bash crashed with signal 42")
 
         # assertion message
         report["Signal"] = "6"
         report["ExecutablePath"] = "/bin/bash"
         report["AssertionMessage"] = "foo.c:42 main: i > 0"
         self.assertEqual(
-            report.standard_title(),
-            "bash assert failure: foo.c:42 main: i > 0",
+            report.standard_title(), "bash assert failure: foo.c:42 main: i > 0"
         )
 
         # Python crash
@@ -219,8 +211,7 @@ ImportError: No module named nonexistent
         )
         self.assertEqual(
             report.standard_title(),
-            "dcut crashed with ImportError in __main__:"
-            " No module named nonexistent",
+            "dcut crashed with ImportError in __main__: No module named nonexistent",
         )
 
         # package install problem
@@ -241,8 +232,7 @@ ImportError: No module named nonexistent
         # nonempty ErrorMessage
         report["ErrorMessage"] = "botched\nnot found\n"
         self.assertEqual(
-            report.standard_title(),
-            "package bash failed to install/upgrade: not found",
+            report.standard_title(), "package bash failed to install/upgrade: not found"
         )
 
         # matching package/system architectures
@@ -257,9 +247,7 @@ ImportError: No module named nonexistent
         )
         report["PackageArchitecture"] = "amd64"
         report["Architecture"] = "amd64"
-        self.assertEqual(
-            report.standard_title(), "bash crashed with SIGSEGV in foo()"
-        )
+        self.assertEqual(report.standard_title(), "bash crashed with SIGSEGV in foo()")
 
         # non-native package (on multiarch)
         report["PackageArchitecture"] = "i386"
@@ -270,9 +258,7 @@ ImportError: No module named nonexistent
 
         # Arch: all package (matches every system architecture)
         report["PackageArchitecture"] = "all"
-        self.assertEqual(
-            report.standard_title(), "bash crashed with SIGSEGV in foo()"
-        )
+        self.assertEqual(report.standard_title(), "bash crashed with SIGSEGV in foo()")
 
         report = apport.report.Report("KernelOops")
         report["OopsText"] = (
@@ -280,9 +266,7 @@ ImportError: No module named nonexistent
             "kernel BUG at /tmp/oops.c:5!\n"
             "invalid opcode: 0000 [#1] SMP"
         )
-        self.assertEqual(
-            report.standard_title(), "kernel BUG at /tmp/oops.c:5!"
-        )
+        self.assertEqual(report.standard_title(), "kernel BUG at /tmp/oops.c:5!")
 
     def test_gen_stacktrace_top(self):
         """_gen_stacktrace_top()."""
@@ -626,8 +610,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
 
         self.assertEqual(
             r.crash_signature(),
-            "/bin/crash:42:foo_bar:d01:raise:<signal handler called>"
-            ":__frob::~frob",
+            "/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob::~frob",
         )
 
         r["StacktraceTop"] = textwrap.dedent(
@@ -657,14 +640,11 @@ dispatch_queue () at canberra-gtk-module.c:815""",
             ZeroDivisionError: integer division or modulo by zero"""
         )
         self.assertEqual(
-            r.crash_signature(),
-            "/bin/crash:ZeroDivisionError:test.py@7:_f:g_foo00",
+            r.crash_signature(), "/bin/crash:ZeroDivisionError:test.py@7:_f:g_foo00"
         )
 
         # sometimes Python traces do not have file references
-        r[
-            "Traceback"
-        ] = "TypeError: function takes exactly 0 arguments (1 given)"
+        r["Traceback"] = "TypeError: function takes exactly 0 arguments (1 given)"
         self.assertEqual(r.crash_signature(), "/bin/crash:TypeError")
 
         r["Traceback"] = "FooBar"
@@ -865,9 +845,7 @@ CR2: 00000000ffffb4ff
 
         try:
             pr = apport.report.Report()
-            utf8_val = (
-                b"\xc3\xa4 " + uname[1].encode("UTF-8") + b" \xe2\x99\xa5 "
-            )
+            utf8_val = b"\xc3\xa4 " + uname[1].encode("UTF-8") + b" \xe2\x99\xa5 "
             pr["ProcUnicodeValue"] = utf8_val.decode("UTF-8")
             pr["ProcByteArrayValue"] = utf8_val
 
@@ -917,8 +895,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
         self.assertEqual(pr._address_to_offset(0x10), None)
 
         self.assertEqual(
-            pr._address_to_offset(0x7F491FC24010),
-            "/lib/with spaces !/libfoo.so+10",
+            pr._address_to_offset(0x7F491FC24010), "/lib/with spaces !/libfoo.so+10"
         )
 
     def test_address_to_offset_arm(self):

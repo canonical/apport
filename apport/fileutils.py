@@ -107,9 +107,9 @@ def find_package_desktopfile(package):
     for line in packaging.get_files(package):
         if line.endswith(".desktop"):
             # restrict to autostart and applications, see LP#1147528
-            if not line.startswith(
-                "/etc/xdg/autostart"
-            ) and not line.startswith("/usr/share/applications/"):
+            if not line.startswith("/etc/xdg/autostart") and not line.startswith(
+                "/usr/share/applications/"
+            ):
                 continue
 
             if desktopfile:
@@ -429,9 +429,7 @@ def make_report_file(report, uid=None):
     elif "Package" in report:
         subject = report["Package"].split(None, 1)[0]
     else:
-        raise ValueError(
-            "report has neither ExecutablePath nor Package attribute"
-        )
+        raise ValueError("report has neither ExecutablePath nor Package attribute")
 
     if not uid:
         uid = os.geteuid()
@@ -586,9 +584,7 @@ def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
 
     if not environ:
         return {}
-    return dict(
-        [entry.split("=", 1) for entry in environ.split("\0") if "=" in entry]
-    )
+    return dict([entry.split("=", 1) for entry in environ.split("\0") if "=" in entry])
 
 
 def get_process_path(proc_pid_fd=None):
@@ -601,9 +597,7 @@ def get_process_path(proc_pid_fd=None):
         return "unknown"
 
 
-def get_core_path(
-    pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
-):
+def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None):
     """Get the path to a core file."""
     if pid is None:
         pid = "unknown"
@@ -702,9 +696,7 @@ def shared_libraries(path):
     return libs
 
 
-def should_skip_crash(
-    report: ProblemReport, filename: str
-) -> typing.Optional[str]:
+def should_skip_crash(report: ProblemReport, filename: str) -> typing.Optional[str]:
     """Check if the crash should be skipped for flood protection.
 
     In case the crash should be skipped return a string with the reason.
@@ -715,10 +707,7 @@ def should_skip_crash(
     except (KeyError, ValueError):
         crash_counter = 0
     if crash_counter > 1:
-        return (
-            f"this executable already crashed"
-            f" {crash_counter} times, ignoring"
-        )
+        return f"this executable already crashed" f" {crash_counter} times, ignoring"
     if os.path.exists(filename) and not seen_report(filename):
         # don't clobber existing report
         return (

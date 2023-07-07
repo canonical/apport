@@ -28,13 +28,9 @@ class ParseSegv:
             if reg in self.regs:
                 self.sp = self.regs[reg]
 
-        (
-            self.line,
-            self.pc,
-            self.insn,
-            self.src,
-            self.dest,
-        ) = self.parse_disassembly(disassembly)
+        (self.line, self.pc, self.insn, self.src, self.dest) = self.parse_disassembly(
+            disassembly
+        )
 
         self.stack_vma = None
         self.maps = self.parse_maps(maps)
@@ -59,15 +55,9 @@ class ParseSegv:
             start, end = [int(x, 16) for x in span.split("-")]
             if name == "[stack]":
                 self.stack_vma = len(maps)
-            maps.append(
-                {"start": start, "end": end, "perms": perms, "name": name}
-            )
+            maps.append({"start": start, "end": end, "perms": perms, "name": name})
             logging.debug(
-                "start: %s, end: %s, perms: %s, name: %s",
-                start,
-                end,
-                perms,
-                name,
+                "start: %s, end: %s, perms: %s, name: %s", start, end, perms, name
             )
         return maps
 
@@ -149,16 +139,7 @@ class ParseSegv:
                 logging.debug("dest: %s", dest)
 
         # Set up possible implicit memory destinations (stack actions)
-        if insn in [
-            "push",
-            "pop",
-            "pushl",
-            "popl",
-            "call",
-            "callq",
-            "ret",
-            "retq",
-        ]:
+        if insn in ["push", "pop", "pushl", "popl", "call", "callq", "ret", "retq"]:
             for reg in ["rsp", "esp"]:
                 if reg in self.regs:
                     dest = f"(%{reg})"
@@ -360,9 +341,7 @@ class ParseSegv:
         if self.sp is not None:
             if self.stack_vma is not None:
                 if self.sp < self.maps[self.stack_vma]["start"]:
-                    details.append(
-                        "Stack memory exhausted (SP below stack segment)"
-                    )
+                    details.append("Stack memory exhausted (SP below stack segment)")
                 if self.sp >= self.maps[self.stack_vma]["end"]:
                     details.append("Stack pointer not within stack segment")
             if not understood:
@@ -375,9 +354,7 @@ class ParseSegv:
         if not understood:
             vma = self.find_vma(self.pc)
             msg = "Reason could not be automatically determined."
-            if vma and (
-                vma["name"] == "[vdso]" or vma["name"] == "[vsyscall]"
-            ):
+            if vma and (vma["name"] == "[vdso]" or vma["name"] == "[vsyscall]"):
                 msg += " (Unhandled exception in kernel code?)"
             reason.append(msg)
             details.append(msg)
@@ -392,9 +369,7 @@ def add_info(report):
     needed = ["Signal", "Architecture", "Disassembly", "ProcMaps", "Registers"]
     for field in needed:
         if field not in report:
-            report[
-                "SegvAnalysis"
-            ] = f'Skipped: missing required field "{field}"'
+            report["SegvAnalysis"] = f'Skipped: missing required field "{field}"'
             return
 
     # Only run on segv for x86 and x86_64...
@@ -402,9 +377,7 @@ def add_info(report):
         return
 
     try:
-        segv = ParseSegv(
-            report["Registers"], report["Disassembly"], report["ProcMaps"]
-        )
+        segv = ParseSegv(report["Registers"], report["Disassembly"], report["ProcMaps"])
         understood, reason, details = segv.report()
         if understood:
             report["SegvReason"] = reason
@@ -417,10 +390,7 @@ def main():
     if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
-        print(
-            f"  Usage:"
-            f" {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt"
-        )
+        print(f"  Usage:" f" {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt")
         sys.exit(0)
 
     with open(sys.argv[1], encoding="utf-8") as registers_file:

@@ -65,20 +65,14 @@ class TestGitHub(unittest.TestCase):
             # Snap fields are not set and the database specifies no
             # norepository_{owner,name}
             self.assertRaises(
-                RuntimeError,
-                self.crashdb_barren.upload,
-                nodata,
-                None,
-                self.message_cb,
+                RuntimeError, self.crashdb_barren.upload, nodata, None, self.message_cb
             )
 
             # Snap fields are not set and the database specifies
             # norepository_{owner,name}
             self.crashdb.upload(nodata, None, self.message_cb)
             mock_api.assert_called_with(
-                self.crashdb.repository_owner,
-                self.crashdb.repository_name,
-                ANY,
+                self.crashdb.repository_owner, self.crashdb.repository_name, ANY
             )
 
             # Snap fields are set and the database specifies
@@ -92,9 +86,7 @@ class TestGitHub(unittest.TestCase):
             # repository_{owner,name}: The database specs takes precedence.
             self.crashdb.upload(snapdata, None, self.message_cb)
             mock_api.assert_called_with(
-                self.crashdb.repository_owner,
-                self.crashdb.repository_name,
-                ANY,
+                self.crashdb.repository_owner, self.crashdb.repository_name, ANY
             )
 
     @patch("apport.crashdb_impl.github.Github.api_authentication")
@@ -127,8 +119,7 @@ class TestGitHub(unittest.TestCase):
             # Expired (requires __enter__ again to update __expiry).
             self.assertRaises(RuntimeError, github.authentication_complete)
             self.message_cb.assert_called_with(
-                "Failed login",
-                "Github authentication expired. Please try again.",
+                "Failed login", "Github authentication expired. Please try again."
             )
 
     def test_not_implemented_methods(self):

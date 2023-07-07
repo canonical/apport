@@ -25,9 +25,7 @@ import apport.report
 def main():
     # Check parameters
     argparser = argparse.ArgumentParser("%(prog) [options]")
-    argparser.add_argument(
-        "-p", "--pid", action="store", type=int, dest="optpid"
-    )
+    argparser.add_argument("-p", "--pid", action="store", type=int, dest="optpid")
     args = argparser.parse_args()
 
     # Build the base report

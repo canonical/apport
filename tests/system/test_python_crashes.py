@@ -112,15 +112,10 @@ func(42)
         )
 
         pr = self._load_report()
-        self.assertTrue(
-            pr["Traceback"].startswith("Traceback"), pr["Traceback"]
-        )
-        self.assertIn(
-            "org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"]
-        )
+        self.assertTrue(pr["Traceback"].startswith("Traceback"), pr["Traceback"])
+        self.assertIn("org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"])
         self.assertEqual(
-            pr["DbusErrorAnalysis"],
-            "no service file providing com.example.NotExisting",
+            pr["DbusErrorAnalysis"], "no service file providing com.example.NotExisting"
         )
 
     def test_dbus_service_unknown_wrongbus_notrunning(self):
@@ -139,9 +134,7 @@ func(42)
         )
 
         pr = self._load_report()
-        self.assertIn(
-            "org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"]
-        )
+        self.assertIn("org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"])
         self.assertRegex(
             pr["DbusErrorAnalysis"],
             "^provided by .*/dbus-1/services.*vfs.*[mM]etadata.service",
@@ -168,9 +161,7 @@ func(42)
         )
 
         pr = self._load_report()
-        self.assertIn(
-            "org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"]
-        )
+        self.assertIn("org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"])
         self.assertRegex(
             pr["DbusErrorAnalysis"],
             "^provided by .*/dbus-1/services.*vfs.*[mM]etadata.service",
@@ -227,12 +218,8 @@ func(42)
         )
 
         pr = self._load_report()
-        self.assertTrue(
-            pr["Traceback"].startswith("Traceback"), pr["Traceback"]
-        )
-        self.assertIn(
-            "org.freedesktop.DBus.Error.UnknownMethod", pr["Traceback"]
-        )
+        self.assertTrue(pr["Traceback"].startswith("Traceback"), pr["Traceback"])
+        self.assertIn("org.freedesktop.DBus.Error.UnknownMethod", pr["Traceback"])
         self.assertNotIn("DbusErrorAnalysis", pr)
         # we expect it to unwrap the actual exception from the DBusException
         self.assertIn(
@@ -244,9 +231,7 @@ func(42)
     def _load_report(self):
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
-        self.assertEqual(
-            len(reports), 1, "crashed Python program produced a report"
-        )
+        self.assertEqual(len(reports), 1, "crashed Python program produced a report")
         pr = apport.Report()
         with open(reports[0], "rb") as f:
             pr.load(f)

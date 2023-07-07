@@ -43,10 +43,7 @@ def parse_args():
         "-s",
         "--stdout",
         action="store_true",
-        help=_(
-            "Do not put the new traces into the report,"
-            " but write them to stdout."
-        ),
+        help=_("Do not put the new traces into the report, but write them to stdout."),
     )
     actions.add_argument(
         "-g",
@@ -71,28 +68,16 @@ def parse_args():
         "-c",
         "--remove-core",
         action="store_true",
-        help=_(
-            "Remove the core dump from the report"
-            " after stack trace regeneration"
-        ),
+        help=_("Remove the core dump from the report after stack trace regeneration"),
     )
     argparser.add_argument(
-        "-r",
-        "--core-file",
-        metavar="CORE",
-        help=_("Override report's CoreFile"),
+        "-r", "--core-file", metavar="CORE", help=_("Override report's CoreFile")
     )
     argparser.add_argument(
-        "-x",
-        "--executable",
-        metavar="EXE",
-        help=_("Override report's ExecutablePath"),
+        "-x", "--executable", metavar="EXE", help=_("Override report's ExecutablePath")
     )
     argparser.add_argument(
-        "-m",
-        "--procmaps",
-        metavar="MAPS",
-        help=_("Override report's ProcMaps"),
+        "-m", "--procmaps", metavar="MAPS", help=_("Override report's ProcMaps")
     )
     argparser.add_argument(
         "-R",
@@ -129,8 +114,7 @@ def parse_args():
         "--verbose",
         action="store_true",
         help=_(
-            "Report download/install progress when installing packages"
-            " into sandbox"
+            "Report download/install progress when installing packages into sandbox"
         ),
     )
     argparser.add_argument(
@@ -192,8 +176,7 @@ def parse_args():
         "--duplicate-db",
         metavar="PATH",
         help=_(
-            "Path to the duplicate sqlite database"
-            " (default: no duplicate checking)"
+            "Path to the duplicate sqlite database (default: no duplicate checking)"
         ),
     )
     argparser.add_argument(
@@ -315,9 +298,7 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report["Stacktrace"].splitlines():
             m = src_frame.match(frame)
             if m:
-                code = get_code(
-                    srcdir, os.path.basename(m.group(1)), int(m.group(2))
-                )
+                code = get_code(srcdir, os.path.basename(m.group(1)), int(m.group(2)))
                 result += f"{frame}\n{code}"
             else:
                 m = other_frame.search(frame)
@@ -362,13 +343,7 @@ def main():
             with open(options.report, "rb") as f:
                 report.load(f, binary="compressed")
             apport.memdbg("loaded report from file")
-        except (
-            MemoryError,
-            TypeError,
-            ValueError,
-            OSError,
-            zlib.error,
-        ) as error:
+        except (MemoryError, TypeError, ValueError, OSError, zlib.error) as error:
             apport.fatal("Cannot open report file: %s", str(error))
     elif options.report.isdigit():
         # crash ID
@@ -394,9 +369,7 @@ def main():
             # close it with an informative message and exit cleanly
             # to not break crash-digger
             if options.auth and not options.output and not options.stdout:
-                apport.error(
-                    "Broken report: %s, closing as invalid", str(error)
-                )
+                apport.error("Broken report: %s, closing as invalid", str(error))
                 crashdb.mark_retrace_failed(
                     options.report,
                     f"""Thank you for your report!
@@ -420,8 +393,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         options.report = None
     else:
         apport.fatal(
-            '"%s" is neither an existing report file nor a crash ID',
-            options.report,
+            '"%s" is neither an existing report file nor a crash ID', options.report
         )
 
     if options.core_file:
@@ -438,13 +410,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     # consistency checks
     required_fields = set(
-        [
-            "CoreDump",
-            "ExecutablePath",
-            "Package",
-            "DistroRelease",
-            "Architecture",
-        ]
+        ["CoreDump", "ExecutablePath", "Package", "DistroRelease", "Architecture"]
     )
     if report["ProblemType"] == "KernelCrash":
         if not set(["Package", "VmCore"]).issubset(set(report.keys())):
@@ -540,9 +506,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                 target = f"{machine}-linux-gnu"
                 if not os.path.exists(f"/usr/lib/debug/.dwz/{target}"):
                     # don't create a broken symlink
-                    if os.path.exists(
-                        f"{sandbox}/usr/lib/debug/.dwz/{target}"
-                    ):
+                    if os.path.exists(f"{sandbox}/usr/lib/debug/.dwz/{target}"):
                         try:
                             os.symlink(
                                 f"{sandbox}/usr/lib/debug/.dwz/{target}",
@@ -668,9 +632,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                         )
                         update_bug = False
                     else:
-                        apport.log(
-                            "Duplicate check negative", options.timestamps
-                        )
+                        apport.log("Duplicate check negative", options.timestamps)
 
                 if update_bug:
                     if "Stacktrace" in report:
@@ -682,10 +644,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                         )
                     else:
                         # this happens when gdb crashes
-                        apport.log(
-                            "No stack trace, invalid report",
-                            options.timestamps,
-                        )
+                        apport.log("No stack trace, invalid report", options.timestamps)
 
                     if not report.has_useful_stacktrace():
                         if outdated_msg:

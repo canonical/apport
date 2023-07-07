@@ -44,26 +44,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """Check if this report can be uploaded to this database.
         Checks for the proper settings of apport.
         """
-        if (
-            not self.options.get("sender")
-            and "UnreportableReason" not in report
-        ):
+        if not self.options.get("sender") and "UnreportableReason" not in report:
             report[
                 "UnreportableReason"
             ] = "Please configure sender settings in /etc/apport/crashdb.conf"
 
         # At this time, we are not ready to take CrashDumps
         if "Stacktrace" in report and not report.has_useful_stacktrace():
-            report["UnreportableReason"] = (
-                "Incomplete backtrace."
-                " Please install the debug symbol packages"
-            )
+            report[
+                "UnreportableReason"
+            ] = "Incomplete backtrace. Please install the debug symbol packages"
 
         return apport.crashdb.CrashDatabase.accepts(self, report)
 
-    def upload(
-        self, report, progress_callback=None, user_message_callback=None
-    ):
+    def upload(self, report, progress_callback=None, user_message_callback=None):
         """Upload given problem report return a handle for it.
 
         In Debian, we use BTS, which is heavily email oriented. This method
@@ -82,9 +76,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         with tempfile.NamedTemporaryFile() as temp:
             temp.file.write(f"Package: {buggy_package}\n".encode("UTF-8"))
             temp.file.write(f"Version: {buggy_version}\n\n\n".encode("UTF-8"))
-            temp.file.write(
-                ("=============================\n\n").encode("UTF-8")
-            )
+            temp.file.write(("=============================\n\n").encode("UTF-8"))
 
             # Let's remove the CoreDump first
 

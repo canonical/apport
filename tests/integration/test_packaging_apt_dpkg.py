@@ -48,41 +48,27 @@ class T(unittest.TestCase):
             # use one relative and one absolute path in checksums file
             with open(sumfile, "wb") as fd:
                 fd.write(
-                    b"2e41290da2fa3f68bd3313174467e3b5  "
-                    + f1[1:].encode()
-                    + b"\n"
+                    b"2e41290da2fa3f68bd3313174467e3b5  " + f1[1:].encode() + b"\n"
                 )
-                fd.write(
-                    b"f6423dfbc4faf022e58b4d3f5ff71a70  " + f2.encode() + b"\n"
-                )
+                fd.write(b"f6423dfbc4faf022e58b4d3f5ff71a70  " + f2.encode() + b"\n")
                 fd.write(b"deadbeef000001111110000011110000  /bin/\xc3\xa4")
-            self.assertEqual(
-                impl._check_files_md5(sumfile), [], "correct md5sums"
-            )
+            self.assertEqual(impl._check_files_md5(sumfile), [], "correct md5sums")
 
             with open(f1, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff!")
-            self.assertEqual(
-                impl._check_files_md5(sumfile), [f1[1:]], "file 1 wrong"
-            )
+            self.assertEqual(impl._check_files_md5(sumfile), [f1[1:]], "file 1 wrong")
             with open(f2, "w", encoding="utf-8") as fd:
                 fd.write("More stuff!")
             self.assertEqual(
-                impl._check_files_md5(sumfile),
-                [f1[1:], f2],
-                "files 1 and 2 wrong",
+                impl._check_files_md5(sumfile), [f1[1:], f2], "files 1 and 2 wrong"
             )
             with open(f1, "w", encoding="utf-8") as fd:
                 fd.write("Some stuff")
-            self.assertEqual(
-                impl._check_files_md5(sumfile), [f2], "file 2 wrong"
-            )
+            self.assertEqual(impl._check_files_md5(sumfile), [f2], "file 2 wrong")
 
             # check using a direct md5 list as argument
             with open(sumfile, "rb") as fd:
-                self.assertEqual(
-                    impl._check_files_md5(fd.read()), [f2], "file 2 wrong"
-                )
+                self.assertEqual(impl._check_files_md5(fd.read()), [f2], "file 2 wrong")
 
         finally:
             shutil.rmtree(td)
@@ -96,9 +82,7 @@ class T(unittest.TestCase):
     def test_get_available_version(self):
         """get_available_version()."""
         self.assertTrue(impl.get_available_version("libc6").startswith("2"))
-        self.assertRaises(
-            ValueError, impl.get_available_version, "nonexisting"
-        )
+        self.assertRaises(ValueError, impl.get_available_version, "nonexisting")
 
     def test_get_dependencies(self):
         """get_dependencies()."""
@@ -170,9 +154,7 @@ class T(unittest.TestCase):
         """get_file_package() on installed files."""
         self.assertEqual(impl.get_file_package("/bin/bash"), "bash")
         self.assertEqual(impl.get_file_package("/bin/cat"), "coreutils")
-        self.assertEqual(
-            impl.get_file_package("/etc/pam.conf"), "libpam-runtime"
-        )
+        self.assertEqual(impl.get_file_package("/etc/pam.conf"), "libpam-runtime")
         self.assertEqual(impl.get_file_package("/nonexisting"), None)
 
     def test_get_file_package_uninstalled(self):
@@ -184,9 +166,7 @@ class T(unittest.TestCase):
             mapdir = os.path.join(basedir, "dists", impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(
-                os.path.join(
-                    mapdir, f"Contents-{impl.get_system_architecture()}.gz"
-                ),
+                os.path.join(mapdir, f"Contents-{impl.get_system_architecture()}.gz"),
                 "w",
             ) as f:
                 f.write(
@@ -204,9 +184,7 @@ bin/true                                                admin/superutils
             )
             os.makedirs(mapdir)
             with gzip.open(
-                os.path.join(
-                    mapdir, f"Contents-{impl.get_system_architecture()}.gz"
-                ),
+                os.path.join(mapdir, f"Contents-{impl.get_system_architecture()}.gz"),
                 "w",
             ) as f:
                 f.write(
@@ -217,56 +195,37 @@ bin/true                                                admin/superutils
             # use this as a mirror
             impl.set_mirror(f"file://{basedir}")
 
-            self.assertEqual(
-                impl.get_file_package("usr/bin/frob", False), None
-            )
+            self.assertEqual(impl.get_file_package("usr/bin/frob", False), None)
             # must not match frob (same file name prefix)
-            self.assertEqual(
-                impl.get_file_package("usr/bin/frob", True), "frob-utils"
-            )
-            self.assertEqual(
-                impl.get_file_package("/usr/bin/frob", True), "frob-utils"
-            )
+            self.assertEqual(impl.get_file_package("usr/bin/frob", True), "frob-utils")
+            self.assertEqual(impl.get_file_package("/usr/bin/frob", True), "frob-utils")
             # find files from -updates pocket
-            self.assertEqual(
-                impl.get_file_package("/lib/libnew.so.5", False), None
-            )
-            self.assertEqual(
-                impl.get_file_package("/lib/libnew.so.5", True), "libnew5"
-            )
+            self.assertEqual(impl.get_file_package("/lib/libnew.so.5", False), None)
+            self.assertEqual(impl.get_file_package("/lib/libnew.so.5", True), "libnew5")
 
             # invalid mirror
             impl.set_mirror("file:///foo/nonexisting")
-            self.assertRaises(
-                OSError, impl.get_file_package, "usr/bin/frob", True
-            )
+            self.assertRaises(OSError, impl.get_file_package, "usr/bin/frob", True)
 
             # valid mirror, test cache directory
             impl.set_mirror(f"file://{basedir}")
             cache_dir = os.path.join(basedir, "cache")
             os.mkdir(cache_dir)
             self.assertEqual(
-                impl.get_file_package("usr/bin/frob", True, cache_dir),
-                "frob-utils",
+                impl.get_file_package("usr/bin/frob", True, cache_dir), "frob-utils"
             )
             cache_dir_files = sorted(os.listdir(cache_dir))
             self.assertEqual(len(cache_dir_files), 3)
-            self.assertEqual(
-                impl.get_file_package("/bo/gu/s", True, cache_dir), None
-            )
+            self.assertEqual(impl.get_file_package("/bo/gu/s", True, cache_dir), None)
 
             # valid cache, should not need to access the mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertEqual(
-                impl.get_file_package("/bin/true", True, cache_dir),
-                "superutils",
+                impl.get_file_package("/bin/true", True, cache_dir), "superutils"
             )
+            self.assertEqual(impl.get_file_package("/bo/gu/s", True, cache_dir), None)
             self.assertEqual(
-                impl.get_file_package("/bo/gu/s", True, cache_dir), None
-            )
-            self.assertEqual(
-                impl.get_file_package("/lib/libnew.so.5", True, cache_dir),
-                "libnew5",
+                impl.get_file_package("/lib/libnew.so.5", True, cache_dir), "libnew5"
             )
 
             # outdated cache, must refresh the cache and hit the invalid
@@ -310,8 +269,7 @@ usr/bin/frob                                            foo/frob-utils
             # and another one for fantasy release
             os.mkdir(os.path.join(basedir, "dists", "mocky"))
             with gzip.open(
-                os.path.join(basedir, "dists", "mocky", "Contents-even.gz"),
-                "w",
+                os.path.join(basedir, "dists", "mocky", "Contents-even.gz"), "w"
             ) as f:
                 f.write(
                     b"""\
@@ -324,34 +282,24 @@ usr/bin/frob                                            foo/frob
             impl.set_mirror(f"file://{basedir}")
 
             # must not match system architecture
-            self.assertEqual(
-                impl.get_file_package("usr/bin/frob", False), None
-            )
+            self.assertEqual(impl.get_file_package("usr/bin/frob", False), None)
             # must match correct architecture
             self.assertEqual(
-                impl.get_file_package("usr/bin/frob", True, arch="even"),
-                "frob-utils",
+                impl.get_file_package("usr/bin/frob", True, arch="even"), "frob-utils"
             )
             self.assertEqual(
-                impl.get_file_package("usr/bin/frob", True, arch="odd"),
-                "frob-utils",
+                impl.get_file_package("usr/bin/frob", True, arch="odd"), "frob-utils"
             )
             self.assertEqual(
-                impl.get_file_package(
-                    "/usr/lib/even/libfrob.so.1", True, arch="even"
-                ),
+                impl.get_file_package("/usr/lib/even/libfrob.so.1", True, arch="even"),
                 "libfrob1",
             )
             self.assertEqual(
-                impl.get_file_package(
-                    "/usr/lib/even/libfrob.so.1", True, arch="odd"
-                ),
+                impl.get_file_package("/usr/lib/even/libfrob.so.1", True, arch="odd"),
                 None,
             )
             self.assertEqual(
-                impl.get_file_package(
-                    "/usr/lib/odd/libfrob.so.1", True, arch="odd"
-                ),
+                impl.get_file_package("/usr/lib/odd/libfrob.so.1", True, arch="odd"),
                 "libfrob1",
             )
 
@@ -426,18 +374,12 @@ usr/bin/frob                                            foo/frob
             # valid cache, should not need to access the mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertEqual(
-                impl.get_file_package(
-                    "usr/bin/frob", True, cache_dir, arch="even"
-                ),
+                impl.get_file_package("usr/bin/frob", True, cache_dir, arch="even"),
                 "frob-utils",
             )
             self.assertEqual(
                 impl.get_file_package(
-                    "usr/bin/frob",
-                    True,
-                    cache_dir,
-                    release="Foonux 3.14",
-                    arch="even",
+                    "usr/bin/frob", True, cache_dir, release="Foonux 3.14", arch="even"
                 ),
                 "frob",
             )
@@ -456,9 +398,7 @@ usr/bin/frob                                            foo/frob
             # mirror
             now = int(time.time())
             for cache_file in os.listdir(cache_dir):
-                os.utime(
-                    os.path.join(cache_dir, cache_file), (now, now - 90000)
-                )
+                os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
 
             self.assertRaises(
                 OSError,
@@ -474,9 +414,7 @@ usr/bin/frob                                            foo/frob
 
     def test_get_file_package_diversion(self):
         """get_file_package() for a diverted file."""
-        output = subprocess.check_output(
-            ["dpkg-divert", "--list"], env={}
-        ).decode()
+        output = subprocess.check_output(["dpkg-divert", "--list"], env={}).decode()
 
         for line in output.rstrip().split("\n"):
             fields = line.split(" ")
@@ -485,9 +423,7 @@ usr/bin/frob                                            foo/frob
                 # pick first diversion we have
                 break
         else:  # pragma: no cover
-            self.fail(
-                f"No non-local diversion found. dpkg-divert output: {output}"
-            )
+            self.fail(f"No non-local diversion found. dpkg-divert output: {output}")
 
         file = fields[2]
         pkg = fields[-1]
@@ -530,9 +466,7 @@ deb http://secondary.mirror tuxy extra
         # empty file
         with open(s, "w", encoding="utf-8") as f:
             f.flush()
-        self.assertRaises(
-            SystemError, impl._get_primary_mirror_from_apt_sources, s
-        )
+        self.assertRaises(SystemError, impl._get_primary_mirror_from_apt_sources, s)
 
     def test_mirror_from_apt_sources_with_options(self) -> None:
         """Test _get_primary_mirror_from_apt_sources() with options"""
@@ -547,9 +481,7 @@ deb http://secondary.mirror tuxy extra
         # very shallow
         self.assertEqual(type(impl.get_modified_conffiles("bash")), type({}))
         self.assertEqual(type(impl.get_modified_conffiles("apport")), type({}))
-        self.assertEqual(
-            type(impl.get_modified_conffiles("nonexisting")), type({})
-        )
+        self.assertEqual(type(impl.get_modified_conffiles("nonexisting")), type({}))
 
     def test_get_system_architecture(self):
         """get_system_architecture()."""
@@ -571,15 +503,9 @@ deb http://secondary.mirror tuxy extra
     def test_compare_versions(self):
         """compare_versions."""
         self.assertEqual(impl.compare_versions("1", "2"), -1)
-        self.assertEqual(
-            impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu2"), -1
-        )
-        self.assertEqual(
-            impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu1"), 0
-        )
-        self.assertEqual(
-            impl.compare_versions("1.0-1ubuntu2", "1.0-1ubuntu1"), 1
-        )
+        self.assertEqual(impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu2"), -1)
+        self.assertEqual(impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu1"), 0)
+        self.assertEqual(impl.compare_versions("1.0-1ubuntu2", "1.0-1ubuntu1"), 1)
         self.assertEqual(impl.compare_versions("1:1.0-1", "2007-2"), 1)
         self.assertEqual(impl.compare_versions("1:1.0-1~1", "1:1.0-1"), -1)
 

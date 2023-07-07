@@ -25,9 +25,7 @@ import apport.crashdb_impl.memory
 def command_dump(crashdb, _):
     """Print out all entries."""
 
-    for sig, (crash_id, version, lastchange) in crashdb.duplicate_db_dump(
-        True
-    ).items():
+    for sig, (crash_id, version, lastchange) in crashdb.duplicate_db_dump(True).items():
         sys.stdout.write(f"{crash_id:7d}: {sig} ")
         if version == "":
             sys.stdout.write("[fixed] ")
@@ -72,16 +70,14 @@ def parse_args():
     parser_dump.set_defaults(command=command_dump)
 
     parser_changeid = subparsers.add_parser(
-        "changeid",
-        help="Change the associated crash ID for a particular crash",
+        "changeid", help="Change the associated crash ID for a particular crash"
     )
     parser_changeid.set_defaults(command=command_changeid)
     parser_changeid.add_argument("old_id")
     parser_changeid.add_argument("new_id")
 
     parser_removeid = subparsers.add_parser(
-        "removeid",
-        help="Remove the associated crash ID for a particular crash",
+        "removeid", help="Remove the associated crash ID for a particular crash"
     )
     parser_removeid.set_defaults(command=command_removeid)
     parser_removeid.add_argument("id")

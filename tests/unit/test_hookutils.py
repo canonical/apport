@@ -27,9 +27,7 @@ class TestHookutils(unittest.TestCase):
         self.assertEqual(report["CurrentDmesg"], "existingcurrent")
 
     @unittest.mock.patch("subprocess.run")
-    @unittest.mock.patch(
-        "os.path.exists", unittest.mock.MagicMock(return_value=True)
-    )
+    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
     def test_attach_journal_errors_with_date(self, run_mock):
         run_mock.return_value = subprocess.CompletedProcess(
             args=None, returncode=0, stdout=b"journalctl output", stderr=b""
@@ -51,9 +49,7 @@ class TestHookutils(unittest.TestCase):
         )
 
     @unittest.mock.patch("subprocess.run")
-    @unittest.mock.patch(
-        "os.path.exists", unittest.mock.MagicMock(return_value=True)
-    )
+    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
     def test_attach_journal_errors_without_date(self, run_mock):
         run_mock.return_value = subprocess.CompletedProcess(
             args=None, returncode=0, stdout=b"journalctl output", stderr=b""
@@ -72,12 +68,9 @@ class TestHookutils(unittest.TestCase):
 
     def test_path_to_key(self):
         """Transform a file path to a valid report key."""
+        self.assertEqual(apport.hookutils.path_to_key("simple.txt"), "simple.txt")
         self.assertEqual(
-            apport.hookutils.path_to_key("simple.txt"), "simple.txt"
-        )
-        self.assertEqual(
-            apport.hookutils.path_to_key("path/with/dirs.txt"),
-            "path.with.dirs.txt",
+            apport.hookutils.path_to_key("path/with/dirs.txt"), "path.with.dirs.txt"
         )
         self.assertEqual(
             apport.hookutils.path_to_key('/funny:characters!& ".txt'),
@@ -85,9 +78,7 @@ class TestHookutils(unittest.TestCase):
         )
 
     @unittest.mock.patch("subprocess.Popen")
-    @unittest.mock.patch(
-        "os.path.exists", unittest.mock.MagicMock(return_value=True)
-    )
+    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
     def test_recent_syslog_journald_cmd(self, popen_mock):
         class SkipPopen(Exception):
             pass
@@ -99,22 +90,14 @@ class TestHookutils(unittest.TestCase):
 
         with self.assertRaises(SkipPopen):
             apport.hookutils.recent_syslog(re.compile("."))
-        popen_mock.assert_called_once_with(
-            cmd_system_only, stdout=unittest.mock.ANY
-        )
+        popen_mock.assert_called_once_with(cmd_system_only, stdout=unittest.mock.ANY)
 
         popen_mock.reset_mock()
         with self.assertRaises(SkipPopen):
-            apport.hookutils.recent_syslog(
-                re.compile("."), journald_only_system=True
-            )
-        popen_mock.assert_called_once_with(
-            cmd_system_only, stdout=unittest.mock.ANY
-        )
+            apport.hookutils.recent_syslog(re.compile("."), journald_only_system=True)
+        popen_mock.assert_called_once_with(cmd_system_only, stdout=unittest.mock.ANY)
 
         popen_mock.reset_mock()
         with self.assertRaises(SkipPopen):
-            apport.hookutils.recent_syslog(
-                re.compile("."), journald_only_system=False
-            )
+            apport.hookutils.recent_syslog(re.compile("."), journald_only_system=False)
         popen_mock.assert_called_once_with(cmd, stdout=unittest.mock.ANY)
