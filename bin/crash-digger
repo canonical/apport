@@ -37,7 +37,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         dupcheck_mode=False,
         publish_dir=None,
         crash_db=None,
-        gdb_sandbox=True,
+        gdb_sandbox=False,
     ):  # pylint: disable=too-many-arguments
         """Initialize pools."""
 
