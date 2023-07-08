@@ -37,6 +37,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         dupcheck_mode=False,
         publish_dir=None,
         crash_db=None,
+        gdb_sandbox=False,
     ):  # pylint: disable=too-many-arguments
         """Initialize pools."""
 
@@ -49,6 +50,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         self.auth_file = auth_file
         self.dup_db = dup_db
         self.dupcheck_mode = dupcheck_mode
+        self.gdb_sandbox = gdb_sandbox
         try:
             self.crashdb = get_crashdb(auth_file, name=crash_db)
         except KeyError:
@@ -124,6 +126,8 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             argv += ["--sandbox-dir", self.sandbox_dir]
         if self.dup_db:
             argv += ["--duplicate-db", self.dup_db]
+        if self.gdb_sandbox:
+            argv += ["--gdb-sandbox"]
         if self.verbose:
             argv.append("-v")
         argv.append(str(crash_id))
@@ -210,6 +214,13 @@ def parse_options():
         metavar="DIR",
         help="Directory for unpacked packages. Future runs will assume that"
         " any already downloaded package is also extracted to this sandbox.",
+    )
+    parser.add_argument(
+        "--gdb-sandbox",
+        dest="gdb_sandbox",
+        action="store_true",
+        help="Use a temporary sandbox for installing the version of GDB (and"
+        " its dependencies) from the same release as the report.",
     )
     parser.add_argument(
         "-C",
@@ -316,6 +327,7 @@ def main():
             opts.dupcheck_mode,
             opts.publish_db,
             opts.crash_db,
+            opts.gdb_sandbox,
         ).run()
     except SystemExit as error:
         if error.code == 99:
