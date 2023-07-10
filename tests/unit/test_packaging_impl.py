@@ -7,7 +7,7 @@ from apport.packaging_impl import determine_packaging_implementation
 
 
 class TestPackagingImpl(unittest.TestCase):
-    @unittest.mock.patch("apport.packaging_impl.freedesktop_os_release")
+    @unittest.mock.patch("platform.freedesktop_os_release")
     def test_determine_ubuntu(self, os_release_mock):
         os_release_mock.return_value = {
             "PRETTY_NAME": "Ubuntu 22.04.1 LTS",
@@ -21,7 +21,7 @@ class TestPackagingImpl(unittest.TestCase):
         self.assertEqual(determine_packaging_implementation(), "apt_dpkg")
         os_release_mock.assert_called_once_with()
 
-    @unittest.mock.patch("apport.packaging_impl.freedesktop_os_release")
+    @unittest.mock.patch("platform.freedesktop_os_release")
     def test_determine_debian_unstable(self, os_release_mock):
         os_release_mock.return_value = {
             "PRETTY_NAME": "Debian GNU/Linux bookworm/sid",

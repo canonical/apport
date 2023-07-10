@@ -26,6 +26,7 @@ import json
 import logging
 import os
 import pickle
+import platform
 import shutil
 import stat
 import subprocess
@@ -40,7 +41,7 @@ import apt
 import aptsources.sourceslist
 
 import apport.logging
-from apport.packaging import PackageInfo, freedesktop_os_release
+from apport.packaging import PackageInfo
 
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -1761,7 +1762,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Get "lsb_release -sc", cache the result."""
         if self._distro_codename is None:
             try:
-                info = freedesktop_os_release()
+                info = platform.freedesktop_os_release()
                 self._distro_codename = info["VERSION_CODENAME"]
             except (KeyError, OSError):
                 # Fall back to query lsb_release

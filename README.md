@@ -24,6 +24,15 @@ Please see https://wiki.ubuntu.com/Apport for more details and further links.
 The files in [doc/](./doc/) document particular details such as package hooks,
 crash database configuration, or the internal data format.
 
+Platform requirements
+---------------------
+
+The absolute minimum requirements for your distribution are Python 3.10 or
+above. Depending on which features you want enabled, various Python packages
+also need to be available.
+
+TODO: document the Python dependencies
+
 Temporarily enabling apport
 ===========================
 

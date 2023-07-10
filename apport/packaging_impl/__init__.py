@@ -1,12 +1,13 @@
 import importlib
 import os
+import platform
 
-from apport.packaging import PackageInfo, freedesktop_os_release
+from apport.packaging import PackageInfo
 
 
 def determine_packaging_implementation() -> str:
     """Determine the packaging implementation for the host."""
-    info = freedesktop_os_release()
+    info = platform.freedesktop_os_release()
     assert info is not None
     ids = set([info["ID"]]) | set(info.get("ID_LIKE", "").split(" "))
     if "debian" in ids:
