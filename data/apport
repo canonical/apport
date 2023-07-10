@@ -938,6 +938,9 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     info = apport.report.Report("Crash")
     info["Signal"] = str(options.signal_number)
     core_size_limit = usable_ram() * 3 / 4
+    # sys.stdin has type io.TextIOWrapper, not the claimed io.TextIO.
+    # See https://github.com/python/typeshed/issues/10093
+    assert isinstance(sys.stdin, io.TextIOWrapper)
     # read binary data from stdio
     info["CoreDump"] = (sys.stdin.detach(), True, core_size_limit, True)
 
