@@ -67,7 +67,7 @@ def translate(self, prop, notr=None):
 
 
 # pylint: disable=protected-access
-uic.properties.Properties._string = translate
+uic.properties.Properties._string = translate  # type: ignore[assignment]
 # pylint: enable=protected-access
 
 
