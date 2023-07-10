@@ -69,7 +69,7 @@ fi
 
 if type pylint >/dev/null 2>&1; then
     echo "Running pylint..."
-    pylint ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+    pylint -j 0 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 else
     echo "Skipping pylint tests, pylint is not installed"
 fi
