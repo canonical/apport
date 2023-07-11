@@ -1081,7 +1081,7 @@ class Report(problem_report.ProblemReport):
         ui: typing.Optional[HookUI] = None,
         package: typing.Optional[str] = None,
         srcpackage: typing.Optional[str] = None,
-    ):
+    ) -> bool:
         """Run hook script for collecting package specific data.
 
         A hook script needs to be in PACKAGE_HOOK_DIR/<Package>.py or in
@@ -1104,7 +1104,7 @@ class Report(problem_report.ProblemReport):
         ui: HookUI,
         package: typing.Optional[str],
         srcpackage: typing.Optional[str],
-    ):
+    ) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
 
@@ -1116,14 +1116,14 @@ class Report(problem_report.ProblemReport):
             package = package.split()[0]
             if "/" in package:
                 self["UnreportableReason"] = f"invalid Package: {package}"
-                return None
+                return False
         if not srcpackage:
             srcpackage = self.get("SourcePackage")
         if srcpackage:
             srcpackage = srcpackage.split()[0]
             if "/" in srcpackage:
                 self["UnreportableReason"] = f"invalid SourcePackage: {package}"
-                return None
+                return False
 
         hook_dirs = [PACKAGE_HOOK_DIR]
         # also search hooks in /opt, when program is from there
