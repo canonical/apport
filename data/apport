@@ -67,7 +67,7 @@ class ProcPid(contextlib.ContextDecorator):
             os.close(self.fd)
         return False
 
-    def _opener(self, path, flags: int) -> int:
+    def _opener(self, path: typing.Union[str, os.PathLike[str]], flags: int) -> int:
         return os.open(path, flags, dir_fd=self.fd)
 
     def open(self, file: str) -> io.TextIOWrapper:
@@ -155,7 +155,7 @@ def get_apport_starttime() -> int:
     return apport.fileutils.get_starttime(contents)
 
 
-def drop_privileges(crash_user: UserGroupID):
+def drop_privileges(crash_user: UserGroupID) -> None:
     """Change effective user and group to crash user/group ID"""
     # Drop any supplemental groups, or we'll still be in the root group
     if os.getuid() == 0:
@@ -659,7 +659,7 @@ def stop_apport() -> None:
     write_to_proc_sys("kernel/core_pattern", "core")
 
 
-def parse_arguments(args: list[str]):
+def parse_arguments(args: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-p", "--pid", type=int, help="process id (%%p)")

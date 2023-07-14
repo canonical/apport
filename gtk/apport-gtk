@@ -226,7 +226,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         gdk_window.set_modal_hint(True)
 
     def ui_present_report_details(
-        self, allowed_to_report=True, modal_for=None
+        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
     ) -> apport.ui.Action:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements

@@ -33,7 +33,7 @@ class T(unittest.TestCase):
     def tearDownClass(cls):
         restore_data_dir(apport.report, cls.orig_data_dir)
 
-    def wait_for_proc_cmdline(self, pid: int, timeout_sec=10.0) -> None:
+    def wait_for_proc_cmdline(self, pid: int, timeout_sec: float = 10.0) -> None:
         assert pid
         elapsed_time = 0.0
         while elapsed_time < timeout_sec:

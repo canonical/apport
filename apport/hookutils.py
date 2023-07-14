@@ -30,6 +30,7 @@ import tempfile
 
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
+from problem_report import ProblemReport
 
 _invalid_key_chars_re = re.compile(r"[^0-9a-zA-Z_.-]")
 _AGENT = None
@@ -778,7 +779,7 @@ def attach_gsettings_package(report, package):
         attach_gsettings_schema(report, schema)
 
 
-def attach_journal_errors(report, time_window=10) -> None:
+def attach_journal_errors(report: ProblemReport, time_window: int = 10) -> None:
     """Attach journal warnings and errors.
 
     If the report contains a date, get the journal logs around that

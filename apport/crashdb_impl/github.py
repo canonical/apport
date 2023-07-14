@@ -12,6 +12,7 @@
 import json
 import time
 from dataclasses import dataclass
+from typing import Any, Callable, Optional
 
 import requests
 
@@ -40,7 +41,7 @@ class Github:
             string = f"{string}&{key}={value}"
         return string
 
-    def _post(self, url: str, data: str):
+    def _post(self, url: str, data: str) -> Any:
         """Posts the given data to the given URL.
         Uses auth token if available"""
         headers = {"Accept": "application/vnd.github.v3+json"}
@@ -61,10 +62,10 @@ class Github:
         result.raise_for_status()  # Not using UI: the user can't do much here
         return json.loads(result.text)
 
-    def api_authentication(self, url: str, data: dict):
+    def api_authentication(self, url: str, data: dict) -> Any:
         return self._post(url, self._stringify(data))
 
-    def api_open_issue(self, owner: str, repo: str, data: dict):
+    def api_open_issue(self, owner: str, repo: str, data: dict) -> Any:
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
         return self._post(url, json.dumps(data))
 
@@ -99,7 +100,7 @@ class Github:
 
         return self
 
-    def __exit__(self, *_) -> None:
+    def __exit__(self, *_: Any) -> None:
         self.__authentication_data = None
         self.__cooldown = 0
         self.__expiry = 0
@@ -178,7 +179,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return github
 
     def upload(
-        self, report: apport.Report, progress_callback=None, user_message_callback=None
+        self,
+        report: apport.Report,
+        progress_callback: Optional[Callable] = None,
+        user_message_callback: Optional[Callable] = None,
     ) -> IssueHandle:
         """Upload given problem report return a handle for it.
         In Github, we open an issue.

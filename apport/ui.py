@@ -44,7 +44,7 @@ import urllib.error
 import webbrowser
 import zlib
 from gettext import gettext as _
-from typing import Optional
+from typing import Any, Optional
 
 import apport.crashdb
 import apport.fileutils
@@ -120,7 +120,9 @@ def _get_users_environ(uid: int) -> dict[str, str]:
     }
 
 
-def run_as_real_user(args: list[str], *, get_user_env: bool = False, **kwargs) -> None:
+def run_as_real_user(
+    args: list[str], *, get_user_env: bool = False, **kwargs: Any
+) -> None:
     """Call subprocess.run as real user if called via sudo/pkexec.
 
     If we are called through pkexec/sudo, determine the real user ID and
@@ -1980,7 +1982,7 @@ class UserInterface:
     #
 
     def ui_present_report_details(
-        self, allowed_to_report=True, modal_for=None
+        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
     ) -> Action:
         """Show details of the bug report.
 

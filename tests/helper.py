@@ -12,7 +12,7 @@ import typing
 import unittest.mock
 import urllib.error
 import urllib.request
-from typing import Optional
+from typing import Any, Optional
 
 
 def get_init_system() -> str:
@@ -39,7 +39,7 @@ def has_internet() -> bool:
         return False
 
 
-def import_module_from_file(path: pathlib.Path):
+def import_module_from_file(path: pathlib.Path) -> Any:
     """Import a module by its filename."""
     name = path.stem.replace("-", "_")
     spec = importlib.util.spec_from_loader(
@@ -83,7 +83,7 @@ def _id(obj):
     return obj
 
 
-def skip_if_command_is_missing(cmd: str):
+def skip_if_command_is_missing(cmd: str) -> typing.Callable:
     """Skip a test if the command is not found."""
     if shutil.which(cmd) is None:
         return unittest.skip(f"{cmd} not installed")
