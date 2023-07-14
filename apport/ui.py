@@ -44,6 +44,7 @@ import urllib.error
 import webbrowser
 import zlib
 from gettext import gettext as _
+from typing import Optional
 
 import apport.crashdb
 import apport.fileutils
@@ -67,9 +68,7 @@ def get_pid(report):
         return None
 
 
-def _get_env_int(
-    key: str, default: typing.Optional[int] = None
-) -> typing.Optional[int]:
+def _get_env_int(key: str, default: Optional[int] = None) -> Optional[int]:
     """Get an environment variable as integer.
 
     Return None if it doesn't exist or failed to convert to integer.
@@ -81,7 +80,7 @@ def _get_env_int(
         return default
 
 
-def _get_newest_process_for_user(name: str, uid: int) -> typing.Optional[int]:
+def _get_newest_process_for_user(name: str, uid: int) -> Optional[int]:
     process = subprocess.run(
         ["pgrep", "-n", "-x", "-u", str(uid), name],
         capture_output=True,
@@ -337,8 +336,8 @@ class UserInterface:
     def __init__(self, argv: list[str]):
         """Initialize program state and parse command line options."""
         self.gettext_domain = "apport"
-        self.report: typing.Optional[apport.report.Report] = None
-        self.report_file: typing.Optional[str] = None
+        self.report: Optional[apport.report.Report] = None
+        self.report_file: Optional[str] = None
         self.cur_package = None
         self.offer_restart = False
         self.specified_a_pkg = False
@@ -2027,7 +2026,7 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
         """Update data upload progress bar.
 
         Set the progress bar in the debug data upload progress window to the

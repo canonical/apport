@@ -21,6 +21,7 @@ import typing
 import unittest
 import unittest.mock
 import urllib.error
+from typing import Optional
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -48,7 +49,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
-    def __init__(self, argv: typing.Optional[list[str]] = None):
+    def __init__(self, argv: Optional[list[str]] = None):
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
@@ -148,7 +149,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
         self.upload_progress_active = True
 
-    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
         assert self.upload_progress_active
         self.upload_progress_pulses += 1
 
@@ -273,9 +274,7 @@ class T(unittest.TestCase):
 
     @contextlib.contextmanager
     def _run_test_executable(
-        self,
-        exename: typing.Optional[str] = None,
-        env: typing.Optional[dict[str, str]] = None,
+        self, exename: Optional[str] = None, env: Optional[dict[str, str]] = None
     ) -> typing.Generator[int, None, None]:
         if not exename:
             exename = self.TEST_EXECUTABLE
@@ -464,7 +463,7 @@ class T(unittest.TestCase):
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
 
-        def search_bug_patterns(url: str) -> typing.Optional[str]:
+        def search_bug_patterns(url: str) -> Optional[str]:
             progress_pulses = self.ui.ic_progress_pulses
             # wait for ui_pulse_info_collection_progress() call
             while self.ui.ic_progress_pulses == progress_pulses:
@@ -509,7 +508,7 @@ class T(unittest.TestCase):
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
     def _write_crashdb_config_hook(
-        self, crashdb: str, bash_hook: typing.Optional[str] = None
+        self, crashdb: str, bash_hook: Optional[str] = None
     ) -> None:
         """Write source_bash.py hook that sets CrashDB"""
         with open(

@@ -37,6 +37,7 @@ import urllib.request
 import xml.dom
 import xml.dom.minidom
 import xml.parsers.expat
+from typing import Optional
 
 import apport.fileutils
 import apport.logging
@@ -154,9 +155,7 @@ def _read_maps(proc_pid_fd):
 
 
 def _command_output(
-    command: list[str],
-    env: typing.Optional[dict[str, str]] = None,
-    timeout: float = 1800,
+    command: list[str], env: Optional[dict[str, str]] = None, timeout: float = 1800
 ) -> str:
     """Run command and capture its output.
 
@@ -1078,9 +1077,9 @@ class Report(problem_report.ProblemReport):
 
     def add_hooks_info(
         self,
-        ui: typing.Optional[HookUI] = None,
-        package: typing.Optional[str] = None,
-        srcpackage: typing.Optional[str] = None,
+        ui: Optional[HookUI] = None,
+        package: Optional[str] = None,
+        srcpackage: Optional[str] = None,
     ) -> bool:
         """Run hook script for collecting package specific data.
 
@@ -1100,10 +1099,7 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def _add_hooks_info(
-        self,
-        ui: HookUI,
-        package: typing.Optional[str],
-        srcpackage: typing.Optional[str],
+        self, ui: HookUI, package: Optional[str], srcpackage: Optional[str]
     ) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches

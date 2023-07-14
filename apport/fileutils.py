@@ -28,6 +28,7 @@ import stat
 import subprocess
 import time
 import typing
+from typing import Optional
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -696,7 +697,7 @@ def shared_libraries(path):
     return libs
 
 
-def should_skip_crash(report: ProblemReport, filename: str) -> typing.Optional[str]:
+def should_skip_crash(report: ProblemReport, filename: str) -> Optional[str]:
     """Check if the crash should be skipped for flood protection.
 
     In case the crash should be skipped return a string with the reason.
