@@ -12,6 +12,7 @@ import typing
 import unittest.mock
 import urllib.error
 import urllib.request
+from typing import Optional
 
 
 def get_init_system() -> str:
@@ -65,7 +66,7 @@ def pidof(program):
     return set(int(pid) for pid in stdout.decode().split())
 
 
-def read_shebang(command: str) -> typing.Optional[str]:
+def read_shebang(command: str) -> Optional[str]:
     """Return the shebang of the given file.
 
     If the given file is a script, return the executable from the

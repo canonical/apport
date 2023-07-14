@@ -1,6 +1,7 @@
 import os
 import pathlib
 import typing
+from typing import Optional
 
 _SRCDIR = pathlib.Path(__file__).absolute().parent.parent
 _BINDIR = _SRCDIR / "bin"
@@ -8,7 +9,7 @@ _CRASHDB_CONF = _SRCDIR / "etc" / "apport" / "crashdb.conf"
 _DATADIR = _SRCDIR / "data"
 
 
-def get_data_directory(local_path: typing.Optional[str] = None) -> pathlib.Path:
+def get_data_directory(local_path: Optional[str] = None) -> pathlib.Path:
     """Return absolute path for apport's data directory.
 
     If the tests are executed in the local source code directory,
@@ -47,7 +48,7 @@ def local_test_environment() -> typing.Mapping[str, str]:
     }
 
 
-def patch_data_dir(report) -> typing.Optional[typing.Mapping[str, str]]:
+def patch_data_dir(report) -> Optional[typing.Mapping[str, str]]:
     """Patch APPORT_DATA_DIR in apport.report for local tests."""
     if not is_local_source_directory():
         return None
@@ -67,7 +68,7 @@ def patch_data_dir(report) -> typing.Optional[typing.Mapping[str, str]]:
     return orig
 
 
-def restore_data_dir(report, orig: typing.Optional[typing.Mapping[str, str]]) -> None:
+def restore_data_dir(report, orig: Optional[typing.Mapping[str, str]]) -> None:
     """Restore APPORT_DATA_DIR in apport.report from local tests.
 
     The parameter orig is the result from the patch_data_dir() call.

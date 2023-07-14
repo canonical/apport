@@ -27,6 +27,7 @@ import textwrap
 import time
 import typing
 import unittest
+from typing import Optional
 
 import psutil
 
@@ -807,9 +808,7 @@ class T(unittest.TestCase):
     ) -> None:
         orig_os_open = os.open
 
-        def _mocked_os_open(
-            path, flags: int, dir_fd: typing.Optional[int] = None
-        ) -> int:
+        def _mocked_os_open(path, flags: int, dir_fd: Optional[int] = None) -> int:
             if path == "root/run/apport.socket":
                 return orig_os_open(socket_path, flags)
             return orig_os_open(path, flags, dir_fd=dir_fd)
@@ -878,7 +877,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(gdb.stdout.strip(), "")
 
     def _check_report(
-        self, expect_report: bool = True, expected_owner: typing.Optional[int] = None
+        self, expect_report: bool = True, expected_owner: Optional[int] = None
     ) -> None:
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])

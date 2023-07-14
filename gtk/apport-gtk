@@ -18,8 +18,8 @@ import os
 import re
 import subprocess
 import sys
-import typing
 from gettext import gettext as _
+from typing import Optional
 
 import apport
 import apport.ui
@@ -474,7 +474,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_set_upload_progress(self, progress: typing.Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
         """Set the progress bar in the debug data upload progress
         window to the given ratio (between 0 and 1, or None for indefinite
         progress).

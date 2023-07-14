@@ -27,6 +27,7 @@ import struct
 import time
 import typing
 import zlib
+from typing import Optional
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
@@ -278,7 +279,7 @@ class ProblemReport(collections.UserDict):
             return set()
         return set(self["Tags"].split(" "))
 
-    def get_timestamp(self) -> typing.Optional[int]:
+    def get_timestamp(self) -> Optional[int]:
         """Get timestamp (seconds since epoch) from Date field.
 
         Return None if it is not present.

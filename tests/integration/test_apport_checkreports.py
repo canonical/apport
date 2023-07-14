@@ -13,8 +13,8 @@ import os
 import shutil
 import subprocess
 import tempfile
-import typing
 import unittest
+from typing import Optional
 
 import apport.report
 from tests.paths import get_data_directory, local_test_environment
@@ -35,7 +35,7 @@ class TestApportCheckreports(unittest.TestCase):
 
     def _call(
         self,
-        args: typing.Optional[list] = None,
+        args: Optional[list] = None,
         expected_returncode: int = 0,
         expected_stdout: str = "",
     ) -> None:
