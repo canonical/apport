@@ -213,7 +213,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         return report_file
 
     def ui_present_report_details(
-        self, allowed_to_report=True, modal_for=None
+        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
     ) -> apport.ui.Action:
         dialog = CLIDialog(
             _("Send problem report to the developers?"),

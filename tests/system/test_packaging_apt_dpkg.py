@@ -985,7 +985,7 @@ def _setup_foonux_config(
     updates: bool = False,
     release: str = "jammy",
     ppa: bool = False,
-):
+) -> str:
     """Set up directories and configuration for install_packages()
 
     If ppa is True, then a sources.list file for a PPA will be created

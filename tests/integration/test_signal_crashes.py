@@ -808,7 +808,11 @@ class T(unittest.TestCase):
     ) -> None:
         orig_os_open = os.open
 
-        def _mocked_os_open(path, flags: int, dir_fd: Optional[int] = None) -> int:
+        def _mocked_os_open(
+            path: typing.Union[str, os.PathLike[str]],
+            flags: int,
+            dir_fd: Optional[int] = None,
+        ) -> int:
             if path == "root/run/apport.socket":
                 return orig_os_open(socket_path, flags)
             return orig_os_open(path, flags, dir_fd=dir_fd)
@@ -930,20 +934,21 @@ class T(unittest.TestCase):
         time.sleep(0.3)  # needs some more setup time
         return process
 
+    # pylint: disable-next=too-many-arguments
     def do_crash(
         self,
-        expect_corefile=False,
-        sig=signal.SIGSEGV,
-        command=None,
-        expected_command=None,
-        uid=None,
-        expect_corefile_owner=None,
-        args=None,
+        expect_corefile: bool = False,
+        sig: int = signal.SIGSEGV,
+        command: Optional[str] = None,
+        expected_command: Optional[str] = None,
+        uid: Optional[int] = None,
+        expect_corefile_owner: Optional[str] = None,
+        args: Optional[list[str]] = None,
         suid_dumpable: int = 1,
-        hook_before_apport=None,
+        hook_before_apport: Optional[typing.Callable] = None,
         expect_report: bool = True,
         via_socket: bool = False,
-    ):  # pylint: disable=too-many-arguments
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Generate a test crash.

@@ -21,7 +21,7 @@ import typing
 import unittest
 import unittest.mock
 import urllib.error
-from typing import Optional
+from typing import Any, Optional
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -37,7 +37,7 @@ logind_session = apport.Report.get_logind_session(os.getpid())
 
 
 def mock_run_calls_except_pgrep(
-    args: list[str], check: bool = False, **kwargs
+    args: list[str], check: bool = False, **kwargs: Any
 ) -> subprocess.CompletedProcess:
     """Wrap subprocess.run() doing no-ops except for pgrep."""
     if args[0] == "pgrep":
@@ -118,7 +118,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.msg_choices = None
 
     def ui_present_report_details(
-        self, allowed_to_report=True, modal_for=None
+        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
     ) -> apport.ui.Action:
         self.present_details_shown = True
         assert self.present_details_response
