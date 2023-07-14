@@ -232,8 +232,8 @@ def write_user_coredump(
     proc_pid: ProcPid,
     crash_user: UserGroupID,
     pidstat: os.stat_result,
-    coredump_fd=None,
-    from_report=None,
+    coredump_fd: Optional[int] = None,
+    from_report: Optional[typing.BinaryIO] = None,
 ) -> None:
     # pylint: disable=too-many-arguments
     """Write the core into a directory if ulimit requests it."""
@@ -286,6 +286,7 @@ def write_user_coredump(
         logger.info("writing core dump %s of size %i", core_path, core_size)
         os.write(core_file, r["CoreDump"])
     else:
+        assert coredump_fd is not None
         block = os.read(coredump_fd, 1048576)
 
         while True:
