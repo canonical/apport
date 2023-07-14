@@ -62,9 +62,9 @@ fi
 
 if type mypy >/dev/null 2>&1; then
     echo "Running mypy..."
-    mypy --ignore-missing-imports ${PYTHON_FILES}
+    mypy --disallow-incomplete-defs --ignore-missing-imports ${PYTHON_FILES}
     for script in $PYTHON_SCRIPTS; do
-        mypy --ignore-missing-imports "$script"
+        mypy --disallow-incomplete-defs --ignore-missing-imports "$script"
     done
 else
     echo "Skipping mypy tests, mypy is not installed"
