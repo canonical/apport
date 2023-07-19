@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+"""Installer script for Apport."""
+
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 

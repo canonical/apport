@@ -1,7 +1,4 @@
 #!/usr/bin/python3
-# Examine the crash files saved by apport to attempt to determine the cause
-# of a segfault.  Currently very very simplistic, and only finds commonly
-# understood situations for x86/x86_64.
 #
 # Copyright 2009-2010  Canonical, Ltd.
 # Author: Kees Cook <kees@ubuntu.com>
@@ -11,6 +8,10 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Examine the crash files saved by apport to attempt to determine the cause
+of a segfault.  Currently very very simplistic, and only finds commonly
+understood situations for x86/x86_64."""
 
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name

@@ -9,6 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+"""Detect and report suspend/hibernate/resume failures.
+
+If a suspend/hibernate is marked as still in progress during a normal
+system boot we know that that operation has failed.  Use that to
+generate an apport bug report.
+"""
+
 import datetime
 import os
 import sys

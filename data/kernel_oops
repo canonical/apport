@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 #
-# Collect information about a kernel oops.
-#
 # Copyright (c) 2008 Canonical Ltd.
 # Author: Matt Zimmerman <mdz@canonical.com>
 #
@@ -10,6 +8,8 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Collect information about a kernel oops."""
 
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name

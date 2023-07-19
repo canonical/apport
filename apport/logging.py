@@ -1,3 +1,5 @@
+"""Legacy logging functions."""
+
 import os
 import sys
 import time

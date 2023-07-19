@@ -1,3 +1,5 @@
+"""Unit tests for the apport.hookutils module."""
+
 import re
 import subprocess
 import time

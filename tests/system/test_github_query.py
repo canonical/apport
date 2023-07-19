@@ -1,3 +1,5 @@
+"""System tests for the apport.crashdb_impl.github module."""
+
 import unittest
 from unittest.mock import Mock
 

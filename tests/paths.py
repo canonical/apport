@@ -1,3 +1,5 @@
+"""Test helper functions around modifying paths."""
+
 import os
 import pathlib
 import typing

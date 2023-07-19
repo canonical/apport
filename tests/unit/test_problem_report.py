@@ -1,3 +1,5 @@
+"""Unit tests for the problem_report module."""
+
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 

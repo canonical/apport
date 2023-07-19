@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 #
-# Collect information about an iwlwifi firmware error dump.
-#
 # Copyright (c) 2014 Canonical Ltd.
 # Author: Seth Forshee <seth.forshee@canonical.com>
 #
@@ -10,6 +8,8 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Collect information about an iwlwifi firmware error dump."""
 
 import os
 import re

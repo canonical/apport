@@ -1,5 +1,3 @@
-# Test apport_python_hook.py
-#
 # Copyright (c) 2006 - 2011 Canonical Ltd.
 # Authors: Robert Collins <robert@ubuntu.com>
 #          Martin Pitt <martin.pitt@ubuntu.com>
@@ -9,6 +7,8 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Test apport_python_hook.py."""
 
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
