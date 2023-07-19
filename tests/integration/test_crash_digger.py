@@ -13,6 +13,7 @@
 # pylint: disable=invalid-name
 
 import os
+import pathlib
 import shutil
 import subprocess
 import tempfile
@@ -56,7 +57,7 @@ class T(unittest.TestCase):
         os.mkdir(os.path.join(self.config_dir, "Testux 1.0"))
         os.mkdir(os.path.join(self.config_dir, "Testux 2.2"))
 
-        self.apport_retrace_log = os.path.join(self.workdir, "apport-retrace.log")
+        self.apport_retrace_log = pathlib.Path(self.workdir) / "apport-retrace.log"
 
         self.apport_retrace = os.path.join(self.workdir, "apport-retrace")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
@@ -181,6 +182,32 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists(self.lock_file))
 
         os.rename(f"{self.apport_retrace}.bak", self.apport_retrace)
+
+    def test_crash_gdb_sandbox(self) -> None:
+        """Crash retracing with --gdb-sandbox."""
+        (out, err) = self.call(
+            ["-c", self.config_dir, "-a", "/dev/zero", "--gdb-sandbox", "-v"]
+        )
+        self.assertEqual(err, "", f"no error messages:\n{err}")
+        self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
+        self.assertIn("retracing #0", out)
+        self.assertIn("retracing #1", out)
+        self.assertIn("retracing #2", out)
+        self.assertIn(
+            "crash is release FooLinux Pi/2 which does not have a config available", out
+        )
+        self.assertNotIn("failed with status", out)
+        self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
+        self.assertNotIn("#4", out, "dupcheck crashes are not retraced")
+
+        retrace_log = self.apport_retrace_log.read_text(encoding="utf-8")
+        self.assertEqual(len(retrace_log.splitlines()), 2)
+        self.assertNotIn(" --gdb-sandbox -v 0\n", retrace_log)
+        self.assertIn(" --gdb-sandbox -v 1\n", retrace_log)
+        self.assertIn(" --gdb-sandbox -v 2\n", retrace_log)
+        self.assertFalse(os.path.exists(self.lock_file))
+
+        self.assertFalse(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
     def test_crashes_transient_error(self):
         """Crash retracing if apport-retrace reports a transient error."""
