@@ -1,3 +1,5 @@
+"""System tests for the apport.packaging_impl.apt_dpkg module."""
+
 # pylint: disable=too-many-lines
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name

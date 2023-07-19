@@ -1,3 +1,5 @@
+"""Unit tests for the parse_segv general hook."""
+
 import unittest
 
 from tests.helper import import_module_from_file

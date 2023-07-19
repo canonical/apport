@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-# Use the coredump in a crash report to regenerate the stack traces. This is
-# helpful to get a trace with debug symbols.
-#
 # Copyright (c) 2006 - 2013 Canonical Ltd.
 # Authors: Alex Chiang <alex.chiang@canonical.com>
 #          Kyle Nitzsche <kyle.nitzsche@canonical.com>
@@ -13,6 +10,9 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Use the coredump in a crash report to regenerate the stack traces. This is
+helpful to get a trace with debug symbols."""
 
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name

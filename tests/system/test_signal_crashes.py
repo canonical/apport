@@ -1,3 +1,5 @@
+"""System tests for data/apport."""
+
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 

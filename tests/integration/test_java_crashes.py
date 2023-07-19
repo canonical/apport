@@ -7,6 +7,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+"""Integration tests for the Java crash collection support."""
+
 import os
 import shutil
 import subprocess

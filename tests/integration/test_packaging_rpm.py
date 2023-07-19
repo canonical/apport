@@ -1,3 +1,5 @@
+"""Integration tests for the apport.packaging_impl.rpm module."""
+
 import unittest
 
 from tests.helper import skip_if_command_is_missing

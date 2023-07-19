@@ -1,3 +1,5 @@
+"""Platform-specific apport.packaging implementation."""
+
 import importlib
 import os
 import platform

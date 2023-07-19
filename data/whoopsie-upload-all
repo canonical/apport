@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 
-# Process all pending crashes and mark them for whoopsie upload, but do not
-# upload them to any other crash database. Wait until whoopsie is done
-# uploading.
-#
 # Copyright (c) 2013 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
@@ -12,6 +8,10 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Process all pending crashes and mark them for whoopsie upload, but do not
+upload them to any other crash database. Wait until whoopsie is done
+uploading."""
 
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name

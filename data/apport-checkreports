@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-# Check if there are new reports for the invoking user. Exit with 0 if new
-# reports are available, or with 1 if not.
-#
 # Copyright (c) 2006 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
@@ -11,6 +8,9 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Check if there are new reports for the invoking user. Exit with 0 if new
+reports are available, or with 1 if not."""
 
 # pylint: disable=invalid-name
 # pylint: enable=invalid-name

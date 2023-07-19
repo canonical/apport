@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 #
-# Collect information about processes which are still running after sending
-# SIGTERM to them (which happens during computer shutdown in
-# /etc/init.d/sendsigs in Debian/Ubuntu)
-#
 # Copyright (c) 2010 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
@@ -12,6 +8,10 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
+
+"""Collect information about processes which are still running after sending
+SIGTERM to them (which happens during computer shutdown in
+/etc/init.d/sendsigs in Debian/Ubuntu)"""
 
 import argparse
 import errno

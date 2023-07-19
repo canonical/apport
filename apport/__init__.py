@@ -1,3 +1,5 @@
+"""Apport Python module."""
+
 import gettext
 import warnings
 
