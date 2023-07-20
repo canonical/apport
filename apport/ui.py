@@ -1735,7 +1735,7 @@ class UserInterface:
             status = os.wait()[1]
             if status:
                 title = _("Unable to start web browser")
-                error = _(f"Unable to start web browser to open {url}.")
+                error = _("Unable to start web browser to open %s.") % url
                 message = os.fdopen(r).readline()
                 if message:
                     error += "\n" + message
