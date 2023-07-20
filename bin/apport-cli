@@ -262,7 +262,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
                     self.report_file = self._save_report_in_temp_directory()
-                print(f"{_('Problem report file:')} {self.report_file}")
+                print(_("Problem report file:") + f" {self.report_file}")
 
             return return_value
 
