@@ -186,13 +186,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         """Return apt.Cache() (initialized lazily)."""
         self._sandbox_apt_cache = None
         if not self._apt_cache:
-            try:
-                # avoid spewage on stdout
-                progress = apt.progress.base.OpProgress()
-                self._apt_cache = apt.Cache(progress, rootdir="/")
-            except AttributeError:
-                # older python-apt versions do not yet have above argument
-                self._apt_cache = apt.Cache(rootdir="/")
+            # avoid spewage on stdout
+            progress = apt.progress.base.OpProgress()
+            self._apt_cache = apt.Cache(progress=progress, rootdir="/")
         return self._apt_cache
 
     def _sandbox_cache(
