@@ -198,7 +198,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             self._clear_apt_cache()
             # avoid spewage on stdout
             progress = apt.progress.base.OpProgress()
-            self._apt_cache = apt.Cache(progress=progress, rootdir="/")
+            self._apt_cache = apt.Cache(progress=progress)
         return self._apt_cache
 
     def _sandbox_cache(
