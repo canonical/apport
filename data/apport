@@ -19,7 +19,7 @@ See https://wiki.ubuntu.com/Apport for details."""
 # See bug https://github.com/PyCQA/pylint/issues/7093
 # pylint: disable=c-extension-no-member,no-name-in-module,not-callable
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,missing-function-docstring
 
 import argparse
 import array
@@ -698,6 +698,7 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     return options
 
 
+# pylint: disable-next=missing-function-docstring
 def main(args: list[str]) -> int:
     init_error_log()
     logging.basicConfig(format=LOG_FORMAT, level=logging.INFO)

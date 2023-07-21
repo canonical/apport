@@ -16,6 +16,8 @@ SOME_ID = "a654870577ad2a2ab5b1"
 
 @unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
 class TestGitHubQuery(unittest.TestCase):
+    """System tests for the apport.crashdb_impl.github module."""
+
     def setUp(self):
         self.crashdb = self._get_gh_database("Lorem", "Ipsum")
         self.message_cb = Mock()

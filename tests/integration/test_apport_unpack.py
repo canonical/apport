@@ -20,6 +20,7 @@ from tests.paths import local_test_environment
 
 
 class TestApportUnpack(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     env: dict[str, str]
 
     @classmethod

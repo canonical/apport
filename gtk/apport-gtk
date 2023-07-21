@@ -11,8 +11,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# TODO: Address following pylint complaints
 # pylint: disable=invalid-name
+# pylint: enable=invalid-name
 
 import os
 import re
@@ -53,6 +53,8 @@ def find_xid_for_pid(pid):
 
 
 class GTKUserInterface(apport.ui.UserInterface):
+    # TODO: Address following pylint complaints
+    # pylint: disable=invalid-name,missing-function-docstring
     """GTK UserInterface."""
 
     def w(self, widget):

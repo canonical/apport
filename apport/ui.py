@@ -61,6 +61,7 @@ PF_KTHREAD = 0x200000
 
 
 def get_pid(report):
+    """Extract process ID from report."""
     try:
         pid = re.search("Pid:\t(.*)\n", report.get("ProcStatus", "")).group(1)
         return int(pid)
@@ -162,6 +163,7 @@ def run_as_real_user(
 
 
 def still_running(pid):
+    """Check if the process with the given ID is still running."""
     try:
         os.kill(int(pid), 0)
     except OSError as error:
@@ -317,6 +319,13 @@ def thread_collect_info(
 
 @dataclasses.dataclass
 class Action:
+    """Action to take on a problem report.
+
+    Possible actions: examine the crash ('examine'), report the crash
+    ('report'), restart the crashed application ('restart'), or ignore further
+    crashes ('ignore').
+    """
+
     examine: bool = False
     ignore: bool = False
     remember: bool = False
@@ -623,6 +632,7 @@ class UserInterface:
 
     @staticmethod
     def kill_segv(pid):
+        """Kill process with signal SIGSEGV."""
         os.kill(int(pid), signal.SIGSEGV)
 
     def run_report_bug(self, symptom_script=None):

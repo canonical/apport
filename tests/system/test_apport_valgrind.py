@@ -27,6 +27,8 @@ with open("/proc/meminfo", encoding="utf-8") as f:
 
 @skip_if_command_is_missing("valgrind")
 class TestApportValgrind(unittest.TestCase):
+    """System tests for bin/apport-valgrind."""
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()

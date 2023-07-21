@@ -113,6 +113,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.crashdb_conf.close()
 
     def clear_msg(self):
+        """Clear the recorded messages"""
         # last message box
         self.msg_title = None
         self.msg_text = None
@@ -186,7 +187,10 @@ class UserInterfaceMock(apport.ui.UserInterface):
     "apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[])
 )
 class T(unittest.TestCase):
-    # pylint: disable=too-many-instance-attributes,too-many-public-methods
+    # pylint: disable=missing-function-docstring,too-many-instance-attributes
+    # pylint: disable=too-many-public-methods
+    """Integration tests for apport.ui."""
+
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 

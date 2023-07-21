@@ -18,6 +18,7 @@ from tests.helper import skip_if_command_is_missing
 
 @skip_if_command_is_missing("dpkg")
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
 
     def setUp(self):

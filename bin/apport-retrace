@@ -323,6 +323,7 @@ def print_traces(report):
         print(report["StacktraceSource"])
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks

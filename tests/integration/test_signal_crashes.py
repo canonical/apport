@@ -60,6 +60,7 @@ required_fields = [
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access,too-many-public-methods
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]

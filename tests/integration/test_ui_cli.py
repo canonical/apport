@@ -27,6 +27,7 @@ apport_cli = import_module_from_file(pathlib.Path(APPORT_CLI_PATH))
 
 
 class TestApportCli(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
     """Test apport-cli."""
 
     @classmethod

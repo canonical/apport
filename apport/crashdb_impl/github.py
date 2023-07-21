@@ -63,9 +63,11 @@ class Github:
         return json.loads(result.text)
 
     def api_authentication(self, url: str, data: dict) -> Any:
+        """Authenticate against the GitHub API."""
         return self._post(url, self._stringify(data))
 
     def api_open_issue(self, owner: str, repo: str, data: dict) -> Any:
+        """Open a new issue on the GitHub project."""
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
         return self._post(url, json.dumps(data))
 
@@ -141,7 +143,7 @@ class Github:
 
 
 @dataclass(frozen=True)
-class IssueHandle:
+class IssueHandle:  # pylint: disable=missing-class-docstring
     url: str
 
 

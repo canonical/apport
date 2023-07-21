@@ -8,6 +8,8 @@ from tests.helper import pidof, read_shebang
 
 
 class TestHelper(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
+
     def test_pidof_non_existing_program(self):
         self.assertEqual(pidof("non-existing"), set())
 

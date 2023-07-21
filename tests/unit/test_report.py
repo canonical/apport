@@ -14,6 +14,7 @@ import apport.report
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
 
     def test_has_useful_stacktrace(self):

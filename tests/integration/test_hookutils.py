@@ -20,6 +20,8 @@ from tests.helper import skip_if_command_is_missing
 
 
 class T(unittest.TestCase):
+    """Integration tests for the apport.hookutils module."""
+
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
 
@@ -492,6 +494,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         apport.hookutils.attach_default_grub(report)
 
     def test_command_output(self):
+        """Test apport.hookutils.command_output."""
         orig_lcm = os.environ.get("LC_MESSAGES")
         os.environ["LC_MESSAGES"] = "en_US.UTF-8"
         try:

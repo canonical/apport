@@ -106,6 +106,8 @@ class CompressedValue:
 
 
 class ProblemReport(collections.UserDict):
+    """Class to store, load, and handle problem reports."""
+
     def __init__(self, problem_type="Crash", date=None):
         """Initialize a fresh problem report.
 

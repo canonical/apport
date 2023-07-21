@@ -103,6 +103,7 @@ Components: main
 """,
     )
     def test_parse_deb822_sources_extra_lines(self, mock_file):
+        """Test _parse_deb822_sources with multiple lines separating blocks."""
         entries = _parse_deb822_sources("foo_bar.sources")
         mock_file.assert_called_with("foo_bar.sources", encoding="utf-8")
         self.assertEqual(len(entries), 2)

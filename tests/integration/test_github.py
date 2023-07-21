@@ -22,6 +22,7 @@ except ImportError as error:
 
 @unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
 class TestGitHub(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
 
     def setUp(self):

@@ -192,6 +192,7 @@ def wait_uploaded(stamps, timeout):
     return False
 
 
+# pylint: disable-next=missing-function-docstring
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Noninteractively upload all "

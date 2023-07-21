@@ -22,6 +22,7 @@ from tests.paths import local_test_environment
 
 
 class TestDupdbAdmin(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
     """Test dupdb-admin"""
 
     def setUp(self):

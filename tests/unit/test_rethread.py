@@ -22,6 +22,8 @@ def div(x, y):
 
 
 class T(unittest.TestCase):
+    """Unit tests for the apport.REThread module."""
+
     def test_return_value(self):
         """Return value works properly."""
         t = apport.REThread.REThread(target=div, args=(42, 2))

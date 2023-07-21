@@ -7,6 +7,9 @@ from apport.packaging_impl import determine_packaging_implementation
 
 
 class TestPackagingImpl(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
+    """Test functions in apport/packaging_impl/__init__.py."""
+
     @unittest.mock.patch("platform.freedesktop_os_release")
     def test_determine_ubuntu(self, os_release_mock):
         os_release_mock.return_value = {

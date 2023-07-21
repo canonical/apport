@@ -15,6 +15,8 @@ except ImportError:
 @unittest.skipUnless(HAS_RPM, "rpm module not available")
 @skip_if_command_is_missing("rpm")
 class TestPackagingRpm(unittest.TestCase):
+    """Integration tests for the apport.packaging_impl.rpm module."""
+
     def test_get_dependencies(self):
         """get_dependencies()."""
         deps = impl.get_dependencies("bash")

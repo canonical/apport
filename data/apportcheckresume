@@ -26,6 +26,7 @@ from apport.hookutils import attach_file_if_exists
 from apport.packaging_impl import impl as packaging
 
 
+# pylint: disable-next=missing-function-docstring
 def main(argv=None):
     if argv is None:
         argv = sys.argv

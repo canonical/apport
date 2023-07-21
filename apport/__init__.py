@@ -20,6 +20,7 @@ __all__ = [
 
 
 def unicode_gettext(message):
+    """Return the localized translation of message."""
     warnings.warn(
         "apport.unicode_gettext() is deprecated."
         " Please use gettext.gettext() directly instead.",

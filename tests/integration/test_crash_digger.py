@@ -25,6 +25,8 @@ from tests.paths import local_test_environment
 
 
 class T(unittest.TestCase):
+    """Test crash-digger"""
+
     def setUp(self):
         """Set up config dir, crashdb.conf, and apport-retrace for testing"""
         self.env = os.environ | local_test_environment()

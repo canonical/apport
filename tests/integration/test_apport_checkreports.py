@@ -21,6 +21,7 @@ from tests.paths import get_data_directory, local_test_environment
 
 
 class TestApportCheckreports(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
     """Test apport-checkreports"""
 
     def setUp(self):

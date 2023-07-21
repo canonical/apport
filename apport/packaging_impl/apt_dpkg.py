@@ -341,6 +341,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def get_lp_binary_package(release, package, version, arch):
+        """Get Launchpad URL and SHA1 sum for the given binary package version."""
         # allow unauthenticated downloads
         apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
         # pylint: disable=import-outside-toplevel
@@ -407,6 +408,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def get_lp_source_package(package, version):
+        """Get files from Launchpad for the given source package version."""
         # pylint: disable=import-outside-toplevel
         from launchpadlib.launchpad import Launchpad
 

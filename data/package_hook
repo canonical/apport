@@ -60,6 +60,7 @@ def parse_args():
     return args
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     # parse command line arguments
     options = parse_args()

@@ -35,6 +35,8 @@ from tests.paths import local_test_environment
 
 @unittest.skipUnless(HAS_DBUS, "dbus Python module not installed")
 class T(unittest.TestCase):
+    """Test apport_python_hook.py"""
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()

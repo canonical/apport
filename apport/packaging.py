@@ -16,6 +16,8 @@ import sys
 
 
 class PackageInfo:
+    """Abstraction of packaging operations."""
+
     # default global configuration file
     configuration = "/etc/default/apport"
 
