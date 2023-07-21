@@ -288,8 +288,10 @@ class T(unittest.TestCase):
         with subprocess.Popen([exename] + self.TEST_ARGS, env=env) as test_process:
             # give the execv() some time to finish
             time.sleep(0.5)
-            yield test_process.pid
-            test_process.kill()
+            try:
+                yield test_process.pid
+            finally:
+                test_process.kill()
 
     @staticmethod
     def _write_symptom_script(script_name: str, content: str) -> None:
