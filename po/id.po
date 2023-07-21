@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-21 16:31+0200\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
-"Last-Translator: Cecep Mahbub <cecep.mahbub@gmail.com>\n"
+"PO-Revision-Date: 2023-06-14 11:27+0000\n"
+"Last-Translator: Ajam Jamaludin <Unknown>\n"
 "Language-Team: Indonesian <id@li.org>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2023-07-21 14:36+0000\n"
+"X-Generator: Launchpad (build 2bfac4503c7b6a57e9a8acd782035a16f97e2ddb)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -260,7 +260,7 @@ msgstr "xprop gagal untuk menentukan ID proses dari jendela"
 #: ../apport/ui.py:1016
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <nomor laporan>"
 
 #: ../apport/ui.py:1017
 msgid "Specify package name."
@@ -276,7 +276,7 @@ msgstr ""
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%(prog)s [opsi] [symptom|pid|pake|path program|berkas .apport/.crash]"
 
 #: ../apport/ui.py:1072
 msgid ""
@@ -797,15 +797,15 @@ msgstr "Ok untuk mengirim lampiran-lampiran ini? [y/t]"
 #: ../bin/apport-unpack.py:31
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <laporan> <direktori tujuan>"
 
 #: ../bin/apport-unpack.py:32
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Berkas laporan yang akan dibuka"
 
 #: ../bin/apport-unpack.py:33
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "direktori tempat mengekstrak laporan"
 
 #: ../bin/apport-unpack.py:60
 msgid "Destination directory exists and is not empty."
@@ -853,6 +853,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"program yang dapat dijalankan di bawah alat pemeriksa kebocoran memori "
+"valgrind untuk mendeteksi kebocoran memori."
 
 #: ../bin/apport-valgrind.py:130
 #, python-format

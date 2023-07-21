@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-21 16:31+0200\n"
-"PO-Revision-Date: 2015-09-17 07:37+0000\n"
-"Last-Translator: Mikola Tsekhan <mail@tsekhan.com>\n"
+"PO-Revision-Date: 2015-12-23 15:55+0000\n"
+"Last-Translator: XiveZ <kyrsant2008@list.ru>\n"
 "Language-Team: Belarusian <be@li.org>\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2023-07-21 14:36+0000\n"
+"X-Generator: Launchpad (build 2bfac4503c7b6a57e9a8acd782035a16f97e2ddb)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -91,7 +91,7 @@ msgstr "Праблема ў %s"
 #: ../apport/ui.py:725 ../apport/ui.py:955 ../apport/ui.py:1723
 #: ../apport/ui.py:1877 ../apport/ui.py:1883
 msgid "Invalid problem report"
-msgstr "Няправільная справаздача аб памылцы"
+msgstr "Няправільная справаздача пра памылку"
 
 #: ../apport/ui.py:537
 msgid "You are not allowed to access this problem report."
@@ -272,9 +272,9 @@ msgid ""
 "a single argument is given.)"
 msgstr ""
 "Запуск у рэжыме адпраўкі справаздачы аб памылцы. Патрабуе параметр --package "
-"і неабавязковы --pid, або толькі --pid. Калі параметры не перададзеныя, "
-"адлюстроўвае спіс вядомых сімптомаў. (Ужываецца, калі перададзены адзіны "
-"параметр.)"
+"і неабавязковы --pid або толькі --pid. Калі параметры не перададзеныя, "
+"паказвае спіс вядомых сімптомаў. (Ужываецца, калі перададзены адзіны "
+"аргумент.)"
 
 #: ../apport/ui.py:1081
 msgid "Click a window as a target for filing a problem report."
@@ -436,7 +436,7 @@ msgstr "Не атрымалася запусціць вэб-браўзэр"
 #: ../apport/ui.py:1748
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "Немагчыма запусціць вэб-браўзэр, каб адчыніць %s."
+msgstr "Немагчыма запусціць вэб-браўзер, каб адкрыць %s."
 
 #: ../apport/ui.py:1839
 msgid ""
@@ -572,7 +572,7 @@ msgid ""
 "application. This might take a few minutes."
 msgstr ""
 "Сабраная інфармацыя можа быць накіравана распрацоўшчыкам для\n"
-"паляпшэння дастасавання. Гэта можа заняць некалькі хвілін."
+"паляпшэння праграмы. Гэта можа заняць некалькі хвілін."
 
 #: ../bin/apport-cli.py:299 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:494
 msgid "Uploading problem information"
@@ -682,13 +682,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"Стварыць часавае асяроддзе, затым загрузіць / ўсталяваць у яе неабходныя "
-"пакеты і адладкавыя сімвалы; без гэтага параметра прадугледжваецца, што "
-"неабходныя пакеты і адладкавыя сімвалы ў сістэме ўжо ўсталяваныя. Аргумент "
-"паказвае на базавую тэчку канфігурацыі сістэмы пакетаў; калі Вы паказалі "
-"\"system\", будуць выкарыстоўвацца сістэмныя файлы канфігурацыі, але толькі "
-"ў выпадку выяўлення аварыйных сітуацый, якія адбыліся ў выпуску сістэмы, які "
-"працуе ў дадзены момант."
+"Стварыць часовае асяроддзе, а пасля гэтага спампаваць/усталяваць у яе "
+"неабходныя пакеты і адладачныя сімвалы; без гэтага параметра мяркуецца, што "
+"неабходныя пакеты і адладачныя сімвалы ўжо ўсталяваны ў сістэме. Аргумент "
+"указвае на базавую папку канфігурацыі сістэмы пакетаў; калі вы пазначылі "
+"\"system\", то будуць выкарыстоўвацца сістэмныя файлы канфігурацыі, але "
+"толькі ў выпадку выяўлення аварыйных сітуацый, якія адбыліся ў выпуску "
+"сістэмы і якая працуе ў дадзены момант."
 
 #: ../bin/apport-retrace.py:107
 msgid ""
@@ -717,7 +717,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:137
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "Тэчка для захавання пакетаў, загружаных у часовае асяроддзе"
+msgstr "Папка для захавання пакетаў, якія спампаваны ў часовае асяроддзе"
 
 #: ../bin/apport-retrace.py:143
 msgid ""
@@ -770,7 +770,7 @@ msgstr "Нельга выкарыстоўваць -C без -S. Прыпынак
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:229
 msgid "OK to send these as attachments? [y/n]"
-msgstr "Адправіць гэтыя дастасаванні? [y/n]"
+msgstr "Адправіць іх як далучэнні? [так/не]"
 
 #: ../bin/apport-unpack.py:31
 #, python-format
@@ -787,7 +787,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:60
 msgid "Destination directory exists and is not empty."
-msgstr "Тэчка прызначэння існуе і яна не пустая."
+msgstr "Папка прызначэння існуе і яна не пустая."
 
 #: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
@@ -1036,8 +1036,8 @@ msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Сабраную інфармацыю можна даслаць распрацоўшчыкам, каб палепшыць "
-"прыкладанне. Гэта можа заняць некалькі хвілін."
+"Сабраную інфармацыю можна адправіць распрацоўшчыкам, каб палепшыць праграму. "
+"Гэта можа заняць некалькі хвілін."
 
 #: ../kde/apport-kde.py:493
 msgid "Uploading Problem Information"
