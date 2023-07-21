@@ -10,6 +10,9 @@ import apport.hookutils
 
 
 class TestHookutils(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
+    """Test apport.hookutils module."""
+
     @unittest.mock.patch("apport.hookutils.root_command_output")
     def test_attach_dmesg(self, root_command_output_mock):
         """attach_dmesg()"""
@@ -82,24 +85,24 @@ class TestHookutils(unittest.TestCase):
     @unittest.mock.patch("subprocess.Popen")
     @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
     def test_recent_syslog_journald_cmd(self, popen_mock):
-        class SkipPopen(Exception):
+        class _SkipPopen(Exception):
             pass
 
-        popen_mock.side_effect = SkipPopen
+        popen_mock.side_effect = _SkipPopen
 
         cmd = ["journalctl", "--quiet", "-b", "-a"]
         cmd_system_only = cmd + ["--system"]
 
-        with self.assertRaises(SkipPopen):
+        with self.assertRaises(_SkipPopen):
             apport.hookutils.recent_syslog(re.compile("."))
         popen_mock.assert_called_once_with(cmd_system_only, stdout=unittest.mock.ANY)
 
         popen_mock.reset_mock()
-        with self.assertRaises(SkipPopen):
+        with self.assertRaises(_SkipPopen):
             apport.hookutils.recent_syslog(re.compile("."), journald_only_system=True)
         popen_mock.assert_called_once_with(cmd_system_only, stdout=unittest.mock.ANY)
 
         popen_mock.reset_mock()
-        with self.assertRaises(SkipPopen):
+        with self.assertRaises(_SkipPopen):
             apport.hookutils.recent_syslog(re.compile("."), journald_only_system=False)
         popen_mock.assert_called_once_with(cmd, stdout=unittest.mock.ANY)

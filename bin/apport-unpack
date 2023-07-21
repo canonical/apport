@@ -35,6 +35,7 @@ def parse_args():
 
 
 def load_report(report_filename: str) -> problem_report.ProblemReport:
+    """Load problem report from given filename."""
     report = problem_report.ProblemReport()
     if report_filename == "-":
         report.load(sys.stdin, binary=False)
@@ -47,6 +48,7 @@ def load_report(report_filename: str) -> problem_report.ProblemReport:
     return report
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     gettext.textdomain("apport")
     args = parse_args()

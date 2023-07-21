@@ -45,6 +45,7 @@ else:
 
 @unittest.skipIf(PYQT5_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}")
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     COLLECTING_DIALOG = unittest.mock.call(
         str(apport_kde_path.parent),
         "Collecting Problem Information",

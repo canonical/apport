@@ -52,6 +52,7 @@ else:
 
 @unittest.skipIf(GI_IMPORT_ERROR, f"gi Python module not available: {GI_IMPORT_ERROR}")
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     POLLING_INTERVAL_MS = 10
 
     @classmethod

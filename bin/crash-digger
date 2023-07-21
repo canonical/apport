@@ -26,6 +26,7 @@ import apport
 from apport.crashdb import get_crashdb
 
 
+# pylint: disable-next=missing-class-docstring
 class CrashDigger:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
@@ -293,6 +294,7 @@ def parse_options():
     return args
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     opts = parse_options()
 

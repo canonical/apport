@@ -30,6 +30,8 @@ from tests.paths import local_test_environment
 
 
 class T(unittest.TestCase):
+    """Test apport_python_hook.py."""
+
     maxDiff = None
 
     @classmethod

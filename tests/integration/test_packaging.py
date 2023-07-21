@@ -9,6 +9,8 @@ import apport.packaging
 
 
 class T(unittest.TestCase):
+    """Integration tests for the apport.packaging module."""
+
     def test_get_uninstalled_package(self):
         """get_uninstalled_package()"""
         p = apport.packaging.get_uninstalled_package()

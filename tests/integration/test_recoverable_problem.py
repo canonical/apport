@@ -22,6 +22,8 @@ from tests.paths import get_data_directory, local_test_environment
 
 
 class TestRecoverableProblem(unittest.TestCase):
+    """Test recoverable_problem"""
+
     def setUp(self):
         self.env = os.environ | local_test_environment()
         self.report_dir = tempfile.mkdtemp()
@@ -29,7 +31,7 @@ class TestRecoverableProblem(unittest.TestCase):
         self.env["APPORT_REPORT_DIR"] = self.report_dir
         self.datadir = get_data_directory()
 
-    def wait_for_report(self):
+    def _wait_for_report(self):
         seconds = 0
         while seconds < 10:
             crashes = os.listdir(self.report_dir)
@@ -50,12 +52,12 @@ class TestRecoverableProblem(unittest.TestCase):
         """Test wait_for_report() helper runs into timeout."""
         listdir_mock.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:
-            self.wait_for_report()
+            self._wait_for_report()
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 101)
 
-    def call_recoverable_problem(self, data):
+    def _call_recoverable_problem(self, data):
         cmd = [self.datadir / "recoverable_problem"]
         proc = subprocess.run(
             cmd,
@@ -73,8 +75,8 @@ class TestRecoverableProblem(unittest.TestCase):
 
     def test_recoverable_problem(self):
         """recoverable_problem with valid data"""
-        self.call_recoverable_problem("hello\0there")
-        path = self.wait_for_report()
+        self._call_recoverable_problem("hello\0there")
+        path = self._wait_for_report()
         with open(path, "rb") as report_path:
             report = apport.report.Report()
             report.load(report_path)
@@ -83,8 +85,8 @@ class TestRecoverableProblem(unittest.TestCase):
 
     def test_recoverable_problem_dupe_sig(self):
         """recoverable_problem duplicate signature includes ExecutablePath"""
-        self.call_recoverable_problem("Package\0test\0DuplicateSignature\0ds")
-        path = self.wait_for_report()
+        self._call_recoverable_problem("Package\0test\0DuplicateSignature\0ds")
+        path = self._wait_for_report()
         with open(path, "rb") as report_path:
             report = apport.report.Report()
             report.load(report_path)
@@ -95,17 +97,17 @@ class TestRecoverableProblem(unittest.TestCase):
     def test_invalid_data(self):
         """recoverable_problem with invalid data"""
         self.assertRaises(
-            subprocess.CalledProcessError, self.call_recoverable_problem, "hello"
+            subprocess.CalledProcessError, self._call_recoverable_problem, "hello"
         )
 
         self.assertRaises(
             subprocess.CalledProcessError,
-            self.call_recoverable_problem,
+            self._call_recoverable_problem,
             "hello\0there\0extraneous",
         )
 
         self.assertRaises(
             subprocess.CalledProcessError,
-            self.call_recoverable_problem,
+            self._call_recoverable_problem,
             "hello\0\0there",
         )

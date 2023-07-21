@@ -31,6 +31,8 @@ def _u(string):
 
 
 class CrashDatabase:
+    """Crash database interface."""
+
     # TODO: Check if some methods can be made private
     # pylint: disable=too-many-public-methods
     def __init__(self, auth_file, options):

@@ -25,7 +25,9 @@ from tests.paths import patch_data_dir, restore_data_dir
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-function-docstring
     # pylint: disable=protected-access,too-many-public-methods
+    """Test apport.report module."""
 
     @classmethod
     def setUpClass(cls):

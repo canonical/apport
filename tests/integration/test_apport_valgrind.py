@@ -21,6 +21,8 @@ from tests.paths import local_test_environment
 
 @skip_if_command_is_missing("valgrind")
 class TestApportValgrind(unittest.TestCase):
+    """Integration tests for bin/apport-valgrind."""
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()

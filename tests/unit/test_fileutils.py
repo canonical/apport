@@ -1,7 +1,7 @@
 """Unit tests for the apport.fileutils module."""
 
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,missing-class-docstring,missing-function-docstring
 
 import io
 import time

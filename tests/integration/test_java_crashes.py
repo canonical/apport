@@ -23,6 +23,8 @@ from tests.paths import get_data_directory, local_test_environment
 
 @skip_if_command_is_missing("java")
 class TestJavaCrashes(unittest.TestCase):
+    """Integration tests for the Java crash collection support."""
+
     def setUp(self):
         self.env = os.environ | local_test_environment()
         datadir = get_data_directory()

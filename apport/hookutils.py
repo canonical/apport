@@ -229,6 +229,7 @@ def attach_dmesg(report):
 
 
 def attach_dmi(report):
+    """Attach Desktop Management Interface (DMI) information to the report."""
     dmi_dir = "/sys/class/dmi/id"
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
@@ -490,6 +491,7 @@ def _spawn_pkttyagent():
 
 
 def kill_pkttyagent():
+    """Kill pkttyagent (from PolicyKit) if it was started by Apport."""
     global _AGENT  # pylint: disable=global-statement
 
     if _AGENT is None:

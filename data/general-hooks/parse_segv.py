@@ -14,7 +14,7 @@ of a segfault.  Currently very very simplistic, and only finds commonly
 understood situations for x86/x86_64."""
 
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,missing-class-docstring,missing-function-docstring
 
 import logging
 import re
@@ -387,6 +387,7 @@ def add_info(report):
         report["SegvAnalysis"] = f"Failure: {str(error)}"
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
         print("To run self-test, run without any arguments (or with -v)")

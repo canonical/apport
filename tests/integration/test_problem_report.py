@@ -19,6 +19,8 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
+
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
 

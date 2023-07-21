@@ -12,7 +12,7 @@
 
 # pylint: disable=too-many-lines
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,missing-function-docstring
 
 import atexit
 import email
@@ -192,6 +192,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     @property
     def lp_distro(self):
+        """Return Launchpad distribution (e.g. ubuntu)."""
         if self.__lp_distro is None:
             if self.distro:
                 self.__lp_distro = self.launchpad.distributions[self.distro]
@@ -1194,6 +1195,9 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
 
 
 class HTTPSProgressHandler(urllib.request.HTTPSHandler):
+    """Implement a HTTPSHandler with an optional callback function for
+    upload progress."""
+
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
 

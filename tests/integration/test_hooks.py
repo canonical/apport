@@ -27,6 +27,7 @@ from tests.paths import get_data_directory, local_test_environment
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     data_dir: pathlib.Path
     env: dict[str, str]
 

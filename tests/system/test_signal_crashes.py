@@ -24,6 +24,7 @@ from tests.paths import (
 
 
 class T(unittest.TestCase):
+    # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]

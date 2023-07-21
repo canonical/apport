@@ -19,6 +19,7 @@ import problem_report
 
 class T(unittest.TestCase):
     # pylint: disable=protected-access
+    """Integration tests for the apport.fileutils module."""
 
     def setUp(self):
         self.orig_core_dir = apport.fileutils.core_dir

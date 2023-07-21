@@ -1,5 +1,7 @@
 """Test test helper functions. Test inception for the win!"""
 
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 import unittest
 
 from tests.helper import get_init_system, wrap_object

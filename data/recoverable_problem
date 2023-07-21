@@ -22,6 +22,7 @@ import sys
 import apport.report
 
 
+# pylint: disable-next=missing-function-docstring
 def main():
     # Check parameters
     argparser = argparse.ArgumentParser("%(prog) [options]")
