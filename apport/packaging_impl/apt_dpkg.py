@@ -45,6 +45,7 @@ import urllib.request
 from typing import Optional
 
 import apt
+import apt_pkg
 import aptsources.sourceslist as apt_sl
 from aptsources.sourceslist import SourceEntry
 
@@ -182,10 +183,19 @@ class __AptDpkgPackageInfo(PackageInfo):
             except MemoryError:
                 pass
 
+    def _clear_apt_cache(self) -> None:
+        # The rootdir option to apt.Cache modifies the global state
+        apt_pkg.config.clear("Dir")
+        apt_pkg.init_config()
+        apt_pkg.init_system()
+
+        self._apt_cache = None
+        self._sandbox_apt_cache = None
+
     def _cache(self):
         """Return apt.Cache() (initialized lazily)."""
-        self._sandbox_apt_cache = None
         if not self._apt_cache:
+            self._clear_apt_cache()
             # avoid spewage on stdout
             progress = apt.progress.base.OpProgress()
             self._apt_cache = apt.Cache(progress=progress, rootdir="/")
@@ -206,8 +216,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         Clear the package selection on subsequent calls.
         """
-        self._apt_cache = None
         if not self._sandbox_apt_cache or arch != self._sandbox_apt_cache_arch:
+            self._clear_apt_cache()
             self._build_apt_sandbox(
                 aptroot, apt_dir, distro_name, release_codename, origins
             )

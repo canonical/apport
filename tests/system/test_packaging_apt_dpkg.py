@@ -365,7 +365,7 @@ def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
         impl.install_packages(
             rootdir, configdir, release, [("tzdata", None)], False, cachedir
         )
-    exc_info.match("^E:Type 'bogus' is not known .* sources could not be read.$")
+    exc_info.match("E:Type 'bogus' is not known .* sources could not be read.$")
 
     # sources.list with wrong server
     with open(
@@ -378,7 +378,7 @@ def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
             rootdir, configdir, release, [("tzdata", None)], False, cachedir
         )
     exc_info.match(
-        "^E:The repository 'http://archive.ubuntu.com/nosuchdistro"
+        "E:The repository 'http://archive.ubuntu.com/nosuchdistro"
         " jammy.*' does not have a Release file.$"
     )
 
