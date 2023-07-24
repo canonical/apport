@@ -1,6 +1,42 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.27.0 (2023-07-24)
+-------------------
+
+### Added
+
+* Add support for deb822 APT sources
+* crash-digger: Add support for using a GDB sandbox (`--gdb-sandbox`)
+
+### Changed
+
+* Already add package info during Python crashes
+* apport:
+  - Demote debug gdbus log to debug level
+  - Demote non-error log messages to info level
+* Use f-strings everywhere
+* Increase maximum line length to 88
+* test: Rely on pytest and drop support running unittest directly
+* Drop Python < 3.10 support
+* Move pylint overrides to affected files instead of disabling the checks globally
+
+### Fixed
+
+* apport-unpack: Catch `MalformedProblemReport` on extraction
+  ([LP: #1997912](https://launchpad.net/bugs/1997912))
+* Correct range of system users/groups from 499 to dynamic 999
+* Fix raising `OSError` if `_command_output()` runs into a timeout
+* Use `ProblemReport` for running generic hook manually
+* Fix type hints and run `mypy` in the CI
+* Fix spelling mistakes found by codespell
+* ui: Fix translating the web browser opening error message
+* test:
+  - Clear environment for `test_run_as_real_user_no_sudo`
+  - Fix check for full name in `test_run_crash_anonymity`
+  - Fix false positives for `test_run_crash_anonymity`
+  - ui: fix hangup on test failure
+
 2.26.1 (2023-04-12)
 -------------------
 
