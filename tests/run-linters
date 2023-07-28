@@ -17,69 +17,93 @@ set -eu
 PYTHON_FILES="apport apport_python_hook.py data problem_report.py setup.py tests"
 PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper)
 
-if type black >/dev/null 2>&1; then
+check_hardcoded_names() {
+    # assert that there are no hardcoded "Ubuntu" names
+    out=$(grep -rw Ubuntu apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
+    if [ -n "$out" ]; then
+        echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
+        exit 1
+    fi
+}
+
+run_black() {
+    if ! type black >/dev/null 2>&1; then
+        echo "Skipping black tests, black is not installed"
+        return
+    fi
     echo "Running black..."
     black -C --check --diff ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-else
-    echo "Skipping black tests, black is not installed"
-fi
+}
 
-if type isort >/dev/null 2>&1; then
+run_isort() {
+    if ! type isort >/dev/null 2>&1; then
+        echo "Skipping isort tests, isort is not installed"
+        return
+    fi
     echo "Running isort..."
     isort --check-only --diff ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-else
-    echo "Skipping isort tests, isort is not installed"
-fi
+}
 
-if type pycodestyle >/dev/null 2>&1; then
-    echo "Running pycodestyle..."
-    # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle --max-line-length=88 -r --ignore=E203,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-else
-    echo "Skipping pycodestyle tests, pycodestyle is not installed"
-fi
-
-if type pydocstyle >/dev/null 2>&1; then
-    pydocstyle_version=$(pydocstyle --version)
-    pydocstyle_major_version=$(echo "$pydocstyle_version" | cut -d. -f1)
-    if test "$pydocstyle_major_version" -ge 6; then
-        echo "Running pydocstyle..."
-        pydocstyle ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-    else
-        echo "Skipping pydocstyle tests, pydocstyle $pydocstyle_version is too old"
+run_mypy() {
+    if ! type mypy >/dev/null 2>&1; then
+        echo "Skipping mypy tests, mypy is not installed"
+        return
     fi
-else
-    echo "Skipping pydocstyle tests, pydocstyle is not installed"
-fi
-
-# pyflakes3, if available
-if type pyflakes3 >/dev/null 2>&1; then
-    echo "Running pyflakes3..."
-    pyflakes3 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-else
-    echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
-fi
-
-if type mypy >/dev/null 2>&1; then
     echo "Running mypy..."
     mypy --disallow-incomplete-defs --ignore-missing-imports ${PYTHON_FILES}
     for script in $PYTHON_SCRIPTS; do
         mypy --disallow-incomplete-defs --ignore-missing-imports "$script"
     done
-else
-    echo "Skipping mypy tests, mypy is not installed"
-fi
+}
 
-if type pylint >/dev/null 2>&1; then
+run_pycodestyle() {
+    if ! type pycodestyle >/dev/null 2>&1; then
+        echo "Skipping pycodestyle tests, pycodestyle is not installed"
+        return
+    fi
+    echo "Running pycodestyle..."
+    # . catches all *.py modules; we explicitly need to specify the programs
+    pycodestyle --max-line-length=88 -r --ignore=E203,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+}
+
+run_pydocstyle() {
+    if ! type pydocstyle >/dev/null 2>&1; then
+        echo "Skipping pydocstyle tests, pydocstyle is not installed"
+        return
+    fi
+    pydocstyle_version=$(pydocstyle --version)
+    pydocstyle_major_version=$(echo "$pydocstyle_version" | cut -d. -f1)
+    if test "$pydocstyle_major_version" -lt 6; then
+        echo "Skipping pydocstyle tests, pydocstyle $pydocstyle_version is too old"
+        return
+    fi
+    echo "Running pydocstyle..."
+    pydocstyle ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+}
+
+run_pyflakes() {
+    if ! type pyflakes3 >/dev/null 2>&1; then
+        echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
+        return
+    fi
+    echo "Running pyflakes3..."
+    pyflakes3 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+}
+
+run_pylint() {
+    if ! type pylint >/dev/null 2>&1; then
+        echo "Skipping pylint tests, pylint is not installed"
+        return
+    fi
     echo "Running pylint..."
     pylint -j 0 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-else
-    echo "Skipping pylint tests, pylint is not installed"
-fi
+}
 
-# assert that there are no hardcoded "Ubuntu" names
-out=$(grep -rw Ubuntu apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v X-Ubuntu-Gettext-Domain | grep -v '#.*Ubuntu') || :
-if [ -n "$out" ]; then
-    echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
-    exit 1
-fi
+run_black
+run_isort
+run_pycodestyle
+run_pydocstyle
+run_pyflakes
+run_mypy
+run_pylint
+check_hardcoded_names
