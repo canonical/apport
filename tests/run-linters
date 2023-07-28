@@ -96,14 +96,20 @@ run_pylint() {
         return
     fi
     echo "Running pylint..."
-    pylint -j 0 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+    pylint -j 0 "$@" ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 }
 
-run_black
-run_isort
-run_pycodestyle
-run_pydocstyle
-run_pyflakes
-run_mypy
-run_pylint
-check_hardcoded_names
+if test "${1-}" = "--errors-only"; then
+    # Run only linters that can detect real errors (ignore formatting)
+    run_mypy
+    run_pylint --errors-only
+else
+    run_black
+    run_isort
+    run_pycodestyle
+    run_pydocstyle
+    run_pyflakes
+    run_mypy
+    run_pylint
+    check_hardcoded_names
+fi
