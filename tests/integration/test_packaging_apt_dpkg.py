@@ -426,7 +426,7 @@ usr/bin/frob                                            foo/frob
                 # pick first diversion we have
                 break
         else:  # pragma: no cover
-            self.fail(f"No non-local diversion found. dpkg-divert output: {output}")
+            self.skipTest(f"No non-local diversion found. dpkg-divert output: {output}")
 
         file = fields[2]
         pkg = fields[-1]
