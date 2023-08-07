@@ -1172,6 +1172,9 @@ class T(unittest.TestCase):
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 600)
 
+    # False positive return statement for unittest.TestCase.fail
+    # See https://github.com/pylint-dev/pylint/issues/4167
+    # pylint: disable-next=inconsistent-return-statements
     def wait_for_gdb_child_process(self, gdb_pid: int, command: str) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
