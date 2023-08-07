@@ -569,7 +569,7 @@ def get_boot_id():
     return boot_id
 
 
-def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
+def get_process_environ(proc_pid_fd: int) -> typing.Dict[str, str]:
     """Get the process environ from a proc directory file descriptor.
 
     Raises an OSError in case the environ file could not been read.
