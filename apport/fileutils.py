@@ -260,7 +260,7 @@ _LOGIN_DEFS_RE = re.compile(
 )
 
 
-def _parse_login_defs(lines: io.TextIOWrapper) -> typing.Dict[str, str]:
+def _parse_login_defs(lines: io.TextIOWrapper) -> dict[str, str]:
     defs = {}
     for line in lines:
         match = _LOGIN_DEFS_RE.match(line)
@@ -271,7 +271,7 @@ def _parse_login_defs(lines: io.TextIOWrapper) -> typing.Dict[str, str]:
 
 
 @functools.cache
-def get_login_defs() -> typing.Dict[str, str]:
+def get_login_defs() -> dict[str, str]:
     """Parse /etc/login.defs and return a dictionary with its content."""
     try:
         with open("/etc/login.defs", encoding="utf-8") as login_defs_file:
