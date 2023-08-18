@@ -1884,7 +1884,7 @@ class Report(problem_report.ProblemReport):
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
-                    "GCONV_PATH": (f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv"),
+                    "GCONV_PATH": f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv",
                 }
                 command.insert(
                     0, f"{gdb_sandbox}" f"/lib/{native_multiarch}/ld-linux-x86-64.so.2"
