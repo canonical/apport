@@ -902,13 +902,6 @@ class Report(problem_report.ProblemReport):
         }
         gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
         environ["HOME"] = "/nonexistent"
-        if not gdb_cmd:
-            raise FileNotFoundError(
-                errno.ENOENT,
-                os.strerror(errno.ENOENT),
-                "gdb not found in retracing env",
-            )
-
         gdb_cmd += [
             "--batch",
             # limit maximum backtrace depth (to avoid looped stacks)
@@ -1811,7 +1804,7 @@ class Report(problem_report.ProblemReport):
                     else:
                         self[k] = pattern.sub(repl, self[k])
 
-    def gdb_command(self, sandbox, gdb_sandbox=None):
+    def gdb_command(self, sandbox: Optional[str], gdb_sandbox: Optional[str] = None) -> tuple[list[str], dict]:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         """Build gdb command for this report.
@@ -1841,7 +1834,12 @@ class Report(problem_report.ProblemReport):
         )
         gdb_path = _which_extrapath("gdb", gdb_sandbox_bin)
         if not gdb_path:
-            return "", ""
+            raise FileNotFoundError(
+                errno.ENOENT,
+                os.strerror(errno.ENOENT),
+                "gdb not found in retracing env",
+            )
+
         command = [gdb_path]
         environ = {}
 

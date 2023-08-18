@@ -593,6 +593,16 @@ dispatch_queue () at canberra-gtk-module.c:815""",
             ),
         )
 
+    @unittest.mock.patch("shutil.which", unittest.mock.MagicMock(return_value=None))
+    def test_gdb_add_info_no_gdb(self):
+        r = apport.report.Report()
+        r["Signal"] = "6"
+        r["ExecutablePath"] = "/bin/bash"
+        r["CoreDump"] = "/var/lib/apport/coredump/core.bash"
+        r["AssertionMessage"] = "foo.c:42 main: i > 0"
+        with self.assertRaises(FileNotFoundError):
+            r.add_gdb_info()
+
     def test_crash_signature(self):
         """crash_signature()."""
         r = apport.report.Report()
