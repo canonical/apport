@@ -1804,7 +1804,9 @@ class Report(problem_report.ProblemReport):
                     else:
                         self[k] = pattern.sub(repl, self[k])
 
-    def gdb_command(self, sandbox: Optional[str], gdb_sandbox: Optional[str] = None) -> tuple[list[str], dict]:
+    def gdb_command(
+        self, sandbox: Optional[str], gdb_sandbox: Optional[str] = None
+    ) -> tuple[list[str], dict[str, str]]:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         """Build gdb command for this report.
@@ -1841,7 +1843,7 @@ class Report(problem_report.ProblemReport):
             )
 
         command = [gdb_path]
-        environ = {}
+        environ: dict[str, str] = {}
 
         if not same_arch:
             # check if we have gdb-multiarch
