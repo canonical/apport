@@ -1299,6 +1299,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             print("Extracting downloaded debs...")
         # False positive, see https://github.com/PyCQA/pylint/issues/7122
         for i in fetcher.items:  # pylint: disable=not-an-iterable
+            if not i.destfile.endswith("deb"):
+                continue
             out = subprocess.check_output(["dpkg-deb", "--show", i.destfile]).decode()
             (p, v) = out.strip().split()
             if (
