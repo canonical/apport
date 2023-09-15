@@ -17,7 +17,6 @@ jobs:
         container:
           - debian:testing-slim
           - ubuntu:jammy
-          - ubuntu:kinetic
           - ubuntu:lunar
     container:
       image: ${{ matrix.container }}
@@ -44,7 +43,6 @@ jobs:
           - debian:bookworm-slim
           - debian:testing-slim
           - ubuntu:jammy
-          - ubuntu:kinetic
           - ubuntu:lunar
     container:
       image: ${{ matrix.container }}
@@ -123,7 +121,6 @@ jobs:
       matrix:
         container:
           - ubuntu:jammy
-          - ubuntu:kinetic
           - ubuntu:lunar
     container:
       image: ${{ matrix.container }}
@@ -207,7 +204,6 @@ jobs:
       matrix:
         container:
           - ubuntu:jammy
-          - ubuntu:kinetic
           - ubuntu:lunar
     container:
       image: ${{ matrix.container }}
@@ -238,7 +234,6 @@ jobs:
       matrix:
         container:
           - ubuntu:jammy
-          - ubuntu:kinetic
           - ubuntu:lunar
     container:
       image: ${{ matrix.container }}
