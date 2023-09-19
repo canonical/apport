@@ -3,17 +3,16 @@
 # get available symptoms
 _apport_symptoms ()
 {
-    local syms
-    if [ -r /usr/share/apport/symptoms ]; then 
-        for FILE in $(ls /usr/share/apport/symptoms); do
-            # hide utility files and symptoms that don't have a run() function
-            if [[ ! "$FILE" =~ ^_.* && -n $(egrep "^def run\s*\(.*\):" /usr/share/apport/symptoms/$FILE) ]]; then
-                syms="$syms ${FILE%.py}"
-            fi
-        done
-    fi
-    echo $syms
-
+    local filename path symptoms
+    for path in /usr/share/apport/symptoms/*; do
+        [[ -e "$path" ]] || continue
+        filename="${path##*/}"
+        # hide utility files and symptoms that don't have a run() function
+        [[ ! "$filename" =~ ^_.* ]] || continue
+        grep -Eq "^def run\s*\(.*\):" "$path" || continue
+        symptoms+=("${filename%.py}")
+    done
+    echo "${symptoms[*]}"
 }
 
 # completion when used without parameters
