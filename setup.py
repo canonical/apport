@@ -11,6 +11,7 @@ import distutils.command.clean
 import distutils.core
 import distutils.version
 import glob
+import logging
 import os.path
 import subprocess
 import sys
@@ -75,6 +76,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
     """Fix hashbang lines in scripts in data dir."""
 
     def _fix_symlinks_in_bash_completion(self):
+        log = logging.getLogger(__name__)
         autoinstalled_completion_dir = os.path.join(
             self.install_data, "share", "apport", "bash-completion"
         )
@@ -89,7 +91,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
             if not os.path.exists(dest):
                 continue
 
-            distutils.log.info("Convert %s into a symlink to %s...", dest, source)
+            log.info("Convert %s into a symlink to %s...", dest, source)
             os.remove(dest)
             os.symlink(source, dest)
 
@@ -103,6 +105,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
             os.rmdir(autoinstalled_completion_dir)
 
     def run(self):
+        log = logging.getLogger(__name__)
         DistUtilsExtra.auto.install_auto.run(self)
         self._fix_symlinks_in_bash_completion()
         new_hashbang = f"#!{sys.executable.rsplit('.', 1)[0]}\n"
@@ -121,7 +124,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
                             # ignore data files like spinner.gif
                             continue
                     if lines[0].startswith("#!") and "python" in lines[0]:
-                        distutils.log.info("Updating hashbang of %s", f)
+                        log.info("Updating hashbang of %s", f)
                         lines[0] = new_hashbang
                         with open(f, "w", encoding="utf-8") as fd:
                             for line in lines:
