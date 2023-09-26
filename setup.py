@@ -9,7 +9,6 @@
 import distutils.command.build
 import distutils.command.clean
 import distutils.core
-import distutils.version
 import glob
 import logging
 import os.path
@@ -23,10 +22,6 @@ except ImportError:
         "To build Apport you need https://launchpad.net/python-distutils-extra\n"
     )
     sys.exit(1)
-
-assert (
-    distutils.version.StrictVersion(DistUtilsExtra.auto.__version__) >= "2.24"
-), "needs DistUtilsExtra.auto >= 2.24"
 
 BASH_COMPLETIONS = "share/bash-completion/completions/"
 
