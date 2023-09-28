@@ -9,6 +9,7 @@
 
 """Unit tests for apport.packaging_impl.apt_dpkg."""
 
+import tempfile
 import unittest
 import unittest.mock
 
@@ -17,6 +18,7 @@ import apt
 from apport.packaging_impl.apt_dpkg import (
     WITH_DEB822_SUPPORT,
     _parse_deb822_sources,
+    _read_mirror_file,
     impl,
 )
 
@@ -109,3 +111,22 @@ Components: main
         self.assertEqual(len(entries), 2)
         self.assertEqual(entries[0].uris[0], "http://example.com")
         self.assertEqual(entries[1].suites[0], "baz")
+
+    def test_read_mirror_file(self) -> None:
+        """Test _read_mirror_file with config from GitHub CI."""
+        with tempfile.NamedTemporaryFile("w") as mirror_file:
+            mirror_file.write(
+                "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1\n"
+                "http://archive.ubuntu.com/ubuntu/\tpriority:2\n"
+                "http://security.ubuntu.com/ubuntu/\tpriority:3\n"
+            )
+            mirror_file.flush()
+            mirrors = _read_mirror_file(f"mirror+file:{mirror_file.name}")
+        self.assertEqual(
+            mirrors,
+            [
+                "http://azure.archive.ubuntu.com/ubuntu/",
+                "http://archive.ubuntu.com/ubuntu/",
+                "http://security.ubuntu.com/ubuntu/",
+            ],
+        )

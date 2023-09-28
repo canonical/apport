@@ -31,6 +31,7 @@ import http.client
 import json
 import logging
 import os
+import pathlib
 import pickle
 import platform
 import shutil
@@ -104,6 +105,20 @@ def _load_all_sources(apt_dir: str) -> list[apt_sl.Deb822SourceEntry | SourceEnt
             sources.extend(_parse_deb822_sources(path))
 
     return sources
+
+
+def _read_mirror_file(uri: str) -> list[str]:
+    """Read an apt-transport-mirror configuration file.
+
+    Note: The metadata will be stripped for simplicity reasons.
+    """
+    assert uri.startswith("mirror+file:")
+    path = pathlib.Path(uri[12:])
+    lines = [line.strip() for line in path.read_text("utf-8").split("\n")]
+    mirrors = [
+        line.split("\t", maxsplit=1)[0] for line in lines if line and line[0] != "#"
+    ]
+    return mirrors
 
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -1406,6 +1421,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     @staticmethod
     def _get_primary_mirror_from_apt_sources(apt_dir: str) -> str:
         """Heuristically determine primary mirror from an apt sources.list."""
+        uri = None
         sources = _load_all_sources(apt_dir)
         for source in sources:
             if source.disabled or source.invalid:
@@ -1415,10 +1431,17 @@ class __AptDpkgPackageInfo(PackageInfo):
             # in a proper release
             if isinstance(source, SourceEntry):
                 if source.type == "deb":
-                    return source.uri or ""
+                    uri = source.uri or ""
             else:
                 if "deb" in source.types:
-                    return source.uris[0]
+                    uri = source.uris[0]
+
+            if uri is not None:
+                if uri.startswith("mirror+file:"):
+                    mirrors = _read_mirror_file(uri)
+                    assert mirrors
+                    return mirrors[0]
+                return uri
 
         raise SystemError(
             "cannot determine default mirror:"
