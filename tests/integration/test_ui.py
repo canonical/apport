@@ -907,6 +907,7 @@ class T(unittest.TestCase):
                 r.add_proc_info(pid)
                 r.add_user_info()
                 r.add_os_info()
+                r.add_package_info()
 
                 # generate a core dump
                 os.kill(pid, signal.SIGSEGV)
