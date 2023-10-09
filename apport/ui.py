@@ -484,7 +484,7 @@ class UserInterface:
             allowed_to_report = apport.fileutils.allowed_to_report()
             response = self.ui_present_report_details(allowed_to_report)
             if response.report or response.examine:
-                if "Dependencies" not in self.report:
+                if "_MarkForUpload" not in self.report:
                     self.collect_info()
 
             if self.report is None:
