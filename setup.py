@@ -168,6 +168,7 @@ DistUtilsExtra.auto.setup(
     url="https://launchpad.net/apport",
     license="gpl",
     description="intercept, process, and report crashes and bug reports",
+    packages=["apport", "apport.crashdb_impl", "apport.packaging_impl"],
     version=__version__,
     data_files=[
         ("share/doc/apport/", glob.glob("doc/*.txt")),
