@@ -14,7 +14,7 @@
 
 set -eu
 
-PYTHON_FILES="apport apport_python_hook.py data problem_report.py setup.py tests"
+PYTHON_FILES="apport apport_python_hook.py data problem_report.py setup.py setuptools_apport tests"
 PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper)
 
 check_hardcoded_names() {
