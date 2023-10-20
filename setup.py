@@ -5,18 +5,17 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
-# distutils-extra needs porting, pylint: disable=deprecated-module
-import distutils.command.build
-import distutils.command.clean
-import distutils.core
 import glob
 import logging
 import os.path
 import subprocess
 import sys
 
+from setuptools_apport.java import register_java_sub_commands
+
 try:
     import DistUtilsExtra.auto
+    from DistUtilsExtra.command.build_extra import build_extra
 except ImportError:
     sys.stderr.write(
         "To build Apport you need https://launchpad.net/python-distutils-extra\n"
@@ -24,36 +23,6 @@ except ImportError:
     sys.exit(1)
 
 BASH_COMPLETIONS = "share/bash-completion/completions/"
-
-
-class build_java_subdir(distutils.core.Command):
-    """Java crash handler build command."""
-
-    description = "Compile java components of Apport"
-    user_options: list[tuple[str, str, str]] = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        oldwd = os.getcwd()
-        os.chdir("java")
-        release = "7"
-
-        javac = ["javac", "-source", release, "-target", release]
-        subprocess.check_call(javac + glob.glob("com/ubuntu/apport/*.java"))
-        subprocess.check_call(
-            ["jar", "cvf", "apport.jar"] + glob.glob("com/ubuntu/apport/*.class")
-        )
-        subprocess.check_call(javac + ["testsuite/crash.java"])
-        subprocess.check_call(
-            ["jar", "cvf", "crash.jar", "crash.class"], cwd="testsuite"
-        )
-
-        os.chdir(oldwd)
 
 
 class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
@@ -130,21 +99,6 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
 # main
 #
 
-optional_data_files = []
-cmdclass: dict[str, object] = {"install": install_fix_hashbangs}
-
-# if we have Java available, build the Java crash handler
-try:
-    subprocess.check_call(["javac", "-version"], stderr=subprocess.PIPE)
-
-    distutils.command.build.build.sub_commands.append(("build_java_subdir", None))
-    optional_data_files.append(("share/java", ["java/apport.jar"]))
-    cmdclass["build_java_subdir"] = build_java_subdir
-    cmdclass["clean"] = clean_java_subdir
-    print("Java support: Enabled")
-except (OSError, subprocess.CalledProcessError):
-    print("Java support: Java not available, not building Java crash handler")
-
 from apport.ui import __version__  # noqa: E402, pylint: disable=C0413
 
 # determine systemd unit directory
@@ -161,6 +115,7 @@ except subprocess.CalledProcessError:
     systemd_unit_dir = "/lib/systemd/system"
     systemd_tmpfiles_dir = "/usr/lib/tmpfiles.d"
 
+cmdclass = register_java_sub_commands(build_extra, install_fix_hashbangs)
 DistUtilsExtra.auto.setup(
     name="apport",
     author="Martin Pitt",
@@ -179,7 +134,11 @@ DistUtilsExtra.auto.setup(
         ("/lib/udev/rules.d", glob.glob("udev/*.rules")),
         (systemd_unit_dir, glob.glob("data/systemd/*.s*")),
         (systemd_tmpfiles_dir, glob.glob("data/systemd/*.conf")),
-    ]
-    + optional_data_files,
-    cmdclass=cmdclass,
+    ],
+    cmdclass={
+        "build": build_extra,
+        "clean": clean_java_subdir,
+        "install": install_fix_hashbangs,
+    }
+    | cmdclass,
 )
