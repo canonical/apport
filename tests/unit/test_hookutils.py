@@ -1,5 +1,6 @@
 """Unit tests for the apport.hookutils module."""
 
+import os
 import re
 import subprocess
 import time
@@ -12,6 +13,78 @@ import apport.hookutils
 class TestHookutils(unittest.TestCase):
     # pylint: disable=missing-function-docstring
     """Test apport.hookutils module."""
+
+    maxDiff = None
+
+    @unittest.mock.patch("os.path.isdir", unittest.mock.MagicMock(return_value=True))
+    @unittest.mock.patch("os.listdir")
+    @unittest.mock.patch("os.stat")
+    @unittest.mock.patch("apport.hookutils.read_file")
+    def test_attach_dmi(
+        self,
+        read_file_mock: unittest.mock.MagicMock,
+        stat_mock: unittest.mock.MagicMock,
+        listdir_mock: unittest.mock.MagicMock,
+    ) -> None:
+        """attach_dmi()"""
+
+        def stat(
+            content: str = "private\n",
+            st_mode: int = 0o100444,
+            st_nlink: int = 1,
+            st_size: int = 4096,
+        ) -> tuple[str, os.stat_result]:
+            st_time = 1698056204.0
+            stat = os.stat_result(
+                (st_mode, 1337, 22, st_nlink, 0, 0, st_size, st_time, st_time, st_time)
+            )
+            return (content, stat)
+
+        dmi_files = {
+            "bios_date": stat("07/20/2022\n"),
+            "board_serial": stat(st_mode=0o100400),
+            "uevent": stat("MODALIAS=dmi:[...]\n", st_mode=0o100644),
+            "product_serial": stat(st_mode=0o100400),
+            "product_name": stat("B550I AORUS PRO AX\n"),
+            "sys_vendor": stat("Gigabyte Technology Co., Ltd.\n"),
+            "power": stat(st_mode=0o40755, st_nlink=2, st_size=0),
+            "bios_version": stat("F16e\n"),
+            "bios_release": stat("5.17\n"),
+            "board_vendor": stat("Gigabyte Technology Co., Ltd.\n"),
+            "subsystem": stat(st_mode=0o40755, st_nlink=2, st_size=0),
+            "product_family": stat("B550 MB\n"),
+            "product_uuid": stat(
+                "2cf4a3c2-8f76-4f38-95b5-77c8a9f6ec4f\n", st_mode=0o100400
+            ),
+            "bios_vendor": stat("American Megatrends International, LLC.\n"),
+            "board_name": stat("B550I AORUS PRO AX\n"),
+        }
+
+        def mock_os_stat(path: str) -> os.stat_result:
+            return dmi_files[os.path.basename(path)][1]
+
+        def mock_read_file(path: str) -> str:
+            return dmi_files[os.path.basename(path)][0].strip()
+
+        listdir_mock.return_value = list(dmi_files.keys())
+        stat_mock.side_effect = mock_os_stat
+        read_file_mock.side_effect = mock_read_file
+        report: dict[str, str] = {}
+        apport.hookutils.attach_dmi(report)
+        self.assertEqual(
+            report,
+            {
+                "dmi.bios.date": "07/20/2022",
+                "dmi.bios.release": "5.17",
+                "dmi.bios.vendor": "American Megatrends International, LLC.",
+                "dmi.bios.version": "F16e",
+                "dmi.board.name": "B550I AORUS PRO AX",
+                "dmi.board.vendor": "Gigabyte Technology Co., Ltd.",
+                "dmi.product.family": "B550 MB",
+                "dmi.product.name": "B550I AORUS PRO AX",
+                "dmi.sys.vendor": "Gigabyte Technology Co., Ltd.",
+            },
+        )
 
     @unittest.mock.patch("apport.hookutils.root_command_output")
     def test_attach_dmesg(self, root_command_output_mock):
