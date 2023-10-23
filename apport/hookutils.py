@@ -233,12 +233,12 @@ def attach_dmi(report):
     dmi_dir = "/sys/class/dmi/id"
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
+            if f in ("subsystem", "uevent"):
+                continue
             p = os.path.realpath(f"{dmi_dir}/{f}")
             st = os.stat(p)
             # ignore the root-only ones, since they have serial numbers
             if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):
-                continue
-            if f in ("subsystem", "uevent"):
                 continue
 
             try:
