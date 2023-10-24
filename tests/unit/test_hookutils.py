@@ -83,6 +83,7 @@ class TestHookutils(unittest.TestCase):
                 "dmi.product.family": "B550 MB",
                 "dmi.product.name": "B550I AORUS PRO AX",
                 "dmi.sys.vendor": "Gigabyte Technology Co., Ltd.",
+                "MachineType": "Gigabyte Technology Co., Ltd. B550I AORUS PRO AX",
             },
         )
 

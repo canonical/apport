@@ -219,6 +219,12 @@ def attach_dmi(report):
             if value:
                 report[f"dmi.{f.replace('_', '.')}"] = value
 
+    # Use the hardware information to create a machine type.
+    if "dmi.sys.vendor" in report and "dmi.product.name" in report:
+        report[
+            "MachineType"
+        ] = f"{report['dmi.sys.vendor']} {report['dmi.product.name']}"
+
 
 def attach_hardware(report):
     """Attach a standard set of hardware-related data to the report, including:
@@ -265,12 +271,6 @@ def attach_hardware(report):
     report["UdevDb"] = labels
 
     attach_dmi(report)
-
-    # Use the hardware information to create a machine type.
-    if "dmi.sys.vendor" in report and "dmi.product.name" in report:
-        report[
-            "MachineType"
-        ] = "{report['dmi.sys.vendor']} {report['dmi.product.name']}"
 
     if command_available("prtconf"):
         report["Prtconf"] = command_output(["prtconf"])
