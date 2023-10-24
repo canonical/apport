@@ -179,3 +179,10 @@ class TestHookutils(unittest.TestCase):
         with self.assertRaises(_SkipPopen):
             apport.hookutils.recent_syslog(re.compile("."), journald_only_system=False)
         popen_mock.assert_called_once_with(cmd, stdout=unittest.mock.ANY)
+
+    def test_deprecated_upstart_functions(self) -> None:
+        """attach_upstart_*() throw deprecation warnings."""
+        with self.assertWarns(PendingDeprecationWarning):
+            apport.hookutils.attach_upstart_logs({}, "apport")
+        with self.assertWarns(PendingDeprecationWarning):
+            apport.hookutils.attach_upstart_overrides({}, "nonexisting")

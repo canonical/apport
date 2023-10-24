@@ -27,6 +27,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import warnings
 
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
@@ -167,56 +168,26 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
         report[f"mtime.conffile.{path_to_key(path)}"] = mtime.isoformat()
 
 
+# pylint: disable-next=unused-argument
 def attach_upstart_overrides(report, package):
     """Attach information about any Upstart override files."""
-    try:
-        files = packaging.get_files(package)
-    except ValueError:
-        return
-
-    for file in files:
-        if os.path.exists(file) and file.startswith("/etc/init/"):
-            override = file.replace(".conf", ".override")
-            key = f"upstart.{override.replace('/etc/init/', '')}"
-            attach_file_if_exists(report, override, key)
+    warnings.warn(
+        "apport.hookutils.attach_upstart_overrides() is obsolete."
+        " Upstart is dead. Please drop this call.",
+        PendingDeprecationWarning,
+        stacklevel=2,
+    )
 
 
+# pylint: disable-next=unused-argument
 def attach_upstart_logs(report, package):
     """Attach information about a package's session upstart logs."""
-    try:
-        files = packaging.get_files(package)
-    except ValueError:
-        return
-
-    for f in files:
-        if not os.path.exists(f):
-            continue
-        if f.startswith("/usr/share/upstart/sessions/"):
-            log = os.path.basename(f).replace(".conf", ".log")
-            key = f"upstart.{log}"
-            try:
-                log = os.path.join(os.environ["XDG_CACHE_HOME"], "upstart", log)
-            except KeyError:
-                try:
-                    log = os.path.join(os.environ["HOME"], ".cache", "upstart", log)
-                except KeyError:
-                    continue
-
-            attach_file_if_exists(report, log, key)
-
-        if f.startswith("/usr/share/applications/") and f.endswith(".desktop"):
-            desktopname = os.path.splitext(os.path.basename(f))[0]
-            key = f"upstart.application.{desktopname}"
-            log = f"application-{desktopname}.log"
-            try:
-                log = os.path.join(os.environ["XDG_CACHE_HOME"], "upstart", log)
-            except KeyError:
-                try:
-                    log = os.path.join(os.environ["HOME"], ".cache", "upstart", log)
-                except KeyError:
-                    continue
-
-            attach_file_if_exists(report, log, key)
+    warnings.warn(
+        "apport.hookutils.attach_upstart_logs() is obsolete."
+        " Upstart is dead. Please drop this call.",
+        PendingDeprecationWarning,
+        stacklevel=2,
+    )
 
 
 def attach_dmesg(report):
