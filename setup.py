@@ -110,7 +110,7 @@ try:
     systemd_tmpfiles_dir = subprocess.check_output(
         ["pkg-config", "--variable=tmpfilesdir", "systemd"], universal_newlines=True
     ).strip()
-except subprocess.CalledProcessError:
+except (FileNotFoundError, subprocess.CalledProcessError):
     # hardcoded fallback path
     systemd_unit_dir = "/lib/systemd/system"
     systemd_tmpfiles_dir = "/usr/lib/tmpfiles.d"

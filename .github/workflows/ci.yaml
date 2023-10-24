@@ -135,7 +135,7 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           bash binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
-          libc6-dev pkg-config python3 python3-apt python3-distutils-extra
+          libc6-dev python3 python3-apt python3-distutils-extra
           python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
           python3-requests python3-setuptools python3-systemd valgrind
       - name: Build Java subdir
