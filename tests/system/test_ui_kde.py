@@ -191,7 +191,7 @@ class T(unittest.TestCase):
     def test_regular_crash_thread_layout(self):
         """A thread of execution has failed, but the application persists."""
         self.app.report["ProblemType"] = "Crash"
-        self.app.report["ProcStatus"] = "Name:\tupstart\nPid:\t1"
+        self.app.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertFalse(self.app.dialog.closed_button.isVisible())

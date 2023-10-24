@@ -195,7 +195,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         +-----------------------------------------------------------------+
         """
         self.app.report["ProblemType"] = "Crash"
-        self.app.report["ProcStatus"] = "Name:\tupstart\nPid:\t1"
+        self.app.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertTrue(self.app.w("dont_send_button").get_property("visible"))
