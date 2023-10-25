@@ -743,7 +743,9 @@ and more
             return db.launchpad.projects[project]
         return None
 
-    def _file_bug(self, bug_target, report, description=None):
+    def _file_bug(
+        self, bug_target: object, report: Report, description: str = "some description"
+    ) -> int:
         """File a bug report for a report.
 
         Return the bug ID.
@@ -752,10 +754,6 @@ and more
         # must avoid using it. Fake it by manually doing the comments and
         # attachments that +filebug would ordinarily do itself when given a
         # blob handle.
-
-        if description is None:
-            description = "some description"
-
         mime = self.crashdb._generate_upload_blob(report)
         msg = email.message_from_binary_file(mime)
         mime.close()
