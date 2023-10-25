@@ -37,6 +37,8 @@ from tests.paths import local_test_environment
 class T(unittest.TestCase):
     """Test apport_python_hook.py"""
 
+    env: dict[str, str]
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()
@@ -53,16 +55,12 @@ class T(unittest.TestCase):
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
 
-    def _test_crash(self, extracode="", scriptname=None):
+    def _test_crash(self, extracode: str) -> str:
         """Create a test crash."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
-        if scriptname:
-            script = scriptname
-            fd = os.open(scriptname, os.O_CREAT | os.O_WRONLY)
-        else:
-            (fd, script) = tempfile.mkstemp(dir="/var/tmp")
-            self.addCleanup(os.unlink, script)
+        (fd, script) = tempfile.mkstemp(dir="/var/tmp")
+        self.addCleanup(os.unlink, script)
 
         os.write(
             fd,
@@ -95,8 +93,6 @@ func(42)
             1,
             "crashing test python program exits with failure code",
         )
-        if not extracode:
-            self.assertIn("This should happen.", process.stderr)
         self.assertNotIn("OSError", process.stderr)
 
         return script
