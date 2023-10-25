@@ -28,9 +28,8 @@ import time
 import urllib.parse
 import urllib.request
 
-from httplib2 import FailedToDecompressContent
-
 try:
+    from httplib2 import FailedToDecompressContent
     from launchpadlib.errors import HTTPError, RestfulError
     from launchpadlib.launchpad import Launchpad
 except ImportError:
