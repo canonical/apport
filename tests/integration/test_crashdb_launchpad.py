@@ -31,9 +31,9 @@ try:
 except ImportError as error:
     IMPORT_ERROR = error
 
-import apport.report
 from apport.crashdb_impl.launchpad import CrashDatabase
 from apport.packaging_impl import impl as packaging
+from apport.report import Report
 
 _CACHE = {}
 
@@ -77,7 +77,7 @@ class T(unittest.TestCase):
 
         # create a local reference report so that we can compare
         # DistroRelease, Architecture, etc.
-        self.ref_report = apport.report.Report()
+        self.ref_report = Report()
         self.ref_report.add_os_info()
         self.ref_report.add_user_info()
         self.ref_report["SourcePackage"] = "coreutils"
@@ -141,7 +141,7 @@ class T(unittest.TestCase):
 
         Return the ID.
         """
-        r = apport.report.Report("Crash")
+        r = Report("Crash")
         r["ExecutablePath"] = "/bin/foo"
         r[
             "Traceback"
@@ -354,7 +354,7 @@ and more
         title = b"1\xc3\xa4\xe2\x99\xa52"
 
         # distro, UTF-8 bytestring
-        r = apport.report.Report("Bug")
+        r = Report("Bug")
         r["Title"] = title
         url = self.crashdb.get_comment_url(r, 42)
         self.assertTrue(
@@ -389,7 +389,7 @@ and more
         self.assertTrue(crash_id > 0)
         sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-        r = apport.report.Report("Bug")
+        r = Report("Bug")
 
         r["OneLiner"] = b"bogus\xe2\x86\x92".decode("UTF-8")
         r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -424,7 +424,7 @@ and more
         self.assertTrue(crash_id > 0)
         sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-        r = apport.report.Report("Bug")
+        r = Report("Bug")
 
         r["OneLiner"] = "bogus→"
         r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -458,7 +458,7 @@ and more
         self.assertTrue(crash_id > 0)
         sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
 
-        r = apport.report.Report("Bug")
+        r = Report("Bug")
 
         r["OneLiner"] = "bogus→"
         r["StacktraceTop"] = "f()\ng()\nh(1)"
@@ -544,18 +544,16 @@ and more
 
         # now try duplicating to a duplicate bug; this should automatically
         # transition to the master bug
-        self.crashdb.close_duplicate(
-            apport.report.Report(), known_test_id, known_test_id2
-        )
+        self.crashdb.close_duplicate(Report(), known_test_id, known_test_id2)
         self.crashdb.close_duplicate(r, segv_id, known_test_id)
         self.assertEqual(self.crashdb.duplicate_of(segv_id), known_test_id2)
 
-        self.crashdb.close_duplicate(apport.report.Report(), known_test_id, None)
-        self.crashdb.close_duplicate(apport.report.Report(), known_test_id2, None)
+        self.crashdb.close_duplicate(Report(), known_test_id, None)
+        self.crashdb.close_duplicate(Report(), known_test_id2, None)
         self.crashdb.close_duplicate(r, segv_id, None)
 
         # this should be a no-op
-        self.crashdb.close_duplicate(apport.report.Report(), known_test_id, None)
+        self.crashdb.close_duplicate(Report(), known_test_id, None)
         self.assertEqual(self.crashdb.duplicate_of(known_test_id), None)
 
         self.crashdb.mark_regression(segv_id, known_test_id)
@@ -855,7 +853,7 @@ and more
         self.assertEqual(crashdb.distro, None)
 
         # create Python crash report
-        r = apport.report.Report("Crash")
+        r = Report("Crash")
         r["ExecutablePath"] = "/bin/foo"
         r[
             "Traceback"
@@ -929,7 +927,7 @@ NameError: global name 'weird' is not defined"""
             for b in range(first_dup, first_dup + 13):
                 count += 1
                 sys.stderr.write(f"{b} ")
-                db.close_duplicate(apport.report.Report(), b, self.get_segv_report())
+                db.close_duplicate(Report(), b, self.get_segv_report())
                 b = db.launchpad.bugs[self.get_segv_report()]
                 has_escalation_tag = db.options["escalation_tag"] in b.tags
                 has_escalation_subscription = any(
@@ -944,7 +942,7 @@ NameError: global name 'weird' is not defined"""
         finally:
             for b in range(first_dup, first_dup + count):
                 sys.stderr.write(f"R{b} ")
-                db.close_duplicate(apport.report.Report(), b, None)
+                db.close_duplicate(Report(), b, None)
         sys.stderr.write("\n")
 
     def test_marking_python_task_mangle(self):
@@ -999,7 +997,7 @@ NameError: global name 'weird' is not defined"""
         """
         workdir = None
         orig_cwd = os.getcwd()
-        pr = apport.report.Report()
+        pr = Report()
         try:
             workdir = tempfile.mkdtemp()
             atexit.register(shutil.rmtree, workdir)
