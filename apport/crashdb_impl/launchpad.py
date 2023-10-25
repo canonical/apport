@@ -32,6 +32,7 @@ try:
     from httplib2 import FailedToDecompressContent
     from launchpadlib.errors import HTTPError, RestfulError
     from launchpadlib.launchpad import Launchpad
+    from launchpadlib.uris import lookup_web_root
 except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
     Launchpad = None
@@ -41,6 +42,7 @@ import apport.logging
 import apport.report
 from apport.packaging_impl import impl as packaging
 
+DEFAULT_LAUNCHPAD_INSTANCE = "production"
 default_credentials_path = os.path.expanduser("~/.cache/apport/launchpad.credentials")
 
 
@@ -153,7 +155,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.options.get("launchpad_instance"):
             launchpad_instance = self.options.get("launchpad_instance")
         else:
-            launchpad_instance = "production"
+            launchpad_instance = DEFAULT_LAUNCHPAD_INSTANCE
 
         auth_dir = os.path.dirname(self.auth)
         if auth_dir and not os.path.isdir(auth_dir):
@@ -222,19 +224,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert ticket
         return ticket
 
-    def get_hostname(self):
+    def get_hostname(self) -> str:
         """Return the hostname for the Launchpad instance."""
-        launchpad_instance = self.options.get("launchpad_instance")
-        if launchpad_instance:
-            if launchpad_instance == "qastaging":
-                hostname = "qastaging.launchpad.net"
-            elif launchpad_instance == "staging":
-                hostname = "staging.launchpad.net"
-            else:
-                hostname = "launchpad.dev"
-        else:
-            hostname = "launchpad.net"
-        return hostname
+        launchpad_instance = self.options.get(
+            "launchpad_instance", DEFAULT_LAUNCHPAD_INSTANCE
+        )
+        url = urllib.parse.urlparse(lookup_web_root(launchpad_instance))
+        return url.netloc
 
     def get_comment_url(self, report, handle):
         """Return an URL that should be opened after report has been uploaded
