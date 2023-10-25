@@ -274,7 +274,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             f"?{urllib.parse.urlencode(args)}"
         )
 
-    def get_id_url(self, report, crash_id):
+    def get_id_url(self, report: apport.report.Report, crash_id: int) -> str:
         """Return URL for a given report ID.
 
         The report is passed in case building the URL needs additional
@@ -282,7 +282,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         Return None if URL is not available or cannot be determined.
         """
-        return f"https://bugs.launchpad.net/bugs/{str(crash_id)}"
+        return f"https://bugs.{self.get_hostname()}/bugs/{crash_id}"
 
     def download(self, crash_id):
         # TODO: Split into smaller functions/methods
