@@ -85,6 +85,22 @@ class T(unittest.TestCase):
         # Objects tests rely on.
         self._create_project("langpack-o-matic")
 
+    def _create_bug_from_report(self, name: str, report: Report) -> int:
+        """Create a Launchpad bug report from a crash report.
+
+        Return the bug ID.
+        """
+        bug_target = self._get_bug_target(self.crashdb, report)
+        self.assertTrue(bug_target)
+
+        crash_id = self._file_bug(bug_target, report)
+        self.assertTrue(crash_id > 0)
+
+        sys.stderr.write(
+            f"(Created {name} report: https://{self.hostname}/bugs/{crash_id}) "
+        )
+        return crash_id
+
     def _create_project(self, name):
         """Create a project using launchpadlib to be used by tests."""
         project = self.crashdb.launchpad.projects[name]
@@ -123,17 +139,7 @@ class T(unittest.TestCase):
         r["ShortGibberish"] = ' "]\xb6"\n'
         r["LongGibberish"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
 
-        # create a bug for the report
-        bug_target = self._get_bug_target(self.crashdb, r)
-        self.assertTrue(bug_target)
-
-        crash_id = self._file_bug(bug_target, r)
-        self.assertTrue(crash_id > 0)
-
-        sys.stderr.write(
-            f"(Created SEGV report: https://{self.hostname}/bugs/{crash_id}) "
-        )
-        return crash_id
+        return self._create_bug_from_report("SEGV", r)
 
     @cache
     def get_python_report(self):
@@ -159,15 +165,7 @@ NameError: global name 'weird' is not defined"""
             " global name 'weird' is not defined",
         )
 
-        bug_target = self._get_bug_target(self.crashdb, r)
-        self.assertTrue(bug_target)
-
-        crash_id = self._file_bug(bug_target, r)
-        self.assertTrue(crash_id > 0)
-        sys.stderr.write(
-            f"(Created Python report: https://{self.hostname}/bugs/{crash_id}) "
-        )
-        return crash_id
+        return self._create_bug_from_report("Python", r)
 
     @cache
     def get_uncommon_description_report(self, force_fresh=False):
