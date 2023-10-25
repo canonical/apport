@@ -93,12 +93,10 @@ class T(unittest.TestCase):
         bug_target = self._get_bug_target(self.crashdb, report)
         self.assertTrue(bug_target)
 
-        crash_id = self._file_bug(bug_target, report)
+        crash_id, web_link = self._file_bug(bug_target, report)
         self.assertTrue(crash_id > 0)
 
-        sys.stderr.write(
-            f"(Created {name} report: https://{self.hostname}/bugs/{crash_id}) "
-        )
+        sys.stderr.write(f"(Created {name} report: {web_link}) ")
         return crash_id
 
     def _create_project(self, name):
@@ -745,7 +743,7 @@ and more
 
     def _file_bug(
         self, bug_target: object, report: Report, description: str = "some description"
-    ) -> int:
+    ) -> tuple[int, str]:
         """File a bug report for a report.
 
         Return the bug ID.
@@ -798,7 +796,7 @@ and more
             if sub:
                 bug.subscribe(person=sub)
 
-        return bug.id
+        return bug.id, bug.web_link
 
     def _mark_needs_retrace(self, crash_id):
         """Mark a report ID as needing retrace."""
@@ -869,9 +867,9 @@ NameError: global name 'weird' is not defined"""
         bug_target = self._get_bug_target(crashdb, r)
         self.assertEqual(bug_target.name, "langpack-o-matic")
 
-        crash_id = self._file_bug(bug_target, r)
+        crash_id, web_link = self._file_bug(bug_target, r)
         self.assertTrue(crash_id > 0)
-        sys.stderr.write(f"(https://{self.hostname}/bugs/{crash_id}) ")
+        sys.stderr.write(f"({web_link}) ")
 
         # update
         r = crashdb.download(crash_id)
