@@ -814,9 +814,7 @@ class UserInterface:
                 if not os.path.exists(
                     os.path.join(apport.report.PACKAGE_HOOK_DIR, f"source_{p}.py")
                 ):
-                    print(
-                        f"Package {p} not installed and no hook available," f" ignoring"
-                    )
+                    print(f"Package {p} not installed and no hook available, ignoring")
                     continue
             self.collect_info(ignore_uninstalled=True)
             info_collected = True

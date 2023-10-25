@@ -569,7 +569,7 @@ class CrashDatabase:
 
         # crash got rejected
         if real_fixed_version == "invalid":
-            print(f"DEBUG: bug {crash_id} was invalidated," f" removing from database")
+            print(f"DEBUG: bug {crash_id} was invalidated, removing from database")
             self.duplicate_db_remove(crash_id)
             return
 

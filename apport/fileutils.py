@@ -708,7 +708,7 @@ def should_skip_crash(report: ProblemReport, filename: str) -> Optional[str]:
     except (KeyError, ValueError):
         crash_counter = 0
     if crash_counter > 1:
-        return f"this executable already crashed" f" {crash_counter} times, ignoring"
+        return f"this executable already crashed {crash_counter} times, ignoring"
     if os.path.exists(filename) and not seen_report(filename):
         # don't clobber existing report
         return (

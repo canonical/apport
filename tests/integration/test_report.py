@@ -49,7 +49,7 @@ class T(unittest.TestCase):
             elapsed_time += 0.1
 
         self.fail(
-            f"/proc/{pid}/cmdline not readable within" f" {int(elapsed_time)} seconds."
+            f"/proc/{pid}/cmdline not readable within {int(elapsed_time)} seconds."
         )
 
     @unittest.mock.patch("time.sleep")

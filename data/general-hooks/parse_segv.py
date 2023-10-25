@@ -392,7 +392,7 @@ def main():
     if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
-        print(f"  Usage:" f" {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt")
+        print(f"  Usage: {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt")
         sys.exit(0)
 
     with open(sys.argv[1], encoding="utf-8") as registers_file:
