@@ -964,7 +964,7 @@ class T(unittest.TestCase):
         self.assertTrue(len(self.ui.report["CoreDump"]) > 10000)
         self.assertTrue(
             self.ui.report["Title"].startswith(
-                f"{os.path.basename(self.TEST_EXECUTABLE)}" f" crashed with SIGSEGV"
+                f"{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV"
             )
         )
 
@@ -1549,7 +1549,7 @@ class T(unittest.TestCase):
 
             self.assertTrue(
                 self.ui.report["Title"].startswith(
-                    f"{os.path.basename(self.TEST_EXECUTABLE)}" f" crashed with SIGSEGV"
+                    f"{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV"
                 ),
                 self.ui.report["Title"],
             )

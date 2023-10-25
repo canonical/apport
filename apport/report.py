@@ -1652,9 +1652,9 @@ class Report(problem_report.ProblemReport):
                     parsed = re.search("^BUG: unable to handle (.*) at ", line)
                     if parsed:
                         match = parsed.group(1)
-                        assert match, (
-                            f"could not parse expected" f" problem type line: {line}"
-                        )
+                        assert (
+                            match
+                        ), f"could not parse expected problem type line: {line}"
                         parts.append(match)
 
                 if line.startswith("IP: "):
@@ -1887,7 +1887,7 @@ class Report(problem_report.ProblemReport):
                     "GCONV_PATH": f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv",
                 }
                 command.insert(
-                    0, f"{gdb_sandbox}" f"/lib/{native_multiarch}/ld-linux-x86-64.so.2"
+                    0, f"{gdb_sandbox}/lib/{native_multiarch}/ld-linux-x86-64.so.2"
                 )
                 command += ["--ex", f"set data-directory {gdb_sandbox}/usr/share/gdb"]
             if not os.path.exists(sandbox + executable):

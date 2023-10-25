@@ -479,9 +479,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_modified_files(self, package):
         """Return list of all modified files of a package."""
         # get the maximum mtime of package files that we consider unmodified
-        listfile = (
-            f"/var/lib/dpkg/info/{package}" f":{self.get_system_architecture()}.list"
-        )
+        listfile = f"/var/lib/dpkg/info/{package}:{self.get_system_architecture()}.list"
         if not os.path.exists(listfile):
             listfile = f"/var/lib/dpkg/info/{package}.list"
         try:
@@ -495,7 +493,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # create a list of files with a newer timestamp for md5sum'ing
         sums = b""
         sumfile = (
-            f"/var/lib/dpkg/info/{package}" f":{self.get_system_architecture()}.md5sums"
+            f"/var/lib/dpkg/info/{package}:{self.get_system_architecture()}.md5sums"
         )
         if not os.path.exists(sumfile):
             sumfile = f"/var/lib/dpkg/info/{package}.md5sums"
@@ -972,7 +970,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 try:
                     cache_pkg = cache[pkg]
                 except KeyError:
-                    m = f"package {pkg.replace('%', '%%')} does not exist," f" ignoring"
+                    m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
                     obsolete += f"{m}\n"
                     apport.logging.warning("%s", m)
                     continue
@@ -1007,7 +1005,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 cache_pkg = cache[pkg]
             except KeyError:
-                m = f"package {pkg.replace('%', '%%')} does not exist," f" ignoring"
+                m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
                 obsolete += f"{m}\n"
                 apport.logging.warning("%s", m)
                 continue
@@ -1257,9 +1255,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     lp_cache[dbgsym_pkg] = ver
                                     pkg_found = True
                             if not pkg_found:
-                                obsolete += (
-                                    f"no debug symbol package found" f" for {pkg}\n"
-                                )
+                                obsolete += f"no debug symbol package found for {pkg}\n"
 
         # unpack packages, weed out the ones that are already installed (for
         # permanent sandboxes)

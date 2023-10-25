@@ -457,7 +457,7 @@ class ProblemReport(collections.UserDict):
                 if len(v) >= 4 and v[3]:
                     if size == 0:
                         raise OSError(
-                            f"did not get any data" f" for field {k} from {str(v[0])}"
+                            f"did not get any data for field {k} from {str(v[0])}"
                         )
 
             # flush compressor and write the rest

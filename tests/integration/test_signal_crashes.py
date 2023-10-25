@@ -1081,9 +1081,7 @@ class T(unittest.TestCase):
 
         args = " ".join(f" {a}" for a in args)
         if uid is not None:
-            args = (
-                f" --reuid={uid} --clear-groups " f"/bin/sh -c 'exec {command}{args}'"
-            )
+            args = f" --reuid={uid} --clear-groups /bin/sh -c 'exec {command}{args}'"
             command = "/usr/bin/setpriv"
             gdb_args += ["--ex", "set follow-fork-mode child"]
 
@@ -1100,7 +1098,7 @@ class T(unittest.TestCase):
     def _get_report_filename(command: str) -> str:
         return os.path.join(
             apport.fileutils.report_dir,
-            f"{os.path.realpath(command).replace('/', '_')}" f".{os.getuid()}.crash",
+            f"{os.path.realpath(command).replace('/', '_')}.{os.getuid()}.crash",
         )
 
     def check_report_coredump(self, report_path):
@@ -1128,7 +1126,7 @@ class T(unittest.TestCase):
             timeout += 0.1
         else:
             self.fail(
-                f"Core file {core_file} not created " f"within {int(timeout)} seconds."
+                f"Core file {core_file} not created within {int(timeout)} seconds."
             )
 
         gdb_process = psutil.Process(gdb_pid)

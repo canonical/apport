@@ -1078,7 +1078,7 @@ def _copy_ubuntu_keyrings(keyring_dir: str) -> None:
     dbgsym_keyring = "/usr/share/keyrings/ubuntu-dbgsym-keyring.gpg"
     if not os.path.isfile(dbgsym_keyring):
         pytest.skip(  # pragma: no cover
-            f"{dbgsym_keyring} missing. " f"Please install ubuntu-dbgsym-keyring!"
+            f"{dbgsym_keyring} missing. Please install ubuntu-dbgsym-keyring!"
         )
     # Convert from GPG keybox database format to OpenPGP Public Key format
     output_dbgsym_keyring = os.path.join(keyring_dir, os.path.basename(dbgsym_keyring))
