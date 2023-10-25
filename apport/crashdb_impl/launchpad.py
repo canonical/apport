@@ -1279,6 +1279,10 @@ if __name__ == "__main__":
 
         return try_to_get_from_cache
 
+    @unittest.skipUnless(
+        "TEST_LAUNCHPAD" in os.environ,
+        "Need Launchpad access with bug control permission. Set TEST_LAUNCHPAD to run.",
+    )
     class _T(unittest.TestCase):
         # pylint: disable=protected-access,too-many-public-methods
 
