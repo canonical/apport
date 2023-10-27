@@ -356,8 +356,6 @@ class ProblemReport(collections.UserDict):
         return value
 
     def write(self, file, only_new=False):
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
@@ -384,92 +382,8 @@ class ProblemReport(collections.UserDict):
         for k in asckeys:
             self._write_key_and_ascii_value_to_file(file, k)
 
-        # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
-            v = self.data[k]
-            limit = None
-            size = 0
-
-            curr_pos = file.tell()
-            file.write(k.encode("ASCII"))
-            file.write(b": base64\n ")
-
-            # CompressedValue
-            if isinstance(v, CompressedValue):
-                file.write(base64.b64encode(v.gzipvalue))
-                file.write(b"\n")
-                continue
-
-            # write gzip header
-            gzip_header = (
-                GZIP_HEADER_START
-                + b"\010\000\000\000\000\002\377"
-                + k.encode("UTF-8")
-                + b"\000"
-            )
-            file.write(base64.b64encode(gzip_header))
-            file.write(b"\n ")
-            crc = zlib.crc32(b"")
-
-            bc = zlib.compressobj(
-                6, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0
-            )
-            # direct value
-            if hasattr(v, "find"):
-                size += len(v)
-                crc = zlib.crc32(v, crc)
-                outblock = bc.compress(v)
-                if outblock:
-                    file.write(base64.b64encode(outblock))
-                    file.write(b"\n ")
-            # file reference
-            else:
-                if len(v) >= 3 and v[2] is not None:
-                    limit = v[2]
-
-                if hasattr(v[0], "read"):
-                    f = v[0]  # file-like object
-                else:
-                    # hard to change, pylint: disable=consider-using-with
-                    f = open(v[0], "rb")  # file name
-                while True:
-                    block = f.read(1048576)
-                    size += len(block)
-                    crc = zlib.crc32(block, crc)
-                    if limit is not None:
-                        if size > limit:
-                            # roll back
-                            file.seek(curr_pos)
-                            file.truncate(curr_pos)
-                            del self.data[k]
-                            crc = None
-                            break
-                    if block:
-                        outblock = bc.compress(block)
-                        if outblock:
-                            file.write(base64.b64encode(outblock))
-                            file.write(b"\n ")
-                    else:
-                        break
-                if not hasattr(v[0], "read"):
-                    f.close()
-
-                if len(v) >= 4 and v[3]:
-                    if size == 0:
-                        raise OSError(
-                            f"did not get any data for field {k} from {str(v[0])}"
-                        )
-
-            # flush compressor and write the rest
-            if not limit or size <= limit:
-                block = bc.flush()
-                # append gzip trailer: crc (32 bit) and size (32 bit)
-                if crc:
-                    block += struct.pack("<L", crc & 0xFFFFFFFF)
-                    block += struct.pack("<L", size & 0xFFFFFFFF)
-
-                file.write(base64.b64encode(block))
-                file.write(b"\n")
+            self._write_key_and_binary_value_compressed_and_encoded_to_file(file, k)
 
     def _get_sorted_keys(self, only_new: bool) -> typing.Tuple[list[str], list[str]]:
         """Sort keys into ASCII non-ASCII/binary attachment ones, so that
@@ -540,6 +454,93 @@ class ProblemReport(collections.UserDict):
             file.write(b": ")
             file.write(v)
         file.write(b"\n")
+
+    def _write_key_and_binary_value_compressed_and_encoded_to_file(self, file, key):
+        """Write the binary keys with gzip compression and base64 encoding"""
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-statements
+        v = self.data[key]
+        limit = None
+        size = 0
+
+        curr_pos = file.tell()
+        file.write(key.encode("ASCII"))
+        file.write(b": base64\n ")
+
+        # CompressedValue
+        if isinstance(v, CompressedValue):
+            file.write(base64.b64encode(v.gzipvalue))
+            file.write(b"\n")
+            return
+
+        # write gzip header
+        gzip_header = (
+            GZIP_HEADER_START
+            + b"\010\000\000\000\000\002\377"
+            + key.encode("UTF-8")
+            + b"\000"
+        )
+        file.write(base64.b64encode(gzip_header))
+        file.write(b"\n ")
+        crc = zlib.crc32(b"")
+
+        bc = zlib.compressobj(6, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0)
+        # direct value
+        if hasattr(v, "find"):
+            size += len(v)
+            crc = zlib.crc32(v, crc)
+            outblock = bc.compress(v)
+            if outblock:
+                file.write(base64.b64encode(outblock))
+                file.write(b"\n ")
+        # file reference
+        else:
+            if len(v) >= 3 and v[2] is not None:
+                limit = v[2]
+
+            if hasattr(v[0], "read"):
+                f = v[0]  # file-like object
+            else:
+                # hard to change, pylint: disable=consider-using-with
+                f = open(v[0], "rb")  # file name
+            while True:
+                block = f.read(1048576)
+                size += len(block)
+                crc = zlib.crc32(block, crc)
+                if limit is not None:
+                    if size > limit:
+                        # roll back
+                        file.seek(curr_pos)
+                        file.truncate(curr_pos)
+                        del self.data[key]
+                        crc = None
+                        break
+                if block:
+                    outblock = bc.compress(block)
+                    if outblock:
+                        file.write(base64.b64encode(outblock))
+                        file.write(b"\n ")
+                else:
+                    break
+            if not hasattr(v[0], "read"):
+                f.close()
+
+            if len(v) >= 4 and v[3]:
+                if size == 0:
+                    raise OSError(
+                        f"did not get any data for field {key} from {str(v[0])}"
+                    )
+
+        # flush compressor and write the rest
+        if not limit or size <= limit:
+            block = bc.flush()
+            # append gzip trailer: crc (32 bit) and size (32 bit)
+            if crc:
+                block += struct.pack("<L", crc & 0xFFFFFFFF)
+                block += struct.pack("<L", size & 0xFFFFFFFF)
+
+            file.write(base64.b64encode(block))
+            file.write(b"\n")
 
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
