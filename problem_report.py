@@ -455,6 +455,16 @@ class ProblemReport(collections.UserDict):
             file.write(v)
         file.write(b"\n")
 
+    @staticmethod
+    def _write_base64_encoded_line(file: typing.BinaryIO, block: bytes) -> None:
+        """Write the given binary block as base64-encoded line.
+
+        The base64-encoded line is assumed to be part of a RFC822 multiline.
+        """
+        file.write(b" ")
+        file.write(base64.b64encode(block))
+        file.write(b"\n")
+
     def _write_key_and_binary_value_compressed_and_encoded_to_file(
         self, file: typing.BinaryIO, key: str
     ) -> None:
@@ -466,13 +476,11 @@ class ProblemReport(collections.UserDict):
         size = 0
 
         curr_pos = file.tell()
-        file.write(key.encode("ASCII"))
-        file.write(b": base64\n ")
+        file.write(f"{key}: base64\n".encode("ASCII"))
 
         # CompressedValue
         if isinstance(v, CompressedValue):
-            file.write(base64.b64encode(v.gzipvalue))
-            file.write(b"\n")
+            self._write_base64_encoded_line(file, v.gzipvalue)
             return
 
         # write gzip header
@@ -482,8 +490,7 @@ class ProblemReport(collections.UserDict):
             + key.encode("UTF-8")
             + b"\000"
         )
-        file.write(base64.b64encode(gzip_header))
-        file.write(b"\n ")
+        self._write_base64_encoded_line(file, gzip_header)
         crc = zlib.crc32(b"")
         write_aborted = False
 
@@ -494,8 +501,7 @@ class ProblemReport(collections.UserDict):
             crc = zlib.crc32(v, crc)
             outblock = bc.compress(v)
             if outblock:
-                file.write(base64.b64encode(outblock))
-                file.write(b"\n ")
+                self._write_base64_encoded_line(file, outblock)
         # file reference
         else:
             if len(v) >= 3 and v[2] is not None:
@@ -521,8 +527,7 @@ class ProblemReport(collections.UserDict):
                 if block:
                     outblock = bc.compress(block)
                     if outblock:
-                        file.write(base64.b64encode(outblock))
-                        file.write(b"\n ")
+                        self._write_base64_encoded_line(file, outblock)
                 else:
                     break
             if not hasattr(v[0], "read"):
@@ -542,8 +547,7 @@ class ProblemReport(collections.UserDict):
                 block += struct.pack("<L", crc & 0xFFFFFFFF)
                 block += struct.pack("<L", size & 0xFFFFFFFF)
 
-            file.write(base64.b64encode(block))
-            file.write(b"\n")
+            self._write_base64_encoded_line(file, block)
 
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
