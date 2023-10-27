@@ -355,7 +355,7 @@ class ProblemReport(collections.UserDict):
                 return value
         return value
 
-    def write(self, file, only_new=False):
+    def write(self, file: typing.BinaryIO, only_new: bool = False) -> None:
         """Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
@@ -455,7 +455,9 @@ class ProblemReport(collections.UserDict):
             file.write(v)
         file.write(b"\n")
 
-    def _write_key_and_binary_value_compressed_and_encoded_to_file(self, file, key):
+    def _write_key_and_binary_value_compressed_and_encoded_to_file(
+        self, file: typing.BinaryIO, key: str
+    ) -> None:
         """Write the binary keys with gzip compression and base64 encoding"""
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-statements
