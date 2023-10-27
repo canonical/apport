@@ -483,6 +483,7 @@ class ProblemReport(collections.UserDict):
         file.write(base64.b64encode(gzip_header))
         file.write(b"\n ")
         crc = zlib.crc32(b"")
+        write_aborted = False
 
         bc = zlib.compressobj(6, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0)
         # direct value
@@ -513,7 +514,7 @@ class ProblemReport(collections.UserDict):
                         file.seek(curr_pos)
                         file.truncate(curr_pos)
                         del self.data[key]
-                        crc = None
+                        write_aborted = True
                         break
                 if block:
                     outblock = bc.compress(block)
@@ -535,7 +536,7 @@ class ProblemReport(collections.UserDict):
         if not limit or size <= limit:
             block = bc.flush()
             # append gzip trailer: crc (32 bit) and size (32 bit)
-            if crc:
+            if not write_aborted:
                 block += struct.pack("<L", crc & 0xFFFFFFFF)
                 block += struct.pack("<L", size & 0xFFFFFFFF)
 
