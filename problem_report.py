@@ -47,6 +47,10 @@ class MalformedProblemReport(ValueError):
         )
 
 
+class _SizeLimitExceeded(RuntimeError):
+    """Raised internally to signal a value that is too big to encode."""
+
+
 class CompressedValue:
     """Represent a ProblemReport value which is gzip compressed."""
 
@@ -455,49 +459,61 @@ class ProblemReport(collections.UserDict):
             file.write(v)
         file.write(b"\n")
 
-    def _write_key_and_binary_value_compressed_and_encoded_to_file(
-        self, file: typing.BinaryIO, key: str
+    @staticmethod
+    def _write_key_and_base64_binary_chunks(
+        file: typing.BinaryIO, key: str, chunks: typing.Iterable[bytes]
     ) -> None:
-        """Write the binary keys with gzip compression and base64 encoding"""
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
-        value = self.data[key]
-        limit = None
-        size = 0
-
-        curr_pos = file.tell()
-        file.write(key.encode("ASCII"))
-        file.write(b": base64\n ")
-
-        # CompressedValue
-        if isinstance(value, CompressedValue):
-            file.write(base64.b64encode(value.gzipvalue))
+        """Write out binary chunks as a base64-encoded RFC822 multiline field."""
+        reset_position = file.tell()
+        try:
+            file.write(f"{key}: base64".encode("ASCII"))
+            for chunk in chunks:
+                file.write(b"\n ")
+                file.write(base64.b64encode(chunk))
             file.write(b"\n")
-            return
+        except Exception:
+            file.seek(reset_position)
+            file.truncate(reset_position)
+            raise
 
-        # write gzip header
+    def _generate_compressed_chunks(
+        self, key: str
+    ) -> typing.Generator[bytes, None, None]:
+        """Generator taking the value out of self.data and outputing it
+        in compressed chunks of binary data.
+
+        Throws a _SizeLimitExceeded exception if the value exceeds its specified
+        size limit, in which case it will also remove the value from self.data entirely.
+        """
+        # TODO: split into smaller subgenerators
+        # pylint: disable=too-many-branches
+        value = self.data[key]
+        if isinstance(value, CompressedValue):
+            assert value.gzipvalue is not None
+            yield value.gzipvalue
+            return
         gzip_header = (
             GZIP_HEADER_START
             + b"\010\000\000\000\000\002\377"
             + key.encode("UTF-8")
             + b"\000"
         )
-        file.write(base64.b64encode(gzip_header))
-        file.write(b"\n ")
-        crc = zlib.crc32(b"")
-        write_aborted = False
+        yield gzip_header
 
+        crc = zlib.crc32(b"")
         bc = zlib.compressobj(6, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0)
+        size = 0
+
         # direct value
         if hasattr(value, "find"):
             size += len(value)
             crc = zlib.crc32(value, crc)
             outblock = bc.compress(value)
             if outblock:
-                file.write(base64.b64encode(outblock))
-                file.write(b"\n ")
+                yield outblock
         # file reference
         else:
+            limit = None
             if len(value) >= 3 and value[2] is not None:
                 limit = value[2]
 
@@ -512,17 +528,14 @@ class ProblemReport(collections.UserDict):
                 crc = zlib.crc32(block, crc)
                 if limit is not None:
                     if size > limit:
-                        # roll back
-                        file.seek(curr_pos)
-                        file.truncate(curr_pos)
                         del self.data[key]
-                        write_aborted = True
-                        break
+                        raise _SizeLimitExceeded(
+                            "Binary data bigger than the limit ({limit}b)"
+                        )
                 if block:
                     outblock = bc.compress(block)
                     if outblock:
-                        file.write(base64.b64encode(outblock))
-                        file.write(b"\n ")
+                        yield outblock
                 else:
                     break
             if not hasattr(value[0], "read"):
@@ -535,15 +548,23 @@ class ProblemReport(collections.UserDict):
                     )
 
         # flush compressor and write the rest
-        if not limit or size <= limit:
-            block = bc.flush()
-            # append gzip trailer: crc (32 bit) and size (32 bit)
-            if not write_aborted:
-                block += struct.pack("<L", crc & 0xFFFFFFFF)
-                block += struct.pack("<L", size & 0xFFFFFFFF)
+        block = bc.flush()
+        # append gzip trailer: crc (32 bit) and size (32 bit)
+        block += struct.pack("<L", crc & 0xFFFFFFFF)
+        block += struct.pack("<L", size & 0xFFFFFFFF)
+        yield block
 
-            file.write(base64.b64encode(block))
-            file.write(b"\n")
+    def _write_key_and_binary_value_compressed_and_encoded_to_file(
+        self, file: typing.BinaryIO, key: str
+    ) -> None:
+        """Write the binary keys with gzip compression and base64 encoding"""
+        try:
+            self._write_key_and_base64_binary_chunks(
+                file, key, self._generate_compressed_chunks(key)
+            )
+        except _SizeLimitExceeded:
+            # TODO: this should be logged out!
+            pass
 
     def add_to_existing(self, reportfile, keep_times=False):
         """Add this report's data to an already existing report file.
