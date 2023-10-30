@@ -70,6 +70,7 @@ class T(unittest.TestCase):
 
         # named signal crash
         report["Signal"] = "11"
+        report["SignalName"] = "SIGSEGV"
         report["ExecutablePath"] = "/bin/bash"
         report["StacktraceTop"] = textwrap.dedent(
             """\
@@ -82,6 +83,7 @@ class T(unittest.TestCase):
 
         # unnamed signal crash
         report["Signal"] = "42"
+        del report["SignalName"]
         self.assertEqual(
             report.standard_title(), "bash crashed with signal 42 in foo()"
         )
@@ -102,6 +104,7 @@ class T(unittest.TestCase):
 
         # assertion message
         report["Signal"] = "6"
+        report["SignalName"] = "SIGABRT"
         report["ExecutablePath"] = "/bin/bash"
         report["AssertionMessage"] = "foo.c:42 main: i > 0"
         self.assertEqual(
@@ -240,6 +243,7 @@ ImportError: No module named nonexistent
 
         # matching package/system architectures
         report["Signal"] = "11"
+        report["SignalName"] = "SIGSEGV"
         report["ExecutablePath"] = "/bin/bash"
         report["StacktraceTop"] = textwrap.dedent(
             """\
@@ -597,6 +601,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
     def test_gdb_add_info_no_gdb(self):
         r = apport.report.Report()
         r["Signal"] = "6"
+        r["SignalName"] = "SIGABRT"
         r["ExecutablePath"] = "/bin/bash"
         r["CoreDump"] = "/var/lib/apport/coredump/core.bash"
         r["AssertionMessage"] = "foo.c:42 main: i > 0"
@@ -769,6 +774,7 @@ RUNQUEUES[0]: c6002320
         # assertion failures
         r = apport.report.Report()
         r["Signal"] = "6"
+        r["SignalName"] = "SIGABRT"
         r["ExecutablePath"] = "/bin/bash"
         r["AssertionMessage"] = "foo.c:42 main: i > 0"
         self.assertEqual(r.crash_signature(), "/bin/bash:foo.c:42 main: i > 0")
