@@ -25,6 +25,7 @@ import pathlib
 import pwd
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -1252,17 +1253,10 @@ class Report(problem_report.ProblemReport):
         return dom
 
     def _get_signal_name(self) -> str:
-        signal_names = {
-            4: "SIGILL",
-            6: "SIGABRT",
-            8: "SIGFPE",
-            11: "SIGSEGV",
-            13: "SIGPIPE",
-        }
         signal_number = int(self["Signal"])
         try:
-            return signal_names[signal_number]
-        except KeyError:
+            return signal.Signals(signal_number).name
+        except ValueError:
             return f"signal {signal_number}"
 
     def check_ignored(self) -> bool:
