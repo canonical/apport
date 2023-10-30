@@ -905,6 +905,12 @@ def process_crash(options: argparse.Namespace) -> int:
         return 1
 
 
+def _set_signal(report: apport.report.Report, signal_number: int) -> None:
+    report["Signal"] = str(signal_number)
+    with contextlib.suppress(ValueError):
+        report["SignalName"] = signal.Signals(signal_number).name
+
+
 def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) -> int:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals
@@ -939,7 +945,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
         return 0
 
     info = apport.report.Report("Crash")
-    info["Signal"] = str(options.signal_number)
+    _set_signal(info, options.signal_number)
     core_size_limit = usable_ram() * 3 / 4
     # sys.stdin has type io.TextIOWrapper, not the claimed io.TextIO.
     # See https://github.com/python/typeshed/issues/10093

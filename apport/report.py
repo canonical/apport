@@ -1254,6 +1254,9 @@ class Report(problem_report.ProblemReport):
 
     def _get_signal_name(self) -> str:
         signal_number = int(self["Signal"])
+        signal_name = self.get("SignalName")
+        if signal_name:
+            return signal_name
         try:
             return signal.Signals(signal_number).name
         except ValueError:
