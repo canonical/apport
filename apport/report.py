@@ -1251,6 +1251,20 @@ class Report(problem_report.ProblemReport):
 
         return dom
 
+    def _get_signal_name(self) -> str:
+        signal_names = {
+            4: "SIGILL",
+            6: "SIGABRT",
+            8: "SIGFPE",
+            11: "SIGSEGV",
+            13: "SIGPIPE",
+        }
+        signal_number = int(self["Signal"])
+        try:
+            return signal_names[signal_number]
+        except KeyError:
+            return f"signal {signal_number}"
+
     def check_ignored(self) -> bool:
         """Check if current report should not be presented.
 
@@ -1403,14 +1417,6 @@ class Report(problem_report.ProblemReport):
 
         # signal crash
         if "Signal" in self and "ExecutablePath" in self and "StacktraceTop" in self:
-            signal_names = {
-                "4": "SIGILL",
-                "6": "SIGABRT",
-                "8": "SIGFPE",
-                "11": "SIGSEGV",
-                "13": "SIGPIPE",
-            }
-
             fn = self.stacktrace_top_function()
             if fn:
                 fn = f" in {fn}()"
@@ -1426,12 +1432,9 @@ class Report(problem_report.ProblemReport):
             ):
                 arch_mismatch = f" [non-native {self['PackageArchitecture']} package]"
 
-            signal_name = signal_names.get(
-                self.get("Signal"), "signal " + self.get("Signal")
-            )
             return (
                 f"{os.path.basename(self['ExecutablePath'])}"
-                f" crashed with {signal_name}{fn}{arch_mismatch}"
+                f" crashed with {self._get_signal_name()}{fn}{arch_mismatch}"
             )
 
         # Python exception
