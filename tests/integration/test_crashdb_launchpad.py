@@ -23,6 +23,7 @@ import sys
 import tempfile
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 try:
     from launchpadlib.errors import HTTPError
@@ -689,9 +690,7 @@ and more
         r = self.crashdb.download(crash_id)
         self.assertNotIn("CoreDump", r)
 
-    @unittest.mock.patch.object(
-        CrashDatabase, "_get_source_version", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(CrashDatabase, "_get_source_version", MagicMock())
     def test_get_fixed_version(self):
         """get_fixed_version() for fixed bugs
 
