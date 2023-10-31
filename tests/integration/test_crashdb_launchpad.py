@@ -982,7 +982,7 @@ NameError: global name 'weird' is not defined"""
         self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
     @staticmethod
-    def _generate_sigsegv_report(signal="11"):
+    def _generate_sigsegv_report(signal: int = 11) -> Report:
         """Create a test executable which will die with a SIGSEGV, generate
         a core dump for it, create a problem report with those two
         arguments (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1032,7 +1032,7 @@ int main() { return f(42); }
 
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
             pr["CoreDump"] = (os.path.join(workdir, "core"),)
-            pr["Signal"] = signal
+            pr["Signal"] = str(signal)
 
             pr.add_gdb_info()
         finally:
