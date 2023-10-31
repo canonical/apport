@@ -127,15 +127,6 @@ class T(unittest.TestCase):
         Return the ID.
         """
         r = self._generate_sigsegv_report()
-        r.add_package_info(self.test_package)
-        r.add_os_info()
-        r.add_gdb_info()
-        r.add_user_info()
-        self.assertEqual(r.standard_title(), "crash crashed with SIGSEGV in f()")
-
-        # add some binary gibberish which isn't UTF-8
-        r["ShortGibberish"] = ' "]\xb6"\n'
-        r["LongGibberish"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
 
         return self._create_bug_from_report("SEGV", r)
 
@@ -981,8 +972,7 @@ NameError: global name 'weird' is not defined"""
         # should not confuse get_fixed_version()
         self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
-    @staticmethod
-    def _generate_sigsegv_report(signal: int = 11) -> Report:
+    def _generate_sigsegv_report(self, signal: int = 11) -> Report:
         """Create a test executable which will die with a SIGSEGV, generate
         a core dump for it, create a problem report with those two
         arguments (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1037,5 +1027,15 @@ int main() { return f(42); }
             pr.add_gdb_info()
         finally:
             os.chdir(orig_cwd)
+
+        pr.add_package_info(self.test_package)
+        pr.add_os_info()
+        pr.add_gdb_info()
+        pr.add_user_info()
+        self.assertEqual(pr.standard_title(), "crash crashed with SIGSEGV in f()")
+
+        # add some binary gibberish which isn't UTF-8
+        pr["ShortGibberish"] = ' "]\xb6"\n'
+        pr["LongGibberish"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
 
         return pr
