@@ -385,7 +385,7 @@ class ProblemReport(collections.UserDict):
         for k in binkeys:
             self._write_key_and_binary_value_compressed_and_encoded_to_file(file, k)
 
-    def _get_sorted_keys(self, only_new: bool) -> typing.Tuple[list[str], list[str]]:
+    def _get_sorted_keys(self, only_new: bool) -> tuple[list[str], list[str]]:
         """Sort keys into ASCII non-ASCII/binary attachment ones, so that
         the base64 ones appear last in the report
         """

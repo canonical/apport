@@ -13,7 +13,6 @@ import os
 import shutil
 import subprocess
 import tempfile
-import typing
 import unittest
 from typing import Optional
 
@@ -43,7 +42,7 @@ class TestDupdbAdmin(unittest.TestCase):
         args: list,
         expected_returncode: int = 0,
         expected_stdout: Optional[str] = "",
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         cmd = ["dupdb-admin", "-f", self.db_file] + args
         process = subprocess.run(
             cmd,
@@ -61,9 +60,7 @@ class TestDupdbAdmin(unittest.TestCase):
         return (process.stdout, process.stderr)
 
     @staticmethod
-    def _find_files_and_directories(
-        base_dir: str,
-    ) -> typing.Tuple[list[str], list[str]]:
+    def _find_files_and_directories(base_dir: str) -> tuple[list[str], list[str]]:
         found_directories = []
         found_files = []
         for root, dirs, files in os.walk(base_dir):

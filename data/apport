@@ -121,7 +121,7 @@ def get_core_path(
     )[1]
 
 
-def get_pid_info(proc_pid: ProcPid) -> typing.Tuple[UserGroupID, os.stat_result]:
+def get_pid_info(proc_pid: ProcPid) -> tuple[UserGroupID, os.stat_result]:
     """Read /proc information about pid"""
     # unhandled exceptions on missing or invalidly formatted files are okay
     # here -- we want to know in the log file
