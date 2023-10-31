@@ -792,6 +792,23 @@ class Report(problem_report.ProblemReport):
           plus the ones mentioned in extraenv)
         - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
         """
+        if not proc_pid_fd:
+            if not pid:
+                pid = os.getpid()
+            proc_pid_fd = os.open(
+                f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            )
+
+        try:
+            environ = _Environment(apport.fileutils.get_process_environ(proc_pid_fd))
+        except OSError as error:
+            self["ProcEnviron"] = f"Error: {error}"
+            return
+        self._add_environ(environ, extraenv)
+
+    def _add_environ(
+        self, environ: _Environment, extraenv: Optional[Iterable[str]] = None
+    ) -> None:
         anonymize_vars = {"LD_LIBRARY_PATH", "LD_PRELOAD", "XDG_RUNTIME_DIR"}
         safe_vars = anonymize_vars | {
             "SHELL",
@@ -815,19 +832,6 @@ class Report(problem_report.ProblemReport):
         }
         if extraenv:
             safe_vars |= set(extraenv)
-
-        if not proc_pid_fd:
-            if not pid:
-                pid = os.getpid()
-            proc_pid_fd = os.open(
-                f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-            )
-
-        try:
-            environ = _Environment(apport.fileutils.get_process_environ(proc_pid_fd))
-        except OSError as error:
-            self["ProcEnviron"] = f"Error: {error}"
-            return
 
         environ.anonymize_path()
         environ.anonymize_vars(anonymize_vars)
