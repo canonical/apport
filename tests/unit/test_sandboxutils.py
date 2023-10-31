@@ -13,6 +13,7 @@ import os
 import tempfile
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 from apport.packaging import PackageInfo
 from apport.report import Report
@@ -32,7 +33,7 @@ class TestSandboxutils(unittest.TestCase):
         return report
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
-    def test_make_sandbox(self, packaging_mock: unittest.mock.MagicMock) -> None:
+    def test_make_sandbox(self, packaging_mock: MagicMock) -> None:
         """make_sandbox() for a sample report."""
         packaging_mock.install_packages.return_value = "obsolete\n"
         report = self._get_sample_report()
@@ -44,7 +45,7 @@ class TestSandboxutils(unittest.TestCase):
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
     def test_make_sandbox_install_packages_failure(
-        self, packaging_mock: unittest.mock.MagicMock
+        self, packaging_mock: MagicMock
     ) -> None:
         """make_sandbox() where packaging.install_packages fails."""
         packaging_mock.install_packages.side_effect = SystemError("100% fail")
@@ -53,9 +54,7 @@ class TestSandboxutils(unittest.TestCase):
         packaging_mock.install_packages.assert_called_once()
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
-    def test_make_sandbox_with_sandbox_dir(
-        self, packaging_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_make_sandbox_with_sandbox_dir(self, packaging_mock: MagicMock) -> None:
         """make_sandbox() with sandbox_dir set."""
         packaging_mock.install_packages.return_value = "obsolete\n"
         with tempfile.TemporaryDirectory(dir="/var/tmp") as tmpdir:

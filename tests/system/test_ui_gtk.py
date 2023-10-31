@@ -21,6 +21,7 @@ import textwrap
 import unittest
 import unittest.mock
 from gettext import gettext as _
+from unittest.mock import MagicMock
 
 import apport.crashdb_impl.memory
 import apport.report
@@ -510,9 +511,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # no crash counter
         self.assertFalse(self.app.w("ignore_future_problems").get_property("visible"))
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "can_examine_locally", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "can_examine_locally", MagicMock())
     def test_examine_button(self):
         """Crash dialog showing or not showing "Examine locally".
 
@@ -656,16 +655,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertFalse(remember_send_error_report.get_property("visible"))
         self.assertFalse(remember_send_error_report.get_active())
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_start_upload_progress", MagicMock()
     )
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_stop_upload_progress", MagicMock()
     )
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_crash_nodetails(self):
         """Crash report without showing details"""
@@ -705,16 +704,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_start_upload_progress", MagicMock()
     )
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_stop_upload_progress", MagicMock()
     )
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_crash_details(self):
         """Crash report with showing details"""
@@ -766,15 +765,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_start_upload_progress", MagicMock()
     )
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_stop_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_stop_upload_progress", MagicMock()
     )
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_broken_crash_details(self):
         """Broken crash report with showing details."""
@@ -839,9 +838,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
@@ -876,9 +875,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertIn("libc", r["Dependencies"])
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_kerneloops_nodetails(self):
         """Kernel oops report without showing details"""
@@ -963,7 +962,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
         self.assertEqual(self.app.report["Package"], f"{pkg} (not installed)")
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     def test_update_report(self):
         """Updating an existing report."""
         self.app.report_file = None
@@ -997,7 +996,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(GTKUserInterface, "open_url", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(GTKUserInterface, "open_url", MagicMock())
     def test_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
@@ -1048,9 +1047,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(
-        GTKUserInterface, "get_desktop_entry", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(GTKUserInterface, "get_desktop_entry", MagicMock())
     def test_missing_icon(self):
         # LP: 937354
         self.app.report["ProblemType"] = "Crash"
@@ -1142,7 +1139,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.run_crash(self.app.report_file)
 
     @unittest.mock.patch.object(
-        GTKUserInterface, "ui_start_upload_progress", unittest.mock.MagicMock()
+        GTKUserInterface, "ui_start_upload_progress", MagicMock()
     )
     def test_close_during_collect(self):
         """Close details window during information collection"""

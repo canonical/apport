@@ -8,6 +8,7 @@ import os
 import textwrap
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apport.packaging
 import apport.report
@@ -597,7 +598,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
             ),
         )
 
-    @unittest.mock.patch("shutil.which", unittest.mock.MagicMock(return_value=None))
+    @unittest.mock.patch("shutil.which", MagicMock(return_value=None))
     def test_gdb_add_info_no_gdb(self):
         r = apport.report.Report()
         r["Signal"] = "6"

@@ -12,6 +12,7 @@ import sys
 import tempfile
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apport.hookutils
 import apport.report
@@ -207,8 +208,7 @@ class T(unittest.TestCase):
             self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile("."))), 0)
 
     @unittest.mock.patch(
-        "apport.hookutils._root_command_prefix",
-        unittest.mock.MagicMock(return_value=[]),
+        "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
     )
     def test_attach_mac_events(self):
         # TODO: Split into separate test cases
@@ -473,8 +473,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 
     @staticmethod
     @unittest.mock.patch(
-        "apport.hookutils._root_command_prefix",
-        unittest.mock.MagicMock(return_value=[]),
+        "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
     )
     def test_no_crashes():
         """Functions do not crash (very shallow)."""

@@ -7,6 +7,7 @@ import io
 import time
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apport.fileutils
 import apport.packaging
@@ -54,7 +55,7 @@ class T(unittest.TestCase):
     def test_get_login_defs_missing(self) -> None:
         """Test get_login_defs() with /etc/login.defs not present."""
         apport.fileutils.get_login_defs.cache_clear()
-        open_mock = unittest.mock.MagicMock(side_effect=FileNotFoundError)
+        open_mock = MagicMock(side_effect=FileNotFoundError)
         with unittest.mock.patch("builtins.open", open_mock):
             login_defs = apport.fileutils.get_login_defs()
         open_mock.assert_called_once()
@@ -72,7 +73,7 @@ class T(unittest.TestCase):
     def test_get_sys_gid_max_default(self) -> None:
         """Test get_sys_gid_max() returning the default."""
         apport.fileutils.get_login_defs.cache_clear()
-        open_mock = unittest.mock.MagicMock(side_effect=FileNotFoundError)
+        open_mock = MagicMock(side_effect=FileNotFoundError)
         with unittest.mock.patch("builtins.open", open_mock):
             sys_gid_max = apport.fileutils.get_sys_gid_max()
         open_mock.assert_called_once()

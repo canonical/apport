@@ -20,6 +20,7 @@ import textwrap
 import unittest
 import unittest.mock
 from gettext import gettext as _
+from unittest.mock import MagicMock
 
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
@@ -492,12 +493,10 @@ class T(unittest.TestCase):
             )
         self.assertEqual(answer, None)
 
-    @unittest.mock.patch.object(
-        MainUserInterface, "open_url", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_1_crash_nodetails(self):
         """Crash report without showing details"""
@@ -531,12 +530,10 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(
-        MainUserInterface, "open_url", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_1_crash_details(self):
         """Crash report with showing details"""
@@ -583,12 +580,10 @@ class T(unittest.TestCase):
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
-    @unittest.mock.patch.object(
-        MainUserInterface, "open_url", unittest.mock.MagicMock()
-    )
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch(
-        "apport.fileutils.allowed_to_report", unittest.mock.MagicMock(return_value=True)
+        "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
     def test_1_crash_noaccept(self):
         """Crash report with non-accepting crash DB"""
@@ -662,9 +657,7 @@ class T(unittest.TestCase):
         )
         self.assertEqual(self.app.report["Package"], f"{pkg} (not installed)")
 
-    @unittest.mock.patch.object(
-        MainUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     def test_1_update_report(self):
         """Updating an existing report"""
         self.app.report_file = None
@@ -697,9 +690,7 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)
 
-    @unittest.mock.patch.object(
-        MainUserInterface, "open_url", unittest.mock.MagicMock()
-    )
+    @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     def test_1_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""

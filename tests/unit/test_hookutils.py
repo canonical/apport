@@ -6,6 +6,7 @@ import subprocess
 import time
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apport.hookutils
 
@@ -16,15 +17,12 @@ class TestHookutils(unittest.TestCase):
 
     maxDiff = None
 
-    @unittest.mock.patch("os.path.isdir", unittest.mock.MagicMock(return_value=True))
+    @unittest.mock.patch("os.path.isdir", MagicMock(return_value=True))
     @unittest.mock.patch("os.listdir")
     @unittest.mock.patch("os.stat")
     @unittest.mock.patch("apport.hookutils.read_file")
     def test_attach_dmi(
-        self,
-        read_file_mock: unittest.mock.MagicMock,
-        stat_mock: unittest.mock.MagicMock,
-        listdir_mock: unittest.mock.MagicMock,
+        self, read_file_mock: MagicMock, stat_mock: MagicMock, listdir_mock: MagicMock
     ) -> None:
         """attach_dmi()"""
 
@@ -106,7 +104,7 @@ class TestHookutils(unittest.TestCase):
         self.assertEqual(report["CurrentDmesg"], "existingcurrent")
 
     @unittest.mock.patch("subprocess.run")
-    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
+    @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
     def test_attach_journal_errors_with_date(self, run_mock):
         run_mock.return_value = subprocess.CompletedProcess(
             args=None, returncode=0, stdout=b"journalctl output", stderr=b""
@@ -128,7 +126,7 @@ class TestHookutils(unittest.TestCase):
         )
 
     @unittest.mock.patch("subprocess.run")
-    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
+    @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
     def test_attach_journal_errors_without_date(self, run_mock):
         run_mock.return_value = subprocess.CompletedProcess(
             args=None, returncode=0, stdout=b"journalctl output", stderr=b""
@@ -157,7 +155,7 @@ class TestHookutils(unittest.TestCase):
         )
 
     @unittest.mock.patch("subprocess.Popen")
-    @unittest.mock.patch("os.path.exists", unittest.mock.MagicMock(return_value=True))
+    @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
     def test_recent_syslog_journald_cmd(self, popen_mock):
         class _SkipPopen(Exception):
             pass

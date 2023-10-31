@@ -24,6 +24,7 @@ import unittest
 import unittest.mock
 import urllib.error
 from typing import Any, Optional
+from unittest.mock import MagicMock
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -184,7 +185,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
 
 
 @unittest.mock.patch(
-    "apport.hookutils._root_command_prefix", unittest.mock.MagicMock(return_value=[])
+    "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
 )
 class T(unittest.TestCase):
     # pylint: disable=missing-function-docstring,too-many-instance-attributes
@@ -1032,8 +1033,8 @@ class T(unittest.TestCase):
         self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
-    @unittest.mock.patch("apport.hookutils.attach_conffiles", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
+    @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
     def test_run_crash_argv_file(self):
         """run_crash() through a file specified on the command line"""
         # valid
@@ -1071,7 +1072,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, "error")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_unreportable(self):
         """run_crash() on a crash with the UnreportableReason field"""
         self.report["UnreportableReason"] = "It stinks."
@@ -1087,7 +1088,7 @@ class T(unittest.TestCase):
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_malicious_crashdb(self):
         """run_crash() on a crash with malicious CrashDB"""
         self.report["ExecutablePath"] = "/bin/bash"
@@ -1103,7 +1104,7 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists("/tmp/pwned"))
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
-    @unittest.mock.patch("apport.report.Report.add_gdb_info", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_malicious_package(self):
         """Package: path traversal"""
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
@@ -1945,7 +1946,7 @@ class T(unittest.TestCase):
             ),
         )
 
-    @unittest.mock.patch("apport.hookutils.attach_conffiles", unittest.mock.MagicMock())
+    @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_run_symptom(self, stderr_mock):
         # TODO: Split into separate test cases
@@ -2617,8 +2618,8 @@ class T(unittest.TestCase):
             pass
         self.ui.wait_for_pid(pid)
 
-    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
-    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch("os.getgid", MagicMock(return_value=0))
+    @unittest.mock.patch("os.getuid", MagicMock(return_value=0))
     @unittest.mock.patch.dict("os.environ", {"SUDO_UID": str(os.getuid())}, clear=True)
     def test_run_as_real_user(self) -> None:
         """Test run_as_real_user() with SUDO_UID set."""
@@ -2651,13 +2652,11 @@ class T(unittest.TestCase):
         )
         self.assertEqual(run_mock.call_count, 2)
 
-    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=0))
-    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=0))
+    @unittest.mock.patch("os.getgid", MagicMock(return_value=0))
+    @unittest.mock.patch("os.getuid", MagicMock(return_value=0))
     @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "1337"}, clear=True)
     @unittest.mock.patch("pwd.getpwuid")
-    def test_run_as_real_user_no_gvfsd(
-        self, getpwuid_mock: unittest.mock.MagicMock
-    ) -> None:
+    def test_run_as_real_user_no_gvfsd(self, getpwuid_mock: MagicMock) -> None:
         """Test run_as_real_user() without no gvfsd process."""
         getpwuid_mock.return_value = pwd.struct_passwd(
             ("testuser", "x", 1337, 42, "Test user,,,", "/home/testuser", "/bin/bash")
@@ -2688,8 +2687,8 @@ class T(unittest.TestCase):
 
         run_mock.assert_called_once_with(["/bin/true"], check=False)
 
-    @unittest.mock.patch("os.getgid", unittest.mock.MagicMock(return_value=37))
-    @unittest.mock.patch("os.getuid", unittest.mock.MagicMock(return_value=37))
+    @unittest.mock.patch("os.getgid", MagicMock(return_value=37))
+    @unittest.mock.patch("os.getuid", MagicMock(return_value=37))
     @unittest.mock.patch.dict("os.environ", {"SUDO_UID": "0"})
     def test_run_as_real_user_non_root(self) -> None:
         # pylint: disable=no-self-use

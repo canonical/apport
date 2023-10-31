@@ -30,6 +30,7 @@ import time
 import typing
 import unittest
 from typing import Optional
+from unittest.mock import MagicMock
 
 import psutil
 
@@ -759,7 +760,7 @@ class T(unittest.TestCase):
         self.assertEqual(report["ExecutablePath"], os.path.realpath("/bin/ping"))
 
     @unittest.mock.patch("os.readlink")
-    def test_is_not_same_ns(self, readlink_mock: unittest.mock.MagicMock) -> None:
+    def test_is_not_same_ns(self, readlink_mock: MagicMock) -> None:
         readlink_mock.side_effect = ["mnt:[1]", "mnt:[2]"]
         open_mock = unittest.mock.mock_open(read_data="0::/user.slice\n")
         command = [self.TEST_EXECUTABLE] + self.TEST_ARGS
@@ -1200,7 +1201,7 @@ class T(unittest.TestCase):
     @unittest.mock.patch("time.sleep")
     def test_wait_for_gdb_child_process(self, sleep_mock):
         """Test wait_for_gdb_child_process() helper method."""
-        child = unittest.mock.MagicMock(spec=psutil.Process)
+        child = MagicMock(spec=psutil.Process)
         child.status.side_effect = ["tracing-stop", "sleeping"]
         child.cmdline.return_value = [self.TEST_EXECUTABLE] + self.TEST_ARGS
         with unittest.mock.patch("psutil.Process", spec=psutil.Process) as process_mock:

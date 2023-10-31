@@ -13,6 +13,7 @@ import unittest.mock
 import urllib.error
 import urllib.request
 from typing import Any, Optional
+from unittest.mock import MagicMock
 
 
 def get_init_system() -> str:
@@ -93,7 +94,7 @@ def skip_if_command_is_missing(cmd: str) -> typing.Callable:
 @contextlib.contextmanager
 def wrap_object(
     target: object, attribute: str, include_instance: bool = False
-) -> typing.Generator[unittest.mock.MagicMock, None, None]:
+) -> typing.Generator[MagicMock, None, None]:
     """Wrap the named member on an object with a mock object.
 
     wrap_object() can be used as a context manager. Inside the
@@ -109,7 +110,7 @@ def wrap_object(
     See also https://stackoverflow.com/questions/44768483 for
     the use case.
     """
-    mock = unittest.mock.MagicMock()
+    mock = MagicMock()
     real_attribute = getattr(target, attribute)
 
     def mocked_attribute(self, *args, **kwargs):

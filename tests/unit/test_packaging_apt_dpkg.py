@@ -12,6 +12,7 @@
 import tempfile
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apt
 
@@ -25,7 +26,7 @@ from apport.packaging_impl.apt_dpkg import (
 
 @unittest.mock.patch(
     "apport.packaging_impl.apt_dpkg.__AptDpkgPackageInfo.get_os_version",
-    unittest.mock.MagicMock(return_value=("Ubuntu", "22.04")),
+    MagicMock(return_value=("Ubuntu", "22.04")),
 )
 class TestPackagingAptDpkg(unittest.TestCase):
     """Unit tests for apport.packaging_impl.apt_dpkg."""
@@ -34,7 +35,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
     def test_is_distro_package_no_candidate(self, apt_cache_mock):
         """is_distro_package() for package that has no candidate."""
         getitem_mock = apt_cache_mock.return_value.__getitem__
-        getitem_mock.return_value = unittest.mock.MagicMock(
+        getitem_mock.return_value = MagicMock(
             spec=apt.Package, installed=None, candidate=None
         )
         self.assertEqual(impl.is_distro_package("adduser"), False)
@@ -44,9 +45,9 @@ class TestPackagingAptDpkg(unittest.TestCase):
     def test_is_distro_package_no_installed_version(self, apt_cache_mock):
         """is_distro_package() for not installed package."""
         getitem_mock = apt_cache_mock.return_value.__getitem__
-        getitem_mock.return_value = unittest.mock.MagicMock(
+        getitem_mock.return_value = MagicMock(
             spec=apt.Package,
-            installed=unittest.mock.MagicMock(spec=apt.package.Version, version=None),
+            installed=MagicMock(spec=apt.package.Version, version=None),
         )
         self.assertEqual(impl.is_distro_package("7zip"), False)
         getitem_mock.assert_called_once_with("7zip")
@@ -54,13 +55,13 @@ class TestPackagingAptDpkg(unittest.TestCase):
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_ppa(self, apt_cache_mock):
         """is_distro_package() for a PPA package."""
-        version = unittest.mock.MagicMock(
+        version = MagicMock(
             spec=apt.package.Version,
-            origins=[unittest.mock.MagicMock(spec=apt.package.Origin, origin="LP-PPA")],
+            origins=[MagicMock(spec=apt.package.Origin, origin="LP-PPA")],
             version="0.5.0-0ppa1",
         )
         getitem_mock = apt_cache_mock.return_value.__getitem__
-        getitem_mock.return_value = unittest.mock.MagicMock(
+        getitem_mock.return_value = MagicMock(
             spec=apt.Package, candidate=version, installed=version
         )
         self.assertEqual(impl.is_distro_package("bdebstrap"), False)
@@ -70,13 +71,13 @@ class TestPackagingAptDpkg(unittest.TestCase):
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_system_image(self, apt_cache_mock, exists_mock):
         """is_distro_package() for a system image without cache."""
-        version = unittest.mock.MagicMock(
+        version = MagicMock(
             spec=apt.package.Version,
-            origins=[unittest.mock.MagicMock(spec=apt.package.Origin, origin="")],
+            origins=[MagicMock(spec=apt.package.Origin, origin="")],
             version="2.23.1-0ubuntu4",
         )
         getitem_mock = apt_cache_mock.return_value.__getitem__
-        getitem_mock.return_value = unittest.mock.MagicMock(
+        getitem_mock.return_value = MagicMock(
             spec=apt.Package, candidate=version, installed=version
         )
         exists_mock.return_value = True
