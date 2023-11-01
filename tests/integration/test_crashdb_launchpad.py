@@ -22,11 +22,14 @@ import tempfile
 import unittest
 import unittest.mock
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 try:
     from launchpadlib.errors import HTTPError
+
+    if TYPE_CHECKING:
+        from lazr.restfulclient.resource import Entry
 
     IMPORT_ERROR = None
 except ImportError as error:
@@ -724,7 +727,7 @@ and more
         )
 
     @staticmethod
-    def _get_bug_target(db: CrashDatabase, report: Report) -> object | None:
+    def _get_bug_target(db: CrashDatabase, report: Report) -> "Entry | None":
         """Return the bug_target for this report."""
         project = db.options.get("project")
         if "SourcePackage" in report:
@@ -859,6 +862,7 @@ NameError: global name 'weird' is not defined"""
 
         # file it
         bug_target = self._get_bug_target(crashdb, r)
+        assert bug_target is not None
         self.assertEqual(bug_target.name, "langpack-o-matic")
 
         crash_id, web_link = self._file_bug(bug_target, r)
