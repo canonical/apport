@@ -635,7 +635,7 @@ class UserInterface:
         """Kill process with signal SIGSEGV."""
         os.kill(int(pid), signal.SIGSEGV)
 
-    def run_report_bug(self, symptom_script=None):
+    def run_report_bug(self, symptom_script: Optional[str] = None) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
@@ -762,7 +762,7 @@ class UserInterface:
 
         return True
 
-    def run_update_report(self):
+    def run_update_report(self) -> bool:
         """Update an existing bug with locally collected information."""
         # avoid irrelevant noise
         if not self.crashdb.can_update(self.args.update_report):
