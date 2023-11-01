@@ -38,7 +38,7 @@ import urllib.request
 import xml.dom
 import xml.dom.minidom
 import xml.parsers.expat
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 import apport.fileutils
 import apport.logging
@@ -107,7 +107,9 @@ def _read_list_files_in_directory(directory: str) -> typing.Iterator[str]:
         pass
 
 
-def _read_proc_link(path, pid=None, dir_fd=None):
+def _read_proc_link(
+    path: str, pid: Optional[int] = None, dir_fd: Optional[int] = None
+) -> str:
     """Use readlink() to resolve link.
 
     Return a string representing the path to which the symbolic link points.
@@ -118,16 +120,18 @@ def _read_proc_link(path, pid=None, dir_fd=None):
     return os.readlink(f"/proc/{pid}/{path}")
 
 
-def _read_proc_file(path, pid=None, dir_fd=None):
+def _read_proc_file(
+    path: str, pid: Optional[int] = None, dir_fd: Optional[int] = None
+) -> str:
     """Read file content.
 
     Return its content, or return a textual error if it failed.
     """
     try:
-        if dir_fd is not None:
-            proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
+        if dir_fd is None:
+            proc_file: Union[int, str] = f"/proc/{pid}/{path}"
         else:
-            proc_file = f"/proc/{pid}/{path}"
+            proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
 
         with io.open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
@@ -670,7 +674,12 @@ class Report(problem_report.ProblemReport):
             return None
         return spec.origin
 
-    def add_proc_info(self, pid=None, proc_pid_fd=None, extraenv=None):
+    def add_proc_info(
+        self,
+        pid: Optional[Union[int, str]] = None,
+        proc_pid_fd: Optional[int] = None,
+        extraenv: Optional[Iterable[str]] = None,
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-statements
         """Add /proc/pid information.
@@ -696,12 +705,13 @@ class Report(problem_report.ProblemReport):
         - _LogindSession: logind cgroup path, if present (Used for filtering
           out crashes that happened in a session that is not running any more)
         """
+        if isinstance(pid, str):
+            pid = int(pid)
         if not proc_pid_fd:
             if not pid:
                 pid = self.pid or os.getpid()
             if not self.pid:
-                self.pid = int(pid)
-            pid = str(pid)
+                self.pid = pid
             try:
                 proc_pid_fd = os.open(
                     f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
@@ -766,7 +776,12 @@ class Report(problem_report.ProblemReport):
         if ret:
             self["_LogindSession"] = ret[0]
 
-    def add_proc_environ(self, pid=None, extraenv=None, proc_pid_fd=None):
+    def add_proc_environ(
+        self,
+        pid: Optional[int] = None,
+        extraenv: Optional[Iterable[str]] = None,
+        proc_pid_fd: Optional[int] = None,
+    ) -> None:
         """Add environment information.
 
         If pid is not given, it defaults to the process' current pid.
@@ -804,7 +819,6 @@ class Report(problem_report.ProblemReport):
         if not proc_pid_fd:
             if not pid:
                 pid = os.getpid()
-            pid = str(pid)
             proc_pid_fd = os.open(
                 f"/proc/{pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
             )

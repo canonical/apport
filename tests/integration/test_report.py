@@ -253,7 +253,7 @@ class T(unittest.TestCase):
         # test process is gone, should complain about nonexisting PID
         self.assertRaises(ValueError, pr.add_proc_info, process.pid)
 
-    def test_add_proc_info_nonascii(self):
+    def test_add_proc_info_nonascii(self) -> None:
         """add_proc_info() for non-ASCII values"""
         lang = b"n\xc3\xb6_v\xc3\xb8lid"
 
@@ -298,7 +298,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["ProcEnviron"], "LANG=xx_YY.UTF-8")
         self.assertEqual(r["CurrentDesktop"], "Pixel Pusher")
 
-    def test_add_path_classification(self):
+    def test_add_path_classification(self) -> None:
         """Classification of $PATH."""
         # system default
         with subprocess.Popen(
