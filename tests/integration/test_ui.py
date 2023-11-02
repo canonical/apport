@@ -1565,10 +1565,10 @@ class T(unittest.TestCase):
         orig_getpwuid = pwd.getpwuid
         orig_getuid = os.getuid
 
-        def fake_getpwuid(_unused_uid):
+        def fake_getpwuid(_unused_uid: int) -> pwd.struct_passwd:
             r = list(orig_getpwuid(orig_getuid()))
             r[4] = "Joe (Hacker,+1 234,,"
-            return r
+            return pwd.struct_passwd(r)
 
         pwd.getpwuid = fake_getpwuid
         os.getuid = lambda: 1234
