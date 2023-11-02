@@ -367,6 +367,7 @@ class MainUserInterface(apport.ui.UserInterface):
     #
 
     def ui_update_view(self, dialog, shown_keys=None):
+        assert self.report
         # report contents
         details = dialog.findChild(QTreeWidget, "details")
         if shown_keys:

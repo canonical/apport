@@ -406,6 +406,7 @@ class UserInterface:
         for f in reports:
             if not self.load_report(f):
                 continue
+            assert self.report
 
             # Skip crashes that happened during logout, which are uninteresting
             # and confusing to see at the next login. A crash happened and gets
@@ -456,6 +457,7 @@ class UserInterface:
                 pass
             if not self.report and not self.load_report(report_file):
                 return
+            assert self.report
 
             if "Ignore" in self.report:
                 return
@@ -1257,6 +1259,7 @@ class UserInterface:
 
     def get_complete_size(self):
         """Return the size of the complete report."""
+        assert self.report
         # report wasn't loaded, so count manually
         size = 0
         for k in self.report:
@@ -1271,6 +1274,7 @@ class UserInterface:
 
     def get_reduced_size(self):
         """Return the size of the reduced report."""
+        assert self.report
         size = 0
         for k in self.report:
             if k != "CoreDump":
@@ -1300,7 +1304,7 @@ class UserInterface:
 
     def restart(self):
         """Reopen the crashed application."""
-        assert "ProcCmdline" in self.report
+        assert self.report and "ProcCmdline" in self.report
 
         if os.fork() == 0:
             os.setsid()
@@ -1314,6 +1318,7 @@ class UserInterface:
 
     def examine(self):
         """Locally examine crash report."""
+        assert self.report_file
         response = self.ui_question_choice(
             _(
                 "This will launch apport-retrace in a terminal window"
@@ -1391,7 +1396,7 @@ class UserInterface:
 
     def check_report_crashdb(self):
         """Process reports' CrashDB field, if present."""
-        if "CrashDB" not in self.report:
+        if self.report is None or "CrashDB" not in self.report:
             return True
 
         # specification?
@@ -1445,6 +1450,7 @@ class UserInterface:
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         """
+        assert self.report
         self.report["_MarkForUpload"] = "True"
 
         # skip if we already ran (we might load a processed report)
@@ -1730,6 +1736,7 @@ class UserInterface:
             on_finished()
 
     def _is_snap(self):
+        assert self.report
         return "SnapSource" in self.report or "Snap" in self.report
 
     def open_url(self, url):
@@ -1772,6 +1779,7 @@ class UserInterface:
     def file_report(self):
         """Upload the current report and guide the user to the reporting
         web page."""
+        assert self.report
         # FIXME: This behaviour is not really correct, but necessary as
         # long as we only support a single crashdb and have whoopsie
         # hardcoded. Once we have multiple crash dbs, we need to check
@@ -1896,6 +1904,7 @@ class UserInterface:
 
         If so, display an info message and return True.
         """
+        assert self.report
         if not self.crashdb.accepts(self.report):
             return False
         if "UnreportableReason" in self.report:
@@ -1920,6 +1929,7 @@ class UserInterface:
 
         Return None if report cannot be associated to a .desktop file.
         """
+        assert self.report
         if "DesktopFile" in self.report and os.path.exists(self.report["DesktopFile"]):
             desktop_file = self.report["DesktopFile"]
         else:
@@ -1952,6 +1962,7 @@ class UserInterface:
         If so, tell the user about it, open the existing bug in a browser, and
         return True.
         """
+        assert self.report
         if not self.crashdb.accepts(self.report):
             return False
         if "_KnownReport" not in self.report:

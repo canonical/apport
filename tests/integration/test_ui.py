@@ -328,6 +328,7 @@ class T(unittest.TestCase):
         self.assertTrue(rs < 10000)
 
         # now add some information (e. g. from package hooks)
+        assert self.ui.report
         self.ui.report["ExtraInfo"] = "A" * 50000
         s = self.ui.get_complete_size()
         self.assertTrue(s >= fsize + 49900)
@@ -352,6 +353,7 @@ class T(unittest.TestCase):
         """load_report()"""
         # valid report
         self.ui.load_report(self.report_file.name)
+        assert self.ui.report
         self.assertEqual(set(self.ui.report.keys()), set(self.report.keys()))
         self.assertEqual(self.ui.report["Package"], self.report["Package"])
         self.assertEqual(
@@ -438,6 +440,7 @@ class T(unittest.TestCase):
         self.ui.load_report(self.report_file.name)
         # add some tuple values, for robustness testing (might be added by
         # apport hooks)
+        assert self.ui.report
         self.ui.report["Fstab"] = ("/etc/fstab", True)
         self.ui.report["CompressedValue"] = problem_report.CompressedValue(b"Test")
         self.ui.collect_info()
@@ -476,6 +479,7 @@ class T(unittest.TestCase):
             # wait for ui_pulse_info_collection_progress() call
             while self.ui.ic_progress_pulses == progress_pulses:
                 time.sleep(0.01)
+            assert self.ui.report
             return apport.report.Report.search_bug_patterns(self.ui.report, url)
 
         with unittest.mock.patch.object(
@@ -709,6 +713,7 @@ class T(unittest.TestCase):
             f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
         )
 
+        assert self.ui.report
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
         self.assertIn("Dependencies", self.ui.report)
@@ -734,6 +739,7 @@ class T(unittest.TestCase):
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.assertEqual(self.ui.run_argv(), True)
 
+        assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcMaps", self.ui.report)
@@ -826,6 +832,7 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_argv()
+        assert self.ui.report
 
         kernel_package = apport.packaging.get_kernel_package()
         self.assertEqual(
@@ -954,6 +961,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
 
+        assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("Stacktrace", self.ui.report)
@@ -982,6 +990,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
 
+        assert self.ui.report
         self.assertTrue(self.ui.report.check_ignored())
         self.assertEqual(self.ui.offer_restart, False)
 
@@ -997,6 +1006,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
+        assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("Stacktrace", self.ui.report)
@@ -1304,6 +1314,7 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
 
+        assert self.ui.report
         self.assertNotIn("ExecutableTimestamp", self.ui.report)
         self.assertIn(
             self.ui.report["ExecutablePath"],
@@ -1354,6 +1365,7 @@ class T(unittest.TestCase):
         )
         self.assertTrue(self.ui.present_details_shown)
 
+        assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
         self.assertIn("Package", self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Package")
@@ -1427,6 +1439,7 @@ class T(unittest.TestCase):
         )
         self.assertTrue(self.ui.present_details_shown)
 
+        assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
         # did we run the hooks properly?
         self.assertIn("KernelDebug", self.ui.report)
@@ -1458,6 +1471,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
+        assert self.ui.report
         self.assertNotIn("ProcCwd", self.ui.report)
 
         dump = io.BytesIO()
@@ -1517,6 +1531,7 @@ class T(unittest.TestCase):
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
+            assert self.ui.report
             self.assertEqual(self.ui.report["ProcAuxInfo"], "my hostname")
             # after anonymization this should mess up Stacktrace; this mostly
             # confirms that our test logic works
@@ -1547,6 +1562,7 @@ class T(unittest.TestCase):
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
+            assert self.ui.report
             self.assertTrue(
                 self.ui.report["Title"].startswith(
                     f"{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV"
@@ -1587,6 +1603,7 @@ class T(unittest.TestCase):
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
+            assert self.ui.report
             self.assertEqual(
                 self.ui.report["ProcInfo1"], "That was User Name and friends"
             )
@@ -1608,6 +1625,7 @@ class T(unittest.TestCase):
             r.write(f)
         self.ui.crashdb.known = lambda r: True
         self.ui.run_crash(report_file)
+        assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "1")
         self.assertEqual(self.ui.msg_severity, "info")
         self.assertEqual(self.ui.opened_url, None)
@@ -1619,6 +1637,7 @@ class T(unittest.TestCase):
             r.write(f)
         self.ui.crashdb.known = lambda r: "http://myreport/1"
         self.ui.run_crash(report_file)
+        assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "http://myreport/1")
         self.assertEqual(self.ui.msg_severity, "info")
         self.assertEqual(self.ui.opened_url, "http://myreport/1")
@@ -1724,6 +1743,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
+        assert self.ui.report
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1742,6 +1762,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
+        assert self.ui.report
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1759,6 +1780,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
+        assert self.ui.report
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1780,6 +1802,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
+        assert self.ui.report
         self.assertEqual(self.ui.report["Package"], "foo (not installed)")
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1808,6 +1831,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
+        assert self.ui.report
         self.assertEqual(self.ui.report["Package"], f"{source_pkg} (not installed)")
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
@@ -1835,6 +1859,7 @@ class T(unittest.TestCase):
                 """
             )
         )
+        assert self.ui.report
         self.assertEqual(self.ui.report["begin"], "1")
         self.assertEqual(self.ui.report["end"], "1")
         self.assertEqual(self.ui.msg_text, "InfoText")
@@ -1852,6 +1877,7 @@ class T(unittest.TestCase):
                 """
             )
         )
+        assert self.ui.report
         self.assertEqual(self.ui.report["begin"], "1")
         self.assertEqual(self.ui.report["end"], "1")
         self.assertEqual(self.ui.msg_text, "YesNo?")
@@ -1880,6 +1906,7 @@ class T(unittest.TestCase):
                 """
             )
         )
+        assert self.ui.report
         self.assertEqual(self.ui.report["begin"], "1")
         self.assertEqual(self.ui.report["end"], "1")
         self.assertEqual(self.ui.msg_text, "YourFile?")
@@ -1904,6 +1931,7 @@ class T(unittest.TestCase):
                 """
             )
         )
+        assert self.ui.report
         self.assertEqual(self.ui.report["begin"], "1")
         self.assertEqual(self.ui.report["end"], "1")
         self.assertEqual(self.ui.msg_text, "YourChoice?")
@@ -1929,6 +1957,7 @@ class T(unittest.TestCase):
                 """
             )
         )
+        assert self.ui.report
         self.assertEqual(self.ui.report["answer"], "None")
 
     def test_interactive_hooks_cancel(self):
@@ -1997,6 +2026,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
+        assert self.ui.report
         self.assertEqual(self.ui.report["itch"], "scratch")
         self.assertIn("DistroRelease", self.ui.report)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
@@ -2012,6 +2042,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
+        assert self.ui.report
         self.assertEqual(self.ui.report["itch"], "scratch")
         self.assertIn("foo", self.ui.report.get_tags())
 
@@ -2034,6 +2065,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
         self.assertEqual(self.ui.msg_text, "do you?")
 
+        assert self.ui.report
         self.assertEqual(self.ui.report["itch"], "slap")
         self.assertIn("DistroRelease", self.ui.report)
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
@@ -2082,6 +2114,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertTrue(self.ui.present_details_shown)
+        assert self.ui.report
         self.assertTrue(self.ui.report["Package"].startswith("bash"))
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
@@ -2474,6 +2507,7 @@ class T(unittest.TestCase):
     def test_can_examine_locally_nocrash(self):
         """can_examine_locally() for a non-crash report"""
         self.ui.load_report(self.report_file.name)
+        assert self.ui.report
         del self.ui.report["CoreDump"]
 
         orig_fn = self.ui.ui_has_terminal
@@ -2503,6 +2537,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
         # data was collected for whoopsie
+        assert self.ui.report
         self.assertEqual(self.ui.report["SourcePackage"], "bash")
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)

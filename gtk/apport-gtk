@@ -115,6 +115,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_update_view(self, shown_keys=None):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
+        assert self.report
 
         # do nothing if the dialog is already destroyed when the data
         # collection finishes
@@ -180,6 +181,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         prominent placement. Otherwise, provide a simple explanation for
         more novice users.
         """
+        assert self.report
         env = self.report.get("ProcEnviron", "")
         from_console = "TERM=" in env and "SHELL=" in env
 
@@ -202,6 +204,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     def setup_bug_report(self):
         # This is a bug generated through `apport-bug $package`, or
         # `apport-collect $id`.
+        assert self.report
 
         # avoid collecting information again, in this mode we already have it
         if "DistroRelease" in self.report:
