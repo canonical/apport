@@ -27,7 +27,7 @@ import struct
 import time
 import typing
 import zlib
-from typing import Optional
+from typing import Optional, Union
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
@@ -112,7 +112,7 @@ class CompressedValue:
 class ProblemReport(collections.UserDict):
     """Class to store, load, and handle problem reports."""
 
-    def __init__(self, problem_type="Crash", date=None):
+    def __init__(self, problem_type: str = "Crash", date: Optional[str] = None) -> None:
         """Initialize a fresh problem report.
 
         problem_type can be 'Crash', 'Packaging', 'KernelCrash' or
@@ -124,7 +124,7 @@ class ProblemReport(collections.UserDict):
         super().__init__({"ProblemType": problem_type, "Date": date})
 
         # keeps track of keys which were added since the last ctor or load()
-        self.old_keys = set()
+        self.old_keys: set[str] = set()
 
     def add_tags(self, tags: typing.Iterable[str]) -> None:
         """Add tags to the report. Duplicates are dropped."""
@@ -303,7 +303,7 @@ class ProblemReport(collections.UserDict):
         except locale.Error:
             return None
 
-    def has_removed_fields(self):
+    def has_removed_fields(self) -> bool:
         """Check if the report has any keys which were not loaded.
 
         This could happen when using binary=False in load().
@@ -341,7 +341,7 @@ class ProblemReport(collections.UserDict):
         return decompressor, value
 
     @staticmethod
-    def is_binary(string):
+    def is_binary(string: Union[bytes, str]) -> bool:
         """Check if the given strings contains binary data."""
         if isinstance(string, bytes):
             for c in string:
@@ -350,7 +350,7 @@ class ProblemReport(collections.UserDict):
         return False
 
     @classmethod
-    def _try_unicode(cls, value):
+    def _try_unicode(cls, value: Union[bytes, str]) -> Union[bytes, str]:
         """Try to convert bytearray value to Unicode."""
         if isinstance(value, bytes) and not cls.is_binary(value):
             try:
@@ -566,7 +566,7 @@ class ProblemReport(collections.UserDict):
             # TODO: this should be logged out!
             pass
 
-    def add_to_existing(self, reportfile, keep_times=False):
+    def add_to_existing(self, reportfile: str, keep_times: bool = False) -> None:
         """Add this report's data to an already existing report file.
 
         The file will be temporarily chmod'ed to 000 to prevent frontends
@@ -732,7 +732,7 @@ class ProblemReport(collections.UserDict):
         file.write(msg.as_string().encode("UTF-8"))
         file.write(b"\n")
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k: str, v: Union[bytes, CompressedValue, str, tuple]) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
             raise ValueError(
@@ -760,7 +760,7 @@ class ProblemReport(collections.UserDict):
 
         return self.data.__setitem__(k, v)
 
-    def new_keys(self):
+    def new_keys(self) -> set[str]:
         """Return newly added keys.
 
         Return the set of keys which have been added to the report since it
@@ -769,7 +769,7 @@ class ProblemReport(collections.UserDict):
         return set(self.data.keys()) - self.old_keys
 
     @staticmethod
-    def _strip_gzip_header(line):
+    def _strip_gzip_header(line: bytes) -> bytes:
         """Strip gzip header from line and return the rest."""
         flags = line[3]
         offset = 10
@@ -789,6 +789,6 @@ class ProblemReport(collections.UserDict):
         return line[offset:]
 
     @staticmethod
-    def _assert_bin_mode(file):
+    def _assert_bin_mode(file: object) -> None:
         """Assert that given file object is in binary mode."""
         assert not hasattr(file, "encoding"), "file stream must be in binary mode"
