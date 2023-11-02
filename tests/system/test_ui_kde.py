@@ -491,7 +491,7 @@ class T(unittest.TestCase):
             answer = self.app.ui_question_choice(
                 "Ultimate Question", ["7", "42", "69"], False
             )
-        self.assertEqual(answer, None)
+        self.assertIsNone(answer)
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())

@@ -360,7 +360,7 @@ class T(unittest.TestCase):
         self.assertEqual(
             self.ui.report["CoreDump"].get_value(), self.report["CoreDump"].get_value()
         )
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_title)
 
         self.ui.clear_msg()
 
@@ -597,8 +597,8 @@ class T(unittest.TestCase):
         """handle_duplicate()"""
         self.ui.load_report(self.report_file.name)
         self.assertEqual(self.ui.handle_duplicate(), False)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
 
         demo_url = "http://example.com/1"
         self.report["_KnownReport"] = demo_url
@@ -615,7 +615,7 @@ class T(unittest.TestCase):
         self.ui.load_report(self.report_file.name)
         self.assertEqual(self.ui.handle_duplicate(), True)
         self.assertEqual(self.ui.msg_severity, "info")
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.opened_url)
 
     def test_run_nopending(self):
         """Run the frontend without any pending reports."""
@@ -653,9 +653,9 @@ class T(unittest.TestCase):
         previous_id = self.ui.crashdb.latest_id()
         self.ui.file_report()
         self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.msg_text, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.msg_text)
 
     def test_file_report_upload_delay(self):
         """file_report() with some polling during upload"""
@@ -665,9 +665,9 @@ class T(unittest.TestCase):
         previous_id = self.ui.crashdb.latest_id()
         self.ui.file_report()
         self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.msg_text, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.msg_text)
 
     def test_file_report_upload_message(self):
         """file_report() with a message to the user"""
@@ -706,8 +706,8 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
         self.assertTrue(self.ui.present_details_shown)
         self.assertEqual(
             self.ui.opened_url,
@@ -750,8 +750,8 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
         self.assertIn("foo", self.ui.report.get_tags())
 
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
         self.assertEqual(
             self.ui.opened_url,
             f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
@@ -852,9 +852,9 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(argv)
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertFalse(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -873,8 +873,8 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertEqual(self.ui.msg_text, None)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
     def _gen_test_crash(self):
@@ -940,9 +940,9 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
         self.assertEqual(self.ui.offer_restart, False)
 
@@ -952,8 +952,8 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
         self.assertEqual(
             self.ui.opened_url,
             f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
@@ -986,9 +986,9 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action(ignore=True)
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
 
         assert self.ui.report
@@ -1005,7 +1005,7 @@ class T(unittest.TestCase):
 
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
 
         assert self.ui.report
         self.assertIn("SourcePackage", self.ui.report)
@@ -1019,7 +1019,7 @@ class T(unittest.TestCase):
         # self.assertIn('assert', self.ui.msg_text, '%s: %s' %
         #     (self.ui.msg_title, self.ui.msg_text))
         # self.assertEqual(self.ui.msg_severity, 'info')
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
     @skip_if_command_is_missing("gdb")
@@ -1057,8 +1057,8 @@ class T(unittest.TestCase):
 
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertEqual(self.ui.msg_text, None)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
         # unreportable
@@ -1158,7 +1158,7 @@ class T(unittest.TestCase):
         self.update_report_file()
 
         self.ui.run_crash(self.report_file.name)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_severity)
 
     def test_run_crash_nocore(self):
         """run_crash() for a crash dump without CoreDump"""
@@ -1211,7 +1211,7 @@ class T(unittest.TestCase):
             f"has {self.ui.msg_severity} message:"
             f" {self.ui.msg_title}: {self.ui.msg_text}",
         )
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_title)
         self.assertTrue(self.ui.present_details_shown)
 
     def test_run_crash_precollected(self):
@@ -1346,9 +1346,9 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action()
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
 
@@ -1358,8 +1358,8 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
         self.assertEqual(
             self.ui.opened_url,
             f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
@@ -1417,8 +1417,8 @@ class T(unittest.TestCase):
             None,
             f"error: {self.ui.msg_title} - {self.ui.msg_text}",
         )
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
 
@@ -1433,7 +1433,7 @@ class T(unittest.TestCase):
             None,
             f"{str(self.ui.msg_title)} {str(self.ui.msg_text)}",
         )
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_title)
         self.assertEqual(
             self.ui.opened_url,
             f"http://{src_pkg}.bugs.example.com/{self.ui.crashdb.latest_id()}",
@@ -1470,7 +1470,7 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
 
         assert self.ui.report
         self.assertNotIn("ProcCwd", self.ui.report)
@@ -1530,13 +1530,13 @@ class T(unittest.TestCase):
             self.ui = UserInterfaceMock()
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
 
             assert self.ui.report
             self.assertEqual(self.ui.report["ProcAuxInfo"], "my hostname")
             # after anonymization this should mess up Stacktrace; this mostly
             # confirms that our test logic works
-            self.assertEqual(self.ui.report.crash_signature_addresses(), None)
+            self.assertIsNone(self.ui.report.crash_signature_addresses())
         finally:
             os.uname = orig_uname
             apport.report.Report.add_gdb_info = orig_add_gdb_info
@@ -1561,7 +1561,7 @@ class T(unittest.TestCase):
             self.ui = UserInterfaceMock()
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
 
             assert self.ui.report
             self.assertTrue(
@@ -1602,7 +1602,7 @@ class T(unittest.TestCase):
             self.ui = UserInterfaceMock()
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
 
             assert self.ui.report
             self.assertEqual(
@@ -1629,7 +1629,7 @@ class T(unittest.TestCase):
         assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "1")
         self.assertEqual(self.ui.msg_severity, "info")
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.opened_url)
 
         self.ui = UserInterfaceMock()
         self.ui.present_details_response = apport.ui.Action(report=True)
@@ -1738,9 +1738,9 @@ class T(unittest.TestCase):
         self.ui.crashdb.download(1)["SourcePackage"] = "bash"
         self.ui.crashdb.download(1)["Package"] = "bash"
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -1757,9 +1757,9 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -1775,9 +1775,9 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
 
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -1797,9 +1797,9 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
         self.assertEqual(self.ui.run_argv(), True, self.ui.report)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -1826,9 +1826,9 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
         self.assertEqual(self.ui.run_argv(), True, self.ui.report)
-        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
-        self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(self.ui.opened_url)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue(self.ui.ic_progress_pulses > 0)
@@ -2023,8 +2023,8 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_text, None)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
         assert self.ui.report
@@ -2039,8 +2039,8 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(argv)
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_text, None)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_text)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
         assert self.ui.report
@@ -2096,7 +2096,7 @@ class T(unittest.TestCase):
 
         self.ui.question_choice_response = None
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertIn("kind of problem", self.ui.msg_text)
         self.assertEqual(
             set(self.ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
@@ -2104,7 +2104,7 @@ class T(unittest.TestCase):
 
         # cancelled
         self.assertEqual(self.ui.ic_progress_pulses, 0)
-        self.assertEqual(self.ui.report, None)
+        self.assertIsNone(self.ui.report)
         self.assertFalse(self.ui.present_details_shown)
 
         # now, choose foo -> bash report
@@ -2112,7 +2112,7 @@ class T(unittest.TestCase):
             self.ui.msg_choices.index("foo does not work")
         ]
         self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.ic_progress_pulses > 0)
         self.assertTrue(self.ui.present_details_shown)
         assert self.ui.report
@@ -2533,8 +2533,8 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
-        self.assertEqual(self.ui.msg_severity, None)
-        self.assertEqual(self.ui.msg_title, None)
+        self.assertIsNone(self.ui.msg_severity)
+        self.assertIsNone(self.ui.msg_title)
         self.assertTrue(self.ui.present_details_shown)
 
         # data was collected for whoopsie
@@ -2545,7 +2545,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
 
         # no upload happened
-        self.assertEqual(self.ui.opened_url, None)
+        self.assertIsNone(self.ui.opened_url)
         self.assertEqual(self.ui.upload_progress_pulses, 0)
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
 
@@ -2629,7 +2629,7 @@ class T(unittest.TestCase):
             )
             desktop_file.flush()
 
-            self.assertEqual(self.ui.get_desktop_entry(), None)
+            self.assertIsNone(self.ui.get_desktop_entry())
 
             # syntax error
             desktop_file.seek(0)
@@ -2645,7 +2645,7 @@ class T(unittest.TestCase):
             )
             desktop_file.flush()
 
-            self.assertEqual(self.ui.get_desktop_entry(), None)
+            self.assertIsNone(self.ui.get_desktop_entry())
 
     def test_wait_for_pid(self):
         # fork a test process

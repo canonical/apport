@@ -20,7 +20,7 @@ class T(unittest.TestCase):
         get_files_mock.return_value = [
             "/usr/share/applications/non-existing/blueman.desktop"
         ]
-        self.assertEqual(apport.fileutils.find_package_desktopfile("blueman"), None)
+        self.assertIsNone(apport.fileutils.find_package_desktopfile("blueman"))
         get_files_mock.assert_called_once_with("blueman")
 
     def test_likely_packaged(self):

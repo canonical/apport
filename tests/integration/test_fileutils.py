@@ -141,7 +141,7 @@ class T(unittest.TestCase):
         """find_file_package()"""
         self.assertEqual(apport.fileutils.find_file_package("/bin/bash"), "bash")
         self.assertEqual(apport.fileutils.find_file_package("/bin/cat"), "coreutils")
-        self.assertEqual(apport.fileutils.find_file_package("/nonexisting"), None)
+        self.assertIsNone(apport.fileutils.find_file_package("/nonexisting"))
 
     def test_seen(self):
         """get_new_reports() and seen_report()"""
@@ -337,14 +337,14 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         """get_config()"""
         # nonexisting
         apport.fileutils._config_file = "/nonexisting"
-        self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+        self.assertIsNone(apport.fileutils.get_config("main", "foo"))
         self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
         apport.fileutils._get_config_parser.cache_clear()
 
         # empty
         with tempfile.NamedTemporaryFile() as f:
             apport.fileutils._config_file = f.name
-            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertIsNone(apport.fileutils.get_config("main", "foo"))
             self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
             apport.fileutils._get_config_parser.cache_clear()
 
@@ -353,7 +353,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
                 b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n" b"[spethial]\none= 99\n"
             )
             f.flush()
-            self.assertEqual(apport.fileutils.get_config("main", "foo"), None)
+            self.assertIsNone(apport.fileutils.get_config("main", "foo"))
             self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
             self.assertEqual(apport.fileutils.get_config("main", "one"), "1")
             self.assertEqual(
@@ -374,7 +374,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
                 False,
             )
             self.assertEqual(apport.fileutils.get_config("spethial", "one"), "99")
-            self.assertEqual(apport.fileutils.get_config("spethial", "two"), None)
+            self.assertIsNone(apport.fileutils.get_config("spethial", "two"))
             self.assertEqual(
                 apport.fileutils.get_config("spethial", "one", "moo"), "99"
             )

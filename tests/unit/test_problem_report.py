@@ -87,7 +87,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """get_timestamp() returns None."""
         pr = problem_report.ProblemReport()
         del pr["Date"]
-        self.assertEqual(pr.get_timestamp(), None)
+        self.assertIsNone(pr.get_timestamp())
 
     def test_consistency_checks(self):
         """Various error conditions."""
@@ -326,7 +326,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # test with skipping binary data
         pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertEqual(pr["File"], None)
+        self.assertIsNone(pr["File"])
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping compressed binary data
@@ -359,7 +359,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # test with skipping binary data
         pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertEqual(pr["File"], None)
+        self.assertIsNone(pr["File"])
         self.assertEqual(pr.has_removed_fields(), True)
 
         # test with keeping CompressedValues
@@ -469,7 +469,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(not parts[1].is_multipart())
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertEqual(parts[1].get_content_charset(), "utf-8")
-        self.assertEqual(parts[1].get_filename(), None)
+        self.assertIsNone(parts[1].get_filename())
         expected = textwrap.dedent(
             f"""\
             ProblemType: Crash
@@ -590,7 +590,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(not parts[1].is_multipart())
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertEqual(parts[1].get_content_charset(), "utf-8")
-        self.assertEqual(parts[1].get_filename(), None)
+        self.assertIsNone(parts[1].get_filename())
         self.assertEqual(
             parts[1].get_payload(decode=True),
             textwrap.dedent(

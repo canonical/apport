@@ -499,8 +499,8 @@ and more
     def test_duplicates(self):
         """Test duplicate handling."""
         # initially we have no dups
-        self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+        self.assertIsNone(self.crashdb.duplicate_of(self.get_segv_report()))
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
         segv_id = self.get_segv_report()
         known_test_id = self.get_uncommon_description_report()
@@ -517,8 +517,8 @@ and more
 
         self.assertEqual(self.crashdb.get_fixed_version(segv_id), "invalid")
         self.crashdb.close_duplicate(r, segv_id, None)
-        self.assertEqual(self.crashdb.duplicate_of(segv_id), None)
-        self.assertEqual(self.crashdb.get_fixed_version(segv_id), None)
+        self.assertIsNone(self.crashdb.duplicate_of(segv_id))
+        self.assertIsNone(self.crashdb.get_fixed_version(segv_id))
 
         # this should have removed attachments; note that Stacktrace is
         # short, and thus inline
@@ -542,7 +542,7 @@ and more
 
         # this should be a no-op
         self.crashdb.close_duplicate(Report(), known_test_id, None)
-        self.assertEqual(self.crashdb.duplicate_of(known_test_id), None)
+        self.assertIsNone(self.crashdb.duplicate_of(known_test_id))
 
         self.crashdb.mark_regression(segv_id, known_test_id)
         self._verify_marked_regression(segv_id)
@@ -559,7 +559,7 @@ and more
         self.assertEqual(
             unretraced_before, unretraced_after.union(set([self.get_segv_report()]))
         )
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
         # mark_retrace_failed()
         self._mark_needs_retrace(self.get_segv_report())
@@ -570,7 +570,7 @@ and more
         self.assertEqual(
             unretraced_before, unretraced_after.union(set([self.get_segv_report()]))
         )
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
         # mark_retrace_failed() of invalid bug
         self._mark_needs_retrace(self.get_segv_report())
@@ -619,7 +619,7 @@ and more
         self.assertEqual(
             unretraced_before, unretraced_after.union(set([project_bug.id]))
         )
-        self.assertEqual(self.crashdb.get_fixed_version(project_bug.id), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(project_bug.id))
 
     def test_marking_foreign_arch(self):
         """Test processing status markings for a project CrashDB."""
@@ -665,7 +665,7 @@ and more
         self.assertEqual(
             unchecked_before, unchecked_after.union(set([self.get_python_report()]))
         )
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_python_report()))
 
     def test_update_traces_invalid(self):
         """Test updating an invalid crash.
@@ -704,7 +704,7 @@ and more
         fixed_ver = self.crashdb.get_fixed_version(self.get_segv_report())
         self.assertEqual(fixed_ver, "3.14")
         self._mark_report_new(self.get_segv_report())
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
     #
     # Launchpad specific implementation and tests
@@ -834,7 +834,7 @@ and more
             os.environ.get("LP_CREDENTIALS"),
             {"project": "langpack-o-matic", "launchpad_instance": launchpad_instance},
         )
-        self.assertEqual(crashdb.distro, None)
+        self.assertIsNone(crashdb.distro)
 
         # create Python crash report
         r = Report("Crash")
@@ -872,15 +872,15 @@ NameError: global name 'weird' is not defined"""
         r = crashdb.download(crash_id)
 
         # test fixed version
-        self.assertEqual(crashdb.get_fixed_version(crash_id), None)
+        self.assertIsNone(crashdb.get_fixed_version(crash_id))
         crashdb.close_duplicate(r, crash_id, self.get_uncommon_description_report())
         self.assertEqual(
             crashdb.duplicate_of(crash_id), self.get_uncommon_description_report()
         )
         self.assertEqual(crashdb.get_fixed_version(crash_id), "invalid")
         crashdb.close_duplicate(r, crash_id, None)
-        self.assertEqual(crashdb.duplicate_of(crash_id), None)
-        self.assertEqual(crashdb.get_fixed_version(crash_id), None)
+        self.assertIsNone(crashdb.duplicate_of(crash_id))
+        self.assertIsNone(crashdb.get_fixed_version(crash_id))
 
     def test_download_robustness(self):
         """download() of uncommon description formats"""
@@ -969,7 +969,7 @@ NameError: global name 'weird' is not defined"""
         self.assertEqual(b.bug_tasks[1].importance, "Medium")
 
         # should not confuse get_fixed_version()
-        self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
+        self.assertIsNone(self.crashdb.get_fixed_version(self.get_python_report()))
 
     def _generate_sigsegv_report(self, signal: int = 11) -> Report:
         """Create a test executable which will die with a SIGSEGV, generate

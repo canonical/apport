@@ -134,7 +134,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         r = self.crashes.download(0)
         self.assertEqual(r["SourcePackage"], "foo")
         self.assertEqual(r["Package"], "libfoo1 1.2-3")
-        self.assertEqual(self.crashes.reports[0]["dup_of"], None)
+        self.assertIsNone(self.crashes.reports[0]["dup_of"])
 
         self.assertRaises(IndexError, self.crashes.download, 5)
 
@@ -197,14 +197,14 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """get_unfixed(), get_fixed_version(), duplicate_of(),
         close_duplicate()"""
         self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 3, 4]))
-        self.assertEqual(self.crashes.get_fixed_version(0), None)
-        self.assertEqual(self.crashes.get_fixed_version(1), None)
-        self.assertEqual(self.crashes.get_fixed_version(3), None)
+        self.assertIsNone(self.crashes.get_fixed_version(0))
+        self.assertIsNone(self.crashes.get_fixed_version(1))
+        self.assertIsNone(self.crashes.get_fixed_version(3))
 
-        self.assertEqual(self.crashes.duplicate_of(0), None)
-        self.assertEqual(self.crashes.duplicate_of(1), None)
+        self.assertIsNone(self.crashes.duplicate_of(0))
+        self.assertIsNone(self.crashes.duplicate_of(1))
         self.crashes.close_duplicate({}, 1, 0)
-        self.assertEqual(self.crashes.duplicate_of(0), None)
+        self.assertIsNone(self.crashes.duplicate_of(0))
         self.assertEqual(self.crashes.duplicate_of(1), 0)
 
         self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 3, 4]))
@@ -220,8 +220,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(
             self.crashes.reports[4]["comment"], "regression, already fixed in #3"
         )
-        self.assertEqual(self.crashes.duplicate_of(3), None)
-        self.assertEqual(self.crashes.duplicate_of(4), None)
+        self.assertIsNone(self.crashes.duplicate_of(3))
+        self.assertIsNone(self.crashes.duplicate_of(4))
 
     #
     # Test crash duplication detection API of crashdb.py
@@ -230,7 +230,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_duplicate_db_fixed(self):
         """duplicate_db_fixed()"""
         self.crashes.init_duplicate_db(":memory:")
-        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
 
         self.assertEqual(
             self.crashes.duplicate_db_dump(),
@@ -251,8 +251,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.crashes.init_duplicate_db(":memory:")
 
-        self.assertEqual(self.crashes.check_duplicate(0), None)
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
+        self.assertIsNone(self.crashes.check_duplicate(2))
 
         # invalid ID (raising KeyError is *hard*, so it's not done)
         self.crashes.duplicate_db_remove(99)
@@ -288,10 +288,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.crashes.duplicate_db_dump(), {})
 
         # ID#0 -> no dup
-        self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
-        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertIsNone(self.crashes.known(self.crashes.download(0)))
+        self.assertIsNone(self.crashes.check_duplicate(0))
         # can't be known before publishing DB
-        self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
+        self.assertIsNone(self.crashes.known(self.crashes.download(0)))
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(
             self.crashes.known(self.crashes.download(0)),
@@ -299,7 +299,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         # bug is not a duplicate of itself, when reprocessed
-        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
 
         # ID#1 -> dup of #0
         self.crashes.duplicate_db_publish(self.dupdb_dir)
@@ -311,8 +311,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # ID#2 is unrelated, no dup
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(self.crashes.download(2)), None)
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.known(self.crashes.download(2)))
+        self.assertIsNone(self.crashes.check_duplicate(2))
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(
             self.crashes.known(self.crashes.download(2)),
@@ -320,7 +320,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         # ID#3: no dup, master of ID#4
-        self.assertEqual(self.crashes.check_duplicate(3), None)
+        self.assertIsNone(self.crashes.check_duplicate(3), None)
 
         # ID#4: dup of ID#3
         self.assertEqual(self.crashes.check_duplicate(4), (3, None))
@@ -342,8 +342,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # ID#4 is dup of ID#3, but happened in version 5 -> regression
         self.crashes.close_duplicate(self.crashes.download(4), 4, None)  # reset
-        self.assertEqual(self.crashes.check_duplicate(4), None)
-        self.assertEqual(self.crashes.duplicate_of(4), None)
+        self.assertIsNone(self.crashes.check_duplicate(4))
+        self.assertIsNone(self.crashes.duplicate_of(4))
         self.assertEqual(
             self.crashes.reports[4]["comment"], "regression, already fixed in #3"
         )
@@ -434,9 +434,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.crashes.reports[3]["fixed_version"] = "4.1"
         self.crashes.reports[5]["fixed_version"] = "4.8"
 
-        self.assertEqual(self.crashes.check_duplicate(3), None)
-        self.assertEqual(self.crashes.check_duplicate(5), None)
-        self.assertEqual(self.crashes.check_duplicate(4), None)
+        self.assertIsNone(self.crashes.check_duplicate(3))
+        self.assertIsNone(self.crashes.check_duplicate(5))
+        self.assertIsNone(self.crashes.check_duplicate(4))
         self.assertEqual(self.crashes.check_duplicate(6), (4, None))
 
     def test_check_duplicate_utf8(self):
@@ -459,7 +459,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         self.crashes.init_duplicate_db(":memory:")
-        self.assertEqual(self.crashes.check_duplicate(5), None)
+        self.assertIsNone(self.crashes.check_duplicate(5))
         self.assertEqual(self.crashes.check_duplicate(6), (5, None))
 
         self.crashes.duplicate_db_publish(self.dupdb_dir)
@@ -476,18 +476,18 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         self.crashes.init_duplicate_db(":memory:")
-        self.assertEqual(self.crashes.check_duplicate(5), None)
+        self.assertIsNone(self.crashes.check_duplicate(5))
 
         self.assertEqual(self.crashes.duplicate_db_dump(), {"Code42Blue": (5, None)})
 
         # this one has a standard crash_signature
-        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
         # ... but DuplicateSignature wins
         self.crashes.download(0)["DuplicateSignature"] = "Code42Blue"
         self.assertEqual(self.crashes.check_duplicate(0), (5, None))
 
         self.crashes.download(1)["DuplicateSignature"] = "CodeRed"
-        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertIsNone(self.crashes.check_duplicate(1))
         self.assertEqual(
             self.crashes.duplicate_db_dump(),
             {
@@ -502,10 +502,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.crashes.init_duplicate_db(":memory:")
 
         # ID#0 -> no dup
-        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
 
         # ID#2 is unrelated, no dup
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(2))
 
         # report from ID#1 is a dup of #0
         self.assertEqual(
@@ -560,16 +560,16 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
         self.crashes.init_duplicate_db(":memory:")
-        self.assertEqual(self.crashes.check_duplicate(5, a), None)
+        self.assertIsNone(self.crashes.check_duplicate(5, a))
 
         # a and s have slightly different sigs -> no dupe
-        self.assertEqual(self.crashes.check_duplicate(6, s), None)
+        self.assertIsNone(self.crashes.check_duplicate(6, s))
 
         # now throw the interesting b at it
         self.assertEqual(self.crashes.check_duplicate(7, b), (5, None))
 
         # s and b should now be duplicates of a
-        self.assertEqual(self.crashes.duplicate_of(5), None)
+        self.assertIsNone(self.crashes.duplicate_of(5))
         self.assertEqual(self.crashes.duplicate_of(6), 5)
         self.assertEqual(self.crashes.duplicate_of(7), 5)
 
@@ -622,9 +622,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertIsNotNone(r.crash_signature_addresses())
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r), None)
+        self.assertIsNone(self.crashes.known(r))
         r_id = self.crashes.upload(r)
-        self.assertEqual(self.crashes.check_duplicate(r_id), None)
+        self.assertIsNone(self.crashes.check_duplicate(r_id))
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), self.crashes.get_comment_url(r, r_id))
 
@@ -685,7 +685,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             r.crash_signature_addresses(), r3.crash_signature_addresses()
         )
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r3), None)
+        self.assertIsNone(self.crashes.known(r3))
 
         # pretend that we went through retracing and r and r3 are actually
         # dupes; temporarily add a signature here to convince check_duplicate()
@@ -693,7 +693,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         r["DuplicateSignature"] = "moo"
         r3["DuplicateSignature"] = "moo"
         r_id = self.crashes.upload(r)
-        self.assertEqual(self.crashes.check_duplicate(r_id), None)
+        self.assertIsNone(self.crashes.check_duplicate(r_id))
         r3_id = self.crashes.upload(r3)
         self.assertEqual(self.crashes.check_duplicate(r3_id), (r_id, None))
         del r["DuplicateSignature"]
@@ -715,8 +715,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # removing an ID also works for address signatures
         self.crashes.duplicate_db_remove(r3_id)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r), None)
-        self.assertEqual(self.crashes.known(r3), None)
+        self.assertIsNone(self.crashes.known(r))
+        self.assertIsNone(self.crashes.known(r3))
 
         self.assertEqual(self.crashes.duplicate_db_dump(), {})
 
@@ -732,10 +732,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         addr = self.crashes.download(1)
         addr.crash_signature_addresses = lambda: "0x1+/" * 1000
 
-        self.assertEqual(self.crashes.known(symb), None)
-        self.assertEqual(self.crashes.check_duplicate(0), None)
-        self.assertEqual(self.crashes.known(addr), None)
-        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertIsNone(self.crashes.known(symb))
+        self.assertIsNone(self.crashes.check_duplicate(0))
+        self.assertIsNone(self.crashes.known(addr))
+        self.assertIsNone(self.crashes.check_duplicate(1))
 
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(symb), "http://foo.bugs.example.com/0")
@@ -748,8 +748,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.crashes.init_duplicate_db(":memory:")
 
-        self.assertEqual(self.crashes.check_duplicate(0), None)
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
+        self.assertIsNone(self.crashes.check_duplicate(2))
 
         # check DB consistency
         self.assertEqual(
@@ -790,7 +790,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             (fd, db) = tempfile.mkstemp()
             os.close(fd)
             self.crashes.init_duplicate_db(db)
-            self.assertEqual(self.crashes.check_duplicate(0), None)
+            self.assertIsNone(self.crashes.check_duplicate(0))
             self.assertEqual(
                 self.crashes.duplicate_db_dump(),
                 {self.crashes.download(0).crash_signature(): (0, None)},

@@ -32,7 +32,7 @@ class T(unittest.TestCase):
         # exc_raise() should be a no-op on successful functions
         t.exc_raise()
         self.assertEqual(t.return_value(), 21)
-        self.assertEqual(t.exc_info(), None)
+        self.assertIsNone(t.exc_info())
 
     def test_no_return_value(self):
         """apport.REThread.REThread works if run() does not return anything."""
@@ -41,8 +41,8 @@ class T(unittest.TestCase):
         # thread must be joined first
         self.assertRaises(AssertionError, t.return_value)
         t.join()
-        self.assertEqual(t.return_value(), None)
-        self.assertEqual(t.exc_info(), None)
+        self.assertIsNone(t.return_value())
+        self.assertIsNone(t.exc_info())
 
     def test_exception(self):
         """Exception in thread is caught and passed."""
