@@ -127,7 +127,7 @@ class T(unittest.TestCase):
             )
         if onedesktop:
             d = apport.fileutils.find_package_desktopfile(onedesktop)
-            self.assertNotEqual(d, None, f"one-desktop package {onedesktop}")
+            self.assertIsNotNone(d, f"one-desktop package {onedesktop}")
             self.assertTrue(os.path.exists(d))
             self.assertTrue(d.endswith(".desktop"))
         if nodisplay:

@@ -1020,7 +1020,7 @@ No symbol table info available.
 #7  0x000000000041d703 in _start ()
 """
         sig = pr.crash_signature_addresses()
-        self.assertNotEqual(sig, None)
+        self.assertIsNotNone(sig)
 
         # one true unresolvable, and some "low address" artifacts; should be
         # identical to the one above

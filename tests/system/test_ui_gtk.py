@@ -835,7 +835,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.app.crashdb.latest_id(), -1)
 
         # proper error message
-        self.assertNotEqual(self.error_title, None)
+        self.assertIsNotNone(self.error_title)
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 

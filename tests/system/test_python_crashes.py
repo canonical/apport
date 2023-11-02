@@ -172,7 +172,7 @@ func(42)
         metadata_obj = dbus.SessionBus().get_object(
             "org.gtk.vfs.Metadata", "/org/gtk/vfs/metadata"
         )
-        self.assertNotEqual(metadata_obj, None)
+        self.assertIsNotNone(metadata_obj)
 
         # timeout of zero will always fail with NoReply
         try:

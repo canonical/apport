@@ -45,6 +45,6 @@ class TestPackagingRpm(unittest.TestCase):
     def test_get_version(self):
         """get_version()."""
         ver = impl.get_version("bash")
-        self.assertNotEqual(ver, None)
+        self.assertIsNotNone(ver)
         ver = impl.get_version("alsa-utils")
-        self.assertNotEqual(ver, None)
+        self.assertIsNotNone(ver)
