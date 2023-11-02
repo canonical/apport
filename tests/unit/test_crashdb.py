@@ -620,7 +620,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             """
         )
 
-        self.assertNotEqual(r.crash_signature_addresses(), None)
+        self.assertIsNotNone(r.crash_signature_addresses())
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), None)
         r_id = self.crashes.upload(r)
