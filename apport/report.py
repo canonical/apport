@@ -38,7 +38,7 @@ import urllib.request
 import xml.dom
 import xml.dom.minidom
 import xml.parsers.expat
-from typing import Optional
+from typing import Optional, Union
 
 import apport.fileutils
 import apport.logging
@@ -328,7 +328,7 @@ class Report(problem_report.ProblemReport):
     standard debugging data.
     """
 
-    def __init__(self, problem_type="Crash", date=None):
+    def __init__(self, problem_type: str = "Crash", date: Optional[str] = None) -> None:
         """Initialize a fresh problem report.
 
         date is the desired date/time string; if None (default), the current
@@ -338,11 +338,11 @@ class Report(problem_report.ProblemReport):
         self.pid, so that e. g. hooks can use it to collect additional data.
         """
         problem_report.ProblemReport.__init__(self, problem_type, date)
-        self.pid = None
-        self._proc_maps_cache = None
+        self.pid: Optional[int] = None
+        self._proc_maps_cache: Optional[list[tuple[int, int, str]]] = None
 
     @staticmethod
-    def _customized_package_suffix(package):
+    def _customized_package_suffix(package: str) -> str:
         """Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
@@ -365,7 +365,7 @@ class Report(problem_report.ProblemReport):
 
         return suffix
 
-    def add_package(self, package):
+    def add_package(self, package: str) -> Optional[str]:
         """Add Package: field.
 
         Determine the version of the given package (uses "(not installed") for
@@ -405,7 +405,7 @@ class Report(problem_report.ProblemReport):
             dependencies += f"{dep} {v}{self._customized_package_suffix(dep)}"
         return dependencies
 
-    def add_package_info(self, package=None):
+    def add_package_info(self, package: Optional[str] = None) -> None:
         """Add packaging information.
 
         If package is not given, the report must have ExecutablePath.
@@ -511,7 +511,7 @@ class Report(problem_report.ProblemReport):
             self["SnapGitName"] = m.group(2)
             self["CrashDB"] = "snap-github"
 
-    def add_os_info(self):
+    def add_os_info(self) -> None:
         """Add operating system information.
 
         This adds:
@@ -529,7 +529,7 @@ class Report(problem_report.ProblemReport):
         if "Architecture" not in self:
             self["Architecture"] = packaging.get_system_architecture()
 
-    def add_user_info(self):
+    def add_user_info(self) -> None:
         """Add information about the user.
 
         This adds:
@@ -551,7 +551,7 @@ class Report(problem_report.ProblemReport):
             # UserGroups to exist
             self["UserGroups"] = "N/A"
 
-    def _check_interpreted(self):
+    def _check_interpreted(self) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
         """Check if process is a script.
@@ -635,7 +635,7 @@ class Report(problem_report.ProblemReport):
             else:
                 self["UnreportableReason"] = "Cannot determine twistd client program"
 
-    def _twistd_executable(self):
+    def _twistd_executable(self) -> Optional[str]:
         """Determine the twistd client program from ProcCmdline."""
         args = self["ProcCmdline"].split("\0")[2:]
 
@@ -660,7 +660,7 @@ class Report(problem_report.ProblemReport):
         return None
 
     @staticmethod
-    def _python_module_path(module):
+    def _python_module_path(module: str) -> Optional[str]:
         """Determine path of given Python module."""
         try:
             spec = importlib.util.find_spec(module)
@@ -828,7 +828,7 @@ class Report(problem_report.ProblemReport):
             ]
         )
 
-    def add_kernel_crash_info(self):
+    def add_kernel_crash_info(self) -> bool:
         """Add information from kernel crash.
 
         This needs a VmCore in the Report.
@@ -864,7 +864,9 @@ class Report(problem_report.ProblemReport):
                 os.unlink(core)
         return ret
 
-    def add_gdb_info(self, rootdir=None, gdb_sandbox=None):
+    def add_gdb_info(
+        self, rootdir: Optional[str] = None, gdb_sandbox: Optional[str] = None
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Add information from gdb.
@@ -1160,7 +1162,7 @@ class Report(problem_report.ProblemReport):
 
         return False
 
-    def search_bug_patterns(self, url):
+    def search_bug_patterns(self, url: Optional[str]) -> Optional[str]:
         r"""Check bug patterns loaded from the specified url.
 
         Return bug URL on match, or None otherwise.
@@ -1317,7 +1319,7 @@ class Report(problem_report.ProblemReport):
 
         return False
 
-    def mark_ignore(self):
+    def mark_ignore(self) -> None:
         """Ignore future crashes of this executable.
 
         Add a ignore list entry for this report to ~/.apport-ignore.xml, so
@@ -1362,7 +1364,7 @@ class Report(problem_report.ProblemReport):
 
         dom.unlink()
 
-    def has_useful_stacktrace(self):
+    def has_useful_stacktrace(self) -> bool:
         """Check whether StackTrace can be considered 'useful'.
 
         The current heuristic is to consider it useless if it either is shorter
@@ -1379,7 +1381,7 @@ class Report(problem_report.ProblemReport):
 
         return unknown_fn.count(True) <= len(unknown_fn) / 2.0
 
-    def stacktrace_top_function(self):
+    def stacktrace_top_function(self) -> Optional[str]:
         """Return topmost function in StacktraceTop."""
         for line in self.get("StacktraceTop", "").splitlines():
             fname = line.split("(")[0].strip()
@@ -1388,7 +1390,7 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    def standard_title(self):
+    def standard_title(self) -> Optional[str]:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         # pylint: disable=too-many-return-statements,too-many-statements
@@ -1514,7 +1516,7 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    def obsolete_packages(self):
+    def obsolete_packages(self) -> list[str]:
         """Return list of obsolete packages in Package and Dependencies."""
         obsolete = []
         for line in (
@@ -1533,7 +1535,7 @@ class Report(problem_report.ProblemReport):
                 obsolete.append(pkg)
         return obsolete
 
-    def crash_signature(self):
+    def crash_signature(self) -> Optional[str]:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
@@ -1678,7 +1680,7 @@ class Report(problem_report.ProblemReport):
         return None
 
     @staticmethod
-    def _extract_function_and_address(line):
+    def _extract_function_and_address(line: str) -> Optional[str]:
         parsed = re.search(r"\[.*\] (.*)$", line)
         if parsed:
             match = parsed.group(1)
@@ -1687,7 +1689,7 @@ class Report(problem_report.ProblemReport):
                 return match
         return None
 
-    def crash_signature_addresses(self):
+    def crash_signature_addresses(self) -> Optional[str]:
         """Compute heuristic duplicate signature for a signal crash.
 
         This should be used if crash_signature() fails, i. e. Stacktrace does
@@ -1747,7 +1749,7 @@ class Report(problem_report.ProblemReport):
 
         return f"{self['ExecutablePath']}:{self['Signal']}:{':'.join(stack)}"
 
-    def anonymize(self):
+    def anonymize(self) -> None:
         """Remove user identifying strings from the report.
 
         This particularly removes the user name, host name, and IPs
@@ -1940,7 +1942,7 @@ class Report(problem_report.ProblemReport):
 
         return None
 
-    def _build_proc_maps_cache(self):
+    def _build_proc_maps_cache(self) -> None:
         """Generate self._proc_maps_cache from ProcMaps field.
 
         This only gets done once.
@@ -1974,16 +1976,18 @@ class Report(problem_report.ProblemReport):
             )
 
     @staticmethod
-    def get_logind_session(pid=None, proc_pid_fd=None):
+    def get_logind_session(
+        pid: Optional[int] = None, proc_pid_fd: Optional[int] = None
+    ) -> Optional[tuple[str, float]]:
         """Get logind session path and start time.
 
         Return (session_id, session_start_timestamp) if process is in a logind
         session, or None otherwise.
         """
-        if proc_pid_fd is not None:
-            cgroup_file = os.open("cgroup", os.O_RDONLY, dir_fd=proc_pid_fd)
+        if proc_pid_fd is None:
+            cgroup_file: Union[int, str] = f"/proc/{pid}/cgroup"
         else:
-            cgroup_file = f"/proc/{pid}/cgroup"
+            cgroup_file = os.open("cgroup", os.O_RDONLY, dir_fd=proc_pid_fd)
 
         # determine cgroup
         try:
