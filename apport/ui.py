@@ -1344,12 +1344,8 @@ class UserInterface:
 
         self.ui_run_terminal(cmds[response[0]])
 
-    def remember_send_report(self, send_report):
+    def remember_send_report(self, send_report: bool) -> None:
         """Put whoopsie in auto or never mode."""
-        if send_report:
-            send_report = "true"
-        else:
-            send_report = "false"
         try:
             subprocess.check_output(
                 [
@@ -1362,7 +1358,7 @@ class UserInterface:
                     "/com/ubuntu/WhoopsiePreferences",
                     "-m",
                     "com.ubuntu.WhoopsiePreferences.SetReportCrashes",
-                    send_report,
+                    str(send_report).lower(),
                 ]
             )
             subprocess.check_output(
