@@ -127,7 +127,7 @@ class T(unittest.TestCase):
         """add_proc_info()."""
         # check without additional safe environment variables
         pr = apport.report.Report()
-        self.assertEqual(pr.pid, None)
+        self.assertIsNone(pr.pid)
         pr.add_proc_info()
         self.assertEqual(pr.pid, os.getpid())
         self.assertTrue(
@@ -1161,7 +1161,7 @@ int main() { return f(42); }
 
             # negative match cases
             r_bash["Package"] = "bash-static 1-2"
-            self.assertEqual(r_bash.search_bug_patterns(pattern_url), None)
+            self.assertIsNone(r_bash.search_bug_patterns(pattern_url))
             r_bash["Package"] = "bash 1-21"
             self.assertEqual(
                 r_bash.search_bug_patterns(pattern_url),
@@ -1803,7 +1803,7 @@ int main() { return f(42); }
         # real /proc/pid/maps and not just with our static test case above
         pr = apport.report.Report()
         pr.add_proc_info()
-        self.assertEqual(pr._address_to_offset(0), None)
+        self.assertIsNone(pr._address_to_offset(0))
         res = pr._address_to_offset(int(pr["ProcMaps"].split("-", 1)[0], 16) + 5)
         self.assertEqual(res.split("+", 1)[1], "5")
         self.assertIn("python", res.split("+", 1)[0])

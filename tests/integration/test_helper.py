@@ -19,7 +19,7 @@ class TestHelper(unittest.TestCase):
         self.assertIn(os.getpid(), pids)
 
     def test_read_shebang_binary(self):
-        self.assertEqual(read_shebang(sys.executable), None)
+        self.assertIsNone(read_shebang(sys.executable))
 
     def test_read_shebang_shell_script(self):
         self.assertEqual(read_shebang("/usr/bin/ldd"), "/bin/bash")

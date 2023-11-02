@@ -454,7 +454,7 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[1].is_multipart())
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertEqual(parts[1].get_content_charset(), "utf-8")
-        self.assertEqual(parts[1].get_filename(), None)
+        self.assertIsNone(parts[1].get_filename())
         self.assertEqual(
             parts[1].get_payload(decode=True),
             b"ProblemType: Crash\nContext: Test suite\nDate: now!\n",
@@ -516,7 +516,7 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[1].is_multipart())
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertEqual(parts[1].get_content_charset(), "utf-8")
-        self.assertEqual(parts[1].get_filename(), None)
+        self.assertIsNone(parts[1].get_filename())
         self.assertEqual(
             parts[1].get_payload(decode=True),
             textwrap.dedent(

@@ -174,16 +174,16 @@ class TestHookParseSegv(unittest.TestCase):
         disasm = "0x1111111111: Cannot access memory at address 0x1111111111\n"
         segv = parse_segv.ParseSegv(regs, disasm, "")
         self.assertEqual(segv.pc, 0x1111111111, segv.pc)
-        self.assertEqual(segv.insn, None, segv.insn)
-        self.assertEqual(segv.src, None, segv.src)
-        self.assertEqual(segv.dest, None, segv.dest)
+        self.assertIsNone(segv.insn, segv.insn)
+        self.assertIsNone(segv.src, segv.src)
+        self.assertIsNone(segv.dest, segv.dest)
 
         disasm = "0x2111111111: \n"
         segv = parse_segv.ParseSegv(regs, disasm, "")
         self.assertEqual(segv.pc, 0x2111111111, segv.pc)
-        self.assertEqual(segv.insn, None, segv.insn)
-        self.assertEqual(segv.src, None, segv.src)
-        self.assertEqual(segv.dest, None, segv.dest)
+        self.assertIsNone(segv.insn, segv.insn)
+        self.assertIsNone(segv.src, segv.src)
+        self.assertIsNone(segv.dest, segv.dest)
 
         disasm = "0x8069ff0 <fopen@plt+132220>: cmpb   $0x0,(%eax,%ebx,1)\n"
         segv = parse_segv.ParseSegv(regs, disasm, "")
@@ -197,14 +197,14 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertEqual(segv.pc, 0xB765BB48, segv.pc)
         self.assertEqual(segv.insn, "call", segv.insn)
         self.assertEqual(segv.src, "*0x40(%edi)", segv.src)
-        self.assertEqual(segv.dest, None, segv.dest)
+        self.assertIsNone(segv.dest, segv.dest)
 
         disasm = "0xb7aae5a0:   call   0xb7a805af <_Unwind_Find_FDE@plt+111>\n"
         segv = parse_segv.ParseSegv(regs, disasm, "")
         self.assertEqual(segv.pc, 0xB7AAE5A0, segv.pc)
         self.assertEqual(segv.insn, "call", segv.insn)
         self.assertEqual(segv.src, "0xb7a805af", segv.src)
-        self.assertEqual(segv.dest, None, segv.dest)
+        self.assertIsNone(segv.dest, segv.dest)
 
         disasm = "0x09083540:    mov    0x4(%esp),%es:%ecx\n"
         segv = parse_segv.ParseSegv(regs, disasm, "")
@@ -248,8 +248,8 @@ class TestHookParseSegv(unittest.TestCase):
         segv = parse_segv.ParseSegv(regs, disasm, "")
         self.assertEqual(segv.pc, 0x08083550, segv.pc)
         self.assertEqual(segv.insn, "nop", segv.insn)
-        self.assertEqual(segv.src, None, segv.src)
-        self.assertEqual(segv.dest, None, segv.dest)
+        self.assertIsNone(segv.src, segv.src)
+        self.assertIsNone(segv.dest, segv.dest)
 
         regs = "esp 0x444"
         disasm = "0x08083560 <main+0>:    push %ecx\n"
@@ -321,7 +321,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertEqual(segv.maps[2]["start"], 0x00C67000, segv)
         self.assertEqual(segv.maps[2]["end"], 0x00C68000, segv)
         self.assertEqual(segv.maps[2]["perms"], "r--p", segv)
-        self.assertEqual(segv.maps[2]["name"], None, segv)
+        self.assertIsNone(segv.maps[2]["name"], segv)
 
     def test_debug(self):
         """Debug mode works."""

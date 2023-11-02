@@ -76,8 +76,8 @@ class TestDupdbAdmin(unittest.TestCase):
         self._call(["dump"])
 
     def test_dump_database(self):
-        self.assertEqual(self.crashes.check_duplicate(0), None)
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(0))
+        self.assertIsNone(self.crashes.check_duplicate(2))
         self.crashes.duplicate_db_fixed(2, "42")
         stdout = self._call(["dump"], expected_stdout=None)[0]
 
@@ -91,13 +91,13 @@ class TestDupdbAdmin(unittest.TestCase):
         self.assertIn("2: /usr/bin/broken:11:h:g:f:e:d [fixed in: 42]", lines[1])
 
     def test_changeid(self):
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(2))
         self._call(["changeid", "2", "1"])
         stdout = self._call(["dump"], expected_stdout=None)[0]
         self.assertIn("1: /usr/bin/broken:11:h:g:f:e:d [open]", stdout)
 
     def test_changeid_missing_argument(self):
-        self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertIsNone(self.crashes.check_duplicate(2))
         stderr = self._call(["changeid", "2"], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: new_id", stderr)
 
@@ -111,7 +111,7 @@ class TestDupdbAdmin(unittest.TestCase):
         self.assertIn("the following arguments are required: command", stderr)
 
     def test_publish(self):
-        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertIsNone(self.crashes.check_duplicate(1))
         pub_path = f"{self.workdir}/www"
         self._call(["publish", pub_path])
         directories, files = self._find_files_and_directories(pub_path)
@@ -123,12 +123,12 @@ class TestDupdbAdmin(unittest.TestCase):
         self.assertIn("the following arguments are required: path", stderr)
 
     def test_removeid(self):
-        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertIsNone(self.crashes.check_duplicate(1))
         self._call(["removeid", "1"])
         self._call(["dump"])
 
     def test_removeid_missing_argument(self):
-        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertIsNone(self.crashes.check_duplicate(1))
         stderr = self._call(["removeid"], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: id", stderr)
 

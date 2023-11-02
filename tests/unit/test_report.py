@@ -66,7 +66,7 @@ class T(unittest.TestCase):
         # pylint: disable=too-many-statements
         """standard_title()."""
         report = apport.report.Report()
-        self.assertEqual(report.standard_title(), None)
+        self.assertIsNone(report.standard_title())
 
         # named signal crash
         report["Signal"] = "11"
@@ -611,7 +611,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
     def test_crash_signature(self):
         """crash_signature()."""
         r = apport.report.Report()
-        self.assertEqual(r.crash_signature(), None)
+        self.assertIsNone(r.crash_signature())
 
         # signal crashes
         r["Signal"] = "42"
@@ -639,10 +639,10 @@ dispatch_queue () at canberra-gtk-module.c:815""",
             <signal handler called>
             __frob (x=1) at crash.c:30"""
         )
-        self.assertEqual(r.crash_signature(), None)
+        self.assertIsNone(r.crash_signature())
 
         r["StacktraceTop"] = ""
-        self.assertEqual(r.crash_signature(), None)
+        self.assertIsNone(r.crash_signature())
 
         # Python crashes
         del r["Signal"]
@@ -666,7 +666,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         self.assertEqual(r.crash_signature(), "/bin/crash:TypeError")
 
         r["Traceback"] = "FooBar"
-        self.assertEqual(r.crash_signature(), None)
+        self.assertIsNone(r.crash_signature())
 
         # kernel
         r["ProblemType"] = "KernelCrash"
@@ -906,12 +906,12 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
             "/lib/x86_64-linux-gnu/libc-2.13.so+36687",
         )
 
-        self.assertEqual(pr._address_to_offset(0x006DDFFF), None)
+        self.assertIsNone(pr._address_to_offset(0x006DDFFF))
         self.assertEqual(pr._address_to_offset(0x006DE000), "/bin/bash+0")
         self.assertEqual(pr._address_to_offset(0x006DF000), "/bin/bash+1000")
-        self.assertEqual(pr._address_to_offset(0x006DF001), None)
-        self.assertEqual(pr._address_to_offset(0), None)
-        self.assertEqual(pr._address_to_offset(0x10), None)
+        self.assertIsNone(pr._address_to_offset(0x006DF001))
+        self.assertIsNone(pr._address_to_offset(0))
+        self.assertIsNone(pr._address_to_offset(0x10))
 
         self.assertEqual(
             pr._address_to_offset(0x7F491FC24010), "/lib/with spaces !/libfoo.so+10"
@@ -951,7 +951,7 @@ ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
     def test_crash_signature_addresses(self):
         """crash_signature_addresses()"""
         pr = apport.report.Report()
-        self.assertEqual(pr.crash_signature_addresses(), None)
+        self.assertIsNone(pr.crash_signature_addresses())
 
         pr["ExecutablePath"] = "/bin/bash"
         pr["Signal"] = "42"
@@ -974,7 +974,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
 """
 
         # no Stacktrace field
-        self.assertEqual(pr.crash_signature_addresses(), None)
+        self.assertIsNone(pr.crash_signature_addresses())
 
         # good stack trace
         pr[
@@ -1002,7 +1002,7 @@ No symbol table info available.
             "#0  0x00007f491fac5687 in kill ()"
             " at ../sysdeps/unix/syscall-template.S:82"
         )
-        self.assertEqual(pr.crash_signature_addresses(), None)
+        self.assertIsNone(pr.crash_signature_addresses())
 
         # one unresolvable, but long enough
         pr[
@@ -1058,7 +1058,7 @@ No symbol table info available.
 #6  0x000000000041d715 in main ()
 #7  0x000000000041d703 in _start ()
 """
-        self.assertEqual(pr.crash_signature_addresses(), None)
+        self.assertIsNone(pr.crash_signature_addresses())
 
     @staticmethod
     def test_missing_uid():

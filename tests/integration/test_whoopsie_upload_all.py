@@ -41,7 +41,7 @@ class TestWhoopsieUploadAll(unittest.TestCase):
     def test_process_report_malformed_report(self, stderr_mock):
         """Test process_report() raises MalformedProblemReport."""
         report = self._write_report(b"AB\xfc:CD\n")
-        self.assertEqual(whoopsie_upload_all.process_report(report), None)
+        self.assertIsNone(whoopsie_upload_all.process_report(report))
         self.assertIn(
             "Malformed problem report: 'ascii' codec can't decode byte 0xfc"
             " in position 2: ordinal not in range(128).",

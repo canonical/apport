@@ -391,7 +391,7 @@ class T(unittest.TestCase):
         report = apport.report.Report()
         self.assertTrue(apport.hookutils.in_session_of_problem(report))
 
-        self.assertEqual(apport.hookutils.in_session_of_problem({}), None)
+        self.assertIsNone(apport.hookutils.in_session_of_problem({}))
 
         orig_ctime = locale.getlocale(locale.LC_TIME)
         try:

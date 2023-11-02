@@ -158,7 +158,7 @@ class T(unittest.TestCase):
         self.assertEqual(impl.get_file_package("/bin/bash"), "bash")
         self.assertEqual(impl.get_file_package("/bin/cat"), "coreutils")
         self.assertEqual(impl.get_file_package("/etc/pam.conf"), "libpam-runtime")
-        self.assertEqual(impl.get_file_package("/nonexisting"), None)
+        self.assertIsNone(impl.get_file_package("/nonexisting"))
 
     def test_get_file_package_uninstalled(self):
         """get_file_package() on uninstalled packages."""
@@ -198,12 +198,12 @@ bin/true                                                admin/superutils
             # use this as a mirror
             impl.set_mirror(f"file://{basedir}")
 
-            self.assertEqual(impl.get_file_package("usr/bin/frob", False), None)
+            self.assertIsNone(impl.get_file_package("usr/bin/frob", False))
             # must not match frob (same file name prefix)
             self.assertEqual(impl.get_file_package("usr/bin/frob", True), "frob-utils")
             self.assertEqual(impl.get_file_package("/usr/bin/frob", True), "frob-utils")
             # find files from -updates pocket
-            self.assertEqual(impl.get_file_package("/lib/libnew.so.5", False), None)
+            self.assertIsNone(impl.get_file_package("/lib/libnew.so.5", False))
             self.assertEqual(impl.get_file_package("/lib/libnew.so.5", True), "libnew5")
 
             # invalid mirror
@@ -219,14 +219,14 @@ bin/true                                                admin/superutils
             )
             cache_dir_files = sorted(os.listdir(cache_dir))
             self.assertEqual(len(cache_dir_files), 3)
-            self.assertEqual(impl.get_file_package("/bo/gu/s", True, cache_dir), None)
+            self.assertIsNone(impl.get_file_package("/bo/gu/s", True, cache_dir))
 
             # valid cache, should not need to access the mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertEqual(
                 impl.get_file_package("/bin/true", True, cache_dir), "superutils"
             )
-            self.assertEqual(impl.get_file_package("/bo/gu/s", True, cache_dir), None)
+            self.assertIsNone(impl.get_file_package("/bo/gu/s", True, cache_dir))
             self.assertEqual(
                 impl.get_file_package("/lib/libnew.so.5", True, cache_dir), "libnew5"
             )
@@ -285,7 +285,7 @@ usr/bin/frob                                            foo/frob
             impl.set_mirror(f"file://{basedir}")
 
             # must not match system architecture
-            self.assertEqual(impl.get_file_package("usr/bin/frob", False), None)
+            self.assertIsNone(impl.get_file_package("usr/bin/frob", False))
             # must match correct architecture
             self.assertEqual(
                 impl.get_file_package("usr/bin/frob", True, arch="even"), "frob-utils"
