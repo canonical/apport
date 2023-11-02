@@ -154,6 +154,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def _get_details(self):
         """Build report string for display."""
+        assert self.report
 
         details = ""
         max_show = 1000000
