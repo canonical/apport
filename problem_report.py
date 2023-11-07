@@ -384,10 +384,10 @@ class ProblemReport(collections.UserDict):
         asckeys, binkeys = self._get_sorted_keys(only_new)
 
         for k in asckeys:
-            self._write_key_and_ascii_value_to_file(file, k)
+            self._write_ascii_item(file, k)
 
         for k in binkeys:
-            self._write_key_and_binary_value_compressed_and_encoded_to_file(file, k)
+            self._write_binary_item_compressed_and_encoded(file, k)
 
     def _get_sorted_keys(self, only_new: bool) -> tuple[list[str], list[str]]:
         """Sort keys into ASCII non-ASCII/binary attachment ones, so that
@@ -418,9 +418,7 @@ class ProblemReport(collections.UserDict):
         binkeys.sort()
         return asckeys, binkeys
 
-    def _write_key_and_ascii_value_to_file(
-        self, file: typing.BinaryIO, key: str
-    ) -> None:
+    def _write_ascii_item(self, file: typing.BinaryIO, key: str) -> None:
         v = self.data[key]
 
         # if it's a tuple, we have a file reference; read the contents
@@ -460,7 +458,7 @@ class ProblemReport(collections.UserDict):
         file.write(b"\n")
 
     @staticmethod
-    def _write_key_and_base64_binary_chunks(
+    def _write_binary_item_base64_encoded(
         file: typing.BinaryIO, key: str, chunks: typing.Iterable[bytes]
     ) -> None:
         """Write out binary chunks as a base64-encoded RFC822 multiline field."""
@@ -554,12 +552,12 @@ class ProblemReport(collections.UserDict):
         block += struct.pack("<L", size & 0xFFFFFFFF)
         yield block
 
-    def _write_key_and_binary_value_compressed_and_encoded_to_file(
+    def _write_binary_item_compressed_and_encoded(
         self, file: typing.BinaryIO, key: str
     ) -> None:
         """Write the binary keys with gzip compression and base64 encoding"""
         try:
-            self._write_key_and_base64_binary_chunks(
+            self._write_binary_item_base64_encoded(
                 file, key, self._generate_compressed_chunks(key)
             )
         except _SizeLimitExceeded:
