@@ -1257,7 +1257,7 @@ class UserInterface:
             return locale.format_string("%.1f MB", size / 1000000.0)
         return locale.format_string("%.1f GB", size / float(1000000000))
 
-    def get_complete_size(self):
+    def get_complete_size(self) -> int:
         """Return the size of the complete report."""
         assert self.report
         # report wasn't loaded, so count manually
@@ -1267,12 +1267,12 @@ class UserInterface:
                 try:
                     # if we have a compressed value, take its size, but take
                     # base64 overhead into account
-                    size += len(self.report[k].gzipvalue) * 8 / 6
+                    size += len(self.report[k].gzipvalue) * 8 // 6
                 except AttributeError:
                     size += len(self.report[k])
         return size
 
-    def get_reduced_size(self):
+    def get_reduced_size(self) -> int:
         """Return the size of the reduced report."""
         assert self.report
         size = 0
@@ -1282,7 +1282,7 @@ class UserInterface:
                     try:
                         # if we have a compressed value, take its size,
                         # but take base64 overhead into account
-                        size += len(self.report[k].gzipvalue) * 8 / 6
+                        size += len(self.report[k].gzipvalue) * 8 // 6
                     except AttributeError:
                         size += len(self.report[k])
 
