@@ -23,6 +23,8 @@ from tests.paths import local_test_environment
 class TestApportValgrind(unittest.TestCase):
     """Integration tests for bin/apport-valgrind."""
 
+    maxDiff = None
+
     @classmethod
     def setUpClass(cls):
         cls.env = os.environ | local_test_environment()
