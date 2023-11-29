@@ -51,6 +51,41 @@ class _SizeLimitExceeded(RuntimeError):
     """Raised internally to signal a value that is too big to encode."""
 
 
+class _EntryParser(Iterator):
+    """Iterator over entries in RFC822 formatted files.
+
+    This iterator reads ahead one line to determine the boundaries between
+    the entries. Each returned entry is a line-based iterator.
+    """
+
+    def __init__(self, iterator: Iterator[bytes]) -> None:
+        self.iterator = iterator
+        self.next_line: (bytes | None) = None
+        self.entry_read = True
+
+    def entry_iterator(self) -> Iterator[bytes]:
+        """Iterate over all lines of one entry."""
+        assert self.next_line
+        yield self.next_line
+        self.next_line = None
+        for line in self.iterator:
+            if line.startswith(b" "):
+                yield line
+            else:
+                self.next_line = line
+                break
+        self.entry_read = True
+
+    def __next__(self) -> Iterator[bytes]:
+        if not self.entry_read:
+            for _ in self.entry_iterator():
+                pass
+        if not self.next_line:
+            self.next_line = next(self.iterator)
+        self.entry_read = False
+        return self.entry_iterator()
+
+
 class CompressedValue:
     """Represent a ProblemReport value which is gzip compressed.
 
