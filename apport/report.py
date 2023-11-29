@@ -1058,11 +1058,11 @@ class Report(problem_report.ProblemReport):
 
                 # handle XErrors
                 if unwinding_xerror:
-                    if fn.startswith("_X") or fn in [
+                    if fn.startswith("_X") or fn in {
                         "handle_response",
                         "handle_error",
                         "XWindowEvent",
-                    ]:
+                    }:
                         continue
                     unwinding_xerror = False
 
@@ -1578,7 +1578,7 @@ class Report(problem_report.ProblemReport):
         it exists.
         """
         if "ExecutablePath" not in self:
-            if not self["ProblemType"] in ("KernelCrash", "KernelOops"):
+            if not self["ProblemType"] in {"KernelCrash", "KernelOops"}:
                 return None
 
         # kernel crash
@@ -1811,7 +1811,7 @@ class Report(problem_report.ProblemReport):
             if (
                 is_proc_field
                 or "Stacktrace" in k
-                or k in ["Traceback", "PythonArgs", "Title", "JournalErrors"]
+                or k in {"Traceback", "PythonArgs", "Title", "JournalErrors"}
             ):
                 if not hasattr(self[k], "isspace"):
                     continue

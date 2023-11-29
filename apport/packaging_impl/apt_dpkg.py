@@ -1561,7 +1561,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         # releases
                         if (
                             pocket == ""
-                            and release in ["trusty", "xenial"]
+                            and release in {"trusty", "xenial"}
                             and line_num < 33
                         ):
                             continue
@@ -1580,7 +1580,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                 continue
                             if path.split(b"/")[1] == b"share" and path.split(b"/")[
                                 2
-                            ] in (
+                            ] in {
                                 b"doc",
                                 b"icons",
                                 b"man",
@@ -1588,10 +1588,10 @@ class __AptDpkgPackageInfo(PackageInfo):
                                 b"gocode",
                                 b"locale",
                                 b"help",
-                            ):
+                            }:
                                 continue
                             package = line.split()[-1].split(b",")[0].split(b"/")[-1]
-                        elif path.split(b"/")[0] in (b"lib", b"bin", b"sbin", b"etc"):
+                        elif path.split(b"/")[0] in {b"lib", b"bin", b"sbin", b"etc"}:
                             package = line.split()[-1].split(b",")[0].split(b"/")[-1]
                         else:
                             continue

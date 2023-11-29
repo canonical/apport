@@ -539,7 +539,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             match = bug_target_re.search(task.target.self_link)
             if not match:
                 continue
-            if task.status in ("Invalid", "Won't Fix", "Fix Released"):
+            if task.status in {"Invalid", "Won't Fix", "Fix Released"}:
                 continue
             result.append(match.group("source"))
         return result
@@ -699,7 +699,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # check if there only invalid ones
                 invalid_tasks = list(
                     filter(
-                        lambda task: task.status in ("Invalid", "Won't Fix", "Expired")
+                        lambda task: task.status in {"Invalid", "Won't Fix", "Expired"}
                         and distro_identifier in task.bug_target_display_name.lower(),
                         tasks,
                     )
@@ -769,7 +769,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return
 
             for a in bug.attachments:
-                if a.title in (
+                if a.title in {
                     "CoreDump.gz",
                     "Stacktrace.txt",
                     "ThreadStacktrace.txt",
@@ -777,7 +777,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     "ProcStatus.txt",
                     "Registers.txt",
                     "Disassembly.txt",
-                ):
+                }:
                     try:
                         a.removeFromBug()
                     except HTTPError:

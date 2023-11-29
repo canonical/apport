@@ -204,7 +204,7 @@ def attach_dmi(report):
     dmi_dir = "/sys/class/dmi/id"
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
-            if f in ("subsystem", "uevent"):
+            if f in {"subsystem", "uevent"}:
                 continue
             p = os.path.realpath(f"{dmi_dir}/{f}")
             st = os.stat(p)
@@ -733,10 +733,10 @@ def attach_gsettings_schema(report, schema):
                 continue  # invalid line
 
             if value != defaults.get(schema_name, {}).get(key, ""):
-                if schema_name == b"org.gnome.shell" and key in [
+                if schema_name == b"org.gnome.shell" and key in {
                     b"command-history",
                     b"favorite-apps",
-                ]:
+                }:
                     value = "redacted by apport"
                 cur_value += f"{schema_name} {key} {value}\n"
 

@@ -501,7 +501,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         # for releases without a fix, by creating a symlink from the host's
         # .dwz directory to the machine specific one in the sandbox.
         target = ""
-        if report["DistroRelease"][-5:] in ("18.04", "20.04"):
+        if report["DistroRelease"][-5:] in {"18.04", "20.04"}:
             if gdb_sandbox and sandbox:
                 machine = report["Uname"].split()[-1]
                 target = f"{machine}-linux-gnu"

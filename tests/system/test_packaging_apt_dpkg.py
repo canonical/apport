@@ -933,7 +933,7 @@ def _ubuntu_archive_uri(arch=None):
     """Return archive URI for the given architecture."""
     if arch is None:
         arch = impl.get_system_architecture()
-    if arch in ("amd64", "i386"):
+    if arch in {"amd64", "i386"}:
         return "http://archive.ubuntu.com/ubuntu"
     return "http://ports.ubuntu.com/ubuntu-ports"
 
