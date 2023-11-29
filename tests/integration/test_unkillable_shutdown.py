@@ -16,8 +16,8 @@ import shutil
 import signal
 import subprocess
 import tempfile
-import typing
 import unittest
+from collections.abc import Generator
 from typing import Optional
 
 from tests.paths import get_data_directory, local_test_environment
@@ -62,7 +62,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     @contextlib.contextmanager
     def _launch_process_with_different_session_id(
         self,
-    ) -> typing.Generator[multiprocessing.Process, None, None]:
+    ) -> Generator[multiprocessing.Process, None, None]:
         """Launch test executable with different session ID.
 
         getsid() will return a different ID than the current process.

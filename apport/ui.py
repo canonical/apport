@@ -39,10 +39,10 @@ import sys
 import threading
 import time
 import traceback
-import typing
 import urllib.error
 import webbrowser
 import zlib
+from collections.abc import Sequence
 from gettext import gettext as _
 from typing import Any, Optional
 
@@ -1011,7 +1011,7 @@ class UserInterface:
     #
 
     @staticmethod
-    def parse_argv_update(argv: typing.Sequence[str]) -> argparse.Namespace:
+    def parse_argv_update(argv: Sequence[str]) -> argparse.Namespace:
         """Parse command line options when being invoked in update mode."""
         parser = argparse.ArgumentParser(usage=_("%(prog)s <report number>"))
         parser.add_argument("-p", "--package", help=_("Specify package name."))
