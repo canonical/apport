@@ -1487,7 +1487,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # last
         # XXX - maybe we shouldn't check -security and -updates if it is the
         # devel release as they will be old and empty
-        for pocket in ["-proposed", "", "-security", "-updates"]:
+        for pocket in ("-proposed", "", "-security", "-updates"):
             contents_filename = os.path.join(
                 map_cachedir, f"{release}{pocket}-Contents-{arch}.gz"
             )

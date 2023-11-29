@@ -186,7 +186,7 @@ class T(unittest.TestCase):
             "140731174346734 0\n"
         )
 
-        for name in [
+        for name in (
             "goodname",
             "bad name",
             "(badname",
@@ -197,7 +197,7 @@ class T(unittest.TestCase):
             ")badname",
             "bad) name",
             "bad) name\\",
-        ]:
+        ):
             starttime = apport.fileutils.get_starttime(template % name)
             self.assertEqual(starttime, 34034895)
 
@@ -270,14 +270,14 @@ class T(unittest.TestCase):
             "nonvoluntary_ctxt_switches:\t0\n"
         )
 
-        for name in [
+        for name in (
             "goodname",
             "Uid:",
             "\nUid:",
             "Uid: 1000 1000 1000\n",
             "a\nUid: 0\nGid: 0",
             "a\nUid: 0\nGid:",
-        ]:
+        ):
             (uid, gid) = apport.fileutils.get_uid_and_gid(template % name)
             self.assertEqual(uid, 1000)
             self.assertEqual(gid, 2000)

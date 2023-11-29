@@ -81,7 +81,7 @@ def get_dbus_socket(dbus_addr):
 
     # Don't support escaped values, multiple addresses, or multiple keys
     # and values
-    for search in ["%", ",", ";"]:
+    for search in ("%", ",", ";"):
         if search in dbus_addr:
             return None
 
