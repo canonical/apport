@@ -216,20 +216,19 @@ class CrashDatabase:
                     # we have a duplicate only identified by address sig,
                     # close it
                     master_id = addr_match
+                # our bug is a dupe of two different masters, one from
+                # symbolic, the other from addr matching (see LP#943117);
+                # make them all duplicates of each other, using the lower
+                # number as master
+                elif master_id < addr_match:
+                    self.close_duplicate(report, addr_match, master_id)
+                    self._duplicate_db_merge_id(addr_match, master_id)
                 else:
-                    # our bug is a dupe of two different masters, one from
-                    # symbolic, the other from addr matching (see LP#943117);
-                    # make them all duplicates of each other, using the lower
-                    # number as master
-                    if master_id < addr_match:
-                        self.close_duplicate(report, addr_match, master_id)
-                        self._duplicate_db_merge_id(addr_match, master_id)
-                    else:
-                        self.close_duplicate(report, master_id, addr_match)
-                        self._duplicate_db_merge_id(master_id, addr_match)
-                        master_id = addr_match
-                        # no version tracking for address signatures yet
-                        master_ver = None
+                    self.close_duplicate(report, master_id, addr_match)
+                    self._duplicate_db_merge_id(master_id, addr_match)
+                    master_id = addr_match
+                    # no version tracking for address signatures yet
+                    master_ver = None
 
         if master_id is not None and master_id != crash_id:
             if addr_sig:

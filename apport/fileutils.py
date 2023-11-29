@@ -601,11 +601,10 @@ def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
     if pid is None:
         pid = "unknown"
         timestamp = "unknown"
-    else:
-        if timestamp is None:
-            with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
-                stat_contents = stat_file.read()
-            timestamp = get_starttime(stat_contents)
+    elif timestamp is None:
+        with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
+            stat_contents = stat_file.read()
+        timestamp = get_starttime(stat_contents)
 
     if exe is None:
         exe = get_process_path(proc_pid_fd)

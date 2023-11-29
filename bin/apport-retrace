@@ -528,15 +528,14 @@ Thank you for your understanding, and sorry for the inconvenience!
                                 == f"{sandbox}/usr/lib/debug/.dwz/{target}"
                             ):
                                 pass
-                else:
-                    if not os.path.islink(f"/usr/lib/debug/.dwz/{target}"):
-                        print(
-                            "apport is unlikely to produce a quality retrace"
-                            " if it can not create a symlink in the host"
-                            " system's /usr/lib/debug/.dwz directory to the"
-                            " gdb sandbox's. See LP: #1818918 for details."
-                        )
-                        sys.exit(0)
+                elif not os.path.islink(f"/usr/lib/debug/.dwz/{target}"):
+                    print(
+                        "apport is unlikely to produce a quality retrace"
+                        " if it can not create a symlink in the host"
+                        " system's /usr/lib/debug/.dwz directory to the"
+                        " gdb sandbox's. See LP: #1818918 for details."
+                    )
+                    sys.exit(0)
     else:
         gdb_sandbox = None
 
@@ -603,9 +602,8 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     if options.stdout:
         print_traces(report)
-    else:
-        if not options.gdb:
-            modified = True
+    elif not options.gdb:
+        modified = True
 
     if modified:
         if not options.report and not options.output:
@@ -677,12 +675,11 @@ Thank you for your understanding, and sorry for the inconvenience!
                             )
                             crashdb.mark_retrace_failed(crashid)
 
+        elif options.output == "-":
+            report.write(sys.stdout.detach())
         else:
-            if options.output == "-":
-                report.write(sys.stdout.detach())
-            else:
-                with open(options.report, "wb") as out:
-                    report.write(out)
+            with open(options.report, "wb") as out:
+                report.write(out)
 
 
 if __name__ == "__main__":

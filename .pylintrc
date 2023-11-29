@@ -9,6 +9,7 @@ extension-pkg-whitelist=apt_pkg  # wokeignore:rule=whitelist
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
 load-plugins=
+ pylint.extensions.check_elif,
  pylint.extensions.code_style,
  pylint.extensions.comparison_placement,
  pylint.extensions.consider_refactoring_into_while_condition,

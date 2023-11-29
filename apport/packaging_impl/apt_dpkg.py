@@ -1287,13 +1287,12 @@ class __AptDpkgPackageInfo(PackageInfo):
                 else:
                     logger.debug("Removing %s which is already the right version", p)
                     real_pkgs.remove(p)
+            elif pkg_versions.get(p) != cache[p].candidate.version:
+                logger.debug("Installing %s", p)
+                cache[p].mark_install(False, False)
             else:
-                if pkg_versions.get(p) != cache[p].candidate.version:
-                    logger.debug("Installing %s", p)
-                    cache[p].mark_install(False, False)
-                else:
-                    logger.debug("Removing %s which is already the right version", p)
-                    real_pkgs.remove(p)
+                logger.debug("Removing %s which is already the right version", p)
+                real_pkgs.remove(p)
 
         last_written = time.time()
         # fetch packages
@@ -1427,9 +1426,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             if isinstance(source, SourceEntry):
                 if source.type == "deb":
                     uri = source.uri or ""
-            else:
-                if "deb" in source.types:
-                    uri = source.uris[0]
+            elif "deb" in source.types:
+                uri = source.uris[0]
 
             if uri is not None:
                 if uri.startswith("mirror+file:"):
