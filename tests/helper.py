@@ -12,7 +12,7 @@ import unittest.mock
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator
-from typing import Any, Optional
+from typing import Any
 from unittest.mock import MagicMock
 
 
@@ -67,7 +67,7 @@ def pidof(program):
     return set(int(pid) for pid in stdout.decode().split())
 
 
-def read_shebang(command: str) -> Optional[str]:
+def read_shebang(command: str) -> str | None:
     """Return the shebang of the given file.
 
     If the given file is a script, return the executable from the

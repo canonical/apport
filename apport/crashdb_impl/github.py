@@ -13,7 +13,7 @@ import json
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -184,8 +184,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def upload(
         self,
         report: apport.Report,
-        progress_callback: Optional[Callable] = None,
-        user_message_callback: Optional[Callable] = None,
+        progress_callback: (Callable | None) = None,
+        user_message_callback: (Callable | None) = None,
     ) -> IssueHandle:
         """Upload given problem report return a handle for it.
         In Github, we open an issue.

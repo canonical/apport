@@ -16,6 +16,7 @@ load-plugins=
  pylint.extensions.eq_without_hash,
  pylint.extensions.no_self_use,
  pylint.extensions.private_import,
+ pylint.extensions.typing,
 
 # Pickle collected data for later comparisons.
 persistent=no

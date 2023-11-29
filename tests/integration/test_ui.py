@@ -23,7 +23,7 @@ import unittest
 import unittest.mock
 import urllib.error
 from collections.abc import Generator
-from typing import Any, Optional
+from typing import Any
 from unittest.mock import MagicMock
 
 import apport.crashdb_impl.memory
@@ -52,7 +52,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
-    def __init__(self, argv: Optional[list[str]] = None):
+    def __init__(self, argv: (list[str] | None) = None):
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
@@ -122,7 +122,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.msg_choices = None
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
+        self, allowed_to_report: bool = True, modal_for: (str | None) = None
     ) -> apport.ui.Action:
         self.present_details_shown = True
         assert self.present_details_response
@@ -153,7 +153,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
         self.upload_progress_active = True
 
-    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: (float | None)) -> None:
         assert self.upload_progress_active
         self.upload_progress_pulses += 1
 
@@ -281,7 +281,7 @@ class T(unittest.TestCase):
 
     @contextlib.contextmanager
     def _run_test_executable(
-        self, exename: Optional[str] = None, env: Optional[dict[str, str]] = None
+        self, exename: (str | None) = None, env: (dict[str, str] | None) = None
     ) -> Generator[int, None, None]:
         if not exename:
             exename = self.TEST_EXECUTABLE
@@ -475,7 +475,7 @@ class T(unittest.TestCase):
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
 
-        def search_bug_patterns(url: str) -> Optional[str]:
+        def search_bug_patterns(url: str) -> str | None:
             progress_pulses = self.ui.ic_progress_pulses
             # wait for ui_pulse_info_collection_progress() call
             while self.ui.ic_progress_pulses == progress_pulses:
@@ -521,7 +521,7 @@ class T(unittest.TestCase):
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
     def _write_crashdb_config_hook(
-        self, crashdb: str, bash_hook: Optional[str] = None
+        self, crashdb: str, bash_hook: (str | None) = None
     ) -> None:
         """Write source_bash.py hook that sets CrashDB"""
         with open(

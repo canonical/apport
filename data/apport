@@ -42,7 +42,6 @@ import sys
 import time
 import traceback
 import typing
-from typing import Optional
 
 import apport.fileutils
 import apport.report
@@ -54,9 +53,9 @@ LOG_FORMAT = "%(levelname)s: apport (pid %(process)s) %(asctime)s: %(message)s"
 class ProcPid(contextlib.ContextDecorator):
     """Context manager to access /proc/<pid>."""
 
-    def __init__(self, pid: int, path: Optional[str] = None) -> None:
+    def __init__(self, pid: int, path: (str | None) = None) -> None:
         self.path = path or f"/proc/{pid}"
-        self.fd: Optional[int] = None
+        self.fd: (int | None) = None
 
     def __enter__(self):
         self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
@@ -67,7 +66,7 @@ class ProcPid(contextlib.ContextDecorator):
             os.close(self.fd)
         return False
 
-    def _opener(self, path: typing.Union[str, os.PathLike[str]], flags: int) -> int:
+    def _opener(self, path: (str | os.PathLike[str]), flags: int) -> int:
         return os.open(path, flags, dir_fd=self.fd)
 
     def open(self, file: str) -> io.TextIOWrapper:
@@ -113,7 +112,7 @@ def get_core_path(
     options: argparse.Namespace,
     crash_user: UserGroupID,
     proc_pid: ProcPid,
-    timestamp: Optional[int] = None,
+    timestamp: (int | None) = None,
 ) -> str:
     """Get the path to the core file."""
     return apport.fileutils.get_core_path(
@@ -232,8 +231,8 @@ def write_user_coredump(
     proc_pid: ProcPid,
     crash_user: UserGroupID,
     pidstat: os.stat_result,
-    coredump_fd: Optional[int] = None,
-    from_report: Optional[typing.BinaryIO] = None,
+    coredump_fd: (int | None) = None,
+    from_report: (typing.BinaryIO | None) = None,
 ) -> None:
     # pylint: disable=too-many-arguments
     """Write the core into a directory if ulimit requests it."""

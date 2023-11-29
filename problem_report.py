@@ -28,7 +28,6 @@ import time
 import typing
 import zlib
 from collections.abc import Generator, Iterable
-from typing import Optional, Union
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
@@ -113,7 +112,7 @@ class CompressedValue:
 class ProblemReport(collections.UserDict):
     """Class to store, load, and handle problem reports."""
 
-    def __init__(self, problem_type: str = "Crash", date: Optional[str] = None) -> None:
+    def __init__(self, problem_type: str = "Crash", date: (str | None) = None) -> None:
         """Initialize a fresh problem report.
 
         problem_type can be 'Crash', 'Packaging', 'KernelCrash' or
@@ -286,7 +285,7 @@ class ProblemReport(collections.UserDict):
             return set()
         return set(self["Tags"].split(" "))
 
-    def get_timestamp(self) -> Optional[int]:
+    def get_timestamp(self) -> int | None:
         """Get timestamp (seconds since epoch) from Date field.
 
         Return None if it is not present.
@@ -342,7 +341,7 @@ class ProblemReport(collections.UserDict):
         return decompressor, value
 
     @staticmethod
-    def is_binary(string: Union[bytes, str]) -> bool:
+    def is_binary(string: (bytes | str)) -> bool:
         """Check if the given strings contains binary data."""
         if isinstance(string, bytes):
             for c in string:
@@ -351,7 +350,7 @@ class ProblemReport(collections.UserDict):
         return False
 
     @classmethod
-    def _try_unicode(cls, value: Union[bytes, str]) -> Union[bytes, str]:
+    def _try_unicode(cls, value: (bytes | str)) -> bytes | str:
         """Try to convert bytearray value to Unicode."""
         if isinstance(value, bytes) and not cls.is_binary(value):
             try:
@@ -729,7 +728,7 @@ class ProblemReport(collections.UserDict):
         file.write(msg.as_string().encode("UTF-8"))
         file.write(b"\n")
 
-    def __setitem__(self, k: str, v: Union[bytes, CompressedValue, str, tuple]) -> None:
+    def __setitem__(self, k: str, v: (bytes | CompressedValue | str | tuple)) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
             raise ValueError(
