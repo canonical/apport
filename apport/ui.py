@@ -116,7 +116,7 @@ def _get_users_environ(uid: int) -> dict[str, str]:
 
     return {
         key: gvfsd_env[key]
-        for key in ["DBUS_SESSION_BUS_ADDRESS", "XDG_DATA_DIRS"]
+        for key in ("DBUS_SESSION_BUS_ADDRESS", "XDG_DATA_DIRS")
         if key in gvfsd_env
     }
 

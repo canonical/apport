@@ -200,7 +200,7 @@ class T(unittest.TestCase):
         os.environ |= local_test_environment()
 
         # we test a few strings, don't get confused by translations
-        for v in ["LANG", "LANGUAGE", "LC_MESSAGES", "LC_ALL"]:
+        for v in ("LANG", "LANGUAGE", "LC_MESSAGES", "LC_ALL"):
             try:
                 del os.environ[v]
             except KeyError:

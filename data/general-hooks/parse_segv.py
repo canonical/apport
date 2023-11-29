@@ -25,7 +25,7 @@ class ParseSegv:
     def __init__(self, registers, disassembly, maps):
         self.regs = self.parse_regs(registers)
         self.sp = None
-        for reg in ["rsp", "esp"]:
+        for reg in ("rsp", "esp"):
             if reg in self.regs:
                 self.sp = self.regs[reg]
 
@@ -141,7 +141,7 @@ class ParseSegv:
 
         # Set up possible implicit memory destinations (stack actions)
         if insn in ["push", "pop", "pushl", "popl", "call", "callq", "ret", "retq"]:
-            for reg in ["rsp", "esp"]:
+            for reg in ("rsp", "esp"):
                 if reg in self.regs:
                     dest = f"(%{reg})"
                     break
