@@ -1070,8 +1070,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         You have to close the returned file object after you are done with it.
         """
         # set reprocessing tags
-        hdr = {}
-        hdr["Tags"] = f"apport-{report['ProblemType'].lower()}"
+        hdr = {"Tags": f"apport-{report['ProblemType'].lower()}"}
         a = report.get("PackageArchitecture")
         if not a or a == "all":
             a = report.get("Architecture")
