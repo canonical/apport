@@ -272,7 +272,7 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
     assert "coreutils 8.32-4.1ubuntu1" in pkglist
     assert "coreutils-dbgsym 8.32-4.1ubuntu1" in pkglist
     assert "tzdata 2022a-0ubuntu1" in pkglist
-    assert len(pkglist), 3 == str(pkglist)
+    assert len(pkglist), str(pkglist) == 3
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
@@ -507,7 +507,7 @@ def test_install_packages_permanent_sandbox_repack(
         permanent_rootdir=True,
     )
     curl_library = _get_library_path("libcurl.so", rootdir)
-    assert "libcurl-gnutls.so" == os.readlink(curl_library)
+    assert os.readlink(curl_library) == "libcurl-gnutls.so"
 
     impl.install_packages(
         rootdir,
@@ -518,7 +518,7 @@ def test_install_packages_permanent_sandbox_repack(
         cachedir,
         permanent_rootdir=True,
     )
-    assert "libcurl-nss.so" == os.readlink(curl_library)
+    assert os.readlink(curl_library) == "libcurl-nss.so"
 
     impl.install_packages(
         rootdir,
@@ -529,7 +529,7 @@ def test_install_packages_permanent_sandbox_repack(
         cachedir,
         permanent_rootdir=True,
     )
-    assert "libcurl-gnutls.so" == os.readlink(curl_library)
+    assert os.readlink(curl_library) == "libcurl-gnutls.so"
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
@@ -850,7 +850,7 @@ def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
         stdout=subprocess.PIPE,
     )
     apt_keys = gpg.stdout.decode()
-    assert "" == apt_keys
+    assert apt_keys == ""
 
 
 def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
