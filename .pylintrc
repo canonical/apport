@@ -6,6 +6,16 @@
 # for backward compatibility.)
 extension-pkg-whitelist=apt_pkg  # wokeignore:rule=whitelist
 
+# List of plugins (as comma separated values of python module names) to load,
+# usually to register additional checkers.
+load-plugins=
+ pylint.extensions.consider_refactoring_into_while_condition,
+ pylint.extensions.docparams,
+ pylint.extensions.dunder,
+ pylint.extensions.eq_without_hash,
+ pylint.extensions.no_self_use,
+ pylint.extensions.private_import,
+
 # Pickle collected data for later comparisons.
 persistent=no
 
