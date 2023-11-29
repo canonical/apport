@@ -744,7 +744,7 @@ class ProblemReport(collections.UserDict):
                 isinstance(v, tuple)
                 and (
                     len(v) == 1
-                    or (len(v) >= 2 and len(v) <= 4 and v[1] in (True, False))
+                    or (len(v) >= 2 and len(v) <= 4 and v[1] in {True, False})
                 )
                 and (hasattr(v[0], "isalnum") or hasattr(v[0], "read"))
             )

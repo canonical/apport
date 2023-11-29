@@ -854,7 +854,7 @@ int main() { return f(42); }
 
         pr.add_proc_info()
         pr.add_hooks_info()
-        if pr["Architecture"] in ["amd64", "i386"]:
+        if pr["Architecture"] in {"amd64", "i386"}:
             # data/general-hooks/parse_segv.py only runs for x86 and x86_64
             self.assertIn("not located in a known VMA region", pr["SegvAnalysis"])
 

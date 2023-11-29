@@ -88,7 +88,7 @@ def needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose=Fals
             if not line.strip():
                 continue
             cols = line.split()
-            if len(cols) in (6, 7) and "x" in cols[1] and ".so" in cols[5]:
+            if len(cols) in {6, 7} and "x" in cols[1] and ".so" in cols[5]:
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
     else:

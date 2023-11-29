@@ -140,7 +140,7 @@ class ParseSegv:
                 logging.debug("dest: %s", dest)
 
         # Set up possible implicit memory destinations (stack actions)
-        if insn in ["push", "pop", "pushl", "popl", "call", "callq", "ret", "retq"]:
+        if insn in {"push", "pop", "pushl", "popl", "call", "callq", "ret", "retq"}:
             for reg in ("rsp", "esp"):
                 if reg in self.regs:
                     dest = f"(%{reg})"
@@ -292,7 +292,7 @@ class ParseSegv:
             reason.append(short)
             understood = True
 
-        if self.insn in ["lea", "leal"]:
+        if self.insn in {"lea", "leal"}:
             # Short-circuit for instructions that do not cause vma access
             details.append(f"insn ({self.insn}) does not access VMA")
         else:
@@ -300,7 +300,7 @@ class ParseSegv:
             if self.src:
                 if (
                     ":" not in self.src
-                    and (self.src[0] in ["%", "$", "*"])
+                    and (self.src[0] in {"%", "$", "*"})
                     and not self.src.startswith("*%")
                 ):
                     details.append(f'source "{self.src}" ok')
@@ -316,7 +316,7 @@ class ParseSegv:
 
             # Verify destination is writable
             if self.dest:
-                if ":" not in self.dest and (self.dest[0] in ["%", "$", "*"]):
+                if ":" not in self.dest and (self.dest[0] in {"%", "$", "*"}):
                     details.append(f'destination "{self.dest}" ok')
                 else:
                     addr = self.calculate_arg(self.dest)
@@ -329,7 +329,7 @@ class ParseSegv:
                         understood = True
 
         # Handle I/O port operations
-        if self.insn in ["out", "in"] and not understood:
+        if self.insn in {"out", "in"} and not understood:
             msg = (
                 f"disallowed I/O port operation"
                 f" on port {self.register_value(self.src)}"
@@ -374,7 +374,7 @@ def add_info(report):
             return
 
     # Only run on segv for x86 and x86_64...
-    if not report["Architecture"] in ["i386", "amd64"]:
+    if not report["Architecture"] in {"i386", "amd64"}:
         return
 
     try:
@@ -389,7 +389,7 @@ def add_info(report):
 
 # pylint: disable-next=missing-function-docstring
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] in ["-h", "--help"]:
+    if len(sys.argv) != 4 or sys.argv[1] in {"-h", "--help"}:
         print("To run self-test, run without any arguments (or with -v)")
         print("To do stand-alone crash parsing:")
         print(f"  Usage: {sys.argv[0]} Registers.txt Disassembly.txt ProcMaps.txt")
