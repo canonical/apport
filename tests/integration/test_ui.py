@@ -19,10 +19,10 @@ import subprocess
 import tempfile
 import textwrap
 import time
-import typing
 import unittest
 import unittest.mock
 import urllib.error
+from collections.abc import Generator
 from typing import Any, Optional
 from unittest.mock import MagicMock
 
@@ -282,7 +282,7 @@ class T(unittest.TestCase):
     @contextlib.contextmanager
     def _run_test_executable(
         self, exename: Optional[str] = None, env: Optional[dict[str, str]] = None
-    ) -> typing.Generator[int, None, None]:
+    ) -> Generator[int, None, None]:
         if not exename:
             exename = self.TEST_EXECUTABLE
 

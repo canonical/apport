@@ -27,6 +27,7 @@ import struct
 import time
 import typing
 import zlib
+from collections.abc import Generator, Iterable
 from typing import Optional, Union
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
@@ -126,7 +127,7 @@ class ProblemReport(collections.UserDict):
         # keeps track of keys which were added since the last ctor or load()
         self.old_keys: set[str] = set()
 
-    def add_tags(self, tags: typing.Iterable[str]) -> None:
+    def add_tags(self, tags: Iterable[str]) -> None:
         """Add tags to the report. Duplicates are dropped."""
         current_tags = self.get_tags()
         new_tags = current_tags.union(tags)
@@ -459,7 +460,7 @@ class ProblemReport(collections.UserDict):
 
     @staticmethod
     def _write_binary_item_base64_encoded(
-        file: typing.BinaryIO, key: str, chunks: typing.Iterable[bytes]
+        file: typing.BinaryIO, key: str, chunks: Iterable[bytes]
     ) -> None:
         """Write out binary chunks as a base64-encoded RFC822 multiline field."""
         reset_position = file.tell()
@@ -474,9 +475,7 @@ class ProblemReport(collections.UserDict):
             file.truncate(reset_position)
             raise
 
-    def _generate_compressed_chunks(
-        self, key: str
-    ) -> typing.Generator[bytes, None, None]:
+    def _generate_compressed_chunks(self, key: str) -> Generator[bytes, None, None]:
         """Generator taking the value out of self.data and outputing it
         in compressed chunks of binary data.
 

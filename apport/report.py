@@ -31,14 +31,14 @@ import subprocess
 import sys
 import tempfile
 import traceback
-import typing
 import urllib.error
 import urllib.parse
 import urllib.request
 import xml.dom
 import xml.dom.minidom
 import xml.parsers.expat
-from typing import Iterable, Optional, Union
+from collections.abc import Iterable, Iterator
+from typing import Optional, Union
 
 import apport.fileutils
 import apport.logging
@@ -93,7 +93,7 @@ def _transitive_dependencies(package, depends_set):
             _transitive_dependencies(d, depends_set)
 
 
-def _read_list_files_in_directory(directory: str) -> typing.Iterator[str]:
+def _read_list_files_in_directory(directory: str) -> Iterator[str]:
     """Read every file in the directory and return each stripped line."""
     try:
         for list_file in pathlib.Path(directory).iterdir():
@@ -313,7 +313,7 @@ class _Environment(dict[str, str]):
         else:
             self["PATH"] = "(custom, no user)"
 
-    def anonymize_vars(self, keys: typing.Iterable[str]) -> None:
+    def anonymize_vars(self, keys: Iterable[str]) -> None:
         """Anonymize given environment variables if present."""
         for key in keys:
             if key in self:

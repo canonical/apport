@@ -2,7 +2,7 @@
 
 import os
 import pathlib
-import typing
+from collections.abc import Mapping
 from typing import Any, Optional
 
 _SRCDIR = pathlib.Path(__file__).absolute().parent.parent
@@ -38,7 +38,7 @@ def is_local_source_directory() -> bool:
     return os.path.isdir("tests") and os.path.exists("setup.py")
 
 
-def local_test_environment() -> typing.Mapping[str, str]:
+def local_test_environment() -> Mapping[str, str]:
     """Return needed environment variables when running tests locally."""
     if not is_local_source_directory():
         return {}
@@ -50,7 +50,7 @@ def local_test_environment() -> typing.Mapping[str, str]:
     }
 
 
-def patch_data_dir(report: Any) -> Optional[typing.Mapping[str, str]]:
+def patch_data_dir(report: Any) -> Optional[Mapping[str, str]]:
     """Patch APPORT_DATA_DIR in apport.report for local tests."""
     if not is_local_source_directory():
         return None
@@ -70,7 +70,7 @@ def patch_data_dir(report: Any) -> Optional[typing.Mapping[str, str]]:
     return orig
 
 
-def restore_data_dir(report: Any, orig: Optional[typing.Mapping[str, str]]) -> None:
+def restore_data_dir(report: Any, orig: Optional[Mapping[str, str]]) -> None:
     """Restore APPORT_DATA_DIR in apport.report from local tests.
 
     The parameter orig is the result from the patch_data_dir() call.

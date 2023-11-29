@@ -29,6 +29,7 @@ import textwrap
 import time
 import typing
 import unittest
+from collections.abc import Callable
 from typing import Optional
 from unittest.mock import MagicMock
 
@@ -949,7 +950,7 @@ class T(unittest.TestCase):
         expect_corefile_owner: Optional[str] = None,
         args: Optional[list[str]] = None,
         suid_dumpable: int = 1,
-        hook_before_apport: Optional[typing.Callable] = None,
+        hook_before_apport: Optional[Callable] = None,
         expect_report: bool = True,
         via_socket: bool = False,
     ) -> None:

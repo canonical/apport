@@ -8,10 +8,10 @@ import os
 import pathlib
 import shutil
 import subprocess
-import typing
 import unittest.mock
 import urllib.error
 import urllib.request
+from collections.abc import Callable, Generator
 from typing import Any, Optional
 from unittest.mock import MagicMock
 
@@ -84,7 +84,7 @@ def _id(obj):
     return obj
 
 
-def skip_if_command_is_missing(cmd: str) -> typing.Callable:
+def skip_if_command_is_missing(cmd: str) -> Callable:
     """Skip a test if the command is not found."""
     if shutil.which(cmd) is None:
         return unittest.skip(f"{cmd} not installed")
@@ -94,7 +94,7 @@ def skip_if_command_is_missing(cmd: str) -> typing.Callable:
 @contextlib.contextmanager
 def wrap_object(
     target: object, attribute: str, include_instance: bool = False
-) -> typing.Generator[MagicMock, None, None]:
+) -> Generator[MagicMock, None, None]:
     """Wrap the named member on an object with a mock object.
 
     wrap_object() can be used as a context manager. Inside the
