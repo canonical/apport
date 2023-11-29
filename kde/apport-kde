@@ -20,7 +20,6 @@ import shutil
 import subprocess
 import sys
 from gettext import gettext as _
-from typing import Optional
 
 import apport.logging
 import apport.ui
@@ -121,7 +120,7 @@ class ProgressDialog(Dialog):
         if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
             sys.exit(0)
 
-    def set(self, value: Optional[float] = None) -> None:
+    def set(self, value: (float | None) = None) -> None:
         progress = self.findChild(QProgressBar, "progress")
         assert isinstance(progress, QProgressBar)
         if not value:
@@ -359,8 +358,8 @@ class MainUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self, argv)
         self.ui_data_path = os.path.dirname(argv[0])
         # Help unit tests get at the dialog.
-        self.dialog: Optional[ReportDialog] = None
-        self.progress: Optional[ProgressDialog] = None
+        self.dialog: (ReportDialog | None) = None
+        self.progress: (ProgressDialog | None) = None
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -398,7 +397,7 @@ class MainUserInterface(apport.ui.UserInterface):
                 QTreeWidgetItem(keyitem, [_("(binary data)")])
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
+        self, allowed_to_report: bool = True, modal_for: (str | None) = None
     ) -> apport.ui.Action:
         desktop_info = self.get_desktop_entry()
         self.dialog = ReportDialog(self.report, allowed_to_report, self, desktop_info)
@@ -500,7 +499,7 @@ class MainUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: (float | None)) -> None:
         assert self.progress
         if progress:
             self.progress.set(progress)

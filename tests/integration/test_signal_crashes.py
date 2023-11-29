@@ -30,7 +30,6 @@ import time
 import typing
 import unittest
 from collections.abc import Callable
-from typing import Optional
 from unittest.mock import MagicMock
 
 import psutil
@@ -814,9 +813,7 @@ class T(unittest.TestCase):
         orig_os_open = os.open
 
         def _mocked_os_open(
-            path: typing.Union[str, os.PathLike[str]],
-            flags: int,
-            dir_fd: Optional[int] = None,
+            path: (str | os.PathLike[str]), flags: int, dir_fd: (int | None) = None
         ) -> int:
             if path == "root/run/apport.socket":
                 return orig_os_open(socket_path, flags)
@@ -886,7 +883,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(gdb.stdout.strip(), "")
 
     def _check_report(
-        self, expect_report: bool = True, expected_owner: Optional[int] = None
+        self, expect_report: bool = True, expected_owner: (int | None) = None
     ) -> None:
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
@@ -944,13 +941,13 @@ class T(unittest.TestCase):
         self,
         expect_corefile: bool = False,
         sig: int = signal.SIGSEGV,
-        command: Optional[str] = None,
-        expected_command: Optional[str] = None,
-        uid: Optional[int] = None,
-        expect_corefile_owner: Optional[str] = None,
-        args: Optional[list[str]] = None,
+        command: (str | None) = None,
+        expected_command: (str | None) = None,
+        uid: (int | None) = None,
+        expect_corefile_owner: (str | None) = None,
+        args: (list[str] | None) = None,
         suid_dumpable: int = 1,
-        hook_before_apport: Optional[Callable] = None,
+        hook_before_apport: (Callable | None) = None,
         expect_report: bool = True,
         via_socket: bool = False,
     ) -> None:

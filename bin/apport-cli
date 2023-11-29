@@ -26,7 +26,6 @@ import sys
 import tempfile
 import termios
 from gettext import gettext as _
-from typing import Optional
 
 import apport.ui
 
@@ -214,7 +213,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         return report_file
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
+        self, allowed_to_report: bool = True, modal_for: (str | None) = None
     ) -> apport.ui.Action:
         dialog = CLIDialog(
             _("Send problem report to the developers?"),
@@ -306,7 +305,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: (float | None)) -> None:
         assert self.progress is not None
         self.progress.set(progress)
 

@@ -43,7 +43,6 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional
 
 import apt
 import apt_pkg
@@ -1625,7 +1624,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def _analyze_ppa_origin_string(
         self, origin: str, distro: str
-    ) -> Optional[tuple[str, str]]:
+    ) -> tuple[str, str] | None:
         if not origin.startswith("LP-PPA-"):
             return None
 
@@ -1666,7 +1665,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     # pylint: disable-next=no-member
     def create_ppa_source_from_origin(
         self, origin: str, distro: str, release_codename: str
-    ) -> Optional[list[apt_sl.Deb822SourceEntry | SourceEntry]]:
+    ) -> list[apt_sl.Deb822SourceEntry | SourceEntry] | None:
         """For an origin from a Launchpad PPA create sources.list content.
 
         distro is the distribution for which content is being created e.g.
@@ -1723,7 +1722,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             ]
 
     @staticmethod
-    def _find_source_file_from_origin(origin: str, src_list_d: str) -> Optional[str]:
+    def _find_source_file_from_origin(origin: str, src_list_d: str) -> str | None:
         """Find a possible source file matching the Origin field of a
         given package (i.e. a PPA)"""
         if os.path.isdir(src_list_d):

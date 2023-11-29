@@ -14,7 +14,6 @@ import shutil
 import subprocess
 import tempfile
 import unittest
-from typing import Optional
 
 from apport.crashdb_impl.memory import CrashDatabase
 from tests.paths import local_test_environment
@@ -41,7 +40,7 @@ class TestDupdbAdmin(unittest.TestCase):
         self,
         args: list,
         expected_returncode: int = 0,
-        expected_stdout: Optional[str] = "",
+        expected_stdout: (str | None) = "",
     ) -> tuple[str, str]:
         cmd = ["dupdb-admin", "-f", self.db_file] + args
         process = subprocess.run(

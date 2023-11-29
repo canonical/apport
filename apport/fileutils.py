@@ -27,8 +27,6 @@ import socket
 import stat
 import subprocess
 import time
-import typing
-from typing import Optional
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -575,7 +573,7 @@ def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
     Raises an OSError in case the environ file could not been read.
     """
 
-    def opener(path: typing.Union[str, os.PathLike[str]], flags: int) -> int:
+    def opener(path: (str | os.PathLike[str]), flags: int) -> int:
         return os.open(path, flags, dir_fd=proc_pid_fd)
 
     with open(
@@ -697,7 +695,7 @@ def shared_libraries(path):
     return libs
 
 
-def should_skip_crash(report: ProblemReport, filename: str) -> Optional[str]:
+def should_skip_crash(report: ProblemReport, filename: str) -> str | None:
     """Check if the crash should be skipped for flood protection.
 
     In case the crash should be skipped return a string with the reason.

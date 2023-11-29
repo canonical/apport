@@ -19,7 +19,6 @@ import re
 import subprocess
 import sys
 from gettext import gettext as _
-from typing import Optional
 
 import apport
 import apport.ui
@@ -231,7 +230,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         gdk_window.set_modal_hint(True)
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: Optional[str] = None
+        self, allowed_to_report: bool = True, modal_for: (str | None) = None
     ) -> apport.ui.Action:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -479,7 +478,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_set_upload_progress(self, progress: Optional[float]) -> None:
+    def ui_set_upload_progress(self, progress: (float | None)) -> None:
         """Set the progress bar in the debug data upload progress
         window to the given ratio (between 0 and 1, or None for indefinite
         progress).

@@ -54,7 +54,7 @@ class install_java(Command):
 
     def initialize_options(self) -> None:
         """Set default values for all the options that this command supports."""
-        self.install_dir: typing.Optional[str] = None
+        self.install_dir: (str | None) = None
 
     def finalize_options(self) -> None:
         """Set final values for all the options that this command supports."""
