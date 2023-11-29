@@ -711,3 +711,73 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         assert compressed_value.compressed_value is not None
         base64_encoded = base64.b64encode(compressed_value.compressed_value)
         self.assertEqual(compressed_value.get_on_disk_size(), len(base64_encoded))
+
+
+class TestEntryParser(unittest.TestCase):
+    # pylint: disable=protected-access
+    """Test _EntryParser class."""
+
+    def test_parse(self) -> None:
+        """Test parsing a report file with _EntryParser."""
+        report_file = io.BytesIO(
+            textwrap.dedent(
+                """\
+                First: single line
+                Second: multi
+                 line
+                """
+            ).encode()
+        )
+        entries = []
+        for entry in problem_report._EntryParser(report_file):
+            entries.append(list(entry))
+        self.assertEqual(
+            entries, [[b"First: single line\n"], [b"Second: multi\n", b" line\n"]]
+        )
+
+    def test_skip_entries(self) -> None:
+        """Test skipping reading one entry."""
+        report_file = io.BytesIO(
+            textwrap.dedent(
+                """\
+                First: this entry
+                 will be skipped
+                Second: single line
+                """
+            ).encode()
+        )
+        iterator = problem_report._EntryParser(report_file)
+        next(iterator)
+        self.assertEqual(list(next(iterator)), [b"Second: single line\n"])
+
+    def test_skip_partial_entries(self) -> None:
+        """Test skipping reading one entry."""
+        report_file = io.BytesIO(
+            textwrap.dedent(
+                """\
+                First: this line is read,
+                 but these lines
+                 will be skipped
+                Second: single line
+                """
+            ).encode()
+        )
+        iterator = problem_report._EntryParser(report_file)
+        self.assertEqual(next(next(iterator)), b"First: this line is read,\n")
+        self.assertEqual(list(next(iterator)), [b"Second: single line\n"])
+
+    def test_skip_last_entry(self) -> None:
+        """Test skipping reading the last entry."""
+        report_file = io.BytesIO(
+            textwrap.dedent(
+                """\
+                First: this line is read
+                Second: this line is skipped
+                """
+            ).encode()
+        )
+        iterator = problem_report._EntryParser(report_file)
+        self.assertEqual(list(next(iterator)), [b"First: this line is read\n"])
+        next(iterator)
+        with self.assertRaises(StopIteration):
+            next(iterator)
