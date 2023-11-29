@@ -10,6 +10,7 @@ extension-pkg-whitelist=apt_pkg  # wokeignore:rule=whitelist
 # usually to register additional checkers.
 load-plugins=
  pylint.extensions.consider_refactoring_into_while_condition,
+ pylint.extensions.dict_init_mutate,
  pylint.extensions.docparams,
  pylint.extensions.dunder,
  pylint.extensions.eq_without_hash,

@@ -639,10 +639,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["oldbin"] = bin_data
         pr["overwrite"] = "I am crap"
 
-        d = {}
-        d["newtext"] = "Goodbye world"
-        d["newbin"] = "11\000\001\002\xFFZZ"
-        d["overwrite"] = "I am good"
+        d = {
+            "newtext": "Goodbye world",
+            "newbin": "11\000\001\002\xFFZZ",
+            "overwrite": "I am good",
+        }
 
         pr.update(d)
         self.assertEqual(pr["oldtext"], "Hello world")
