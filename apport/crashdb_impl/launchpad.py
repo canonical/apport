@@ -891,9 +891,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             master.tags = master_tags
             master.lp_save()
 
-        else:
-            if bug.duplicate_of:
-                bug.duplicate_of = None
+        elif bug.duplicate_of:
+            bug.duplicate_of = None
 
         # pylint: disable=protected-access
         if bug._dirty_attributes:  # LP#336866 workaround
@@ -951,11 +950,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         a.removeFromBug()
                     except HTTPError:
                         pass  # LP#249950 workaround
-        else:
-            if "apport-failed-retrace" not in bug.tags:
-                # LP#254901 workaround
-                bug.tags = bug.tags + ["apport-failed-retrace"]
-                bug.lp_save()
+        elif "apport-failed-retrace" not in bug.tags:
+            # LP#254901 workaround
+            bug.tags = bug.tags + ["apport-failed-retrace"]
+            bug.lp_save()
 
     def _mark_dup_checked(self, crash_id, report):
         """Mark crash id as checked for being a duplicate."""

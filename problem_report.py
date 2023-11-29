@@ -319,24 +319,22 @@ class ProblemReport(collections.UserDict):
             raise MalformedProblemReport(str(error)) from None
         if decompressor:
             value += decompressor.decompress(block)
+        elif isinstance(value, CompressedValue):
+            # check gzip header; if absent, we have legacy zlib
+            # data
+            if value.gzipvalue == b"" and not block.startswith(GZIP_HEADER_START):
+                value.legacy_zlib = True
+            value.gzipvalue += block
+        # lazy initialization of decompressor
+        # skip gzip header, if present
+        elif block.startswith(GZIP_HEADER_START):
+            decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
+            value = decompressor.decompress(cls._strip_gzip_header(block))
         else:
-            if isinstance(value, CompressedValue):
-                # check gzip header; if absent, we have legacy zlib
-                # data
-                if value.gzipvalue == b"" and not block.startswith(GZIP_HEADER_START):
-                    value.legacy_zlib = True
-                value.gzipvalue += block
-            else:
-                # lazy initialization of decompressor
-                # skip gzip header, if present
-                if block.startswith(GZIP_HEADER_START):
-                    decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
-                    value = decompressor.decompress(cls._strip_gzip_header(block))
-                else:
-                    # legacy zlib-only format used default block
-                    # size
-                    decompressor = zlib.decompressobj()
-                    value += decompressor.decompress(block)
+            # legacy zlib-only format used default block
+            # size
+            decompressor = zlib.decompressobj()
+            value += decompressor.decompress(block)
 
         return decompressor, value
 
@@ -404,12 +402,11 @@ class ProblemReport(collections.UserDict):
                     binkeys.append(k)
                 else:
                     asckeys.append(k)
+            elif not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]:
+                # force uncompressed
+                asckeys.append(k)
             else:
-                if not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]:
-                    # force uncompressed
-                    asckeys.append(k)
-                else:
-                    binkeys.append(k)
+                binkeys.append(k)
 
         asckeys.sort()
         if "ProblemType" in asckeys:
