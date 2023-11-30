@@ -79,11 +79,12 @@ def main() -> None:
                 key_file.write(value.encode("UTF-8"))
             else:
                 key_file.write(value)
-    try:
-        with open_report(args.report) as report_file:
-            report.extract_keys(report_file, bin_keys, args.target_directory)
-    except (OSError, problem_report.MalformedProblemReport) as error:
-        fatal("%s", str(error))
+    if bin_keys:
+        try:
+            with open_report(args.report) as report_file:
+                report.extract_keys(report_file, bin_keys, args.target_directory)
+        except (OSError, problem_report.MalformedProblemReport) as error:
+            fatal("%s", str(error))
 
 
 if __name__ == "__main__":
