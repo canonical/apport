@@ -54,6 +54,26 @@ def open_report(report_filename: str) -> Iterator[(BinaryIO | gzip.GzipFile)]:
             yield report_file
 
 
+def unpack_report_to_directory(
+    report: problem_report.ProblemReport, target_directory: str
+) -> list[str]:
+    """Write each report entry into a separate file.
+
+    Return a list of keys that were not loaded.
+    """
+    missing_keys = []
+    for key, value in report.items():
+        if value is None:
+            missing_keys.append(key)
+            continue
+        with open(os.path.join(target_directory, key), "wb") as key_file:
+            if isinstance(value, str):
+                key_file.write(value.encode("UTF-8"))
+            else:
+                key_file.write(value)
+    return missing_keys
+
+
 # pylint: disable-next=missing-function-docstring
 def main() -> None:
     gettext.textdomain("apport")
@@ -70,7 +90,6 @@ def main() -> None:
         fatal("%s", str(error))
 
     report = problem_report.ProblemReport()
-    bin_keys = []
     try:
         with open_report(args.report) as report_file:
             # In case of passing the report to stdin,
@@ -79,15 +98,7 @@ def main() -> None:
             report.load(report_file, binary=args.report == "-")
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
-    for key, value in report.items():
-        if value is None:
-            bin_keys.append(key)
-            continue
-        with open(os.path.join(args.target_directory, key), "wb") as key_file:
-            if isinstance(value, str):
-                key_file.write(value.encode("UTF-8"))
-            else:
-                key_file.write(value)
+    bin_keys = unpack_report_to_directory(report, args.target_directory)
     if bin_keys:
         try:
             with open_report(args.report) as report_file:
