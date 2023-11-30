@@ -16,6 +16,7 @@ empty directory."""
 # pylint: enable=invalid-name
 
 import argparse
+import contextlib
 import gettext
 import gzip
 import os
@@ -34,18 +35,17 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_report(report_filename: str) -> problem_report.ProblemReport:
-    """Load problem report from given filename."""
-    report = problem_report.ProblemReport()
+@contextlib.contextmanager
+def open_report(report_filename):
+    """Open a problem report from given filename."""
     if report_filename == "-":
-        report.load(sys.stdin, binary=False)
+        yield sys.stdin
     elif report_filename.endswith(".gz"):
         with gzip.open(report_filename, "rb") as report_file:
-            report.load(report_file, binary=False)
+            yield report_file
     else:
         with open(report_filename, "rb") as report_file:
-            report.load(report_file, binary=False)
-    return report
+            yield report_file
 
 
 # pylint: disable-next=missing-function-docstring
@@ -63,9 +63,11 @@ def main() -> None:
     except OSError as error:
         fatal("%s", str(error))
 
+    report = problem_report.ProblemReport()
     bin_keys = []
     try:
-        report = load_report(args.report)
+        with open_report(args.report) as report_file:
+            report.load(report_file, binary=False)
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
     for key, value in report.items():
@@ -78,12 +80,8 @@ def main() -> None:
             else:
                 key_file.write(value)
     try:
-        if args.report.endswith(".gz"):
-            with gzip.open(args.report, "rb") as key_file:
-                report.extract_keys(key_file, bin_keys, args.target_directory)
-        else:
-            with open(args.report, "rb") as key_file:
-                report.extract_keys(key_file, bin_keys, args.target_directory)
+        with open_report(args.report) as report_file:
+            report.extract_keys(report_file, bin_keys, args.target_directory)
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
 
