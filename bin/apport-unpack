@@ -19,9 +19,12 @@ import argparse
 import contextlib
 import gettext
 import gzip
+import io
 import os
 import sys
+from collections.abc import Iterator
 from gettext import gettext as _
+from typing import BinaryIO
 
 import problem_report
 from apport import fatal
@@ -36,10 +39,13 @@ def parse_args() -> argparse.Namespace:
 
 
 @contextlib.contextmanager
-def open_report(report_filename):
+def open_report(report_filename: str) -> Iterator[(BinaryIO | gzip.GzipFile)]:
     """Open a problem report from given filename."""
     if report_filename == "-":
-        yield sys.stdin
+        # sys.stdin has type io.TextIOWrapper, not the claimed io.TextIO.
+        # See https://github.com/python/typeshed/issues/10093
+        assert isinstance(sys.stdin, io.TextIOWrapper)
+        yield sys.stdin.detach()
     elif report_filename.endswith(".gz"):
         with gzip.open(report_filename, "rb") as report_file:
             yield report_file
@@ -67,7 +73,10 @@ def main() -> None:
     bin_keys = []
     try:
         with open_report(args.report) as report_file:
-            report.load(report_file, binary=False)
+            # In case of passing the report to stdin,
+            # the report needs to be loaded in one go.
+            # The current implementation loads the whole report into memory.
+            report.load(report_file, binary=args.report == "-")
     except (OSError, problem_report.MalformedProblemReport) as error:
         fatal("%s", str(error))
     for key, value in report.items():

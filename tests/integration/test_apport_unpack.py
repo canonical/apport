@@ -64,6 +64,27 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(self._get_unpack("binary"), self.bindata)
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
+    def test_unpack_stdin(self):
+        """apport-unpack unpacks report from stdin"""
+        with open(self.report_file, "rb") as report_file:
+            process = subprocess.run(
+                ["apport-unpack", "-", self.unpack_dir],
+                check=False,
+                env=self.env,
+                stdin=report_file,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+
+        self.assertEqual(process.stderr, b"", process.stderr.decode())
+        self.assertEqual(process.stdout, b"", process.stdout.decode())
+        self.assertEqual(process.returncode, 0)
+
+        self.assertEqual(self._get_unpack("utf8"), self.utf8_str)
+        self.assertEqual(self._get_unpack("unicode"), self.utf8_str)
+        self.assertEqual(self._get_unpack("binary"), self.bindata)
+        self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
+
     def test_help(self):
         """Call apport-unpack with --help."""
         process = self._call_apport_unpack(["--help"])
