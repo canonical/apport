@@ -26,7 +26,7 @@ import problem_report
 from apport import fatal
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(usage=_("%(prog)s <report> <target directory>"))
     parser.add_argument("report", help=_("Report file to unpack"))
@@ -49,7 +49,7 @@ def load_report(report_filename: str) -> problem_report.ProblemReport:
 
 
 # pylint: disable-next=missing-function-docstring
-def main():
+def main() -> None:
     gettext.textdomain("apport")
     args = parse_args()
 
