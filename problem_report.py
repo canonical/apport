@@ -52,26 +52,24 @@ class _SizeLimitExceeded(RuntimeError):
 
 
 class CompressedValue:
-    """Represent a ProblemReport value which is gzip compressed."""
+    """Represent a ProblemReport value which is gzip compressed.
+
+    By default, compressed values are in gzip format. Earlier versions of
+    problem_report used zlib format (without gzip header).
+    """
 
     def __init__(self, value=None, name=None):
         """Initialize an empty CompressedValue object with an optional name."""
         self.gzipvalue = None
         self.name = name
-        # By default, compressed values are in gzip format. Earlier versions of
-        # problem_report used zlib format (without gzip header). If you have
-        # such a case, set legacy_zlib to True.
-        self.legacy_zlib = False
-
         if value:
             self.set_value(value)
 
-    def set_value(self, value):
+    def set_value(self, value: bytes) -> None:
         """Set uncompressed value."""
         out = io.BytesIO()
         gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
         self.gzipvalue = out.getvalue()
-        self.legacy_zlib = False
 
     def get_on_disk_size(self) -> int:
         """Return the size needed on disk to store the compressed value.
@@ -82,36 +80,39 @@ class CompressedValue:
         """
         return ((len(self.gzipvalue) + 2) // 3) * 4
 
-    def get_value(self):
+    def get_value(self) -> bytes | None:
         """Return uncompressed value."""
         if not self.gzipvalue:
             return None
 
-        if self.legacy_zlib:
-            return zlib.decompress(self.gzipvalue)
-        return gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue)).read()
+        if self.gzipvalue.startswith(GZIP_HEADER_START):
+            return gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue)).read()
+        # legacy zlib format
+        return zlib.decompress(self.gzipvalue)
 
-    def write(self, file):
+    def write(self, file: typing.BinaryIO) -> None:
         """Write uncompressed value into given file-like object."""
         assert self.gzipvalue
 
-        if self.legacy_zlib:
-            file.write(zlib.decompress(self.gzipvalue))
+        if self.gzipvalue.startswith(GZIP_HEADER_START):
+            gz = gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue))
+            while True:
+                block = gz.read(1048576)
+                if not block:
+                    break
+                file.write(block)
             return
 
-        gz = gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue))
-        while True:
-            block = gz.read(1048576)
-            if not block:
-                break
-            file.write(block)
+        # legacy zlib format
+        file.write(zlib.decompress(self.gzipvalue))
 
     def __len__(self):
         """Return length of uncompressed value."""
         assert self.gzipvalue
-        if self.legacy_zlib:
-            return len(self.get_value())
-        return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
+        if self.gzipvalue.startswith(GZIP_HEADER_START):
+            return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
+        # legacy zlib format
+        return len(self.get_value())
 
     def splitlines(self):
         """Behaves like splitlines() for a normal string."""
@@ -329,10 +330,6 @@ class ProblemReport(collections.UserDict):
         if decompressor:
             value += decompressor.decompress(block)
         elif isinstance(value, CompressedValue):
-            # check gzip header; if absent, we have legacy zlib
-            # data
-            if value.gzipvalue == b"" and not block.startswith(GZIP_HEADER_START):
-                value.legacy_zlib = True
             value.gzipvalue += block
         # lazy initialization of decompressor
         # skip gzip header, if present
