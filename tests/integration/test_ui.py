@@ -52,7 +52,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
-    def __init__(self, argv: (list[str] | None) = None):
+    def __init__(self, argv: (list[str] | None) = None) -> None:
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
@@ -92,20 +92,20 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
 
         # store last message box
-        self.msg_title = None
-        self.msg_text = None
-        self.msg_severity = None
-        self.msg_choices = None
+        self.msg_title: (str | None) = None
+        self.msg_text: (str | None) = None
+        self.msg_severity: (str | None) = None
+        self.msg_choices: (list[str] | None) = None
 
         # these store the choices the ui_present_* calls do
         self.present_package_error_response = None
         self.present_kernel_error_response = None
-        self.present_details_response = None
-        self.question_yesno_response = None
-        self.question_choice_response = None
-        self.question_file_response = None
+        self.present_details_response: (apport.ui.Action | None) = None
+        self.question_yesno_response: (bool | None) = None
+        self.question_choice_response: (list[int] | None) = None
+        self.question_file_response: (str | None) = None
 
-        self.opened_url = None
+        self.opened_url: (str | None) = None
         self.present_details_shown = False
 
         self.clear_msg()
