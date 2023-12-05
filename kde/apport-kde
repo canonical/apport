@@ -393,7 +393,9 @@ class MainUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def ui_update_view(self, dialog, shown_keys=None):
+    def ui_update_view(
+        self, dialog: ReportDialog, shown_keys: (list[str] | None) = None
+    ) -> None:
         assert self.report
         # report contents
         details = dialog.findChild(QTreeWidget, "details")
@@ -404,11 +406,7 @@ class MainUserInterface(apport.ui.UserInterface):
             details.addTopLevelItem(keyitem)
 
             # string value
-            if (
-                not hasattr(value, "gzipvalue")
-                and hasattr(value, "isspace")
-                and not self.report.is_binary(value)
-            ):
+            if isinstance(value, str):
                 lines = value.splitlines()
                 for line in lines:
                     QTreeWidgetItem(keyitem, [str(line)])
