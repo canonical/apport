@@ -79,18 +79,21 @@ class Dialog(QDialog):
         uic.loadUi(os.path.join(ui_data_path, ui), self)
 
         self.setWindowTitle(title)
-        if self.findChild(QLabel, "heading"):
-            self.findChild(QLabel, "heading").setText(f"<h2>{heading}</h2>")
-        self.findChild(QLabel, "text").setText(text)
+        heading_label = self.findChild(QLabel, "heading")
+        if isinstance(heading_label, QLabel):
+            heading_label.setText(f"<h2>{heading}</h2>")
+        text_label = self.findChild(QLabel, "text")
+        assert isinstance(text_label, QLabel)
+        text_label.setText(text)
 
     def on_buttons_clicked(self, button):
         if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
             button.window().done(2)
 
-    def addbutton(self, button):
-        return self.findChild(QDialogButtonBox, "buttons").addButton(
-            button, QDialogButtonBox.ActionRole
-        )
+    def addbutton(self, button: str) -> QPushButton:
+        button_box = self.findChild(QDialogButtonBox, "buttons")
+        assert isinstance(button_box, QDialogButtonBox)
+        return button_box.addButton(button, QDialogButtonBox.ActionRole)
 
 
 class ChoicesDialog(Dialog):
@@ -144,22 +147,32 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
             self, ui.ui_data_path, "bugreport.ui", distro.split()[0], "", ""
         )
         self.details = self.findChild(QPushButton, "show_details")
+        assert isinstance(self.details, QPushButton)
         self.details.clicked.connect(self.on_show_details_clicked)
         self.continue_button = self.findChild(QPushButton, "continue_button")
+        assert isinstance(self.continue_button, QPushButton)
         self.continue_button.clicked.connect(self.on_continue_clicked)
         self.closed_button = self.findChild(QPushButton, "closed_button")
+        assert isinstance(self.closed_button, QPushButton)
         self.closed_button.clicked.connect(self.on_closed_clicked)
         self.examine_button = self.findChild(QPushButton, "examine_button")
+        assert isinstance(self.examine_button, QPushButton)
         self.examine_button.clicked.connect(self.on_examine_clicked)
         self.cancel_button = self.findChild(QPushButton, "cancel_button")
+        assert isinstance(self.cancel_button, QPushButton)
         self.cancel_button.clicked.connect(self.on_cancel_button_clicked)
         self.treeview = self.findChild(QTreeWidget, "details")
+        assert isinstance(self.treeview, QTreeWidget)
         self.send_error_report = self.findChild(QCheckBox, "send_error_report")
+        assert isinstance(self.send_error_report, QCheckBox)
         self.ignore_future_problems = self.findChild(
             QCheckBox, "ignore_future_problems"
         )
+        assert isinstance(self.ignore_future_problems, QCheckBox)
         self.heading = self.findChild(QLabel, "heading")
+        assert isinstance(self.heading, QLabel)
         self.text = self.findChild(QLabel, "text")
+        assert isinstance(self.text, QLabel)
         self.ui = ui
         self.collect_called = False
         icon = None
@@ -342,8 +355,12 @@ class UserPassDialog(Dialog):
 
     def __init__(self, ui_data_path, title, text):
         Dialog.__init__(self, ui_data_path, "userpass.ui", title, None, text)
-        self.findChild(QLabel, "l_username").setText(_("Username:"))
-        self.findChild(QLabel, "l_password").setText(_("Password:"))
+        username_label = self.findChild(QLabel, "l_username")
+        assert isinstance(username_label, QLabel)
+        username_label.setText(_("Username:"))
+        password_label = self.findChild(QLabel, "l_password")
+        assert isinstance(password_label, QLabel)
+        password_label.setText(_("Password:"))
 
     def on_buttons_clicked(self, button):
         Dialog.on_buttons_clicked(self, button)
@@ -380,6 +397,7 @@ class MainUserInterface(apport.ui.UserInterface):
         assert self.report
         # report contents
         details = dialog.findChild(QTreeWidget, "details")
+        assert isinstance(details, QTreeWidget)
         details.clear()
         for key, value in self.report.sorted_items(shown_keys):
             keyitem = QTreeWidgetItem([key])
