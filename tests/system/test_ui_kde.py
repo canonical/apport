@@ -543,9 +543,10 @@ class T(unittest.TestCase):
             # try again
             QTimer.singleShot(200, show_details)  # pragma: no cover
 
-        def cont():
+        def cont() -> None:
             # wait until data collection is done and tree filled
             details = self.ui.dialog.findChild(QTreeWidget, "details")
+            assert isinstance(details, QTreeWidget)
             if details.topLevelItemCount() == 0:
                 QTimer.singleShot(200, cont)
                 return
@@ -742,11 +743,12 @@ class T(unittest.TestCase):
         self.assertFalse(self.ui.dialog.send_error_report.isVisible())
         self.assertFalse(self.ui.dialog.send_error_report.isChecked())
 
-    def test_ui_set_upload_progress(self):
+    def test_ui_set_upload_progress(self) -> None:
         self.ui.ui_start_upload_progress()
         try:
             self.ui.ui_set_upload_progress(0.5)
             progress = self.ui.progress.findChild(QProgressBar, "progress")
+            assert isinstance(progress, QProgressBar)
             self.assertEqual(progress.value(), 500)
         finally:
             self.ui.ui_stop_upload_progress()
