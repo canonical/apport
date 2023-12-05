@@ -1049,8 +1049,7 @@ class T(unittest.TestCase):
         r = apport.Report()
         r["ExecutablePath"] = self.TEST_EXECUTABLE
         r["Signal"] = "11"
-        r["CoreDump"] = problem_report.CompressedValue()
-        r["CoreDump"].gzipvalue = b"AAAAAAAA"
+        r["CoreDump"] = problem_report.CompressedValue(compressed_value=b"AAAAAAAA")
         r.add_user_info()
 
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")

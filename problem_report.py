@@ -58,9 +58,9 @@ class CompressedValue:
     problem_report used zlib format (without gzip header).
     """
 
-    def __init__(self, value=None, name=None):
+    def __init__(self, value=None, name=None, compressed_value=None):
         """Initialize an empty CompressedValue object with an optional name."""
-        self.gzipvalue = None
+        self.gzipvalue = compressed_value
         self.name = name
         if value:
             self.set_value(value)
@@ -222,8 +222,7 @@ class ProblemReport(collections.UserDict):
                 value = value.strip()
                 if value == b"base64":
                     if binary == "compressed":
-                        value = CompressedValue(name=key)
-                        value.gzipvalue = b""
+                        value = CompressedValue(name=key, compressed_value=b"")
                     else:
                         value = b""
                     b64_block = True
