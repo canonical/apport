@@ -1923,7 +1923,7 @@ class Report(problem_report.ProblemReport):
                 atexit.register(os.unlink, core)
                 os.write(fd, self["CoreDump"])
                 os.close(fd)
-            elif hasattr(self["CoreDump"], "gzipvalue"):
+            elif isinstance(self["CoreDump"], problem_report.CompressedValue):
                 (fd, core) = tempfile.mkstemp(prefix="apport_core_")
                 atexit.register(os.unlink, core)
                 os.close(fd)
