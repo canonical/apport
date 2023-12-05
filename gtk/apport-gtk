@@ -110,7 +110,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         spinner.hide()
         return spinner
 
-    def ui_update_view(self, shown_keys=None):
+    def ui_update_view(self, shown_keys: (list[str] | None) = None) -> None:
         assert self.report
 
         # do nothing if the dialog is already destroyed when the data
@@ -124,20 +124,10 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.tree_model.set_value(keyiter, 0, key)
 
             valiter = self.tree_model.insert_before(keyiter, None)
-            if (
-                not hasattr(value, "gzipvalue")
-                and hasattr(value, "isspace")
-                and not self.report.is_binary(value)
-            ):
+            if isinstance(value, str):
                 v = value
                 if len(v) > 4000:
-                    v = v[:4000]
-                    if isinstance(v, bytes):
-                        v += b"\n[...]"
-                    else:
-                        v += "\n[...]"
-                if isinstance(v, bytes):
-                    v = v.decode("UTF-8", errors="replace")
+                    v = v[:4000] + "\n[...]"
                 self.tree_model.set_value(valiter, 0, v)
                 # expand the row if the value has less than 5 lines
                 if len(list(filter(lambda c: c == "\n", value))) < 4:

@@ -151,7 +151,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.in_update_view = False
         self.progress = None
 
-    def _get_details(self):
+    def _get_details(self) -> str:
         """Build report string for display."""
         assert self.report
 
@@ -161,20 +161,13 @@ class CLIUserInterface(apport.ui.UserInterface):
             details += f"== {key} =================================\n"
             # string value
             keylen = len(value)
-            if (
-                not hasattr(value, "gzipvalue")
-                and hasattr(value, "isspace")
-                and not self.report.is_binary(value)
-                and keylen < max_show
-            ):
+            if isinstance(value, str) and keylen < max_show:
                 s = value
             elif keylen >= max_show:
                 s = _("(%i bytes)") % keylen
             else:
                 s = _("(binary data)")
 
-            if isinstance(s, bytes):
-                s = s.decode("UTF-8", errors="ignore")
             details += s
             details += "\n\n"
 
