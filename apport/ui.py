@@ -1265,9 +1265,7 @@ class UserInterface:
         for k in self.report:
             if self.report[k]:
                 try:
-                    # if we have a compressed value, take its size, but take
-                    # base64 overhead into account
-                    size += len(self.report[k].gzipvalue) * 8 / 6
+                    size += self.report[k].get_on_disk_size()
                 except AttributeError:
                     size += len(self.report[k])
         return size
@@ -1280,9 +1278,7 @@ class UserInterface:
             if k != "CoreDump":
                 if self.report[k]:
                     try:
-                        # if we have a compressed value, take its size,
-                        # but take base64 overhead into account
-                        size += len(self.report[k].gzipvalue) * 8 / 6
+                        size += self.report[k].get_on_disk_size()
                     except AttributeError:
                         size += len(self.report[k])
 
