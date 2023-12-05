@@ -3,6 +3,7 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import base64
 import email
 import io
 import locale
@@ -671,3 +672,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["DataYes"], "yesyes")
         self.assertEqual(pr["GoodFile"], bin_data)
         self.assertEqual(sorted(pr.keys()), ["DataYes", "GoodFile"])
+
+    def test_get_on_disk_size(self) -> None:
+        """Test CompressedValue.get_on_disk_size()."""
+        compressed_value = problem_report.CompressedValue(b"somedata")
+        self.assertEqual(len(compressed_value.gzipvalue), 28)
+        base64_encoded = base64.b64encode(compressed_value.gzipvalue)
+        self.assertEqual(compressed_value.get_on_disk_size(), len(base64_encoded))

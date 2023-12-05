@@ -73,6 +73,15 @@ class CompressedValue:
         self.gzipvalue = out.getvalue()
         self.legacy_zlib = False
 
+    def get_on_disk_size(self) -> int:
+        """Return the size needed on disk to store the compressed value.
+
+        The compressed value will be base64 encoded when written to disk
+        which adds an overhead of 1/3 plus up to 2 bytes of padding. Additional
+        spaces and newlines are ignored in this calculation.
+        """
+        return ((len(self.gzipvalue) + 2) // 3) * 4
+
     def get_value(self):
         """Return uncompressed value."""
         if not self.gzipvalue:
