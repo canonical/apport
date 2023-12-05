@@ -60,7 +60,7 @@ class CompressedValue:
 
     def __init__(self, value=None, name=None, compressed_value=None):
         """Initialize an empty CompressedValue object with an optional name."""
-        self.gzipvalue = compressed_value
+        self.compressed_value = compressed_value
         self.name = name
         if value:
             self.set_value(value)
@@ -69,7 +69,7 @@ class CompressedValue:
         """Set uncompressed value."""
         out = io.BytesIO()
         gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
-        self.gzipvalue = out.getvalue()
+        self.compressed_value = out.getvalue()
 
     def get_on_disk_size(self) -> int:
         """Return the size needed on disk to store the compressed value.
@@ -78,24 +78,24 @@ class CompressedValue:
         which adds an overhead of 1/3 plus up to 2 bytes of padding. Additional
         spaces and newlines are ignored in this calculation.
         """
-        return ((len(self.gzipvalue) + 2) // 3) * 4
+        return ((len(self.compressed_value) + 2) // 3) * 4
 
     def get_value(self) -> bytes | None:
         """Return uncompressed value."""
-        if not self.gzipvalue:
+        if not self.compressed_value:
             return None
 
-        if self.gzipvalue.startswith(GZIP_HEADER_START):
-            return gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue)).read()
+        if self.compressed_value.startswith(GZIP_HEADER_START):
+            return gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)).read()
         # legacy zlib format
-        return zlib.decompress(self.gzipvalue)
+        return zlib.decompress(self.compressed_value)
 
     def write(self, file: typing.BinaryIO) -> None:
         """Write uncompressed value into given file-like object."""
-        assert self.gzipvalue
+        assert self.compressed_value
 
-        if self.gzipvalue.startswith(GZIP_HEADER_START):
-            gz = gzip.GzipFile(fileobj=io.BytesIO(self.gzipvalue))
+        if self.compressed_value.startswith(GZIP_HEADER_START):
+            gz = gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value))
             while True:
                 block = gz.read(1048576)
                 if not block:
@@ -104,13 +104,13 @@ class CompressedValue:
             return
 
         # legacy zlib format
-        file.write(zlib.decompress(self.gzipvalue))
+        file.write(zlib.decompress(self.compressed_value))
 
     def __len__(self):
         """Return length of uncompressed value."""
-        assert self.gzipvalue
-        if self.gzipvalue.startswith(GZIP_HEADER_START):
-            return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
+        assert self.compressed_value
+        if self.compressed_value.startswith(GZIP_HEADER_START):
+            return int(struct.unpack("<L", self.compressed_value[-4:])[0])
         # legacy zlib format
         return len(self.get_value())
 
@@ -329,7 +329,7 @@ class ProblemReport(collections.UserDict):
         if decompressor:
             value += decompressor.decompress(block)
         elif isinstance(value, CompressedValue):
-            value.gzipvalue += block
+            value.compressed_value += block
         # lazy initialization of decompressor
         # skip gzip header, if present
         elif block.startswith(GZIP_HEADER_START):
@@ -524,8 +524,8 @@ class ProblemReport(collections.UserDict):
         # pylint: disable=too-many-branches
         value = self.data[key]
         if isinstance(value, CompressedValue):
-            assert value.gzipvalue is not None
-            yield value.gzipvalue
+            assert value.compressed_value is not None
+            yield value.compressed_value
             return
         gzip_header = (
             GZIP_HEADER_START
@@ -680,7 +680,7 @@ class ProblemReport(collections.UserDict):
 
             # compressed values are ready for attaching in gzip form
             if isinstance(v, CompressedValue):
-                attach_value = v.gzipvalue
+                attach_value = v.compressed_value
 
             # if it's a tuple, we have a file reference; read the contents
             # and gzip it
@@ -711,7 +711,7 @@ class ProblemReport(collections.UserDict):
                 if k.endswith(".gz"):
                     attach_value = v
                 else:
-                    attach_value = CompressedValue(v, k).gzipvalue
+                    attach_value = CompressedValue(v, k).compressed_value
 
             # if we have an attachment value, create an attachment
             if attach_value:
