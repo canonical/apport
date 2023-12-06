@@ -1407,10 +1407,76 @@ class Report(problem_report.ProblemReport):
 
         return None
 
+    def _get_python_exception_title(self) -> str | None:
+        trace = self["Traceback"].splitlines()
+
+        if len(trace) < 1:
+            return None
+        if len(trace) < 3:
+            return (
+                f"{os.path.basename(self['ExecutablePath'])}"
+                f" crashed with {trace[0]}"
+            )
+
+        trace_re = re.compile(r'^\s*File\s*"(\S+)".* in (.+)$')
+        i = len(trace) - 1
+        function = "unknown"
+        while i >= 0:
+            m = trace_re.match(trace[i])
+            if m:
+                module_path = m.group(1)
+                function = m.group(2)
+                break
+            i -= 1
+
+        path = os.path.basename(self["ExecutablePath"])
+        last_line = trace[-1]
+        exception = last_line.split(":")[0]
+        m = re.match(f"^{re.escape(exception)}: (.+)$", last_line)
+        if m:
+            message = m.group(1)
+        else:
+            message = None
+
+        if function == "<module>":
+            if module_path == self["ExecutablePath"]:
+                context = "__main__"
+            else:
+                # Maybe use os.path.basename?
+                context = module_path
+        else:
+            context = f"{function}()"
+
+        title = f"{path} crashed with {exception} in {context}"
+
+        if message:
+            title += f": {message}"
+
+        return title
+
+    def _get_signal_crash_title(self) -> str | None:
+        fn = self.stacktrace_top_function()
+        if fn:
+            fn = f" in {fn}()"
+        else:
+            fn = ""
+
+        arch_mismatch = ""
+        if (
+            "Architecture" in self
+            and "PackageArchitecture" in self
+            and self["Architecture"] != self["PackageArchitecture"]
+            and self["PackageArchitecture"] != "all"
+        ):
+            arch_mismatch = f" [non-native {self['PackageArchitecture']} package]"
+
+        return (
+            f"{os.path.basename(self['ExecutablePath'])}"
+            f" crashed with {self._get_signal_name()}{fn}{arch_mismatch}"
+        )
+
+    # pylint: disable-next=too-many-return-statements
     def standard_title(self) -> str | None:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
-        # pylint: disable=too-many-return-statements,too-many-statements
         """Create an appropriate title for a crash database entry.
 
         This contains the topmost function name from the stack trace and the
@@ -1431,75 +1497,11 @@ class Report(problem_report.ProblemReport):
                 f" {self['AssertionMessage']}"
             )
 
-        # signal crash
         if "Signal" in self and "ExecutablePath" in self and "StacktraceTop" in self:
-            fn = self.stacktrace_top_function()
-            if fn:
-                fn = f" in {fn}()"
-            else:
-                fn = ""
+            return self._get_signal_crash_title()
 
-            arch_mismatch = ""
-            if (
-                "Architecture" in self
-                and "PackageArchitecture" in self
-                and self["Architecture"] != self["PackageArchitecture"]
-                and self["PackageArchitecture"] != "all"
-            ):
-                arch_mismatch = f" [non-native {self['PackageArchitecture']} package]"
-
-            return (
-                f"{os.path.basename(self['ExecutablePath'])}"
-                f" crashed with {self._get_signal_name()}{fn}{arch_mismatch}"
-            )
-
-        # Python exception
         if "Traceback" in self and "ExecutablePath" in self:
-            trace = self["Traceback"].splitlines()
-
-            if len(trace) < 1:
-                return None
-            if len(trace) < 3:
-                return (
-                    f"{os.path.basename(self['ExecutablePath'])}"
-                    f" crashed with {trace[0]}"
-                )
-
-            trace_re = re.compile(r'^\s*File\s*"(\S+)".* in (.+)$')
-            i = len(trace) - 1
-            function = "unknown"
-            while i >= 0:
-                m = trace_re.match(trace[i])
-                if m:
-                    module_path = m.group(1)
-                    function = m.group(2)
-                    break
-                i -= 1
-
-            path = os.path.basename(self["ExecutablePath"])
-            last_line = trace[-1]
-            exception = last_line.split(":")[0]
-            m = re.match(f"^{re.escape(exception)}: (.+)$", last_line)
-            if m:
-                message = m.group(1)
-            else:
-                message = None
-
-            if function == "<module>":
-                if module_path == self["ExecutablePath"]:
-                    context = "__main__"
-                else:
-                    # Maybe use os.path.basename?
-                    context = module_path
-            else:
-                context = f"{function}()"
-
-            title = f"{path} crashed with {exception} in {context}"
-
-            if message:
-                title += f": {message}"
-
-            return title
+            return self._get_python_exception_title()
 
         # package problem
         if self.get("ProblemType") == "Package" and "Package" in self:
