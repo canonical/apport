@@ -57,10 +57,11 @@ class GTKUserInterface(apport.ui.UserInterface):
     # pylint: disable=invalid-name,missing-function-docstring
     """GTK UserInterface."""
 
-    def w(self, widget):
+    def w(self, widget: str) -> Gtk.Widget:
         """Shortcut for getting a widget."""
-
-        return self.widgets.get_object(widget)
+        widget = self.widgets.get_object(widget)
+        assert widget is not None
+        return widget
 
     def __init__(self, argv: list[str]):
         apport.ui.UserInterface.__init__(self, argv)
