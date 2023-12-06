@@ -361,6 +361,17 @@ class MainUserInterface(apport.ui.UserInterface):
         self.dialog: (ReportDialog | None) = None
         self.progress: (ProgressDialog | None) = None
 
+        self.app = QApplication(argv)
+        self.app.setApplicationName("apport-kde")
+        self.app.setApplicationDisplayName(_("Apport"))
+        self.app.setWindowIcon(QIcon.fromTheme("apport"))
+        translator = QTranslator()
+        translator.load(
+            f"qtbase_{QLocale.system().name()}",
+            QLibraryInfo.location(QLibraryInfo.TranslationsPath),
+        )
+        self.app.installTranslator(translator)
+
     #
     # ui_* implementation of abstract UserInterface classes
     #
@@ -562,17 +573,6 @@ if __name__ == "__main__":
             "This program needs a running X session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )
-
-    app = QApplication(sys.argv)
-    app.setApplicationName("apport-kde")
-    app.setApplicationDisplayName(_("Apport"))
-    app.setWindowIcon(QIcon.fromTheme("apport"))
-    translator = QTranslator()
-    translator.load(
-        f"qtbase_{QLocale.system().name()}",
-        QLibraryInfo.location(QLibraryInfo.TranslationsPath),
-    )
-    app.installTranslator(translator)
 
     UserInterface = MainUserInterface(sys.argv)
     sys.exit(UserInterface.run_argv())
