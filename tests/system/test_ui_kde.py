@@ -24,8 +24,7 @@ from unittest.mock import MagicMock
 
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
-    from PyQt5.QtGui import QIcon
-    from PyQt5.QtWidgets import QApplication, QProgressBar, QTreeWidget
+    from PyQt5.QtWidgets import QProgressBar, QTreeWidget
 
     PYQT5_IMPORT_ERROR = None
 except ImportError as error:
@@ -69,11 +68,6 @@ class T(unittest.TestCase):
         os.environ["LANGUAGE"] = "C"
 
         cls.argv = [str(apport_kde_path)]
-        cls.app = QApplication(cls.argv)
-        cls.app.applicationName = "apport-kde"
-        cls.app.applicationDisplayName = _("Apport")
-        cls.app.windowIcon = QIcon.fromTheme("apport")
-
         r = apport.report.Report()
         r.add_os_info()
         cls.distro = r["DistroRelease"]
@@ -116,6 +110,8 @@ class T(unittest.TestCase):
             QCoreApplication.processEvents()
             self.ui.dialog.done(0)
             QCoreApplication.processEvents()
+        self.ui.app.exit()
+        del self.ui.app
 
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.hook_dir)
