@@ -91,9 +91,9 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
-        self.app = MainUserInterface(self.argv)
+        self.ui = MainUserInterface(self.argv)
         # use in-memory crashdb
-        self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+        self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 
         # disable package hooks, as they might ask for sudo password and other
         # interactive bits; allow tests to install their own hooks
@@ -102,19 +102,19 @@ class T(unittest.TestCase):
         apport.report.PACKAGE_HOOK_DIR = self.hook_dir
 
         # test report
-        self.app.report_file = os.path.join(self.report_dir, "bash.crash")
+        self.ui.report_file = os.path.join(self.report_dir, "bash.crash")
 
-        self.app.report = apport.report.Report()
-        self.app.report["ExecutablePath"] = "/bin/bash"
-        self.app.report["Signal"] = "11"
-        self.app.report["CoreDump"] = b"\x01\x02"
-        with open(self.app.report_file, "wb") as f:
-            self.app.report.write(f)
+        self.ui.report = apport.report.Report()
+        self.ui.report["ExecutablePath"] = "/bin/bash"
+        self.ui.report["Signal"] = "11"
+        self.ui.report["CoreDump"] = b"\x01\x02"
+        with open(self.ui.report_file, "wb") as f:
+            self.ui.report.write(f)
 
     def tearDown(self):
-        if self.app.dialog:
+        if self.ui.dialog:
             QCoreApplication.processEvents()
-            self.app.dialog.done(0)
+            self.ui.dialog.done(0)
             QCoreApplication.processEvents()
 
         shutil.rmtree(self.report_dir)
@@ -125,10 +125,10 @@ class T(unittest.TestCase):
         crash."""
 
         def c():
-            self.app.dialog.reject()
+            self.ui.dialog.reject()
 
         QTimer.singleShot(0, c)
-        result = self.app.ui_present_report_details(True)
+        result = self.ui.ui_present_report_details(True)
         self.assertFalse(result.report)
 
     def test_kernel_crash_layout(self):
@@ -142,21 +142,21 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         """
-        self.app.report["ProblemType"] = "KernelCrash"
+        self.ui.report["ProblemType"] = "KernelCrash"
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+        self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("Sorry, %s has experienced an internal error.") % self.distro,
         )
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
-        self.assertFalse(self.app.dialog.text.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
 
     def test_package_crash_layout(self):
         """Display crash dialog for a failed package installation.
@@ -170,33 +170,33 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         """
-        self.app.report["ProblemType"] = "Package"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.report["ProblemType"] = "Package"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+        self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("Sorry, a problem occurred while installing software."),
         )
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
         self.assertEqual(
-            self.app.dialog.text.text(), _("Package: apport 1.2.3~0ubuntu1")
+            self.ui.dialog.text.text(), _("Package: apport 1.2.3~0ubuntu1")
         )
 
     def test_regular_crash_thread_layout(self):
         """A thread of execution has failed, but the application persists."""
-        self.app.report["ProblemType"] = "Crash"
-        self.app.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
+        self.ui.report["ProblemType"] = "Crash"
+        self.ui.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(True)
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
+        self.ui.ui_present_report_details(True)
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
 
     def test_regular_crash_layout(self):
         """Display crash dialog for an application crash.
@@ -210,9 +210,9 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         """
-        self.app.report["ProblemType"] = "Crash"
-        self.app.report["CrashCounter"] = "1"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.report["ProblemType"] = "Crash"
+        self.ui.report["CrashCounter"] = "1"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
             fp.write(
                 textwrap.dedent(
@@ -225,26 +225,26 @@ class T(unittest.TestCase):
                 )
             )
             fp.flush()
-            self.app.report["DesktopFile"] = fp.name
+            self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
-            self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+            self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
         # no ProcCmdline, cannot restart
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
-        self.assertFalse(self.app.dialog.text.isVisible())
-        self.assertFalse(self.app.dialog.text.isVisible())
-        self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
+        self.assertTrue(self.ui.dialog.ignore_future_problems.isVisible())
         self.assertTrue(
-            str(self.app.dialog.ignore_future_problems.text()).endswith(
+            str(self.ui.dialog.ignore_future_problems.text()).endswith(
                 "of this program version"
             )
         )
@@ -262,11 +262,11 @@ class T(unittest.TestCase):
         +-----------------------------------------------------------------+
         """
         # pretend we got called through run_crashes() which sets offer_restart
-        self.app.offer_restart = True
-        self.app.report["ProblemType"] = "Crash"
-        self.app.report["CrashCounter"] = "1"
-        self.app.report["ProcCmdline"] = "apport-bug apport"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.offer_restart = True
+        self.ui.report["ProblemType"] = "Crash"
+        self.ui.report["CrashCounter"] = "1"
+        self.ui.report["ProcCmdline"] = "apport-bug apport"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
             fp.write(
                 textwrap.dedent(
@@ -279,25 +279,25 @@ class T(unittest.TestCase):
                 )
             )
             fp.flush()
-            self.app.report["DesktopFile"] = fp.name
+            self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
-            self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+            self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Relaunch"))
-        self.assertTrue(self.app.dialog.closed_button.isVisible())
-        self.assertFalse(self.app.dialog.text.isVisible())
-        self.assertFalse(self.app.dialog.text.isVisible())
-        self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Relaunch"))
+        self.assertTrue(self.ui.dialog.closed_button.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
+        self.assertTrue(self.ui.dialog.ignore_future_problems.isVisible())
         self.assertTrue(
-            str(self.app.dialog.ignore_future_problems.text()).endswith(
+            str(self.ui.dialog.ignore_future_problems.text()).endswith(
                 "of this program version"
             )
         )
@@ -316,10 +316,10 @@ class T(unittest.TestCase):
         """
         # pretend we did not get called through run_crashes(),
         # thus no offer_restart
-        self.app.report["ProblemType"] = "Crash"
-        self.app.report["CrashCounter"] = "1"
-        self.app.report["ProcCmdline"] = "apport-bug apport"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.report["ProblemType"] = "Crash"
+        self.ui.report["CrashCounter"] = "1"
+        self.ui.report["ProcCmdline"] = "apport-bug apport"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
             fp.write(
                 textwrap.dedent(
@@ -332,19 +332,19 @@ class T(unittest.TestCase):
                 )
             )
             fp.flush()
-            self.app.report["DesktopFile"] = fp.name
+            self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
-            self.app.ui_present_report_details(True)
+            self.ui.ui_present_report_details(True)
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("The application Apport has closed unexpectedly."),
         )
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
 
     def test_system_crash_layout(self):
         """Display crash dialog for a system application crash.
@@ -360,30 +360,30 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         """
-        self.app.report["ProblemType"] = "Crash"
-        self.app.report["CrashCounter"] = "1"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.report["ProblemType"] = "Crash"
+        self.ui.report["CrashCounter"] = "1"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+        self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(),
+            self.ui.dialog.heading.text(),
             _("Sorry, %s has experienced an internal error.") % self.distro,
         )
         self.assertEqual(
-            self.app.dialog.text.text(),
+            self.ui.dialog.text.text(),
             _("If you notice further problems, try restarting the computer."),
         )
-        self.assertTrue(self.app.dialog.text.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
-        self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
+        self.assertTrue(self.ui.dialog.text.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
+        self.assertTrue(self.ui.dialog.ignore_future_problems.isVisible())
         self.assertTrue(
-            str(self.app.dialog.ignore_future_problems.text()).endswith("of this type")
+            str(self.ui.dialog.ignore_future_problems.text()).endswith("of this type")
         )
 
     def test_apport_bug_package_layout(self):
@@ -400,22 +400,22 @@ class T(unittest.TestCase):
         | [ Cancel ]                                               [ Send ] |
         +-------------------------------------------------------------------+
         """
-        self.app.report_file = None
+        self.ui.report_file = None
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+        self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
-            self.app.dialog.heading.text(), _("Send problem report to the developers?")
+            self.ui.dialog.heading.text(), _("Send problem report to the developers?")
         )
-        self.assertFalse(self.app.dialog.text.isVisible())
-        self.assertFalse(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertFalse(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Send"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
-        self.assertTrue(self.app.dialog.cancel_button.isVisible())
-        self.assertTrue(self.app.dialog.treeview.isVisible())
+        self.assertFalse(self.ui.dialog.text.isVisible())
+        self.assertFalse(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertFalse(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Send"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
+        self.assertTrue(self.ui.dialog.cancel_button.isVisible())
+        self.assertTrue(self.ui.dialog.treeview.isVisible())
 
     def test_recoverable_crash_layout(self):
         """Display crash dialog for a recoverable crash.
@@ -429,9 +429,9 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         """
-        self.app.report["ProblemType"] = "RecoverableProblem"
-        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
-        self.app.report["DialogBody"] = "Some developer-specified error text."
+        self.ui.report["ProblemType"] = "RecoverableProblem"
+        self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
+        self.ui.report["DialogBody"] = "Some developer-specified error text."
 
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
             fp.write(
@@ -445,21 +445,21 @@ class T(unittest.TestCase):
                 )
             )
             fp.flush()
-            self.app.report["DesktopFile"] = fp.name
+            self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
-            self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
+            self.ui.ui_present_report_details(True)
+        self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         msg = "The application Apport has experienced an internal error."
-        self.assertEqual(self.app.dialog.heading.text(), msg)
+        self.assertEqual(self.ui.dialog.heading.text(), msg)
         msg = "Some developer-specified error text."
-        self.assertEqual(self.app.dialog.text.text(), msg)
-        self.assertTrue(self.app.dialog.text.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isVisible())
-        self.assertTrue(self.app.dialog.send_error_report.isChecked())
-        self.assertTrue(self.app.dialog.details.isVisible())
-        self.assertTrue(self.app.dialog.continue_button.isVisible())
-        self.assertEqual(self.app.dialog.continue_button.text(), _("Continue"))
-        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertEqual(self.ui.dialog.text.text(), msg)
+        self.assertTrue(self.ui.dialog.text.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isVisible())
+        self.assertTrue(self.ui.dialog.send_error_report.isChecked())
+        self.assertTrue(self.ui.dialog.details.isVisible())
+        self.assertTrue(self.ui.dialog.continue_button.isVisible())
+        self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
+        self.assertFalse(self.ui.dialog.closed_button.isVisible())
 
     def test_ui_question_choice_hide_dialog(self):
         """Test hiding/closing a UI question choice dialog.
@@ -488,7 +488,7 @@ class T(unittest.TestCase):
                 QTimer.singleShot(200, hide_dialog)  # pragma: no cover
 
             QTimer.singleShot(200, hide_dialog)
-            answer = self.app.ui_question_choice(
+            answer = self.ui.ui_question_choice(
                 "Ultimate Question", ["7", "42", "69"], False
             )
         self.assertIsNone(answer)
@@ -502,19 +502,19 @@ class T(unittest.TestCase):
         """Crash report without showing details"""
 
         def cont():
-            if self.app.dialog and self.app.dialog.continue_button.isVisible():
-                self.app.dialog.continue_button.click()
+            if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
+                self.ui.dialog.continue_button.click()
                 return
             # try again
             QTimer.singleShot(1000, cont)  # pragma: no cover
 
         QTimer.singleShot(1000, cont)
         with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
-            self.app.run_crash(self.app.report_file)
+            self.ui.run_crash(self.ui.report_file)
 
         # we should have reported one crash
-        self.assertEqual(self.app.crashdb.latest_id(), 0)
-        r = self.app.crashdb.download(0)
+        self.assertEqual(self.ui.crashdb.latest_id(), 0)
+        r = self.ui.crashdb.download(0)
         self.assertEqual(r["ProblemType"], "Crash")
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
 
@@ -528,7 +528,7 @@ class T(unittest.TestCase):
         self.assertIn("libc", r["Dependencies"])
 
         # URL was opened
-        self.assertEqual(self.app.open_url.call_count, 1)
+        self.assertEqual(self.ui.open_url.call_count, 1)
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
@@ -539,8 +539,8 @@ class T(unittest.TestCase):
         """Crash report with showing details"""
 
         def show_details():
-            if self.app.dialog and self.app.dialog.show_details.isVisible():
-                self.app.dialog.show_details.click()
+            if self.ui.dialog and self.ui.dialog.show_details.isVisible():
+                self.ui.dialog.show_details.click()
                 QTimer.singleShot(1000, cont)
                 return
 
@@ -549,24 +549,24 @@ class T(unittest.TestCase):
 
         def cont():
             # wait until data collection is done and tree filled
-            details = self.app.dialog.findChild(QTreeWidget, "details")
+            details = self.ui.dialog.findChild(QTreeWidget, "details")
             if details.topLevelItemCount() == 0:
                 QTimer.singleShot(200, cont)
                 return
 
-            if self.app.dialog and self.app.dialog.continue_button.isVisible():
-                self.app.dialog.continue_button.click()
+            if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
+                self.ui.dialog.continue_button.click()
                 return
             # try again
             QTimer.singleShot(200, cont)  # pragma: no cover
 
         QTimer.singleShot(200, show_details)
         with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
-            self.app.run_crash(self.app.report_file)
+            self.ui.run_crash(self.ui.report_file)
 
         # we should have reported one crash
-        self.assertEqual(self.app.crashdb.latest_id(), 0)
-        r = self.app.crashdb.download(0)
+        self.assertEqual(self.ui.crashdb.latest_id(), 0)
+        r = self.ui.crashdb.download(0)
         self.assertEqual(r["ProblemType"], "Crash")
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
 
@@ -578,7 +578,7 @@ class T(unittest.TestCase):
         self.assertIn("libc", r["Dependencies"])
 
         # URL was opened
-        self.assertEqual(self.app.open_url.call_count, 1)
+        self.assertEqual(self.ui.open_url.call_count, 1)
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
@@ -589,26 +589,26 @@ class T(unittest.TestCase):
         """Crash report with non-accepting crash DB"""
 
         def cont():
-            if self.app.dialog and self.app.dialog.continue_button.isVisible():
-                self.app.dialog.continue_button.click()
+            if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
+                self.ui.dialog.continue_button.click()
                 return
             # try again
             QTimer.singleShot(1000, cont)  # pragma: no cover
 
         QTimer.singleShot(1000, cont)
-        self.app.crashdb.options["problem_types"] = ["bug"]
+        self.ui.crashdb.options["problem_types"] = ["bug"]
         with wrap_object(apport_kde.ProgressDialog, "__init__") as progress_dialog:
-            self.app.run_crash(self.app.report_file)
+            self.ui.run_crash(self.ui.report_file)
 
         # we should not have reported the crash
-        self.assertEqual(self.app.crashdb.latest_id(), -1)
-        self.assertEqual(self.app.open_url.call_count, 0)
+        self.assertEqual(self.ui.crashdb.latest_id(), -1)
+        self.assertEqual(self.ui.open_url.call_count, 0)
 
         # no progress dialog for non-accepting DB
         progress_dialog.assert_not_called()
 
         # data was collected for whoopsie
-        r = self.app.report
+        r = self.ui.report
         self.assertEqual(r["ProblemType"], "Crash")
         self.assertEqual(r["ExecutablePath"], "/bin/bash")
         self.assertTrue(r["Package"].startswith("bash "))
@@ -616,89 +616,89 @@ class T(unittest.TestCase):
 
     def test_bug_report_installed_package(self):
         """Bug report for installed package."""
-        self.app.report_file = None
-        self.app.args.package = "bash"
+        self.ui.report_file = None
+        self.ui.args.package = "bash"
 
         def c():
-            if self.app.dialog and self.app.dialog.cancel_button.isVisible():
-                self.app.dialog.cancel_button.click()
+            if self.ui.dialog and self.ui.dialog.cancel_button.isVisible():
+                self.ui.dialog.cancel_button.click()
                 return
             # try again
             QTimer.singleShot(1000, c)  # pragma: no cover
 
         QTimer.singleShot(1000, c)
-        self.app.run_report_bug()
+        self.ui.run_report_bug()
 
-        self.assertEqual(self.app.report["ProblemType"], "Bug")
-        self.assertEqual(self.app.report["SourcePackage"], "bash")
-        self.assertTrue(self.app.report["Package"].startswith("bash "))
-        self.assertNotEqual(self.app.report["Dependencies"], "")
+        self.assertEqual(self.ui.report["ProblemType"], "Bug")
+        self.assertEqual(self.ui.report["SourcePackage"], "bash")
+        self.assertTrue(self.ui.report["Package"].startswith("bash "))
+        self.assertNotEqual(self.ui.report["Dependencies"], "")
 
     def test_bug_report_uninstalled_package(self):
         """Bug report for uninstalled package"""
         pkg = apport.packaging.get_uninstalled_package()
 
-        self.app.report_file = None
-        self.app.args.package = pkg
+        self.ui.report_file = None
+        self.ui.args.package = pkg
 
         def c():
-            if self.app.dialog and self.app.dialog.cancel_button.isVisible():
-                self.app.dialog.cancel_button.click()
+            if self.ui.dialog and self.ui.dialog.cancel_button.isVisible():
+                self.ui.dialog.cancel_button.click()
                 return
             # try again
             QTimer.singleShot(1000, c)  # pragma: no cover
 
         QTimer.singleShot(1000, c)
-        self.app.run_report_bug()
+        self.ui.run_report_bug()
 
-        self.assertEqual(self.app.report["ProblemType"], "Bug")
+        self.assertEqual(self.ui.report["ProblemType"], "Bug")
         self.assertEqual(
-            self.app.report["SourcePackage"], apport.packaging.get_source(pkg)
+            self.ui.report["SourcePackage"], apport.packaging.get_source(pkg)
         )
-        self.assertEqual(self.app.report["Package"], f"{pkg} (not installed)")
+        self.assertEqual(self.ui.report["Package"], f"{pkg} (not installed)")
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     def test_1_update_report(self):
         """Updating an existing report"""
-        self.app.report_file = None
+        self.ui.report_file = None
 
         def cont():
-            if self.app.dialog and self.app.dialog.continue_button.isVisible():
-                self.app.dialog.continue_button.click()
+            if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
+                self.ui.dialog.continue_button.click()
                 return
             # try again
             QTimer.singleShot(200, cont)  # pragma: no cover
 
         # upload empty report
-        crash_id = self.app.crashdb.upload({})
+        crash_id = self.ui.crashdb.upload({})
         self.assertEqual(crash_id, 0)
-        self.app.args.update_report = 0
-        self.app.args.package = "bash"
+        self.ui.args.update_report = 0
+        self.ui.args.package = "bash"
 
         QTimer.singleShot(200, cont)
-        self.app.run_update_report()
+        self.ui.run_update_report()
 
         # no new bug reported
-        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        self.assertEqual(self.ui.crashdb.latest_id(), 0)
 
         # bug was updated
-        r = self.app.crashdb.download(0)
+        r = self.ui.crashdb.download(0)
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertIn("libc", r["Dependencies"])
         self.assertIn("DistroRelease", r)
 
         # No URL in this mode
-        self.assertEqual(self.app.open_url.call_count, 0)
+        self.assertEqual(self.ui.open_url.call_count, 0)
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
     def test_1_update_report_different_binary_source(self):
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
-        self.app.report_file = None
+        self.ui.report_file = None
 
         def cont():
-            if self.app.dialog and self.app.dialog.continue_button.isVisible():
-                self.app.dialog.continue_button.click()
+            if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
+                self.ui.dialog.continue_button.click()
                 return
             # try again
             QTimer.singleShot(200, cont)  # pragma: no cover
@@ -717,40 +717,40 @@ class T(unittest.TestCase):
             f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
 
         # upload empty report
-        crash_id = self.app.crashdb.upload({})
+        crash_id = self.ui.crashdb.upload({})
         self.assertEqual(crash_id, 0)
 
         # run in update mode for that bug
-        self.app.args.update_report = 0
-        self.app.args.package = source_pkg
+        self.ui.args.update_report = 0
+        self.ui.args.package = source_pkg
 
         QTimer.singleShot(200, cont)
-        self.app.run_update_report()
+        self.ui.run_update_report()
 
         # no new bug reported
-        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        self.assertEqual(self.ui.crashdb.latest_id(), 0)
 
         # bug was updated
-        r = self.app.crashdb.download(0)
+        r = self.ui.crashdb.download(0)
         self.assertIn("ProcEnviron", r)
         self.assertIn("DistroRelease", r)
         self.assertIn("Uname", r)
         self.assertEqual(r["MachineType"], "Laptop")
 
         # No URL in this mode
-        self.assertEqual(self.app.open_url.call_count, 0)
+        self.assertEqual(self.ui.open_url.call_count, 0)
 
     def test_administrator_disabled_reporting(self):
         QTimer.singleShot(0, QCoreApplication.quit)
-        self.app.ui_present_report_details(False)
-        self.assertFalse(self.app.dialog.send_error_report.isVisible())
-        self.assertFalse(self.app.dialog.send_error_report.isChecked())
+        self.ui.ui_present_report_details(False)
+        self.assertFalse(self.ui.dialog.send_error_report.isVisible())
+        self.assertFalse(self.ui.dialog.send_error_report.isChecked())
 
     def test_ui_set_upload_progress(self):
-        self.app.ui_start_upload_progress()
+        self.ui.ui_start_upload_progress()
         try:
-            self.app.ui_set_upload_progress(0.5)
-            progress = self.app.progress.findChild(QProgressBar, "progress")
+            self.ui.ui_set_upload_progress(0.5)
+            progress = self.ui.progress.findChild(QProgressBar, "progress")
             self.assertEqual(progress.value(), 500)
         finally:
-            self.app.ui_stop_upload_progress()
+            self.ui.ui_stop_upload_progress()
