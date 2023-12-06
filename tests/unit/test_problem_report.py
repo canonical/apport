@@ -434,6 +434,35 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ).encode(),
         )
 
+    def test_sorted_items(self) -> None:
+        """Test ProblemReport.sorted_items()."""
+        bin_report = textwrap.dedent(
+            """\
+            ProblemType: Crash
+            Date: now!
+            File: base64
+             eJw=
+             c3RyxIAMcBAFAG55BXk=
+            _MarkForUpload: False
+            Architecture: amd64
+            ExecutablePath: /usr/bin/python3
+            Package: python3.12-minimal
+            """
+        ).encode()
+
+        report = problem_report.ProblemReport()
+        report.load(io.BytesIO(bin_report), binary=False)
+        self.assertEqual(
+            list(report.sorted_items()),
+            [
+                ("ExecutablePath", "/usr/bin/python3"),
+                ("Package", "python3.12-minimal"),
+                ("ProblemType", "Crash"),
+                ("Architecture", "amd64"),
+                ("Date", "now!"),
+            ],
+        )
+
     def test_write_mime_text(self):
         """write_mime() for text values."""
         pr = problem_report.ProblemReport(date="now!")
