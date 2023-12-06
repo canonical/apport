@@ -113,8 +113,6 @@ class GTKUserInterface(apport.ui.UserInterface):
         return spinner
 
     def ui_update_view(self, shown_keys=None):
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
         assert self.report
 
         # do nothing if the dialog is already destroyed when the data
@@ -122,40 +120,18 @@ class GTKUserInterface(apport.ui.UserInterface):
         if not self.w("details_treeview").get_property("visible"):
             return
 
-        if shown_keys:
-            keys = set(self.report.keys()) & set(shown_keys)
-        else:
-            keys = self.report.keys()
-        # show the most interesting items on top
-        keys = sorted(keys)
-        for k in (
-            "Traceback",
-            "StackTrace",
-            "Title",
-            "ProblemType",
-            "Package",
-            "ExecutablePath",
-        ):
-            if k in keys:
-                keys.remove(k)
-                keys.insert(0, k)
-
         self.tree_model.clear()
-        for key in keys:
-            # ignore internal keys
-            if key.startswith("_"):
-                continue
-
+        for key, value in self.report.sorted_items(shown_keys):
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
 
             valiter = self.tree_model.insert_before(keyiter, None)
             if (
-                not hasattr(self.report[key], "gzipvalue")
-                and hasattr(self.report[key], "isspace")
-                and not self.report.is_binary(self.report[key])
+                not hasattr(value, "gzipvalue")
+                and hasattr(value, "isspace")
+                and not self.report.is_binary(value)
             ):
-                v = self.report[key]
+                v = value
                 if len(v) > 4000:
                     v = v[:4000]
                     if isinstance(v, bytes):
@@ -166,7 +142,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                     v = v.decode("UTF-8", errors="replace")
                 self.tree_model.set_value(valiter, 0, v)
                 # expand the row if the value has less than 5 lines
-                if len(list(filter(lambda c: c == "\n", self.report[key]))) < 4:
+                if len(list(filter(lambda c: c == "\n", value))) < 4:
                     self.w("details_treeview").expand_row(
                         self.tree_model.get_path(keyiter), False
                     )

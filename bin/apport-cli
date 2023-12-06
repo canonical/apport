@@ -157,20 +157,17 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         details = ""
         max_show = 1000000
-        for key in sorted(self.report):
-            # ignore internal keys
-            if key.startswith("_"):
-                continue
+        for key, value in self.report.sorted_items():
             details += f"== {key} =================================\n"
             # string value
-            keylen = len(self.report[key])
+            keylen = len(value)
             if (
-                not hasattr(self.report[key], "gzipvalue")
-                and hasattr(self.report[key], "isspace")
-                and not self.report.is_binary(self.report[key])
+                not hasattr(value, "gzipvalue")
+                and hasattr(value, "isspace")
+                and not self.report.is_binary(value)
                 and keylen < max_show
             ):
-                s = self.report[key]
+                s = value
             elif keylen >= max_show:
                 s = _("(%i bytes)") % keylen
             else:

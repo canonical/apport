@@ -49,20 +49,30 @@ class TestApportCli(unittest.TestCase):
         self.app.report["CoreDump"] = b"\x01\x02"
 
     @skip_if_command_is_missing("/usr/bin/sensible-pager")
-    def test_ui_update_view(self):
+    def test_ui_update_view(self) -> None:
         read_fd, write_fd = os.pipe()
         with os.fdopen(write_fd, "w", buffering=1) as stdout:
             self.app.ui_update_view(stdout=stdout)
         with os.fdopen(read_fd, "r") as pipe:
             report = pipe.read()
-        self.assertIn(
-            "== ExecutablePath =================================\n"
+        self.assertRegex(
+            report,
+            "^== ExecutablePath =================================\n"
             "/bin/bash\n\n"
             "== ProblemType =================================\n"
             "Crash\n\n"
+            "== Architecture =================================\n"
+            "[^\n]+\n\n"
+            "== CoreDump =================================\n"
+            "[^\n]+\n\n"
+            "== Date =================================\n"
+            "[^\n]+\n\n"
+            "== DistroRelease =================================\n"
+            "[^\n]+\n\n"
             "== Signal =================================\n"
-            "11\n\n",
-            report,
+            "11\n\n"
+            "== Uname =================================\n"
+            "[^\n]+\n\n$",
         )
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)

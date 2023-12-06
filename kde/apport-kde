@@ -369,26 +369,18 @@ class MainUserInterface(apport.ui.UserInterface):
         assert self.report
         # report contents
         details = dialog.findChild(QTreeWidget, "details")
-        if shown_keys:
-            keys = set(self.report.keys()) & set(shown_keys)
-        else:
-            keys = self.report.keys()
         details.clear()
-        for key in sorted(keys):
-            # ignore internal keys
-            if key.startswith("_"):
-                continue
-
+        for key, value in self.report.sorted_items(shown_keys):
             keyitem = QTreeWidgetItem([key])
             details.addTopLevelItem(keyitem)
 
             # string value
             if (
-                not hasattr(self.report[key], "gzipvalue")
-                and hasattr(self.report[key], "isspace")
-                and not self.report.is_binary(self.report[key])
+                not hasattr(value, "gzipvalue")
+                and hasattr(value, "isspace")
+                and not self.report.is_binary(value)
             ):
-                lines = self.report[key].splitlines()
+                lines = value.splitlines()
                 for line in lines:
                     QTreeWidgetItem(keyitem, [str(line)])
                 if len(lines) < 4:

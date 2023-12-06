@@ -27,7 +27,7 @@ import struct
 import time
 import typing
 import zlib
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Iterator
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
@@ -365,6 +365,43 @@ class ProblemReport(collections.UserDict):
             except UnicodeDecodeError:
                 return value
         return value
+
+    def sorted_items(
+        self, keys: (Iterable[str] | None) = None
+    ) -> Iterator[tuple[str, (bytes | CompressedValue | str | tuple)]]:
+        """Iterate over all non-internal items sorted.
+
+        The most interesting fields will be returned first. The remaining
+        items will be returned in alphabetical order. Keys starting with
+        an underscore are considered internal and are skipped. Also values
+        that are None will be skipped.
+
+        If keys is provided, only those keys will be iterated over.
+        """
+        if keys:
+            keys = sorted(set(self.keys()) & set(keys))
+        else:
+            keys = sorted(self.keys())
+        # show the most interesting items on top
+        for key in (
+            "Traceback",
+            "StackTrace",
+            "Title",
+            "ProblemType",
+            "Package",
+            "ExecutablePath",
+        ):
+            if key in keys:
+                keys.remove(key)
+                keys.insert(0, key)
+        for key in keys:
+            # ignore internal keys
+            if key.startswith("_"):
+                continue
+            value = self[key]
+            if value is None:
+                continue
+            yield key, self[key]
 
     def write(self, file: typing.BinaryIO, only_new: bool = False) -> None:
         """Write information into the given file-like object.
