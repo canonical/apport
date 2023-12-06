@@ -556,15 +556,14 @@ class MainUserInterface(apport.ui.UserInterface):
 
         return response
 
-    def ui_question_file(self, text):
+    def ui_question_file(self, text: str) -> str | None:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         """
-        response = QFileDialog.getOpenFileName(None, str(text))
-        if response.length() == 0:
-            return None
-        return str(response)
+        filename = QFileDialog.getOpenFileName(None, str(text))[0]
+        # filename will be an empty string when cancelled
+        return filename or None
 
 
 if __name__ == "__main__":

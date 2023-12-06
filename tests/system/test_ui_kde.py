@@ -24,7 +24,7 @@ from unittest.mock import MagicMock
 
 try:
     from PyQt5.QtCore import QCoreApplication, QTimer
-    from PyQt5.QtWidgets import QProgressBar, QTreeWidget
+    from PyQt5.QtWidgets import QFileDialog, QProgressBar, QTreeWidget
 
     PYQT5_IMPORT_ERROR = None
 except ImportError as error:
@@ -750,3 +750,16 @@ class T(unittest.TestCase):
             self.assertEqual(progress.value(), 500)
         finally:
             self.ui.ui_stop_upload_progress()
+
+    def test_ui_question_file_close(self) -> None:
+        def cont() -> None:
+            for widget in self.ui.app.allWidgets():
+                if isinstance(widget, QFileDialog):
+                    widget.close()
+                    return
+
+            # try again
+            QTimer.singleShot(10, cont)  # pragma: no cover
+
+        QTimer.singleShot(10, cont)
+        self.assertIsNone(self.ui.ui_question_file("Please select a file"))
