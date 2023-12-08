@@ -16,10 +16,15 @@ class build_java(Command):
     """Compile Java components of Apport"""
 
     description = __doc__
-    user_options: list[tuple[str, str, str]] = []
+    user_options = [("minimum-java-release=", "r", "Specify minimum Java release.")]
+
+    def __init__(self, dist: Distribution, **kwargs: dict[str, typing.Any]) -> None:
+        Command.__init__(self, dist, **kwargs)
+        self.initialize_options()
 
     def initialize_options(self) -> None:
         """Set or (reset) all options/attributes/caches to their default values"""
+        self.minimum_java_release = "7"
 
     def finalize_options(self) -> None:
         """Set final values for all options/attributes"""
@@ -29,9 +34,13 @@ class build_java(Command):
         """Build the Java .class and .jar files."""
         oldwd = os.getcwd()
         os.chdir("java")
-        release = "7"
-
-        javac = ["javac", "-source", release, "-target", release]
+        javac = [
+            "javac",
+            "-source",
+            self.minimum_java_release,
+            "-target",
+            self.minimum_java_release,
+        ]
         subprocess.check_call(javac + glob.glob("com/ubuntu/apport/*.java"))
         subprocess.check_call(
             ["jar", "cvf", "apport.jar"] + glob.glob("com/ubuntu/apport/*.class")
