@@ -306,6 +306,7 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(out, binary="compressed")
         self.assertEqual(pr["File"].get_value(), data)
+        self.assertEqual(pr["File"].name, "File")
 
     def test_size_limit(self):
         """Write and a big random file with a size limit key."""
