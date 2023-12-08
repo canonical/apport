@@ -222,7 +222,7 @@ class ProblemReport(collections.UserDict):
                 value = value.strip()
                 if value == b"base64":
                     if binary == "compressed":
-                        value = CompressedValue(key.encode())
+                        value = CompressedValue(name=key)
                         value.gzipvalue = b""
                     else:
                         value = b""

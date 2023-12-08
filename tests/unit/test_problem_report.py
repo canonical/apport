@@ -337,6 +337,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(isinstance(pr["File"], problem_report.CompressedValue))
         self.assertEqual(len(pr["File"]), len(bin_data))
         self.assertEqual(pr["File"].get_value(), bin_data)
+        self.assertEqual(pr["File"].name, "File")
 
     def test_read_file_legacy(self):
         """Read a report with binary data in legacy format without gzip
@@ -368,6 +369,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr.has_removed_fields(), False)
         self.assertEqual(len(pr["File"]), 31)
         self.assertEqual(pr["File"].get_value(), b"AB" * 10 + b"\0" * 10 + b"Z")
+        self.assertEqual(pr["File"].name, "File")
         out = io.BytesIO()
         pr["File"].write(out)
         out.seek(0)
