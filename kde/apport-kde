@@ -400,7 +400,7 @@ class MainUserInterface(apport.ui.UserInterface):
                 QTreeWidgetItem(keyitem, [_("(binary data)")])
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (str | None) = None
+        self, allowed_to_report: bool = True, modal_for: (int | None) = None
     ) -> apport.ui.Action:
         desktop_info = self.get_desktop_entry()
         self.dialog = ReportDialog(self.report, allowed_to_report, self, desktop_info)

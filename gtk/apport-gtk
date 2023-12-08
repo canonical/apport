@@ -39,10 +39,8 @@ except (AssertionError, ImportError, RuntimeError) as error:
 have_display = os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")
 
 
-def find_xid_for_pid(pid):
+def find_xid_for_pid(pid: int) -> int | None:
     """Return the X11 Window (xid) for the supplied process ID."""
-
-    pid = int(pid)
     screen = Wnck.Screen.get_default()
     screen.force_update()
     for window in screen.get_windows():
@@ -207,7 +205,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         gdk_window.set_modal_hint(True)
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (str | None) = None
+        self, allowed_to_report: bool = True, modal_for: (int | None) = None
     ) -> apport.ui.Action:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements

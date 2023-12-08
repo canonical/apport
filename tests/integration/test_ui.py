@@ -122,9 +122,10 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.msg_choices = None
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (str | None) = None
+        self, allowed_to_report: bool = True, modal_for: (int | None) = None
     ) -> apport.ui.Action:
         self.present_details_shown = True
+        assert modal_for is None or isinstance(modal_for, int)
         assert self.present_details_response
         return self.present_details_response
 
@@ -812,6 +813,25 @@ class T(unittest.TestCase):
 
         os.unlink(exename)
         self.assertEqual(self.ui.msg_severity, "error")
+
+    def test_run_report_hanging(self) -> None:
+        with self._run_test_executable() as pid:
+            self.ui = UserInterfaceMock(["ui-test", "--hanging", str(pid)])
+            self.ui.present_details_response = apport.ui.Action(report=True)
+            self.assertTrue(self.ui.run_argv())
+
+        assert self.ui.report
+        for expected_key in (
+            "ProblemType",
+            "ExecutablePath",
+            "Package",
+            "SourcePackage",
+        ):
+            self.assertIn(expected_key, self.ui.report)
+        self.assertEqual(self.ui.report["ProblemType"], "Hang")
+        self.assertEqual(self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
+        self.assertEqual(self.ui.report["Package"].split(" ")[0], "coreutils")
+        self.assertEqual(self.ui.report["SourcePackage"], "coreutils")
 
     @unittest.mock.patch("apport.packaging_impl.impl.get_version")
     def test_run_report_bug_kernel_thread(self, get_version_mock):
