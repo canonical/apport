@@ -80,10 +80,9 @@ class CompressedValue:
         """
         return ((len(self.compressed_value) + 2) // 3) * 4
 
-    def get_value(self) -> bytes | None:
+    def get_value(self) -> bytes:
         """Return uncompressed value."""
-        if not self.compressed_value:
-            return None
+        assert self.compressed_value is not None
 
         if self.compressed_value.startswith(GZIP_HEADER_START):
             return gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)).read()
