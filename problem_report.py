@@ -71,6 +71,11 @@ class CompressedValue:
         gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
         self.compressed_value = out.getvalue()
 
+    def get_compressed_size(self) -> int:
+        """Return size of the compressed (but not base64 encoded) value."""
+        assert self.compressed_value is not None
+        return len(self.compressed_value)
+
     def get_on_disk_size(self) -> int:
         """Return the size needed on disk to store the compressed value.
 
@@ -78,7 +83,7 @@ class CompressedValue:
         which adds an overhead of 1/3 plus up to 2 bytes of padding. Additional
         spaces and newlines are ignored in this calculation.
         """
-        return ((len(self.compressed_value) + 2) // 3) * 4
+        return ((self.get_compressed_size() + 2) // 3) * 4
 
     def get_value(self) -> bytes:
         """Return uncompressed value."""
