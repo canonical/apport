@@ -564,13 +564,11 @@ class MainUserInterface(apport.ui.UserInterface):
         if response == QDialog.Rejected:
             return None
 
-        response = [
+        return [
             c
             for c in range(0, dialog.vbox_choices.count())
             if dialog.vbox_choices.itemAt(c).widget().isChecked()
         ]
-
-        return response
 
     def ui_question_file(self, text: str) -> str | None:
         """Show a file selector dialog.
