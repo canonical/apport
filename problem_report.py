@@ -31,6 +31,7 @@ from collections.abc import Generator, Iterable, Iterator
 
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
+ZSTANDARD_MAGIC_NUMBER = b"\x28\xB5\x2F\xFD"
 
 
 class MalformedProblemReport(ValueError):
@@ -129,6 +130,25 @@ def _text_decoder(entry: Iterator[bytes], first_line: bytes) -> Iterator[bytes]:
             length += len(line) - 1
 
 
+def _get_zstandard_decompressor():
+    try:
+        # pylint: disable-next=import-outside-toplevel
+        import zstandard
+    except ImportError as error:
+        raise RuntimeError(
+            f"Failed to import zstandard library: {error}."
+            f" Please install python3-zstandard."
+        ) from None
+    return zstandard.ZstdDecompressor()
+
+
+def _zstandard_decoder(entry: Iterator[bytes], first_block: bytes) -> Iterator[bytes]:
+    decompressor = _get_zstandard_decompressor().decompressobj()
+    yield decompressor.decompress(first_block)
+    for block in entry:
+        yield decompressor.decompress(block)
+
+
 def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
     """Parse the given entry and return key and value.
 
@@ -160,7 +180,7 @@ def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
 
 
 class CompressedValue:
-    """Represent a ProblemReport value which is gzip compressed.
+    """Represent a ProblemReport value which is gzip or zstandard compressed.
 
     By default, compressed values are in gzip format. Earlier versions of
     problem_report used zlib format (without gzip header).
@@ -204,6 +224,9 @@ class CompressedValue:
         block = next(entry, None)
         if block is None:
             return
+        if block.startswith(ZSTANDARD_MAGIC_NUMBER):
+            yield from _zstandard_decoder(entry, block)
+            return
         # skip gzip header, if present
         if block.startswith(GZIP_HEADER_START):
             decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
@@ -221,6 +244,8 @@ class CompressedValue:
         """Return uncompressed value."""
         assert self.compressed_value is not None
 
+        if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
+            return _get_zstandard_decompressor().decompress(self.compressed_value)
         if self.compressed_value.startswith(GZIP_HEADER_START):
             return gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)).read()
         # legacy zlib format
@@ -229,6 +254,11 @@ class CompressedValue:
     def write(self, file: typing.BinaryIO) -> None:
         """Write uncompressed value into given file-like object."""
         assert self.compressed_value
+
+        if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
+            decompressor = _get_zstandard_decompressor()
+            decompressor.copy_stream(io.BytesIO(self.compressed_value), file)
+            return
 
         if self.compressed_value.startswith(GZIP_HEADER_START):
             gz = gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value))
