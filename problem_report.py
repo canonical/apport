@@ -58,7 +58,12 @@ class CompressedValue:
     problem_report used zlib format (without gzip header).
     """
 
-    def __init__(self, value=None, name=None, compressed_value=None):
+    def __init__(
+        self,
+        value: (bytes | None) = None,
+        name: (str | None) = None,
+        compressed_value: (bytes | None) = None,
+    ) -> None:
         """Initialize an empty CompressedValue object with an optional name."""
         self.compressed_value = compressed_value
         self.name = name
@@ -110,7 +115,7 @@ class CompressedValue:
         # legacy zlib format
         file.write(zlib.decompress(self.compressed_value))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return length of uncompressed value."""
         assert self.compressed_value
         if self.compressed_value.startswith(GZIP_HEADER_START):
@@ -118,7 +123,7 @@ class CompressedValue:
         # legacy zlib format
         return len(self.get_value())
 
-    def splitlines(self):
+    def splitlines(self) -> list[bytes]:
         """Behaves like splitlines() for a normal string."""
         return self.get_value().splitlines()
 
