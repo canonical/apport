@@ -106,7 +106,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertRaises(TypeError, pr.__setitem__, "a", ["/tmp/nonexistent"])
         self.assertRaises(KeyError, pr.__getitem__, "Nonexistent")
 
-    def test_write(self):
+    def test_write(self) -> None:
         """write() and proper formatting."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
@@ -138,8 +138,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 """
             )
             + "  foo   bar\n baz\n   blip  \n \n afteremptyline\n"
-        )
-        expected = expected.encode("UTF-8")
+        ).encode("UTF-8")
         self.assertEqual(out.getvalue(), expected)
 
     def test_load(self):
