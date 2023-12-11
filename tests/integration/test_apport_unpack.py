@@ -21,6 +21,8 @@ from tests.paths import local_test_environment
 
 class TestApportUnpack(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
+    UTF8_STR = b"a\xe2\x99\xa5b"
+    BINDATA = b"\x00\x01\xFF\x40"
     env: dict[str, str]
 
     @classmethod
@@ -30,11 +32,9 @@ class TestApportUnpack(unittest.TestCase):
 
         # create problem report file with all possible data types
         report = problem_report.ProblemReport()
-        cls.utf8_str = b"a\xe2\x99\xa5b"
-        cls.bindata = b"\x00\x01\xFF\x40"
-        report["utf8"] = cls.utf8_str
-        report["unicode"] = cls.utf8_str.decode("UTF-8")
-        report["binary"] = cls.bindata
+        report["utf8"] = cls.UTF8_STR
+        report["unicode"] = cls.UTF8_STR.decode("UTF-8")
+        report["binary"] = cls.BINDATA
         report["compressed"] = problem_report.CompressedValue(b"FooFoo!")
         report["separator"] = ""
 
@@ -59,9 +59,9 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(process.stderr, "")
         self.assertEqual(process.stdout, "")
 
-        self.assertEqual(self._get_unpack("utf8"), self.utf8_str)
-        self.assertEqual(self._get_unpack("unicode"), self.utf8_str)
-        self.assertEqual(self._get_unpack("binary"), self.bindata)
+        self.assertEqual(self._get_unpack("utf8"), self.UTF8_STR)
+        self.assertEqual(self._get_unpack("unicode"), self.UTF8_STR)
+        self.assertEqual(self._get_unpack("binary"), self.BINDATA)
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
     def test_unpack_stdin(self):
@@ -80,9 +80,9 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(process.stdout, b"", process.stdout.decode())
         self.assertEqual(process.returncode, 0)
 
-        self.assertEqual(self._get_unpack("utf8"), self.utf8_str)
-        self.assertEqual(self._get_unpack("unicode"), self.utf8_str)
-        self.assertEqual(self._get_unpack("binary"), self.bindata)
+        self.assertEqual(self._get_unpack("utf8"), self.UTF8_STR)
+        self.assertEqual(self._get_unpack("unicode"), self.UTF8_STR)
+        self.assertEqual(self._get_unpack("binary"), self.BINDATA)
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
     def test_help(self):
