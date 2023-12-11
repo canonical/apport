@@ -46,6 +46,7 @@ else:
 @unittest.skipIf(PYQT5_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}")
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
+    # pylint: disable=too-many-public-methods
     COLLECTING_DIALOG = unittest.mock.call(
         str(apport_kde_path.parent),
         "Collecting Problem Information",
@@ -742,6 +743,12 @@ class T(unittest.TestCase):
         self.ui.ui_present_report_details(False)
         self.assertFalse(self.ui.dialog.send_error_report.isVisible())
         self.assertFalse(self.ui.dialog.send_error_report.isChecked())
+
+    def test_ui_run_terminal(self) -> None:
+        """Test ui_run_terminal."""
+        if not self.ui.ui_has_terminal():
+            self.skipTest("installed terminal application needed")
+        self.ui.ui_run_terminal("true")
 
     def test_ui_set_upload_progress(self) -> None:
         self.ui.ui_start_upload_progress()

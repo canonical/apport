@@ -598,6 +598,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_run_terminal(self, command):
         program = self._get_terminal()
+        assert program is not None
         subprocess.call([program, "-e", command])
 
     #

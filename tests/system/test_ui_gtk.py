@@ -1182,6 +1182,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             f'Für Hilfe gehen Sie über <a href="{url}">{url}</a>.',
         )
 
+    def test_ui_run_terminal(self) -> None:
+        """Test ui_run_terminal."""
+        if not self.app.ui_has_terminal():
+            self.skipTest("installed terminal application needed")
+        self.app.ui_run_terminal("true")
+
     def test_ui_update_view_destroyed(self):
         """Test ui_update_view if the dialog is already destroyed."""
         self.app.w("details_treeview").destroy()
