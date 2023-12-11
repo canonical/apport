@@ -1159,7 +1159,7 @@ class Report(problem_report.ProblemReport):
                 opt_path = os.path.dirname(opt_path)
 
         # common hooks
-        for hook in glob.glob(GENERAL_HOOK_DIR + "/*.py"):
+        for hook in sorted(glob.glob(GENERAL_HOOK_DIR + "/*.py")):
             if _run_hook(self, ui, hook):
                 return True
 
