@@ -395,36 +395,13 @@ class UserInterface:
 
         if os.geteuid() == 0:
             reports = apport.fileutils.get_new_system_reports()
-            logind_session = None
         else:
             reports = apport.fileutils.get_new_reports()
-            proc_pid_fd = os.open(
-                f"/proc/{os.getpid()}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-            )
-            logind_session = apport.Report.get_logind_session(proc_pid_fd=proc_pid_fd)
 
         for f in reports:
             if not self.load_report(f):
                 continue
             assert self.report
-
-            # Skip crashes that happened during logout, which are uninteresting
-            # and confusing to see at the next login. A crash happened and gets
-            # reported in the same session if the logind session paths agree
-            # and the session started before the report's "Date".
-            if (
-                logind_session
-                and "_LogindSession" in self.report
-                and "Date" in self.report
-            ):
-                # report.get_timestamp() can return None
-                if not self.report.get_timestamp():
-                    continue
-                if (
-                    logind_session[0] != self.report["_LogindSession"]
-                    or logind_session[1] > self.report.get_timestamp()
-                ):
-                    continue
 
             if self.report["ProblemType"] == "Hang":
                 self.finish_hang(f)
