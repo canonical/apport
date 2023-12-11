@@ -680,7 +680,7 @@ class Report(problem_report.ProblemReport):
         extraenv: (Iterable[str] | None) = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
+        # pylint: disable=too-many-branches
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -701,8 +701,6 @@ class Report(problem_report.ProblemReport):
         - ProcMaps: /proc/pid/maps contents
         - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
         - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
-        - _LogindSession: logind cgroup path, if present (Used for filtering
-          out crashes that happened in a session that is not running any more)
         """
         if isinstance(pid, str):
             pid = int(pid)
@@ -770,10 +768,6 @@ class Report(problem_report.ProblemReport):
                     self["ProcAttrCurrent"] = val
         except OSError:
             pass
-
-        ret = self.get_logind_session(pid, proc_pid_fd)
-        if ret:
-            self["_LogindSession"] = ret[0]
 
     def add_proc_environ(
         self,
@@ -1993,38 +1987,3 @@ class Report(problem_report.ProblemReport):
             self._proc_maps_cache.append(
                 (int(m.group(1), 16), int(m.group(2), 16), m.group(3))
             )
-
-    @staticmethod
-    def get_logind_session(
-        pid: (int | None) = None, proc_pid_fd: (int | None) = None
-    ) -> tuple[str, float] | None:
-        """Get logind session path and start time.
-
-        Return (session_id, session_start_timestamp) if process is in a logind
-        session, or None otherwise.
-        """
-        if proc_pid_fd is None:
-            cgroup_file: (int | str) = f"/proc/{pid}/cgroup"
-        else:
-            cgroup_file = os.open("cgroup", os.O_RDONLY, dir_fd=proc_pid_fd)
-
-        # determine cgroup
-        try:
-            with io.open(cgroup_file, encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if (
-                        "name=systemd:" in line
-                        and line.endswith(".scope")
-                        and "/session-" in line
-                    ):
-                        my_session = line.split("/session-", 1)[1][:-6]
-                        break
-                else:
-                    return None
-            # determine session creation time
-            session_start_time = os.stat("/run/systemd/sessions/" + my_session).st_mtime
-        except OSError:
-            return None
-
-        return (my_session, session_start_time)

@@ -36,7 +36,6 @@ from tests.helper import pidof, skip_if_command_is_missing
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
-logind_session = apport.Report.get_logind_session(os.getpid())
 
 
 def mock_run_calls_except_pgrep(
@@ -1684,54 +1683,6 @@ class T(unittest.TestCase):
         r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
         self.assertIn("SourcePackage", r)
         self.assertNotIn("_Temp", r)
-
-    @unittest.skipIf(logind_session is None, "not running in logind session")
-    def test_run_crash_older_session(self):
-        """run_crashes() skips crashes from older logind sessions"""
-        latest_id_before = self.ui.crashdb.latest_id()
-
-        # current crash report
-        r = self._gen_test_crash()
-        cur_date = r["Date"]
-        r["Tag"] = "cur"
-        self.assertEqual(r["_LogindSession"], logind_session[0])
-        with open(os.path.join(apport.fileutils.report_dir, "cur.crash"), "wb") as f:
-            r.write(f)
-
-        # old crash report
-        r["Date"] = time.asctime(time.localtime(logind_session[1] - 1))
-        r["Tag"] = "old"
-        with open(os.path.join(apport.fileutils.report_dir, "old.crash"), "wb") as f:
-            r.write(f)
-
-        # old crash report without session
-        del r["_LogindSession"]
-        r["Tag"] = "oldnosession"
-        with open(
-            os.path.join(apport.fileutils.report_dir, "oldnosession.crash"), "wb"
-        ) as f:
-            r.write(f)
-        del r
-
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crashes()
-
-        if os.getuid() != 0:
-            # as user: should have reported two reports only
-            self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 2)
-            r1 = self.ui.crashdb.download(self.ui.crashdb.latest_id())
-            r2 = self.ui.crashdb.download(self.ui.crashdb.latest_id() - 1)
-            if r1["Tag"] == "cur":
-                self.assertEqual(r1["Date"], cur_date)
-                self.assertEqual(r2["Tag"], "oldnosession")
-            else:
-                self.assertEqual(r2["Date"], cur_date)
-                self.assertEqual(r1["Tag"], "oldnosession")
-                self.assertEqual(r2["Tag"], "cur")
-        else:
-            # as root: should have reported all reports
-            self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 3)
 
     def test_run_update_report_nonexisting_package_from_bug(self):
         """run_update_report() on a nonexisting package (from bug)"""
