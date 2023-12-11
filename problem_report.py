@@ -244,7 +244,7 @@ class ProblemReport(collections.UserDict):
     def extract_keys(self, file, bin_keys, directory):
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
-        """Extract only one binary element from the problem report.
+        """Extract only given binary elements from the problem report.
 
         Binary elements like kernel crash dumps can be very big. This method
         extracts directly files without loading the report into memory.
