@@ -494,6 +494,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_run_terminal(self, command):
         program = self._get_terminal()
+        assert program is not None
         subprocess.call([program, "-e", command])
 
     def ui_stop_info_collection_progress(self):
