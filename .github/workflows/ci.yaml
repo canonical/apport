@@ -9,7 +9,7 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-  linter-tests:
+  linter:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -39,7 +39,7 @@ jobs:
       - name: Run linter tests
         run: tests/run-linters
 
-  unit-tests:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -79,7 +79,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml
 
-  unit-tests-installed:
+  unit-installed:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -124,7 +124,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml,./coverage-setup.xml
 
-  integration-tests:
+  integration:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -163,7 +163,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml,./coverage-setup.xml
 
-  integration-tests-installed:
+  integration-installed:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -207,7 +207,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml,./coverage-setup.xml
 
-  skip-tests:
+  skip:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -237,7 +237,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml
 
-  system-tests:
+  system:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -282,7 +282,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml
 
-  system-tests-installed:
+  system-installed:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
