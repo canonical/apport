@@ -709,5 +709,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """Test CompressedValue.get_on_disk_size()."""
         compressed_value = problem_report.CompressedValue(b"somedata")
         self.assertEqual(compressed_value.get_compressed_size(), 28)
+        assert compressed_value.compressed_value is not None
         base64_encoded = base64.b64encode(compressed_value.compressed_value)
         self.assertEqual(compressed_value.get_on_disk_size(), len(base64_encoded))
