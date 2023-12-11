@@ -15,7 +15,8 @@
 set -eu
 
 PYTHON_FILES="apport apport_python_hook.py data problem_report.py setup.py setuptools_apport tests"
-PYTHON_SCRIPTS=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper)
+PYTHON_SCRIPTS_WITHOUT_APPORT=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper ! -name apport)
+PYTHON_SCRIPTS="$PYTHON_SCRIPTS_WITHOUT_APPORT data/apport"
 
 check_hardcoded_names() {
     # assert that there are no hardcoded "Ubuntu" names
@@ -50,10 +51,8 @@ run_mypy() {
         return
     fi
     echo "Running mypy..."
-    mypy --disallow-incomplete-defs --ignore-missing-imports ${PYTHON_FILES}
-    for script in $PYTHON_SCRIPTS; do
-        mypy --disallow-incomplete-defs --ignore-missing-imports "$script"
-    done
+    mypy --disallow-incomplete-defs --ignore-missing-imports ${PYTHON_FILES} data/apport
+    mypy --disallow-incomplete-defs --ignore-missing-imports --scripts-are-modules ${PYTHON_SCRIPTS_WITHOUT_APPORT}
 }
 
 run_pycodestyle() {
