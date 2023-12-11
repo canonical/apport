@@ -86,6 +86,26 @@ class _EntryParser(Iterator):
         return self.entry_iterator()
 
 
+def _strip_gzip_header(line: bytes) -> bytes:
+    """Strip gzip header from line and return the rest."""
+    flags = line[3]
+    offset = 10
+    if flags & 4:  # FLG.FEXTRA
+        offset += line[offset] + 1
+    if flags & 8:  # FLG.FNAME
+        while line[offset] != 0:
+            offset += 1
+        offset += 1
+    if flags & 16:  # FLG.FCOMMENT
+        while line[offset] != 0:
+            offset += 1
+        offset += 1
+    if flags & 2:  # FLG.FHCRC
+        offset += 2
+
+    return line[offset:]
+
+
 class CompressedValue:
     """Represent a ProblemReport value which is gzip compressed.
 
@@ -363,8 +383,8 @@ class ProblemReport(collections.UserDict):
         """
         return None in self.values()
 
-    @classmethod
-    def _decompress_line(cls, line, decompressor, value=b""):
+    @staticmethod
+    def _decompress_line(line, decompressor, value=b""):
         """Decompress a Base64 encoded line of gzip compressed data."""
         try:
             block = base64.b64decode(line)
@@ -378,7 +398,7 @@ class ProblemReport(collections.UserDict):
         # skip gzip header, if present
         elif block.startswith(GZIP_HEADER_START):
             decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
-            value = decompressor.decompress(cls._strip_gzip_header(block))
+            value = decompressor.decompress(_strip_gzip_header(block))
         else:
             # legacy zlib-only format used default block
             # size
@@ -846,26 +866,6 @@ class ProblemReport(collections.UserDict):
         was constructed or loaded.
         """
         return set(self.data.keys()) - self.old_keys
-
-    @staticmethod
-    def _strip_gzip_header(line: bytes) -> bytes:
-        """Strip gzip header from line and return the rest."""
-        flags = line[3]
-        offset = 10
-        if flags & 4:  # FLG.FEXTRA
-            offset += line[offset] + 1
-        if flags & 8:  # FLG.FNAME
-            while line[offset] != 0:
-                offset += 1
-            offset += 1
-        if flags & 16:  # FLG.FCOMMENT
-            while line[offset] != 0:
-                offset += 1
-            offset += 1
-        if flags & 2:  # FLG.FHCRC
-            offset += 2
-
-        return line[offset:]
 
     @staticmethod
     def _assert_bin_mode(file: object) -> None:
