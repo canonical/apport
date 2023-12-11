@@ -86,6 +86,14 @@ class _EntryParser(Iterator):
         return self.entry_iterator()
 
 
+def _base64_decoder(entry: Iterable[bytes]) -> Iterator[bytes]:
+    for line in entry:
+        try:
+            yield base64.b64decode(line)
+        except binascii.Error as error:
+            raise MalformedProblemReport(str(error)) from None
+
+
 def _strip_gzip_header(line: bytes) -> bytes:
     """Strip gzip header from line and return the rest."""
     flags = line[3]
@@ -104,6 +112,51 @@ def _strip_gzip_header(line: bytes) -> bytes:
         offset += 2
 
     return line[offset:]
+
+
+def _text_decoder(entry: Iterator[bytes], first_line: bytes) -> Iterator[bytes]:
+    line = first_line.strip()
+    yield line
+    length = len(line)
+    for line in entry:
+        if length > 0:
+            yield b"\n"
+        if line.endswith(b"\n"):
+            yield line[1:-1]
+            length += len(line) - 2
+        else:
+            yield line[1:]
+            length += len(line) - 1
+
+
+def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
+    """Parse the given entry and return key and value.
+
+    Return the key and a line iterator over the value. Also return a
+    boolean if the entry is base64 encoded (i.e. is a binary value).
+    """
+    first_line = next(entry)
+    try:
+        (key_in_bytes, first_line_value) = first_line.split(b":", 1)
+    except ValueError:
+        raise MalformedProblemReport(
+            f"Line {first_line.decode(errors='backslashreplace')!r}"
+            f" does not contain a colon for separating"
+            f" the key from the value"
+        ) from None
+
+    try:
+        key = key_in_bytes.decode("ASCII")
+    except UnicodeDecodeError as error:
+        raise MalformedProblemReport(str(error)) from None
+
+    base64_encoded = first_line_value.strip() == b"base64"
+    if base64_encoded:
+        value_iterator = _base64_decoder(entry)
+    else:
+        value_iterator = _text_decoder(entry, first_line_value)
+
+    return key, value_iterator, base64_encoded
 
 
 class CompressedValue:
@@ -144,6 +197,25 @@ class CompressedValue:
         spaces and newlines are ignored in this calculation.
         """
         return ((self.get_compressed_size() + 2) // 3) * 4
+
+    @staticmethod
+    def decode_compressed_stream(entry: Iterator[bytes]) -> Iterator[bytes]:
+        """Decode the given compressed value (iterator version)."""
+        block = next(entry, None)
+        if block is None:
+            return
+        # skip gzip header, if present
+        if block.startswith(GZIP_HEADER_START):
+            decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
+            yield decompressor.decompress(_strip_gzip_header(block))
+        else:
+            # legacy zlib-only format used default block size
+            decompressor = zlib.decompressobj()
+            yield decompressor.decompress(block)
+
+        for block in entry:
+            yield decompressor.decompress(block)
+        yield decompressor.flush()
 
     def get_value(self) -> bytes:
         """Return uncompressed value."""
@@ -206,10 +278,12 @@ class ProblemReport(collections.UserDict):
         new_tags = current_tags.union(tags)
         self["Tags"] = " ".join(sorted(new_tags))
 
-    def load(self, file, binary=True, key_filter=None):
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-nested-blocks
-        # pylint: disable=too-many-statements
+    def load(
+        self,
+        file: (gzip.GzipFile | typing.BinaryIO),
+        binary: (bool | typing.Literal["compressed"]) = True,
+        key_filter: (Iterable[str] | None) = None,
+    ) -> None:
         """Initialize problem report from a file-like object.
 
         If binary is False, binary data is not loaded; the dictionary key is
@@ -228,77 +302,44 @@ class ProblemReport(collections.UserDict):
         """
         self._assert_bin_mode(file)
         self.data.clear()
-        key = None
-        value = None
-        b64_block = False
-        bd = None
         if key_filter:
             remaining_keys = set(key_filter)
         else:
             remaining_keys = None
-        for line in file:
-            # continuation line
-            if line.startswith(b" "):
-                if b64_block and not binary:
-                    value = None
-                    continue
-                assert key is not None and value is not None
-                if b64_block:
-                    bd, value = self._decompress_line(line, bd, value)
+
+        for entry in _EntryParser(file):
+            key, iterator, base64_encoded = _parse_entry(entry)
+            if remaining_keys is not None and key not in remaining_keys:
+                continue
+
+            if base64_encoded:
+                if binary is False:
+                    self.data[key] = None
+                elif binary == "compressed":
+                    self.data[key] = CompressedValue(
+                        name=key, compressed_value=b"".join(iterator)
+                    )
                 else:
-                    if len(value) > 0:
-                        value += b"\n"
-                    if line.endswith(b"\n"):
-                        value += line[1:-1]
-                    else:
-                        value += line[1:]
+                    self.data[key] = self._try_unicode(
+                        b"".join(CompressedValue.decode_compressed_stream(iterator))
+                    )
+
             else:
-                if b64_block:
-                    if bd:
-                        value += bd.flush()
-                    b64_block = False
-                    bd = None
-                if key:
-                    if remaining_keys is not None:
-                        try:
-                            remaining_keys.remove(key)
-                            self.data[key] = self._try_unicode(value)
-                            if not remaining_keys:
-                                key = None
-                                break
-                        except KeyError:
-                            pass
-                    else:
-                        self.data[key] = self._try_unicode(value)
+                self.data[key] = self._try_unicode(b"".join(iterator))
 
-                try:
-                    (key, value) = line.split(b":", 1)
-                except ValueError:
-                    raise MalformedProblemReport(
-                        f"Line {line.decode(errors='backslashreplace')!r}"
-                        f" does not contain a colon for separating"
-                        f" the key from the value"
-                    ) from None
-                try:
-                    key = key.decode("ASCII")
-                except UnicodeDecodeError as error:
-                    raise MalformedProblemReport(str(error)) from None
-                value = value.strip()
-                if value == b"base64":
-                    if binary == "compressed":
-                        value = CompressedValue(name=key, compressed_value=b"")
-                    else:
-                        value = b""
-                    b64_block = True
-
-        if key is not None:
-            self.data[key] = self._try_unicode(value)
+            if remaining_keys is not None:
+                remaining_keys.remove(key)
+                if len(remaining_keys) == 0:
+                    break
 
         self.old_keys = set(self.data.keys())
 
-    def extract_keys(self, file, bin_keys, directory):
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+    def extract_keys(
+        self,
+        file: (gzip.GzipFile | typing.BinaryIO),
+        bin_keys: (Iterable[str] | str),
+        directory: str,
+    ) -> None:
         """Extract only given binary elements from the problem report.
 
         Binary elements like kernel crash dumps can be very big. This method
@@ -308,44 +349,27 @@ class ProblemReport(collections.UserDict):
         # support single key and collection of keys
         if isinstance(bin_keys, str):
             bin_keys = [bin_keys]
-        key = None
-        value = None
         missing_keys = list(bin_keys)
         b64_block = {}
-        bd = None
-        out = None
-        for line in file:
-            # Identify the bin_keys we're looking for
-            while not line.startswith(b" "):
-                (key, value) = line.split(b":", 1)
-                key = key.decode("ASCII")
-                if key not in missing_keys:
-                    break
-                b64_block[key] = False
-                missing_keys.remove(key)
-                value = value.strip()
-                if value == b"base64":
-                    value = b""
-                    b64_block[key] = True
-                    key_path = os.path.join(directory, key)
-                    try:
-                        bd = None
-                        with open(key_path, "wb") as out:
-                            # pylint: disable=redefined-outer-name
-                            for line in file:
-                                # continuation line
-                                if line.startswith(b" "):
-                                    assert key is not None and value is not None
-                                    if b64_block[key]:
-                                        bd, line_value = self._decompress_line(line, bd)
-                                        if line_value:
-                                            out.write(line_value)
-                                else:
-                                    break
-                    except OSError as error:
-                        raise OSError(f"unable to open {key_path}") from error
-                else:
-                    break
+
+        for entry in _EntryParser(file):
+            key, iterator, base64_encoded = _parse_entry(entry)
+            if key not in missing_keys:
+                continue
+
+            b64_block[key] = base64_encoded
+            missing_keys.remove(key)
+            if not base64_encoded:
+                continue
+
+            key_path = os.path.join(directory, key)
+            try:
+                with open(key_path, "wb") as out:
+                    for block in CompressedValue.decode_compressed_stream(iterator):
+                        out.write(block)
+            except OSError as error:
+                raise OSError(f"unable to open {key_path}") from error
+
         if missing_keys:
             raise KeyError(f"Cannot find {', '.join(missing_keys)} in report")
         if False in b64_block.values():
@@ -382,30 +406,6 @@ class ProblemReport(collections.UserDict):
         This could happen when using binary=False in load().
         """
         return None in self.values()
-
-    @staticmethod
-    def _decompress_line(line, decompressor, value=b""):
-        """Decompress a Base64 encoded line of gzip compressed data."""
-        try:
-            block = base64.b64decode(line)
-        except binascii.Error as error:
-            raise MalformedProblemReport(str(error)) from None
-        if decompressor:
-            value += decompressor.decompress(block)
-        elif isinstance(value, CompressedValue):
-            value.compressed_value += block
-        # lazy initialization of decompressor
-        # skip gzip header, if present
-        elif block.startswith(GZIP_HEADER_START):
-            decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
-            value = decompressor.decompress(_strip_gzip_header(block))
-        else:
-            # legacy zlib-only format used default block
-            # size
-            decompressor = zlib.decompressobj()
-            value += decompressor.decompress(block)
-
-        return decompressor, value
 
     @staticmethod
     def is_binary(string: (bytes | str)) -> bool:
