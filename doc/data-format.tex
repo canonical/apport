@@ -81,7 +81,10 @@ should be compressed.
 
 A binary value is introduced by the text ``\verb!base64!'' and a line break
 following the key name, colon, and space. After that, the binary data is
-encoded as follows:
+compressed (either gzip or zstandard) and then base64-encoded. Each line
+should contain at most 1 MiB of binary data when decoded and uncompressed.
+
+For gzip compression, the binary data is encoded as follows:
 
 \begin{itemize}
     \item Write a gzip header

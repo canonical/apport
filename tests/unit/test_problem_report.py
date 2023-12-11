@@ -4,12 +4,21 @@
 # pylint: disable=invalid-name
 
 import base64
+import contextlib
 import email
 import io
 import locale
+import sys
 import textwrap
 import time
 import unittest
+import unittest.mock
+from unittest.mock import MagicMock
+
+try:
+    import zstandard
+except ImportError:
+    zstandard = None  # type: ignore
 
 import problem_report
 
@@ -270,6 +279,88 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 "^Malformed problem report: Incorrect padding."
                 " Is this a proper .crash text file\\?$",
             ):
+                report.load(report_file)
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_load_zstd_compressed_data(self) -> None:
+        """Test reading zstd-compressed data."""
+        report = problem_report.ProblemReport()
+        content = (
+            b"CoreDump: base64\n"
+            b" KLUv/SROHQIAgoQOEqC7ASCSGCybZRrN7//Hsn7dVyActu7bbMcLaav0RC06\n"
+            b" m6fCZ/N7aeOeyqxspRVn88bSx8a8opWQAwEA/8OEAhOOwLA=\n"
+        )
+        with io.BytesIO(content) as report_file:
+            report.load(report_file)
+        self.assertEqual(
+            report["CoreDump"],
+            "sample data that is compressed with zstd"
+            " and is long enough for zstd to work.\n",
+        )
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_reading_zstd_compressed_value(self) -> None:
+        """Test reading zstd-compressed CompressedValue."""
+        report = problem_report.ProblemReport()
+        content = (
+            b"CoreDump: base64\n"
+            b" KLUv/SRPHQIA8sQPFKClOoBIEkjIbmfbhiz9/1/96mYFATGiz9JHLfTZY9aV\n"
+            b" a9QBRdQz0AkUjbdbVqNQorP3UpGC1NIi9X3UgygBAEyQcYs=\n"
+        )
+        with io.BytesIO(content) as report_file:
+            report.load(report_file, binary="compressed")
+        self.assertEqual(
+            report["CoreDump"].get_value(),
+            b"fake core dump data for testing purposes"
+            b" which is long enough to be compressed\n",
+        )
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_writing_zstd_compressed_value(self) -> None:
+        """Test writing zstd-compressed CompressedValue."""
+        compressed_value = problem_report.CompressedValue(
+            compressed_value=base64.b64decode(
+                b"KLUv/SRCvQEAIsQMEMC3AbLcS0WaZ8rvf69jyw3ghpXr6pBr5i7HiCKroc60"
+                b"3+tB4rC/4TV1osHyJUXme6IIAD6PTiM="
+            )
+        )
+        output = io.BytesIO()
+        compressed_value.write(output)
+        self.assertEqual(
+            output.getvalue(),
+            b"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam\n",
+        )
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_zstd_compressed_value_length(self) -> None:
+        """Test getting length of zstd-compressed CompressedValue."""
+        compressed_value = problem_report.CompressedValue(
+            compressed_value=base64.b64decode(
+                b"KLUv/SRB3QEAwoMMEbDrOJRilklIQlLIJC3OvFUMIIwdaHxrV6aSHEv6rFlP"
+                b"/ll/IaXfo19actUkdvm8hggBAAlhlgHbiBMF"
+            )
+        )
+        self.assertEqual(len(compressed_value), 65)
+
+    @unittest.mock.patch("builtins.__import__")
+    def test_zstandard_missing(self, import_mock: MagicMock) -> None:
+        """Test reading zstd-compressed data when zstandard is missing."""
+        with contextlib.suppress(KeyError):
+            sys.modules.pop("zstandard")
+        import_mock.side_effect = ImportError("mocked import error")
+
+        report = problem_report.ProblemReport()
+        content = (
+            b"CoreDump: base64\n"
+            b" KLUv/SROHQIAgoQOEqC7ASCSGCybZRrN7//Hsn7dVyActu7bbMcLaav0RC06\n"
+            b" m6fCZ/N7aeOeyqxspRVn88bSx8a8opWQAwEA/8OEAhOOwLA=\n"
+        )
+        expected_message = (
+            "Failed to import zstandard library: mocked import error."
+            " Please install python3-zstandard."
+        )
+        with self.assertRaisesRegex(RuntimeError, expected_message):
+            with io.BytesIO(content) as report_file:
                 report.load(report_file)
 
     def test_write_fileobj(self):
