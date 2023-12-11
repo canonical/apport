@@ -1260,6 +1260,7 @@ int main() { return f(42); }
                         """\
                         import sys
                         def add_info(report):
+                            report['Order'] = f'{report.get("Order", "")} foo'
                             report['Field1'] = 'Field 1'
                             report['Field2'] = 'Field 2\\nBla'
                             if 'Spethial' in report:
@@ -1277,6 +1278,7 @@ int main() { return f(42); }
                     textwrap.dedent(
                         """\
                         def add_info(report):
+                            report['Order'] = f'{report.get("Order", "")} foo1'
                             report['CommonField1'] = 'CommonField 1'
                             if report['Package'] == 'commonspethial':
                                 raise StopIteration
@@ -1292,6 +1294,7 @@ int main() { return f(42); }
                     textwrap.dedent(
                         """\
                         def add_info(report):
+                            report['Order'] = f'{report.get("Order", "")} foo2'
                             report['CommonField2'] = 'CommonField 2'
                         """
                     )
@@ -1305,6 +1308,7 @@ int main() { return f(42); }
                     textwrap.dedent(
                         """\
                         def add_info(report, ui):
+                            report['Order'] = f'{report.get("Order", "")} foo3'
                             report['CommonField3'] = str(ui)
                         """
                     )
@@ -1320,6 +1324,7 @@ int main() { return f(42); }
                     textwrap.dedent(
                         """\
                         def add_info(report):
+                            report['Order'] = f'{report.get("Order", "")} notme'
                             report['BadField'] = 'XXX'
                         """
                     )
@@ -1338,6 +1343,7 @@ int main() { return f(42); }
                         "CommonField1",
                         "CommonField2",
                         "CommonField3",
+                        "Order",
                     ]
                 ),
                 "report has required fields",
@@ -1357,6 +1363,7 @@ int main() { return f(42); }
                         "CommonField1",
                         "CommonField2",
                         "CommonField3",
+                        "Order",
                     ]
                 ),
                 "report has required fields",
@@ -1377,6 +1384,7 @@ int main() { return f(42); }
                         "CommonField1",
                         "CommonField2",
                         "CommonField3",
+                        "Order",
                     ]
                 ),
                 "report has required fields",
@@ -1386,6 +1394,7 @@ int main() { return f(42); }
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
             self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
+            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 foo")
 
             r = apport.report.Report()
             r["Package"] = "foo 4.5-6"
@@ -1402,6 +1411,7 @@ int main() { return f(42); }
                         "CommonField1",
                         "CommonField2",
                         "CommonField3",
+                        "Order",
                     ]
                 ),
                 "report has required fields",
@@ -1410,6 +1420,7 @@ int main() { return f(42); }
             self.assertEqual(r["Field2"], "Field 2\nBla")
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
+            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 foo")
 
             # test hook abort
             r["Spethial"] = "1"
@@ -1428,6 +1439,7 @@ int main() { return f(42); }
                     textwrap.dedent(
                         """\
                         def add_info(report, ui):
+                            report['Order'] = f'{report.get("Order", "")} source_foo'
                             report['Field1'] = 'Field 1'
                             report['Field2'] = 'Field 2\\nBla'
                             if report['Package'] == 'spethial':
@@ -1452,6 +1464,7 @@ int main() { return f(42); }
                         "CommonField1",
                         "CommonField2",
                         "CommonField3",
+                        "Order",
                     ]
                 ),
                 "report has required fields",
@@ -1461,6 +1474,7 @@ int main() { return f(42); }
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
             self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
+            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 source_foo")
 
             # test hook abort
             r["Package"] = "spethial"
