@@ -1,6 +1,11 @@
 [tool.black]
 line-length = 88
 
+[tool.coverage.report]
+exclude_also = [
+    "skipTest\\(",
+]
+
 [tool.codespell]
 skip = ".git,*.click,*.gif,*.po,*.png"
 ignore-words-list = "buildd"
