@@ -47,8 +47,6 @@ jobs:
         container:
           - debian:bookworm-slim
           - debian:testing-slim
-          - ubuntu:jammy
-          - ubuntu:mantic
     container:
       image: ${{ matrix.container }}
     steps:
@@ -58,12 +56,7 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           locales python3 python3-apt python3-pytest python3-pytest-cov
-          python3-systemd
-      # python3-zstandard is not available on ubuntu:jammy
-      - name: Install optional dependencies
-        run: >
-          apt-get install --no-install-recommends --yes python3-zstandard
-          || true
+          python3-systemd python3-zstandard
       - name: Enable German locale
         run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
       - name: Run unit tests
@@ -79,52 +72,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml
 
-  unit-installed:
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: Remove system installed Apport
-        run: >
-          sudo apt-get remove --purge --yes
-          apport python3-apport python3-problem-report
-      - name: Install dependencies
-        run: >
-          sudo apt-get update
-          && sudo apt-get install --no-install-recommends --yes
-          locales python3 python3-apt python3-distutils-extra python3-pytest
-          python3-pytest-cov
-      - name: Enable German locale
-        run: >
-          sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen
-          && sudo locale-gen
-      - name: Install
-        run: >
-          sudo python3 -m coverage run
-          ./setup.py install --install-layout=deb --prefix=/usr --root=/
-          && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
-          && python3 -m coverage xml -o coverage-setup.xml
-      - name: Run unit tests
-        run: >
-          WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
-          && cp -r tests "$WORKDIR"
-          && cd "$WORKDIR"
-          && python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/unit/
-          && cd -
-          && cp "$WORKDIR/coverage.xml" .
-      - name: Install dependencies for Codecov
-        run: >
-          sudo apt-get install --no-install-recommends --yes
-          ca-certificates curl git
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml,./coverage-setup.xml
-
-  integration:
+  unit-and-integration:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -142,16 +90,24 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           bash binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
-          libc6-dev python3 python3-apt python3-distutils-extra
+          libc6-dev locales python3 python3-apt python3-distutils-extra
           python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
           python3-requests python3-setuptools python3-systemd valgrind
+      # python3-zstandard is not available on ubuntu:jammy
+      - name: Install optional dependencies
+        run: >
+          apt-get install --no-install-recommends --yes python3-zstandard
+          || true
+      - name: Enable German locale
+        run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
       - name: Build Java subdir
         run: >
           python3 -m coverage run ./setup.py build_java_subdir
           && python3 -m coverage xml -o coverage-setup.xml
-      - name: Run integration tests
+      - name: Run unit and integration tests
         run: >
-          python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/integration/
+          python3 -m pytest -ra --cov=$(pwd) --cov-report=xml
+          tests/unit/ tests/integration/
       - name: Install dependencies for Codecov
         run: >
           apt-get install --no-install-recommends --yes
@@ -163,7 +119,7 @@ jobs:
           fail_ci_if_error: true
           files: ./coverage.xml,./coverage-setup.xml
 
-  integration-installed:
+  unit-and-integration-installed:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -178,22 +134,25 @@ jobs:
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
           bash binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
-          libc6-dev pkg-config python3 python3-apt python3-distutils-extra
-          python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
-          python3-setuptools python3-systemd valgrind
+          libc6-dev locales pkg-config python3 python3-apt
+          python3-distutils-extra python3-launchpadlib python3-psutil
+          python3-pytest python3-pytest-cov python3-setuptools python3-systemd
+          valgrind
+      - name: Enable German locale
+        run: sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && sudo locale-gen
       - name: Install
         run: >
           sudo python3 -m coverage run
           ./setup.py install --install-layout=deb --prefix=/usr --root=/
           && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
           && python3 -m coverage xml -o coverage-setup.xml
-      - name: Run integration tests
+      - name: Run unit and integration tests
         run: >
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
           && cp -r tests "$WORKDIR"
           && cd "$WORKDIR"
           && python3 -m pytest -ra --cov=$(pwd) --cov-report=xml
-          tests/integration/
+          tests/unit/ tests/integration/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Install dependencies for Codecov
