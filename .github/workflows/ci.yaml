@@ -60,7 +60,9 @@ jobs:
       - name: Enable German locale
         run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
       - name: Run unit tests
-        run: python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/unit/
+        run: >
+          python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
+          tests/unit/
       - name: Install dependencies for Codecov
         run: >
           apt-get install --no-install-recommends --yes
@@ -106,7 +108,7 @@ jobs:
           && python3 -m coverage xml -o coverage-setup.xml
       - name: Run unit and integration tests
         run: >
-          python3 -m pytest -ra --cov=$(pwd) --cov-report=xml
+          python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
           tests/unit/ tests/integration/
       - name: Install dependencies for Codecov
         run: >
@@ -151,7 +153,7 @@ jobs:
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
           && cp -r tests "$WORKDIR"
           && cd "$WORKDIR"
-          && python3 -m pytest -ra --cov=$(pwd) --cov-report=xml
+          && python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
           tests/unit/ tests/integration/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
@@ -184,7 +186,9 @@ jobs:
           && apt-get install --no-install-recommends --yes
           python3 python3-apt python3-psutil python3-pytest python3-pytest-cov
       - name: Run all tests (to check if they are skipped or succeed)
-        run: python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/
+        run: >
+          python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
+          tests/
       - name: Install dependencies for Codecov
         run: >
           apt-get install --no-install-recommends --yes
@@ -226,8 +230,8 @@ jobs:
         env:
           GDK_BACKEND: x11
         run: >
-          xvfb-run
-          python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/system/
+          xvfb-run python3 -m pytest -ra --cov=$(pwd) --cov-branch
+          --cov-report=xml tests/system/
       - name: Stop D-Bus daemon
         run: kill $(cat /run/dbus/pid)
       - name: Install dependencies for Codecov
@@ -279,8 +283,8 @@ jobs:
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
           && cp -r tests "$WORKDIR"
           && cd "$WORKDIR"
-          && sudo xvfb-run
-          python3 -m pytest -ra --cov=$(pwd) --cov-report=xml tests/system/
+          && sudo xvfb-run python3 -m pytest -ra --cov=$(pwd) --cov-branch
+          --cov-report=xml tests/system/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Install dependencies for Codecov
