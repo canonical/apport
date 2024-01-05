@@ -14,6 +14,7 @@
 # pylint: disable=invalid-name
 
 import atexit
+import datetime
 import errno
 import fnmatch
 import glob
@@ -30,6 +31,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 import traceback
 import urllib.error
 import urllib.parse
@@ -317,6 +319,16 @@ class _Environment(dict[str, str]):
         for key in keys:
             if key in self:
                 self[key] = "<set>"
+
+    @classmethod
+    def from_string(cls, environ):
+        """Read environment variables from text representation.
+
+        The environment variables are expected to be separated by newlines.
+        """
+        return cls(
+            [entry.split("=", 1) for entry in environ.split("\n") if "=" in entry]
+        )
 
 
 #
@@ -747,7 +759,7 @@ class Report(problem_report.ProblemReport):
         # check if we have an interpreted program
         self._check_interpreted()
 
-        self["ExecutableTimestamp"] = str(int(os.stat(self["ExecutablePath"]).st_mtime))
+        self._add_executable_timestamp()
 
         # make ProcCmdline ASCII friendly, do shell escaping
         self["ProcCmdline"] = (
@@ -768,6 +780,9 @@ class Report(problem_report.ProblemReport):
                     self["ProcAttrCurrent"] = val
         except OSError:
             pass
+
+    def _add_executable_timestamp(self) -> None:
+        self["ExecutableTimestamp"] = str(int(os.stat(self["ExecutablePath"]).st_mtime))
 
     def add_proc_environ(
         self,
@@ -1987,3 +2002,79 @@ class Report(problem_report.ProblemReport):
             self._proc_maps_cache.append(
                 (int(m.group(1), 16), int(m.group(2), 16), m.group(3))
             )
+
+    def _add_str_from_coredump(
+        self, coredump: dict[str, object], coredump_key: str, key: str
+    ) -> None:
+        value = coredump.get(coredump_key)
+        assert isinstance(value, str)
+        self[key] = value.rstrip()
+
+    def _add_coredump_from_systemd_coredump(self, coredump: dict[str, object]) -> None:
+        dump = coredump.get("COREDUMP")
+        if dump:
+            assert isinstance(dump, bytes)
+            self["CoreDump"] = dump
+            return
+
+        filename = coredump.get("COREDUMP_FILENAME")
+        if filename:
+            assert isinstance(filename, str)
+            self["CoreDump"] = problem_report.CompressedFile(filename)
+
+    @classmethod
+    def from_systemd_coredump(cls, coredump):
+        """Convert the givin systemd coredump into a problem report.
+
+        The following keys are not used:
+         * COREDUMP_CGROUP (str)
+         * COREDUMP_COMM (str)
+         * COREDUMP_CONTAINER_CMDLINE (str)
+         * COREDUMP_GID (int)
+         * COREDUMP_HOSTNAME (str)
+         * COREDUMP_OPEN_FDS (str)
+         * COREDUMP_OWNER_UID (str)
+         * COREDUMP_PACKAGE_JSON (str)
+         * COREDUMP_PACKAGE_NAME
+         * COREDUMP_PACKAGE_VERSION
+         * COREDUMP_PROC_AUXV (bytes)
+         * COREDUMP_PROC_CGROUP (str)
+         * COREDUMP_PROC_LIMITS (str)
+         * COREDUMP_PROC_MOUNTINFO (str)
+         * COREDUMP_RLIMIT (str)
+         * COREDUMP_ROOT (str)
+         * COREDUMP_SESSION
+         * COREDUMP_SLICE (str)
+         * COREDUMP_UID (int)
+         * COREDUMP_UNIT (str)
+         * COREDUMP_USER_UNIT (str)
+         * MESSAGE (str)
+        """
+        date = coredump.get("COREDUMP_TIMESTAMP")
+        assert isinstance(date, datetime.datetime)
+        report = cls(date=time.asctime(date.timetuple()))
+
+        pid = coredump.get("COREDUMP_PID")
+        assert isinstance(pid, int)
+        report.pid = pid
+
+        signal_number = coredump.get("COREDUMP_SIGNAL")
+        assert isinstance(signal_number, int)
+        report["Signal"] = str(signal_number)
+
+        report._add_str_from_coredump(coredump, "COREDUMP_SIGNAL_NAME", "SignalName")
+        report._add_str_from_coredump(coredump, "COREDUMP_CMDLINE", "ProcCmdline")
+        report._add_str_from_coredump(coredump, "COREDUMP_EXE", "ExecutablePath")
+        report._add_str_from_coredump(coredump, "COREDUMP_CWD", "ProcCwd")
+        report._add_str_from_coredump(coredump, "COREDUMP_PROC_MAPS", "ProcMaps")
+        report._add_str_from_coredump(coredump, "COREDUMP_PROC_STATUS", "ProcStatus")
+
+        environ = coredump.get("COREDUMP_ENVIRON")
+        assert isinstance(environ, str)
+        report._add_environ(_Environment.from_string(environ))
+
+        report._add_executable_timestamp()
+        if report.get("COREDUMP_TRUNCATED") != "1":
+            report._add_coredump_from_systemd_coredump(coredump)
+
+        return report

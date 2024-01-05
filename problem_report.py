@@ -15,6 +15,7 @@
 import base64
 import binascii
 import collections
+import dataclasses
 import email.encoders
 import email.mime.base
 import email.mime.multipart
@@ -177,6 +178,25 @@ def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
         value_iterator = _text_decoder(entry, first_line_value)
 
     return key, value_iterator, base64_encoded
+
+
+@dataclasses.dataclass
+class CompressedFile:
+    """Represents a ProblemReport value which points to a compressed file.
+
+    The file is expected to be compressed with gzip or zstandard.
+    """
+
+    filename: str
+
+    def iter_compressed(self) -> Iterator[bytes]:
+        """Iterate over the compressed content of the file in 1 MB chunks."""
+        with open(self.filename, "rb") as compressed_file:
+            while True:
+                block = compressed_file.read(1048576)
+                if not block:
+                    break
+                yield block
 
 
 class CompressedValue:
@@ -538,7 +558,11 @@ class ProblemReport(collections.UserDict):
                     binkeys.append(k)
                 else:
                     asckeys.append(k)
-            elif not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]:
+            elif (
+                not isinstance(v, (CompressedFile, CompressedValue))
+                and len(v) >= 2
+                and not v[1]
+            ):
                 # force uncompressed
                 asckeys.append(k)
             else:
@@ -617,6 +641,9 @@ class ProblemReport(collections.UserDict):
         # TODO: split into smaller subgenerators
         # pylint: disable=too-many-branches
         value = self.data[key]
+        if isinstance(value, CompressedFile):
+            yield from value.iter_compressed()
+            return
         if isinstance(value, CompressedValue):
             assert value.compressed_value is not None
             yield value.compressed_value
@@ -861,7 +888,9 @@ class ProblemReport(collections.UserDict):
         file.write(msg.as_string().encode("UTF-8"))
         file.write(b"\n")
 
-    def __setitem__(self, k: str, v: (bytes | CompressedValue | str | tuple)) -> None:
+    def __setitem__(
+        self, k: str, v: (bytes | CompressedFile | CompressedValue | str | tuple)
+    ) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
             raise ValueError(
@@ -871,7 +900,7 @@ class ProblemReport(collections.UserDict):
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool, [, max_size [, fail_on_empty]]]))
         if not (
-            isinstance(v, CompressedValue)
+            isinstance(v, (CompressedFile, CompressedValue))
             or hasattr(v, "isalnum")
             or (
                 isinstance(v, tuple)

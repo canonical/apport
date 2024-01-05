@@ -4,7 +4,12 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import datetime
+import io
 import os
+import pathlib
+import re
+import tempfile
 import textwrap
 import unittest
 import unittest.mock
@@ -13,10 +18,263 @@ from unittest.mock import MagicMock
 import apport.packaging
 import apport.report
 
+DIVIDE_BY_ZERO_PROC_MAPS = f"""\
+558164bd3000-558164bd4000 r--p 00000000 fc:00 44306916 \
+                  /usr/bin/divide-by-zero
+558164bd4000-558164bd5000 r-xp 00001000 fc:00 44306916 \
+                  /usr/bin/divide-by-zero
+558164bd5000-558164bd6000 r--p 00002000 fc:00 44306916 \
+                  /usr/bin/divide-by-zero
+558164bd6000-558164bd7000 r--p 00002000 fc:00 44306916 \
+                  /usr/bin/divide-by-zero
+558164bd7000-558164bd8000 rw-p 00003000 fc:00 44306916 \
+                  /usr/bin/divide-by-zero
+7f70d0600000-7f70d0626000 r--p 00000000 fc:00 44304501 \
+                  /usr/lib/x86_64-linux-gnu/libc.so.6
+7f70d0626000-7f70d07a5000 r-xp 00026000 fc:00 44304501 \
+                  /usr/lib/x86_64-linux-gnu/libc.so.6
+7f70d07a5000-7f70d07fa000 r--p 001a5000 fc:00 44304501 \
+                  /usr/lib/x86_64-linux-gnu/libc.so.6
+7f70d07fa000-7f70d07fe000 r--p 001f9000 fc:00 44304501 \
+                  /usr/lib/x86_64-linux-gnu/libc.so.6
+7f70d07fe000-7f70d0800000 rw-p 001fd000 fc:00 44304501 \
+                  /usr/lib/x86_64-linux-gnu/libc.so.6
+7f70d0800000-7f70d080d000 rw-p 00000000 00:00 0{" "}
+7f70d0967000-7f70d096a000 rw-p 00000000 00:00 0{" "}
+7f70d0989000-7f70d098b000 rw-p 00000000 00:00 0{" "}
+7f70d098b000-7f70d098c000 r--p 00000000 fc:00 44303536 \
+                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f70d098c000-7f70d09b6000 r-xp 00001000 fc:00 44303536 \
+                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f70d09b6000-7f70d09c0000 r--p 0002b000 fc:00 44303536 \
+                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f70d09c0000-7f70d09c2000 r--p 00035000 fc:00 44303536 \
+                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f70d09c2000-7f70d09c4000 rw-p 00037000 fc:00 44303536 \
+                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fffd4d90000-7fffd4db2000 rw-p 00000000 00:00 0 \
+                         [stack]
+7fffd4ddd000-7fffd4de1000 r--p 00000000 00:00 0 \
+                         [vvar]
+7fffd4de1000-7fffd4de3000 r-xp 00000000 00:00 0 \
+                         [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0 \
+                 [vsyscall]
+"""
+DIVIDE_BY_ZERO_PROC_STATUS = f"""\
+Name:	divide-by-zero
+Umask:	0002
+State:	S (sleeping)
+Tgid:	284582
+Ngid:	0
+Pid:	284582
+PPid:	276410
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	256
+Groups:	4 20 24 27 30 46 118 122 133 134 135 1000 1001{" "}
+NStgid:	284582
+NSpid:	284582
+NSpgid:	284582
+NSsid:	276410
+Kthread:	0
+VmPeak:	    2652 kB
+VmSize:	    2528 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	    1024 kB
+VmRSS:	    1024 kB
+RssAnon:	       0 kB
+RssFile:	    1024 kB
+RssShmem:	       0 kB
+VmData:	      92 kB
+VmStk:	     136 kB
+VmExe:	       4 kB
+VmLib:	    1708 kB
+VmPTE:	      40 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	1
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	1
+SigQ:	0/254102
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	ffffffff
+Cpus_allowed_list:	0-31
+Mems_allowed:	{"00000000," * 31}00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	3
+nonvoluntary_ctxt_switches:	0
+"""
+DIVIDE_BY_ZERO_REPORT = f"""\
+ProblemType: Crash
+CurrentDesktop: Unity:Unity7:ubuntu
+Date: Mon Oct 30 13:40:03 2023
+ExecutablePath: /usr/bin/divide-by-zero
+ExecutableTimestamp: 1688310044
+ProcCmdline: divide-by-zero
+ProcCwd: /home/user/something
+ProcEnviron:
+ LANG=de_DE.UTF-8
+ LANGUAGE=de_DE:en
+ LC_ADDRESS=de_DE.UTF-8
+ LC_IDENTIFICATION=de_DE.UTF-8
+ LC_MEASUREMENT=de_DE.UTF-8
+ LC_MONETARY=de_DE.UTF-8
+ LC_NAME=de_DE.UTF-8
+ LC_NUMERIC=de_DE.UTF-8
+ LC_PAPER=de_DE.UTF-8
+ LC_TELEPHONE=de_DE.UTF-8
+ LC_TIME=de_DE.UTF-8
+ PATH=(custom, no user)
+ SHELL=/bin/bash
+ TERM=xterm-256color
+ XDG_RUNTIME_DIR=<set>
+ProcMaps:
+{re.sub("^", " ", DIVIDE_BY_ZERO_PROC_MAPS.rstrip(), flags=re.MULTILINE)}
+ProcStatus:
+{re.sub("^", " ", DIVIDE_BY_ZERO_PROC_STATUS.rstrip(), flags=re.MULTILINE)}
+Signal: 4
+SignalName: SIGILL
+"""
+_DIVIDE_BY_ZERO_ENVIRONMENT = [
+    "SHELL=/bin/bash",
+    "SESSION_MANAGER=local/hostname:@/tmp/.ICE-unix/6144"
+    ",unix/hostname:/tmp/.ICE-unix/6144",
+    "QT_ACCESSIBILITY=1",
+    "COLORTERM=truecolor",
+    "XDG_CONFIG_DIRS=/etc/xdg/xdg-unity:/etc/xdg",
+    "SSH_AGENT_LAUNCHER=openssh",
+    "HISTCONTROL=ignoreboth",
+    "XDG_MENU_PREFIX=gnome-",
+    "GNOME_DESKTOP_SESSION_ID=this-is-deprecated",
+    "GTK_IM_MODULE=ibus",
+    "HISTSIZE=1000000",
+    "LANGUAGE=de_DE:en",
+    "UNITY_HAS_3D_SUPPORT=true",
+    "LC_ADDRESS=de_DE.UTF-8",
+    "LC_NAME=de_DE.UTF-8",
+    "SSH_AUTH_SOCK=/run/user/1000/keyring/ssh",
+    "XMODIFIERS=@im=ibus",
+    "DESKTOP_SESSION=unity",
+    "LC_MONETARY=de_DE.UTF-8",
+    "EDITOR=/usr/bin/vim.basic",
+    "GTK_MODULES=gail:atk-bridge:unity-gtk-module",
+    "ZEITGEIST_DATA_PATH=/home/user/.local/share/zeitgeist",
+    "PWD=/home/user/something",
+    "XDG_SESSION_DESKTOP=unity",
+    "LOGNAME=user",
+    "XDG_SESSION_TYPE=x11",
+    "GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1",
+    "SYSTEMD_EXEC_PID=19518",
+    "XAUTHORITY=/run/user/1000/gdm/Xauthority",
+    "WINDOWPATH=2",
+    "HOME=/home/user",
+    "USERNAME=user",
+    "IM_CONFIG_PHASE=1",
+    "LC_PAPER=de_DE.UTF-8",
+    "LANG=de_DE.UTF-8",
+    "XDG_CURRENT_DESKTOP=Unity:Unity7:ubuntu",
+    "VTE_VERSION=7400",
+    "GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen"
+    "/28a9c759_0c8e_4dbb_ac97_ab266bc17659",
+    "QTWEBENGINE_DICTIONARIES_PATH=/usr/share/hunspell-bdic/",
+    "GTK_CSD=0",
+    "CLUTTER_IM_MODULE=ibus",
+    "LESSCLOSE=/usr/bin/lesspipe %s %s",
+    "XDG_SESSION_CLASS=user",
+    "TERM=xterm-256color",
+    "LC_IDENTIFICATION=de_DE.UTF-8",
+    "LESSOPEN=| /usr/bin/lesspipe %s",
+    "LIBVIRT_DEFAULT_URI=qemu:///system",
+    "USER=user",
+    "GNOME_TERMINAL_SERVICE=:1.197",
+    "DISPLAY=:0",
+    "SHLVL=1",
+    "LC_TELEPHONE=de_DE.UTF-8",
+    "QT_IM_MODULE=ibus",
+    "LC_MEASUREMENT=de_DE.UTF-8",
+    "GNOME_SESSION_XDG_SESSION_PATH=",
+    "XDG_RUNTIME_DIR=/run/user/1000",
+    "COMPIZ_CONFIG_PROFILE=ubuntu",
+    "DEBUGINFOD_URLS=https://debuginfod.ubuntu.com",
+    "LC_TIME=de_DE.UTF-8",
+    "GTK3_MODULES=xapp-gtk3-module",
+    "XDG_DATA_DIRS=/usr/share/unity:/usr/share/gnome:/usr/local/share/"
+    ":/usr/share/:/var/lib/snapd/desktop",
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    ":/usr/games:/usr/local/games:/snap/bin",
+    "GDMSESSION=unity",
+    "HISTFILESIZE=1000000",
+    "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus",
+    "LC_NUMERIC=de_DE.UTF-8",
+    "UNITY_DEFAULT_PROFILE=unity",
+    "OLDPWD=/home/user/previous_path",
+    "_=/usr/bin/divide-by-zero",
+]
+_CET = datetime.timezone(datetime.timedelta(seconds=3600), "CET")
+DIVIDE_BY_ZERO_SYSTEMD_COREDUMP = {
+    "COREDUMP_CGROUP": "/user.slice/user-1000.slice/user"
+    "@1000.service/app.slice/app-org.gnome.Terminal.slice"
+    "/vte-spawn-3e85b382-d004-42dd-890d-bb72fe095fe8.scope",
+    "COREDUMP_CMDLINE": "divide-by-zero",
+    "COREDUMP_COMM": "divide-by-zero",
+    "COREDUMP_CWD": "/home/user/something",
+    "COREDUMP_ENVIRON": "\n".join(_DIVIDE_BY_ZERO_ENVIRONMENT) + "\n",
+    "COREDUMP_EXE": "/usr/bin/divide-by-zero",
+    "COREDUMP_GID": 1000,
+    "COREDUMP_HOSTNAME": "hostname",
+    "COREDUMP_OPEN_FDS": "0:/dev/pts/2\npos:\t0\nflags:\t02002002\n"
+    "mnt_id:\t27\nino:\t5\n"
+    "\n1:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n"
+    "\n2:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n",
+    "COREDUMP_OWNER_UID": "1000",
+    "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump","elfArchitecture":"AMD x86-64"}',
+    "COREDUMP_PID": 284582,
+    "COREDUMP_PROC_AUXV": b"!" + b"\x00" * 8 + b"\x10\xde\xd4\xff\x7f\x00\x003",
+    "COREDUMP_PROC_CGROUP": "0::/user.slice/user-1000.slice/user"
+    "@1000.service/app.slice/app-org.gnome.Terminal.slice"
+    "/vte-spawn-3e85b382-d004-42dd-890d-bb72fe095fe8.scope\n",
+    "COREDUMP_PROC_LIMITS": "[redacted]",
+    "COREDUMP_PROC_MAPS": DIVIDE_BY_ZERO_PROC_MAPS,
+    "COREDUMP_PROC_MOUNTINFO": "24 31 0:22 / /sys"
+    " rw,nosuid,nodev,noexec,relatime shared:7 - sysfs sysfs rw\n",
+    "COREDUMP_PROC_STATUS": DIVIDE_BY_ZERO_PROC_STATUS,
+    "COREDUMP_RLIMIT": "9223372036854775808",
+    "COREDUMP_ROOT": "/",
+    "COREDUMP_SIGNAL": 4,
+    "COREDUMP_SIGNAL_NAME": "SIGILL",
+    "COREDUMP_SLICE": "user-1000.slice",
+    "COREDUMP_TIMESTAMP": datetime.datetime(2023, 10, 30, 13, 40, 3, tzinfo=_CET),
+    "COREDUMP_UID": 1000,
+    "COREDUMP_UNIT": "user@1000.service",
+    "COREDUMP_USER_UNIT": "vte-spawn-3e85b382-d004-42dd-890d-bb72fe095fe8.scope",
+}
+DIVIDE_BY_ZERO_EXECUTABLE_STAT = os.stat_result(
+    (33261, 88736832, 64512, 1, 0, 0, 14648, 1704369903, 1688310044, 1698059154)
+)
+
 
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
+    maxDiff = None
 
     def test_has_useful_stacktrace(self):
         """has_useful_stacktrace()."""
@@ -1112,3 +1370,69 @@ No symbol table info available.
         self.assertEqual("lxc", pr["SnapGitOwner"])
         self.assertEqual("lxd", pr["SnapGitName"])
         self.assertEqual("snap-github", pr["CrashDB"])
+
+    @unittest.mock.patch("os.stat")
+    def test_report_from_systemd_coredump_default(self, stat_mock: MagicMock) -> None:
+        """Test converting systemd-coredump with default settings."""
+        stat_mock.return_value = DIVIDE_BY_ZERO_EXECUTABLE_STAT
+        coredump = DIVIDE_BY_ZERO_SYSTEMD_COREDUMP.copy()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            coredump_file = (
+                pathlib.Path(tmpdir)
+                / "core.divide-by-zero.1000.7ec30fc09da94efb8b4bdb75d2b8dc40"
+                ".284582.1698669603000000.zst"
+            )
+            coredump_file.write_bytes(
+                b"(\xb5/\xfd$T-\x02\x00\xd2\x04\x0f\x11\xa0\xed\x80Ie\xb7[\xf8\x97\xe6"
+                b"\x1e\xae\x92\x8d\xfdn\x8e@\xa0\xa7zr\xbf\xd5\xa3\x97\xf0\x9c\x9b:\xef"
+                b"\xca}f{\xbe\xefI\x17\xb9\x88\x8e\x9a\xb3\x84\xe5mY~\xdf\xf0}\xaaO\x95"
+                b"\xfaa\xd3\x8e\x01\x00\r\x99z\x02\xb1\xef\x7f\xc4"
+            )
+            coredump["COREDUMP_FILENAME"] = str(coredump_file)
+
+            report = apport.report.Report.from_systemd_coredump(coredump)
+            report_output = io.BytesIO()
+            report.write(report_output)
+
+        expected_report = (
+            DIVIDE_BY_ZERO_REPORT + "CoreDump: base64\n"
+            " KLUv/SRULQIA0gQPEaDtgEllt1v4l+YerpKN/W6OQKCnenK/1aOX8JybOu/"
+            "KfWZ7vu9JF7mIjpqzhOVtWX7f8H2qT5X6YdOOAQANmXoCse9/xA==\n"
+        )
+        self.assertEqual(report_output.getvalue().decode(), expected_report)
+        stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
+
+    @unittest.mock.patch("os.stat")
+    def test_report_from_systemd_coredump_storage_journal(
+        self, stat_mock: MagicMock
+    ) -> None:
+        """Test converting systemd-coredump with Storage=journal."""
+        stat_mock.return_value = DIVIDE_BY_ZERO_EXECUTABLE_STAT
+        coredump = DIVIDE_BY_ZERO_SYSTEMD_COREDUMP.copy()
+        coredump["COREDUMP"] = b"\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00"
+
+        report = apport.report.Report.from_systemd_coredump(coredump)
+        report_output = io.BytesIO()
+        report.write(report_output)
+
+        expected_report = (
+            DIVIDE_BY_ZERO_REPORT + "CoreDump: base64\n"
+            " H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
+            " q3f1cWNiZGSAAgC2f6EYDwAAAA==\n"
+        )
+        self.assertEqual(report_output.getvalue().decode(), expected_report)
+        stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
+
+    @unittest.mock.patch("os.stat")
+    def test_report_from_systemd_coredump_storage_none(
+        self, stat_mock: MagicMock
+    ) -> None:
+        """Test converting systemd-coredump with Storage=none."""
+        stat_mock.return_value = DIVIDE_BY_ZERO_EXECUTABLE_STAT
+        report = apport.report.Report.from_systemd_coredump(
+            DIVIDE_BY_ZERO_SYSTEMD_COREDUMP
+        )
+        report_output = io.BytesIO()
+        report.write(report_output)
+        self.assertEqual(report_output.getvalue().decode(), DIVIDE_BY_ZERO_REPORT)
+        stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
