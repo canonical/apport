@@ -369,9 +369,7 @@ class T(unittest.TestCase):
         sys.stderr.write(f"[Δ {delta_kb} kB] ")
         self.assertLess(delta_kb, 5000)
 
-        self.assertTrue(
-            data.startswith("Apr 20 11:30:00 komputer kernel: bogus message\n")
-        )
+        self.assertRegex(data, "^Apr 20 11:30:00 komputer kernel: bogus message\n")
         self.assertGreater(len(data), 100000)
         self.assertLess(len(data), 1000000)
 
