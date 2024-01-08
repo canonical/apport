@@ -697,6 +697,43 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     return options
 
 
+def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
+    """Check the global PID if the crash happens in a container.
+
+    Check if we received a valid global PID (kernel >= 3.12). If we do,
+    then compare it with the local PID. In that case forward the crash
+    to the container.
+
+    If they don't match, it's an indication that the crash originated
+    from another PID namespace. Simply log an entry in the host error
+    log and let apport exit.
+
+    Returns True in case apport should exit with 0.
+    """
+    if options.global_pid is not None:
+        if not is_same_ns(options.global_pid, "mnt"):
+            if not is_same_ns(options.global_pid, "pid"):
+                forward_crash_to_container(options)
+                return True
+            logging.getLogger().error(
+                "host pid %s crashed in a separate mount namespace, ignoring",
+                options.global_pid,
+            )
+            return True
+
+        # If it doesn't look like the crash originated from within a full
+        # container or if the is_same_ns() function fails open (returning
+        # True), then take the global pid and replace the local pid with
+        # it, then move on to normal handling.
+
+        # This bit is needed because some software like the chrome sandbox
+        # will use container namespaces as a security measure but are still
+        # otherwise host processes. When that's the case, we need to keep
+        # handling those crashes locally using the global pid.
+        options.pid = options.global_pid
+    return False
+
+
 # pylint: disable-next=missing-function-docstring
 def main(args: list[str]) -> int:
     init_error_log()
@@ -715,32 +752,8 @@ def main(args: list[str]) -> int:
         start_apport()
         return 0
 
-    # Check if we received a valid global PID (kernel >= 3.12). If we do,
-    # then compare it with the local PID. If they don't match, it's an
-    # indication that the crash originated from another PID namespace.
-    # Simply log an entry in the host error log and exit 0.
-    if options.global_pid is not None:
-        if not is_same_ns(options.global_pid, "mnt"):
-            if not is_same_ns(options.global_pid, "pid"):
-                forward_crash_to_container(options)
-                return 0
-            logging.getLogger().error(
-                "host pid %s crashed in a separate mount namespace, ignoring",
-                options.global_pid,
-            )
-            return 0
-
-        # If it doesn't look like the crash originated from within a full
-        # container or if the is_same_ns() function fails open (returning
-        # True), then take the global pid and replace the local pid with
-        # it, then move on to normal handling.
-
-        # This bit is needed because some software like the chrome sandbox
-        # will use container namespaces as a security measure but are still
-        # otherwise host processes. When that's the case, we need to keep
-        # handling those crashes locally using the global pid.
-        options.pid = options.global_pid
-
+    if _check_global_pid_and_forward(options):
+        return 0
     check_lock()
 
     try:
