@@ -41,6 +41,7 @@ from tests.paths import get_data_directory, local_test_environment
 APPORT_PATH = get_data_directory() / "apport"
 apport_binary = import_module_from_file(APPORT_PATH)
 
+MAIL_UID = 8
 test_package = "coreutils"
 test_source = "coreutils"
 
@@ -671,23 +672,23 @@ class T(unittest.TestCase):
         # run test program in /run (which should only be writable to root)
         os.chdir("/run")
 
-        # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
         # if a user can crash a suid root binary, it should not create
         # core files
-        self.do_crash(command=myexe, uid=8, suid_dumpable=2)
+        self.do_crash(command=myexe, uid=MAIL_UID, suid_dumpable=2)
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self):
         """Report generation for setuid program which drops root."""
-        # run ping as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
         # if a user can crash a suid root binary, it should not create
         # core files
-        self.do_crash(command="/bin/ping", args=["127.0.0.1"], uid=8, suid_dumpable=2)
+        self.do_crash(
+            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=2
+        )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self):
@@ -701,7 +702,6 @@ class T(unittest.TestCase):
         os.close(fd)
         os.chmod(myexe, 0o4755)
 
-        # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
         # if a user can crash a suid root binary, it should not create
@@ -710,7 +710,7 @@ class T(unittest.TestCase):
             command=myexe,
             expect_corefile=False,
             expect_report=False,
-            uid=8,
+            uid=MAIL_UID,
             suid_dumpable=2,
         )
 
@@ -743,11 +743,10 @@ class T(unittest.TestCase):
     def test_crash_setuid_drop_via_socket(self):
         """Report generation via socket for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        # run ping as user "mail"
         self.do_crash(
             command="/bin/ping",
             args=["127.0.0.1"],
-            uid=8,
+            uid=MAIL_UID,
             suid_dumpable=2,
             via_socket=True,
         )
