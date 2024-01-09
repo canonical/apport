@@ -110,13 +110,13 @@ def check_lock():
 
 def get_core_path(
     options: argparse.Namespace,
-    crash_user: UserGroupID,
+    real_user: UserGroupID,
     proc_pid: ProcPid,
     timestamp: (int | None) = None,
 ) -> str:
     """Get the path to the core file."""
     return apport.fileutils.get_core_path(
-        options.pid, options.executable_path, crash_user.uid, timestamp, proc_pid.fd
+        options.pid, options.executable_path, real_user.uid, timestamp, proc_pid.fd
     )[1]
 
 
@@ -131,11 +131,11 @@ def get_pid_info(proc_pid: ProcPid) -> tuple[UserGroupID, os.stat_result]:
     # (this matters when suid_dumpable is enabled)
     with proc_pid.open("status") as status_file:
         contents = status_file.read()
-    (crash_uid, crash_gid) = apport.fileutils.get_uid_and_gid(contents)
+    (real_uid, real_gid) = apport.fileutils.get_uid_and_gid(contents)
 
-    assert crash_uid is not None, "failed to parse Uid"
-    assert crash_gid is not None, "failed to parse Gid"
-    return UserGroupID(crash_uid, crash_gid), pidstat
+    assert real_uid is not None, "failed to parse Uid"
+    assert real_gid is not None, "failed to parse Gid"
+    return UserGroupID(real_uid, real_gid), pidstat
 
 
 def get_process_starttime(proc_pid: ProcPid) -> int:
@@ -154,16 +154,16 @@ def get_apport_starttime() -> int:
     return apport.fileutils.get_starttime(contents)
 
 
-def drop_privileges(crash_user: UserGroupID) -> None:
+def drop_privileges(real_user: UserGroupID) -> None:
     """Change effective user and group to crash user/group ID"""
     # Drop any supplemental groups, or we'll still be in the root group
     if os.getuid() == 0:
         os.setgroups([])
         assert os.getgroups() == []
-    os.setregid(-1, crash_user.gid)
-    os.setreuid(-1, crash_user.uid)
-    assert os.getegid() == crash_user.gid
-    assert os.geteuid() == crash_user.uid
+    os.setregid(-1, real_user.gid)
+    os.setreuid(-1, real_user.uid)
+    assert os.getegid() == real_user.gid
+    assert os.geteuid() == real_user.uid
 
 
 def recover_privileges():
@@ -229,7 +229,7 @@ def write_user_coredump(
     core_path: str,
     limit: int,
     proc_pid: ProcPid,
-    crash_user: UserGroupID,
+    real_user: UserGroupID,
     pidstat: os.stat_result,
     coredump_fd: (int | None) = None,
     from_report: (typing.BinaryIO | None) = None,
@@ -251,7 +251,7 @@ def write_user_coredump(
     # (suid_dumpable==2 and core_pattern restrictions); when this happens,
     # /proc/pid/stat is owned by root (or the user suid'ed to), but we already
     # changed to the crashed process' uid
-    if UserGroupID(pidstat.st_uid, pidstat.st_gid) != crash_user:
+    if UserGroupID(pidstat.st_uid, pidstat.st_gid) != real_user:
         logger.error("disabling core dump for suid/sgid/unreadable executable")
         return
 
@@ -259,7 +259,7 @@ def write_user_coredump(
 
     try:
         # Limit number of core files to prevent DoS
-        apport.fileutils.clean_core_directory(crash_user.uid)
+        apport.fileutils.clean_core_directory(real_user.uid)
         core_file = os.open(
             core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o400, dir_fd=cwd
         )
@@ -308,7 +308,7 @@ def write_user_coredump(
             block = os.read(coredump_fd, 1048576)
 
     # Make sure the user can read it
-    os.fchown(core_file, crash_user.uid, -1)
+    os.fchown(core_file, real_user.uid, -1)
     os.close(core_file)
 
 
@@ -373,7 +373,7 @@ def _run_with_output_limit_and_timeout(
     return stdout, stderr
 
 
-def is_closing_session(proc_pid: ProcPid, crash_user: UserGroupID) -> bool:
+def is_closing_session(proc_pid: ProcPid, real_user: UserGroupID) -> bool:
     """Check if pid is in a closing user session.
 
     During that, crashes are common as the session D-BUS and X.org are going
@@ -406,8 +406,8 @@ def is_closing_session(proc_pid: ProcPid, crash_user: UserGroupID) -> bool:
     real_uid = os.getuid()
     real_gid = os.getgid()
     try:
-        os.setresgid(crash_user.gid, crash_user.gid, real_gid)
-        os.setresuid(crash_user.uid, crash_user.uid, real_uid)
+        os.setresgid(real_user.gid, real_user.gid, real_gid)
+        os.setresuid(real_user.uid, real_user.uid, real_uid)
         out, err = _run_with_output_limit_and_timeout(
             [
                 "/usr/bin/gdbus",
@@ -834,7 +834,7 @@ def consistency_checks(
     options: argparse.Namespace,
     process_start: int,
     proc_pid: ProcPid,
-    crash_user: UserGroupID,
+    real_user: UserGroupID,
 ) -> bool:
     """Run consistency checks and return True if all pass."""
     logger = logging.getLogger()
@@ -850,7 +850,7 @@ def consistency_checks(
     # Make sure the process uid/gid match the ones provided by the kernel
     # if available, if not, it may have been replaced
     if (options.uid is not None) and (options.gid is not None):
-        if UserGroupID(options.uid, options.gid) != crash_user:
+        if UserGroupID(options.uid, options.gid) != real_user:
             logger.error("process uid/gid doesn't match expected, ignoring")
             return False
 
@@ -918,10 +918,10 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     logger = logging.getLogger()
 
     coredump_fd = sys.stdin.fileno()
-    crash_user, pidstat = get_pid_info(proc_pid)
+    real_user, pidstat = get_pid_info(proc_pid)
 
     process_start = get_process_starttime(proc_pid)
-    if not consistency_checks(options, process_start, proc_pid, crash_user):
+    if not consistency_checks(options, process_start, proc_pid, real_user):
         return 0
 
     logger.info(
@@ -934,12 +934,12 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
 
     core_ulimit = refine_core_ulimit(options)
 
-    core_path = get_core_path(options, crash_user, proc_pid, process_start)
+    core_path = get_core_path(options, real_user, proc_pid, process_start)
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
     if options.signal_number == int(signal.SIGQUIT):
         write_user_coredump(
-            core_path, core_ulimit, proc_pid, crash_user, pidstat, coredump_fd
+            core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
         )
         return 0
 
@@ -962,7 +962,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     # Drop privileges temporarily to make sure that we don't
     # include information in the crash report that the user should
     # not be allowed to access.
-    drop_privileges(crash_user)
+    drop_privileges(real_user)
 
     info.add_proc_info(proc_pid_fd=proc_pid.fd)
 
@@ -1000,7 +1000,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
             # check if the user wants a core dump
             recover_privileges()
             write_user_coredump(
-                core_path, core_ulimit, proc_pid, crash_user, pidstat, coredump_fd
+                core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
             )
             return 0
 
@@ -1013,7 +1013,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
         )
         recover_privileges()
         write_user_coredump(
-            core_path, core_ulimit, proc_pid, crash_user, pidstat, coredump_fd
+            core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
         )
         return 0
 
@@ -1026,7 +1026,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     recover_privileges()
 
     # Do not check closing session for root processes
-    if not crash_user.is_root() and is_closing_session(proc_pid, crash_user):
+    if not real_user.is_root() and is_closing_session(proc_pid, real_user):
         logger.error("happens for shutting down session, ignoring")
         return 0
 
@@ -1050,7 +1050,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
             if skip_msg:
                 logger.error("%s", skip_msg)
                 write_user_coredump(
-                    core_path, core_ulimit, proc_pid, crash_user, pidstat, coredump_fd
+                    core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
                 )
                 return 0
             # remove the old file, so that we can create the new one
@@ -1073,7 +1073,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
         return 1
 
     # Drop privileges before writing out the reportfile.
-    drop_privileges(crash_user)
+    drop_privileges(real_user)
 
     info.add_user_info()
     info.add_os_info()
@@ -1108,7 +1108,7 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     # than the core size.
     reportfile.seek(0)
     write_user_coredump(
-        core_path, core_ulimit, proc_pid, crash_user, pidstat, from_report=reportfile
+        core_path, core_ulimit, proc_pid, real_user, pidstat, from_report=reportfile
     )
     return 0
 
