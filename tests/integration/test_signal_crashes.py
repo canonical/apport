@@ -963,6 +963,10 @@ class T(unittest.TestCase):
         The socket is being used in a container via systemd activation,
         where the core dump gets read from /run/apport.socket.
 
+        If the specified program has file capability or is a
+        set‐user‐ID/set-group-ID program, this method needs to be called
+        as root to allow GDB to call the program.
+
         Note: The arguments for the test program must not contain spaces.
         Since there was no need for it, the support was not implemented.
         """
