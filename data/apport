@@ -970,9 +970,11 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
         logger.error("could not determine ExecutablePath, aborting")
         return 1
 
-    subject = info["ExecutablePath"].replace("/", "_")
-    base = f"{subject}.{pidstat.st_uid}.{options.pid}.hanging"
-    hanging = os.path.join(apport.fileutils.report_dir, base)
+    report = (
+        f"{apport.fileutils.report_dir}"
+        f"/{info['ExecutablePath'].replace('/', '_')}.{pidstat.st_uid}.crash"
+    )
+    hanging = f"{os.path.splitext(report)[0]}.{options.pid}.hanging"
 
     if os.path.exists(hanging):
         if os.stat("/proc/uptime").st_ctime < os.stat(hanging).st_mtime:
@@ -1039,11 +1041,6 @@ def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) 
     # Create crash report file descriptor for writing the report into
     # report_dir
     try:
-        report = (
-            f"{apport.fileutils.report_dir}"
-            f"/{info['ExecutablePath'].replace('/', '_')}"
-            f".{pidstat.st_uid}.crash"
-        )
         if os.path.exists(report):
             apport.fileutils.increment_crash_counter(info, report)
             skip_msg = apport.fileutils.should_skip_crash(info, report)
