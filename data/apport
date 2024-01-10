@@ -42,6 +42,7 @@ import sys
 import time
 import traceback
 import typing
+from collections.abc import Callable
 
 import apport.fileutils
 import apport.report
@@ -926,9 +927,6 @@ def _set_signal(report: apport.report.Report, signal_number: int) -> None:
 def process_crash_from_kernel_with_proc_pid(
     options: argparse.Namespace, proc_pid: ProcPid
 ) -> int:
-    # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals
-    # pylint: disable=too-many-return-statements,too-many-statements
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
@@ -990,17 +988,54 @@ def process_crash_from_kernel_with_proc_pid(
     # not be allowed to access.
     drop_privileges(real_user)
 
+    info.pid = options.pid
     info.add_proc_info(proc_pid_fd=proc_pid.fd)
 
     if "ExecutablePath" not in info:
         logger.error("could not determine ExecutablePath, aborting")
         return 1
 
+    def _write_coredump_callback(from_report: (typing.BinaryIO | None) = None) -> None:
+        write_user_coredump(
+            core_path,
+            core_ulimit,
+            proc_pid,
+            real_user,
+            pidstat,
+            coredump_fd,
+            from_report,
+        )
+
+    result = process_crash(
+        info,
+        real_user,
+        UserGroupID(pidstat.st_uid, pidstat.st_gid),
+        _write_coredump_callback,
+    )
+    if "CoreDump" not in info:
+        logger.error(
+            "core dump exceeded %i MiB, dropped to avoid memory overflow",
+            core_size_limit / 1048576,
+        )
+    return result
+
+
+def process_crash(
+    info: apport.report.Report,
+    real_user: UserGroupID,
+    report_owner: UserGroupID,
+    write_coredump_callback: Callable[[typing.BinaryIO | None], None] | None = None,
+) -> int:
+    """Process crash and return exit code."""
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-statements
+    logger = logging.getLogger()
+
     report = (
         f"{apport.fileutils.report_dir}"
         f"/{info['ExecutablePath'].replace('/', '_')}.{real_user.uid}.crash"
     )
-    hanging = f"{os.path.splitext(report)[0]}.{options.pid}.hanging"
+    hanging = f"{os.path.splitext(report)[0]}.{info.pid}.hanging"
 
     if os.path.exists(hanging):
         if os.stat("/proc/uptime").st_ctime < os.stat(hanging).st_mtime:
@@ -1027,22 +1062,19 @@ def process_crash_from_kernel_with_proc_pid(
             logger.error("executable does not belong to a package, ignoring")
             # check if the user wants a core dump
             recover_privileges()
-            write_user_coredump(
-                core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
-            )
+            if write_coredump_callback:
+                write_coredump_callback(None)
             return 0
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
-    if options.signal_number in (int(signal.SIGXCPU), int(signal.SIGXFSZ)):
+    if int(info["Signal"]) in (int(signal.SIGXCPU), int(signal.SIGXFSZ)):
         logger.error(
-            "Ignoring signal %s (caused by exceeding soft RLIMIT)",
-            options.signal_number,
+            "Ignoring signal %s (caused by exceeding soft RLIMIT)", info["Signal"]
         )
         recover_privileges()
-        write_user_coredump(
-            core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
-        )
+        if write_coredump_callback:
+            write_coredump_callback(None)
         return 0
 
     if info.check_ignored():
@@ -1061,9 +1093,8 @@ def process_crash_from_kernel_with_proc_pid(
             skip_msg = apport.fileutils.should_skip_crash(info, report)
             if skip_msg:
                 logger.error("%s", skip_msg)
-                write_user_coredump(
-                    core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
-                )
+                if write_coredump_callback:
+                    write_coredump_callback(None)
                 return 0
             # remove the old file, so that we can create the new one
             # with os.O_CREAT|os.O_EXCL
@@ -1077,9 +1108,9 @@ def process_crash_from_kernel_with_proc_pid(
         # Make sure the crash reporting daemon can read this report
         try:
             gid = pwd.getpwnam("whoopsie").pw_gid
-            os.fchown(fd, pidstat.st_uid, gid)
+            os.fchown(fd, report_owner.uid, gid)
         except (OSError, KeyError):
-            os.fchown(fd, pidstat.st_uid, pidstat.st_gid)
+            os.fchown(fd, report_owner.uid, report_owner.gid)
     except OSError as error:
         logger.error("Could not create report file: %s", str(error))
         return 1
@@ -1098,12 +1129,6 @@ def process_crash_from_kernel_with_proc_pid(
     except OSError:
         os.unlink(report)
         raise
-    if "CoreDump" not in info:
-        logger.error(
-            "core dump exceeded %i MiB, dropped from %s to avoid memory overflow",
-            core_size_limit / 1048576,
-            report,
-        )
 
     # Get privileges back so the core file can be written to root-owned
     # corefile directory
@@ -1113,15 +1138,14 @@ def process_crash_from_kernel_with_proc_pid(
     os.fchmod(fd, 0o640)
     logger.info("wrote report %s", report)
 
-    # Check if the user wants a core file. We need to create that
-    # from the written report, as we can only read stdin once and
-    # write_user_coredump() might abort reading from stdin and remove
-    # the written core file when core_ulimit is > 0 and smaller
-    # than the core size.
-    reportfile.seek(0)
-    write_user_coredump(
-        core_path, core_ulimit, proc_pid, real_user, pidstat, from_report=reportfile
-    )
+    if write_coredump_callback:
+        # Check if the user wants a core file. We need to create that
+        # from the written report, as we can only read stdin once and
+        # write_user_coredump() might abort reading from stdin and remove
+        # the written core file when core_ulimit is > 0 and smaller
+        # than the core size.
+        reportfile.seek(0)
+        write_coredump_callback(reportfile)
     return 0
 
 
