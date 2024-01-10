@@ -843,8 +843,8 @@ class UserInterface:
         """
         scripts = glob.glob(os.path.join(symptom_script_dir, "*.py"))
 
-        symptom_names = []
-        symptom_descriptions = []
+        # symptoms contains a list of (symptom_description, symptom_name)
+        symptoms = []
         for script in scripts:
             # scripts with an underscore can be used for private libraries
             if os.path.basename(script).startswith("_"):
@@ -863,28 +863,23 @@ class UserInterface:
                     "symptom script %s does not define run() function", script
                 )
                 continue
-            symptom_names.append(os.path.splitext(os.path.basename(script))[0])
-            symptom_descriptions.append(symb.get("description", symptom_names[-1]))
+            symptom_name = os.path.splitext(os.path.basename(script))[0]
+            symptoms.append((symb.get("description", symptom_name), symptom_name))
 
-        if not symptom_names:
+        if not symptoms:
             return False
 
-        symptom_descriptions, symptom_names = zip(
-            *sorted(zip(symptom_descriptions, symptom_names))
-        )
-        symptom_descriptions = list(symptom_descriptions)
-        symptom_names = list(symptom_names)
-        symptom_names.append(None)
-        symptom_descriptions.append("Other problem")
+        symptoms.sort()
+        symptoms.append(("Other problem", None))
 
         ch = self.ui_question_choice(
             _("What kind of problem do you want to report?"),
-            symptom_descriptions,
+            [description for description, name in symptoms],
             False,
         )
 
         if ch is not None:
-            symptom = symptom_names[ch[0]]
+            symptom = symptoms[ch[0]][1]
             if symptom:
                 self.run_report_bug(os.path.join(symptom_script_dir, symptom + ".py"))
             else:
