@@ -5,6 +5,7 @@
 
 import base64
 import contextlib
+import datetime
 import email
 import io
 import locale
@@ -84,13 +85,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_get_timestamp_locale_german(self):
         """get_timestamp() returns date when LC_TIME is set."""
-        pr = problem_report.ProblemReport(date="Wed May 18 09:49:57 2022")
+        now = datetime.datetime.now()
+
+        pr = problem_report.ProblemReport(date=now.strftime("%a %b %d %H:%M:%S %Y"))
         orig_ctime = locale.getlocale(locale.LC_TIME)
         try:
             locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
         except locale.Error:
             self.skipTest("Missing German locale support")
-        self.assertEqual(pr.get_timestamp(), 1652867397 + time.altzone)
+        self.assertEqual(pr.get_timestamp(), int(now.timestamp()))
         locale.setlocale(locale.LC_TIME, orig_ctime)
 
     def test_get_timestamp_returns_none(self):
