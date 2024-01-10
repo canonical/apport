@@ -974,7 +974,7 @@ def process_crash_from_kernel_with_proc_pid(
 
     report = (
         f"{apport.fileutils.report_dir}"
-        f"/{info['ExecutablePath'].replace('/', '_')}.{pidstat.st_uid}.crash"
+        f"/{info['ExecutablePath'].replace('/', '_')}.{real_user.uid}.crash"
     )
     hanging = f"{os.path.splitext(report)[0]}.{options.pid}.hanging"
 

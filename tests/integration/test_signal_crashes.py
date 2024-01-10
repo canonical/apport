@@ -112,11 +112,11 @@ class T(unittest.TestCase):
         os.chdir("/tmp")
 
         # expected report name for test executable report
-        self.test_report = self._get_report_filename(self.TEST_EXECUTABLE)
+        self.test_report = None
 
     def tearDown(self):
         # permit tests to leave behind test_report, but nothing else
-        if os.path.exists(self.test_report):
+        if self.test_report and os.path.exists(self.test_report):
             apport.fileutils.delete_report(self.test_report)
         try:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
@@ -928,6 +928,7 @@ class T(unittest.TestCase):
             args = self.TEST_ARGS
 
         assert os.access(command, os.X_OK), f"{command} is not executable"
+        self.test_report = self._get_report_filename(command, uid)
 
         env = os.environ.copy()
         # set UTF-8 environment variable, to check proper parsing in apport
@@ -998,7 +999,7 @@ class T(unittest.TestCase):
             args.insert(0, command)
             command = shebang
 
-        self.test_report = self._get_report_filename(command)
+        self.test_report = self._get_report_filename(command, uid)
 
         gdb_core_file = os.path.join(self.workdir, "core")
         self.assertFalse(
@@ -1111,10 +1112,12 @@ class T(unittest.TestCase):
         return gdb_args
 
     @staticmethod
-    def _get_report_filename(command: str) -> str:
+    def _get_report_filename(command: str, uid: (int | None) = None) -> str:
+        if uid is None:
+            uid = os.getuid()
         return os.path.join(
             apport.fileutils.report_dir,
-            f"{os.path.realpath(command).replace('/', '_')}.{os.getuid()}.crash",
+            f"{os.path.realpath(command).replace('/', '_')}.{uid}.crash",
         )
 
     def check_report_coredump(self, report_path):
