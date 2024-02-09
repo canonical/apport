@@ -364,7 +364,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     pass
             elif ext == ".gz":
                 try:
-                    report[key] = gzip.GzipFile(fileobj=attachment).read()
+                    with gzip.GzipFile(fileobj=attachment) as gz:
+                        report[key] = gz.read()
                 except OSError as error:
                     # some attachments are only called .gz, but are
                     # uncompressed (LP #574360)
