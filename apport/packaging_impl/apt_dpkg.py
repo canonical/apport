@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import contextlib
 import datetime
+import functools
 import glob
 import gzip
 import hashlib
@@ -651,6 +652,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return None
 
     @staticmethod
+    @functools.cache
     def get_system_architecture():
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
