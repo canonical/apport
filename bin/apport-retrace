@@ -417,6 +417,53 @@ def needs_update(
     return True
 
 
+def update_bug(
+    report: Report,
+    options: Namespace,
+    outdated_msg: str | None,
+    crashid: int,
+    crashdb: CrashDatabase,
+) -> None:
+    """Update the bug in the crash db with the retracing data."""
+    if "Stacktrace" in report:
+        crashdb.update_traces(crashid, report)
+        apport.logging.log(
+            f"New attachments uploaded to crash database LP: #{crashid}",
+            options.timestamps,
+        )
+    else:
+        # this happens when gdb crashes
+        apport.logging.log("No stack trace, invalid report", options.timestamps)
+
+    if not report.has_useful_stacktrace():
+        if outdated_msg:
+            invalid_msg = f"""Thank you for your report!
+
+However, processing it in order to get sufficient information for the
+developers failed (it does not generate a useful symbolic stack trace). This
+might be caused by some outdated packages which were installed on your system
+at the time of the report:
+
+{outdated_msg}
+
+Please upgrade your system to the latest package versions. If you still
+encounter the crash, please file a new report.
+
+Thank you for your understanding, and sorry for the inconvenience!
+"""
+            apport.logging.log(
+                "No crash signature and outdated packages, invalidating report",
+                options.timestamps,
+            )
+            crashdb.mark_retrace_failed(crashid, invalid_msg)
+        else:
+            apport.logging.log(
+                "Report has no crash signature, so retrace is flawed",
+                options.timestamps,
+            )
+            crashdb.mark_retrace_failed(crashid)
+
+
 # pylint: disable-next=missing-function-docstring
 def main(argv):
     # TODO: Split into smaller functions/methods
@@ -653,49 +700,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                 )
             if not options.confirm or confirm_traces(report):
                 if needs_update(report, options, crashid, crashdb):
-                    if "Stacktrace" in report:
-                        crashdb.update_traces(crashid, report)
-                        apport.logging.log(
-                            f"New attachments uploaded to crash database"
-                            f" LP: #{crashid}",
-                            options.timestamps,
-                        )
-                    else:
-                        # this happens when gdb crashes
-                        apport.logging.log(
-                            "No stack trace, invalid report", options.timestamps
-                        )
-
-                    if not report.has_useful_stacktrace():
-                        if outdated_msg:
-                            invalid_msg = f"""Thank you for your report!
-
-However, processing it in order to get sufficient information for the
-developers failed (it does not generate a useful symbolic stack trace). This
-might be caused by some outdated packages which were installed on your system
-at the time of the report:
-
-{outdated_msg}
-
-Please upgrade your system to the latest package versions. If you still
-encounter the crash, please file a new report.
-
-Thank you for your understanding, and sorry for the inconvenience!
-"""
-                            apport.logging.log(
-                                "No crash signature and outdated packages,"
-                                " invalidating report",
-                                options.timestamps,
-                            )
-                            crashdb.mark_retrace_failed(crashid, invalid_msg)
-                        else:
-                            apport.logging.log(
-                                "Report has no crash signature,"
-                                " so retrace is flawed",
-                                options.timestamps,
-                            )
-                            crashdb.mark_retrace_failed(crashid)
-
+                    update_bug(report, options, outdated_msg, crashid, crashdb)
         elif options.output == "-":
             report.write(sys.stdout.detach())
         else:
