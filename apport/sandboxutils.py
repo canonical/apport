@@ -120,16 +120,17 @@ def needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose=Fals
     return [(p, pkg_versions.get(p)) for p in pkgs]
 
 
+# pylint: disable-next=too-many-arguments
 def make_sandbox(
-    report,
-    config_dir,
-    cache_dir=None,
-    sandbox_dir=None,
-    extra_packages=None,
-    verbose=False,
-    log_timestamps=False,
-    dynamic_origins=False,
-):  # pylint: disable=too-many-arguments
+    report: apport.Report,
+    config_dir: str | None,
+    cache_dir: str | None = None,
+    sandbox_dir: str | None = None,
+    extra_packages: list[str] | None = None,
+    verbose: bool = False,
+    log_timestamps: bool = False,
+    dynamic_origins: bool = False,
+) -> tuple[str, str, str]:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-statements
     """Build a sandbox with the packages that belong to a particular report.
