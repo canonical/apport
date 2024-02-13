@@ -1733,7 +1733,7 @@ class UserInterface:
                 run_as_real_user(["xdg-open", url], get_user_env=True)
             except OSError:
                 # fall back to webbrowser
-                webbrowser.open(url, new=True, autoraise=True)
+                webbrowser.open(url, new=1, autoraise=True)
                 sys.exit(0)
         except Exception as error:  # pylint: disable=broad-except
             os.write(w, str(error))
