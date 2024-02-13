@@ -1708,37 +1708,16 @@ class UserInterface:
 
         Display an error dialog if everything fails.
         """
-        (r, w) = os.pipe()
-        if os.fork() > 0:
-            os.close(w)
-            status = os.wait()[1]
-            if status:
-                title = _("Unable to start web browser")
-                error = _("Unable to start web browser to open %s.") % url
-                message = os.fdopen(r).readline()
-                if message:
-                    error += "\n" + message
-                self.ui_error_message(title, error)
-            try:
-                os.close(r)
-            except OSError:
-                pass
-            return
-
-        os.setsid()
-        os.close(r)
-
         try:
             try:
                 run_as_real_user(["xdg-open", url], get_user_env=True)
             except OSError:
                 # fall back to webbrowser
                 webbrowser.open(url, new=1, autoraise=True)
-                sys.exit(0)
         except Exception as error:  # pylint: disable=broad-except
-            os.write(w, str(error))
-            sys.exit(1)
-        os._exit(0)  # pylint: disable=protected-access
+            title = _("Unable to start web browser")
+            message = _("Unable to start web browser to open %s.") % url
+            self.ui_error_message(title, message + f"\n{error}")
 
     def file_report(self):
         """Upload the current report and guide the user to the reporting
