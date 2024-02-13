@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+import typing
 
 
 def log(message, timestamp=False):
@@ -12,7 +13,7 @@ def log(message, timestamp=False):
     print(message)
 
 
-def fatal(msg, *args):
+def fatal(msg: str, *args: typing.Any) -> typing.NoReturn:
     """Print out an error message and exit the program."""
     error(msg, *args)
     sys.exit(1)
