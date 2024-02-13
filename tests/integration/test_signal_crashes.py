@@ -680,6 +680,21 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
+    def test_crash_suid_dumpable_debug(self):
+        """Report generation for setuid program with suid_dumpable set to 1.
+
+        ping has cap_net_raw=ep and therefore do_crash needs root.
+        """
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+
+        # if a user can crash a suid root binary, it should not create
+        # core files if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
+        self.do_crash(
+            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=1
+        )
+
+    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
+    @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self):
         """Report generation for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
