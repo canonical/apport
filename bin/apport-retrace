@@ -345,7 +345,6 @@ def load_report(
             crashid = int(options.report)
             report = crashdb.download(crashid)
             apport.memdbg("downloaded report from crash DB")
-            options.report = None
             return report, crashid
         except AssertionError as error:
             if "apport format data" in str(error):
@@ -617,7 +616,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         modified = True
 
     if modified:
-        if not options.report and not options.output:
+        if crashid is not None and not options.output:
             if not options.auth:
                 apport.fatal(
                     "You need to specify --auth for uploading retraced results"
