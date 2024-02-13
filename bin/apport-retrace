@@ -26,12 +26,14 @@ import tempfile
 import termios
 import tty
 import zlib
+from argparse import Namespace
 from gettext import gettext as _
 
 import apport
 import apport.fileutils
 import apport.sandboxutils
-from apport.crashdb import get_crashdb
+from apport import Report
+from apport.crashdb import CrashDatabase, get_crashdb
 
 
 def parse_args():
@@ -323,20 +325,10 @@ def print_traces(report):
         print(report["StacktraceSource"])
 
 
-# pylint: disable-next=missing-function-docstring
-def main():
-    # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
-    # pylint: disable=too-many-statements
-    apport.memdbg("start")
-
-    gettext.textdomain("apport")
-
-    options = parse_args()
-
-    crashdb = get_crashdb(options.auth)
-    apport.memdbg("got crash DB")
-
+def load_report(
+    options: Namespace, crashdb: CrashDatabase
+) -> tuple[Report, int | None]:
+    """Load the initial report for the given CLI options"""
     # load the report
     if os.path.exists(options.report):
         try:
@@ -344,13 +336,17 @@ def main():
             with open(options.report, "rb") as f:
                 report.load(f, binary="compressed")
             apport.memdbg("loaded report from file")
+            return report, None
         except (MemoryError, TypeError, ValueError, OSError, zlib.error) as error:
             apport.fatal("Cannot open report file: %s", str(error))
     elif options.report.isdigit():
         # crash ID
         try:
-            report = crashdb.download(int(options.report))
+            crashid = int(options.report)
+            report = crashdb.download(crashid)
             apport.memdbg("downloaded report from crash DB")
+            options.report = None
+            return report, crashid
         except AssertionError as error:
             if "apport format data" in str(error):
                 apport.error("Broken report: %s", str(error))
@@ -389,13 +385,28 @@ Thank you for your understanding, and sorry for the inconvenience!
                 sys.exit(0)
             else:
                 raise
-
-        crashid = options.report
-        options.report = None
     else:
         apport.fatal(
             '"%s" is neither an existing report file nor a crash ID', options.report
         )
+
+
+# pylint: disable-next=missing-function-docstring
+def main():
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
+    # pylint: disable=too-many-statements
+    apport.memdbg("start")
+
+    gettext.textdomain("apport")
+
+    options = parse_args()
+
+    crashdb = get_crashdb(options.auth)
+    apport.memdbg("got crash DB")
+
+    # load the report
+    report, crashid = load_report(options, crashdb)
 
     if options.core_file:
         report["CoreDump"] = (os.path.abspath(options.core_file),)
@@ -617,7 +628,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                 update_bug = True
                 if options.duplicate_db:
                     crashdb.init_duplicate_db(options.duplicate_db)
-                    res = crashdb.check_duplicate(int(crashid), report)
+                    res = crashdb.check_duplicate(crashid, report)
                     if res:
                         if res[1] is None:
                             version = "not fixed yet"
@@ -637,8 +648,8 @@ Thank you for your understanding, and sorry for the inconvenience!
                     if "Stacktrace" in report:
                         crashdb.update_traces(crashid, report)
                         apport.log(
-                            "New attachments uploaded to crash database LP: #"
-                            + crashid,
+                            f"New attachments uploaded to crash database"
+                            f"LP: #{crashid}",
                             options.timestamps,
                         )
                     else:
