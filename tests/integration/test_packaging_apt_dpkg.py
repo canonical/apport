@@ -19,7 +19,7 @@ from tests.helper import skip_if_command_is_missing
 @skip_if_command_is_missing("dpkg")
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access,too-many-public-methods
 
     def setUp(self):
         # save and restore configuration file
@@ -87,9 +87,8 @@ class T(unittest.TestCase):
         self.assertTrue(impl.get_available_version("libc6").startswith("2"))
         self.assertRaises(ValueError, impl.get_available_version, "nonexisting")
 
-    def test_get_dependencies(self):
-        """get_dependencies()."""
-        # package with both Depends: and Pre-Depends:
+    def test_get_dependencies_depends_and_pre_depends(self):
+        """get_dependencies() on package with both Depends and Pre-Depends."""
         d = impl.get_dependencies("bash")
         self.assertGreater(len(d), 2)
         self.assertIn("libc6", d)
@@ -99,14 +98,16 @@ class T(unittest.TestCase):
                 continue
             self.assertTrue(impl.get_version(dep))
 
-        # Pre-Depends: only
+    def test_get_dependencies_pre_depends_only(self):
+        """get_dependencies() on package with Pre-Depends only."""
         d = impl.get_dependencies("coreutils")
         self.assertGreaterEqual(len(d), 1)
         self.assertIn("libc6", d)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
-        # Depends: only
+    def test_get_dependencies_depends_only(self):
+        """get_dependencies() on package with Depends only."""
         d = impl.get_dependencies("libc-bin")
         self.assertGreaterEqual(len(d), 1)
         for dep in d:
