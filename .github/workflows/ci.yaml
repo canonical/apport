@@ -39,7 +39,7 @@ jobs:
       - name: Run linter tests
         run: tests/run-linters
 
-  unit:
+  unit-and-integration:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -47,39 +47,6 @@ jobs:
         container:
           - debian:bookworm-slim
           - debian:testing-slim
-    container:
-      image: ${{ matrix.container }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: >
-          apt-get update
-          && apt-get install --no-install-recommends --yes
-          locales python3 python3-apt python3-pytest python3-pytest-cov
-          python3-systemd python3-zstandard
-      - name: Enable German locale
-        run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
-      - name: Run unit tests
-        run: >
-          python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
-          tests/unit/
-      - name: Install dependencies for Codecov
-        run: >
-          apt-get install --no-install-recommends --yes
-          ca-certificates curl git
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml
-
-  unit-and-integration:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        container:
           - ubuntu:jammy
           - ubuntu:mantic
     container:
@@ -92,7 +59,7 @@ jobs:
           apt-get update
           && apt-get install --no-install-recommends --yes
           bash binutils default-jdk-headless dpkg-dev gcc gdb iputils-ping kmod
-          libc6-dev locales python3 python3-apt python3-distutils-extra
+          libc6-dev locales procps python3 python3-apt python3-distutils-extra
           python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
           python3-requests python3-setuptools python3-systemd valgrind
       # python3-zstandard is not available on ubuntu:jammy
