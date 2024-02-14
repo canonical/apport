@@ -108,8 +108,8 @@ class T(unittest.TestCase):
 
     def test_get_dependencies_depends_only(self):
         """get_dependencies() on package with Depends only."""
-        d = impl.get_dependencies("libc-bin")
-        self.assertGreaterEqual(len(d), 1)
+        d = impl.get_dependencies("sysvinit-utils")
+        self.assertIn("libc6", d)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
