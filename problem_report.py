@@ -221,7 +221,8 @@ class CompressedValue:
     def set_value(self, value: bytes) -> None:
         """Set uncompressed value."""
         out = io.BytesIO()
-        gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0).write(value)
+        with gzip.GzipFile(self.name, mode="wb", fileobj=out, mtime=0) as gz:
+            gz.write(value)
         self.compressed_value = out.getvalue()
 
     def get_compressed_size(self) -> int:
@@ -267,7 +268,7 @@ class CompressedValue:
         if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
             return _get_zstandard_decompressor().decompress(self.compressed_value)
         if self.compressed_value.startswith(GZIP_HEADER_START):
-            return gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)).read()
+            return gzip.decompress(self.compressed_value)
         # legacy zlib format
         return zlib.decompress(self.compressed_value)
 
@@ -281,13 +282,13 @@ class CompressedValue:
             return
 
         if self.compressed_value.startswith(GZIP_HEADER_START):
-            gz = gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value))
-            while True:
-                block = gz.read(1048576)
-                if not block:
-                    break
-                file.write(block)
-            return
+            with gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)) as gz:
+                while True:
+                    block = gz.read(1048576)
+                    if not block:
+                        break
+                    file.write(block)
+                return
 
         # legacy zlib format
         file.write(zlib.decompress(self.compressed_value))
@@ -816,14 +817,13 @@ class ProblemReport(collections.UserDict):
                     attach_value = f.read()
                 else:
                     out = io.BytesIO()
-                    gf = gzip.GzipFile(k, mode="wb", fileobj=out, mtime=0)
-                    while True:
-                        block = f.read(1048576)
-                        if block:
-                            gf.write(block)
-                        else:
-                            gf.close()
-                            break
+                    with gzip.GzipFile(k, mode="wb", fileobj=out, mtime=0) as gz:
+                        while True:
+                            block = f.read(1048576)
+                            if block:
+                                gz.write(block)
+                            else:
+                                break
                     attach_value = out.getvalue()
                 f.close()
 

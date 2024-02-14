@@ -19,6 +19,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Any
 
 from apport.packaging_impl import impl as packaging
 
@@ -878,7 +879,9 @@ class CrashDatabase:
 #
 
 
-def get_crashdb(auth_file, name=None, conf=None):
+def get_crashdb(
+    auth_file: str | None, name: str | None = None, conf: str | None = None
+) -> CrashDatabase:
     """Return a CrashDatabase object for the given crash db name.
 
     This reads the configuration file 'conf'.
@@ -898,9 +901,10 @@ def get_crashdb(auth_file, name=None, conf=None):
       implementation for that crash db type). Other generally known options are
       'bug_pattern_url', 'dupdb_url', and 'problem_types'.
     """
-    if not conf:
+    if conf is None:
         conf = os.environ.get("APPORT_CRASHDB_CONF", "/etc/apport/crashdb.conf")
-    settings = {}
+    assert conf
+    settings: dict[str, Any] = {}
     with open(conf, encoding="utf-8") as f:
         # legacy, pylint: disable=exec-used
         exec(compile(f.read(), conf, "exec"), settings)

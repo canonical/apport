@@ -234,6 +234,10 @@ class T(unittest.TestCase):
         dmesgfile = os.path.join(vmcore_dir, f"dmesg.{timedir}")
         with open(dmesgfile, "wt", encoding="utf-8") as dmesg:
             dmesg.write("1" * 100)
+        vmcore_dir2 = pathlib.Path(apport.fileutils.report_dir) / "20240110211337"
+        vmcore_dir2.mkdir()
+        wrongly_named = vmcore_dir2 / "dmesg.wrongly-named"
+        wrongly_named.write_bytes(b"2" * 80)
 
         self.assertEqual(
             subprocess.call(self.data_dir / "kernel_crashdump", env=self.env),

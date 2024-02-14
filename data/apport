@@ -745,7 +745,7 @@ def main(args: list[str]) -> int:
 
     try:
         setup_signals()
-        return process_crash(options)
+        return process_crash_from_kernel(options)
     except (SystemExit, KeyboardInterrupt):
         pass
     except Exception:  # pylint: disable=broad-except
@@ -890,10 +890,10 @@ def refine_core_ulimit(options: argparse.Namespace) -> int:
     return core_ulimit
 
 
-def process_crash(options: argparse.Namespace) -> int:
+def process_crash_from_kernel(options: argparse.Namespace) -> int:
     try:
         with ProcPid(options.pid) as proc_pid:
-            return process_crash_with_proc_pid(options, proc_pid)
+            return process_crash_from_kernel_with_proc_pid(options, proc_pid)
     except FileNotFoundError as error:
         logging.getLogger().error(
             "%s not found. "
@@ -910,7 +910,9 @@ def _set_signal(report: apport.report.Report, signal_number: int) -> None:
         report["SignalName"] = signal.Signals(signal_number).name
 
 
-def process_crash_with_proc_pid(options: argparse.Namespace, proc_pid: ProcPid) -> int:
+def process_crash_from_kernel_with_proc_pid(
+    options: argparse.Namespace, proc_pid: ProcPid
+) -> int:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals
     # pylint: disable=too-many-return-statements,too-many-statements

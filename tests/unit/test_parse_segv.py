@@ -2,6 +2,7 @@
 
 import unittest
 
+from problem_report import ProblemReport
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
 
@@ -135,6 +136,27 @@ DISASM = """\
 
 class TestHookParseSegv(unittest.TestCase):
     """Test Segfault Parser."""
+
+    def test_add_info_without_segv_reason(self) -> None:
+        """Test add_info() with no SegvReason in result."""
+        report = ProblemReport()
+        report["Signal"] = "11"
+        report["Architecture"] = "amd64"
+        report["Disassembly"] = DISASM
+        report["ProcMaps"] = MAPS
+        report["Registers"] = REGS64
+
+        parse_segv.add_info(report)
+
+        self.assertEqual(
+            report.get("SegvAnalysis"),
+            "Segfault happened at: 0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n"
+            "PC (0x08083540) ok\n"
+            "insn (lea) does not access VMA\n"
+            "SP (0xbfc6af24) ok\n"
+            "Reason could not be automatically determined.",
+        )
+        self.assertNotIn("SegvReason", report)
 
     def test_invalid_00_registers(self):
         """Require valid registers."""

@@ -538,4 +538,5 @@ class T(unittest.TestCase):
         with tempfile.TemporaryFile() as payload:
             payload.write(message.get_payload(decode=True))
             payload.seek(0)
-            return gzip.GzipFile(mode="rb", fileobj=payload).read()
+            with gzip.GzipFile(mode="rb", fileobj=payload) as gz:
+                return gz.read()

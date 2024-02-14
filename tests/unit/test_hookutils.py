@@ -1,9 +1,9 @@
 """Unit tests for the apport.hookutils module."""
 
+import datetime
 import os
 import re
 import subprocess
-import time
 import unittest
 import unittest.mock
 from unittest.mock import MagicMock
@@ -109,8 +109,9 @@ class TestHookutils(unittest.TestCase):
         run_mock.return_value = subprocess.CompletedProcess(
             args=None, returncode=0, stdout=b"journalctl output", stderr=b""
         )
+        now = datetime.datetime.now()
 
-        report = apport.Report(date="Wed May 18 18:31:08 2022")
+        report = apport.Report(date=now.strftime("%a %b %d %H:%M:%S %Y"))
         apport.hookutils.attach_journal_errors(report)
 
         self.assertEqual(run_mock.call_count, 1)
@@ -120,8 +121,8 @@ class TestHookutils(unittest.TestCase):
             [
                 "journalctl",
                 "--priority=warning",
-                f"--since=@{1652898658 + time.altzone}",
-                f"--until=@{1652898678 + time.altzone}",
+                f"--since=@{int(now.timestamp()) - 10}",
+                f"--until=@{int(now.timestamp()) + 10}",
             ],
         )
 
