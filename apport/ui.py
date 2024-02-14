@@ -1711,13 +1711,18 @@ class UserInterface:
         try:
             try:
                 run_as_real_user(["xdg-open", url], get_user_env=True)
+                return
             except OSError:
                 # fall back to webbrowser
-                webbrowser.open(url, new=1, autoraise=True)
+                if webbrowser.open(url, new=1, autoraise=True):
+                    return
+                error_details = ""
         except Exception as error:  # pylint: disable=broad-except
-            title = _("Unable to start web browser")
-            message = _("Unable to start web browser to open %s.") % url
-            self.ui_error_message(title, message + f"\n{error}")
+            error_details = f"\n{error}"
+
+        title = _("Unable to start web browser")
+        message = _("Unable to start web browser to open %s.") % url
+        self.ui_error_message(title, message + error_details)
 
     def file_report(self):
         """Upload the current report and guide the user to the reporting

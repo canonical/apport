@@ -5,6 +5,7 @@ import tempfile
 import textwrap
 import unittest
 import unittest.mock
+from gettext import gettext as _
 from unittest.mock import MagicMock
 
 import apport.ui
@@ -79,3 +80,26 @@ class TestUI(unittest.TestCase):
             ["xdg-open", "https://example.net"], check=False
         )
         open_mock.assert_called_once_with("https://example.net", new=1, autoraise=True)
+
+    @unittest.mock.patch("subprocess.run")
+    @unittest.mock.patch("webbrowser.open")
+    @unittest.mock.patch("apport.ui.UserInterface.ui_error_message")
+    def test_open_url_webbrowser_fails(
+        self, error_message_mock: MagicMock, open_mock: MagicMock, run_mock: MagicMock
+    ) -> None:
+        """Test UserInterface.open_url() with webbrowser.open() returning False."""
+        run_mock.side_effect = FileNotFoundError
+        open_mock.return_value = False
+
+        self.ui.open_url("https://example.org")
+
+        run_mock.assert_called_once_with(
+            ["xdg-open", "https://example.org"], check=False
+        )
+        open_mock.assert_called_once_with("https://example.org", new=1, autoraise=True)
+        error_message_mock.assert_called_once_with(
+            _("Unable to start web browser"),
+            # False positive on Ubuntu 22.04 "jammy"
+            # pylint: disable-next=consider-using-f-string
+            _("Unable to start web browser to open %s.") % ("https://example.org"),
+        )
