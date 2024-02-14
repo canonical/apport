@@ -914,7 +914,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            cache = self._sandbox_cache(
+            apt_cache = self._sandbox_cache(
                 aptroot,
                 apt_dir,
                 fetchProgress,
@@ -931,12 +931,12 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._current_release_codename,
                 origins,
             )
-            cache = apt.Cache(rootdir=os.path.abspath(aptroot))
+            apt_cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
-                cache.update(fetchProgress)
+                apt_cache.update(fetchProgress)
             except apt.cache.FetchFailedException as error:
                 raise SystemError(str(error)) from error
-            cache.open()
+            apt_cache.open()
 
         archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
 
@@ -967,7 +967,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             deps = []
             for pkg, ver in packages:
                 try:
-                    cache_pkg = cache[pkg]
+                    cache_pkg = apt_cache[pkg]
                 except KeyError:
                     m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
                     obsolete += f"{m}\n"
@@ -975,11 +975,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                     continue
                 for dep in cache_pkg.candidate.dependencies:
                     # the dependency may be satisfied by a different package
-                    if dep[0].name not in cache:
-                        dep[0] = cache.get_providing_packages(dep[0].name)[0]
+                    if dep[0].name not in apt_cache:
+                        dep[0] = apt_cache.get_providing_packages(dep[0].name)[0]
                     # the version in dep is the one from pkg's dependencies,
                     # so use the version from the cache
-                    dep_pkg_vers = cache[dep[0].name].candidate.version
+                    dep_pkg_vers = apt_cache[dep[0].name].candidate.version
                     # if the dependency is in the list of packages we don't
                     # need to look up its dependencies again
                     if dep[0].name in [pkg[0] for pkg in packages]:
@@ -1002,7 +1002,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         for pkg, ver in packages:
             try:
-                cache_pkg = cache[pkg]
+                cache_pkg = apt_cache[pkg]
             except KeyError:
                 m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
                 obsolete += f"{m}\n"
@@ -1059,7 +1059,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     # Replaces/Depends, we can safely choose the first value
                     # here.
                     conflict = conflict[0]
-                    if cache.is_virtual_package(conflict[0]):
+                    if apt_cache.is_virtual_package(conflict[0]):
                         try:
                             providers = virtual_mapping[conflict[0]]
                         except KeyError:
@@ -1098,7 +1098,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if candidate.architecture != "all" and install_dbg:
                 try:
                     dbg_pkg = f"{pkg}-dbg"
-                    dbg = cache[dbg_pkg]
+                    dbg = apt_cache[dbg_pkg]
                     pkg_found = False
                     # try to get the same version as pkg
                     if ver:
@@ -1148,14 +1148,14 @@ class __AptDpkgPackageInfo(PackageInfo):
                             p
                             for p in src_records.binaries
                             if p.endswith("-dbg")
-                            and p in cache
-                            and "transitional" not in cache[p].candidate.description
+                            and p in apt_cache
+                            and "transitional" not in apt_cache[p].candidate.description
                         ]
                         # if a specific version of a package was requested
                         # only install dbg pkgs whose version matches
                         if ver:
                             for dbg in dbgs:
-                                if cache[dbg].candidate.version != ver:
+                                if apt_cache[dbg].candidate.version != ver:
                                     dbgs.remove(dbg)
                     else:
                         dbgs = []
@@ -1169,7 +1169,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             # prefer the version requested
                             if ver:
                                 try:
-                                    cache[p].candidate = cache[p].versions[ver]
+                                    apt_cache[p].candidate = apt_cache[p].versions[ver]
                                     pkg_found = True
                                 except KeyError:
                                     (lp_url, sha1sum) = self.get_lp_binary_package(
@@ -1188,7 +1188,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                         pkg_found = True
                             if not pkg_found:
                                 try:
-                                    cache[p].candidate = cache[p].versions[
+                                    apt_cache[p].candidate = apt_cache[p].versions[
                                         candidate.version
                                     ]
                                 except KeyError:
@@ -1201,7 +1201,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         pkg_found = False
                         dbgsym_pkg = f"{pkg}-dbgsym"
                         try:
-                            dbgsym = cache[dbgsym_pkg]
+                            dbgsym = apt_cache[dbgsym_pkg]
                             real_pkgs.add(dbgsym_pkg)
                             # prefer the version requested
                             if ver:
@@ -1264,32 +1264,34 @@ class __AptDpkgPackageInfo(PackageInfo):
             if p in requested_pkgs:
                 if requested_pkgs[p] is None:
                     # We already have the latest version of this package
-                    if pkg_versions.get(p) == cache[p].candidate.version:
+                    if pkg_versions.get(p) == apt_cache[p].candidate.version:
                         logger.debug(
                             "Removing %s which is already the right version", p
                         )
                         real_pkgs.remove(p)
                     else:
                         logger.debug(
-                            "Installing %s version %s", p, cache[p].candidate.version
+                            "Installing %s version %s",
+                            p,
+                            apt_cache[p].candidate.version,
                         )
-                        cache[p].mark_install(False, False)
+                        apt_cache[p].mark_install(False, False)
                 elif pkg_versions.get(p) != requested_pkgs[p]:
                     logger.debug(
-                        "Installing %s version %s", p, cache[p].candidate.version
+                        "Installing %s version %s", p, apt_cache[p].candidate.version
                     )
-                    cache[p].mark_install(False, False)
-                elif pkg_versions.get(p) != cache[p].candidate.version:
+                    apt_cache[p].mark_install(False, False)
+                elif pkg_versions.get(p) != apt_cache[p].candidate.version:
                     logger.debug(
-                        "Installing %s version %s", p, cache[p].candidate.version
+                        "Installing %s version %s", p, apt_cache[p].candidate.version
                     )
-                    cache[p].mark_install(False, False)
+                    apt_cache[p].mark_install(False, False)
                 else:
                     logger.debug("Removing %s which is already the right version", p)
                     real_pkgs.remove(p)
-            elif pkg_versions.get(p) != cache[p].candidate.version:
+            elif pkg_versions.get(p) != apt_cache[p].candidate.version:
                 logger.debug("Installing %s", p)
-                cache[p].mark_install(False, False)
+                apt_cache[p].mark_install(False, False)
             else:
                 logger.debug("Removing %s which is already the right version", p)
                 real_pkgs.remove(p)
@@ -1297,7 +1299,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         last_written = time.time()
         # fetch packages
         try:
-            cache.fetch_archives(fetcher=fetcher)
+            apt_cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as error:
             apport.logging.error(
                 "Package download error, try again later: %s", str(error)
