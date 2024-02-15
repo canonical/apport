@@ -14,6 +14,7 @@ import io
 import os
 import pathlib
 import shutil
+import signal
 import sys
 import tempfile
 import time
@@ -280,3 +281,30 @@ class TestApport(unittest.TestCase):
                 with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
                     self.assertEqual(apport_binary.main(["-p", str(fake_pid)]), 1)
         self.assertIn("/proc/2147483647 not found", error_logs.output[0])
+
+    @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
+    @unittest.mock.patch.object(apport_binary, "consistency_checks", MagicMock())
+    @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
+    @unittest.mock.patch.object(
+        apport_binary, "is_closing_session", MagicMock(return_value=False)
+    )
+    @unittest.mock.patch.object(apport_binary, "is_systemd_watchdog_restart")
+    def test_main_ignore_watchdog_restart(
+        self, is_systemd_watchdog_restart_mock: MagicMock
+    ) -> None:
+        """Test main() to ignore watchdog restarts.
+
+        The underlying is_systemd_watchdog_restart() function is mocked,
+        which should be tested in a separate unit test.
+        """
+        is_systemd_watchdog_restart_mock.return_value = True
+        args = ["-p", str(os.getpid()), "-s", str(int(signal.SIGABRT)), "-c", "-1"]
+        with self.assertLogs(level="ERROR") as error_logs:
+            with tempfile.NamedTemporaryFile() as stdin:
+                stdin_mock = io.TextIOWrapper(io.FileIO(stdin.name))
+                with unittest.mock.patch("sys.stdin", stdin_mock):
+                    exit_code = apport_binary.main(args)
+
+        self.assertEqual(exit_code, 0)
+        is_systemd_watchdog_restart_mock.assert_called_once()
+        self.assertIn("Ignoring systemd watchdog restart", error_logs.output[0])
