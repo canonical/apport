@@ -99,12 +99,20 @@ class TestApport(unittest.TestCase):
         self.assertEqual(sys.stderr, stderr)
         isatty_mock.assert_called_once_with(2)
 
-    @unittest.mock.patch("builtins.__import__")
-    def test_receive_arguments_via_socket_import_error(self, import_mock):
+    def test_receive_arguments_via_socket_import_error(self) -> None:
         """Test receive_arguments_via_socket() fail to import systemd."""
-        import_mock.side_effect = ModuleNotFoundError("No module named 'systemd'")
-        with self.assertRaisesRegex(SystemExit, "^0$"):
+        with (
+            self.assertLogs(level="ERROR") as error_logs,
+            unittest.mock.patch("builtins.__import__") as import_mock,
+            self.assertRaisesRegex(SystemExit, "^0$"),
+        ):
+            import_mock.side_effect = ModuleNotFoundError("No module named 'systemd'")
             apport_binary.receive_arguments_via_socket()
+
+        import_mock.assert_called_once()
+        self.assertRegex(
+            error_logs.output[0], "apport-forward.socket.*systemd python module"
+        )
 
     def test_receive_arguments_via_socket_invalid_socket(self):
         """Test receive_arguments_via_socket with invalid socket."""
