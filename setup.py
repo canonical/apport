@@ -132,7 +132,14 @@ DistUtilsExtra.auto.setup(
         (BASH_COMPLETIONS, glob.glob("data/bash-completion/*")),
         ("lib/pm-utils/sleep.d/", glob.glob("pm-utils/sleep.d/*")),
         ("/lib/udev/rules.d", glob.glob("udev/*.rules")),
-        (systemd_unit_dir, glob.glob("data/systemd/*.s*")),
+        (
+            systemd_unit_dir,
+            glob.glob("data/systemd/*.service") + glob.glob("data/systemd/*.socket"),
+        ),
+        (
+            f"{systemd_unit_dir}/systemd-coredump@.service.d",
+            ["data/systemd/systemd-coredump@.service.d/apport-coredump-hook.conf"],
+        ),
         (systemd_tmpfiles_dir, glob.glob("data/systemd/*.conf")),
     ],
     cmdclass={
