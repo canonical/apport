@@ -15,8 +15,10 @@
 
 import argparse
 import collections
+import datetime
 import grp
 import os
+import pathlib
 import resource
 import shutil
 import signal
@@ -35,8 +37,16 @@ from unittest.mock import MagicMock
 import psutil
 
 import apport.fileutils
-from tests.helper import import_module_from_file, read_shebang
+from tests.helper import import_module_from_file, read_shebang, run_test_executable
 from tests.paths import get_data_directory, local_test_environment
+
+try:
+    import systemd.journal
+
+    assert systemd.journal.Reader
+    SYSTEMD_IMPORT_ERROR = None
+except ImportError as import_error:
+    SYSTEMD_IMPORT_ERROR = import_error
 
 APPORT_PATH = get_data_directory() / "apport"
 apport_binary = import_module_from_file(APPORT_PATH)
@@ -66,6 +76,7 @@ class T(unittest.TestCase):
     # pylint: disable=protected-access,too-many-public-methods
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
+    maxDiff = None
 
     @classmethod
     def setUpClass(cls):
@@ -795,6 +806,79 @@ class T(unittest.TestCase):
         open_mock.assert_called_with(
             f"/proc/{test_process.pid}/cgroup", encoding="utf-8"
         )
+
+    @unittest.skipIf(
+        SYSTEMD_IMPORT_ERROR,
+        f"systemd Python module not available: {SYSTEMD_IMPORT_ERROR}",
+    )
+    @unittest.mock.patch("systemd.journal.Reader.__iter__")
+    def test_crash_apport_from_systemd_coredump(self, reader_mock: MagicMock) -> None:
+        """Report generation with apport from systemd-coredump."""
+        with tempfile.TemporaryDirectory() as tmpdir, run_test_executable() as pid:
+            coredump_file = pathlib.Path(tmpdir) / "core.zst"
+            coredump_file.write_text("mocked core")
+
+            now = datetime.datetime.now(tz=datetime.timezone.utc)
+            expected_report = apport.report.Report(
+                date=now.strftime("%a %b %d %H:%M:%S %Y")
+            )
+            expected_report.pid = pid
+            expected_report.add_proc_info()
+            expected_report.add_user_info()
+            expected_report.add_os_info()
+            expected_report.add_package_info()
+            expected_report["Signal"] = "11"
+            expected_report["SignalName"] = "SIGSEGV"
+            expected_report["_HooksRun"] = "no"
+            # systemd-coredump does not collect /proc/<pid>/attr/current
+            expected_report.pop("ProcAttrCurrent", None)
+
+            systemd_coredump = {
+                "COREDUMP_CGROUP": "mocked cgroup",
+                "COREDUMP_CMDLINE": expected_report["ProcCmdline"],
+                "COREDUMP_COMM": self.TEST_EXECUTABLE,
+                "COREDUMP_CWD": expected_report["ProcCwd"],
+                "COREDUMP_ENVIRON": "".join(
+                    f"{k}={v}\n" for k, v in os.environ.items()
+                ),
+                "COREDUMP_EXE": self.TEST_EXECUTABLE,
+                "COREDUMP_FILENAME": str(coredump_file),
+                "COREDUMP_GID": os.getgid(),
+                "COREDUMP_HOSTNAME": "mocked hostname",
+                "COREDUMP_OPEN_FDS": "mocked open file descriptors",
+                "COREDUMP_OWNER_UID": os.getuid(),
+                "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump"}',
+                "COREDUMP_PID": pid,
+                "COREDUMP_PROC_AUXV": b"mocked /proc/<pid>/auxv",
+                "COREDUMP_PROC_CGROUP": "mocked /proc/<pid>/cgroup",
+                "COREDUMP_PROC_LIMITS": "mocked /proc/<pid>/limits",
+                "COREDUMP_PROC_MAPS": expected_report["ProcMaps"],
+                "COREDUMP_PROC_MOUNTINFO": "mocked /proc/<pid>/mountinfo",
+                "COREDUMP_PROC_STATUS": expected_report["ProcStatus"],
+                "COREDUMP_RLIMIT": "9223372036854775808",
+                "COREDUMP_ROOT": "/",
+                "COREDUMP_SIGNAL": 11,
+                "COREDUMP_SIGNAL_NAME": "SIGSEGV",
+                "COREDUMP_SLICE": "mocked slice",
+                "COREDUMP_TIMESTAMP": now,
+                "COREDUMP_UID": os.getuid(),
+                "COREDUMP_UNIT": "mocked unit",
+                "COREDUMP_USER_UNIT": "mocked user unit",
+            }
+            reader_mock.return_value = iter([systemd_coredump])
+            self.test_report = self._get_report_filename(self.TEST_EXECUTABLE)
+
+            exit_code = apport_binary.main(["--from-systemd-coredump", "37-23489-42"])
+
+        self.assertEqual(exit_code, 0)
+        reader_mock.assert_called_once_with()
+        self._check_report()
+        report = apport.Report()
+        with open(self.test_report, "rb") as report_file:
+            report.load(report_file, binary="compressed")
+        self.assertEqual(report["CoreDump"].compressed_value, b"mocked core")
+        del report["CoreDump"]
+        self.assertEqual(dict(report), dict(expected_report))
 
     #
     # Helper methods

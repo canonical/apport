@@ -9,6 +9,7 @@
 
 """Unit tests for data/apport."""
 
+import datetime
 import errno
 import io
 import os
@@ -30,6 +31,7 @@ apport_binary = import_module_from_file(get_data_directory() / "apport")
 
 
 class TestApport(unittest.TestCase):
+    # pylint: disable=too-many-public-methods
     """Unit tests for data/apport."""
 
     @classmethod
@@ -308,3 +310,90 @@ class TestApport(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         is_systemd_watchdog_restart_mock.assert_called_once()
         self.assertIn("Ignoring systemd watchdog restart", error_logs.output[0])
+
+    @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
+    def test_non_existing_systemd_coredump(self) -> None:
+        """Test main() to print error if systemd-coredump cannot be found."""
+        try:
+            # pylint: disable-next=import-outside-toplevel
+            import systemd.journal
+        except ImportError as error:
+            self.skipTest(f"{error.name} Python module not available")
+        assert systemd.journal
+
+        with self.assertLogs(level="ERROR") as error_logs:
+            exit_code = apport_binary.main(["--from-systemd-coredump", "42-5846584-0"])
+
+        self.assertEqual(exit_code, 1)
+        self.assertIn(
+            "No journal log for systemd unit"
+            " systemd-coredump@42-5846584-0.service found.",
+            error_logs.output[0],
+        )
+
+    def test_systemd_journal_import_error(self) -> None:
+        """Test handling missing systemd.journal library correctly."""
+        with (
+            self.assertLogs(level="ERROR") as error_logs,
+            unittest.mock.patch("builtins.__import__") as import_mock,
+            self.assertRaisesRegex(SystemExit, "^1$"),
+        ):
+            import_mock.side_effect = ModuleNotFoundError(
+                "No module named 'systemd.journal'"
+            )
+            apport_binary.process_crash_from_systemd_coredump("0-383264-0")
+
+        import_mock.assert_called_once()
+        self.assertRegex(error_logs.output[0], "Please install python3-systemd")
+
+    @unittest.mock.patch.object(apport_binary, "process_crash")
+    @unittest.mock.patch.object(apport_binary, "get_systemd_coredump")
+    def test_reading_core_from_journal_log(
+        self, get_systemd_coredump_mock: MagicMock, process_crash_mock: MagicMock
+    ) -> None:
+        """Test _user_can_read_coredump via process_crash_from_systemd_coredump
+
+        The core dump can be provided via the journal log. In this case
+        _user_can_read_coredump should behave correctly.
+        """
+        get_systemd_coredump_mock.return_value = {
+            "COREDUMP": b"(\xb5/\xfd$\x0ca\x00\x00mocked core\nG\xfe\xe0\x10",
+            "COREDUMP_CMDLINE": "python3",
+            "COREDUMP_CWD": "/",
+            "COREDUMP_ENVIRON": "SHELL=/bin/bash\n",
+            "COREDUMP_EXE": sys.executable,
+            "COREDUMP_GID": 0,
+            "COREDUMP_PID": 123456789,
+            "COREDUMP_PROC_MAPS": "mocked /proc/<pid>/maps",
+            "COREDUMP_PROC_STATUS": "mocked /proc/<pid>/status",
+            "COREDUMP_SIGNAL": 11,
+            "COREDUMP_SIGNAL_NAME": "SIGSEGV",
+            "COREDUMP_TIMESTAMP": datetime.datetime(
+                2024, 2, 19, 12, 10, 42, tzinfo=datetime.timezone.utc
+            ),
+            "COREDUMP_UID": 0,
+        }
+        process_crash_mock.side_effect = lambda report, *_args: report
+
+        report = apport_binary.process_crash_from_systemd_coredump("3-12345-7")
+
+        get_systemd_coredump_mock.assert_called_once_with("3-12345-7")
+        process_crash_mock.assert_called_once()
+        self.assertEqual(report.pid, 123456789)
+        self.assertEqual(
+            dict(report),
+            {
+                "Date": "Mon Feb 19 12:10:42 2024",
+                "CoreDump": b"(\xb5/\xfd$\x0ca\x00\x00mocked core\nG\xfe\xe0\x10",
+                "ExecutablePath": sys.executable,
+                "ExecutableTimestamp": str(int(os.stat(sys.executable).st_mtime)),
+                "ProblemType": "Crash",
+                "ProcCmdline": "python3",
+                "ProcCwd": "/",
+                "ProcEnviron": "SHELL=/bin/bash",
+                "ProcMaps": "mocked /proc/<pid>/maps",
+                "ProcStatus": "mocked /proc/<pid>/status",
+                "Signal": "11",
+                "SignalName": "SIGSEGV",
+            },
+        )

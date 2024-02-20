@@ -47,6 +47,7 @@ from collections.abc import Callable
 import apport.fileutils
 import apport.report
 from apport.user_group import UserGroupID
+from problem_report import CompressedFile
 
 LOG_FORMAT = "%(levelname)s: apport (pid %(process)s) %(asctime)s: %(message)s"
 
@@ -674,6 +675,11 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     parser.add_argument("executable_path", nargs="*", help="path of executable (%%E)")
 
     parser.add_argument(
+        "--from-systemd-coredump",
+        dest="systemd_coredump_instance",
+        help="Read crash information from systemd-coredump",
+    )
+    parser.add_argument(
         "--start", action="store_true", help="Start Apport crash handler and exit"
     )
     parser.add_argument(
@@ -682,7 +688,12 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
 
     options = parser.parse_args(args)
 
-    if not options.pid and not options.start and not options.stop:
+    if (
+        not options.pid
+        and not options.systemd_coredump_instance
+        and not options.start
+        and not options.stop
+    ):
         parser.error("the following arguments are required: -p/--pid")
 
     # In kernels before 5.3.0, an executable path with spaces may be split
@@ -746,6 +757,8 @@ def main(args: list[str]) -> int:
     else:
         options = parse_arguments(args)
 
+    if options.systemd_coredump_instance:
+        return process_crash_from_systemd_coredump(options.systemd_coredump_instance)
     if options.stop:
         stop_apport()
         return 0
@@ -839,6 +852,7 @@ def receive_arguments_via_socket() -> argparse.Namespace:
         uid=None,
         gid=None,
         executable_path=None,
+        systemd_coredump_instance=None,
         start=False,
         stop=False,
     )
@@ -1124,6 +1138,10 @@ def process_crash(
         info.add_package_info()
     info["_HooksRun"] = "no"
 
+    # Ensure that the CoreDump from systemd-coredump can be read.
+    if report_owner.is_root():
+        recover_privileges()
+
     try:
         info.write(reportfile)
     except OSError:
@@ -1147,6 +1165,79 @@ def process_crash(
         reportfile.seek(0)
         write_coredump_callback(reportfile)
     return 0
+
+
+class _JournalMessageNotFound(RuntimeError):
+    """No matching journal message found."""
+
+
+def get_systemd_coredump(instance: str) -> dict[str, object]:
+    """Read crash from systemd-coredump.
+
+    The crash is identified by finding the matching instance of
+    systemd-coredump@.service.
+    """
+    systemd_unit = f"systemd-coredump@{instance}.service"
+    try:
+        # pylint: disable-next=import-outside-toplevel
+        import systemd.journal
+    except ImportError:
+        logging.getLogger().error(
+            "systemd Python module is required for reading journal log from %s."
+            " Please install python3-systemd!",
+            systemd_unit,
+        )
+        sys.exit(1)
+
+    journal = systemd.journal.Reader()
+    journal.messageid_match("fc2e22bc6ee647b6b90729ab34a250b1")
+    journal.add_match(f"_SYSTEMD_UNIT={systemd_unit}")
+    coredumps = list(journal)
+    if not coredumps:
+        raise _JournalMessageNotFound(
+            f"No journal log for systemd unit {systemd_unit} found."
+        )
+    assert len(coredumps) == 1
+    return coredumps[0]
+
+
+def _user_can_read_coredump(report: apport.report.Report, user: UserGroupID) -> bool:
+    coredump = report.get("CoreDump")
+    if not isinstance(coredump, CompressedFile):
+        return True
+    drop_privileges(user)
+    is_readable = coredump.is_readable()
+    recover_privileges()
+    return is_readable
+
+
+def _determine_report_owner(
+    report: apport.report.Report, real_user: UserGroupID
+) -> UserGroupID:
+    if _user_can_read_coredump(report, real_user):
+        return real_user
+
+    # systemd-coredump does not allow users to read coredumps if the uid or
+    # capabilities were changed. So make the report only readable by root.
+    logging.getLogger().warning(
+        "Core dump is not readable by user %i."
+        " Making the report only readable by root.",
+        real_user.uid,
+    )
+    return UserGroupID(0, 0)
+
+
+def process_crash_from_systemd_coredump(instance: str) -> int:
+    """Read crash from systemd-coredump and process it."""
+    try:
+        coredump = get_systemd_coredump(instance)
+    except _JournalMessageNotFound as error:
+        logging.getLogger(__name__).error("%s", error)
+        return 1
+    report = apport.report.Report.from_systemd_coredump(coredump)
+    real_user = UserGroupID.from_systemd_coredump(coredump)
+    report_owner = _determine_report_owner(report, real_user)
+    return process_crash(report, real_user, report_owner)
 
 
 if __name__ == "__main__":

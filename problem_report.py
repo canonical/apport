@@ -198,6 +198,10 @@ class CompressedFile:
                     break
                 yield block
 
+    def is_readable(self) -> bool:
+        """Check if the compressed file is readable by the effective user."""
+        return os.access(self.filename, os.R_OK, effective_ids=True)
+
 
 class CompressedValue:
     """Represent a ProblemReport value which is gzip or zstandard compressed.

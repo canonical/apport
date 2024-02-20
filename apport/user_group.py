@@ -19,6 +19,15 @@ class UserGroupID:
         """Check if the user or group ID is root."""
         return self.uid == 0 or self.gid == 0
 
+    @classmethod
+    def from_systemd_coredump(cls, coredump):
+        """Extract user and group from systemd-coredump dictionary."""
+        uid = coredump.get("COREDUMP_UID")
+        assert isinstance(uid, int)
+        gid = coredump.get("COREDUMP_GID")
+        assert isinstance(gid, int)
+        return cls(uid, gid)
+
 
 def get_process_user_and_group() -> UserGroupID:
     """Return the current process’s real user and group."""

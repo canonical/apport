@@ -1,0 +1,28 @@
+# This service is responsible for reading the coredump data from systemd journal
+# after a crash has occurred, and generating a crash file to /var/crash/.
+[Service]
+Type=oneshot
+ExecStart=/usr/share/apport/apport --from-systemd-coredump %i
+Nice=9
+OOMScoreAdjust=500
+IPAddressDeny=any
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateNetwork=yes
+PrivateTmp=yes
+ProtectControlGroups=yes
+ProtectHome=read-only
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectSystem=strict
+ReadWritePaths=/var/crash /var/log
+RestrictAddressFamilies=AF_UNIX
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+SystemCallFilter=@system-service @file-system @setuid
