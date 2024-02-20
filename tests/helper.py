@@ -11,7 +11,7 @@ import subprocess
 import unittest.mock
 import urllib.error
 import urllib.request
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterator, Sequence
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -78,6 +78,19 @@ def read_shebang(command: str) -> str | None:
     if not first_line.startswith(b"#!"):
         return None
     return first_line.decode().split(" ", 1)[0][2:]
+
+
+@contextlib.contextmanager
+def run_test_executable(
+    args: Sequence[str] = (os.path.realpath("/bin/sleep"), "86400"),
+    env: (dict[str, str] | None) = None,
+) -> Iterator[int]:
+    """Run test executable and yield the process ID. Kill process afterwards."""
+    with subprocess.Popen(args, env=env) as test_process:
+        try:
+            yield test_process.pid
+        finally:
+            test_process.kill()
 
 
 def _id(obj):
