@@ -4,7 +4,6 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
-import contextlib
 import errno
 import glob
 import io
@@ -22,7 +21,6 @@ import time
 import unittest
 import unittest.mock
 import urllib.error
-from collections.abc import Generator
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -32,7 +30,7 @@ import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _, run_as_real_user
-from tests.helper import pidof, skip_if_command_is_missing
+from tests.helper import pidof, run_test_executable, skip_if_command_is_missing
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
@@ -278,21 +276,6 @@ class T(unittest.TestCase):
         os.environ.update(self.orig_environ)
 
         restore_data_dir(apport.report, self.orig_data_dir)
-
-    @contextlib.contextmanager
-    def _run_test_executable(
-        self, exename: (str | None) = None, env: (dict[str, str] | None) = None
-    ) -> Generator[int, None, None]:
-        if not exename:
-            exename = self.TEST_EXECUTABLE
-
-        with subprocess.Popen([exename] + self.TEST_ARGS, env=env) as test_process:
-            # give the execv() some time to finish
-            time.sleep(0.5)
-            try:
-                yield test_process.pid
-            finally:
-                test_process.kill()
 
     @staticmethod
     def _write_symptom_script(script_name: str, content: str) -> None:
@@ -733,7 +716,7 @@ class T(unittest.TestCase):
 
     def test_run_report_bug_pid_tags(self):
         """run_report_bug() for a pid with extra tags"""
-        with self._run_test_executable() as pid:
+        with run_test_executable() as pid:
             # report a bug on text executable process
             argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
             self.ui = UserInterfaceMock(argv)
@@ -806,7 +789,7 @@ class T(unittest.TestCase):
         os.close(fd)
         os.chmod(exename, 0o755)
 
-        with self._run_test_executable(exename) as pid:
+        with run_test_executable([exename] + self.TEST_ARGS) as pid:
             self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
             self.assertRaises(SystemExit, self.ui.run_argv)
 
@@ -814,7 +797,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "error")
 
     def test_run_report_hanging(self) -> None:
-        with self._run_test_executable() as pid:
+        with run_test_executable() as pid:
             self.ui = UserInterfaceMock(["ui-test", "--hanging", str(pid)])
             self.ui.present_details_response = apport.ui.Action(report=True)
             self.assertTrue(self.ui.run_argv())
@@ -1181,7 +1164,7 @@ class T(unittest.TestCase):
     def test_run_crash_nocore(self):
         """run_crash() for a crash dump without CoreDump"""
         # create a test executable
-        with self._run_test_executable() as pid:
+        with run_test_executable() as pid:
             # generate crash report
             r = apport.Report()
             r["ExecutablePath"] = self.TEST_EXECUTABLE
@@ -2619,7 +2602,7 @@ class T(unittest.TestCase):
 
     def test_wait_for_pid(self):
         # fork a test process
-        with self._run_test_executable() as pid:
+        with run_test_executable() as pid:
             pass
         self.ui.wait_for_pid(pid)
 
@@ -2637,7 +2620,7 @@ class T(unittest.TestCase):
                 "XDG_DATA_DIRS": "mocked XDG data dir",
                 "DBUS_SESSION_BUS_ADDRESS": "/fake/dbus/path",
             }
-            with self._run_test_executable(gvfsd_mock, env=gvfsd_env):
+            with run_test_executable([gvfsd_mock] + self.TEST_ARGS, env=gvfsd_env):
                 with unittest.mock.patch(
                     "subprocess.run", side_effect=mock_run_calls_except_pgrep
                 ) as run_mock:
