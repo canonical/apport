@@ -1,17 +1,17 @@
-# Estonian translation for apport
-# Copyright (c) 2006 Rosetta Contributors and Canonical Ltd 2006
+# Ladin translation for apport
+# Copyright (c) 2024 Rosetta Contributors and Canonical Ltd 2024
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-21 22:26+0100\n"
-"PO-Revision-Date: 2013-08-28 23:23+0000\n"
-"Last-Translator: olavi tohver <Unknown>\n"
-"Language-Team: Estonian <et@li.org>\n"
-"Language: et\n"
+"PO-Revision-Date: 2024-02-15 20:11+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Ladin <lld@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,27 +20,25 @@ msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr "Koguge süsteemiteavet"
+msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
-"Selle probleemiaruande jaoks süsteemiteabe kogumiseks on vaja autentimist"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr "Süsteemiprobleemide aruanded"
+msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
-"Süsteemiprogrammide probleemiaruannetele juurdepääsuks sisestage oma parool"
 
 #: ../apport/ui.py:259
 msgid "This package does not seem to be installed correctly"
-msgstr "Tundub, et see pakett ei ole õigesti installitud"
+msgstr ""
 
 #: ../apport/ui.py:269
 #, python-format
@@ -49,9 +47,6 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"See ei tundu olevat ametlik %s pakett. Proovige pärast saadaolevate "
-"pakettide indeksite värskendamist uuesti, kui see ei tööta, eemaldage seotud "
-"kolmanda osapoole paketid ja proovige uuesti."
 
 #: ../apport/ui.py:299
 #, python-format
@@ -61,118 +56,110 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Sul on paigaldatud mõned vananenud programmiversioonid. Palun uuenda "
-"järgnevaid pakettte ja kontrolli, kas probleemid jätkuvad :\n"
-"\n"
-"%s"
 
 #: ../apport/ui.py:450
 msgid "unknown program"
-msgstr "tundmatu programm"
+msgstr "program sconesciü"
 
 #: ../apport/ui.py:452
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Vabandust, programm \"%s\" sulgus ootamatult"
+msgstr ""
 
 #: ../apport/ui.py:454
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"Sinu arvutil ei ole piisavalt vaba mälu probleemi automaatse analüüsi ja "
-"arendajate teavitamise jaoks."
 
 #: ../apport/ui.py:459 ../apport/ui.py:1880
 #, python-format
 msgid "Problem in %s"
-msgstr "Probleem %s ga"
+msgstr ""
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
 #: ../apport/ui.py:1847 ../apport/ui.py:1853
 msgid "Invalid problem report"
-msgstr "Ebasobiv vearaport"
+msgstr ""
 
 #: ../apport/ui.py:516
 msgid "You are not allowed to access this problem report."
-msgstr "Sul puudub ligipääs sellele vearaportile."
+msgstr ""
 
 #: ../apport/ui.py:524
 msgid "Error"
-msgstr "Viga"
+msgstr ""
 
 #: ../apport/ui.py:526
 msgid "There is not enough disk space available to process this report."
-msgstr "Vearaporti käsitsemiseks pole piisavalt vaba kettaruumi."
+msgstr ""
 
 #: ../apport/ui.py:562
 msgid "No PID specified"
-msgstr "PID-d pole määratud"
+msgstr ""
 
 #: ../apport/ui.py:563
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Pead määrama PID-i. Lisateabe saamiseks vaadake --help."
+msgstr ""
 
 #: ../apport/ui.py:572 ../apport/ui.py:677
 msgid "Invalid PID"
-msgstr "Vigane PID"
+msgstr ""
 
 #: ../apport/ui.py:572
 msgid "The specified process ID does not exist."
-msgstr "Määratud protsessi ID-d pole olemas."
+msgstr ""
 
 #: ../apport/ui.py:577
 msgid "Not your PID"
-msgstr "Mitte sinu PID"
+msgstr ""
 
 #: ../apport/ui.py:578
 msgid "The specified process ID does not belong to you."
-msgstr "Määratud protsessi ID ei kuulu sulle."
+msgstr ""
 
 #: ../apport/ui.py:635
 msgid "No package specified"
-msgstr "Pakett määramata"
+msgstr ""
 
 #: ../apport/ui.py:637
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Sa pead määrama paketi või PID-i. Vaata --help lisainfo jaoks."
+msgstr ""
 
 #: ../apport/ui.py:664
 msgid "Permission denied"
-msgstr "Ligipääs keelatud"
+msgstr ""
 
 #: ../apport/ui.py:666
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"Valitud protsess ei kuulu sulle. Palun käivita see programm protsessi "
-"omaniku või administraatorina."
 
 #: ../apport/ui.py:678
 msgid "The specified process ID does not belong to a program."
-msgstr "Protsessi ID ei kuulu ühelegi programmile."
+msgstr ""
 
 #: ../apport/ui.py:699
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr "Sümptomiskript %s ei tuvastanud seotud paketti"
+msgstr ""
 
 #: ../apport/ui.py:705
 #, python-format
 msgid "Package %s does not exist"
-msgstr "Paketti %s ei leitud"
+msgstr ""
 
 #: ../apport/ui.py:734 ../apport/ui.py:932 ../apport/ui.py:965
 #: ../apport/ui.py:972
 msgid "Cannot create report"
-msgstr "Raportit ei õnnestu luua"
+msgstr ""
 
 #: ../apport/ui.py:749 ../apport/ui.py:803 ../apport/ui.py:820
 msgid "Updating problem report"
-msgstr "Probleemiraporti uuendamine"
+msgstr ""
 
 #: ../apport/ui.py:751
 msgid ""
@@ -181,10 +168,6 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"Te ei ole selle probleemi raporteerija ega ka selle probleemi jälgija. "
-"Raport võib olla duplikaat või juba suletud.\n"
-"\n"
-"Palun luua uus raport kasutades \"apport-bug\" käsku."
 
 #: ../apport/ui.py:763
 msgid ""
@@ -197,31 +180,23 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"Te ei ole selle probleemiaruande reporter. Palju lihtsam on märkida viga "
-"teise vea duplikaadiks, kui teisaldada oma kommentaarid ja manused uude "
-"veasse.\n"
-"\n"
-"Seejärel soovitame teil esitada uus veaaruanne, kasutades \"apport-bug\" ja "
-"kommenteerida selle vea kohta esitatud viga.\n"
-"\n"
-"Kas soovite tõesti jätkata?"
 
 #: ../apport/ui.py:803 ../apport/ui.py:820
 msgid "No additional information collected."
-msgstr "Täiendavaid andmeid ei kogutud."
+msgstr ""
 
 #: ../apport/ui.py:876
 msgid "What kind of problem do you want to report?"
-msgstr "Mis liiki veast sa tahad raporteerida?"
+msgstr ""
 
 #: ../apport/ui.py:895
 msgid "Unknown symptom"
-msgstr "Tundmatu sümptom"
+msgstr ""
 
 #: ../apport/ui.py:896
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr "Sümptom \"%s\" pole teada."
+msgstr ""
 
 #: ../apport/ui.py:934
 msgid ""
@@ -233,22 +208,12 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
-"Akna valikut ei saa Waylandis kasutada.\n"
-"\n"
-"Leidke akna protsessi ID ja seejärel käivitage \"ubuntu-bug <protsessi "
-"ID>\".\n"
-"\n"
-"Protsessi ID leiate, käivitades süsteemimonitori rakenduse. Kerige "
-"vahekaardil Protsessid, kuni leiate õige rakenduse. Protsessi ID on ID "
-"veerus loetletud number."
 
 #: ../apport/ui.py:950
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
-"Probleemist teatamiseks vajuta peale selle sõnumi sulgemist probleemse "
-"rakenduse aknal."
 
 #: ../apport/ui.py:966 ../apport/ui.py:973
 msgid "xprop failed to determine process ID of the window"
@@ -261,11 +226,11 @@ msgstr ""
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
-msgstr "Täpsusta paketi nimi."
+msgstr ""
 
 #: ../apport/ui.py:995 ../apport/ui.py:1125
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "Lisa aruandele täiendav silt. Võib määrata mitu korda."
+msgstr ""
 
 #: ../apport/ui.py:1033
 #, python-format
@@ -282,7 +247,7 @@ msgstr ""
 
 #: ../apport/ui.py:1053
 msgid "Click a window as a target for filing a problem report."
-msgstr "Klõpsa probleemiaruande esitamise sihtmärgina akent."
+msgstr ""
 
 #: ../apport/ui.py:1061
 msgid "Start in bug updating mode. Can take an optional --package."
@@ -293,8 +258,6 @@ msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"Esita sümptomi kohta veaaruanne. (See tähendab, kui sümptomi nimi on toodud "
-"ainsa argumendina.)"
 
 #: ../apport/ui.py:1078
 msgid ""
@@ -311,7 +274,7 @@ msgstr ""
 
 #: ../apport/ui.py:1097
 msgid "The provided pid is a hanging application."
-msgstr "Pakutud pid on rippuv rakendus."
+msgstr ""
 
 #: ../apport/ui.py:1105
 #, python-format
@@ -319,8 +282,6 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Esita tõrge antud .apport või .crash failist, mitte ootel olevatest "
-"failidest %s. (Kaudselt, kui fail on antud ainukese argumendina."
 
 #: ../apport/ui.py:1115
 msgid ""
@@ -328,21 +289,19 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"Vea teatamise režiimis salvesta kogutud teave faili, selle asemel et seda "
-"kohe raporteerida. Seda faili saab hiljem teiselt seadmelt edasi saata."
 
 #: ../apport/ui.py:1131
 msgid "Print the Apport version number."
-msgstr "Printige välja Apport versiooninumber."
+msgstr ""
 
 #: ../apport/ui.py:1292
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr "See käivitab krahhi uurimiseks terminaliaknas apport-retrace'i."
+msgstr ""
 
 #: ../apport/ui.py:1296
 msgid "Run gdb session"
-msgstr "Käivita gdb sessioon"
+msgstr ""
 
 #: ../apport/ui.py:1297
 msgid "Run gdb session without downloading debug symbols"
@@ -358,63 +317,57 @@ msgstr ""
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
-"Krahhi aruandluse oleku salvestamine ebaõnnestus. Ei saa seadistada "
-"automaatset või mitte kunagi aruandlusrežiimi."
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr "Aruande olekuseadeid ei mäleta"
+msgstr ""
 
 #: ../apport/ui.py:1435 ../apport/ui.py:1448
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "See veateade on programmi kohta, mida ei ole enam paigaldatud."
+msgstr ""
 
 #: ../apport/ui.py:1468
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Probleem ilmnes programmiga %s, mis muutus pärast krahhi toimumist."
+msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
 #: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
 msgid "This problem report is damaged and cannot be processed."
-msgstr "See vearaport on rikutud ja seetõttu ei ole võimalik seda käsitseda."
+msgstr ""
 
 #: ../apport/ui.py:1533
 msgid "This report is about a package that is not installed."
-msgstr "See aruanne käsitleb paketti, mis pole installitud."
+msgstr ""
 
 #: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Selle probleemiaruande töötlemisel ilmnes viga:"
+msgstr ""
 
 #: ../apport/ui.py:1557
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
-"Teil on installitud selle rakenduse kaks versiooni, mille kohta soovite "
-"veast teatada?"
 
 #: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
-msgstr "%s snap"
+msgstr ""
 
 #: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
-msgstr "%s deb pakett"
+msgstr ""
 
 #: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"%s on saadaval hetkest, mille avaldas %s. Abi saamiseks võtke nendega "
-"ühendust %s kaudu."
 
 #: ../apport/ui.py:1606
 #, python-format
@@ -422,39 +375,36 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"%s on saadaval hetkest, mille avaldas %s. Kontaktaadressi pole esitatud; abi "
-"saamiseks külastage foorumit aadressil https://forum.snapcraft.io/."
 
 #: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
-msgstr "Paketi või lähtekoodi paketi nime ei suudetud tuvastada."
+msgstr ""
 
 #: ../apport/ui.py:1716
 msgid "Unable to start web browser"
-msgstr "Veebisirvija käivitamine ebaõnnestus"
+msgstr ""
 
 #: ../apport/ui.py:1717
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "%s avamiseks ei saa veebibrauserit käivitada."
+msgstr ""
 
 #: ../apport/ui.py:1809
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"Ei saa ühendust krahhide andmebaasiga, palun kontrolli oma internetiühendust."
 
 #: ../apport/ui.py:1812
 msgid "Network problem"
-msgstr "Probleem võrguühendusega"
+msgstr ""
 
 #: ../apport/ui.py:1838
 msgid "Memory exhaustion"
-msgstr "Mälu ammendatud"
+msgstr ""
 
 #: ../apport/ui.py:1840
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Sinu arvutil pole piisavalt mälu selle krahhirapordi käsitlemiseks."
+msgstr ""
 
 #: ../apport/ui.py:1885
 #, python-format
@@ -463,13 +413,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Sellest veast ei ole võimalik teatada:\n"
-"\n"
-"%s"
 
 #: ../apport/ui.py:1939 ../apport/ui.py:1951
 msgid "Problem already known"
-msgstr "Probleem on varasemast teada"
+msgstr ""
 
 #: ../apport/ui.py:1941
 msgid ""
@@ -477,51 +424,47 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"Sellest probleemist teavitati juba veebisirvijas nähaolevas vearaportis. "
-"Palun vaata, kas sul on arendajate jaoks olulist informatsiooni, mida lisada."
 
 #: ../apport/ui.py:1952
 msgid "This problem was already reported to developers. Thank you!"
-msgstr "Sellest probleemist teatati juba arendajatele. Aitäh!"
+msgstr ""
 
 #: ../bin/apport-cli.py:87
 msgid "Press any key to continue..."
-msgstr "Jätkamiseks vajutage mõnd klahvi..."
+msgstr ""
 
 #: ../bin/apport-cli.py:94
 msgid "What would you like to do? Your options are:"
-msgstr "Mida sa tahad teha? Sinu võimalused on järgnevad:"
+msgstr ""
 
 #: ../bin/apport-cli.py:107
 #, python-format
 msgid "Please choose (%s):"
-msgstr "Palun vali (%s):"
+msgstr ""
 
 #: ../bin/apport-cli.py:167
 #, python-format
 msgid "(%i bytes)"
-msgstr "(%i baiti)"
+msgstr ""
 
 #: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:416
 msgid "(binary data)"
-msgstr "(binaarandmed)"
+msgstr ""
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:208
 msgid "Send problem report to the developers?"
-msgstr "Kas saata arendajatele vearaport?"
+msgstr ""
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"Pärast vearaporti saatmist täida palun vorm automaatselt avanevas "
-"veebibrauseri aknas."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr "&Saada raport (%s)"
+msgstr ""
 
 #: ../bin/apport-cli.py:222
 msgid "&Examine locally"
@@ -529,110 +472,104 @@ msgstr ""
 
 #: ../bin/apport-cli.py:226
 msgid "&View report"
-msgstr "&Näita raportit"
+msgstr ""
 
 #: ../bin/apport-cli.py:228
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "&Hoia raportifail alles, et see saata hiljem või kopeerida mujale"
+msgstr ""
 
 #: ../bin/apport-cli.py:231
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Katkesta ja &ignoreeri edaspidi selle programmi versiooni krahhe"
+msgstr ""
 
 #: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
 #: ../bin/apport-cli.py:369
 msgid "&Cancel"
-msgstr "&Loobu"
+msgstr ""
 
 #: ../bin/apport-cli.py:255
 msgid "Problem report file:"
-msgstr "Vearaporti fail:"
+msgstr ""
 
 #: ../bin/apport-cli.py:261 ../bin/apport-cli.py:266
 msgid "&Confirm"
-msgstr "K&innita"
+msgstr ""
 
 #: ../bin/apport-cli.py:265
 #, python-format
 msgid "Error: %s"
-msgstr "Viga: %s"
+msgstr ""
 
 #: ../bin/apport-cli.py:271 ../kde/apport-kde.py:464
 msgid "Collecting problem information"
-msgstr "Probleemi kirjeldavate andmete kogumine"
+msgstr ""
 
 #: ../bin/apport-cli.py:273
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"Kogutud teabe võib saata arendajatele, et rakendust parandada.\n"
-"See võib võtta mõne minuti."
 
 #: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:514
 msgid "Uploading problem information"
-msgstr "Probleemi kirjeldava teabe üleslaadimine"
+msgstr ""
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"Kogutud teave saadetakse veahaldussüsteemi.\n"
-"See võib võtta mõne minuti."
 
 #: ../bin/apport-cli.py:347
 msgid "&Done"
-msgstr "&Valmis"
+msgstr ""
 
 #: ../bin/apport-cli.py:353
 msgid "none"
-msgstr "puudub"
+msgstr ""
 
 #: ../bin/apport-cli.py:354
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "Valitud: %s. Mitu valikut:"
+msgstr ""
 
 #: ../bin/apport-cli.py:370
 msgid "Choices:"
-msgstr "Valikud:"
+msgstr ""
 
 #: ../bin/apport-cli.py:384
 msgid "Path to file (Enter to cancel):"
-msgstr "Faili tee (tühistamiseks Enter klahv):"
+msgstr ""
 
 #: ../bin/apport-cli.py:390
 msgid "File does not exist."
-msgstr "Faili ei ole."
+msgstr ""
 
 #: ../bin/apport-cli.py:392
 msgid "This is a directory."
-msgstr "See on kataloog."
+msgstr ""
 
 #: ../bin/apport-cli.py:397
 msgid "To continue, you must visit the following URL:"
-msgstr "Jätkamiseks pead külastama järgmist URLi:"
+msgstr ""
 
 #: ../bin/apport-cli.py:399
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"Võite nüüd veebilehitseja käivitada, või kopeerida selle URLi mõne teise "
-"arvuti brauserisse."
 
 #: ../bin/apport-cli.py:404
 msgid "Launch a browser now"
-msgstr "Käivitada veebilehitseja nüüd"
+msgstr ""
 
 #: ../bin/apport-cli.py:419
 msgid "No pending crash reports. Try --help for more information."
-msgstr "Ootel vearaporteid pole. Proovi --help võtit lisainfo jaoks."
+msgstr ""
 
 #: ../bin/apport-retrace.py:48
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Ärge pange uusi jälgi aruandesse, vaid kirjutage need stdouti."
+msgstr ""
 
 #: ../bin/apport-retrace.py:55
 msgid ""
@@ -643,7 +580,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:64
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "Algse aruande muutmise asemel kirjutage antud faili muudetud aruanne"
+msgstr ""
 
 #: ../bin/apport-retrace.py:73
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -663,7 +600,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:88
 msgid "Rebuild report's Package information"
-msgstr "Uuenda aruande paketi teave"
+msgstr ""
 
 #: ../bin/apport-retrace.py:95
 msgid ""
@@ -739,7 +676,7 @@ msgstr ""
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:231
 msgid "OK to send these as attachments? [y/n]"
-msgstr "Kas saata need nagu manuseid? [jah: y /ei: n]"
+msgstr ""
 
 #: ../bin/apport-unpack.py:35
 #, python-format
@@ -748,7 +685,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr "Teata lahtipakkitavast failist"
+msgstr ""
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
@@ -756,11 +693,11 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
-msgstr "Sihtkataloog on olemas ja ei ole tühi."
+msgstr ""
 
 #: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
-msgstr "Vaata üksikasju man-lehelt."
+msgstr ""
 
 #: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
@@ -797,7 +734,7 @@ msgstr ""
 #: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr "Viga: %s ei ole käivitusfail. Katkestan."
+msgstr ""
 
 #: ../data/apportcheckresume.py:75
 msgid ""
@@ -815,187 +752,181 @@ msgstr ""
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr "Töötlemise jätkamine sai lõpule ja näib olevat normaalselt lõppenud."
+msgstr ""
 
 #: ../data/kernel_oops.py:33
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
-"Teie süsteem võib nüüd muutuda ebastabiilseks ja võib vajada taaskäivitust."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr "Probleemist teatamine..."
+msgstr ""
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr "Arendajate teavitamine tõrkest"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:155
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr "Vabandust, rakendus %s peatus ootamatult."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:158
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Vabandust, %s sulgus ootamatult."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr "Vabandust, %s ilmnes sisemine viga."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
 msgid "Send"
-msgstr "Saada"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:333
 msgid "Show Details"
-msgstr "Näita üksikasju"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
 msgid "Continue"
-msgstr "Jätka"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:244
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr "Rakendus %s on lakanud reageerimast."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:248
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr "Programm \"%s\" ei vasta enam."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:265 ../kde/apport-kde.py:231
 #, python-format
 msgid "Package: %s"
-msgstr "Pakett: %s"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:238
 msgid "Sorry, a problem occurred while installing software."
-msgstr "Vabandust, tarkvara paigaldamisel tekkis viga."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:246
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr "Rakenduses %s ilmnes sisemine viga."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:251
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Rakendus %s suleti ootamatult."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Kui märkad täiendavaid probleeme, proovi arvuti taaskäivitada."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:281
 msgid "Ignore future problems of this type"
-msgstr "Ignoreeri seda tüüpi tulevasi probleeme"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:330
 msgid "Hide Details"
-msgstr "Peida üksikasjad"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:383 ../kde/apport-kde.py:553
 msgid "Apport"
-msgstr "Apport"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr "Loobu"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
-msgstr "Krahhiaruanne"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr "<big><b>Vabandust, ilmnes sisemine viga .</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr "Pidage seda tulevikus meeles"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr "Ignoreeri selle programmiversiooni tulevasi probleeme"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr "Taaskäivita see rakendus"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
-msgstr "_Uuri olukorda"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr "Ära saada"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Probleemi kirjeldavate andmete kogumine</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"Kogutakse informatsiooni, mis võib aidata arendajatel probleemi kõrvaldada."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>Probleemi kirjeldava teabe üleslaadimine</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:516
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"Toimub kogutud info saatmine veajälgimissüsteemile. Selleks võib kuluda mitu "
-"minutit."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr "Apport krahhifail"
+msgstr ""
 
 #: ../kde/apport-kde.py:267
 msgid "Leave Closed"
-msgstr "Jätke suletuks"
+msgstr ""
 
 #: ../kde/apport-kde.py:268 ../kde/apport-kde.py:434
 msgid "Relaunch"
-msgstr "Taaskäivita"
+msgstr ""
 
 #: ../kde/apport-kde.py:360
 msgid "Username:"
-msgstr "Kasutajanimi:"
+msgstr ""
 
 #: ../kde/apport-kde.py:363
 msgid "Password:"
-msgstr "Parool:"
+msgstr ""
 
 #: ../kde/apport-kde.py:463
 msgid "Collecting Problem Information"
-msgstr "Probleemi kirjeldavate andmete kogumine"
+msgstr ""
 
 #: ../kde/apport-kde.py:466
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Kogutud andmed võib saata arendajatele, et rakenduse saaks parandada. "
-"Saatmine võib võtta mõned minutid."
 
 #: ../kde/apport-kde.py:513
 msgid "Uploading Problem Information"
-msgstr "Probleemi kirjeldava teabe üleslaadimine"
+msgstr ""
