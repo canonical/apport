@@ -1,6 +1,56 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.28.0 (2024-02-22)
+-------------------
+
+### Added
+
+* apt_dpkg: Add basic support for `mirror+file:` URIs
+* problem_report: support reading values compressed with Zstandard
+* support systemd-coredump as core dump handler
+  ([LP: #2048136](https://launchpad.net/bugs/2048136))
+* set signal name during crash collection (`SignalName` in report)
+
+### Changed
+
+* setup:
+  - Replace `distutils` by `setuptools` to support Python 3.12
+  - set minimum Java release to 8
+    ([LP: #2045705](https://launchpad.net/bugs/2045705))
+* remove support for Upstart
+* apport-cli/apport-kde: show the most interesting fields first in the details
+  view (similar to apport-gtk)
+* ui:
+  - only show string values in details view
+  - remove skipping crashes that happened during logout
+    ([LP: #2043393](https://launchpad.net/bugs/2043393))
+* run common hooks in alphabetical order
+* dpkg: memorize the `get_system_architecture` method
+
+### Fixed
+
+* raise "GDB not found" as soon as detected
+  ([LP: #2031919](https://launchpad.net/bugs/2031919))
+* apt_dpkg: Skip parsing non-deb files with dpkg-deb
+* ui: don't rely on Dependencies to know if `collect_info()` has been run
+  ([LP: #2038650](https://launchpad.net/bugs/2038650))
+* bash-completion: Do not use `ls` in completion
+  ([LP: #1850804](https://launchpad.net/bugs/1850804))
+* Fix `MachineType` f-string interpolation (regression in 2.27.0)
+* Correct `CrashDatabase.get_id_url()` for testing Launchpad instances
+* apport-unpack: fix reading from stdin
+* apport-kde: fix `AttributeError` in `ui_question_file()`
+* Rework apport-retrace to handle unbound `crashid`
+  ([LP: #2051512](https://launchpad.net/bugs/2051512))
+* Use context manager when manipulating `GzipFiles`
+  ([LP: #2051512](https://launchpad.net/bugs/2051512))
+* apport: fix UID in report filename for suid programs
+* test:
+  - Skip `test_get_file_package_diversion` if the system has no diversion
+    ([LP: #2028879](https://launchpad.net/bugs/2028879))
+  - Silence false inconsistent-return-statements (from pylint 2.17.4)
+
 2.27.0 (2023-07-24)
 -------------------
 
