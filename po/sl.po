@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 18:59+0100\n"
+"POT-Creation-Date: 2024-02-21 22:26+0100\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-02-21 18:08+0000\n"
+"X-Generator: Launchpad (build 9643586c585856148a18782148972ae9c1179d06)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -26,8 +26,7 @@ msgstr "Zberi podatke o sistemu"
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
-msgstr ""
-"Za zbiranje podatkov o sistemu za to poročilo o težavi je zahtevana overitev."
+msgstr "Zbiranje sistemskih podatkov za to poročilo o težavi zahteva overitev."
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
@@ -49,6 +48,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"To verjetno ni uradni %s paket. Poskusite znova po posodobitvi indeksa "
+"paketov, ki so na voljo. Če to ne deluje, odstranite povezane pakete drugih "
+"ponudnikov in poskusite znova."
 
 #: ../apport/ui.py:299
 #, python-format
@@ -105,11 +107,11 @@ msgstr "Na disku ni dovolj prostora za obdelavo tega poročila."
 
 #: ../apport/ui.py:562
 msgid "No PID specified"
-msgstr ""
+msgstr "Noben PID ni določen"
 
 #: ../apport/ui.py:563
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "PID mora biti določen. Poglejte --help za več podatkov."
 
 #: ../apport/ui.py:572 ../apport/ui.py:677
 msgid "Invalid PID"
@@ -117,15 +119,15 @@ msgstr "Neveljaven PID"
 
 #: ../apport/ui.py:572
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Podani ID procesa ne obstaja."
 
 #: ../apport/ui.py:577
 msgid "Not your PID"
-msgstr ""
+msgstr "Ni vaš PID"
 
 #: ../apport/ui.py:578
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Podani ID procesa ne pripada vam."
 
 #: ../apport/ui.py:635
 msgid "No package specified"
@@ -230,6 +232,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Wayland ne podpira te možnosti okna.\n"
+"\n"
+"Poiščite ID opravila za to okno in zaženite 'ubuntu-bug <process ID>'.\n"
+"\n"
+"ID opravila je mogoče najti s programom Nadzornik sistema. Na zavihku "
+"Opravila poiščite ustrezen program. ID opravila je številka, ki se nahaja "
+"pod stolpcem ID."
 
 #: ../apport/ui.py:950
 msgid ""
@@ -246,7 +255,7 @@ msgstr "xprop ni uspelo določevanje ID-ja opravila okna"
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <številka poročila>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
@@ -261,6 +270,7 @@ msgstr "Doda dodatno oznako poročilu. Določite jo lahko večkrat."
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [možnosti] [simptom|pid|paket|program path|.apport/.crash datoteka]"
 
 #: ../apport/ui.py:1044
 msgid ""
@@ -357,10 +367,12 @@ msgstr "Posodobi %s s polno simbolično sledjo sklicev"
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Shranjevanje poročila o sesutju ni bilo uspešno. Načina poročanja ne morem "
+"nastaviti na samodejno ali nikoli."
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Ne morem shraniti nastavitev za pošiljanje poročila o stanju"
 
 #: ../apport/ui.py:1435 ../apport/ui.py:1448
 msgid ""
@@ -382,7 +394,7 @@ msgstr "Poročilo o težavi je poškodovano, zato njegova obdelava ni mogoča."
 
 #: ../apport/ui.py:1533
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "To poročilo se nanaša na paket, ki ni nameščen"
 
 #: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
@@ -393,21 +405,24 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Namesščeni sta dve različici tega programa. Za katero želite prijaviti "
+"napako?"
 
 #: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb paket"
 
 #: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s temelji na snap-u, izdan s strani %s. Za pomoč vzpostavite stik preko %s."
 
 #: ../apport/ui.py:1606
 #, python-format
@@ -415,6 +430,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s temelji na snap-u, izdan s strani %s. Kontaktni naslov ni bil podan; za "
+"pomoč obiščite forum https://forum.snapcraft.io/"
 
 #: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
@@ -501,7 +518,7 @@ msgstr "(binarni podatki)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:208
 msgid "Send problem report to the developers?"
-msgstr "Ali želite poročilo o napaki poslati razvijalcem?"
+msgstr "Ali želite poslati poročilo o napaki?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
@@ -627,7 +644,8 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:48
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Ne dajaj novih sledi v poročilo temveč jih izpiši v stdout."
+msgstr ""
+"Novih sledi ne zapiši v poročilo, temveč jih izpiši v na standardni izhod."
 
 #: ../bin/apport-retrace.py:55
 msgid ""
@@ -685,6 +703,9 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
+"Ustvari še en začasni peskovnik za namestitev gdb in njegovih odvisnosti in "
+"uporabi isto izdajo, kot se nahaja v poročilu, namesto izdaje, ki je "
+"nameščena."
 
 #: ../bin/apport-retrace.py:119
 msgid "Report download/install progress when installing packages into sandbox"
@@ -745,7 +766,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:188
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Poročilu ne dodaj StacktraceSource"
 
 #: ../bin/apport-retrace.py:201
 msgid "You cannot use -C without -S. Stopping."
@@ -760,15 +781,15 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <poročilo> <ciljna mapa>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Datoteka s poročilom za odpakiranje"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "mapa, kamor naj se odpakira poročilo"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -815,6 +836,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"izvršljiva datoteka, ki se zažene s valgrindovim preizkusom pomnilnika za "
+"odkrivanje puščanja pomnilnika"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
@@ -858,7 +881,7 @@ msgstr "Pošlji poročilo o težavi ..."
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr "Poročajte napačno delovanje razvijalcem"
+msgstr "Razvijalcem prijavi napako"
 
 #: ../gtk/apport-gtk.py:155
 #, python-format
@@ -868,12 +891,12 @@ msgstr "Oprostite, program %s se je nepričakovano končal."
 #: ../gtk/apport-gtk.py:158
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Oprostite, program %s se je nepričakovano zaprl."
+msgstr "Program %s se je nepričakovano zaprl."
 
 #: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr "Oprostite, v programu %s je prišlo do notranje napake."
+msgstr "V programu %s je prišlo do notranje napake."
 
 #: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
 msgid "Send"
@@ -919,7 +942,7 @@ msgstr "Program %s se je nepričakovano zaprl."
 
 #: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Če opazite nadaljnje težave, poskusite s ponovnim zagonom računalnika."
+msgstr "Če težave ne izginejo, poskusite ponovno zagnati računalnik."
 
 #: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:281
 msgid "Ignore future problems of this type"
@@ -951,7 +974,7 @@ msgstr "<big><b>Oprostite, prišlo je do notranje napake.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Zapomni si to"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -959,7 +982,7 @@ msgstr "Prezri nadaljnje težave te različice programa"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Ponovno zaženi ta program"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -967,7 +990,7 @@ msgstr "_Preuči krajevno"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Ne pošlji"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"

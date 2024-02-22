@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 18:59+0100\n"
+"POT-Creation-Date: 2024-02-21 22:26+0100\n"
 "PO-Revision-Date: 2020-04-03 16:38+0000\n"
-"Last-Translator: Úr Balázs <balazs@urbalazs.hu>\n"
+"Last-Translator: Balázs Úr <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-02-21 18:08+0000\n"
+"X-Generator: Launchpad (build 9643586c585856148a18782148972ae9c1179d06)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -28,7 +28,7 @@ msgid ""
 "report"
 msgstr ""
 "A hibajelentéshez szükséges rendszer-információk összegyűjtéséhez "
-"hitelesítés szükséges."
+"hitelesítés szükséges"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
@@ -36,7 +36,7 @@ msgstr "Rendszerhiba-jelentések"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
-msgstr "Adja meg jelszavát a rendszerprogramok hibáinak eléréséhez"
+msgstr "Adja meg jelszavát a rendszerprogramok hibajelentéseinek eléréséhez"
 
 #: ../apport/ui.py:259
 msgid "This package does not seem to be installed correctly"
@@ -49,6 +49,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Úgy tűnik, hogy ez nem hivatalos %s csomag. Próbálja meg újra az elérhető "
+"csomagok indexeinek frissítése után, és ha ez nem működik, akkor távolítsa "
+"el a kapcsolódó harmadik féltől származó csomagokat, és próbálja meg újra."
 
 #: ../apport/ui.py:299
 #, python-format
@@ -58,8 +61,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Néhány csomagból egy elavult verzió van telepítve. Frissítse az alábbi "
-"csomagokat és ellenőrizze, hogy a probléma ezután is fennáll-e: \n"
+"Néhány csomagból elavult verzió van telepítve. Frissítse az alábbi "
+"csomagokat és ellenőrizze, hogy a hiba ezután is fennáll-e: \n"
 "\n"
 "%s"
 
@@ -70,20 +73,20 @@ msgstr "ismeretlen program"
 #: ../apport/ui.py:452
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Elnézést, a(z) „%s” program váratlanul összeomlott."
+msgstr "Elnézést, a(z) „%s” program váratlanul bezáródott"
 
 #: ../apport/ui.py:454
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"A számítógépe nem rendelkezik elegendő szabad memóriával a probléma "
-"automatikus elemzéséhez és a jelentés elküldéséhez a fejlesztőknek."
+"A számítógépe nem rendelkezik elegendő szabad memóriával a hiba automatikus "
+"elemzéséhez és a jelentés elküldéséhez a fejlesztőknek."
 
 #: ../apport/ui.py:459 ../apport/ui.py:1880
 #, python-format
 msgid "Problem in %s"
-msgstr "Probléma a következőben: %s"
+msgstr "Hiba a következőben: %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
@@ -93,7 +96,7 @@ msgstr "Érvénytelen hibajelentés"
 
 #: ../apport/ui.py:516
 msgid "You are not allowed to access this problem report."
-msgstr "A hibajelentés elérése nem engedélyezett"
+msgstr "Ön nem férhet hozzá ehhez a hibabejelentéshez."
 
 #: ../apport/ui.py:524
 msgid "Error"
@@ -101,19 +104,21 @@ msgstr "Hiba"
 
 #: ../apport/ui.py:526
 msgid "There is not enough disk space available to process this report."
-msgstr "Nincs elegendő lemezterület a hiba feldolgozásához."
+msgstr "Nincs elegendő lemezterület a jelentés feldolgozásához."
 
 #: ../apport/ui.py:562
 msgid "No PID specified"
-msgstr ""
+msgstr "Nincs folyamatazonosító megadva"
 
 #: ../apport/ui.py:563
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
+"Meg kell adnia egy folyamatazonosítót. További információkért nézze meg a --"
+"help kapcsolót."
 
 #: ../apport/ui.py:572 ../apport/ui.py:677
 msgid "Invalid PID"
-msgstr "Érvénytelen PID"
+msgstr "Érvénytelen folyamatazonosító"
 
 #: ../apport/ui.py:572
 msgid "The specified process ID does not exist."
@@ -135,8 +140,8 @@ msgstr "Nincs megadva csomag"
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"Meg kell adnia egy csomagot vagy PID azonosítót. További információkért "
-"tekintse meg a --help kapcsoló kimenetét."
+"Meg kell adnia egy csomagot vagy egy folyamatazonosítót. További "
+"információkért nézze meg a --help kapcsolót."
 
 #: ../apport/ui.py:664
 msgid "Permission denied"
@@ -147,12 +152,12 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"A megadott folyamat nem Önhöz tartozik. Ezt a programot a folyamat "
-"tulajdonosaként vagy rendszergazdaként futtassa."
+"A megadott folyamat nem Önhöz tartozik. Futtassa ezt a programot a folyamat "
+"tulajdonosaként vagy rendszergazdaként."
 
 #: ../apport/ui.py:678
 msgid "The specified process ID does not belong to a program."
-msgstr "A megadott PID nem programhoz tartozik."
+msgstr "A megadott folyamatazonosító nem programhoz tartozik."
 
 #: ../apport/ui.py:699
 #, python-format
@@ -180,8 +185,8 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"Ön nem beküldője vagy feliratkozottja a hibajelentésnek, vagy a jelentés egy "
-"duplikátum, esetleg már lezárták.\n"
+"Ön nem a bejelentője vagy feliratkozója ennek a hibajelentésnek, vagy a "
+"jelentés egy duplikátum, esetleg már lezárták.\n"
 "\n"
 "Készítsen új jelentést az „apport-bug” használatával."
 
@@ -196,23 +201,23 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"Nem Ön küldte be a hibajelentést. Sokkal könnyebb megjelölni egy hibát egy "
-"másik duplikátumaként, mint átköltöztetni a hozzászólásait és mellékleteit "
-"egy új hibához.\n"
+"Ön nem a bejelentője ennek a hibajelentésnek. Sokkal könnyebb megjelölni egy "
+"hibát egy másik duplikátumaként, mint áthelyezni a hozzászólásait és "
+"mellékleteit egy új hibába.\n"
 "\n"
 "Emiatt azt ajánljuk, hogy nyisson egy új hibajelentést az „apport-bug” "
 "használatával, és küldjön egy hozzászólást ehhez a hibához az újonnan "
 "nyitottról.\n"
 "\n"
-"Biztosan folytatja?"
+"Valóban folytatni szeretné?"
 
 #: ../apport/ui.py:803 ../apport/ui.py:820
 msgid "No additional information collected."
-msgstr "Nem került gyűjtésre további információ."
+msgstr "Nem lettek további információk összegyűjtve."
 
 #: ../apport/ui.py:876
 msgid "What kind of problem do you want to report?"
-msgstr "Milyen problémát kíván jelenteni?"
+msgstr "Milyen jellegű hibát szeretne jelenteni?"
 
 #: ../apport/ui.py:895
 msgid "Unknown symptom"
@@ -233,6 +238,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Az ablak kapcsoló nem használható Wayland alatt.\n"
+"\n"
+"Keresse meg az ablak folyamatazonosítóját, majd futtassa az „ubuntu-bug "
+"<folyamatazonosító>” parancsot.\n"
+"\n"
+"A folyamatazonosító a Rendszerfigyelő alkalmazás futtatásával található meg. "
+"A Folyamatok lapon görgessen addig, amíg meg nem találja a megfelelő "
+"alkalmazást. A folyamatazonosító az azonosító oszlopban szereplő szám."
 
 #: ../apport/ui.py:950
 msgid ""
@@ -249,21 +262,23 @@ msgstr "Az xprop nem tudta meghatározni az ablak folyamatazonosítóját"
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <jelentés száma>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
-msgstr "Adja meg a csomagnevet."
+msgstr "Csomag nevének megadása."
 
 #: ../apport/ui.py:995 ../apport/ui.py:1125
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "Extra címke hozzáadása a jelentéshez. Többször is megadható."
+msgstr "További címke hozzáadása a jelentéshez. Többször is megadható."
 
 #: ../apport/ui.py:1033
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [kapcsolók] [tünet|folyamatazonosító|csomag|program útvonala|."
+"apport/.crash fájl]"
 
 #: ../apport/ui.py:1044
 msgid ""
@@ -282,15 +297,15 @@ msgstr "Kattintson egy ablakra az azzal kapcsolatos hiba jelentéséhez."
 #: ../apport/ui.py:1061
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
-"Indítás hibafrissítés módban. Opcionálisan használható a --package kapcsoló."
+"Indítás hibafrissítő módban. Opcionálisan használható a --package kapcsoló."
 
 #: ../apport/ui.py:1069
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"Hiba bejelentése egy tünetről. (Ha az egyetlen paraméter tünetnév, az is ezt "
-"jelenti.)"
+"Hiba bejelentése egy tünetről. (Ha az egyetlen paraméter egy tünetnév, az is "
+"ezt jelenti.)"
 
 #: ../apport/ui.py:1078
 msgid ""
@@ -307,11 +322,12 @@ msgid ""
 "argument.)"
 msgstr ""
 "Futó program megadása --file-bug módban. Ha ez meg van adva, a hibajelentés "
-"több információt fog tartalmazni."
+"több információt fog tartalmazni. (Ha az egyetlen paraméter egy "
+"folyamatazonosító, az is ezt jelenti.)"
 
 #: ../apport/ui.py:1097
 msgid "The provided pid is a hanging application."
-msgstr "A megadott PID egy nem válaszoló alkalmazásra mutat."
+msgstr "A megadott folyamatazonosító egy nem válaszoló alkalmazás."
 
 #: ../apport/ui.py:1105
 #, python-format
@@ -319,8 +335,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Az összeomlás bejelentése adott .apport vagy .crash fájlból, a(z) %s alatt "
-"függőben lévők helyet. (Ha az egyetlen paraméter egy fájl, az is ezt "
+"Az összeomlás bejelentése adott .apport vagy .crash fájlból a(z) %s alatt "
+"függőben lévők helyett. (Ha az egyetlen paraméter egy fájl, az is ezt "
 "jelenti.)"
 
 #: ../apport/ui.py:1115
@@ -334,34 +350,35 @@ msgstr ""
 
 #: ../apport/ui.py:1131
 msgid "Print the Apport version number."
-msgstr "Az Apport verziószámának megjelenítése."
+msgstr "Az Apport verziószámának kiírása."
 
 #: ../apport/ui.py:1292
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
-"Ez meg fogja nyitni az apport-retrace-t egy terminálban, hogy az "
-"megvizsgálja az összeomlást."
+"Ez elindítja az apport-retrace programot egy terminálablakban az összeomlás "
+"megvizsgálásához."
 
 #: ../apport/ui.py:1296
 msgid "Run gdb session"
-msgstr "gdb folyamat futtatása"
+msgstr "Egy gdb munkamenet futtatása"
 
 #: ../apport/ui.py:1297
 msgid "Run gdb session without downloading debug symbols"
-msgstr "gdb folyamat futtatása a hibakeresési szimbólumok letöltése nélkül"
+msgstr ""
+"Egy gdb munkamenet futtatása a hibakeresési szimbólumok letöltése nélkül"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:1299
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr "%s frissítése teljes szimbolikus veremkiíratással"
+msgstr "A(z) %s frissítése teljes szimbolikus veremkiíratással"
 
 #: ../apport/ui.py:1353
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
-"Az összeomlási jelentés állapotának mentése sikertelen. Nem lehet beállítani "
+"Az összeomlás-jelentés állapotának mentése sikertelen. Nem lehet beállítani "
 "az automatikus vagy sohasem jelentési módot."
 
 #: ../apport/ui.py:1357
@@ -372,8 +389,7 @@ msgstr "Nem lehet megjegyezni a jelentés küldése állapot beállításait"
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
-"Ez a problémajelentés egy olyan programra vonatkozik, amely már nincs "
-"telepítve."
+"Ez a hibajelentés egy olyan programra vonatkozik, amely már nincs telepítve."
 
 #: ../apport/ui.py:1468
 #, python-format
@@ -387,7 +403,7 @@ msgstr ""
 #. can happen with broken gz values
 #: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
 msgid "This problem report is damaged and cannot be processed."
-msgstr "A hibajelentés megsérült és nem dolgozható fel."
+msgstr "Ez a hibajelentés megsérült és nem dolgozható fel."
 
 #: ../apport/ui.py:1533
 msgid "This report is about a package that is not installed."
@@ -395,28 +411,33 @@ msgstr "Ez a jelentés egy nem telepített csomagról szól."
 
 #: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Hiba történt a következő hibabejelentés feldolgozása közben:"
+msgstr ""
+"Hiba történt a következő hibabejelentés feldolgozásának kísérlete közben:"
 
 #: ../apport/ui.py:1557
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Két verziója van telepítve ennek az alkalmazásnak, melyikkel kapcsolatban "
+"szeretne hibát jelenteni?"
 
 #: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s deb-csomag"
 
 #: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"A(z) %s csomagot egy %s által közzétett snap szolgáltatja. Vegye fel vele a "
+"kapcsolatot a(z) %s címen a segítségért."
 
 #: ../apport/ui.py:1606
 #, python-format
@@ -424,19 +445,22 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"A(z) %s csomagot egy %s által közzétett snap szolgáltatja. Nem lett "
+"kapcsolatfelvételi cím megadva. Látogassa meg a https://forum.snapcraft.io/ "
+"címen lévő fórumot a segítségért."
 
 #: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
-msgstr "A csomag vagy forrás neve nem állapítható meg."
+msgstr "Nem sikerült meghatározni a csomag vagy a forráscsomag nevét."
 
 #: ../apport/ui.py:1716
 msgid "Unable to start web browser"
-msgstr "A webböngésző nem indítható."
+msgstr "Nem lehet elindítani a webböngészőt"
 
 #: ../apport/ui.py:1717
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "A(z) „%s” megnyitásához nem lehet elindítani a webböngészőt."
+msgstr "Nem lehet elindítani a webböngészőt a(z) „%s” megnyitásához."
 
 #: ../apport/ui.py:1809
 msgid ""
@@ -447,7 +471,7 @@ msgstr ""
 
 #: ../apport/ui.py:1812
 msgid "Network problem"
-msgstr "Hálózati probléma"
+msgstr "Hálózati hiba"
 
 #: ../apport/ui.py:1838
 msgid "Memory exhaustion"
@@ -456,7 +480,7 @@ msgstr "Elfogyott a memória"
 #: ../apport/ui.py:1840
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
-"A rendszere nem rendelkezik elegendő memóriával ezen összeomlásjelentés "
+"A rendszere nem rendelkezik elegendő memóriával ezen összeomlás-jelentés "
 "feldolgozásához."
 
 #: ../apport/ui.py:1885
@@ -472,7 +496,7 @@ msgstr ""
 
 #: ../apport/ui.py:1939 ../apport/ui.py:1951
 msgid "Problem already known"
-msgstr "A probléma már ismert."
+msgstr "A hiba már ismert"
 
 #: ../apport/ui.py:1941
 msgid ""
@@ -480,13 +504,13 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"Ez a probléma már ismert, a webböngészőjében megjelent a hozzátartozó "
-"hibajelentés. Ellenőrizze, hogy tud-e további információkkal szolgálni, "
-"amelyek hasznosak lehetnek a fejlesztők számára."
+"Ezt a hibát már jelentették a webböngészőben megjelenített hibajelentésben. "
+"Ellenőrizze, hogy tud-e további információkat hozzáadni, amelyek hasznosak "
+"lehetnek a fejlesztők számára."
 
 #: ../apport/ui.py:1952
 msgid "This problem was already reported to developers. Thank you!"
-msgstr "Ez a probléma már jelentve volt a fejlesztőknek. Köszönjük!"
+msgstr "Ezt a hibát már jelentették a fejlesztőknek. Köszönjük!"
 
 #: ../bin/apport-cli.py:87
 msgid "Press any key to continue..."
@@ -512,20 +536,20 @@ msgstr "(bináris adatok)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:208
 msgid "Send problem report to the developers?"
-msgstr "Elküldi a hibajelentést a feljesztőknek?"
+msgstr "Elküldi a hibajelentést a fejlesztőknek?"
 
 #: ../bin/apport-cli.py:211
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"A hibajelentés elküldése után töltse ki a kérdőívet az\n"
-"automatikusan megnyíló webböngészőben."
+"A hibabejelentés elküldése után töltse ki az űrlapot az automatikusan\n"
+"megnyíló webböngészőben."
 
 #: ../bin/apport-cli.py:218
 #, python-format
 msgid "&Send report (%s)"
-msgstr "&Hibajelentés küldése (%s)"
+msgstr "Jelentés &küldése (%s)"
 
 #: ../bin/apport-cli.py:222
 msgid "&Examine locally"
@@ -533,16 +557,17 @@ msgstr "&Vizsgálat helyileg"
 
 #: ../bin/apport-cli.py:226
 msgid "&View report"
-msgstr "Hi&bajelentés megtekintése"
+msgstr "Jelentés &megtekintése"
 
 #: ../bin/apport-cli.py:228
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "Hibajelentés megtartása &későbbi küldésre, vagy más helyre másolásra"
+msgstr "Jelentésfájl megtartása &későbbi küldésre vagy más helyre másolásra"
 
 #: ../bin/apport-cli.py:231
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
-"Mégse, és ezentúl a programverzió összeomlásainak figyelmen &kívül hagyása"
+"Megszakítás és a programverzió jövőbeli összeomlásainak &figyelmen kívül "
+"hagyása"
 
 #: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
 #: ../bin/apport-cli.py:369
@@ -564,7 +589,7 @@ msgstr "Hiba: %s"
 
 #: ../bin/apport-cli.py:271 ../kde/apport-kde.py:464
 msgid "Collecting problem information"
-msgstr "Információgyűjtés a hibáról"
+msgstr "Hibainformációk összegyűjtése"
 
 #: ../bin/apport-cli.py:273
 msgid ""
@@ -573,18 +598,18 @@ msgid ""
 msgstr ""
 "Az összegyűjtött információkat elküldheti a fejlesztőknek, hogy "
 "javíthassanak\n"
-"az alkalmazáson. A küldés eltarthat pár percig."
+"az alkalmazáson. Ez eltarthat pár percig."
 
 #: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:514
 msgid "Uploading problem information"
-msgstr "A hibával kapcsolatos információk feltöltése"
+msgstr "Hibainformációk feltöltése"
 
 #: ../bin/apport-cli.py:291
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"Az összegyűjtött információk elküldése a hibakövető rendszernek.\n"
+"Az összegyűjtött információk elküldésre kerülnek a hibakövető rendszerbe.\n"
 "Ez eltarthat pár percig."
 
 #: ../bin/apport-cli.py:347
@@ -598,7 +623,7 @@ msgstr "nincs"
 #: ../bin/apport-cli.py:354
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "Kiválasztva: %s. További lehetőségek:"
+msgstr "Kiválasztva: %s. Több választási lehetőség:"
 
 #: ../bin/apport-cli.py:370
 msgid "Choices:"
@@ -606,7 +631,7 @@ msgstr "Lehetőségek:"
 
 #: ../bin/apport-cli.py:384
 msgid "Path to file (Enter to cancel):"
-msgstr "Fájl helye (kilépés enterrel):"
+msgstr "Fájl útvonala (Enter a megszakításhoz):"
 
 #: ../bin/apport-cli.py:390
 msgid "File does not exist."
@@ -618,14 +643,14 @@ msgstr "Ez egy könyvtár."
 
 #: ../bin/apport-cli.py:397
 msgid "To continue, you must visit the following URL:"
-msgstr "A folytatáshoz meg kell nyitnia a következő URL-címet:"
+msgstr "A folytatáshoz meg kell látogatnia a következő URL-t:"
 
 #: ../bin/apport-cli.py:399
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"Elindíthatja most a böngészőt, vagy átmásolhatja ezt az URL-címet egy másik "
+"Elindíthatja most a böngészőt, vagy átmásolhatja ezt az URL-t egy másik "
 "számítógépen lévő böngészőbe."
 
 #: ../bin/apport-cli.py:404
@@ -635,8 +660,8 @@ msgstr "Böngésző indítása most"
 #: ../bin/apport-cli.py:419
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
-"Nincs függőben lévő összeomlás-jelentés. \r\n"
-"További információkért tekintse meg a --help kapcsoló kimenetét."
+"Nincsenek függőben lévő összeomlás-jelentések. További információkért "
+"próbálja meg a --help kapcsolót."
 
 #: ../bin/apport-retrace.py:48
 msgid "Do not put the new traces into the report, but write them to stdout."
@@ -649,21 +674,21 @@ msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
-"Interaktív gdb munkamenet indítása a jelentés memóriakiíratásával (a -o "
-"figyelmen kívül marad, nem írja újra a jelentést)"
+"Interaktív gdb munkamenet indítása a jelentés memóriakiíratásával (az -o "
+"kapcsoló figyelmen kívül marad, nem írja újra a jelentést)"
 
 #: ../bin/apport-retrace.py:64
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
-"Módosított jelentés írása a megadott fájlba az eredeti jelentés módosítása "
-"helyett"
+"Módosított jelentés írása a megadott fájlba az eredeti jelentés "
+"megváltoztatása helyett"
 
 #: ../bin/apport-retrace.py:73
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
-"A veremkiíratás ismételt előállítása után a memóriakiíratás eltávolítása a "
-"jelentésből"
+"A memóriakiíratás eltávolítása a jelentésből a veremkiíratás ismételt "
+"előállítása után"
 
 #: ../bin/apport-retrace.py:76
 msgid "Override report's CoreFile"
@@ -690,7 +715,7 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"Ideiglenes homokozó létrehozása, majd ebbe a szükséges csomagok, "
+"Ideiglenes homokozó összeállítása, majd ebbe a szükséges csomagok, "
 "hibakeresési szimbólumok letöltése/telepítése; enélkül feltételezi, hogy a "
 "szükséges csomagok és hibakeresési szimbólumok már telepítve lettek. Az "
 "argumentum a csomagkezelő rendszer konfigurációs alapkönyvtárára mutat; a "
@@ -703,41 +728,43 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
-"Állítson össze egy másik, a jelentéssel megegyező kiadást használó átmeneti "
-"homokozót a gdb és függőségei telepítéséhez az Ön által telepített "
-"valamilyen gdb verzió helyett."
+"Egy másik ideiglenes homokozó összeállítása a gdb és függőségeinek "
+"telepítéséhez a jelentéssel megegyező kiadás használatával, nem pedig a gdb "
+"telepített verziójával."
 
 #: ../bin/apport-retrace.py:119
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
-"Homokozóba történő telepítéskor a letöltés/telepítési folyamat kijelzése"
+"Jelentés letöltési vagy telepítési folyamata a csomagok homokozóba történő "
+"telepítésekor"
 
 #: ../bin/apport-retrace.py:125
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "Helyezzen időbélyegeket a naplóüzenetek elé, a kötegelt működéshez"
+msgstr "Időbélyegek beillesztése a naplóüzenetek elé a kötegelt műveletnél"
 
 #: ../bin/apport-retrace.py:131
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
-"Külső tárolók létrehozása és használata a jelentésekben megadott forrásokból"
+"Harmadik féltől származó tárolók létrehozása és használata a jelentésekben "
+"megadott forrásokból"
 
 #: ../bin/apport-retrace.py:139
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "Homokozóba letöltött csomagok gyorsítókönyvtára"
+msgstr "A homokozóba letöltött csomagok gyorsítótárkönyvtára"
 
 #: ../bin/apport-retrace.py:145
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
-"Kicsomagolt csomagok könyvtára. A jövőbeli futások feltételezik, hogy a már "
-"kicsomagolt csomagok ugyanebbe a homokozóba lesznek kicsomagolva."
+"A kibontott csomagok könyvtára. A jövőbeli futások feltételezik, hogy a már "
+"letöltött csomagok ugyanebbe a homokozóba lesznek kibontva."
 
 #: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "Extra csomag homokozóba telepítése (többször is megadható)"
+msgstr "További csomag telepítése a homokozóba (többször is megadható)"
 
 #: ../bin/apport-retrace.py:163
 msgid ""
@@ -745,9 +772,9 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
-"Az összeomlási adatbázis hitelesítési információit tartalmazó fájl útvonala. "
-"Ez összeomlási azonosító megadásakor használatos az ismételten nyomon "
-"követett veremkiíratások feltöltésekor (ha a -g, -o és -s egyike sincs "
+"Az összeomlás-adatbázis hitelesítési információit tartalmazó fájl útvonala. "
+"Ez az összeomlás-azonosító megadásakor használatos az ismételten nyomon "
+"követett veremkiíratások feltöltéséhez (ha a -g, -o és -s egyike sincs "
 "megadva)"
 
 #: ../bin/apport-retrace.py:173
@@ -755,17 +782,18 @@ msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
-"Ismételten nyomon követett veremkiíratások megjelenítése, és megerősítés "
-"kérése a beküldés előtt az összeomlási adatbázisba."
+"Ismételten nyomon követett veremkiíratások megjelenítése és megerősítés "
+"kérése az összeomlás-adatbázisba történő beküldés előtt."
 
 #: ../bin/apport-retrace.py:181
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
-"Útvonal a kettőzött sqlite adatbázishoz (alapértelmezett: nincs ellenőrzés)"
+"Útvonal a kettőzött sqlite adatbázishoz (alapértelmezett: nincs kettőzöttség-"
+"ellenőrzés)"
 
 #: ../bin/apport-retrace.py:188
 msgid "Do not add StacktraceSource to the report."
-msgstr "Ne adja hozzá a veremkövetés forrását a jelentéshez."
+msgstr "Ne adja hozzá a veremkiíratás forrását a jelentéshez."
 
 #: ../bin/apport-retrace.py:201
 msgid "You cannot use -C without -S. Stopping."
@@ -780,15 +808,15 @@ msgstr "Elküldhetők ezek mellékletként? [y/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <jelentés> <célkönyvtár>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Kibontandó jelentésfájl"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "Könyvtár a jelentés kibontásához."
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -796,26 +824,26 @@ msgstr "A célkönyvtár létezik és nem üres."
 
 #: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
-msgstr "Részletekért lásd a man oldalt."
+msgstr "A részletekért nézze meg a kézikönyvoldalt."
 
 #: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
-msgstr "Adja meg a Valgrind naplófájl nevét"
+msgstr "A valgrind által előállított naplófájl nevének megadása."
 
 #: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
-"Korábban létrehozott sandbox mappa (SDIR) újra felhasználása, vagy ha nem "
-"létezik, létrehozása"
+"Korábban létrehozott homokozókönyvtár (SDIR) újrahasználata vagy "
+"létrehozása, ha nem létezik."
 
 #: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
-"Ne hozzon létre vagy használjon fel újra homokozó mappát további "
+"Ne hozzon létre vagy használjon újra homokozókönyvtárat a további "
 "hibakeresési szimbólumokhoz, csak a telepített hibakeresési szimbólumokat "
 "használja."
 
@@ -824,19 +852,22 @@ msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
-"Korábban létrehozott gyorsítókönyvtár (CDIR) újra felhasználása, vagy ha nem "
-"létezik, létrehozása"
+"Korábban létrehozott gyorsítótárkönyvtár (CDIR) újrahasználata vagy "
+"létrehozása, ha nem létezik."
 
 #: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
-"Letöltési/telepítési folyamat jelentése csomagok telepítésekor a homokozóba"
+"Jelentés letöltési vagy telepítési folyamata a csomagok homokozóba történő "
+"telepítésekor"
 
 #: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"A végrehajtható fájl, amely a valgrind memória-ellenőrző eszköze alatt fut a "
+"memóriaszivárgás felismeréséhez."
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
@@ -869,7 +900,7 @@ msgstr ""
 
 #: ../data/kernel_oops.py:33
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr "A rendszer instabillá válhatott, és szükség lehet az újraindítására."
+msgstr "A rendszer most instabillá válhat, és szükség lehet az újraindítására."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
@@ -889,7 +920,7 @@ msgstr "Elnézést, a(z) %s alkalmazás váratlanul leállt."
 #: ../gtk/apport-gtk.py:158
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Elnézést, a(z) %s váratlanul befejeződött."
+msgstr "Elnézést, a(z) %s váratlanul bezáródott."
 
 #: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
 #, python-format
@@ -926,7 +957,7 @@ msgstr "Csomag: %s"
 
 #: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:238
 msgid "Sorry, a problem occurred while installing software."
-msgstr "Elnézést, hiba történt a szoftvertelepítés alatt."
+msgstr "Elnézést, hiba történt a szoftvertelepítés közben."
 
 #: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:246
 #, python-format
@@ -936,16 +967,16 @@ msgstr "A(z) %s alkalmazás belső hibát észlelt."
 #: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:251
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "A(z) %s alkalmazás váratlanul befejeződött."
+msgstr "A(z) %s alkalmazás váratlanul bezáródott."
 
 #: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
-"Ha további problémákat észlel, próbálja meg újraindítani a számítógépet."
+"Ha további hibákat észlel, akkor próbálja meg újraindítani a számítógépet."
 
 #: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:281
 msgid "Ignore future problems of this type"
-msgstr "Ilyen típusú problémák figyelmen kívül hagyása a jövőben"
+msgstr "Az ilyen típusú hibák figyelmen kívül hagyása a jövőben"
 
 #: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:330
 msgid "Hide Details"
@@ -961,7 +992,7 @@ msgstr "Mégse"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr "Ok"
+msgstr "OK"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -977,7 +1008,7 @@ msgstr "Emlékezzen erre a jövőben"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr "Ezen programverzió további problémáinak figyelmen kívül hagyása"
+msgstr "Ezen programverzió további hibáinak figyelmen kívül hagyása"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
@@ -993,15 +1024,15 @@ msgstr "Ne küldje el"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Információgyűjtés a problémáról</b></big>"
+msgstr "<big><b>Hibainformációk összegyűjtése</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"Információk gyűjtése, amelyek segíthetik a fejlesztőket a jelentendő "
-"probléma megoldásában."
+"Olyan információkat gyűjtünk, amelyek segíthetnek a fejlesztőknek az Ön "
+"által bejelentett hiba kijavításában."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
@@ -1013,11 +1044,11 @@ msgid ""
 "might take a few minutes."
 msgstr ""
 "Az összegyűjtött információk elküldésre kerülnek a hibakövető rendszerbe. Ez "
-"eltarthat néhány percig."
+"eltarthat pár percig."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr "Apport jelentésfájl"
+msgstr "Apport-összeomlásfájl"
 
 #: ../kde/apport-kde.py:267
 msgid "Leave Closed"
@@ -1037,16 +1068,16 @@ msgstr "Jelszó:"
 
 #: ../kde/apport-kde.py:463
 msgid "Collecting Problem Information"
-msgstr "Információgyűjtés a hibáról"
+msgstr "Hibainformációk összegyűjtése"
 
 #: ../kde/apport-kde.py:466
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Az összegyűjtött információk elküldhetők a fejlesztőknek az alkalmazás "
-"javítása érdekében. Ez eltarthat néhány percig."
+"Az összegyűjtött információkat elküldheti a fejlesztőknek, hogy "
+"javíthassanak az alkalmazáson. Ez eltarthat pár percig."
 
 #: ../kde/apport-kde.py:513
 msgid "Uploading Problem Information"
-msgstr "A hibával kapcsolatos információk feltöltése"
+msgstr "Hibainformációk feltöltése"

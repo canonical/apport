@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 18:59+0100\n"
-"PO-Revision-Date: 2022-08-19 14:26+0000\n"
+"POT-Creation-Date: 2024-02-21 22:26+0100\n"
+"PO-Revision-Date: 2022-12-07 23:42+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-02-21 18:08+0000\n"
+"X-Generator: Launchpad (build 9643586c585856148a18782148972ae9c1179d06)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -228,6 +228,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"אי אפשר להשתמש באפשרות החלון ב־Wayland.\n"
+"\n"
+"נא לאתר את מזהה התהליך של החלון ואז להריץ את הפקודה ‚ubuntu-bug <process "
+"ID>‎’.\n"
+"\n"
+"אפשר למצוא את מזהה התהליך על ידי הרצת יישום צג המערכת. בלשונית התהליכים, יש "
+"לגלול עד לאיתור היישום הנכון. מזהה התהליך הוא המספר שמופיע בעמודת המזהה."
 
 #: ../apport/ui.py:950
 msgid ""
@@ -243,7 +250,7 @@ msgstr "xprop לא הצליח לזהות את מזהה התהליך של החל�
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <report number>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
@@ -258,6 +265,7 @@ msgstr "הוספת תגית נוספת לדיווח. ניתן לציין מספ�
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:1044
 msgid ""
@@ -749,7 +757,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "תיקייה לחילוץ הדוח אליה"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
