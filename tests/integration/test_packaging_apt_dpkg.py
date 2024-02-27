@@ -152,12 +152,12 @@ class T(unittest.TestCase):
     def test_get_files(self):
         """get_files()."""
         self.assertRaises(ValueError, impl.get_files, "nonexisting")
-        self.assertIn("/bin/bash", impl.get_files("bash"))
+        self.assertIn("/usr/share/man/man1/bash.1.gz", impl.get_files("bash"))
 
     def test_get_file_package(self):
         """get_file_package() on installed files."""
-        self.assertEqual(impl.get_file_package("/bin/bash"), "bash")
-        self.assertEqual(impl.get_file_package("/bin/cat"), "coreutils")
+        self.assertEqual(impl.get_file_package("/usr/bin/bash"), "bash")
+        self.assertEqual(impl.get_file_package("/usr/bin/cat"), "coreutils")
         self.assertEqual(impl.get_file_package("/etc/pam.conf"), "libpam-runtime")
         self.assertIsNone(impl.get_file_package("/nonexisting"))
 
