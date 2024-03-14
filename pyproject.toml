@@ -1,3 +1,13 @@
+[project]
+authors = [
+    {name = "Martin Pitt", email = "martin.pitt@ubuntu.com"},
+]
+description = "intercept, process, and report crashes and bug reports"
+dynamic = ["version"]
+license = {text = "GPLv2+"}
+name = "apport"
+requires-python = ">=3.10"
+
 [tool.black]
 line-length = 88
 
