@@ -35,7 +35,7 @@ class TestApportCheckreports(unittest.TestCase):
 
     def _call(
         self,
-        args: (list | None) = None,
+        args: list | None = None,
         expected_returncode: int = 0,
         expected_stdout: str = "",
     ) -> None:

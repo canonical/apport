@@ -49,7 +49,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
-    def __init__(self, argv: (list[str] | None) = None) -> None:
+    def __init__(self, argv: list[str] | None = None) -> None:
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
@@ -89,20 +89,20 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
 
         # store last message box
-        self.msg_title: (str | None) = None
-        self.msg_text: (str | None) = None
-        self.msg_severity: (str | None) = None
-        self.msg_choices: (list[str] | None) = None
+        self.msg_title: str | None = None
+        self.msg_text: str | None = None
+        self.msg_severity: str | None = None
+        self.msg_choices: list[str] | None = None
 
         # these store the choices the ui_present_* calls do
         self.present_package_error_response = None
         self.present_kernel_error_response = None
-        self.present_details_response: (apport.ui.Action | None) = None
-        self.question_yesno_response: (bool | None) = None
-        self.question_choice_response: (list[int] | None) = None
-        self.question_file_response: (str | None) = None
+        self.present_details_response: apport.ui.Action | None = None
+        self.question_yesno_response: bool | None = None
+        self.question_choice_response: list[int] | None = None
+        self.question_file_response: str | None = None
 
-        self.opened_url: (str | None) = None
+        self.opened_url: str | None = None
         self.present_details_shown = False
 
         self.clear_msg()
@@ -119,7 +119,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.msg_choices = None
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (int | None) = None
+        self, allowed_to_report: bool = True, modal_for: int | None = None
     ) -> apport.ui.Action:
         self.present_details_shown = True
         assert modal_for is None or isinstance(modal_for, int)
@@ -151,7 +151,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
         self.upload_progress_pulses = 0
         self.upload_progress_active = True
 
-    def ui_set_upload_progress(self, progress: (float | None)) -> None:
+    def ui_set_upload_progress(self, progress: float | None) -> None:
         assert self.upload_progress_active
         self.upload_progress_pulses += 1
 
@@ -504,7 +504,7 @@ class T(unittest.TestCase):
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
     def _write_crashdb_config_hook(
-        self, crashdb: str, bash_hook: (str | None) = None
+        self, crashdb: str, bash_hook: str | None = None
     ) -> None:
         """Write source_bash.py hook that sets CrashDB"""
         with open(
@@ -1104,9 +1104,9 @@ class T(unittest.TestCase):
         """run_crash() on a crash with malicious CrashDB"""
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
-        self.report[
-            "CrashDB"
-        ] = "{'impl': 'memory', 'crash_config': open('/tmp/pwned', 'w').close()}"
+        self.report["CrashDB"] = (
+            "{'impl': 'memory', 'crash_config': open('/tmp/pwned', 'w').close()}"
+        )
         self.update_report_file()
         self.ui.present_details_response = apport.ui.Action(report=True)
 
@@ -1513,9 +1513,9 @@ class T(unittest.TestCase):
                 #1  0x10000001 in main () at crash.c:40
                 """
             )
-            self[
-                "ProcMaps"
-            ] = "10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash\n"
+            self["ProcMaps"] = (
+                "10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash\n"
+            )
             assert self.crash_signature_addresses() is not None
 
         try:

@@ -221,9 +221,9 @@ def attach_dmi(report):
 
     # Use the hardware information to create a machine type.
     if "dmi.sys.vendor" in report and "dmi.product.name" in report:
-        report[
-            "MachineType"
-        ] = f"{report['dmi.sys.vendor']} {report['dmi.product.name']}"
+        report["MachineType"] = (
+            f"{report['dmi.sys.vendor']} {report['dmi.product.name']}"
+        )
 
 
 def attach_hardware(report):
@@ -1075,9 +1075,11 @@ def attach_default_grub(report, key=None):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             filtered = [
-                line
-                if not line.startswith("password")
-                else "### PASSWORD LINE REMOVED ###"
+                (
+                    line
+                    if not line.startswith("password")
+                    else "### PASSWORD LINE REMOVED ###"
+                )
                 for line in f.readlines()
             ]
             report[key] = "".join(filtered)

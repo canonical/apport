@@ -69,7 +69,7 @@ def get_pid(report):
         return None
 
 
-def _get_env_int(key: str, default: (int | None) = None) -> int | None:
+def _get_env_int(key: str, default: int | None = None) -> int | None:
     """Get an environment variable as integer.
 
     Return None if it doesn't exist or failed to convert to integer.
@@ -347,8 +347,8 @@ class UserInterface:
     def __init__(self, argv: list[str]):
         """Initialize program state and parse command line options."""
         self.gettext_domain = "apport"
-        self.report: (apport.report.Report | None) = None
-        self.report_file: (str | None) = None
+        self.report: apport.report.Report | None = None
+        self.report_file: str | None = None
         self.cur_package = None
         self.offer_restart = False
         self.specified_a_pkg = False
@@ -614,7 +614,7 @@ class UserInterface:
         """Kill process with signal SIGSEGV."""
         os.kill(int(pid), signal.SIGSEGV)
 
-    def run_report_bug(self, symptom_script: (str | None) = None) -> bool:
+    def run_report_bug(self, symptom_script: str | None = None) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
@@ -1448,9 +1448,9 @@ class UserInterface:
                         "This problem report applies to a program"
                         " which is not installed any more."
                     )
-                    self.report[
-                        "UnreportableReason"
-                    ] = f"{msg} ({self.report['InterpreterPath']})"
+                    self.report["UnreportableReason"] = (
+                        f"{msg} ({self.report['InterpreterPath']})"
+                    )
                     if on_finished:
                         on_finished()
                     return
@@ -1949,7 +1949,7 @@ class UserInterface:
     #
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (int | None) = None
+        self, allowed_to_report: bool = True, modal_for: int | None = None
     ) -> Action:
         """Show details of the bug report.
 
@@ -1995,7 +1995,7 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_set_upload_progress(self, progress: (float | None)) -> None:
+    def ui_set_upload_progress(self, progress: float | None) -> None:
         """Update data upload progress bar.
 
         Set the progress bar in the debug data upload progress window to the
