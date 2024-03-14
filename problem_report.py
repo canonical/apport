@@ -62,7 +62,7 @@ class _EntryParser(Iterator):
 
     def __init__(self, iterator: Iterator[bytes]) -> None:
         self.iterator = iterator
-        self.next_line: (bytes | None) = None
+        self.next_line: bytes | None = None
         self.entry_read = True
 
     def entry_iterator(self) -> Iterator[bytes]:
@@ -212,9 +212,9 @@ class CompressedValue:
 
     def __init__(
         self,
-        value: (bytes | None) = None,
-        name: (str | None) = None,
-        compressed_value: (bytes | None) = None,
+        value: bytes | None = None,
+        name: str | None = None,
+        compressed_value: bytes | None = None,
     ) -> None:
         """Initialize an empty CompressedValue object with an optional name."""
         self.compressed_value = compressed_value
@@ -313,7 +313,7 @@ class CompressedValue:
 class ProblemReport(collections.UserDict):
     """Class to store, load, and handle problem reports."""
 
-    def __init__(self, problem_type: str = "Crash", date: (str | None) = None) -> None:
+    def __init__(self, problem_type: str = "Crash", date: str | None = None) -> None:
         """Initialize a fresh problem report.
 
         problem_type can be 'Crash', 'Packaging', 'KernelCrash' or
@@ -335,9 +335,9 @@ class ProblemReport(collections.UserDict):
 
     def load(
         self,
-        file: (gzip.GzipFile | typing.BinaryIO),
-        binary: (bool | typing.Literal["compressed"]) = True,
-        key_filter: (Iterable[str] | None) = None,
+        file: gzip.GzipFile | typing.BinaryIO,
+        binary: bool | typing.Literal["compressed"] = True,
+        key_filter: Iterable[str] | None = None,
     ) -> None:
         """Initialize problem report from a file-like object.
 
@@ -391,8 +391,8 @@ class ProblemReport(collections.UserDict):
 
     def extract_keys(
         self,
-        file: (gzip.GzipFile | typing.BinaryIO),
-        bin_keys: (Iterable[str] | str),
+        file: gzip.GzipFile | typing.BinaryIO,
+        bin_keys: Iterable[str] | str,
         directory: str,
     ) -> None:
         """Extract only given binary elements from the problem report.
@@ -463,7 +463,7 @@ class ProblemReport(collections.UserDict):
         return None in self.values()
 
     @staticmethod
-    def is_binary(string: (bytes | str)) -> bool:
+    def is_binary(string: bytes | str) -> bool:
         """Check if the given strings contains binary data."""
         if isinstance(string, bytes):
             for c in string:
@@ -472,7 +472,7 @@ class ProblemReport(collections.UserDict):
         return False
 
     @classmethod
-    def _try_unicode(cls, value: (bytes | str)) -> bytes | str:
+    def _try_unicode(cls, value: bytes | str) -> bytes | str:
         """Try to convert bytearray value to Unicode."""
         if isinstance(value, bytes) and not cls.is_binary(value):
             try:
@@ -482,7 +482,7 @@ class ProblemReport(collections.UserDict):
         return value
 
     def sorted_items(
-        self, keys: (Iterable[str] | None) = None
+        self, keys: Iterable[str] | None = None
     ) -> Iterator[tuple[str, (bytes | CompressedValue | str | tuple)]]:
         """Iterate over all non-internal items sorted.
 
@@ -893,7 +893,7 @@ class ProblemReport(collections.UserDict):
         file.write(b"\n")
 
     def __setitem__(
-        self, k: str, v: (bytes | CompressedFile | CompressedValue | str | tuple)
+        self, k: str, v: bytes | CompressedFile | CompressedValue | str | tuple
     ) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():

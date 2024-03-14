@@ -11,7 +11,7 @@ _CRASHDB_CONF = _SRCDIR / "etc" / "apport" / "crashdb.conf"
 _DATADIR = _SRCDIR / "data"
 
 
-def get_data_directory(local_path: (str | None) = None) -> pathlib.Path:
+def get_data_directory(local_path: str | None = None) -> pathlib.Path:
     """Return absolute path for apport's data directory.
 
     If the tests are executed in the local source code directory,
@@ -70,7 +70,7 @@ def patch_data_dir(report: Any) -> Mapping[str, str] | None:
     return orig
 
 
-def restore_data_dir(report: Any, orig: (Mapping[str, str] | None)) -> None:
+def restore_data_dir(report: Any, orig: Mapping[str, str] | None) -> None:
     """Restore APPORT_DATA_DIR in apport.report from local tests.
 
     The parameter orig is the result from the patch_data_dir() call.

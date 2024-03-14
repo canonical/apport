@@ -32,6 +32,11 @@ run_black() {
         echo "Skipping black tests, black is not installed"
         return
     fi
+    black_version=$(black --version | head -n1 | cut -d' ' -f 2)
+    if test "${black_version%%.*}" -lt 24; then
+        echo "Skipping black tests, black $black_version is installed but version >= 24 is needed"
+        return
+    fi
     echo "Running black..."
     black -C --check --diff ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 }

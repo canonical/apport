@@ -1530,9 +1530,9 @@ int main() { return f(42); }
             r = apport.report.Report()
             r["Package"] = "foo-bin 0.2"
             r["SourcePackage"] = "foo"
-            r[
-                "ExecutablePath"
-            ] = f"{apport.report._opt_dir}/foolabs.example.com/foo/bin/frob"
+            r["ExecutablePath"] = (
+                f"{apport.report._opt_dir}/foolabs.example.com/foo/bin/frob"
+            )
 
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(r["SourceHook"], "1")

@@ -37,10 +37,7 @@ class TestDupdbAdmin(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def _call(
-        self,
-        args: list,
-        expected_returncode: int = 0,
-        expected_stdout: (str | None) = "",
+        self, args: list, expected_returncode: int = 0, expected_stdout: str | None = ""
     ) -> tuple[str, str]:
         cmd = ["dupdb-admin", "-f", self.db_file] + args
         process = subprocess.run(

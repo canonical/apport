@@ -109,7 +109,7 @@ def _read_list_files_in_directory(directory: str) -> Iterator[str]:
 
 
 def _read_proc_link(
-    path: str, pid: (int | None) = None, dir_fd: (int | None) = None
+    path: str, pid: int | None = None, dir_fd: int | None = None
 ) -> str:
     """Use readlink() to resolve link.
 
@@ -122,7 +122,7 @@ def _read_proc_link(
 
 
 def _read_proc_file(
-    path: str, pid: (int | None) = None, dir_fd: (int | None) = None
+    path: str, pid: int | None = None, dir_fd: int | None = None
 ) -> str:
     """Read file content.
 
@@ -130,7 +130,7 @@ def _read_proc_file(
     """
     try:
         if dir_fd is None:
-            proc_file: (int | str) = f"/proc/{pid}/{path}"
+            proc_file: int | str = f"/proc/{pid}/{path}"
         else:
             proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
 
@@ -161,7 +161,7 @@ def _read_maps(proc_pid_fd):
 
 
 def _command_output(
-    command: list[str], env: (dict[str, str] | None) = None, timeout: float = 1800
+    command: list[str], env: dict[str, str] | None = None, timeout: float = 1800
 ) -> str:
     """Run command and capture its output.
 
@@ -343,7 +343,7 @@ class Report(problem_report.ProblemReport):
     standard debugging data.
     """
 
-    def __init__(self, problem_type: str = "Crash", date: (str | None) = None) -> None:
+    def __init__(self, problem_type: str = "Crash", date: str | None = None) -> None:
         """Initialize a fresh problem report.
 
         date is the desired date/time string; if None (default), the current
@@ -353,8 +353,8 @@ class Report(problem_report.ProblemReport):
         self.pid, so that e. g. hooks can use it to collect additional data.
         """
         problem_report.ProblemReport.__init__(self, problem_type, date)
-        self.pid: (int | None) = None
-        self._proc_maps_cache: (list[tuple[int, int, str]] | None) = None
+        self.pid: int | None = None
+        self._proc_maps_cache: list[tuple[int, int, str]] | None = None
 
     @staticmethod
     def _customized_package_suffix(package: str) -> str:
@@ -420,7 +420,7 @@ class Report(problem_report.ProblemReport):
             dependencies += f"{dep} {v}{self._customized_package_suffix(dep)}"
         return dependencies
 
-    def add_package_info(self, package: (str | None) = None) -> None:
+    def add_package_info(self, package: str | None = None) -> None:
         """Add packaging information.
 
         If package is not given, the report must have ExecutablePath.
@@ -611,9 +611,9 @@ class Report(problem_report.ProblemReport):
                     self["InterpreterPath"] = self["ExecutablePath"]
                     self["ExecutablePath"] = path
                 else:
-                    self[
-                        "UnreportableReason"
-                    ] = f"Cannot determine path of python module {cmdargs[2]}"
+                    self["UnreportableReason"] = (
+                        f"Cannot determine path of python module {cmdargs[2]}"
+                    )
                 return
 
             del cmdargs[1]
@@ -687,9 +687,9 @@ class Report(problem_report.ProblemReport):
 
     def add_proc_info(
         self,
-        pid: (int | str | None) = None,
-        proc_pid_fd: (int | None) = None,
-        extraenv: (Iterable[str] | None) = None,
+        pid: int | str | None = None,
+        proc_pid_fd: int | None = None,
+        extraenv: Iterable[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
@@ -786,9 +786,9 @@ class Report(problem_report.ProblemReport):
 
     def add_proc_environ(
         self,
-        pid: (int | None) = None,
-        extraenv: (Iterable[str] | None) = None,
-        proc_pid_fd: (int | None) = None,
+        pid: int | None = None,
+        extraenv: Iterable[str] | None = None,
+        proc_pid_fd: int | None = None,
     ) -> None:
         """Add environment information.
 
@@ -815,7 +815,7 @@ class Report(problem_report.ProblemReport):
         self._add_environ(environ, extraenv)
 
     def _add_environ(
-        self, environ: _Environment, extraenv: (Iterable[str] | None) = None
+        self, environ: _Environment, extraenv: Iterable[str] | None = None
     ) -> None:
         anonymize_vars = {"LD_LIBRARY_PATH", "LD_PRELOAD", "XDG_RUNTIME_DIR"}
         safe_vars = anonymize_vars | {
@@ -891,7 +891,7 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def add_gdb_info(
-        self, rootdir: (str | None) = None, gdb_sandbox: (str | None) = None
+        self, rootdir: str | None = None, gdb_sandbox: str | None = None
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -1099,9 +1099,9 @@ class Report(problem_report.ProblemReport):
 
     def add_hooks_info(
         self,
-        ui: (HookUI | None) = None,
-        package: (str | None) = None,
-        srcpackage: (str | None) = None,
+        ui: HookUI | None = None,
+        package: str | None = None,
+        srcpackage: str | None = None,
     ) -> bool:
         """Run hook script for collecting package specific data.
 
@@ -1121,7 +1121,7 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def _add_hooks_info(
-        self, ui: HookUI, package: (str | None), srcpackage: (str | None)
+        self, ui: HookUI, package: str | None, srcpackage: str | None
     ) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
@@ -1188,7 +1188,7 @@ class Report(problem_report.ProblemReport):
 
         return False
 
-    def search_bug_patterns(self, url: (str | None)) -> str | None:
+    def search_bug_patterns(self, url: str | None) -> str | None:
         r"""Check bug patterns loaded from the specified url.
 
         Return bug URL on match, or None otherwise.
@@ -1835,7 +1835,7 @@ class Report(problem_report.ProblemReport):
                         self[k] = pattern.sub(repl, self[k])
 
     def gdb_command(
-        self, sandbox: (str | None), gdb_sandbox: (str | None) = None
+        self, sandbox: str | None, gdb_sandbox: str | None = None
     ) -> tuple[list[str], dict[str, str]]:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals

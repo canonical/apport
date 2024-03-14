@@ -789,8 +789,9 @@ class T(unittest.TestCase):
         readlink_mock.side_effect = ["mnt:[1]", "mnt:[2]"]
         open_mock = unittest.mock.mock_open(read_data="0::/user.slice\n")
         command = [self.TEST_EXECUTABLE] + self.TEST_ARGS
-        with subprocess.Popen(command) as test_process, unittest.mock.patch(
-            "builtins.open", open_mock
+        with (
+            subprocess.Popen(command) as test_process,
+            unittest.mock.patch("builtins.open", open_mock),
         ):
             try:
                 same_ns = apport_binary.is_same_ns(test_process.pid, "mnt")
@@ -911,7 +912,7 @@ class T(unittest.TestCase):
         orig_os_open = os.open
 
         def _mocked_os_open(
-            path: (str | os.PathLike[str]), flags: int, dir_fd: (int | None) = None
+            path: str | os.PathLike[str], flags: int, dir_fd: int | None = None
         ) -> int:
             if path == "root/run/apport.socket":
                 return orig_os_open(socket_path, flags)
@@ -981,7 +982,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(gdb.stdout.strip(), "")
 
     def _check_report(
-        self, expect_report: bool = True, expected_owner: (int | None) = None
+        self, expect_report: bool = True, expected_owner: int | None = None
     ) -> None:
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
@@ -1040,13 +1041,13 @@ class T(unittest.TestCase):
         self,
         expect_corefile: bool = False,
         sig: int = signal.SIGSEGV,
-        command: (str | None) = None,
-        expected_command: (str | None) = None,
-        uid: (int | None) = None,
-        expect_corefile_owner: (str | None) = None,
-        args: (list[str] | None) = None,
+        command: str | None = None,
+        expected_command: str | None = None,
+        uid: int | None = None,
+        expect_corefile_owner: str | None = None,
+        args: list[str] | None = None,
         suid_dumpable: int = 1,
-        hook_before_apport: (Callable | None) = None,
+        hook_before_apport: Callable | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
     ) -> None:
@@ -1196,7 +1197,7 @@ class T(unittest.TestCase):
         return gdb_args
 
     @staticmethod
-    def _get_report_filename(command: str, uid: (int | None) = None) -> str:
+    def _get_report_filename(command: str, uid: int | None = None) -> str:
         if uid is None:
             uid = os.getuid()
         return os.path.join(

@@ -279,9 +279,9 @@ and more
         self.assertNotIn("apport-collected", tags)
 
         # updating with a useful stack trace removes core dump
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         r["Stacktrace"] = "long\ntrace"
         r["ThreadStacktrace"] = "thread\neven longer\ntrace"
         self.crashdb.update_traces(self.get_segv_report(), r, "good retrace!")
@@ -305,9 +305,9 @@ and more
             bug.lp_save()
         except HTTPError:
             pass  # LP#336866 workaround
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         self.crashdb.update_traces(
             self.get_segv_report(), r, "good retrace with title amendment"
         )
@@ -322,9 +322,9 @@ and more
         except HTTPError:
             pass  # LP#336866 workaround
 
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         self.crashdb.update_traces(
             self.get_segv_report(), r, "good retrace with custom title"
         )
@@ -680,9 +680,9 @@ and more
         self.crashdb.close_duplicate(r, crash_id, self.get_segv_report())
 
         # updating with a useful stack trace removes core dump
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         r["Stacktrace"] = "long\ntrace"
         r["ThreadStacktrace"] = "thread\neven longer\ntrace"
         self.crashdb.update_traces(crash_id, r, "good retrace!")
@@ -863,9 +863,9 @@ NameError: global name 'weird' is not defined"""
 
         # update
         r = crashdb.download(crash_id)
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         r["Stacktrace"] = "long\ntrace"
         r["ThreadStacktrace"] = "thread\neven longer\ntrace"
         crashdb.update_traces(crash_id, r, "good retrace!")

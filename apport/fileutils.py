@@ -573,7 +573,7 @@ def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
     Raises an OSError in case the environ file could not been read.
     """
 
-    def opener(path: (str | os.PathLike[str]), flags: int) -> int:
+    def opener(path: str | os.PathLike[str], flags: int) -> int:
         return os.open(path, flags, dir_fd=proc_pid_fd)
 
     with open(

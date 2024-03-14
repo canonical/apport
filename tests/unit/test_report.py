@@ -296,14 +296,14 @@ class T(unittest.TestCase):
         r["StacktraceTop"] = "read () from /lib/libc.6.so\n?? ()\n?? ()\n?? ()"
         self.assertFalse(r.has_useful_stacktrace())
 
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so"
+        )
         self.assertTrue(r.has_useful_stacktrace())
 
-        r[
-            "StacktraceTop"
-        ] = "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()"
+        r["StacktraceTop"] = (
+            "read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()"
+        )
         self.assertTrue(r.has_useful_stacktrace())
 
         r["StacktraceTop"] = (

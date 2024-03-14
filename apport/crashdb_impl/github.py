@@ -184,8 +184,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def upload(
         self,
         report: apport.Report,
-        progress_callback: (Callable | None) = None,
-        user_message_callback: (Callable | None) = None,
+        progress_callback: Callable | None = None,
+        user_message_callback: Callable | None = None,
     ) -> IssueHandle:
         """Upload given problem report return a handle for it.
         In Github, we open an issue.

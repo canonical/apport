@@ -203,7 +203,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         return report_file
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (int | None) = None
+        self, allowed_to_report: bool = True, modal_for: int | None = None
     ) -> apport.ui.Action:
         dialog = CLIDialog(
             _("Send problem report to the developers?"),
@@ -295,7 +295,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress: (float | None)) -> None:
+    def ui_set_upload_progress(self, progress: float | None) -> None:
         assert self.progress is not None
         self.progress.set(progress)
 
@@ -340,9 +340,9 @@ class CLIUserInterface(apport.ui.UserInterface):
                 choice_index_map = {}
                 for option in options:
                     if index not in result:
-                        choice_index_map[
-                            dialog.addbutton(option, str(index + 1))
-                        ] = index
+                        choice_index_map[dialog.addbutton(option, str(index + 1))] = (
+                            index
+                        )
                     index += 1
                 done = dialog.addbutton(_("&Done"))
                 cancel = dialog.addbutton(_("&Cancel"))

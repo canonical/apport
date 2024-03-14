@@ -374,8 +374,9 @@ func(42)
         # hook
         (fd, script) = tempfile.mkstemp(dir="/var/tmp")
         try:
-            with tempfile.NamedTemporaryFile() as i_file, unittest.mock.patch(
-                "apport.report._ignore_file", i_file.name
+            with (
+                tempfile.NamedTemporaryFile() as i_file,
+                unittest.mock.patch("apport.report._ignore_file", i_file.name),
             ):
                 os.write(
                     fd,

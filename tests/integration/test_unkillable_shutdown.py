@@ -39,7 +39,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.report_dir)
 
-    def _call(self, omit: (list | None) = None) -> None:
+    def _call(self, omit: list | None = None) -> None:
         cmd = [self.data_dir / "unkillable_shutdown"]
         if omit:
             cmd += [arg for pid in omit for arg in ("-o", str(pid))]

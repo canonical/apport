@@ -123,7 +123,7 @@ class ProgressDialog(Dialog):
         if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
             sys.exit(0)
 
-    def set(self, value: (float | None) = None) -> None:
+    def set(self, value: float | None = None) -> None:
         progress = self.findChild(QProgressBar, "progress")
         assert isinstance(progress, QProgressBar)
         if not value:
@@ -375,8 +375,8 @@ class MainUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self, argv)
         self.ui_data_path = os.path.dirname(argv[0])
         # Help unit tests get at the dialog.
-        self.dialog: (ReportDialog | None) = None
-        self.progress: (ProgressDialog | None) = None
+        self.dialog: ReportDialog | None = None
+        self.progress: ProgressDialog | None = None
 
         self.app = QApplication(argv)
         self.app.setApplicationName("apport-kde")
@@ -394,7 +394,7 @@ class MainUserInterface(apport.ui.UserInterface):
     #
 
     def ui_update_view(
-        self, dialog: ReportDialog, shown_keys: (list[str] | None) = None
+        self, dialog: ReportDialog, shown_keys: list[str] | None = None
     ) -> None:
         assert self.report
         # report contents
@@ -416,7 +416,7 @@ class MainUserInterface(apport.ui.UserInterface):
                 QTreeWidgetItem(keyitem, [_("(binary data)")])
 
     def ui_present_report_details(
-        self, allowed_to_report: bool = True, modal_for: (int | None) = None
+        self, allowed_to_report: bool = True, modal_for: int | None = None
     ) -> apport.ui.Action:
         desktop_info = self.get_desktop_entry()
         self.dialog = ReportDialog(self.report, allowed_to_report, self, desktop_info)
@@ -519,7 +519,7 @@ class MainUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_set_upload_progress(self, progress: (float | None)) -> None:
+    def ui_set_upload_progress(self, progress: float | None) -> None:
         assert self.progress
         if progress:
             self.progress.set(progress)

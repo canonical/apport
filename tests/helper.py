@@ -83,7 +83,7 @@ def read_shebang(command: str) -> str | None:
 @contextlib.contextmanager
 def run_test_executable(
     args: Sequence[str] = (os.path.realpath("/bin/sleep"), "86400"),
-    env: (dict[str, str] | None) = None,
+    env: dict[str, str] | None = None,
 ) -> Iterator[int]:
     """Run test executable and yield the process ID. Kill process afterwards."""
     with subprocess.Popen(args, env=env) as test_process:
