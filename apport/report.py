@@ -1140,7 +1140,7 @@ class Report(problem_report.ProblemReport):
         if srcpackage:
             srcpackage = srcpackage.split()[0]
             if "/" in srcpackage:
-                self["UnreportableReason"] = f"invalid SourcePackage: {package}"
+                self["UnreportableReason"] = f"invalid SourcePackage: {srcpackage}"
                 return False
 
         hook_dirs = [PACKAGE_HOOK_DIR]
