@@ -1345,6 +1345,16 @@ No symbol table info available.
         expected = "suspend/resume:Cray XT5"
         self.assertEqual(expected, pr.crash_signature())
 
+    def test_add_hooks_info_invalid_source(self) -> None:
+        """Test Report.add_hooks_info() with invalid source package name."""
+        report = apport.report.Report()
+        result = report.add_hooks_info(package="bash", srcpackage="in/valid")
+
+        self.assertFalse(result)
+        self.assertEqual(
+            report.get("UnreportableReason"), "invalid SourcePackage: in/valid"
+        )
+
     def test_add_snap_contact_info_launchpad(self):
         """add_snap_contact_info()
 
