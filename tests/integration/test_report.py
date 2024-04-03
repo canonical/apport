@@ -8,6 +8,7 @@ import atexit
 import grp
 import io
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -143,7 +144,7 @@ class T(unittest.TestCase):
             self.assertNotIn("LANG=", pr["ProcEnviron"])
         self.assertNotIn("USER", pr["ProcEnviron"])
         self.assertNotIn("PWD", pr["ProcEnviron"])
-        self.assertRegex(pr["ExecutablePath"], r".*\.py$")
+        self.assertRegex(pr["ExecutablePath"], rf"^({re.escape(sys.argv[0])}|.*\.py)$")
         self.assertEqual(
             int(pr["ExecutableTimestamp"]), int(os.stat(pr["ExecutablePath"]).st_mtime)
         )
