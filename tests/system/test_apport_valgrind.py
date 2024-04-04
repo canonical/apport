@@ -53,7 +53,7 @@ class TestApportValgrind(unittest.TestCase):
             sandbox,
             "--cache",
             cache,
-            "/bin/true",
+            "/usr/bin/true",
         ]
         subprocess.check_call(cmd, env=self.env)
 
