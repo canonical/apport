@@ -821,7 +821,7 @@ class T(unittest.TestCase):
 
             now = datetime.datetime.now(tz=datetime.timezone.utc)
             expected_report = apport.report.Report(
-                date=now.strftime("%a %b %d %H:%M:%S %Y")
+                date=now.strftime("%a %b %e %H:%M:%S %Y")
             )
             expected_report.pid = pid
             expected_report.add_proc_info()
