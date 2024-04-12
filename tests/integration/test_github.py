@@ -12,15 +12,9 @@
 import unittest
 from unittest.mock import ANY, Mock, patch
 
-try:
-    import apport.crashdb_impl.github
-
-    IMPORT_ERROR = None
-except ImportError as error:
-    IMPORT_ERROR = error
+import apport.crashdb_impl.github
 
 
-@unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
 class TestGitHub(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
