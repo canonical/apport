@@ -3,18 +3,11 @@
 import unittest
 from unittest.mock import Mock
 
-try:
-    import apport.crashdb_impl.github
-
-    IMPORT_ERROR = None
-except ImportError as error:
-    IMPORT_ERROR = error
-
+import apport.crashdb_impl.github
 
 SOME_ID = "a654870577ad2a2ab5b1"
 
 
-@unittest.skipIf(IMPORT_ERROR, f"module not available: {IMPORT_ERROR}")
 class TestGitHubQuery(unittest.TestCase):
     """System tests for the apport.crashdb_impl.github module."""
 
