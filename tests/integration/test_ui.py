@@ -765,6 +765,7 @@ class T(unittest.TestCase):
 
     def test_run_report_bug_noperm_pid(self):
         """run_report_bug() for a pid which runs as a different user"""
+        self.ui = None
         restore_root = False
         if os.getuid() == 0:
             # temporarily drop to normal user "mail"
