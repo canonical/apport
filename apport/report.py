@@ -551,7 +551,11 @@ class Report(problem_report.ProblemReport):
         - UserGroups: system groups the user is in
         """
         # Use effective uid in case privileges were dropped
-        user = pwd.getpwuid(os.geteuid())[0]
+        try:
+            user = pwd.getpwuid(os.geteuid())[0]
+        except KeyError:
+            # User not found (e.g. dynamic user in container)
+            return
         sys_gid_max = apport.fileutils.get_sys_gid_max()
         groups = [
             name

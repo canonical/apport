@@ -123,6 +123,17 @@ class T(unittest.TestCase):
             self.assertLess(grp.getgrnam(g).gr_gid, 1000)
         self.assertNotIn(grp.getgrgid(os.getgid()).gr_name, pr["UserGroups"])
 
+    @unittest.mock.patch("os.geteuid")
+    def test_add_user_info_missing_user(self, geteuid_mock: MagicMock) -> None:
+        """Test add_user_info() with the effective user set to an dynamic user."""
+        geteuid_mock.return_value = 1000042
+        report = apport.report.Report()
+
+        report.add_user_info()
+
+        self.assertNotIn("UserGroups", report)
+        geteuid_mock.assert_called_once_with()
+
     def test_add_proc_info(self):
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
