@@ -6,13 +6,14 @@
 import gzip
 import os
 import pathlib
+import platform
 import shutil
 import subprocess
 import tempfile
 import time
 import unittest
 
-from apport.packaging_impl.apt_dpkg import impl
+from apport.packaging_impl.apt_dpkg import WITH_DEB822_SUPPORT, impl
 from tests.helper import skip_if_command_is_missing
 
 
@@ -433,6 +434,35 @@ usr/bin/frob                                            foo/frob
         pkg = fields[-1]
 
         self.assertEqual(impl.get_file_package(file), pkg)
+
+    @unittest.skipUnless(WITH_DEB822_SUPPORT, "deb822 not supported on this system")
+    def test_mirror_from_deb822_apt_sources(self) -> None:
+        sources_list_d = pathlib.Path(self.workdir) / "sources.list.d"
+        sources_list_d.mkdir()
+        info = platform.freedesktop_os_release()
+        primary_sources = sources_list_d / f"{info['ID']}.sources"
+        ppa_sources = sources_list_d / "0ppa.sources"
+        primary_sources.write_text(
+            """\
+Types: deb
+URIs: http://primary-mirror.example.com/distro/
+Suites: tuxy
+Components: main
+"""
+        )
+        ppa_sources.write_text(
+            """\
+Types: deb
+URIs: https://ppa.example.net/user/ppa-name/distro/
+Suites: lazy
+Components: main
+"""
+        )
+
+        self.assertEqual(
+            impl._get_primary_mirror_from_apt_sources(self.workdir),
+            "http://primary-mirror.example.com/distro/",
+        )
 
     def test_mirror_from_apt_sources(self):
         s = os.path.join(self.workdir, "sources.list")

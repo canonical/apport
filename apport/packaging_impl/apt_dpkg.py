@@ -44,6 +44,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Iterator
 
 import apt
 import apt_pkg
@@ -81,6 +82,19 @@ def _parse_deb822_sources(source: str) -> list[apt_sl.Deb822SourceEntry]:
         return sections
 
 
+def _order_sources(apt_sources: list[str]) -> Iterator[str]:
+    """Order APT sources files heuristically to get the primary sources first."""
+    sources = set(apt_sources)
+    info = platform.freedesktop_os_release()
+    expected_primary = f"{info['ID']}.sources"
+    try:
+        sources.remove(expected_primary)
+        yield expected_primary
+    except KeyError:
+        pass
+    yield from sorted(sources)
+
+
 # pylint: disable-next=no-member
 def _load_all_sources(apt_dir: str) -> list[apt_sl.Deb822SourceEntry | SourceEntry]:
     """Given an APT configuration directory (e.g. /etc/apt/), loads up all
@@ -88,7 +102,9 @@ def _load_all_sources(apt_dir: str) -> list[apt_sl.Deb822SourceEntry | SourceEnt
     """
     sources_d = os.path.join(apt_dir, "sources.list.d")
     if os.path.exists(sources_d):
-        to_inspect = sorted([os.path.join(sources_d, f) for f in os.listdir(sources_d)])
+        to_inspect = [
+            os.path.join(sources_d, f) for f in _order_sources(os.listdir(sources_d))
+        ]
     else:
         to_inspect = []
 
