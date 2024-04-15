@@ -68,7 +68,8 @@ def _parse_deb822_sources(source: str) -> list[apt_sl.Deb822SourceEntry]:
         for line in f.read().split("\n"):
             line = line.rstrip()
             if line:
-                current.append(line)
+                if not line.lstrip().startswith("#"):
+                    current.append(line)
             else:
                 if not current:
                     continue

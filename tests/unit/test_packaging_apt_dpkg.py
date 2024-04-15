@@ -90,6 +90,8 @@ class TestPackagingAptDpkg(unittest.TestCase):
         "builtins.open",
         new_callable=unittest.mock.mock_open,
         read_data="""
+# Some documentation in the beginning
+
 Types: deb deb-src
 URIs: http://example.com
 Suites: foo foo-bar
