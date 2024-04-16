@@ -189,14 +189,22 @@ class CompressedFile:
 
     filename: str
 
+    def __init__(self, filename: str) -> None:
+        self.filename = filename
+        # pylint: disable-next=consider-using-with
+        self._compressed_file = open(self.filename, "rb")
+
+    def __del__(self):
+        if hasattr(self, "_compressed_file"):
+            self._compressed_file.close()
+
     def iter_compressed(self) -> Iterator[bytes]:
         """Iterate over the compressed content of the file in 1 MB chunks."""
-        with open(self.filename, "rb") as compressed_file:
-            while True:
-                block = compressed_file.read(1048576)
-                if not block:
-                    break
-                yield block
+        while True:
+            block = self._compressed_file.read(1048576)
+            if not block:
+                break
+            yield block
 
     def is_readable(self) -> bool:
         """Check if the compressed file is readable by the effective user."""
