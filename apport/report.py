@@ -21,6 +21,7 @@ import glob
 import grp
 import importlib.util
 import io
+import logging
 import os
 import pathlib
 import pwd
@@ -2024,7 +2025,13 @@ class Report(problem_report.ProblemReport):
         filename = coredump.get("COREDUMP_FILENAME")
         if filename:
             assert isinstance(filename, str)
-            self["CoreDump"] = problem_report.CompressedFile(filename)
+            try:
+                self["CoreDump"] = problem_report.CompressedFile(filename)
+            except FileNotFoundError:
+                logging.getLogger(__name__).warning(
+                    "Ignoring COREDUMP_FILENAME '%s' because it does not exist.",
+                    filename,
+                )
 
     @classmethod
     def from_systemd_coredump(cls, coredump):

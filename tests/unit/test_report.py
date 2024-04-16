@@ -1413,6 +1413,28 @@ No symbol table info available.
         stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
 
     @unittest.mock.patch("os.stat")
+    def test_report_from_systemd_coredump_missing_crash(
+        self, stat_mock: MagicMock
+    ) -> None:
+        """Test converting systemd-coredump with a missing crash file."""
+        stat_mock.return_value = DIVIDE_BY_ZERO_EXECUTABLE_STAT
+        coredump = DIVIDE_BY_ZERO_SYSTEMD_COREDUMP.copy()
+        coredump["COREDUMP_FILENAME"] = "/non-existing/core.tracker-extract.1000.zst"
+
+        with self.assertLogs(level="WARNING") as warning_logs:
+            report = apport.report.Report.from_systemd_coredump(coredump)
+            report_output = io.BytesIO()
+            report.write(report_output)
+
+        self.assertEqual(report_output.getvalue().decode(), DIVIDE_BY_ZERO_REPORT)
+        stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
+        self.assertIn(
+            "Ignoring COREDUMP_FILENAME '/non-existing/core.tracker-extract.1000.zst'"
+            " because it does not exist.",
+            warning_logs.output[0],
+        )
+
+    @unittest.mock.patch("os.stat")
     def test_report_from_systemd_coredump_storage_journal(
         self, stat_mock: MagicMock
     ) -> None:
