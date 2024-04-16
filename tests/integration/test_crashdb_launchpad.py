@@ -756,7 +756,9 @@ and more
         part = next(msg_iter)
         assert not part.is_multipart()
         assert part.get_content_type() == "text/plain"
-        description += "\n\n" + part.get_payload(decode=True).decode("UTF-8", "replace")
+        payload = part.get_payload(decode=True)
+        assert isinstance(payload, bytes)
+        description += "\n\n" + payload.decode("UTF-8", "replace")
 
         # create the bug from header and description data
         bug = self.crashdb.launchpad.bugs.createBug(

@@ -535,8 +535,7 @@ class T(unittest.TestCase):
 
     @staticmethod
     def decode_gzipped_message(message: email.message.Message) -> bytes:
-        with tempfile.TemporaryFile() as payload:
-            payload.write(message.get_payload(decode=True))
-            payload.seek(0)
-            with gzip.GzipFile(mode="rb", fileobj=payload) as gz:
-                return gz.read()
+        payload = message.get_payload(decode=True)
+        assert isinstance(payload, bytes)
+        with gzip.GzipFile(mode="rb", fileobj=io.BytesIO(payload)) as gzip_file:
+            return gzip_file.read()
