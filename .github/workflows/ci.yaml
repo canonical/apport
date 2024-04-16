@@ -21,6 +21,7 @@ jobs:
           - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:mantic
+          - ubuntu:noble
     container:
       image: ${{ matrix.container }}
     steps:
@@ -52,6 +53,7 @@ jobs:
           - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:mantic
+          - ubuntu:noble
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -144,6 +146,7 @@ jobs:
         container:
           - ubuntu:jammy
           - ubuntu:mantic
+          - ubuntu:noble
     container:
       image: ${{ matrix.container }}
     steps:
@@ -175,12 +178,17 @@ jobs:
         container:
           - ubuntu:jammy
           - ubuntu:mantic
+          - ubuntu:noble
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
       - name: Enable 'deb-src' URIs in /etc/apt/sources.list
-        run: sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
+        run: >
+          sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
+          && ! test -e /etc/apt/sources.list.d/ubuntu.sources
+          || sed -i 's/^Types:.*/Types: deb deb-src/g'
+          /etc/apt/sources.list.d/ubuntu.sources
       - name: Install dependencies
         run: >
           apt-get update
