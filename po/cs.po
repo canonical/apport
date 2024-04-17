@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 22:26+0100\n"
+"POT-Creation-Date: 2024-04-17 14:42+0200\n"
 "PO-Revision-Date: 2022-12-07 23:42+0000\n"
 "Last-Translator: Croolman <croolman@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -84,14 +84,14 @@ msgstr ""
 "Váš počítač nemá dostatek volné paměti pro automatickou analýzu problému a "
 "odeslání hlášení vývojářům."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1880
+#: ../apport/ui.py:459 ../apport/ui.py:1864
 #, python-format
 msgid "Problem in %s"
 msgstr "Problém v %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1847 ../apport/ui.py:1853
+#: ../apport/ui.py:1831 ../apport/ui.py:1837
 msgid "Invalid problem report"
 msgstr "Neplatné hlášení o problému"
 
@@ -390,7 +390,7 @@ msgstr "Problém byl zaznamenán v programu %s, který byl od pádu změněn."
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Toto hlášení o problému je poškozené a nemůže být zpracováno."
 
@@ -439,36 +439,36 @@ msgstr ""
 msgid "Could not determine the package or source package name."
 msgstr "Nelze určit název balíku nebo zdrojového balíku."
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "Nelze spustit webový prohlížeč"
 
-#: ../apport/ui.py:1717
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nelze spustit webový prohlížeč a otevřít %s."
 
-#: ../apport/ui.py:1809
+#: ../apport/ui.py:1793
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nelze se připojit k databází havárií, prosím zkontrolujte své internetové "
 "připojení."
 
-#: ../apport/ui.py:1812
+#: ../apport/ui.py:1796
 msgid "Network problem"
 msgstr "Problém se sítí"
 
-#: ../apport/ui.py:1838
+#: ../apport/ui.py:1822
 msgid "Memory exhaustion"
 msgstr "Vyčerpání paměti"
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1824
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Váš systém nemá dostatek paměti pro zpracování tohoto hlášení o havárii."
 
-#: ../apport/ui.py:1885
+#: ../apport/ui.py:1869
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -479,11 +479,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1939 ../apport/ui.py:1951
+#: ../apport/ui.py:1923 ../apport/ui.py:1935
 msgid "Problem already known"
 msgstr "Problém je již znám"
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1925
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -493,7 +493,7 @@ msgstr ""
 "prohlížeči. Prosím zkontrolujte, zda můžete přidat další informace, které by "
 "mohly být vývojářům nápomocné."
 
-#: ../apport/ui.py:1952
+#: ../apport/ui.py:1936
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Tato chyba byla vývojářům již ohlášena. Děkujeme!"
 
