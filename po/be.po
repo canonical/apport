@@ -8,27 +8,27 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-17 14:42+0200\n"
-"PO-Revision-Date: 2015-12-23 15:55+0000\n"
-"Last-Translator: XiveZ <kyrsant2008@list.ru>\n"
+"PO-Revision-Date: 2024-04-11 15:46+0000\n"
+"Last-Translator: Ubuntu Belarusian Translators Team <Unknown>\n"
 "Language-Team: Belarusian <be@li.org>\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2023-07-21 14:36+0000\n"
-"X-Generator: Launchpad (build 2bfac4503c7b6a57e9a8acd782035a16f97e2ddb)\n"
+"X-Launchpad-Export-Date: 2024-04-17 09:08+0000\n"
+"X-Generator: Launchpad (build 67d34a19aaa1df7be4dd8bf498cbc5bbd785067b)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr "Сабраць сістэмную інфармацыю"
+msgstr "Сабраць звесткі аб сістэме"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
-"Трэба даць права, каб сабраць патрэбныя дадзеныя для справаздачнасці гэтай "
-"праблемы"
+"Патрабуецца аўтэнтыфікацыя, каб сабраць звесткі аб сістэме для адпраўкі "
+"справаздачы пра гэту праблему"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
@@ -238,8 +238,8 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
-"Пасля закрыцця гэтага паведамлення, калі ласка, націсніце на вакно "
-"прыкладання, каб паведаміць аб праблеме."
+"Пасля закрыцця гэтага паведамлення, націсніце на акно, каб паведаміць аб "
+"праблеме."
 
 #: ../apport/ui.py:966 ../apport/ui.py:973
 msgid "xprop failed to determine process ID of the window"
@@ -331,9 +331,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"У рэжыме збору справаздачы аб памылках, сабраная інфармацыя захоўваецца ў "
-"файле замест яе адпраўкі. Гэты файл можна будзе адправіць пазней, ці з "
-"іншага кампутара."
+"У рэжыме адпраўкі справаздачы, сабраныя звесткі захоўваюцца ў файле, а не "
+"адпраўляюцца. Гэты файл можна будзе адправіць пазней з іншага камп'ютара."
 
 #: ../apport/ui.py:1131
 msgid "Print the Apport version number."
@@ -882,7 +881,7 @@ msgstr "Выбачайце, прылада %s нечакана прыпыніл�
 #: ../gtk/apport-gtk.py:158
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Выбачайце, %s нечакана зачынілася."
+msgstr "Выбачайце, %s нечакана закрылася."
 
 #: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
 #, python-format
@@ -929,7 +928,7 @@ msgstr "У дадатку %s адбылася ўнутраная памылка.
 #: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:251
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Дастасаванне %s нечакана зачынілася."
+msgstr "Праграма %s нечакана закрылася."
 
 #: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
 msgid "If you notice further problems, try restarting the computer."
@@ -997,14 +996,14 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>Перадача звестак аб няспраўнасці</b></big>"
+msgstr "<big><b>Запампоўванне звестак аб праблеме</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:516
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"Сабраныя дадзеныя перасылаюцца ў сістэму ўліку памылак. Гэта можа заняць "
+"Сабраныя звесткі адпраўляюцца ў сістэму ўліку памылак. Гэта можа заняць "
 "некалькі хвілін."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
@@ -1041,4 +1040,4 @@ msgstr ""
 
 #: ../kde/apport-kde.py:513
 msgid "Uploading Problem Information"
-msgstr "Перадача інфармацыі аб непаладцы"
+msgstr "Запампоўванне звестак аб праблеме"
