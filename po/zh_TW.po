@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 11:13+0100\n"
+"POT-Creation-Date: 2024-04-17 14:42+0200\n"
 "PO-Revision-Date: 2024-02-17 21:50+0000\n"
 "Last-Translator: 爽自由 <coby2023t@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
@@ -75,14 +75,14 @@ msgid ""
 "problem and send a report to the developers."
 msgstr "閣下電腦無足夠可用記憶體供自動分析問題並向開發者傳送報告。"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1880
+#: ../apport/ui.py:459 ../apport/ui.py:1864
 #, python-format
 msgid "Problem in %s"
 msgstr "在 %s 中的問題"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1847 ../apport/ui.py:1853
+#: ../apport/ui.py:1831 ../apport/ui.py:1837
 msgid "Invalid problem report"
 msgstr "無效的問題回報"
 
@@ -359,7 +359,7 @@ msgstr "發生問題的程式 %s 自上次遭遇當掉之後已有變動。"
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
 msgid "This problem report is damaged and cannot be processed."
 msgstr "此問題報告已損壞故無法處理。"
 
@@ -405,33 +405,33 @@ msgstr ""
 msgid "Could not determine the package or source package name."
 msgstr "無法決定軟體包或原始碼軟體包名稱。"
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "無法啟動網頁瀏覽器"
 
-#: ../apport/ui.py:1717
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "無法啟動網頁瀏覽器以開啟 %s。"
 
-#: ../apport/ui.py:1809
+#: ../apport/ui.py:1793
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "無法連接到當機資料庫，請檢查您的網路連線。"
 
-#: ../apport/ui.py:1812
+#: ../apport/ui.py:1796
 msgid "Network problem"
 msgstr "網路問題"
 
-#: ../apport/ui.py:1838
+#: ../apport/ui.py:1822
 msgid "Memory exhaustion"
 msgstr "記憶體耗盡"
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1824
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "您的系統沒有足夠的記憶體來處理此份當機報告。"
 
-#: ../apport/ui.py:1885
+#: ../apport/ui.py:1869
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -442,11 +442,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1939 ../apport/ui.py:1951
+#: ../apport/ui.py:1923 ../apport/ui.py:1935
 msgid "Problem already known"
 msgstr "已知問題"
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1925
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -455,7 +455,7 @@ msgstr ""
 "此問題在網路瀏覽器顯示之臭蟲報告中已回報。請檢查您是否能新增任何可能對開發者"
 "有幫助的進一步資訊。"
 
-#: ../apport/ui.py:1952
+#: ../apport/ui.py:1936
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "此問題已經回報給開發者。感謝您！"
 

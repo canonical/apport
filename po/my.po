@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 22:26+0100\n"
+"POT-Creation-Date: 2024-04-17 14:42+0200\n"
 "PO-Revision-Date: 2012-09-04 12:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Burmese <my@li.org>\n"
@@ -81,14 +81,14 @@ msgstr ""
 "သင့်ကွန်ပျူတာတွင် ပြဿနာကိုအလိုအလျောက်ခွဲခြမ်းစိတ်ဖြာပြီး ဆော့ဖ်ဝဲရ်ရေးသားသူများထံ အစီရင်ခံစာပေးပို့ရန်အတွက် "
 "လုံလောက်သည့် free memory မရှိပါ။"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1880
+#: ../apport/ui.py:459 ../apport/ui.py:1864
 #, python-format
 msgid "Problem in %s"
 msgstr "%s တွင်ပြသာနတက်နေပါသည်"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1847 ../apport/ui.py:1853
+#: ../apport/ui.py:1831 ../apport/ui.py:1837
 msgid "Invalid problem report"
 msgstr "ပြဿနာသတင်းပို့ချက်မမှန်ကန်ပါ"
 
@@ -381,7 +381,7 @@ msgstr "ပျက်စီးမှုဖြစ်ပွားပြီးနေ
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
 msgid "This problem report is damaged and cannot be processed."
 msgstr "ဤပြဿနာအစီရင်ခံစာသည် ပျက်စီးနေပြီး လုပ်ဆောင်နိုင်ခြင်းမရှိပါ။"
 
@@ -428,33 +428,33 @@ msgstr ""
 msgid "Could not determine the package or source package name."
 msgstr "ပက်ကေ့ဂျ် သို့မဟုတ် အရင်းအမြစ်ပက်ကေ့ဂျ်အမည်ကို မဆုံးဖြတ်နိုင်ပါ။"
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "Web browser ကိုမဖွင့်နိုင်ပါ"
 
-#: ../apport/ui.py:1717
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s ဖွင့်ရန် ဝဘ်ဘရောက်ဆာကို စတင်၍မရပါ။"
 
-#: ../apport/ui.py:1809
+#: ../apport/ui.py:1793
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "ပျက်စီးနေသောဒေတာဘေ့စ်သို့ ချိတ်ဆက်၍မရပါ။ ကျေးဇူးပြု၍ အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပါ။"
 
-#: ../apport/ui.py:1812
+#: ../apport/ui.py:1796
 msgid "Network problem"
 msgstr "နတ်ဝေါ့ပြသာနာ"
 
-#: ../apport/ui.py:1838
+#: ../apport/ui.py:1822
 msgid "Memory exhaustion"
 msgstr "Memory exhaustion"
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1824
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "သင့်စနစ်တွင် ဤပျက်စီးမှုအစီရင်ခံစာလုပ်ဆောင်ရန်အတွက် လုံလောက်သော memory မရှိပါ။"
 
-#: ../apport/ui.py:1885
+#: ../apport/ui.py:1869
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -465,11 +465,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1939 ../apport/ui.py:1951
+#: ../apport/ui.py:1923 ../apport/ui.py:1935
 msgid "Problem already known"
 msgstr "ပြသာနာကိုသိရှိပြီးပါပြီ။"
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1925
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -478,7 +478,7 @@ msgstr ""
 "ဤပြဿနာကို ဝဘ်ဘရောက်ဆာတွင် ပြသထားသည့် bug အစီရင်ခံစာတွင် အစီရင်ခံထားပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ "
 "ဆော့ဖ်ဝဲရ်ရေးသားသူများအတွက် အထောက်အကူဖြစ်နိုင်သည့် နောက်ထပ်အချက်အလက်များထည့်သွင်းနိုင်ရန် စစ်ဆေးပါ။"
 
-#: ../apport/ui.py:1952
+#: ../apport/ui.py:1936
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "ဒီပြသာနာကို developer များသို့ပို့ပြီးပါပြီ။ ကျေးဇူးတင်ရှိပါသည်။"
 

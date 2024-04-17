@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 18:59+0100\n"
+"POT-Creation-Date: 2024-04-17 14:42+0200\n"
 "PO-Revision-Date: 2018-04-11 17:57+0000\n"
 "Last-Translator: Rūdolfs Mazurs <Unknown>\n"
 "Language-Team: Latvian <lv@li.org>\n"
@@ -82,14 +82,14 @@ msgstr ""
 "Jūsu datoram trūkst brīvas atmiņas, lai veiktu automātisku problēmas analīzi "
 "un nosūtītu ziņojumu izstrādātājiem."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1880
+#: ../apport/ui.py:459 ../apport/ui.py:1864
 #, python-format
 msgid "Problem in %s"
 msgstr "Problēma ar %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1847 ../apport/ui.py:1853
+#: ../apport/ui.py:1831 ../apport/ui.py:1837
 msgid "Invalid problem report"
 msgstr "Nepareizs kļūdas ziņojums"
 
@@ -382,7 +382,7 @@ msgstr "Problēma notika ar programmu %s, kura ir mainījusies kopš avārijas."
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Problēmas ziņojums ir bojāts un to nevar apstrādāt."
 
@@ -426,36 +426,36 @@ msgstr ""
 msgid "Could not determine the package or source package name."
 msgstr "Neizdevās noteikt pakotnes vai pirmkoda pakotnes nosaukumu."
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "Neizdevās palaist tīmekļa pārlūku"
 
-#: ../apport/ui.py:1717
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Neizdevās palaist tīmekļa pārlūku, lai atvērtu %s."
 
-#: ../apport/ui.py:1809
+#: ../apport/ui.py:1793
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Neizdodas savienoties ar avāriju datubāzi, lūdzu pārbaudiet jūsu Internet "
 "savienojumu."
 
-#: ../apport/ui.py:1812
+#: ../apport/ui.py:1796
 msgid "Network problem"
 msgstr "Tīkla problēma"
 
-#: ../apport/ui.py:1838
+#: ../apport/ui.py:1822
 msgid "Memory exhaustion"
 msgstr "Atmiņas pārtēriņš"
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1824
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Jūsu sistēmai nepietiek atmiņas, lai apstrādātu šo ziņojumu par avāriju."
 
-#: ../apport/ui.py:1885
+#: ../apport/ui.py:1869
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -466,11 +466,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1939 ../apport/ui.py:1951
+#: ../apport/ui.py:1923 ../apport/ui.py:1935
 msgid "Problem already known"
 msgstr "Jau zināma problēma"
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1925
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -480,7 +480,7 @@ msgstr ""
 "Lūdzu pārbaudiet, vai jūs varat pievienot papildus informāciju, kas varētu "
 "būt noderīga izstrādātājiem."
 
-#: ../apport/ui.py:1952
+#: ../apport/ui.py:1936
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Šī problēma jau ir ziņota izstrādātājiem. Paldies!"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 18:59+0100\n"
+"POT-Creation-Date: 2024-04-17 14:42+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: raj <Unknown>\n"
 "Language-Team: Gujarati <gu@li.org>\n"
@@ -78,14 +78,14 @@ msgstr ""
 "તમારા કૉમ્પ્યૂટર માં મુશ્કેલીનુ આપોઆપ વિશ્લેષણ કરવા માટે અને ડેવલોપરોને રિપૉર્ટ (હકીકત) "
 "મોકલાવવા માટે પુરતા પ્રમાણ માં મુકત મેમરી નથી."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1880
+#: ../apport/ui.py:459 ../apport/ui.py:1864
 #, python-format
 msgid "Problem in %s"
 msgstr "%s માં તકલીફ છે"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
 #: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1847 ../apport/ui.py:1853
+#: ../apport/ui.py:1831 ../apport/ui.py:1837
 msgid "Invalid problem report"
 msgstr "અપ્રમાણ મુશ્કેલી રિપૉર્ટ"
 
@@ -348,7 +348,7 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1851
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
 msgid "This problem report is damaged and cannot be processed."
 msgstr "આ સમસ્યા રિપૉર્ટ નુકસાન પામેલ છે અને આગળ વધી નહી શકાય."
 
@@ -392,34 +392,34 @@ msgstr ""
 msgid "Could not determine the package or source package name."
 msgstr "પેકેજ અથવા સૉર્સ પેકેજ નુ નામ શોધી નથી શકાયુ."
 
-#: ../apport/ui.py:1716
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "વેબ બ્રાઊઝર શરુ કરવામાં સમર્થ નથી."
 
-#: ../apport/ui.py:1717
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s ને ખોલવા માટે વેબ બ્રાઊઝર શરુ કરવામાં સમર્થ નથી."
 
-#: ../apport/ui.py:1809
+#: ../apport/ui.py:1793
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "ક્રૅશ ડેટાબેઞ સાથે જોડાણ થઈ શકે તેમ નથી. મહેરબાની કરીને તમારા ઈનટરનેટનુ જોડાણ તપાશો."
 
-#: ../apport/ui.py:1812
+#: ../apport/ui.py:1796
 msgid "Network problem"
 msgstr "નેટવર્ક માં સમસ્યા"
 
-#: ../apport/ui.py:1838
+#: ../apport/ui.py:1822
 msgid "Memory exhaustion"
 msgstr "મેમરીની થકાવટ"
 
-#: ../apport/ui.py:1840
+#: ../apport/ui.py:1824
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "આ ક્રૅશ રિપૉર્ટ ને પ્રોસેસ કરવા માટે તમારી સિસ્ટમમાં પૂરતી મેમરી નથી."
 
-#: ../apport/ui.py:1885
+#: ../apport/ui.py:1869
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -430,11 +430,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1939 ../apport/ui.py:1951
+#: ../apport/ui.py:1923 ../apport/ui.py:1935
 msgid "Problem already known"
 msgstr "મુશ્કેલી પહેલાંથી જાણીતી છે."
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1925
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -443,7 +443,7 @@ msgstr ""
 "આ સમસ્યા વેબ બ્રાઊઝરમાં દેખાતા બગ રિપૉટમાં પહેલાંથી રજુ કરેલ છે. મહેરબાની કરીને ચકાસો કે "
 "તમે વધુ માહીતી ઊમેરી શકો છો કે જે ડેવલોપરો માટે ઊપયોગી થઈ શકે."
 
-#: ../apport/ui.py:1952
+#: ../apport/ui.py:1936
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 
