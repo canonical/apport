@@ -58,6 +58,30 @@ class TestPackagingAptDpkg(unittest.TestCase):
 
         apt_cache.fetch_archives.assert_called_once_with(fetcher=None)
 
+    @unittest.mock.patch("time.sleep")
+    def test_fetch_packages_too_many_requests(self, sleep_mock: MagicMock) -> None:
+        """Test _fetch_packages() to retry on HTTP 429 'Too Many Requests'."""
+        too_many_requests_failure = apt.cache.FetchFailedException(
+            "Failed to fetch http://ddebs.ubuntu.com/pool/main"
+            "/p/pcre2/libpcre2-8-0-dbgsym_10.39-3build1_amd64.ddeb"
+            " 429  Too Many Requests [IP: 185.125.190.18 80]\n"
+            "Failed to fetch http://ddebs.ubuntu.com/pool/main"
+            "/libs/libselinux/libselinux1-dbgsym_3.3-1build2_amd64.ddeb"
+            " 429  Too Many Requests [IP: 185.125.190.18 80]\n"
+        )
+        apt_cache = MagicMock()
+        apt_cache.fetch_archives.side_effect = [
+            too_many_requests_failure,
+            too_many_requests_failure,
+            None,
+        ]
+
+        # pylint: disable-next=protected-access
+        impl._fetch_packages(apt_cache)
+
+        apt_cache.fetch_archives.assert_called_with(fetcher=None)
+        self.assertEqual(sleep_mock.call_count, 2)
+
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
         """is_distro_package() for package that has no candidate."""

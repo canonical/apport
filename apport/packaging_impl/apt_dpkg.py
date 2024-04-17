@@ -1592,13 +1592,26 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _fetch_packages(
         apt_cache: apt.cache.Cache, fetcher: apt_pkg.Acquire | None = None
     ) -> None:
-        try:
-            apt_cache.fetch_archives(fetcher=fetcher)
-        except apt.cache.FetchFailedException as error:
-            apport.logging.error(
-                "Package download error, try again later: %s", str(error)
-            )
-            sys.exit(1)  # transient error
+        backoff = 1.0
+        while True:
+            try:
+                apt_cache.fetch_archives(fetcher=fetcher)
+                break
+            except apt.cache.FetchFailedException as error:
+                if backoff <= 3600 and "Too Many Requests" in str(error):
+                    apport.logging.warning(
+                        "Package download error, retrying in %i second(s): %s",
+                        backoff,
+                        str(error),
+                    )
+                else:
+                    apport.logging.error(
+                        "Package download error, try again later: %s", str(error)
+                    )
+                    sys.exit(1)  # transient error
+
+            time.sleep(backoff)
+            backoff *= 2
 
     def _get_mirror(self, arch: str) -> str:
         """Return the distribution mirror URL.
