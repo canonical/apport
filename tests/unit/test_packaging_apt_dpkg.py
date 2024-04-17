@@ -29,9 +29,22 @@ from apport.packaging_impl.apt_dpkg import (
     MagicMock(return_value=("Ubuntu", "22.04")),
 )
 class TestPackagingAptDpkg(unittest.TestCase):
+    # pylint: disable=protected-access
     """Unit tests for apport.packaging_impl.apt_dpkg."""
 
     maxDiff = None
+
+    def test_fetch_packages_download_error(self) -> None:
+        """Test _fetch_packages() with a download error."""
+        apt_cache = MagicMock()
+        apt_cache.fetch_archives.side_effect = apt.cache.FetchFailedException(
+            "Failed to fetch example.deb 404  Not Found"
+        )
+
+        with self.assertRaises(SystemExit):
+            impl._fetch_packages(apt_cache)
+
+        apt_cache.fetch_archives.assert_called_once_with(fetcher=None)
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
