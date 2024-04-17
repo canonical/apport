@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-17 14:42+0200\n"
-"PO-Revision-Date: 2024-02-17 21:50+0000\n"
+"PO-Revision-Date: 2024-03-20 05:21+0000\n"
 "Last-Translator: 爽自由 <coby2023t@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2024-02-22 10:04+0000\n"
-"X-Generator: Launchpad (build 9643586c585856148a18782148972ae9c1179d06)\n"
+"X-Launchpad-Export-Date: 2024-04-17 09:08+0000\n"
+"X-Generator: Launchpad (build 67d34a19aaa1df7be4dd8bf498cbc5bbd785067b)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -47,6 +47,8 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"這看起來不像是官方 %s 套件。請在套件索引更新後再試試。如果還是不行，移除相關"
+"的第三方套件後再試。"
 
 #: ../apport/ui.py:299
 #, python-format
@@ -249,7 +251,7 @@ msgstr "加入額外標籤至回報中。可以多次分別指定。"
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%(prog)s [選項] [symptom|pid|package|program path|.apport/.crash 檔]"
 
 #: ../apport/ui.py:1044
 msgid ""
