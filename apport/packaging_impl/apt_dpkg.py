@@ -1487,9 +1487,141 @@ class __AptDpkgPackageInfo(PackageInfo):
             " without install_packages()"
         )
 
+    def _fetch_contents_file(
+        self, contents_filename: str, mtime: float | None, dist: str, arch: str
+    ) -> bool:
+        update = False
+        url = f"{self._get_mirror()}/dists/{dist}/Contents-{arch}.gz"
+        if mtime:
+            # HTTPConnection requires server name e.g.
+            # archive.ubuntu.com
+            server = urllib.parse.urlparse(url)[1]
+            conn = http.client.HTTPConnection(server)
+            conn.request("HEAD", urllib.parse.urlparse(url)[2])
+            res = conn.getresponse()
+            modified_str = res.getheader("last-modified", None)
+            if modified_str:
+                modified = datetime.datetime.strptime(
+                    modified_str, "%a, %d %b %Y %H:%M:%S %Z"
+                )
+                update = modified > datetime.datetime.fromtimestamp(mtime)
+            else:
+                update = True
+            # don't update the file if it is empty
+            if res.getheader("content-length", None) == "40":
+                update = False
+        else:
+            update = True
+        if update:
+            self._contents_update = True
+            try:
+                # hard to change, pylint: disable=consider-using-with
+                src = urllib.request.urlopen(url)
+            except OSError:
+                # we ignore non-existing pockets, but we do crash
+                # if the release pocket doesn't exist
+                if "-" not in dist:
+                    raise
+                return False
+
+            with open(contents_filename, "wb") as f:
+                while True:
+                    data = src.read(1000000)
+                    if not data:
+                        break
+                    f.write(data)
+            src.close()
+            assert os.path.exists(contents_filename)
+        return True
+
+    def _get_contents_file(self, map_cachedir: str, dist: str, arch: str) -> str | None:
+        contents_filename = os.path.join(map_cachedir, f"{dist}-Contents-{arch}.gz")
+        # check if map exists and is younger than a day; if not, we need
+        # to refresh it
+        try:
+            mtime = os.stat(contents_filename).st_mtime
+            age = int(time.time() - mtime)
+        except OSError:
+            mtime = None
+            age = None
+
+        if age is None or age >= 86400:
+            if not self._fetch_contents_file(contents_filename, mtime, dist, arch):
+                return None
+
+        return contents_filename
+
+    @staticmethod
+    def _update_given_file2pkg_mapping(
+        file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
+    ) -> None:
+        with gzip.open(contents_filename, "rb") as contents:
+            line_num = 0
+            for line in contents:
+                line_num += 1
+                # the first 32 lines are descriptive only for these
+                # releases
+                if dist in {"trusty", "xenial"} and line_num < 33:
+                    continue
+                path = line.split()[0]
+                if path.split(b"/")[0] == b"usr":
+                    if path.split(b"/")[1] not in (
+                        b"lib",
+                        b"libexec",
+                        b"libx32",
+                        b"bin",
+                        b"sbin",
+                        b"share",
+                        b"games",
+                        b"Brother",
+                    ):
+                        continue
+                    if path.split(b"/")[1] == b"share" and path.split(b"/")[2] in {
+                        b"doc",
+                        b"icons",
+                        b"man",
+                        b"texlive",
+                        b"gocode",
+                        b"locale",
+                        b"help",
+                    }:
+                        continue
+                    package = line.split()[-1].split(b",")[0].split(b"/")[-1]
+                elif path.split(b"/")[0] in {b"lib", b"bin", b"sbin", b"etc"}:
+                    package = line.split()[-1].split(b",")[0].split(b"/")[-1]
+                else:
+                    continue
+                if path in file2pkg:
+                    if package == file2pkg[path]:
+                        continue
+                    # if the package was updated use the update
+                    # b/c everyone should have packages from
+                    # -updates and -security installed
+                file2pkg[path] = package
+
+    def _get_file2pkg_mapping(
+        self, map_cachedir: str, release: str, arch: str
+    ) -> dict[bytes, bytes]:
+        # this is ordered by likelihood of installation with the most common
+        # last
+        # XXX - maybe we shouldn't check -security and -updates if it is the
+        # devel release as they will be old and empty
+        for pocket in ("-proposed", "", "-security", "-updates"):
+            dist = f"{release}{pocket}"
+            contents_filename = self._get_contents_file(map_cachedir, dist, arch)
+            if contents_filename is None:
+                continue
+            file2pkg = self._contents_mapping(map_cachedir, release, arch)
+            # if the mapping is empty build it
+            if not file2pkg or len(file2pkg) == 2:
+                self._contents_update = True
+            # if any of the Contents files were updated we need to update the
+            # map because the ordering in which is created is important
+            if self._contents_update:
+                self._update_given_file2pkg_mapping(file2pkg, contents_filename, dist)
+        return file2pkg
+
     def _search_contents(self, file, map_cachedir, release, arch):
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Search file in Contents.gz."""
         if not map_cachedir:
             if not self._contents_dir:
@@ -1502,130 +1634,14 @@ class __AptDpkgPackageInfo(PackageInfo):
             release = self.get_distro_codename()
         else:
             release = self._distro_release_to_codename(release)
-        # this is ordered by likelihood of installation with the most common
-        # last
-        # XXX - maybe we shouldn't check -security and -updates if it is the
-        # devel release as they will be old and empty
-        for pocket in ("-proposed", "", "-security", "-updates"):
-            contents_filename = os.path.join(
-                map_cachedir, f"{release}{pocket}-Contents-{arch}.gz"
-            )
-            # check if map exists and is younger than a day; if not, we need
-            # to refresh it
-            update = False
-            try:
-                st = os.stat(contents_filename)
-                age = int(time.time() - st.st_mtime)
-            except OSError:
-                age = None
 
-            if age is None or age >= 86400:
-                url = (
-                    f"{self._get_mirror()}/dists"
-                    f"/{release}{pocket}/Contents-{arch}.gz"
-                )
-                if age:
-                    # HTTPConnection requires server name e.g.
-                    # archive.ubuntu.com
-                    server = urllib.parse.urlparse(url)[1]
-                    conn = http.client.HTTPConnection(server)
-                    conn.request("HEAD", urllib.parse.urlparse(url)[2])
-                    res = conn.getresponse()
-                    modified_str = res.getheader("last-modified", None)
-                    if modified_str:
-                        modified = datetime.datetime.strptime(
-                            modified_str, "%a, %d %b %Y %H:%M:%S %Z"
-                        )
-                        update = modified > datetime.datetime.fromtimestamp(st.st_mtime)
-                    else:
-                        update = True
-                    # don't update the file if it is empty
-                    if res.getheader("content-length", None) == "40":
-                        update = False
-                else:
-                    update = True
-                if update:
-                    self._contents_update = True
-                    try:
-                        # hard to change, pylint: disable=consider-using-with
-                        src = urllib.request.urlopen(url)
-                    except OSError:
-                        # we ignore non-existing pockets, but we do crash
-                        # if the release pocket doesn't exist
-                        if pocket == "":
-                            raise
-                        continue
-
-                    with open(contents_filename, "wb") as f:
-                        while True:
-                            data = src.read(1000000)
-                            if not data:
-                                break
-                            f.write(data)
-                    src.close()
-                    assert os.path.exists(contents_filename)
-
-            contents_mapping = self._contents_mapping(map_cachedir, release, arch)
-            # if the mapping is empty build it
-            if not contents_mapping or len(contents_mapping) == 2:
-                self._contents_update = True
-            # if any of the Contents files were updated we need to update the
-            # map because the ordering in which is created is important
-            if self._contents_update:
-                with gzip.open(f"{contents_filename}", "rb") as contents:
-                    line_num = 0
-                    for line in contents:
-                        line_num += 1
-                        # the first 32 lines are descriptive only for these
-                        # releases
-                        if (
-                            pocket == ""
-                            and release in {"trusty", "xenial"}
-                            and line_num < 33
-                        ):
-                            continue
-                        path = line.split()[0]
-                        if path.split(b"/")[0] == b"usr":
-                            if path.split(b"/")[1] not in (
-                                b"lib",
-                                b"libexec",
-                                b"libx32",
-                                b"bin",
-                                b"sbin",
-                                b"share",
-                                b"games",
-                                b"Brother",
-                            ):
-                                continue
-                            if path.split(b"/")[1] == b"share" and path.split(b"/")[
-                                2
-                            ] in {
-                                b"doc",
-                                b"icons",
-                                b"man",
-                                b"texlive",
-                                b"gocode",
-                                b"locale",
-                                b"help",
-                            }:
-                                continue
-                            package = line.split()[-1].split(b",")[0].split(b"/")[-1]
-                        elif path.split(b"/")[0] in {b"lib", b"bin", b"sbin", b"etc"}:
-                            package = line.split()[-1].split(b",")[0].split(b"/")[-1]
-                        else:
-                            continue
-                        if path in contents_mapping:
-                            if package == contents_mapping[path]:
-                                continue
-                            # if the package was updated use the update
-                            # b/c everyone should have packages from
-                            # -updates and -security installed
-                        contents_mapping[path] = package
+        contents_mapping = self._get_file2pkg_mapping(map_cachedir, release, arch)
         # the file only needs to be saved after an update
         if self._contents_update:
             self._save_contents_mapping(map_cachedir, release, arch)
             # the update of the mapping only needs to be done once
             self._contents_update = False
+
         if isinstance(file, bytes):
             file = file.decode()
         if file[0] == "/":
