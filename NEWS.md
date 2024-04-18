@@ -1,6 +1,33 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.28.1 (2024-04-18)
+-------------------
+
+### Changed
+
+* Format Python code with black 24.2
+
+### Fixed
+
+* apt_dpkg:
+  - fix heuristic for determining primary mirror with DEB822 sources
+  - fix reading comment only entries in APT deb822 sources
+* report:
+  - fix reporting invalid SourcePackage
+  - Fix crash if the user is a dynamic user
+  - Ignore missing `COREDUMP_FILENAME`
+    ([LP: #2058380](https://launchpad.net/bugs/2058380))
+* ui: show error message if `webbrowser.open()` fails
+* test:
+  - use sysvinit-utils for `test_get_dependencies_depends_only`
+  - fix date in `test_crash_apport_from_systemd_coredump`
+  - support running tests directly with pytest
+  - fix integration tests for bash >= 5.2.21-2ubuntu2 and coreutils >=
+    9.4-3ubuntu1 ([LP: #2054902](https://launchpad.net/bugs/2054902))
+  - fix deletion of the tmpdir in `test_run_report_bug_noperm_pid`
+  - fix mypy 1.9.0 complains
+
 2.28.0 (2024-02-22)
 -------------------
 
