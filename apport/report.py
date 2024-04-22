@@ -510,7 +510,7 @@ class Report(problem_report.ProblemReport):
         """
         # Launchpad
         p = (
-            r"^https?:\/\/.*launchpad\.net\/"
+            r"^https?:\/\/.*launchpad\.net\/(?:distros/)?"
             r"((?:[^\/]+\/\+source\/)?[^\/]+)(?:.*field\.tags?=([^&]+))?"
         )
         m = re.search(p, urllib.parse.unquote(snap_contact))
