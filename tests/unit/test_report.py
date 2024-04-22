@@ -1320,16 +1320,14 @@ No symbol table info available.
         self.assertIsNone(pr.crash_signature_addresses())
 
     @staticmethod
-    def test_missing_uid():
+    @unittest.mock.patch("os.geteuid")
+    def test_missing_uid(geteuid_mock: MagicMock) -> None:
         """check_ignored() works for removed user"""
-        orig_getuid = os.getuid
-        os.getuid = lambda: 123456789
-        try:
-            pr = apport.report.Report()
-            pr["ExecutablePath"] = "/bin/bash"
-            pr.check_ignored()
-        finally:
-            os.getuid = orig_getuid
+        geteuid_mock.return_value = 123456789
+        pr = apport.report.Report()
+        pr["ExecutablePath"] = "/bin/bash"
+        pr.check_ignored()
+        geteuid_mock.assert_called_once_with()
 
     def test_suspend_resume(self):
         pr = apport.report.Report()
