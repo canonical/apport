@@ -1369,6 +1369,16 @@ No symbol table info available.
         self.assertEqual("ubuntu/+source/chromium-browser", pr["SnapSource"])
         self.assertEqual("snap", pr["SnapTags"])
 
+    def test_add_snap_contact_launchpad_distro(self) -> None:
+        """add_snap_contact_info() with https://launchpad.net/distros/ contact"""
+        report = apport.report.Report()
+        snap_contact = "https://launchpad.net/distros/ubuntu/+source/thunderbird"
+
+        report.add_snap_contact_info(snap_contact)
+
+        self.assertEqual(set(report.keys()), {"ProblemType", "Date", "SnapSource"})
+        self.assertEqual("ubuntu/+source/thunderbird", report["SnapSource"])
+
     def test_add_snap_contact_info_github(self):
         """add_snap_contact_info()
 
