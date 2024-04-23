@@ -91,6 +91,13 @@ except (FileNotFoundError, subprocess.CalledProcessError):
     systemd_unit_dir = "/lib/systemd/system"
     systemd_tmpfiles_dir = "/usr/lib/tmpfiles.d"
 
+try:
+    udev_dir = subprocess.check_output(
+        ["pkg-config", "--variable=udevdir", "udev"], text=True
+    ).strip()
+except (FileNotFoundError, subprocess.CalledProcessError):
+    udev_dir = "/lib/udev"
+
 cmdclass = register_java_sub_commands(build_extra, install_fix_completion_symlinks)
 DistUtilsExtra.auto.setup(
     name="apport",
@@ -107,7 +114,7 @@ DistUtilsExtra.auto.setup(
         ("share/apport", ["gtk/apport-gtk", "kde/apport-kde"]),
         (BASH_COMPLETIONS, glob.glob("data/bash-completion/*")),
         ("lib/pm-utils/sleep.d/", glob.glob("pm-utils/sleep.d/*")),
-        ("/lib/udev/rules.d", glob.glob("udev/*.rules")),
+        (f"{udev_dir}/rules.d", glob.glob("udev/*.rules")),
         (
             systemd_unit_dir,
             glob.glob("data/systemd/*.service") + glob.glob("data/systemd/*.socket"),
