@@ -234,10 +234,11 @@ jobs:
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
           ca-certificates dbus dbus-x11 dirmngr dpkg-dev gcc gdb gir1.2-gtk-3.0
-          gir1.2-wnck-3.0 git gnome-icon-theme gpg gvfs-daemons psmisc python3
-          python3-apt python3-dbus python3-distutils-extra python3-gi
-          python3-launchpadlib python3-pyqt5 python3-pytest python3-pytest-cov
-          python3-setuptools ubuntu-dbgsym-keyring ubuntu-keyring valgrind xvfb
+          gir1.2-wnck-3.0 git gnome-icon-theme gpg gvfs-daemons pkg-config
+          psmisc python3 python3-apt python3-dbus python3-distutils-extra
+          python3-gi python3-launchpadlib python3-pyqt5 python3-pytest
+          python3-pytest-cov python3-setuptools ubuntu-dbgsym-keyring
+          ubuntu-keyring valgrind xvfb
       - uses: actions/checkout@v4
       - name: Install
         run: >
