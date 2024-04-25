@@ -405,3 +405,39 @@ class TestApport(unittest.TestCase):
                 "SignalName": "SIGSEGV",
             },
         )
+
+    @unittest.mock.patch.object(apport_binary, "process_crash")
+    @unittest.mock.patch.object(apport_binary, "get_systemd_coredump")
+    def test_process_crash_from_systemd_coredump_container(
+        self, get_systemd_coredump_mock: MagicMock, process_crash_mock: MagicMock
+    ) -> None:
+        """Test process_crash_from_systemd_coredump with container crash"""
+        get_systemd_coredump_mock.return_value = {
+            "COREDUMP_CMDLINE": "divide-by-zero",
+            "COREDUMP_CONTAINER_CMDLINE": "/usr/lib/systemd/systemd",
+            "COREDUMP_CWD": "/root",
+            "COREDUMP_ENVIRON": "SHELL=/bin/bash\n",
+            "COREDUMP_EXE": "/usr/bin/divide-by-zero",
+            "COREDUMP_GID": 297664512,
+            "COREDUMP_PID": 523536,
+            "COREDUMP_PROC_MAPS": "mocked /proc/<pid>/maps",
+            "COREDUMP_PROC_STATUS": "mocked /proc/<pid>/status",
+            "COREDUMP_SIGNAL": 4,
+            "COREDUMP_SIGNAL_NAME": "SIGILL",
+            "COREDUMP_TIMESTAMP": datetime.datetime(
+                2024, 4, 25, 10, 52, 42, tzinfo=datetime.timezone.utc
+            ),
+            "COREDUMP_UID": 297664512,
+        }
+
+        with self.assertLogs(level="INFO") as info_logs:
+            result = apport_binary.process_crash_from_systemd_coredump("0-523537-0")
+
+        get_systemd_coredump_mock.assert_called_once_with("0-523537-0")
+        process_crash_mock.assert_not_called()
+        self.assertEqual(result, 0)
+        self.assertIn(
+            "Ignoring /usr/bin/divide-by-zero crash because it happened"
+            " inside a container.",
+            info_logs.output[0],
+        )

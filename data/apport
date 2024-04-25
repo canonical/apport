@@ -1234,6 +1234,14 @@ def process_crash_from_systemd_coredump(instance: str) -> int:
     except _JournalMessageNotFound as error:
         logging.getLogger(__name__).error("%s", error)
         return 1
+    if "COREDUMP_CONTAINER_CMDLINE" in coredump:
+        logging.getLogger(__name__).info(
+            "Ignoring %s crash because it happened inside a container."
+            " Please install systemd-coredump inside the container for"
+            " forwarding future crashes.",
+            coredump["COREDUMP_EXE"],
+        )
+        return 0
     report = apport.report.Report.from_systemd_coredump(coredump)
     real_user = UserGroupID.from_systemd_coredump(coredump)
     report_owner = _determine_report_owner(report, real_user)
