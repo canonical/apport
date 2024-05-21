@@ -593,6 +593,19 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             5,
         )
 
+    def test_check_duplicate_reopen(self) -> None:
+        """check_duplicate() which calls mark_regression()
+
+        Bug 3 and 4 have the same traceback. Assume bug 3 to be marked
+        as fixed in version 4.1. The check_duplicate() call on bug 4
+        (with version 5) will be a regression.
+        """
+        self.crashes.init_duplicate_db(":memory:")
+        self.assertIsNone(self.crashes.check_duplicate(3))
+        self.crashes.duplicate_db_fixed(3, "4.1")
+
+        self.assertEqual(self.crashes.check_duplicate(4), (3, None))
+
     def test_known_address_sig(self):
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
