@@ -1072,11 +1072,11 @@ class Report(problem_report.ProblemReport):
 
                 # handle XErrors
                 if unwinding_xerror:
-                    if fn.startswith("_X") or fn in {
-                        "handle_response",
-                        "handle_error",
-                        "XWindowEvent",
-                    }:
+                    if (
+                        fn
+                        and fn.startswith("_X")
+                        or fn in {"handle_response", "handle_error", "XWindowEvent"}
+                    ):
                         continue
                     unwinding_xerror = False
 
