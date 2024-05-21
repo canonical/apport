@@ -1180,11 +1180,10 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
 
             # adjust chunksize so that it takes between .5 and 2
             # seconds to send a chunk
-            if chunksize > 1024:
-                if duration < 0.5:
-                    chunksize <<= 1
-                elif duration > 2:
-                    chunksize >>= 1
+            if duration < 0.5:
+                chunksize <<= 1
+            elif duration > 2 and chunksize > 1024:
+                chunksize >>= 1
 
 
 class HTTPSProgressHandler(urllib.request.HTTPSHandler):
