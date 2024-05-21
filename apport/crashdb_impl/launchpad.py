@@ -1176,14 +1176,14 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
             t1 = time.time()
             http.client.HTTPSConnection.send(self, data[sent : (sent + chunksize)])
             sent += chunksize
-            t2 = time.time()
+            duration = time.time() - t1
 
             # adjust chunksize so that it takes between .5 and 2
             # seconds to send a chunk
             if chunksize > 1024:
-                if t2 - t1 < 0.5:
+                if duration < 0.5:
                     chunksize <<= 1
-                elif t2 - t1 > 2:
+                elif duration > 2:
                     chunksize >>= 1
 
 
