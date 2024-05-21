@@ -1012,6 +1012,7 @@ class UserInterface:
         If a single argument is given without any options, this tries to "do
         what I mean".
         """
+        suppress = None
         # invoked in update mode?
         if len(argv) > 0:
             if "APPORT_INVOKED_AS" in os.environ:
@@ -1022,11 +1023,8 @@ class UserInterface:
             cmd = argv[0]
             if cmd.endswith("-update-bug") or cmd.endswith("-collect"):
                 return self.parse_argv_update(argv)
-
-        if len(argv) > 0 and cmd.endswith("-bug"):
-            suppress = argparse.SUPPRESS
-        else:
-            suppress = None
+            if cmd.endswith("-bug"):
+                suppress = argparse.SUPPRESS
 
         parser = argparse.ArgumentParser(
             usage=_(
