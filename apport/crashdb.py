@@ -588,7 +588,7 @@ class CrashDatabase:
                 f"DEBUG: bug {crash_id} got reopened,"
                 f" dropping fixed version {db_fixed_version} from database"
             )
-            self.duplicate_db_fixed(crash_id, real_fixed_version)
+            self.duplicate_db_fixed(crash_id, None)
             return
 
     def _duplicate_db_add_address_signature(self, sig, crash_id):
