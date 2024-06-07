@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 
 from apport.packaging import PackageInfo
 from apport.report import Report
-from apport.sandboxutils import make_sandbox
+from apport.sandboxutils import _move_or_add_base_files_first, make_sandbox
 
 
 class TestSandboxutils(unittest.TestCase):
@@ -71,3 +71,36 @@ class TestSandboxutils(unittest.TestCase):
             self.assertEqual(cache, cache_dir)
         self.assertEqual(outdated_msg, "obsolete\nobsolete\n")
         self.assertEqual(packaging_mock.install_packages.call_count, 2)
+
+    def test_move_or_add_base_files_first_existing(self) -> None:
+        """_move_or_add_base_files_first() with base-files in list."""
+        pkgs: list[tuple[str, None | str]] = [
+            ("chaos-marmosets", "0.1.2-2"),
+            ("base-files", "13ubuntu9"),
+            ("libc6", "2.39-0ubuntu8.2"),
+        ]
+        _move_or_add_base_files_first(pkgs)
+        self.assertEqual(
+            pkgs,
+            [
+                ("base-files", "13ubuntu9"),
+                ("chaos-marmosets", "0.1.2-2"),
+                ("libc6", "2.39-0ubuntu8.2"),
+            ],
+        )
+
+    def test_move_or_add_base_files_first_missing(self) -> None:
+        """_move_or_add_base_files_first() without base-files in list."""
+        pkgs: list[tuple[str, None | str]] = [
+            ("chaos-marmosets", "0.1.2-2"),
+            ("libc6", "2.39-0ubuntu8.2"),
+        ]
+        _move_or_add_base_files_first(pkgs)
+        self.assertEqual(
+            pkgs,
+            [
+                ("base-files", None),
+                ("chaos-marmosets", "0.1.2-2"),
+                ("libc6", "2.39-0ubuntu8.2"),
+            ],
+        )
