@@ -38,7 +38,7 @@ def is_local_source_directory() -> bool:
     return os.path.isdir("tests") and os.path.exists("setup.py")
 
 
-def local_test_environment() -> Mapping[str, str]:
+def local_test_environment() -> dict[str, str]:
     """Return needed environment variables when running tests locally."""
     if not is_local_source_directory():
         return {}
@@ -50,7 +50,7 @@ def local_test_environment() -> Mapping[str, str]:
     }
 
 
-def patch_data_dir(report: Any) -> Mapping[str, str] | None:
+def patch_data_dir(report: Any) -> dict[str, str] | None:
     """Patch APPORT_DATA_DIR in apport.report for local tests."""
     if not is_local_source_directory():
         return None
