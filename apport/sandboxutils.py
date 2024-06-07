@@ -120,6 +120,17 @@ def needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose=Fals
     return [(p, pkg_versions.get(p)) for p in pkgs]
 
 
+def _move_or_add_base_files_first(pkgs: list[tuple[str, None | str]]) -> None:
+    """Move base-files to the front or add it if missing."""
+    base_files_version = None
+    for i, (pkg, version) in enumerate(pkgs):
+        if pkg == "base-files":
+            base_files_version = version
+            pkgs.pop(i)
+            break
+    pkgs[:0] = [("base-files", base_files_version)]
+
+
 # pylint: disable-next=too-many-arguments
 def make_sandbox(
     report: apport.Report,
@@ -221,6 +232,9 @@ def make_sandbox(
         origins = set(match.findall(pkg_list))
         if origins:
             apport.logging.log(f"Origins: {origins}")
+
+    # Install base-files first to get correct usrmerge
+    _move_or_add_base_files_first(pkgs)
 
     # unpack packages, if any, using cache and sandbox
     try:
