@@ -52,7 +52,7 @@ class T(unittest.TestCase):
     def test_general_hook_generic(self) -> None:
         """Test running general-hooks/generic.py."""
         process = subprocess.run(
-            [sys.executable, self.data_dir / "general-hooks" / "generic.py"],
+            [sys.executable, str(self.data_dir / "general-hooks" / "generic.py")],
             check=True,
             env=self.env,
             encoding="utf-8",
@@ -63,7 +63,7 @@ class T(unittest.TestCase):
     def test_package_hook_nologs(self):
         """package_hook without any log files."""
         ph = subprocess.run(
-            [self.data_dir / "package_hook", "-p", "bash"],
+            [str(self.data_dir / "package_hook"), "-p", "bash"],
             check=False,
             env=self.env,
             input=b"something is wrong",
@@ -85,7 +85,7 @@ class T(unittest.TestCase):
         """package_hook on an uninstalled package (might fail to install)."""
         pkg = apport.packaging.get_uninstalled_package()
         ph = subprocess.run(
-            [self.data_dir / "package_hook", "-p", pkg],
+            [str(self.data_dir / "package_hook"), "-p", pkg],
             check=False,
             env=self.env,
             input=b"something is wrong",
@@ -117,7 +117,7 @@ class T(unittest.TestCase):
 
         ph = subprocess.run(
             [
-                self.data_dir / "package_hook",
+                str(self.data_dir / "package_hook"),
                 "-p",
                 "bash",
                 "-l",
@@ -162,7 +162,7 @@ class T(unittest.TestCase):
     def test_package_hook_tags(self):
         """package_hook with extra tags argument."""
         cmd = [
-            self.data_dir / "package_hook",
+            str(self.data_dir / "package_hook"),
             "-p",
             "bash",
             "-t",
@@ -192,7 +192,7 @@ class T(unittest.TestCase):
             log.write("vmcore successfully dumped")
 
         self.assertEqual(
-            subprocess.call(self.data_dir / "kernel_crashdump", env=self.env),
+            subprocess.call([str(self.data_dir / "kernel_crashdump")], env=self.env),
             0,
             "kernel_crashdump finished successfully",
         )
@@ -240,7 +240,7 @@ class T(unittest.TestCase):
         wrongly_named.write_bytes(b"2" * 80)
 
         self.assertEqual(
-            subprocess.call(self.data_dir / "kernel_crashdump", env=self.env),
+            subprocess.call([str(self.data_dir / "kernel_crashdump")], env=self.env),
             0,
             "kernel_crashdump finished successfully",
         )
@@ -306,7 +306,9 @@ class T(unittest.TestCase):
 
         self.assertNotEqual(
             subprocess.call(
-                self.data_dir / "kernel_crashdump", env=self.env, stderr=subprocess.PIPE
+                [str(self.data_dir / "kernel_crashdump")],
+                env=self.env,
+                stderr=subprocess.PIPE,
             ),
             0,
             "kernel_crashdump unexpectedly succeeded",
@@ -330,7 +332,9 @@ class T(unittest.TestCase):
 
         self.assertNotEqual(
             subprocess.call(
-                self.data_dir / "kernel_crashdump", env=self.env, stderr=subprocess.PIPE
+                [str(self.data_dir / "kernel_crashdump")],
+                env=self.env,
+                stderr=subprocess.PIPE,
             ),
             0,
             "kernel_crashdump unexpectedly succeeded",
@@ -371,7 +375,7 @@ class T(unittest.TestCase):
 
             self.assertEqual(
                 subprocess.call(
-                    [self.data_dir / "gcc_ice_hook", gcc_path, test_source.name],
+                    [str(self.data_dir / "gcc_ice_hook"), gcc_path, test_source.name],
                     env=self.env,
                 ),
                 0,
@@ -405,7 +409,7 @@ class T(unittest.TestCase):
 
             self.assertEqual(
                 subprocess.call(
-                    [self.data_dir / "gcc_ice_hook", gcc_path, test_source.name],
+                    [str(self.data_dir / "gcc_ice_hook"), gcc_path, test_source.name],
                     env=self.env,
                 ),
                 0,
@@ -427,7 +431,7 @@ class T(unittest.TestCase):
         test_source = "int f(int x);"
 
         hook = subprocess.run(
-            [self.data_dir / "gcc_ice_hook", gcc_path, "-"],
+            [str(self.data_dir / "gcc_ice_hook"), gcc_path, "-"],
             check=False,
             env=self.env,
             input=test_source.encode(),
@@ -462,7 +466,7 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4\
  ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 """
         hook = subprocess.run(
-            [self.data_dir / "kernel_oops"],
+            [str(self.data_dir / "kernel_oops")],
             check=False,
             env=self.env,
             input=test_source.encode(),

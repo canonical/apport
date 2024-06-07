@@ -39,7 +39,7 @@ class TestApportCheckreports(unittest.TestCase):
         expected_returncode: int = 0,
         expected_stdout: str = "",
     ) -> None:
-        cmd = [self.data_dir / "apport-checkreports"]
+        cmd = [str(self.data_dir / "apport-checkreports")]
         if args:
             cmd += args
         process = subprocess.run(
