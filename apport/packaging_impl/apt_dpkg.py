@@ -609,6 +609,22 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return match
 
+    def __fgrep_list_for_path(
+        self, path: str, likely_lists: list[str], all_lists: list[str]
+    ) -> str | None:
+        # first check the likely packages
+        match = self.__fgrep_files(path, likely_lists)
+        if not match:
+            match = self.__fgrep_files(path, all_lists)
+        # with usrmerge some binaries appear in usr but their .list file
+        # doesn't reflect that so strip the /usr from the path
+        if not match and path.startswith("/usr"):
+            path = path[4:]
+            match = self.__fgrep_files(path, likely_lists)
+            if not match:
+                match = self.__fgrep_files(path, all_lists)
+        return match
+
     def get_file_package(
         self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
     ):
@@ -651,18 +667,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             else:
                 all_lists.append(f)
 
-        # first check the likely packages
-        match = self.__fgrep_files(file, likely_lists)
-        if not match:
-            match = self.__fgrep_files(file, all_lists)
-        # with usrmerge some binaries appear in usr but their .list file
-        # doesn't reflect that so strip the /usr from the path
-        if not match and file.startswith("/usr"):
-            file = file[4:]
-            match = self.__fgrep_files(f"{file}", likely_lists)
-            if not match:
-                match = self.__fgrep_files(f"{file}", all_lists)
-
+        match = self.__fgrep_list_for_path(file, likely_lists, all_lists)
         if match:
             return os.path.splitext(os.path.basename(match))[0].split(":")[0]
 
