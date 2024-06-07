@@ -1113,19 +1113,12 @@ CR2: 00000000ffffb4ff
         """Methods get along with non-ASCII data."""
         # fake os.uname() into reporting a non-ASCII name
         uname = os.uname()
-        uname = (
-            uname[0],
-            b"t\xe2\x99\xaax".decode("UTF-8"),
-            uname[2],
-            uname[3],
-            uname[4],
+        uname_mock = os.uname_result(
+            (uname[0], b"t\xe2\x99\xaax".decode("UTF-8"), uname[2], uname[3], uname[4])
         )
-        orig_uname = os.uname
-        os.uname = lambda: uname
-
-        try:
+        with unittest.mock.patch("os.uname", return_value=uname_mock):
             pr = apport.report.Report()
-            utf8_val = b"\xc3\xa4 " + uname[1].encode("UTF-8") + b" \xe2\x99\xa5 "
+            utf8_val = b"\xc3\xa4 " + uname_mock[1].encode("UTF-8") + b" \xe2\x99\xa5 "
             pr["ProcUnicodeValue"] = utf8_val.decode("UTF-8")
             pr["ProcByteArrayValue"] = utf8_val
 
@@ -1134,8 +1127,6 @@ CR2: 00000000ffffb4ff
             exp_utf8 = b"\xc3\xa4 hostname \xe2\x99\xa5 "
             self.assertEqual(pr["ProcUnicodeValue"], exp_utf8.decode("UTF-8"))
             self.assertEqual(pr["ProcByteArrayValue"], exp_utf8)
-        finally:
-            os.uname = orig_uname
 
     def test_address_to_offset(self):
         """_address_to_offset()"""

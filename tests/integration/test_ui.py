@@ -1495,16 +1495,16 @@ class T(unittest.TestCase):
                 s, report, f"dump contains sensitive string: {s}:\n{report}"
             )
 
-    def test_run_crash_anonymity_order(self):
+    @unittest.mock.patch("apport.report.Report.add_gdb_info", autospec=True)
+    def test_run_crash_anonymity_order(self, add_gdb_info_mock: MagicMock) -> None:
         """run_crash() anonymization runs after info and duplicate
         collection"""
         # pretend the hostname looks like a hex number which matches
         # the stack trace address
         uname = os.uname()
-        uname = (uname[0], "0xDEADBEEF", uname[2], uname[3], uname[4])
-        orig_uname = os.uname
-        orig_add_gdb_info = apport.report.Report.add_gdb_info
-        os.uname = lambda: uname
+        uname_mock = os.uname_result(
+            (uname[0], "0xDEADBEEF", uname[2], uname[3], uname[4])
+        )
 
         def fake_add_gdb_info(self):
             self["Stacktrace"] = textwrap.dedent(
@@ -1519,9 +1519,9 @@ class T(unittest.TestCase):
             )
             assert self.crash_signature_addresses() is not None
 
-        try:
+        add_gdb_info_mock.side_effect = fake_add_gdb_info
+        with unittest.mock.patch("os.uname", return_value=uname_mock):
             r = self._gen_test_crash()
-            apport.report.Report.add_gdb_info = fake_add_gdb_info
             r["ProcAuxInfo"] = "my 0xDEADBEEF"
             report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
             with open(report_file, "wb") as f:
@@ -1539,19 +1539,14 @@ class T(unittest.TestCase):
             # after anonymization this should mess up Stacktrace; this mostly
             # confirms that our test logic works
             self.assertIsNone(self.ui.report.crash_signature_addresses())
-        finally:
-            os.uname = orig_uname
-            apport.report.Report.add_gdb_info = orig_add_gdb_info
+        add_gdb_info_mock.assert_called_once()
 
     def test_run_crash_anonymity_substring(self):
         """run_crash() anonymization only catches whole words"""
         # pretend the hostname is "ed", a substring of e. g. "crashed"
         uname = os.uname()
-        uname = (uname[0], "ed", uname[2], uname[3], uname[4])
-        orig_uname = os.uname
-        os.uname = lambda: uname
-
-        try:
+        uname_mock = os.uname_result((uname[0], "ed", uname[2], uname[3], uname[4]))
+        with unittest.mock.patch("os.uname", return_value=uname_mock):
             r = self._gen_test_crash()
             r["ProcInfo1"] = "my ed"
             r["ProcInfo2"] = '"ed.localnet"'
@@ -1575,8 +1570,6 @@ class T(unittest.TestCase):
             self.assertEqual(self.ui.report["ProcInfo1"], "my hostname")
             self.assertEqual(self.ui.report["ProcInfo2"], '"hostname.localnet"')
             self.assertEqual(self.ui.report["ProcInfo3"], "education")
-        finally:
-            os.uname = orig_uname
 
     def test_run_crash_anonymity_escaping(self):
         """run_crash() anonymization escapes special chars"""
