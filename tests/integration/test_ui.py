@@ -13,7 +13,6 @@ import pathlib
 import pwd
 import re
 import shutil
-import signal
 import stat
 import subprocess
 import tempfile
@@ -31,7 +30,12 @@ import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _, run_as_real_user
-from tests.helper import pidof, run_test_executable, skip_if_command_is_missing
+from tests.helper import (
+    generate_sleep_crash,
+    pidof,
+    run_test_executable,
+    skip_if_command_is_missing,
+)
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
@@ -883,53 +887,11 @@ class T(unittest.TestCase):
 
     def _gen_test_crash(self):
         """Generate a Report with real crash data."""
-        core_path = self.workdir / "core"
         try:
-            with subprocess.Popen(
-                [
-                    "gdb",
-                    "--batch",
-                    "-iex",
-                    "set debuginfod enable off",
-                    "--ex",
-                    f"run {' '.join(self.TEST_ARGS)}",
-                    "--ex",
-                    f"generate-core-file {core_path}",
-                    self.TEST_EXECUTABLE,
-                ],
-                env={"HOME": str(self.workdir)},
-                stdout=subprocess.PIPE,
-            ) as gdb:
-                timeout = 10.0
-                while timeout > 0:
-                    pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
-                    if pids:
-                        pid = pids.pop()
-                        break
-                    time.sleep(0.01)
-                    timeout -= 0.01
-                else:
-                    gdb.kill()
-                    self.fail(f"{self.TEST_EXECUTABLE} not started within 10 seconds")
-
-                # generate crash report
-                r = apport.Report()
-                r["ExecutablePath"] = self.TEST_EXECUTABLE
-                r["Signal"] = "11"
-                r.add_proc_info(pid)
-                r.add_user_info()
-                r.add_os_info()
-                r.add_package_info()
-
-                # generate a core dump
-                os.kill(pid, signal.SIGSEGV)
-                os.waitpid(gdb.pid, 0)
-                assert core_path.exists()
-                r["CoreDump"] = (str(core_path),)
+            report = generate_sleep_crash(self.workdir, self.workdir / "core")
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
-
-        return r
+        return report
 
     def test_run_crash(self):
         """run_crash()"""

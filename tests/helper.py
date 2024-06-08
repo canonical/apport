@@ -7,13 +7,17 @@ import importlib.util
 import os
 import pathlib
 import shutil
+import signal
 import subprocess
+import time
 import unittest.mock
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator, Iterator, Sequence
 from typing import Any
 from unittest.mock import MagicMock
+
+from apport.report import Report
 
 
 def get_init_system() -> str:
@@ -91,6 +95,56 @@ def run_test_executable(
             yield test_process.pid
         finally:
             test_process.kill()
+
+
+def generate_sleep_crash(workdir: pathlib.Path, core_path: pathlib.Path) -> Report:
+    """Generate a Report with real crash data."""
+    executable = os.path.realpath("/bin/sleep")
+    assert os.path.exists(executable)
+    running_test_executables = pidof(executable)
+    with subprocess.Popen(
+        [
+            "gdb",
+            "--batch",
+            "-iex",
+            "set debuginfod enable off",
+            "--ex",
+            "run 3600",
+            "--ex",
+            f"generate-core-file {core_path}",
+            executable,
+        ],
+        env={"HOME": str(workdir)},
+        stdout=subprocess.PIPE,
+    ) as gdb:
+        timeout = 10.0
+        while timeout > 0:
+            pids = pidof(executable) - running_test_executables
+            if pids:
+                pid = pids.pop()
+                break
+            time.sleep(0.01)
+            timeout -= 0.01
+        else:
+            gdb.kill()
+            raise TimeoutError(f"{executable} not started within 10 seconds")
+
+        # generate crash report
+        report = Report()
+        report["ExecutablePath"] = executable
+        report["Signal"] = "11"
+        report.add_proc_info(pid)
+        report.add_user_info()
+        report.add_os_info()
+        report.add_package_info()
+
+        # generate a core dump
+        os.kill(pid, signal.SIGSEGV)
+        os.waitpid(gdb.pid, 0)
+        assert core_path.exists()
+        report["CoreDump"] = (str(core_path),)
+
+    return report
 
 
 def _id(obj):
