@@ -9,6 +9,7 @@ import glob
 import io
 import locale
 import os
+import pathlib
 import pwd
 import re
 import shutil
@@ -207,15 +208,15 @@ class T(unittest.TestCase):
         self.orig_data_dir = patch_data_dir(apport.report)
 
         # pylint: disable=protected-access
-        self.workdir = tempfile.mkdtemp()
+        self.workdir = pathlib.Path(tempfile.mkdtemp())
         self.orig_report_dir = apport.fileutils.report_dir
-        apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
+        apport.fileutils.report_dir = str(self.workdir / "crash")
         os.mkdir(apport.fileutils.report_dir)
         self.orig_symptom_script_dir = apport.ui.symptom_script_dir
-        apport.ui.symptom_script_dir = os.path.join(self.workdir, "symptoms")
+        apport.ui.symptom_script_dir = str(self.workdir / "symptoms")
         os.mkdir(apport.ui.symptom_script_dir)
         self.orig_ignore_file = apport.report._ignore_file
-        apport.report._ignore_file = os.path.join(self.workdir, "apport-ignore.xml")
+        apport.report._ignore_file = str(self.workdir / "apport-ignore.xml")
         os.mknod(apport.report._ignore_file)
 
         self.ui = UserInterfaceMock()
@@ -234,7 +235,7 @@ class T(unittest.TestCase):
         self.update_report_file()
 
         # set up our local hook directory
-        self.hookdir = os.path.join(self.workdir, "package-hooks")
+        self.hookdir = str(self.workdir / "package-hooks")
         os.mkdir(self.hookdir)
         self.orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
         apport.report.PACKAGE_HOOK_DIR = self.hookdir
@@ -882,7 +883,7 @@ class T(unittest.TestCase):
 
     def _gen_test_crash(self):
         """Generate a Report with real crash data."""
-        core_path = os.path.join(self.workdir, "core")
+        core_path = self.workdir / "core"
         try:
             with subprocess.Popen(
                 [
@@ -896,7 +897,7 @@ class T(unittest.TestCase):
                     f"generate-core-file {core_path}",
                     self.TEST_EXECUTABLE,
                 ],
-                env={"HOME": self.workdir},
+                env={"HOME": str(self.workdir)},
                 stdout=subprocess.PIPE,
             ) as gdb:
                 timeout = 10.0
@@ -923,8 +924,8 @@ class T(unittest.TestCase):
                 # generate a core dump
                 os.kill(pid, signal.SIGSEGV)
                 os.waitpid(gdb.pid, 0)
-                assert os.path.exists(core_path)
-                r["CoreDump"] = (core_path,)
+                assert core_path.exists()
+                r["CoreDump"] = (str(core_path),)
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
 
