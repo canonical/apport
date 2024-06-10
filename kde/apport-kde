@@ -495,11 +495,12 @@ class MainUserInterface(apport.ui.UserInterface):
         assert program is not None
         subprocess.call([program, "-e", command])
 
-    def ui_stop_info_collection_progress(self):
+    def ui_stop_info_collection_progress(self) -> None:
         if self.progress:
             self.progress.hide()
             self.progress = None
         else:
+            assert self.dialog
             self.dialog.movie.stop()
             self.dialog.spinner.hide()
 
