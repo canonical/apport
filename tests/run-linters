@@ -56,8 +56,8 @@ run_mypy() {
         return
     fi
     echo "Running mypy..."
-    mypy --disallow-incomplete-defs --ignore-missing-imports ${PYTHON_FILES} data/apport
-    mypy --disallow-incomplete-defs --ignore-missing-imports --scripts-are-modules ${PYTHON_SCRIPTS_WITHOUT_APPORT}
+    mypy ${PYTHON_FILES} data/apport
+    mypy --scripts-are-modules ${PYTHON_SCRIPTS_WITHOUT_APPORT}
 }
 
 run_pycodestyle() {
