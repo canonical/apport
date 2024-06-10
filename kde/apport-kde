@@ -70,6 +70,7 @@ uic.properties.Properties._string = translate  # type: ignore[assignment]
 # pylint: enable=protected-access
 
 
+# pylint: disable-next=too-few-public-methods
 class Dialog(QDialog):
     """Main dialog wrapper"""
 
@@ -90,12 +91,8 @@ class Dialog(QDialog):
         if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
             button.window().done(2)
 
-    def addbutton(self, button: str) -> QPushButton:
-        button_box = self.findChild(QDialogButtonBox, "buttons")
-        assert isinstance(button_box, QDialogButtonBox)
-        return button_box.addButton(button, QDialogButtonBox.ActionRole)
 
-
+# pylint: disable-next=too-few-public-methods
 class ChoicesDialog(Dialog):
     """Choices dialog wrapper"""
 
@@ -350,6 +347,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
             self.setMaximumSize(1, 1)
 
 
+# pylint: disable-next=too-few-public-methods
 class UserPassDialog(Dialog):
     """Username/Password dialog wrapper"""
 
