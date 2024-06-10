@@ -1077,7 +1077,9 @@ class T(unittest.TestCase):
         )
         self.assertNotEqual(gdb.stdout.strip(), "")
 
-    def _check_report(self, expect_report=True, expected_owner=None):
+    def _check_report(
+        self, expect_report: bool = True, expected_owner: int | None = None
+    ) -> None:
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
             return
@@ -1343,7 +1345,7 @@ class T(unittest.TestCase):
             f"{os.path.realpath(command).replace('/', '_')}.{uid}.crash",
         )
 
-    def check_report_coredump(self, report_path):
+    def check_report_coredump(self, report_path: str) -> None:
         """Check that given report file has a valid core dump."""
         r = apport.Report()
         with open(report_path, "rb") as f:
