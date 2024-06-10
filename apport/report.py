@@ -866,16 +866,15 @@ class Report(problem_report.ProblemReport):
         """
         if "VmCore" not in self:
             return False
-        unlink_core = False
-        ret = False
-        try:
-            if hasattr(self["VmCore"], "find"):
-                (fd, core) = tempfile.mkstemp()
-                os.write(fd, self["VmCore"])
-                os.close(fd)
-                unlink_core = True
+        with tempfile.NamedTemporaryFile(prefix="apport_vmcore_") as core:
+            if hasattr(self["VmCore"], "write"):
+                self["VmCore"].write(core)
+            else:
+                core.write(self["VmCore"])
+            core.flush()
+
             kver = self["Uname"].split()[1]
-            command = ["crash", f"/usr/lib/debug/boot/vmlinux-{kver}", core]
+            command = ["crash", f"/usr/lib/debug/boot/vmlinux-{kver}", core.name]
             try:
                 crash = subprocess.run(
                     command,
@@ -890,9 +889,6 @@ class Report(problem_report.ProblemReport):
             if ret:
                 # FIXME: split it up nicely etc
                 self["Stacktrace"] = crash.stdout
-        finally:
-            if unlink_core:
-                os.unlink(core)
         return ret
 
     def add_gdb_info(

@@ -9,6 +9,7 @@ import io
 import os
 import pathlib
 import re
+import subprocess
 import tempfile
 import textwrap
 import unittest
@@ -17,6 +18,7 @@ from unittest.mock import MagicMock
 
 import apport.packaging
 import apport.report
+import problem_report
 
 DIVIDE_BY_ZERO_PROC_MAPS = f"""\
 558164bd3000-558164bd4000 r--p 00000000 fc:00 44306916 \
@@ -1476,3 +1478,61 @@ No symbol table info available.
         report.write(report_output)
         self.assertEqual(report_output.getvalue().decode(), DIVIDE_BY_ZERO_REPORT)
         stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
+
+    def test_add_kernel_crash_info_no_vmcore(self) -> None:
+        """add_kernel_crash_info() on a non-kernel crash."""
+        report = apport.report.Report()
+        self.assertFalse(report.add_kernel_crash_info())
+
+    @unittest.mock.patch("subprocess.run")
+    def test_add_kernel_crash_info(self, run_mock: MagicMock) -> None:
+        """add_kernel_crash_info() on a fake vmcore."""
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=MagicMock(), returncode=0, stdout=b"kernel stack trace", stderr=b""
+        )
+        report = apport.report.Report("KernelCrash")
+        report["VmCore"] = problem_report.CompressedValue(b"\x01" * 100, name="VmCore")
+        # add_os_info() keys Architecture, DistroRelease, Uname from Ubuntu 24.04
+        report["Architecture"] = "amd64"
+        report["DistroRelease"] = "Ubuntu 24.04"
+        report["Uname"] = "Linux 6.8.0-31-generic x86_64"
+
+        self.assertTrue(report.add_kernel_crash_info())
+
+        self.assertEqual(report.get("Stacktrace"), b"kernel stack trace")
+        run_mock.assert_called_once()
+        called_cmd = run_mock.call_args[0][0]
+        self.assertEqual(
+            called_cmd[:-1], ["crash", "/usr/lib/debug/boot/vmlinux-6.8.0-31-generic"]
+        )
+        tmpfile = called_cmd[-1]
+        self.assertRegex(tmpfile, r"^/.*/apport_vmcore_\w{8}$")
+        self.assertFalse(pathlib.Path(tmpfile).exists())
+
+    @unittest.mock.patch("subprocess.run")
+    def test_add_kernel_crash_info_fail(self, run_mock: MagicMock) -> None:
+        """add_kernel_crash_info() on a fake vmcore where crash fails."""
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=MagicMock(),
+            returncode=1,
+            stdout=b"read_maps: unable to read header from $vmcore, errno = 0",
+            stderr=b"",
+        )
+        report = apport.report.Report("KernelCrash")
+        report["VmCore"] = b"\x01" * 100
+        # add_os_info() keys Architecture, DistroRelease, Uname from Ubuntu 24.04
+        report["Architecture"] = "amd64"
+        report["DistroRelease"] = "Ubuntu 24.04"
+        report["Uname"] = "Linux 6.8.0-31-generic x86_64"
+
+        self.assertFalse(report.add_kernel_crash_info())
+
+        self.assertNotIn("Stacktrace", report)
+        run_mock.assert_called_once()
+        called_cmd = run_mock.call_args[0][0]
+        self.assertEqual(
+            called_cmd[:-1], ["crash", "/usr/lib/debug/boot/vmlinux-6.8.0-31-generic"]
+        )
+        tmpfile = called_cmd[-1]
+        self.assertRegex(tmpfile, r"^/.*/apport_vmcore_\w{8}$")
+        self.assertFalse(pathlib.Path(tmpfile).exists())
