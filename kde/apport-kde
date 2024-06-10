@@ -526,7 +526,8 @@ class MainUserInterface(apport.ui.UserInterface):
             self.progress.set()
         QApplication.processEvents()
 
-    def ui_stop_upload_progress(self):
+    def ui_stop_upload_progress(self) -> None:
+        assert self.progress
         self.progress.hide()
 
     def ui_question_yesno(self, text):
