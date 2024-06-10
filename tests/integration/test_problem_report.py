@@ -113,7 +113,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["File"], BIN_DATA)
         self.assertEqual(pr["Extra"], "appended")
 
-    def test_extract_keys(self):
+    def test_extract_keys(self) -> None:
         """extract_keys() with various binary elements."""
         # create a test report with binary elements
         large_val = b"A" * 5000000

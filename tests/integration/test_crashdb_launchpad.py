@@ -832,7 +832,7 @@ and more
         bug = self.crashdb.launchpad.bugs[crash_id]
         self.assertIn("regression-retracer", bug.tags)
 
-    def test_project(self):
+    def test_project(self) -> None:
         """Test reporting crashes against a project instead of a distro."""
         launchpad_instance = os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
         # crash database for langpack-o-matic project (this does not have
@@ -898,7 +898,7 @@ NameError: global name 'weird' is not defined"""
         self.assertEqual(r["Architecture"], "amd64")
         self.assertTrue(r["DistroRelease"].startswith("Ubuntu "))
 
-    def test_escalation(self):
+    def test_escalation(self) -> None:
         """Escalating bugs with more than 10 duplicates"""
         launchpad_instance = os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
         db = CrashDatabase(

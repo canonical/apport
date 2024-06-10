@@ -180,7 +180,7 @@ func(42)
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1)
 
-    def test_symlink(self):
+    def test_symlink(self) -> None:
         """Python crash of a symlinked program resolves to target."""
         script = self._test_crash()
 
@@ -369,7 +369,7 @@ func(42)
         finally:
             os.chdir(orig_cwd)
 
-    def test_ignoring(self):
+    def test_ignoring(self) -> None:
         """The Python crash hook respects the ignore list."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
@@ -484,7 +484,7 @@ func(42)
         exe = pr["ExecutablePath"]
         self.assertEqual(pr.crash_signature(), f"{exe}:OSError:{exe}@11:g")
 
-    def test_getcwd_error(self):
+    def test_getcwd_error(self) -> None:
         """Raise FileNotFoundError on os.getcwd() call."""
         for relpath in (True, False):
             with self.subTest(relpath=relpath):

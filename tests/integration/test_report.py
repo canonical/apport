@@ -982,7 +982,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
         self.assertNotIn("AssertionMessage", pr)
 
-    def test_add_gdb_info_abort_glib(self):
+    def test_add_gdb_info_abort_glib(self) -> None:
         """add_gdb_info() with glib assertion"""
         code = textwrap.dedent(
             """\
