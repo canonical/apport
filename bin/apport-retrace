@@ -477,6 +477,7 @@ def main():
         cache = None
         outdated_msg = None
 
+    gdb_sandbox = None
     if options.gdb_sandbox:
         if report["Architecture"] == system_arch:
             if sandbox:
@@ -546,8 +547,6 @@ def main():
                         " gdb sandbox's. See LP: #1818918 for details."
                     )
                     sys.exit(0)
-    else:
-        gdb_sandbox = None
 
     # interactive gdb session
     if options.gdb:
