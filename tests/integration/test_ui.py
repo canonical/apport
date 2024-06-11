@@ -107,10 +107,10 @@ class UserInterfaceMock(apport.ui.UserInterface):
 
         self.clear_msg()
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.crashdb_conf.close()
 
-    def clear_msg(self):
+    def clear_msg(self) -> None:
         """Clear the recorded messages"""
         # last message box
         self.msg_title = None
@@ -126,28 +126,28 @@ class UserInterfaceMock(apport.ui.UserInterface):
         assert self.present_details_response
         return self.present_details_response
 
-    def ui_info_message(self, title, text):
+    def ui_info_message(self, title: str, text: str) -> None:
         self.msg_title = title
         self.msg_text = text
         self.msg_severity = "info"
 
-    def ui_error_message(self, title, text):
+    def ui_error_message(self, title: str, text: str) -> None:
         self.msg_title = title
         self.msg_text = text
         self.msg_severity = "error"
 
-    def ui_start_info_collection_progress(self):
+    def ui_start_info_collection_progress(self) -> None:
         self.ic_progress_pulses = 0
         self.ic_progress_active = True
 
-    def ui_pulse_info_collection_progress(self):
+    def ui_pulse_info_collection_progress(self) -> None:
         assert self.ic_progress_active
         self.ic_progress_pulses += 1
 
-    def ui_stop_info_collection_progress(self):
+    def ui_stop_info_collection_progress(self) -> None:
         self.ic_progress_active = False
 
-    def ui_start_upload_progress(self):
+    def ui_start_upload_progress(self) -> None:
         self.upload_progress_pulses = 0
         self.upload_progress_active = True
 
@@ -155,29 +155,31 @@ class UserInterfaceMock(apport.ui.UserInterface):
         assert self.upload_progress_active
         self.upload_progress_pulses += 1
 
-    def ui_stop_upload_progress(self):
+    def ui_stop_upload_progress(self) -> None:
         self.upload_progress_active = False
 
-    def ui_has_terminal(self):
+    def ui_has_terminal(self) -> bool:
         # The tests are already running in a terminal
         return True
 
-    def ui_run_terminal(self, command):
+    def ui_run_terminal(self, command: str) -> None:
         subprocess.call(command, shell=True)
 
-    def open_url(self, url):
+    def open_url(self, url: str) -> None:
         self.opened_url = url
 
-    def ui_question_yesno(self, text):
+    def ui_question_yesno(self, text: str) -> bool | None:
         self.msg_text = text
         return self.question_yesno_response
 
-    def ui_question_choice(self, text, options, multiple):
+    def ui_question_choice(
+        self, text: str, options: list[str], multiple: bool
+    ) -> list[int] | None:
         self.msg_text = text
         self.msg_choices = options
         return self.question_choice_response
 
-    def ui_question_file(self, text):
+    def ui_question_file(self, text: str) -> str | None:
         self.msg_text = text
         return self.question_file_response
 

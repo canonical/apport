@@ -42,7 +42,7 @@ import traceback
 import urllib.error
 import webbrowser
 import zlib
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from gettext import gettext as _
 from typing import Any
 
@@ -344,7 +344,7 @@ class UserInterface:
     A concrete subclass must implement all the abstract ui_* methods.
     """
 
-    def __init__(self, argv: list[str]):
+    def __init__(self, argv: list[str]) -> None:
         """Initialize program state and parse command line options."""
         self.gettext_domain = "apport"
         self.report: apport.report.Report | None = None
@@ -375,7 +375,7 @@ class UserInterface:
     # main entry points
     #
 
-    def run_crashes(self):
+    def run_crashes(self) -> bool:
         """Present all currently pending crash reports.
 
         Ask the user what to do about them, and offer to file bugs for them.
@@ -411,7 +411,7 @@ class UserInterface:
 
         return result
 
-    def run_crash(self, report_file):
+    def run_crash(self, report_file: str) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
@@ -534,7 +534,7 @@ class UserInterface:
             raise
 
     @staticmethod
-    def finish_hang(f):
+    def finish_hang(f: str) -> None:
         """Finish processing a hanging application after the core pipe handler
         has handed the report back.
 
@@ -543,7 +543,7 @@ class UserInterface:
         apport.fileutils.mark_report_upload(f)
         apport.fileutils.mark_report_seen(f)
 
-    def run_hang(self, pid):
+    def run_hang(self, pid: int) -> bool:
         """Report an application hanging.
 
         This will first present a dialog containing the information it can
@@ -596,7 +596,7 @@ class UserInterface:
         return True
 
     @staticmethod
-    def wait_for_pid(pid):
+    def wait_for_pid(pid: int) -> None:
         """waitpid() does not work for non-child processes. Query the process
         state in a loop, waiting for "no such process."
         """
@@ -610,7 +610,7 @@ class UserInterface:
             time.sleep(1)
 
     @staticmethod
-    def kill_segv(pid):
+    def kill_segv(pid: int) -> None:
         """Kill process with signal SIGSEGV."""
         os.kill(int(pid), signal.SIGSEGV)
 
@@ -836,7 +836,7 @@ class UserInterface:
 
         return False
 
-    def run_symptoms(self):
+    def run_symptoms(self) -> bool:
         """Report a bug from a list of available symptoms.
 
         Return False if no symptoms are available.
@@ -844,12 +844,12 @@ class UserInterface:
         scripts = glob.glob(os.path.join(symptom_script_dir, "*.py"))
 
         # symptoms contains a list of (symptom_description, symptom_name)
-        symptoms = []
+        symptoms: list[tuple[str, str | None]] = []
         for script in scripts:
             # scripts with an underscore can be used for private libraries
             if os.path.basename(script).startswith("_"):
                 continue
-            symb = {}
+            symb: dict[str, Any] = {}
             try:
                 with open(script, encoding="utf-8") as f:
                     # legacy, pylint: disable=exec-used
@@ -887,7 +887,7 @@ class UserInterface:
 
         return True
 
-    def run_symptom(self):
+    def run_symptom(self) -> None:
         """Report a bug with a symptom script."""
         script = os.path.join(symptom_script_dir, self.args.symptom + ".py")
         if not os.path.exists(script):
@@ -899,7 +899,7 @@ class UserInterface:
 
         self.run_report_bug(script)
 
-    def run_argv(self):
+    def run_argv(self) -> bool:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-return-statements
         """Call appropriate run_* method according to command line arguments.
@@ -1218,7 +1218,7 @@ class UserInterface:
         return args
 
     @staticmethod
-    def format_filesize(size):
+    def format_filesize(size: int) -> str:
         """Format the given integer as humanly readable and i18n'ed file
         size."""
         if size < 1000000:
@@ -1227,7 +1227,7 @@ class UserInterface:
             return locale.format_string("%.1f MB", size / 1000000.0)
         return locale.format_string("%.1f GB", size / float(1000000000))
 
-    def get_complete_size(self):
+    def get_complete_size(self) -> int:
         """Return the size of the complete report."""
         assert self.report
         # report wasn't loaded, so count manually
@@ -1240,7 +1240,7 @@ class UserInterface:
                     size += len(self.report[k])
         return size
 
-    def get_reduced_size(self):
+    def get_reduced_size(self) -> int:
         """Return the size of the reduced report."""
         assert self.report
         size = 0
@@ -1254,7 +1254,7 @@ class UserInterface:
 
         return size
 
-    def can_examine_locally(self):
+    def can_examine_locally(self) -> bool:
         """Check whether to offer the "Examine locally" button.
 
         This will be true if the report has a core dump, apport-retrace is
@@ -1268,7 +1268,7 @@ class UserInterface:
 
         return self.ui_has_terminal()
 
-    def restart(self):
+    def restart(self) -> None:
         """Reopen the crashed application."""
         assert self.report and "ProcCmdline" in self.report
 
@@ -1282,7 +1282,7 @@ class UserInterface:
             )
             sys.exit(1)
 
-    def examine(self):
+    def examine(self) -> None:
         """Locally examine crash report."""
         assert self.report_file
         response = self.ui_question_choice(
@@ -1356,7 +1356,7 @@ class UserInterface:
                 f"{msg}\n\n{str(error)}",
             )
 
-    def check_report_crashdb(self):
+    def check_report_crashdb(self) -> bool:
         """Process reports' CrashDB field, if present."""
         if self.report is None or "CrashDB" not in self.report:
             return True
@@ -1397,8 +1397,11 @@ class UserInterface:
         return True
 
     def collect_info(
-        self, symptom_script=None, ignore_uninstalled=False, on_finished=None
-    ):
+        self,
+        symptom_script: str | None = None,
+        ignore_uninstalled: bool = False,
+        on_finished: Callable[[], None] | None = None,
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Collect additional information.
@@ -1548,7 +1551,7 @@ class UserInterface:
                 if "(not installed)" in self.report["Package"]:
                     # choose snap automatically, if deb package
                     # is not installed
-                    res = [0]
+                    res: list[int] | None = [0]
                 else:
                     res = self.ui_question_choice(
                         _(
@@ -1697,11 +1700,11 @@ class UserInterface:
         if on_finished:
             on_finished()
 
-    def _is_snap(self):
+    def _is_snap(self) -> bool:
         assert self.report
         return "SnapSource" in self.report or "Snap" in self.report
 
-    def open_url(self, url):
+    def open_url(self, url: str) -> None:
         """Open the given URL in a new browser window.
 
         Display an error dialog if everything fails.
@@ -1722,7 +1725,7 @@ class UserInterface:
         message = _("Unable to start web browser to open %s.") % url
         self.ui_error_message(title, message + error_details)
 
-    def file_report(self):
+    def file_report(self) -> None:
         """Upload the current report and guide the user to the reporting
         web page."""
         assert self.report
@@ -1752,9 +1755,11 @@ class UserInterface:
         def progress_callback(sent, total):
             self.upload_progress = float(sent) / total
 
-        message_queue = queue.SimpleQueue()
+        message_queue: queue.SimpleQueue[tuple[str, str, threading.Event]] = (
+            queue.SimpleQueue()
+        )
 
-        def message_callback(title, text):
+        def message_callback(title: str, text: str) -> None:
             message_displayed = threading.Event()
             message_queue.put((title, text, message_displayed))
             message_displayed.wait()
@@ -1801,7 +1806,7 @@ class UserInterface:
         if url:
             self.open_url(url)
 
-    def load_report(self, path):
+    def load_report(self, path: str) -> bool:
         """Load report from given path and do some consistency checks.
 
         This might issue an error message and return False if the report cannot
@@ -1845,7 +1850,7 @@ class UserInterface:
 
         return True
 
-    def check_unreportable(self):
+    def check_unreportable(self) -> bool:
         """Check if the current report is unreportable.
 
         If so, display an info message and return True.
@@ -1870,7 +1875,7 @@ class UserInterface:
             return True
         return False
 
-    def get_desktop_entry(self):
+    def get_desktop_entry(self) -> dict[str, str] | None:
         """Return a .desktop info dictionary for the current report.
 
         Return None if report cannot be associated to a .desktop file.
@@ -1902,7 +1907,7 @@ class UserInterface:
             return None
         return result
 
-    def handle_duplicate(self):
+    def handle_duplicate(self) -> bool:
         """Check if current report matches a bug pattern.
 
         If so, tell the user about it, open the existing bug in a browser, and
@@ -1936,7 +1941,7 @@ class UserInterface:
 
         return True
 
-    def add_extra_tags(self):
+    def add_extra_tags(self) -> None:
         """Add extra tags to report specified with --tags on CLI."""
         assert self.report
         if self.args.tags:
@@ -1959,15 +1964,15 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_info_message(self, title, text):
+    def ui_info_message(self, title: str, text: str) -> None:
         """Show an information message box with given title and text."""
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_error_message(self, title, text):
+    def ui_error_message(self, title: str, text: str) -> None:
         """Show an error message box with given title and text."""
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_start_info_collection_progress(self):
+    def ui_start_info_collection_progress(self) -> None:
         """Open a indefinite progress bar for data collection.
 
         This tells the user to wait while debug information is being
@@ -1975,18 +1980,18 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_pulse_info_collection_progress(self):
+    def ui_pulse_info_collection_progress(self) -> None:
         """Advance the data collection progress bar.
 
         This function is called every 100 ms.
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_stop_info_collection_progress(self):
+    def ui_stop_info_collection_progress(self) -> None:
         """Close debug data collection progress window."""
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_start_upload_progress(self):
+    def ui_start_upload_progress(self) -> None:
         """Open progress bar for data upload.
 
         This tells the user to wait while debug information is being uploaded.
@@ -2003,24 +2008,24 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_stop_upload_progress(self):
+    def ui_stop_upload_progress(self) -> None:
         """Close debug data upload progress window."""
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_shutdown(self):
+    def ui_shutdown(self) -> None:
         """Called right before terminating the program.
 
         This can be used for for cleaning up.
         """
 
-    def ui_has_terminal(self):
+    def ui_has_terminal(self) -> bool:
         """Check for a terminal window.
 
         Check if a terminal application is available and can be launched.
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_run_terminal(self, command):
+    def ui_run_terminal(self, command: str) -> None:
         """Run command in a terminal window.
 
         Run given command in a terminal window; raise an
@@ -2033,7 +2038,7 @@ class UserInterface:
     # be used by interactive package hooks
     #
 
-    def ui_question_yesno(self, text):
+    def ui_question_yesno(self, text: str) -> bool | None:
         """Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -2041,7 +2046,9 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_question_choice(self, text, options, multiple):
+    def ui_question_choice(
+        self, text: str, options: list[str], multiple: bool
+    ) -> list[int] | None:
         """Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -2053,7 +2060,7 @@ class UserInterface:
         """
         raise NotImplementedError("this function must be overridden by subclasses")
 
-    def ui_question_file(self, text):
+    def ui_question_file(self, text: str) -> str | None:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.

@@ -146,10 +146,10 @@ class CLIProgressDialog(CLIDialog):
 class CLIUserInterface(apport.ui.UserInterface):
     """Command line Apport user interface"""
 
-    def __init__(self, argv: list[str]):
+    def __init__(self, argv: list[str]) -> None:
         apport.ui.UserInterface.__init__(self, argv)
         self.in_update_view = False
-        self.progress = None
+        self.progress: CLIProgressDialog | None = None
 
     def _get_details(self) -> str:
         """Build report string for display."""
@@ -173,7 +173,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return details
 
-    def ui_update_view(self, stdout=None):
+    def ui_update_view(self, stdout: int | None = None) -> None:
         self.in_update_view = True
         report = self._get_details()
         try:
@@ -256,17 +256,17 @@ class CLIUserInterface(apport.ui.UserInterface):
 
             return return_value
 
-    def ui_info_message(self, title, text):
+    def ui_info_message(self, title: str, text: str) -> None:
         dialog = CLIDialog(title, text)
         dialog.addbutton(_("&Confirm"))
         dialog.run()
 
-    def ui_error_message(self, title, text):
+    def ui_error_message(self, title: str, text: str) -> None:
         dialog = CLIDialog(_("Error: %s") % title, text)
         dialog.addbutton(_("&Confirm"))
         dialog.run()
 
-    def ui_start_info_collection_progress(self):
+    def ui_start_info_collection_progress(self) -> None:
         self.progress = CLIProgressDialog(
             _("Collecting problem information"),
             _(
@@ -277,14 +277,14 @@ class CLIUserInterface(apport.ui.UserInterface):
         )
         self.progress.show()
 
-    def ui_pulse_info_collection_progress(self):
+    def ui_pulse_info_collection_progress(self) -> None:
         assert self.progress is not None
         self.progress.set()
 
-    def ui_stop_info_collection_progress(self):
+    def ui_stop_info_collection_progress(self) -> None:
         sys.stdout.write("\n")
 
-    def ui_start_upload_progress(self):
+    def ui_start_upload_progress(self) -> None:
         self.progress = CLIProgressDialog(
             _("Uploading problem information"),
             _(
@@ -299,10 +299,10 @@ class CLIUserInterface(apport.ui.UserInterface):
         assert self.progress is not None
         self.progress.set(progress)
 
-    def ui_stop_upload_progress(self):
+    def ui_stop_upload_progress(self) -> None:
         sys.stdout.write("\n")
 
-    def ui_question_yesno(self, text):
+    def ui_question_yesno(self, text: str) -> bool | None:
         """Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -320,7 +320,9 @@ class CLIUserInterface(apport.ui.UserInterface):
         assert result == r_cancel
         return None
 
-    def ui_question_choice(self, text, options, multiple):
+    def ui_question_choice(
+        self, text: str, options: list[str], multiple: bool
+    ) -> list[int] | None:
         """Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -330,7 +332,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         """
-        result = []
+        result: list[int] = []
         dialog = CLIDialog(text, None)
 
         if multiple:
@@ -374,7 +376,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return result
 
-    def ui_question_file(self, text):
+    def ui_question_file(self, text: str) -> str | None:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
@@ -393,7 +395,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             else:
                 return f
 
-    def open_url(self, url):
+    def open_url(self, url: str) -> None:
         header = _("To continue, you must visit the following URL:")
         footer = _(
             "You can launch a browser now,"
@@ -405,11 +407,11 @@ class CLIUserInterface(apport.ui.UserInterface):
         if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
 
-    def ui_has_terminal(self):
+    def ui_has_terminal(self) -> bool:
         # we are already running in a terminal, so this works by definition
         return True
 
-    def ui_run_terminal(self, command):
+    def ui_run_terminal(self, command: str) -> None:
         subprocess.call(command, shell=True)
 
 

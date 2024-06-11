@@ -33,8 +33,14 @@ jobs:
           black gir1.2-gtk-3.0 gir1.2-wnck-3.0 isort mypy pycodestyle
           pydocstyle pyflakes3 pylint python3 python3-apt python3-dbus
           python3-distutils-extra python3-gi python3-launchpadlib
-          python3-psutil python3-pyqt5 python3-pytest python3-rpm
-          python3-typeshed python3-yaml python3-systemd
+          python3-psutil python3-pytest python3-rpm python3-typeshed
+          python3-yaml python3-systemd
+      - name: Install python3-pyqt5 on non-jammy (to avoid false positives)
+        run: >
+          . /etc/os-release &&
+          if test "${VERSION_CODENAME-}" != jammy; then
+            apt-get install --no-install-recommends --yes python3-pyqt5;
+          fi
       # python3-zstandard is not available on ubuntu:jammy
       - name: Install optional dependencies
         run: >

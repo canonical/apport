@@ -30,7 +30,7 @@ try:
     gi.require_version("GdkX11", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
-    from gi.repository import GdkX11, GLib, Gtk, Wnck
+    from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
     sys.stderr.write(f"Cannot start: {str(error)}\n")
@@ -60,7 +60,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         assert widget is not None
         return widget
 
-    def __init__(self, argv: list[str]):
+    def __init__(self, argv: list[str]) -> None:
         apport.ui.UserInterface.__init__(self, argv)
 
         # load UI
@@ -82,9 +82,9 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.spinner = self.add_spinner_over_treeview(self.w("details_overlay"))
 
         self.argv = argv
-        self.md = None
+        self.md: Gtk.MessageDialog | None = None
 
-        self.desktop_info = None
+        self.desktop_info: dict[str, str] | None = None
         self.allowed_to_report = True
         self.collect_called = False
 
@@ -93,7 +93,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     #
 
     @staticmethod
-    def add_spinner_over_treeview(overlay):
+    def add_spinner_over_treeview(overlay: Gtk.Overlay) -> Gtk.Spinner:
         """Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
         centered on top."""
         # TODO handle the expose event of the spinner so that we can draw on
@@ -137,7 +137,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.tree_model.set_value(valiter, 0, _("(binary data)"))
 
-    def get_system_application_title(self):
+    def get_system_application_title(self) -> str:
         """Get dialog title for a non-.desktop application.
 
         If the system application was started from the console, assume a
@@ -165,7 +165,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             )
         return t
 
-    def setup_bug_report(self):
+    def setup_bug_report(self) -> None:
         # This is a bug generated through `apport-bug $package`, or
         # `apport-collect $id`.
         assert self.report
@@ -185,7 +185,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w("dont_send_button").show()
         self.w("continue_button").set_label(_("Send"))
 
-    def set_modal_for(self, xid):
+    def set_modal_for(self, xid: int) -> None:
         gdk_window = self.w("dialog_crash_new")
         gdk_window.realize()
         gdk_window = gdk_window.get_window()
@@ -410,7 +410,13 @@ class GTKUserInterface(apport.ui.UserInterface):
         Gtk.main()
         return return_value
 
-    def _ui_message_dialog(self, title, text, _type, buttons=Gtk.ButtonsType.CLOSE):
+    def _ui_message_dialog(
+        self,
+        title: str,
+        text: str,
+        _type: Gtk.MessageType,
+        buttons: Gtk.ButtonsType = Gtk.ButtonsType.CLOSE,
+    ) -> bool:
         self.md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if "http://" in text or "https://" in text:
             self.md.set_markup(text_to_markup(text))
@@ -425,16 +431,16 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.md = None
         return result
 
-    def ui_info_message(self, title, text):
+    def ui_info_message(self, title: str, text: str) -> None:
         self._ui_message_dialog(title, text, Gtk.MessageType.INFO)
 
-    def ui_error_message(self, title, text):
+    def ui_error_message(self, title: str, text: str) -> None:
         self._ui_message_dialog(title, text, Gtk.MessageType.ERROR)
 
-    def ui_shutdown(self):
+    def ui_shutdown(self) -> None:
         Gtk.main_quit()
 
-    def ui_start_upload_progress(self):
+    def ui_start_upload_progress(self) -> None:
         """Open a window with an definite progress bar, telling the user to
         wait while debug information is being uploaded."""
 
@@ -458,14 +464,14 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_stop_upload_progress(self):
+    def ui_stop_upload_progress(self) -> None:
         """Close debug data upload progress window."""
 
         self.w("window_report_upload").hide()
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_start_info_collection_progress(self):
+    def ui_start_info_collection_progress(self) -> None:
         # show a spinner if we already have the main window
         if self.w("dialog_crash_new").get_property("visible"):
             self.spinner.show()
@@ -478,7 +484,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_pulse_info_collection_progress(self):
+    def ui_pulse_info_collection_progress(self) -> None:
         if self.w("window_information_collection").get_property("visible"):
             self.w("progressbar_information_collection").pulse()
 
@@ -486,7 +492,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_stop_info_collection_progress(self):
+    def ui_stop_info_collection_progress(self) -> None:
         if self.w("window_information_collection").get_property("visible"):
             self.w("window_information_collection").hide()
         else:
@@ -496,7 +502,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    def ui_question_yesno(self, text):
+    def ui_question_yesno(self, text: str) -> bool | None:
         """Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -511,7 +517,9 @@ class GTKUserInterface(apport.ui.UserInterface):
             return False
         return None
 
-    def ui_question_choice(self, text, options, multiple):
+    def ui_question_choice(
+        self, text: str, options: list[str], multiple: bool
+    ) -> list[int] | None:
         """Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -554,7 +562,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             index += 1
         return result
 
-    def ui_question_file(self, text):
+    def ui_question_file(self, text: str) -> str | None:
         """Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
@@ -578,7 +586,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return None
 
     @staticmethod
-    def _get_terminal():
+    def _get_terminal() -> str | None:
         terminals = [
             "x-terminal-emulator",
             "gnome-terminal",
@@ -593,10 +601,10 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return program
         return None
 
-    def ui_has_terminal(self):
+    def ui_has_terminal(self) -> bool:
         return have_display and self._get_terminal() is not None
 
-    def ui_run_terminal(self, command):
+    def ui_run_terminal(self, command: str) -> None:
         program = self._get_terminal()
         assert program is not None
         subprocess.call([program, "-e", command])
@@ -605,7 +613,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     # Event handlers
     #
 
-    def on_show_details_clicked(self, widget):
+    def on_show_details_clicked(self, widget: Gtk.Button) -> bool:
         sw = self.w("details_scrolledwindow")
         if sw.get_property("visible"):
             self.w("dialog_crash_new").set_resizable(False)
@@ -623,7 +631,9 @@ class GTKUserInterface(apport.ui.UserInterface):
                 )
         return True
 
-    def on_progress_window_close_event(self, widget, event=None):
+    def on_progress_window_close_event(
+        self, widget: Gtk.Widget, event: Gdk.Event
+    ) -> None:
         # pylint: disable=unused-argument
         self.w("window_information_collection").hide()
         self.w("window_report_upload").hide()

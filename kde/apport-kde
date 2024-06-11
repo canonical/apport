@@ -369,7 +369,7 @@ class UserPassDialog(Dialog):
 class MainUserInterface(apport.ui.UserInterface):
     """The main user interface presented to the user"""
 
-    def __init__(self, argv: list[str]):
+    def __init__(self, argv: list[str]) -> None:
         apport.ui.UserInterface.__init__(self, argv)
         self.ui_data_path = os.path.dirname(argv[0])
         # Help unit tests get at the dialog.
@@ -437,13 +437,13 @@ class MainUserInterface(apport.ui.UserInterface):
             return_value.ignore = True
         return return_value
 
-    def ui_info_message(self, title, text):
+    def ui_info_message(self, title: str, text: str) -> None:
         QMessageBox.information(None, _(title), _(text))
 
-    def ui_error_message(self, title, text):
+    def ui_error_message(self, title: str, text: str) -> None:
         QMessageBox.information(None, _(title), _(text))
 
-    def ui_start_info_collection_progress(self):
+    def ui_start_info_collection_progress(self) -> None:
         # show a spinner if we already have the main window
         if self.dialog and self.dialog.isVisible():
             rect = self.dialog.spinner.parent().rect()
@@ -471,14 +471,14 @@ class MainUserInterface(apport.ui.UserInterface):
 
         QApplication.processEvents()
 
-    def ui_pulse_info_collection_progress(self):
+    def ui_pulse_info_collection_progress(self) -> None:
         if self.progress:
             self.progress.set()
         # for a spinner we just need to handle events
         QApplication.processEvents()
 
     @staticmethod
-    def _get_terminal():
+    def _get_terminal() -> str | None:
         terminals = ["x-terminal-emulator", "konsole", "xterm"]
 
         for terminal in terminals:
@@ -487,10 +487,10 @@ class MainUserInterface(apport.ui.UserInterface):
                 return program
         return None
 
-    def ui_has_terminal(self):
+    def ui_has_terminal(self) -> bool:
         return self._get_terminal() is not None
 
-    def ui_run_terminal(self, command):
+    def ui_run_terminal(self, command: str) -> None:
         program = self._get_terminal()
         assert program is not None
         subprocess.call([program, "-e", command])
@@ -506,7 +506,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         QApplication.processEvents()
 
-    def ui_start_upload_progress(self):
+    def ui_start_upload_progress(self) -> None:
         self.progress = ProgressDialog(
             self.ui_data_path,
             _("Uploading Problem Information"),
@@ -530,7 +530,7 @@ class MainUserInterface(apport.ui.UserInterface):
         assert self.progress
         self.progress.hide()
 
-    def ui_question_yesno(self, text):
+    def ui_question_yesno(self, text: str) -> bool | None:
         response = QMessageBox.question(
             None, "", text, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
         )
@@ -540,7 +540,9 @@ class MainUserInterface(apport.ui.UserInterface):
             return False
         return None
 
-    def ui_question_choice(self, text, options, multiple):
+    def ui_question_choice(
+        self, text: str, options: list[str], multiple: bool
+    ) -> list[int] | None:
         """Show a question with predefined choices.
 
         @options is a list of strings to present.
