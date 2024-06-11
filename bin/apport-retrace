@@ -687,7 +687,7 @@ Thank you for your understanding, and sorry for the inconvenience!
         elif options.output == "-":
             report.write(sys.stdout.detach())
         else:
-            with open(options.report, "wb") as out:
+            with open(options.output or options.report, "wb") as out:
                 report.write(out)
 
 
