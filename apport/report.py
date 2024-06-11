@@ -1914,12 +1914,11 @@ class Report(problem_report.ProblemReport):
                 # env settings need to be modified for gdb in a sandbox
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
+                    "PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
                     "GCONV_PATH": f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv",
                 }
-                command.insert(
-                    0, f"{gdb_sandbox}/lib/{native_multiarch}/ld-linux-x86-64.so.2"
-                )
+                command[:0] = ["ld-linux-x86-64.so.2"]
                 command += ["--ex", f"set data-directory {gdb_sandbox}/usr/share/gdb"]
             if not os.path.exists(sandbox + executable):
                 if executable.startswith("/usr"):
