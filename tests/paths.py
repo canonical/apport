@@ -29,6 +29,11 @@ def get_data_directory(local_path: str | None = None) -> pathlib.Path:
     return pathlib.Path("/usr/share/apport")
 
 
+def get_test_data_directory() -> pathlib.Path:
+    """Return absolute path for apport's tests/data directory."""
+    return pathlib.Path(__file__).absolute().parent / "data"
+
+
 def is_local_source_directory() -> bool:
     """Return True if the current working directory is the source directory.
 
