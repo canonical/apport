@@ -20,7 +20,6 @@ jobs:
         container:
           - debian:testing-slim
           - ubuntu:jammy
-          - ubuntu:mantic
           - ubuntu:noble
     container:
       image: ${{ matrix.container }}
@@ -52,7 +51,6 @@ jobs:
           - debian:bookworm-slim
           - debian:testing-slim
           - ubuntu:jammy
-          - ubuntu:mantic
           - ubuntu:noble
     container:
       image: ${{ matrix.container }}
@@ -142,7 +140,6 @@ jobs:
       matrix:
         container:
           - ubuntu:jammy
-          - ubuntu:mantic
           - ubuntu:noble
     container:
       image: ${{ matrix.container }}
@@ -175,7 +172,6 @@ jobs:
       matrix:
         container:
           - ubuntu:jammy
-          - ubuntu:mantic
           - ubuntu:noble
     container:
       image: ${{ matrix.container }}
