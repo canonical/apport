@@ -86,7 +86,7 @@ jobs:
       - name: Run unit and integration tests
         run: >
           python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
-          tests/unit/ tests/integration/
+          --durations=0 tests/unit/ tests/integration/
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
@@ -126,7 +126,7 @@ jobs:
           && cp -r tests "$WORKDIR"
           && cd "$WORKDIR"
           && python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
-          tests/unit/ tests/integration/
+          --durations=0 tests/unit/ tests/integration/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Upload coverage
@@ -161,7 +161,7 @@ jobs:
       - name: Run all tests (to check if they are skipped or succeed)
         run: >
           SKIP_ONLINE_TESTS=1 python3 -m pytest -ra --cov=$(pwd) --cov-branch
-          --cov-report=xml tests/
+          --cov-report=xml --durations=0 tests/
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
@@ -208,7 +208,7 @@ jobs:
           GDK_BACKEND: x11
         run: >
           xvfb-run python3 -m pytest -ra --cov=$(pwd) --cov-branch
-          --cov-report=xml tests/system/
+          --cov-report=xml --durations=0 tests/system/
       - name: Stop D-Bus daemon
         run: kill $(cat /run/dbus/pid)
       - name: Upload coverage
@@ -257,7 +257,7 @@ jobs:
           && cp -r tests "$WORKDIR"
           && cd "$WORKDIR"
           && sudo xvfb-run python3 -m pytest -ra --cov=$(pwd) --cov-branch
-          --cov-report=xml tests/system/
+          --cov-report=xml --durations=0 tests/system/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Upload coverage
