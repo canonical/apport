@@ -133,3 +133,25 @@ Components: main
                 "http://security.ubuntu.com/ubuntu/",
             ],
         )
+
+    @unittest.mock.patch.object(impl, "_get_file2pkg_mapping")
+    @unittest.mock.patch.object(impl, "_save_contents_mapping", MagicMock())
+    def test_get_file_package_uninstalled_usrmerge(
+        self, _get_file2pkg_mapping_mock: MagicMock
+    ) -> None:
+        """get_file_package() on uninstalled usrmerge packages."""
+        # Data from Ubuntu 24.04 (noble)
+        _get_file2pkg_mapping_mock.return_value = {
+            b"usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": b"libc6",
+            b"usr/lib/x86_64-linux-gnu/libc.so.6": b"libc6",
+            b"usr/libx32/libc.so.6": b"libc6-x32",
+        }
+
+        pkg = impl.get_file_package(
+            "/lib/x86_64-linux-gnu/libc.so.6", True, "/map_cachedir", arch="amd64"
+        )
+
+        self.assertEqual(pkg, "libc6")
+        _get_file2pkg_mapping_mock.assert_called_with(
+            "/map_cachedir", impl.get_distro_codename(), "amd64"
+        )

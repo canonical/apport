@@ -3,6 +3,7 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import glob
 import gzip
 import os
 import pathlib
@@ -161,6 +162,12 @@ class T(unittest.TestCase):
         self.assertEqual(impl.get_file_package("/usr/bin/cat"), "coreutils")
         self.assertEqual(impl.get_file_package("/etc/pam.conf"), "libpam-runtime")
         self.assertIsNone(impl.get_file_package("/nonexisting"))
+
+    def test_get_file_package_libc_so(self) -> None:
+        """get_file_package() on libc.so.6."""
+        libc_so = sorted(glob.glob("/lib/*/libc.so.6"))
+        self.assertIsNotNone(libc_so)
+        self.assertEqual(impl.get_file_package(libc_so[-1]), "libc6")
 
     def test_get_file_package_uninstalled(self):
         """get_file_package() on uninstalled packages."""
