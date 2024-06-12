@@ -58,6 +58,10 @@ jobs:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
+      - name: Sanitize container name (for artifact name)
+        run: |
+          container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
+          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
       - name: Install dependencies
         run: >
           apt-get update
@@ -83,14 +87,11 @@ jobs:
         run: >
           python3 -m pytest -ra --cov=$(pwd) --cov-branch --cov-report=xml
           tests/unit/ tests/integration/
-      - name: Install additional dependencies for Codecov
-        run: apt-get install --no-install-recommends --yes curl gpg gpg-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml,./coverage-setup.xml
+          name: coverage-${{ env.JOB }}
+          path: ./coverage*.xml
 
   unit-and-integration-installed:
     runs-on: ubuntu-22.04
@@ -128,15 +129,11 @@ jobs:
           tests/unit/ tests/integration/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
-      - name: Install additional dependencies for Codecov
-        run: >
-          sudo apt-get install --no-install-recommends --yes curl gpg gpg-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml,./coverage-setup.xml
+          name: coverage-${{ github.job }}
+          path: ./coverage*.xml
 
   skip:
     runs-on: ubuntu-latest
@@ -150,6 +147,10 @@ jobs:
     container:
       image: ${{ matrix.container }}
     steps:
+      - name: Sanitize container name (for artifact name)
+        run: |
+          container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
+          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
       - name: Install dependencies
         run: >
           apt-get update
@@ -161,14 +162,11 @@ jobs:
         run: >
           SKIP_ONLINE_TESTS=1 python3 -m pytest -ra --cov=$(pwd) --cov-branch
           --cov-report=xml tests/
-      - name: Install additional dependencies for Codecov
-        run: apt-get install --no-install-recommends --yes curl gpg gpg-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml
+          name: coverage-${{ env.JOB }}
+          path: ./coverage.xml
 
   system:
     runs-on: ubuntu-latest
@@ -183,6 +181,10 @@ jobs:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
+      - name: Sanitize container name (for artifact name)
+        run: |
+          container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
+          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
       - name: Enable 'deb-src' URIs in /etc/apt/sources.list
         run: >
           sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
@@ -209,14 +211,11 @@ jobs:
           --cov-report=xml tests/system/
       - name: Stop D-Bus daemon
         run: kill $(cat /run/dbus/pid)
-      - name: Install additional dependencies for Codecov
-        run: apt-get install --no-install-recommends --yes curl gpg gpg-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml
+          name: coverage-${{ env.JOB }}
+          path: ./coverage.xml
 
   system-installed:
     runs-on: ubuntu-22.04
@@ -261,15 +260,11 @@ jobs:
           --cov-report=xml tests/system/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
-      - name: Install additional dependencies for Codecov
-        run: >
-          sudo apt-get install --no-install-recommends --yes curl gpg gpg-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./coverage.xml,./coverage-setup.xml
+          name: coverage-${{ github.job }}
+          path: ./coverage*.xml
 
   woke:
     name: woke
@@ -282,3 +277,22 @@ jobs:
         with:
           # Cause the check to fail on any broke rules
           fail-on-error: true
+
+  upload-to-codecov:
+    if: ${{ always() }}
+    needs:
+      - unit-and-integration
+      - unit-and-integration-installed
+      - skip
+      - system
+      - system-installed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
