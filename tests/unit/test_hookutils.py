@@ -105,9 +105,9 @@ class TestHookutils(unittest.TestCase):
 
     @unittest.mock.patch("subprocess.run")
     @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
-    def test_attach_journal_errors_with_date(self, run_mock):
+    def test_attach_journal_errors_with_date(self, run_mock: MagicMock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
-            args=None, returncode=0, stdout=b"journalctl output", stderr=b""
+            args=MagicMock(), returncode=0, stdout=b"journalctl output", stderr=b""
         )
         now = datetime.datetime.now()
 
@@ -128,9 +128,9 @@ class TestHookutils(unittest.TestCase):
 
     @unittest.mock.patch("subprocess.run")
     @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
-    def test_attach_journal_errors_without_date(self, run_mock):
+    def test_attach_journal_errors_without_date(self, run_mock: MagicMock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
-            args=None, returncode=0, stdout=b"journalctl output", stderr=b""
+            args=MagicMock(), returncode=0, stdout=b"journalctl output", stderr=b""
         )
 
         report = apport.Report()
