@@ -35,6 +35,7 @@ import os
 import pathlib
 import pickle
 import platform
+import re
 import shutil
 import stat
 import subprocess
@@ -136,6 +137,21 @@ def _read_mirror_file(uri: str) -> list[str]:
         line.split("\t", maxsplit=1)[0] for line in lines if line and line[0] != "#"
     ]
     return mirrors
+
+
+def _usr_merge_alternative(path: str) -> str | None:
+    """Determine /usr-merge alternative name.
+
+    With /usr-merge some binaries appear in /usr but their .list file
+    doesn't reflect that. Vice-versa is possible as well. So strip or
+    add the /usr from the path. Return None in case there is no
+    alternative path.
+    """
+    if re.match("^/usr/(bin|lib|lib32|lib64|libx32|sbin)/", path):
+        return path[4:]
+    if re.match("^/(bin|lib|lib32|lib64|libx32|sbin)/", path):
+        return f"/usr{path}"
+    return None
 
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -616,13 +632,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         match = self.__fgrep_files(path, likely_lists)
         if not match:
             match = self.__fgrep_files(path, all_lists)
-        # with usrmerge some binaries appear in usr but their .list file
-        # doesn't reflect that so strip the /usr from the path
-        if not match and path.startswith("/usr"):
-            path = path[4:]
-            match = self.__fgrep_files(path, likely_lists)
-            if not match:
-                match = self.__fgrep_files(path, all_lists)
+        if not match:
+            usrmerge_path = _usr_merge_alternative(path)
+            if usrmerge_path:
+                match = self.__fgrep_files(usrmerge_path, likely_lists)
+                if not match:
+                    match = self.__fgrep_files(usrmerge_path, all_lists)
         return match
 
     def get_file_package(
@@ -1649,11 +1664,12 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if isinstance(file, bytes):
             file = file.decode()
-        if file[0] == "/":
-            file = file[1:]
-        files = [file.encode()]
-        if file.startswith("usr/"):
-            files.append(file[4:].encode())
+        if file[0] != "/":
+            file = f"/{file}"
+        files = [file[1:].encode()]
+        usrmerge_file = _usr_merge_alternative(file)
+        if usrmerge_file:
+            files.append(usrmerge_file[1:].encode())
         for filename in files:
             try:
                 pkg = contents_mapping[filename].decode()
