@@ -9,6 +9,7 @@ import shutil
 import tempfile
 import textwrap
 import unittest
+from unittest.mock import MagicMock
 
 import apport.report
 from apport.crashdb_impl.memory import CrashDatabase
@@ -512,7 +513,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.crashes.check_duplicate(2, self.crashes.download(1)), (0, None)
         )
 
-    def test_check_duplicate_multiple_masters(self):
+    def test_check_duplicate_multiple_masters(self) -> None:
         """check_duplicate() with multiple master bugs
 
         Due to the unavoidable jitter in gdb stack traces, it can happen that a
@@ -525,73 +526,97 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         a = apport.report.Report()
         a["SourcePackage"] = "bash"
         a["Package"] = "bash 5"
-        a.crash_signature = lambda: "/bin/bash:11:read:main"
-        a.crash_signature_addresses = (
-            lambda: "/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"
-        )
-        self.assertEqual(
-            self.crashes.get_comment_url(a, self.crashes.upload(a)),
-            "http://bash.bugs.example.com/5",
-        )
 
         s = apport.report.Report()
         s["SourcePackage"] = "bash"
         s["Package"] = "bash 5"
-        s.crash_signature = lambda: "/bin/bash:11:__getch:read:main"
-        s.crash_signature_addresses = (
-            lambda: "/bin/bash:11:/lib/libc.so+BEEF:/lib/libc.so+123" ":/bin/bash+DEAD"
-        )
-        self.assertEqual(
-            self.crashes.get_comment_url(s, self.crashes.upload(s)),
-            "http://bash.bugs.example.com/6",
-        )
 
         # same addr sig as a, same symbolic sig as s
         b = apport.report.Report()
         b["SourcePackage"] = "bash"
         b["Package"] = "bash 5"
-        b.crash_signature = lambda: "/bin/bash:11:__getch:read:main"
-        b.crash_signature_addresses = (
-            lambda: "/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"
-        )
-        self.assertEqual(
-            self.crashes.get_comment_url(b, self.crashes.upload(b)),
-            "http://bash.bugs.example.com/7",
-        )
 
-        self.crashes.init_duplicate_db(":memory:")
-        self.assertIsNone(self.crashes.check_duplicate(5, a))
-
-        # a and s have slightly different sigs -> no dupe
-        self.assertIsNone(self.crashes.check_duplicate(6, s))
-
-        # now throw the interesting b at it
-        self.assertEqual(self.crashes.check_duplicate(7, b), (5, None))
-
-        # s and b should now be duplicates of a
-        self.assertIsNone(self.crashes.duplicate_of(5))
-        self.assertEqual(self.crashes.duplicate_of(6), 5)
-        self.assertEqual(self.crashes.duplicate_of(7), 5)
-
-        # sig DB should only have a now
-        self.assertEqual(
-            self.crashes.duplicate_db_dump(), {"/bin/bash:11:read:main": (5, None)}
-        )
-
-        # addr DB should have both possible patterns on a
-        # pylint: disable=protected-access
-        self.assertEqual(
-            self.crashes._duplicate_search_address_signature(
-                b.crash_signature_addresses()
+        with (
+            unittest.mock.patch.object(
+                a, "crash_signature", MagicMock(return_value="/bin/bash:11:read:main")
             ),
-            5,
-        )
-        self.assertEqual(
-            self.crashes._duplicate_search_address_signature(
-                s.crash_signature_addresses()
+            unittest.mock.patch.object(
+                a,
+                "crash_signature_addresses",
+                MagicMock(return_value="/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"),
             ),
-            5,
-        )
+            unittest.mock.patch.object(
+                s,
+                "crash_signature",
+                MagicMock(return_value="/bin/bash:11:__getch:read:main"),
+            ),
+            unittest.mock.patch.object(
+                s,
+                "crash_signature_addresses",
+                MagicMock(
+                    return_value="/bin/bash:11:/lib/libc.so+BEEF:/lib/libc.so+123"
+                    ":/bin/bash+DEAD"
+                ),
+            ),
+            unittest.mock.patch.object(
+                b,
+                "crash_signature",
+                MagicMock(return_value="/bin/bash:11:__getch:read:main"),
+            ),
+            unittest.mock.patch.object(
+                b,
+                "crash_signature_addresses",
+                MagicMock(return_value="/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"),
+            ),
+        ):
+            self.assertEqual(
+                self.crashes.get_comment_url(a, self.crashes.upload(a)),
+                "http://bash.bugs.example.com/5",
+            )
+
+            self.assertEqual(
+                self.crashes.get_comment_url(s, self.crashes.upload(s)),
+                "http://bash.bugs.example.com/6",
+            )
+
+            self.assertEqual(
+                self.crashes.get_comment_url(b, self.crashes.upload(b)),
+                "http://bash.bugs.example.com/7",
+            )
+
+            self.crashes.init_duplicate_db(":memory:")
+            self.assertIsNone(self.crashes.check_duplicate(5, a))
+
+            # a and s have slightly different sigs -> no dupe
+            self.assertIsNone(self.crashes.check_duplicate(6, s))
+
+            # now throw the interesting b at it
+            self.assertEqual(self.crashes.check_duplicate(7, b), (5, None))
+
+            # s and b should now be duplicates of a
+            self.assertIsNone(self.crashes.duplicate_of(5))
+            self.assertEqual(self.crashes.duplicate_of(6), 5)
+            self.assertEqual(self.crashes.duplicate_of(7), 5)
+
+            # sig DB should only have a now
+            self.assertEqual(
+                self.crashes.duplicate_db_dump(), {"/bin/bash:11:read:main": (5, None)}
+            )
+
+            # addr DB should have both possible patterns on a
+            # pylint: disable=protected-access
+            self.assertEqual(
+                self.crashes._duplicate_search_address_signature(
+                    b.crash_signature_addresses()
+                ),
+                5,
+            )
+            self.assertEqual(
+                self.crashes._duplicate_search_address_signature(
+                    s.crash_signature_addresses()
+                ),
+                5,
+            )
 
     def test_check_duplicate_reopen(self) -> None:
         """check_duplicate() which calls mark_regression()
