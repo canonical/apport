@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-17 14:42+0200\n"
+"POT-Creation-Date: 2024-06-13 16:28+0200\n"
 "PO-Revision-Date: 2024-03-20 05:21+0000\n"
 "Last-Translator: 爽自由 <coby2023t@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
@@ -77,14 +77,14 @@ msgid ""
 "problem and send a report to the developers."
 msgstr "閣下電腦無足夠可用記憶體供自動分析問題並向開發者傳送報告。"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1864
+#: ../apport/ui.py:459 ../apport/ui.py:1862
 #, python-format
 msgid "Problem in %s"
 msgstr "在 %s 中的問題"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1831 ../apport/ui.py:1837
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
+#: ../apport/ui.py:1829 ../apport/ui.py:1835
 msgid "Invalid problem report"
 msgstr "無效的問題回報"
 
@@ -243,17 +243,17 @@ msgstr "%(prog)s <報告數字>"
 msgid "Specify package name."
 msgstr "指定軟體包名稱。"
 
-#: ../apport/ui.py:995 ../apport/ui.py:1125
+#: ../apport/ui.py:995 ../apport/ui.py:1123
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "加入額外標籤至回報中。可以多次分別指定。"
 
-#: ../apport/ui.py:1033
+#: ../apport/ui.py:1031
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%(prog)s [選項] [symptom|pid|package|program path|.apport/.crash 檔]"
 
-#: ../apport/ui.py:1044
+#: ../apport/ui.py:1042
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -262,21 +262,21 @@ msgstr ""
 "啟動為臭蟲歸檔模式。需要 --package 或再加上 --pid，或是只需 --pid。若兩者都未"
 "給予，顯示已知徵狀列表。(暗示若只有給予單一參數。)"
 
-#: ../apport/ui.py:1053
+#: ../apport/ui.py:1051
 msgid "Click a window as a target for filing a problem report."
 msgstr "請點擊要作為問題報告目標發送的視窗。"
 
-#: ../apport/ui.py:1061
+#: ../apport/ui.py:1059
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "以臭蟲更新模式啟動。可以加上選用的參數 --package。"
 
-#: ../apport/ui.py:1069
+#: ../apport/ui.py:1067
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr "建立關於症狀的錯誤報告。(暗示是否只要提供症狀名稱作為引數。)"
 
-#: ../apport/ui.py:1078
+#: ../apport/ui.py:1076
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -284,7 +284,7 @@ msgstr ""
 "在 --file-bug 模式中指定軟體包名稱。若指定 --pid 則前者不加亦可。(表示是否只"
 "要提供 pid 為引數。)"
 
-#: ../apport/ui.py:1089
+#: ../apport/ui.py:1087
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -293,11 +293,11 @@ msgstr ""
 "在 --file-bug 模式中指定一個正在執行中的程式。如果有指定，該臭蟲回報將包含更"
 "多資訊。(表示是否只要提供 pid 為引數。)"
 
-#: ../apport/ui.py:1097
+#: ../apport/ui.py:1095
 msgid "The provided pid is a hanging application."
 msgstr "提供的 pid 是懸凍的應用程式。"
 
-#: ../apport/ui.py:1105
+#: ../apport/ui.py:1103
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -306,7 +306,7 @@ msgstr ""
 "從特定的 .apport 或 .crash 檔案來回報當掉情形，代替等待中的 %s。（暗示若特定"
 "檔案是唯一給予的參數。）"
 
-#: ../apport/ui.py:1115
+#: ../apport/ui.py:1113
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -315,44 +315,44 @@ msgstr ""
 "在臭蟲歸檔模式中，收集的資訊將儲存在檔案中而不是將它回報。這個檔案可以稍後從"
 "不同機器回報。"
 
-#: ../apport/ui.py:1131
+#: ../apport/ui.py:1129
 msgid "Print the Apport version number."
 msgstr "列印 Apport 版本號碼。"
 
-#: ../apport/ui.py:1292
+#: ../apport/ui.py:1290
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "這會在終端機視窗中啟動 apport-retrace 以檢查程式當掉原因。"
 
-#: ../apport/ui.py:1296
+#: ../apport/ui.py:1294
 msgid "Run gdb session"
 msgstr "執行 gdb 作業階段"
 
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1295
 msgid "Run gdb session without downloading debug symbols"
 msgstr "執行 gdb 作業階段而不下載除錯符號"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1299
+#: ../apport/ui.py:1297
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "以完整的符號堆疊追蹤來更新 %s"
 
-#: ../apport/ui.py:1353
+#: ../apport/ui.py:1351
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr "儲存回報當機狀態時發生錯誤，無法設定自動或永不回報模式。"
 
-#: ../apport/ui.py:1357
+#: ../apport/ui.py:1355
 msgid "Can't remember send report status settings"
 msgstr "無法儲存「傳送回報狀態」設定"
 
-#: ../apport/ui.py:1435 ../apport/ui.py:1448
+#: ../apport/ui.py:1433 ../apport/ui.py:1446
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "此問題報告用於不再安裝的程式。"
 
-#: ../apport/ui.py:1468
+#: ../apport/ui.py:1466
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -361,40 +361,40 @@ msgstr "發生問題的程式 %s 自上次遭遇當掉之後已有變動。"
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
+#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
 msgid "This problem report is damaged and cannot be processed."
 msgstr "此問題報告已損壞故無法處理。"
 
-#: ../apport/ui.py:1533
+#: ../apport/ui.py:1531
 msgid "This report is about a package that is not installed."
 msgstr "這個是關於未安裝軟體包的回報。"
 
-#: ../apport/ui.py:1540
+#: ../apport/ui.py:1538
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "試圖處理問題回報時遭遇錯誤："
 
-#: ../apport/ui.py:1557
+#: ../apport/ui.py:1555
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr "此應用程式您安裝了兩個版本，您想對哪一個版本回報臭蟲？"
 
-#: ../apport/ui.py:1562
+#: ../apport/ui.py:1560
 #, python-format
 msgid "%s snap"
 msgstr "%s snap"
 
-#: ../apport/ui.py:1563
+#: ../apport/ui.py:1561
 #, python-format
 msgid "%s deb package"
 msgstr "%s deb 套件包"
 
-#: ../apport/ui.py:1601
+#: ../apport/ui.py:1599
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr "%s 的 snap 是由 %s 發行。可透過 %s 連絡他們尋找協助。"
 
-#: ../apport/ui.py:1606
+#: ../apport/ui.py:1604
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -403,37 +403,37 @@ msgstr ""
 "%s 是由 %s 所發布的 snap 。開發者沒有提供聯絡地址；請前往論壇 https://forum."
 "snapcraft.io/ 尋求協助。"
 
-#: ../apport/ui.py:1692
+#: ../apport/ui.py:1690
 msgid "Could not determine the package or source package name."
 msgstr "無法決定軟體包或原始碼軟體包名稱。"
 
-#: ../apport/ui.py:1723
+#: ../apport/ui.py:1721
 msgid "Unable to start web browser"
 msgstr "無法啟動網頁瀏覽器"
 
-#: ../apport/ui.py:1724
+#: ../apport/ui.py:1722
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "無法啟動網頁瀏覽器以開啟 %s。"
 
-#: ../apport/ui.py:1793
+#: ../apport/ui.py:1791
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "無法連接到當機資料庫，請檢查您的網路連線。"
 
-#: ../apport/ui.py:1796
+#: ../apport/ui.py:1794
 msgid "Network problem"
 msgstr "網路問題"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1820
 msgid "Memory exhaustion"
 msgstr "記憶體耗盡"
 
-#: ../apport/ui.py:1824
+#: ../apport/ui.py:1822
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "您的系統沒有足夠的記憶體來處理此份當機報告。"
 
-#: ../apport/ui.py:1869
+#: ../apport/ui.py:1867
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -444,11 +444,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1923 ../apport/ui.py:1935
+#: ../apport/ui.py:1921 ../apport/ui.py:1933
 msgid "Problem already known"
 msgstr "已知問題"
 
-#: ../apport/ui.py:1925
+#: ../apport/ui.py:1923
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -457,7 +457,7 @@ msgstr ""
 "此問題在網路瀏覽器顯示之臭蟲報告中已回報。請檢查您是否能新增任何可能對開發者"
 "有幫助的進一步資訊。"
 
-#: ../apport/ui.py:1936
+#: ../apport/ui.py:1934
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "此問題已經回報給開發者。感謝您！"
 
@@ -479,11 +479,11 @@ msgstr "請選擇 (%s):"
 msgid "(%i bytes)"
 msgstr "(%i 位元組)"
 
-#: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:416
+#: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:414
 msgid "(binary data)"
 msgstr "（二進制資料）"
 
-#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:208
+#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:205
 msgid "Send problem report to the developers?"
 msgstr "是否傳送問題報告予開發者？"
 
@@ -534,7 +534,7 @@ msgstr "確認(&C)"
 msgid "Error: %s"
 msgstr "錯誤：%s"
 
-#: ../bin/apport-cli.py:271 ../kde/apport-kde.py:464
+#: ../bin/apport-cli.py:271 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
 msgstr "正在收集問題資訊"
 
@@ -546,7 +546,7 @@ msgstr ""
 "收集的資訊可傳送予開發者以改進此\n"
 "應用程式。這可能需要數分鐘。"
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:514
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
 msgid "Uploading problem information"
 msgstr "正在上傳問題資訊"
 
@@ -827,21 +827,21 @@ msgstr "很抱歉，應用程式 %s 已無預期停止。"
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "非常抱歉，%s 已無預警關閉。"
 
-#: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:220 ../kde/apport-kde.py:269
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "非常抱歉， %s 遭遇內部錯誤。"
 
-#: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:213
 msgid "Send"
 msgstr "傳送"
 
 #: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "顯示詳細資料"
 
-#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:261 ../kde/apport-kde.py:276
 msgid "Continue"
 msgstr "繼續"
 
@@ -855,38 +855,38 @@ msgstr "應用程式 %s 已停止回應。"
 msgid "The program \"%s\" has stopped responding."
 msgstr "程式「%s」已停止回應。"
 
-#: ../gtk/apport-gtk.py:265 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:265 ../kde/apport-kde.py:228
 #, python-format
 msgid "Package: %s"
 msgstr "軟體包：%s"
 
-#: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:235
 msgid "Sorry, a problem occurred while installing software."
 msgstr "非常抱歉，於安裝軟體時遭遇問題。"
 
-#: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:243
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "應用程式 %s 已遭遇某內部錯誤。"
 
-#: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "應用程式 %s 已無預警關閉。"
 
-#: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:273
 msgid "If you notice further problems, try restarting the computer."
 msgstr "若您之後仍發現問題，請嘗試重新啟動電腦。"
 
-#: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:278
 msgid "Ignore future problems of this type"
 msgstr "忽略未來發生的此類型問題"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "隱藏詳細資料"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:383 ../kde/apport-kde.py:553
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
 msgid "Apport"
 msgstr "Apport"
 
@@ -940,7 +940,7 @@ msgstr "正在收集資訊以幫助開發者修正您報告的問題。"
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>正在上傳問題資訊</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:516
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -950,32 +950,32 @@ msgstr "正將收集到的資訊傳送至臭蟲追蹤系統。這可能需要數
 msgid "Apport crash file"
 msgstr "Apport 當機檔案"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:264
 msgid "Leave Closed"
 msgstr "維持關閉"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:434
+#: ../kde/apport-kde.py:265 ../kde/apport-kde.py:432
 msgid "Relaunch"
 msgstr "重新啟動"
 
-#: ../kde/apport-kde.py:360
+#: ../kde/apport-kde.py:358
 msgid "Username:"
 msgstr "使用者名稱："
 
-#: ../kde/apport-kde.py:363
+#: ../kde/apport-kde.py:361
 msgid "Password:"
 msgstr "密碼："
 
-#: ../kde/apport-kde.py:463
+#: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
 msgstr "正收集問題資訊"
 
-#: ../kde/apport-kde.py:466
+#: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr "收集之資訊會傳送予開發者以改善該應用程式。此舉或需數分鐘。"
 
-#: ../kde/apport-kde.py:513
+#: ../kde/apport-kde.py:511
 msgid "Uploading Problem Information"
 msgstr "正上傳問題資訊"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-17 14:42+0200\n"
+"POT-Creation-Date: 2024-06-13 16:28+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Khmer <km@li.org>\n"
@@ -76,14 +76,14 @@ msgstr ""
 "កម្មវិធី​កុំព្យូទ័រ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ ដើម្បី​ធ្វើវិភាគ​ដោយស្វ័យប្រវត្តិ ហើយ​ផ្ញើ​របាយការណ៍​ទៅ​"
 "អ្នក​អភិវឌ្ឍន៍ ។"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1864
+#: ../apport/ui.py:459 ../apport/ui.py:1862
 #, python-format
 msgid "Problem in %s"
 msgstr "បញ្ហា​នៅ​ក្នុង %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1691
-#: ../apport/ui.py:1831 ../apport/ui.py:1837
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
+#: ../apport/ui.py:1829 ../apport/ui.py:1835
 msgid "Invalid problem report"
 msgstr "របាយការណ៍​បញ្ហា​មិន​ត្រឹមត្រូវ"
 
@@ -245,17 +245,17 @@ msgstr ""
 msgid "Specify package name."
 msgstr "បញ្ជាក់​ឈ្មោះ​កញ្ចប់ ។"
 
-#: ../apport/ui.py:995 ../apport/ui.py:1125
+#: ../apport/ui.py:995 ../apport/ui.py:1123
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "បន្ថែម​ស្លាក​​ខាងក្រៅ​ដើម្បី​រាយការណ៍ ។ អាច​ត្រូវ​បាន​បញ្ជាក់​ពេលវេលា​ច្រើន ។"
 
-#: ../apport/ui.py:1033
+#: ../apport/ui.py:1031
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:1044
+#: ../apport/ui.py:1042
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -265,22 +265,22 @@ msgstr ""
 "ប្រសិនបើ​ មិន​ត្រូវ​​បាន​ផ្ដល់​ឲ្យ​ទេ​នោះ បង្ហាញ​បញ្ជី​សញ្ញា​ដែល​មិន​ស្គាល់ ។  (បាន​បញ្ជាក់ ប្រសិនបើ​អាគុយម៉ង់​ត្រូវ​"
 "បាន​ផ្ដល់​ឲ្យ ។)"
 
-#: ../apport/ui.py:1053
+#: ../apport/ui.py:1051
 msgid "Click a window as a target for filing a problem report."
 msgstr "ចុច​លើ​បង្អួច​ដែល​ជា​គោលដៅ​សម្រាប់​បំពេញ​របាយការណ៍​អំពី​បញ្ហា ។"
 
-#: ../apport/ui.py:1061
+#: ../apport/ui.py:1059
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "ចាប់ផ្ដើម​ជា​របៀប​​ការ​ធ្វើ​បច្ចុប្បន្នភាព​កំហុស ។ អាច​យក​កញ្ចប់ --ជា​ជម្រើស ។"
 
-#: ../apport/ui.py:1069
+#: ../apport/ui.py:1067
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
 "ឯកសារ​របាយការណ៍​កំហុស​អំពី​សញ្ញា ។ (បាន​បញ្ជាក់ ប្រសិនបើ​ឈ្មោះ​សញ្ញា​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:1078
+#: ../apport/ui.py:1076
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -288,7 +288,7 @@ msgstr ""
 "បញ្ជាក់​ឈ្មោះ​កញ្ចប់​ជា​របៀប --កំហុស-ឯកសារ ។ វា​គឺ​ជា​ជម្រើស ប្រសិនបើ --pid ត្រូវ​បាន​បញ្ជាក់ ។ (បាន​"
 "បញ្ជាក់ ប្រសិនបើ​​ឈ្មោះ​កញ្ចប់​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:1089
+#: ../apport/ui.py:1087
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -297,11 +297,11 @@ msgstr ""
 "បញ្ជាក់​ការ​ដំណើរការ​កម្មវិធី​ជា​របៀប --កំហុស-ឯកសារ ។ ប្រសិនបើ វា​ត្រូវ​បាន​បញ្ជាក់ របាយការណ៍​កំហុស​នឹង​"
 "មាន​ព័ត៌មាន​បន្ថែម ។  (បាន​បញ្ជាក់ ប្រសិនបើ pid ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:1097
+#: ../apport/ui.py:1095
 msgid "The provided pid is a hanging application."
 msgstr "pid ដែល​បាន​ផ្ដល់​ជា​កម្ម​វិធី​ដែល​បាន​ព្យួរ។"
 
-#: ../apport/ui.py:1105
+#: ../apport/ui.py:1103
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -310,7 +310,7 @@ msgstr ""
 "របាយការណ៍​គាំង​​ដែល​បាន​ផ្ដល់​ពី​ឯកសារ .apport ឬ .crash ជំនួស​នៅ​ក្នុង%s. ( បាន​បញ្ជាក់​ ប្រសិនបើ​"
 "ឯកសារ​ត្រូវ​បាន​ផ្ដល់​​តែ​អាគុយម៉ង់ ។)"
 
-#: ../apport/ui.py:1115
+#: ../apport/ui.py:1113
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -319,44 +319,44 @@ msgstr ""
 "ជា​របៀប​បំពេញ​កំហុស រក្សាទុក​ព័ត៌មាន​ដែល​បាន​ប្រមូល​នៅ​ក្នុង​ឯកសារ​​ជំនួស​ការ​ធ្វើ​របាយការណ៍​​អំពី​វា ។ ឯកសារ​នេះ​​"
 "អាច​ត្រូវ​បាន​​រាយការណ៍​​ក្រោយ​ពេល​ពី​ម៉ាស៊ីន​ខុសគ្នា ។"
 
-#: ../apport/ui.py:1131
+#: ../apport/ui.py:1129
 msgid "Print the Apport version number."
 msgstr "បោះពុម្ព​លេខ​កំណែ Apport ។"
 
-#: ../apport/ui.py:1292
+#: ../apport/ui.py:1290
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "វា​នឹង​ចាប់ផ្ដើម apport-retrace នៅ​ក្នុង​បង្អួយ​ស្ថានីយ ដើម្បី​ត្រួតពិនិត្យ​​ភាគ​គាំង ។"
 
-#: ../apport/ui.py:1296
+#: ../apport/ui.py:1294
 msgid "Run gdb session"
 msgstr "រត់​សម័យ  gdb"
 
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1295
 msgid "Run gdb session without downloading debug symbols"
 msgstr "រត់​សម័យ gdb ដោយ​មិន​ទាញ​យក​និមិត្ត​សញ្ញា​បំបាត់​កំហុស"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1299
+#: ../apport/ui.py:1297
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "ធ្វើ​បច្ចុប្បន្ន %s ជា​មួយ​ដាន​​ជា​​​និមិត្ត​សញ្ញា​ពេញលេញ"
 
-#: ../apport/ui.py:1353
+#: ../apport/ui.py:1351
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 
-#: ../apport/ui.py:1357
+#: ../apport/ui.py:1355
 msgid "Can't remember send report status settings"
 msgstr ""
 
-#: ../apport/ui.py:1435 ../apport/ui.py:1448
+#: ../apport/ui.py:1433 ../apport/ui.py:1446
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "របាយការណ៍​អំពី​បញ្ហា​នេះ​អនុវត្ត​កម្មវិធី​ដែល​មិន​ត្រូវ​បាន​ដំឡើង​ទៀត​ឡើយ ។"
 
-#: ../apport/ui.py:1468
+#: ../apport/ui.py:1466
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -365,77 +365,77 @@ msgstr "បញ្ហា​បានកើត​ឡើង​ជា​មួយ​
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1835
+#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
 msgid "This problem report is damaged and cannot be processed."
 msgstr "របាយការណ៍​អំពី​បង្ហាញ​នេះ​ខូច ហើយ​មិន​អាច​ធ្វើ​បន្ត​បាន​ទេ ។"
 
-#: ../apport/ui.py:1533
+#: ../apport/ui.py:1531
 msgid "This report is about a package that is not installed."
 msgstr ""
 
-#: ../apport/ui.py:1540
+#: ../apport/ui.py:1538
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "កំហុស​មួយ​បាន​កើត​ឡើង​ នៅ​ពេល​ព្យាយាម​ដំណើរការ​របាយការណ៍​បញ្ហា​នេះ ៖"
 
-#: ../apport/ui.py:1557
+#: ../apport/ui.py:1555
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1562
+#: ../apport/ui.py:1560
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1563
+#: ../apport/ui.py:1561
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1601
+#: ../apport/ui.py:1599
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1606
+#: ../apport/ui.py:1604
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1692
+#: ../apport/ui.py:1690
 msgid "Could not determine the package or source package name."
 msgstr "មិន​អាច​កំណត់​​ ឈ្មោះ​កញ្ចប់​ប្រភព ឬ​កញ្ចប់​បាន​ឡើយ ។"
 
-#: ../apport/ui.py:1723
+#: ../apport/ui.py:1721
 msgid "Unable to start web browser"
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ​បាន​ទេ"
 
-#: ../apport/ui.py:1724
+#: ../apport/ui.py:1722
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ ដើម្បី​បើក %s បាន​ទេ ។"
 
-#: ../apport/ui.py:1793
+#: ../apport/ui.py:1791
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "មិន​អាច​តភ្ជាប់​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង​បាន​ទេ សូម​ពិនិត្យមើល​ការ​តភ្ជាប់​អ៊ីនធឺណិត​របស់​អ្នក ។"
 
-#: ../apport/ui.py:1796
+#: ../apport/ui.py:1794
 msgid "Network problem"
 msgstr "បញ្ហា​បណ្ដាញ"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1820
 msgid "Memory exhaustion"
 msgstr "ការ​ប្រើ​​​អស់​អង្គ​ចងចាំ"
 
-#: ../apport/ui.py:1824
+#: ../apport/ui.py:1822
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "ប្រព័ន្ធ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ ដើម្បី​ដំណើរការ​របាយការណ៍​គាំង​នេះ​ទេ ។"
 
-#: ../apport/ui.py:1869
+#: ../apport/ui.py:1867
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -446,11 +446,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1923 ../apport/ui.py:1935
+#: ../apport/ui.py:1921 ../apport/ui.py:1933
 msgid "Problem already known"
 msgstr "ស្គាល់​​​អំពី​បញ្ហា​ហើយ"
 
-#: ../apport/ui.py:1925
+#: ../apport/ui.py:1923
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -459,7 +459,7 @@ msgstr ""
 "បញ្ហា​នេះ​ត្រូវ​បាន​រាយការណ៍​នៅ​ក្នុង​របាយការណ៍​កំហុស ដែល​បង្ហាញ​នៅ​ក្នុង​កម្មវិធី​រុករក​បណ្ដាញ ។ សូម​ពិនិត្យមើល "
 "ប្រសិនបើ​អ្នក​អាច​បន្ថែម​ព័ត៌មាន​បន្ថែម ​​ដែល​​​អា​ផ្ដល់​ជា​ប្រយោជន៍​សម្រាប់​​អ្នក​អ្នក​អភិវឌ្ឍន៍ ។"
 
-#: ../apport/ui.py:1936
+#: ../apport/ui.py:1934
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "បញ្ហា​នេះ​​អាច​ត្រូវ​បាន​រាយការណ៍​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ។ អរគុណ !"
 
@@ -481,11 +481,11 @@ msgstr "សូម​ជ្រើសរើស (%s) ៖"
 msgid "(%i bytes)"
 msgstr "(%i បៃ)"
 
-#: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:416
+#: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:414
 msgid "(binary data)"
 msgstr "(ទិន្នន័យ​គោល​ពីរ)"
 
-#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:208
+#: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:205
 msgid "Send problem report to the developers?"
 msgstr "ផ្ញើ​​របាយការណ៍​អំពី​បញ្ហា​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ?"
 
@@ -536,7 +536,7 @@ msgstr "អះអាង"
 msgid "Error: %s"
 msgstr "កំហុស ៖ %s"
 
-#: ../bin/apport-cli.py:271 ../kde/apport-kde.py:464
+#: ../bin/apport-cli.py:271 ../kde/apport-kde.py:462
 msgid "Collecting problem information"
 msgstr "ប្រមូល​ព័ត៌មាន​អំពី​បញ្ហា"
 
@@ -548,7 +548,7 @@ msgstr ""
 "ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅ​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង\n"
 " ។ វា​អាច​ចំណាយ​ពេលវេលា​ពីរបី​នាទី ។"
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:514
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
 msgid "Uploading problem information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"
 
@@ -835,21 +835,21 @@ msgstr "សូមទោស, កម្មវិធី %s បាន​បញ្ឈ
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "សូម​ទោស %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក ។"
 
-#: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:163 ../kde/apport-kde.py:220 ../kde/apport-kde.py:269
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "សូម​ទោស %s បាន​ជួប​ប្រទះ​បញ្ហា​ខាង​ក្នុង ។"
 
-#: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:186 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:213
 msgid "Send"
 msgstr "ផ្ញើ"
 
 #: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "បង្ហាញ​សេចក្ដី​លម្អិត"
 
-#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:261 ../kde/apport-kde.py:276
 msgid "Continue"
 msgstr "បន្ត"
 
@@ -863,38 +863,38 @@ msgstr "កម្មវិធី %s បាន​បញ្ឈប់​ការ�
 msgid "The program \"%s\" has stopped responding."
 msgstr "កម្មវិធី \"%s\" បាន​បញ្ឈប់​ការ​ឆ្លើយតប។"
 
-#: ../gtk/apport-gtk.py:265 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:265 ../kde/apport-kde.py:228
 #, python-format
 msgid "Package: %s"
 msgstr "កញ្ចប់ ៖ %s"
 
-#: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:235
 msgid "Sorry, a problem occurred while installing software."
 msgstr "សូម​ទោស បញ្ហា​មួយ​បានកើត​ឡើង​ខណៈ​ពេល​ដំឡើង​កម្មវិធី ។"
 
-#: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:243
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "កម្មវិធី %s មាន​បទពិសោធន៍​កំហុស​ខាងក្រៅ។"
 
-#: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "កម្មវិធី %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក ។"
 
-#: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:308 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:273
 msgid "If you notice further problems, try restarting the computer."
 msgstr "ប្រសិនបើ​អ្នក​កត់​សម្គាល់​បញ្ហា​បន្ថែម ព្យាយាម​ចាប់ផ្ដើម​កុំព្យូទ័រ​ឡើង​វិញ ។"
 
-#: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:311 ../kde/apport-kde.py:278
 msgid "Ignore future problems of this type"
 msgstr "មិន​អើពើ​នឹង​បញ្ហា​នា​ពេល​អនាគត​នៃ​ប្រភេទ​នេះ"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "លាក់​សេចក្ដី​លម្អិត"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:383 ../kde/apport-kde.py:553
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
 msgid "Apport"
 msgstr "Apport"
 
@@ -948,7 +948,7 @@ msgstr "ព័ត៌មាន​កំពុង​ត្រូវ​បាន​
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:516
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -959,27 +959,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "ឯកសារ​គាំង​របស់ Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:264
 msgid "Leave Closed"
 msgstr "ទុក​ឲ្យ​បិទ"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:434
+#: ../kde/apport-kde.py:265 ../kde/apport-kde.py:432
 msgid "Relaunch"
 msgstr "ចាប់ផ្ដើម​ឡើង​វិញ"
 
-#: ../kde/apport-kde.py:360
+#: ../kde/apport-kde.py:358
 msgid "Username:"
 msgstr "ឈ្មោះ​អ្នក​ប្រើ ៖"
 
-#: ../kde/apport-kde.py:363
+#: ../kde/apport-kde.py:361
 msgid "Password:"
 msgstr "ពាក្យ​សម្ងាត់ ៖"
 
-#: ../kde/apport-kde.py:463
+#: ../kde/apport-kde.py:461
 msgid "Collecting Problem Information"
 msgstr "ប្រមូល​ព័ត៌មាន​អំពី​បញ្ហា"
 
-#: ../kde/apport-kde.py:466
+#: ../kde/apport-kde.py:464
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -987,6 +987,6 @@ msgstr ""
 "ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង ។ វា​អាច​ចំណាយ​"
 "ពេលវេលា​ពីរបី​នាទី ។"
 
-#: ../kde/apport-kde.py:513
+#: ../kde/apport-kde.py:511
 msgid "Uploading Problem Information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"
