@@ -21,6 +21,7 @@ jobs:
           - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:noble
+          - ubuntu:oracular
     container:
       image: ${{ matrix.container }}
     steps:
@@ -52,6 +53,7 @@ jobs:
           - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:noble
+          - ubuntu:oracular
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -141,6 +143,7 @@ jobs:
         container:
           - ubuntu:jammy
           - ubuntu:noble
+          - ubuntu:oracular
     container:
       image: ${{ matrix.container }}
     steps:
@@ -173,6 +176,7 @@ jobs:
         container:
           - ubuntu:jammy
           - ubuntu:noble
+          - ubuntu:oracular
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
