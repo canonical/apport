@@ -648,7 +648,7 @@ def write_to_proc_sys(path: str, value: str) -> None:
 
 def start_apport() -> None:
     """Start Apport crash handler."""
-    create_directory(apport.fileutils.report_dir, 0o1777)
+    create_directory(apport.fileutils.report_dir, 0o3777)
     write_to_proc_sys(
         "kernel/core_pattern", f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E"
     )
