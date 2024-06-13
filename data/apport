@@ -631,9 +631,13 @@ def check_kernel_crash() -> None:
 
 
 def create_directory(path: str, mode: int) -> None:
-    """Ensure the directory is created with the correct mode."""
-    os.makedirs(path, exist_ok=True)
-    os.chmod(path, mode)
+    """Ensure the directory is created.
+
+    Only set the directory mode if the directory is newly created.
+    """
+    with contextlib.suppress(FileExistsError):
+        os.makedirs(path)
+        os.chmod(path, mode)
 
 
 def write_to_proc_sys(path: str, value: str) -> None:
