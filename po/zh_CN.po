@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-13 16:28+0200\n"
-"PO-Revision-Date: 2022-10-10 02:46+0000\n"
-"Last-Translator: Luke Luo <Unknown>\n"
+"PO-Revision-Date: 2024-04-28 17:19+0000\n"
+"Last-Translator: Mingye Wang <arthur2e5@aosc.xyz>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-06-13 14:36+0000\n"
+"X-Generator: Launchpad (build bbfa2351d9d6a9ddfe262109428f7bf5516e65d1)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -220,18 +220,18 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
-"窗口选项不能在Wayland上使用。\n"
+"不能在Wayland通过窗口选择进程。\n"
 "\n"
 "请找到该窗口的进程ID，然后运行’ubuntu-bug <进程ID>‘。\n"
 "\n"
-"可以通过运行System Monitor应用程序找到进程ID。在Processes选项卡中，滚动直到找"
-"到正确的应用程序。进程ID是ID列中列出的编号。"
+"可以通过运行“系统监视器”程序找到进程ID。在“进程”选项卡中，滚动直到找到正确的"
+"应用程序。进程ID是ID列中列出的编号。"
 
 #: ../apport/ui.py:950
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
-msgstr "在关闭这个消息只后，请点击要报告问题的程序窗口。"
+msgstr "在关闭这个消息之后，请点击要报告问题的程序窗口。"
 
 #: ../apport/ui.py:966 ../apport/ui.py:973
 msgid "xprop failed to determine process ID of the window"
@@ -240,7 +240,7 @@ msgstr "xprop 无法确定窗口的进程 ID"
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <报告编号>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
@@ -254,7 +254,7 @@ msgstr "向报告中添加额外的标记，可多次指定。"
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%(prog)s [选项] [症状|pid|包名|程序路径|.apport/.crash 文件]"
 
 #: ../apport/ui.py:1042
 msgid ""
@@ -320,7 +320,7 @@ msgstr ""
 
 #: ../apport/ui.py:1129
 msgid "Print the Apport version number."
-msgstr "输出 Apport 版本号"
+msgstr "输出 Apport 版本号。"
 
 #: ../apport/ui.py:1290
 msgid ""
@@ -360,7 +360,7 @@ msgstr "这一问题报告适用于不再安装的程序。"
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "自崩溃发生起已更改的程序 %s 出现问题。"
+msgstr "这个问题出现在程序 %s 中。程序在崩溃发生后受到了更改。"
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
@@ -728,7 +728,7 @@ msgstr "确定以附件形式发送这些？[y/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <报告> <目标目录>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
@@ -776,7 +776,7 @@ msgstr "安装包进入沙盒时报告下载/安装进度"
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
-msgstr ""
+msgstr "在valgrind的memcheck工具（用于检测内存泄漏）下运行的可执行文件"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
@@ -906,7 +906,7 @@ msgstr "<big><b>对不起，发生内部错误。</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr "请确保您能记住它"
+msgstr "记住这个选择"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
