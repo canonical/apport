@@ -1905,9 +1905,9 @@ class Report(problem_report.ProblemReport):
             ]
             if gdb_sandbox:
                 ld_lib_path = (
-                    f"{gdb_sandbox}/lib"
                     f":{gdb_sandbox}/lib/{native_multiarch}"
                     f":{gdb_sandbox}/usr/lib/{native_multiarch}"
+                    f"{gdb_sandbox}/lib"
                     f":{gdb_sandbox}/usr/lib"
                 )
                 pyhome = f"{gdb_sandbox}/usr"
