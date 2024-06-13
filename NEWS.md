@@ -1,6 +1,37 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.29.0 (2024-06-13)
+-------------------
+
+### Changed
+
+* remove dependency on python-requests
+* apport:
+  - Ignore container crash reports from systemd-coredump
+    ([LP: #2063349](https://launchpad.net/bugs/2063349))
+  - do not modify permission of existing `/var/crash` or
+    create `/var/crash` with setgid permission (mode 3777)
+    ([LP: #2066995](https://launchpad.net/bugs/2066995))
+
+### Fixed
+
+* apport-retrace:
+  - initialize `gdb_sandbox` (pylint 3.2.2 complaint)
+  - fix writing report to given `--output`
+  - install `base-files` first for setting up usrmerge symlinks
+    ([LP: #2067120](https://launchpad.net/bugs/2067120))
+* apt_dpkg: fix finding source for `/lib/x86_64-linux-gnu/libc.so.6`
+* launchpad: fix dynamic adaption of chunck size
+* report:
+  - fix determining bug report URL for Thunderbird
+    ([LP: #2056758](https://launchpad.net/bugs/2056758))
+  - Fix possible `None.startswith()` call
+  - fix `UnboundLocalError` in `add_kernel_crash_info`
+  - Fix retracing crashes on Ubuntu 24.04 (noble)
+    ([LP: #2067120](https://launchpad.net/bugs/2067120))
+* setup: determine udev directory dynamically
+
 2.28.1 (2024-04-18)
 -------------------
 
