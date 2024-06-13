@@ -222,8 +222,8 @@ def main() -> None:
         )
         != 0
     ):
-        sys.stderr.write("ERROR: whoopsie.path is not enabled\n")
-        sys.exit(1)
+        logging.info("whoopsie.path is not enabled, doing nothing")
+        return
 
     stamps = collect_info()
     # print('stamps:', stamps)
