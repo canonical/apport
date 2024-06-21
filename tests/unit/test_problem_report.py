@@ -73,15 +73,19 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr = problem_report.ProblemReport(date="19801224 12:34")
         self.assertEqual(pr["Date"], "19801224 12:34")
 
-    def test_get_timestamp(self):
+    def test_get_timestamp(self) -> None:
         """get_timestamp() returns timestamp."""
         r = problem_report.ProblemReport()
-        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=2)
+        timestamp = r.get_timestamp()
+        assert timestamp
+        self.assertAlmostEqual(timestamp, time.time(), delta=2)
 
         r["Date"] = "Thu Jan 9 12:00:00 2014"
         # delta is ±12 hours, as this depends on the timezone that the test is
         # run in
-        self.assertAlmostEqual(r.get_timestamp(), 1389265200, delta=43200)
+        timestamp = r.get_timestamp()
+        assert timestamp
+        self.assertAlmostEqual(timestamp, 1389265200, delta=43200)
 
     def test_get_timestamp_locale_german(self):
         """get_timestamp() returns date when LC_TIME is set."""
