@@ -322,7 +322,7 @@ class T(unittest.TestCase):
         )
         self.assertFalse(r.has_useful_stacktrace())
 
-    def test_standard_title(self):
+    def test_standard_title(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """standard_title()."""
@@ -442,6 +442,7 @@ Key: /apps/avant-window-navigator/app/active_png isn't set.
 Restarting AWN usually solves this issue"""
 
         t = report.standard_title()
+        assert t
         self.assertTrue(t.startswith("apport-gtk crashed with"))
         self.assertTrue(t.endswith("setup_chooser()"))
 
