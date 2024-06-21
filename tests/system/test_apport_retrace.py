@@ -201,6 +201,38 @@ def test_retrace_system_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() == "amd64",
+    reason="GDB sandbox is only available on amd64",
+)
+def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
+    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+) -> None:
+    """Refuse to retrace a crash in a non-amd64 system sandbox with a GDB sandbox."""
+    retraced_report_filename = workdir / "retraced.crash"
+    env = os.environ | local_test_environment()
+    cmd = [
+        "apport-retrace",
+        "-v",
+        "-o",
+        str(retraced_report_filename),
+        "--sandbox",
+        "system",
+        "--gdb-sandbox",
+        "--cache",
+        str(module_cachedir),
+        divide_by_zero_crash,
+    ]
+    ret = subprocess.run(cmd, check=False, env=env, capture_output=True, text=True)
+    assert ret.returncode == 3
+    assert "gdb sandboxes are only implemented for amd64 hosts" in ret.stderr
+
+
+@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64",
+    reason="Testing the GDB sandbox erroring out on non-AMD64",
+)
 def test_retrace_system_sandbox_gdb_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
 ) -> None:
@@ -256,6 +288,10 @@ def test_retrace_jammy_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64",
+    reason="GDB sandbox only available on amd64",
+)
 def test_retrace_jammy_sandbox_gdb_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
 ) -> None:
