@@ -278,7 +278,7 @@ class T(unittest.TestCase):
     # pylint: disable=protected-access
     maxDiff = None
 
-    def test_has_useful_stacktrace(self):
+    def test_has_useful_stacktrace(self) -> None:
         """has_useful_stacktrace()."""
         r = apport.report.Report()
         self.assertFalse(r.has_useful_stacktrace())
@@ -537,7 +537,7 @@ ImportError: No module named nonexistent
         )
         self.assertEqual(report.standard_title(), "kernel BUG at /tmp/oops.c:5!")
 
-    def test_gen_stacktrace_top(self):
+    def test_gen_stacktrace_top(self) -> None:
         """_gen_stacktrace_top()."""
         # nothing to chop off
         r = apport.report.Report()
@@ -860,7 +860,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         )
 
     @unittest.mock.patch("shutil.which", MagicMock(return_value=None))
-    def test_gdb_add_info_no_gdb(self):
+    def test_gdb_add_info_no_gdb(self) -> None:
         r = apport.report.Report()
         r["Signal"] = "6"
         r["SignalName"] = "SIGABRT"
@@ -870,7 +870,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         with self.assertRaises(FileNotFoundError):
             r.add_gdb_info()
 
-    def test_crash_signature(self):
+    def test_crash_signature(self) -> None:
         """crash_signature()."""
         r = apport.report.Report()
         self.assertIsNone(r.crash_signature())
@@ -1110,7 +1110,7 @@ CR2: 00000000ffffb4ff
             ":sys_execve+0x37/0x70:ptregs_execve+0x12/0x18",
         )
 
-    def test_nonascii_data(self):
+    def test_nonascii_data(self) -> None:
         """Methods get along with non-ASCII data."""
         # fake os.uname() into reporting a non-ASCII name
         uname = os.uname()
@@ -1129,7 +1129,7 @@ CR2: 00000000ffffb4ff
             self.assertEqual(pr["ProcUnicodeValue"], exp_utf8.decode("UTF-8"))
             self.assertEqual(pr["ProcByteArrayValue"], exp_utf8)
 
-    def test_address_to_offset(self):
+    def test_address_to_offset(self) -> None:
         """_address_to_offset()"""
         pr = apport.report.Report()
 
@@ -1170,7 +1170,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
             pr._address_to_offset(0x7F491FC24010), "/lib/with spaces !/libfoo.so+10"
         )
 
-    def test_address_to_offset_arm(self):
+    def test_address_to_offset_arm(self) -> None:
         """_address_to_offset() for ARM /proc/pid/maps"""
         pr = apport.report.Report()
         pr[
@@ -1201,7 +1201,7 @@ ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
             "/usr/lib/arm-linux-gnueabihf/libgio-2.0.so.0.3400.0+1f",
         )
 
-    def test_crash_signature_addresses(self):
+    def test_crash_signature_addresses(self) -> None:
         """crash_signature_addresses()"""
         pr = apport.report.Report()
         self.assertIsNone(pr.crash_signature_addresses())
@@ -1323,7 +1323,7 @@ No symbol table info available.
         pr.check_ignored()
         geteuid_mock.assert_called_once_with()
 
-    def test_suspend_resume(self):
+    def test_suspend_resume(self) -> None:
         pr = apport.report.Report()
         pr["ProblemType"] = "KernelOops"
         pr["Failure"] = "suspend/resume"
@@ -1347,7 +1347,7 @@ No symbol table info available.
             report.get("UnreportableReason"), "invalid SourcePackage: in/valid"
         )
 
-    def test_add_snap_contact_info_launchpad(self):
+    def test_add_snap_contact_info_launchpad(self) -> None:
         """add_snap_contact_info()
 
         Test that report is against Launchpad
@@ -1371,7 +1371,7 @@ No symbol table info available.
         self.assertEqual(set(report.keys()), {"ProblemType", "Date", "SnapSource"})
         self.assertEqual("ubuntu/+source/thunderbird", report["SnapSource"])
 
-    def test_add_snap_contact_info_github(self):
+    def test_add_snap_contact_info_github(self) -> None:
         """add_snap_contact_info()
 
         Test that report is against Github
