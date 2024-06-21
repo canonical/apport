@@ -15,7 +15,7 @@ import apport.packaging
 
 class T(unittest.TestCase):
     @unittest.mock.patch("apport.fileutils.packaging.get_files")
-    def test_find_package_desktopfile_deleted(self, get_files_mock):
+    def test_find_package_desktopfile_deleted(self, get_files_mock: MagicMock) -> None:
         """find_package_desktopfile() for a deleted desktop file."""
         get_files_mock.return_value = [
             "/usr/share/applications/non-existing/blueman.desktop"
@@ -23,7 +23,7 @@ class T(unittest.TestCase):
         self.assertIsNone(apport.fileutils.find_package_desktopfile("blueman"))
         get_files_mock.assert_called_once_with("blueman")
 
-    def test_likely_packaged(self):
+    def test_likely_packaged(self) -> None:
         """likely_packaged()"""
         self.assertEqual(apport.fileutils.likely_packaged("/bin/bash"), True)
         self.assertEqual(apport.fileutils.likely_packaged("/usr/bin/foo"), True)
@@ -129,7 +129,7 @@ class T(unittest.TestCase):
         open_mock.assert_called_once()
         self.assertEqual(environ, {})
 
-    def test_get_recent_crashes(self):
+    def test_get_recent_crashes(self) -> None:
         """get_recent_crashes()"""
         # incomplete fields
         r = io.BytesIO(b"""ProblemType: Crash""")
@@ -156,7 +156,7 @@ class T(unittest.TestCase):
         r = io.BytesIO(f"ProblemType: Crash\nDate: {date}\nCrashCounter: 3\n".encode())
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 3)
 
-    def test_get_dbus_socket(self):
+    def test_get_dbus_socket(self) -> None:
         """get_dbus_socket()"""
         tests = [
             ("unix:path=/run/user/1000/bus", "/run/user/1000/bus"),
@@ -173,7 +173,7 @@ class T(unittest.TestCase):
         for addr, result in tests:
             self.assertEqual(apport.fileutils.get_dbus_socket(addr), result)
 
-    def test_get_starttime(self):
+    def test_get_starttime(self) -> None:
         """get_starttime()"""
         template = (
             "2022799 (%s) S 1834041 2022799 2022799 34820 "
@@ -201,7 +201,7 @@ class T(unittest.TestCase):
             starttime = apport.fileutils.get_starttime(template % name)
             self.assertEqual(starttime, 34034895)
 
-    def test_get_uid_and_gid(self):
+    def test_get_uid_and_gid(self) -> None:
         """get_uid_and_gid()"""
         # Python 3's open uses universal newlines, which means all
         # line endings get replaced with \n, so we don't need to test

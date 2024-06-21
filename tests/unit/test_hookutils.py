@@ -86,17 +86,17 @@ class TestHookutils(unittest.TestCase):
         )
 
     @unittest.mock.patch("apport.hookutils.root_command_output")
-    def test_attach_dmesg(self, root_command_output_mock):
+    def test_attach_dmesg(self, root_command_output_mock: MagicMock) -> None:
         """attach_dmesg()"""
         root_command_output_mock.return_value = "[30804.972250] CPU0 is up"
 
-        report = {}
+        report: dict[str, str] = {}
         apport.hookutils.attach_dmesg(report)
         self.assertEqual(report, {"CurrentDmesg": "[30804.972250] CPU0 is up"})
 
         root_command_output_mock.assert_called_once_with(["dmesg"])
 
-    def test_dmesg_overwrite(self):
+    def test_dmesg_overwrite(self) -> None:
         """attach_dmesg() does not overwrite already existing data"""
         report = {"CurrentDmesg": "existingcurrent"}
 
@@ -144,7 +144,7 @@ class TestHookutils(unittest.TestCase):
             ["journalctl", "--priority=warning", "-b", "--lines=1000"],
         )
 
-    def test_path_to_key(self):
+    def test_path_to_key(self) -> None:
         """Transform a file path to a valid report key."""
         self.assertEqual(apport.hookutils.path_to_key("simple.txt"), "simple.txt")
         self.assertEqual(
@@ -157,7 +157,7 @@ class TestHookutils(unittest.TestCase):
 
     @unittest.mock.patch("subprocess.Popen")
     @unittest.mock.patch("os.path.exists", MagicMock(return_value=True))
-    def test_recent_syslog_journald_cmd(self, popen_mock):
+    def test_recent_syslog_journald_cmd(self, popen_mock: MagicMock) -> None:
         class _SkipPopen(Exception):
             pass
 

@@ -32,7 +32,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
     """Unit tests for apport.packaging_impl.apt_dpkg."""
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
-    def test_is_distro_package_no_candidate(self, apt_cache_mock):
+    def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
         """is_distro_package() for package that has no candidate."""
         getitem_mock = apt_cache_mock.return_value.__getitem__
         getitem_mock.return_value = MagicMock(
@@ -42,7 +42,9 @@ class TestPackagingAptDpkg(unittest.TestCase):
         getitem_mock.assert_called_once_with("adduser")
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
-    def test_is_distro_package_no_installed_version(self, apt_cache_mock):
+    def test_is_distro_package_no_installed_version(
+        self, apt_cache_mock: MagicMock
+    ) -> None:
         """is_distro_package() for not installed package."""
         getitem_mock = apt_cache_mock.return_value.__getitem__
         getitem_mock.return_value = MagicMock(
@@ -53,7 +55,7 @@ class TestPackagingAptDpkg(unittest.TestCase):
         getitem_mock.assert_called_once_with("7zip")
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
-    def test_is_distro_package_ppa(self, apt_cache_mock):
+    def test_is_distro_package_ppa(self, apt_cache_mock: MagicMock) -> None:
         """is_distro_package() for a PPA package."""
         version = MagicMock(
             spec=apt.package.Version,
@@ -69,7 +71,9 @@ class TestPackagingAptDpkg(unittest.TestCase):
 
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
-    def test_is_distro_package_system_image(self, apt_cache_mock, exists_mock):
+    def test_is_distro_package_system_image(
+        self, apt_cache_mock: MagicMock, exists_mock: MagicMock
+    ) -> None:
         """is_distro_package() for a system image without cache."""
         version = MagicMock(
             spec=apt.package.Version,
@@ -107,7 +111,7 @@ Components: main
 
 """,
     )
-    def test_parse_deb822_sources_extra_lines(self, mock_file):
+    def test_parse_deb822_sources_extra_lines(self, mock_file: MagicMock) -> None:
         """Test _parse_deb822_sources with multiple lines separating blocks."""
         entries = _parse_deb822_sources("foo_bar.sources")
         mock_file.assert_called_with("foo_bar.sources", encoding="utf-8")

@@ -11,12 +11,12 @@ import unittest
 import apport.REThread
 
 
-def idle(seconds):
+def idle(seconds: float) -> None:
     """Test thread to just wait a bit."""
     time.sleep(seconds)
 
 
-def div(x, y):
+def div(x: int, y: int) -> float:
     """Test thread to divide two numbers."""
     return x / y
 
@@ -24,7 +24,7 @@ def div(x, y):
 class T(unittest.TestCase):
     """Unit tests for the apport.REThread module."""
 
-    def test_return_value(self):
+    def test_return_value(self) -> None:
         """Return value works properly."""
         t = apport.REThread.REThread(target=div, args=(42, 2))
         t.start()
@@ -34,7 +34,7 @@ class T(unittest.TestCase):
         self.assertEqual(t.return_value(), 21)
         self.assertIsNone(t.exc_info())
 
-    def test_no_return_value(self):
+    def test_no_return_value(self) -> None:
         """apport.REThread.REThread works if run() does not return anything."""
         t = apport.REThread.REThread(target=idle, args=(0.5,))
         t.start()
@@ -44,7 +44,7 @@ class T(unittest.TestCase):
         self.assertIsNone(t.return_value())
         self.assertIsNone(t.exc_info())
 
-    def test_exception(self):
+    def test_exception(self) -> None:
         """Exception in thread is caught and passed."""
         t = apport.REThread.REThread(target=div, args=(1, 0))
         t.start()
@@ -61,7 +61,7 @@ class T(unittest.TestCase):
         )
         self.assertIn("\n    return x / y\n", exc[-2])
 
-    def test_exc_raise(self):
+    def test_exc_raise(self) -> None:
         """exc_raise() raises caught thread exception."""
         t = apport.REThread.REThread(target=div, args=(1, 0))
         t.start()
@@ -78,7 +78,7 @@ class T(unittest.TestCase):
             self.assertIn("\n    return x / y\n", exc[-2])
         self.assertTrue(raised)
 
-    def test_exc_raise_complex(self):
+    def test_exc_raise_complex(self) -> None:
         """Exceptions that can't be simply created are reraised correctly.
 
         A unicode error takes several arguments on construction, so trying to

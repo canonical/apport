@@ -52,7 +52,7 @@ def import_module_from_file(path: pathlib.Path) -> Any:
     return module
 
 
-def pidof(program):
+def pidof(program: str) -> set[int]:
     """Find the process ID of a running program.
 
     This function wraps the pidof command and returns a set of
@@ -93,7 +93,7 @@ def run_test_executable(
             test_process.kill()
 
 
-def _id(obj):
+def _id(obj: Any) -> Any:
     return obj
 
 
@@ -126,7 +126,7 @@ def wrap_object(
     mock = MagicMock()
     real_attribute = getattr(target, attribute)
 
-    def mocked_attribute(self, *args, **kwargs):
+    def mocked_attribute(self: object, *args: Any, **kwargs: Any) -> Any:
         if include_instance:
             mock(self, *args, **kwargs)
         else:

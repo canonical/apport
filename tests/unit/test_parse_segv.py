@@ -158,7 +158,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertNotIn("SegvReason", report)
 
-    def test_invalid_00_registers(self):
+    def test_invalid_00_registers(self) -> None:
         """Require valid registers."""
         regs = "a 0x10\nb !!!\n"
         self.assertRaises(ValueError, parse_segv.ParseSegv, regs, "", "")
@@ -175,7 +175,7 @@ class TestHookParseSegv(unittest.TestCase):
         segv.regs = None
         self.assertRaises(ValueError, segv.parse_disassembly, "")
 
-    def test_invalid_01_disassembly(self):
+    def test_invalid_01_disassembly(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """Require valid disassembly."""
@@ -290,7 +290,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertEqual(segv.src, "%ecx", segv.src)
         self.assertEqual(segv.dest, "(%esp)", segv.dest)
 
-    def test_ioport_operation(self):
+    def test_ioport_operation(self) -> None:
         """I/O port violations."""
         regs = "rax            0x3  3"
         disasm = (
@@ -315,7 +315,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertTrue(understood, details)
         self.assertTrue("disallowed I/O port operation on port 3" in reason, reason)
 
-    def test_invalid_02_maps(self):
+    def test_invalid_02_maps(self) -> None:
         """Require valid maps."""
         regs = "a 0x10"
         disasm = "Dump ...\n0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n"
@@ -345,7 +345,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertEqual(segv.maps[2]["perms"], "r--p", segv)
         self.assertIsNone(segv.maps[2]["name"], segv)
 
-    def test_debug(self):
+    def test_debug(self) -> None:
         """Debug mode works."""
         regs = "a 0x10"
         disasm = "Dump ...\n0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n"
@@ -359,7 +359,7 @@ class TestHookParseSegv(unittest.TestCase):
             segv = parse_segv.ParseSegv(regs, disasm, maps)
         self.assertTrue(segv is not None, segv)
 
-    def test_register_values(self):
+    def test_register_values(self) -> None:
         """Sub-register parsing."""
         disasm = """0x08083540 <main+0>:    mov    $1,%ecx"""
         segv = parse_segv.ParseSegv(REGS64, disasm, "")
@@ -373,7 +373,7 @@ class TestHookParseSegv(unittest.TestCase):
         val = segv.register_value("%dl")
         self.assertEqual(val, 0x80, hex(val))
 
-    def test_segv_unknown(self):
+    def test_segv_unknown(self) -> None:
         """Handle unknown segfaults."""
         disasm = """0x08083540 <main+0>:    mov    $1,%ecx"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -409,7 +409,7 @@ class TestHookParseSegv(unittest.TestCase):
             segv.calculate_arg("(%rax,%rbx,1)"), 0x26EFF3, segv.regs["rbx"]
         )
 
-    def test_segv_pc_missing(self):
+    def test_segv_pc_missing(self) -> None:
         """Handle PC in missing VMA."""
         disasm = """0x00083540 <main+0>:    lea    0x4(%esp),%ecx"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -425,7 +425,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("PC (0x00083544) not located in a known VMA region", details)
         self.assertIn("executing unknown VMA", reason)
 
-    def test_segv_pc_null(self):
+    def test_segv_pc_null(self) -> None:
         """Handle PC in NULL VMA."""
         disasm = """0x00000540 <main+0>:    lea    0x4(%esp),%ecx"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -434,7 +434,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("PC (0x00000540) not located in a known VMA region", details)
         self.assertIn("executing NULL VMA", reason)
 
-    def test_segv_pc_nx_writable(self):
+    def test_segv_pc_nx_writable(self) -> None:
         """Handle PC in writable NX VMA."""
         disasm = """0x005a3000 <main+0>:    lea    0x4(%esp),%ecx"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -443,7 +443,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("PC (0x005a3000) in non-executable VMA region:", details)
         self.assertIn("executing writable VMA /lib/libncurses.so.5.7", reason)
 
-    def test_segv_pc_nx_unwritable(self):
+    def test_segv_pc_nx_unwritable(self) -> None:
         """Handle PC in non-writable NX VMA."""
         disasm = """0x00dfb000 <main+0>:    lea    0x4(%esp),%ecx"""
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -452,7 +452,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertIn("PC (0x00dfb000) in non-executable VMA region:", details)
         self.assertIn("executing non-writable VMA /lib/libreadline.so.5.2", reason)
 
-    def test_segv_src_missing(self):
+    def test_segv_src_missing(self) -> None:
         """Handle source in missing VMA."""
         reg = f"{REGS}ecx            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -477,7 +477,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("reading unknown VMA", reason)
 
-    def test_segv_src_null(self):
+    def test_segv_src_null(self) -> None:
         """Handle source in NULL VMA."""
         reg = f"{REGS}ecx            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -491,7 +491,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("reading NULL VMA", reason)
 
-    def test_segv_src_not_readable(self):
+    def test_segv_src_not_readable(self) -> None:
         """Handle source not in readable VMA."""
         reg = f"{REGS}ecx            0x0026c080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -505,7 +505,7 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertNotIn("Stack memory exhausted", details)
         self.assertNotIn("Stack pointer not within stack segment", details)
 
-    def test_segv_dest_missing(self):
+    def test_segv_dest_missing(self) -> None:
         """Handle destination in missing VMA."""
         reg = f"{REGS}esp            0x0006af24   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -519,7 +519,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("writing unknown VMA", reason)
 
-    def test_segv_dest_null(self):
+    def test_segv_dest_null(self) -> None:
         """Handle destination in NULL VMA."""
         reg = f"{REGS}esp            0x00000024   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -533,7 +533,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("writing NULL VMA", reason)
 
-    def test_segv_dest_not_writable(self):
+    def test_segv_dest_not_writable(self) -> None:
         """Handle destination not in writable VMA."""
         reg = f"{REGS}esp            0x08048080   0xbfc6af24"
         disasm = "0x08083547 <main+7>:    pushl  -0x4(%ecx)"
@@ -545,7 +545,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("writing VMA /usr/bin/gdb", reason)
 
-    def test_segv_crackful_disasm(self):
+    def test_segv_crackful_disasm(self) -> None:
         """Reject insane disassemblies."""
         disasm = "0x08083547 <main+7>:    pushl  -0x4(blah)"
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
@@ -555,7 +555,7 @@ class TestHookParseSegv(unittest.TestCase):
         segv = parse_segv.ParseSegv(REGS, disasm, MAPS)
         self.assertRaises(ValueError, segv.report)
 
-    def test_segv_stack_failure(self):
+    def test_segv_stack_failure(self) -> None:
         """Handle walking off the stack."""
         # Triggered via "push"
         reg = f"{REGS}esp            0xbfc56ff0   0xbfc56ff0"
@@ -595,7 +595,7 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertIn("Stack pointer not within stack segment", details)
 
-    def test_segv_stack_kernel_segfault(self):
+    def test_segv_stack_kernel_segfault(self) -> None:
         """Handle unknown segfaults in kernel."""
         # Crash in valid code path
         disasm = """0x0056e010: ret"""
