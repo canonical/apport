@@ -276,6 +276,10 @@ def test_retrace_system_sandbox_gdb_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64" and shutil.which("gdb-multiarch") is None,
+    reason="gdb-multiarch is needed for proper retracing on foreign architectures",
+)
 def test_retrace_jammy_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
 ) -> None:
