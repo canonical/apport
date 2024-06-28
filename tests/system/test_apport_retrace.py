@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -136,17 +137,26 @@ def _assert_is_retraced(report: Report) -> None:
 
 
 def _assert_divide_by_zero_retrace(report: Report) -> None:
+    # The path could be relative to the so
+
+    # noble: at /usr/src/chaos-marmosets-0.2.0-1/divide-by-zero.c
+    # noble armhf: at divide-by-zero.c
+    # jammy: at ./divide-by-zero.c
     stack_top = "divide_by_zero () at /usr/src/chaos-marmosets"
     if report["DistroRelease"] == "Ubuntu 22.04":
         stack_top = "divide_by_zero () at ./divide-by-zero.c"
+    # Actual frame info format depends on arch, compiler, opt-level...
+    # If the failing instruction is *not* the first instruction for the
+    # line there's an addition pointer in the line.
+    frame_regex = re.compile(rf"#0  (0x[0-9a-f]+ in )?{re.escape(stack_top)}")
     assert "divide_by_zero" in report["Disassembly"]
     # Expect RIP point to divide_by_zero
     assert "divide_by_zero" in report["Registers"]
-    assert f"#0  {stack_top}" in report["Stacktrace"]
-    assert f"#0  {stack_top}" in report["StacktraceSource"]
+    assert frame_regex.match(report["Stacktrace"])
+    assert frame_regex.match(report["StacktraceSource"])
     assert "42 / zero" in report["StacktraceSource"]
     assert stack_top in report["StacktraceTop"]
-    assert f"#0  {stack_top}" in report["ThreadStacktrace"]
+    assert frame_regex.search(report["ThreadStacktrace"])
 
 
 def _assert_sleep_retrace(report: Report) -> None:
@@ -195,6 +205,38 @@ def test_retrace_system_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() == "amd64",
+    reason="GDB sandbox only available on amd64",
+)
+def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
+    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+) -> None:
+    """Retrace a divide-by-zero crash in a system sandbox with a GDB sandbox."""
+    retraced_report_filename = workdir / "retraced.crash"
+    env = os.environ | local_test_environment()
+    cmd = [
+        "apport-retrace",
+        "-v",
+        "-o",
+        str(retraced_report_filename),
+        "--sandbox",
+        "system",
+        "--gdb-sandbox",
+        "--cache",
+        str(module_cachedir),
+        divide_by_zero_crash,
+    ]
+    ret = subprocess.run(cmd, check=False, env=env, capture_output=True)
+    assert ret.returncode == 1
+    assert "gdb sandboxes are only implemented for amd64 hosts" in ret.stderr.decode()
+
+
+@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64",
+    reason="Testing the GDB sandbox erroring out on non-AMD64",
+)
 def test_retrace_system_sandbox_gdb_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
 ) -> None:
@@ -221,6 +263,10 @@ def test_retrace_system_sandbox_gdb_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64" and shutil.which("gdb-multiarch") is None,
+    reason="gdb-multiarch is needed for proper retracing on foreign architectures",
+)
 def test_retrace_jammy_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
 ) -> None:
@@ -250,6 +296,10 @@ def test_retrace_jammy_sandbox(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() != "amd64",
+    reason="GDB sandbox only available on amd64",
+)
 def test_retrace_jammy_sandbox_gdb_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
 ) -> None:
