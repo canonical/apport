@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -136,17 +137,26 @@ def _assert_is_retraced(report: Report) -> None:
 
 
 def _assert_divide_by_zero_retrace(report: Report) -> None:
+    # The path could be relative to the so
+
+    # noble: at /usr/src/chaos-marmosets-0.2.0-1/divide-by-zero.c
+    # noble armhf: at divide-by-zero.c
+    # jammy: at ./divide-by-zero.c
     stack_top = "divide_by_zero () at /usr/src/chaos-marmosets"
     if report["DistroRelease"] == "Ubuntu 22.04":
         stack_top = "divide_by_zero () at ./divide-by-zero.c"
+    # Actual frame info format depends on arch, compiler, opt-level...
+    # If the failing instruction is *not* the first instruction for the
+    # line there's an addition pointer in the line.
+    frame_regex = re.compile(rf"#0  (0x[0-9a-f]+ in )?{re.escape(stack_top)}")
     assert "divide_by_zero" in report["Disassembly"]
     # Expect RIP point to divide_by_zero
     assert "divide_by_zero" in report["Registers"]
-    assert f"#0  {stack_top}" in report["Stacktrace"]
-    assert f"#0  {stack_top}" in report["StacktraceSource"]
+    assert frame_regex.match(report["Stacktrace"])
+    assert frame_regex.match(report["StacktraceSource"])
     assert "42 / zero" in report["StacktraceSource"]
     assert stack_top in report["StacktraceTop"]
-    assert f"#0  {stack_top}" in report["ThreadStacktrace"]
+    assert frame_regex.search(report["ThreadStacktrace"])
 
 
 def _assert_sleep_retrace(report: Report) -> None:
