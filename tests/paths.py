@@ -11,6 +11,13 @@ _CRASHDB_CONF = _SRCDIR / "etc" / "apport" / "crashdb.conf"
 _DATADIR = _SRCDIR / "data"
 
 
+def get_bin_directory() -> pathlib.Path:
+    """Return absolute path for the scripts directory."""
+    if is_local_source_directory():
+        return _BINDIR
+    return pathlib.Path("/usr/bin")
+
+
 def get_data_directory(local_path: str | None = None) -> pathlib.Path:
     """Return absolute path for apport's data directory.
 

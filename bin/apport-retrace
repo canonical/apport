@@ -353,7 +353,7 @@ def load_report(
         except AssertionError as error:
             if "apport format data" in str(error):
                 apport.error("Broken report: %s", str(error))
-                raise _LoadReportException(0) from None
+                raise _LoadReportException(2) from None
             raise
         except (
             MemoryError,
@@ -431,9 +431,9 @@ def main(argv):
     if report["ProblemType"] == "KernelCrash":
         if not set(["Package", "VmCore"]).issubset(set(report.keys())):
             apport.error("report file does not contain the required fields")
-            return 0
+            return 2
         apport.error("KernelCrash processing not implemented yet")
-        return 0
+        return 3
     if not required_fields.issubset(set(report.keys())):
         missing_fields = []
         for required_field in required_fields:
@@ -441,9 +441,9 @@ def main(argv):
                 missing_fields.append(required_field)
         apport.error(
             "report file does not contain one of the required fields: %s",
-            " ".join(missing_fields),
+            " ".join(sorted(missing_fields)),
         )
-        return 0
+        return 2
 
     apport.memdbg("consistency checks passed")
 
@@ -451,7 +451,7 @@ def main(argv):
         system_arch = apport.packaging.get_system_architecture()
         if system_arch != "amd64":
             apport.error("gdb sandboxes are only implemented for amd64 hosts")
-            return 0
+            return 3
         # Create a .dwz directory if it doesn't exist
         if not os.path.exists("/usr/lib/debug/.dwz"):
             os.mkdir("/usr/lib/debug/.dwz")
@@ -537,7 +537,7 @@ def main(argv):
                                 " directory to the gdb sandbox's."
                                 " See LP: #1818918 for details."
                             )
-                            return 0
+                            return 3
                         except FileExistsError:
                             if (
                                 os.readlink(f"/usr/lib/debug/.dwz/{target}")
@@ -551,7 +551,7 @@ def main(argv):
                         " system's /usr/lib/debug/.dwz directory to the"
                         " gdb sandbox's. See LP: #1818918 for details."
                     )
-                    return 0
+                    return 3
 
     # interactive gdb session
     if options.gdb:
