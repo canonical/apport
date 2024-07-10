@@ -325,6 +325,10 @@ def print_traces(report):
         print(report["StacktraceSource"])
 
 
+class _LoadReportException(SystemExit):
+    """Failures that were handled in load_report."""
+
+
 def load_report(
     options: Namespace, crashdb: CrashDatabase
 ) -> tuple[Report, int | None]:
@@ -349,9 +353,8 @@ def load_report(
         except AssertionError as error:
             if "apport format data" in str(error):
                 apport.error("Broken report: %s", str(error))
-                sys.exit(0)
-            else:
-                raise
+                raise _LoadReportException(0) from None
+            raise
         except (
             MemoryError,
             TypeError,
@@ -381,9 +384,8 @@ If you encounter the crash again, please file a new report.
 Thank you for your understanding, and sorry for the inconvenience!
 """,
                 )
-                sys.exit(0)
-            else:
-                raise
+                raise _LoadReportException(0) from None
+            raise
     else:
         apport.fatal(
             '"%s" is neither an existing report file nor a crash ID', options.report
@@ -394,7 +396,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 def main(argv):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-return-statements,too-many-statements
     apport.memdbg("start")
 
     gettext.textdomain("apport")
@@ -405,7 +407,10 @@ def main(argv):
     apport.memdbg("got crash DB")
 
     # load the report
-    report, crashid = load_report(options, crashdb)
+    try:
+        report, crashid = load_report(options, crashdb)
+    except _LoadReportException as error:
+        return error.code
 
     if options.core_file:
         report["CoreDump"] = (os.path.abspath(options.core_file),)
@@ -426,10 +431,10 @@ def main(argv):
     if report["ProblemType"] == "KernelCrash":
         if not set(["Package", "VmCore"]).issubset(set(report.keys())):
             apport.error("report file does not contain the required fields")
-            sys.exit(0)
+            return 0
         apport.error("KernelCrash processing not implemented yet")
-        sys.exit(0)
-    elif not required_fields.issubset(set(report.keys())):
+        return 0
+    if not required_fields.issubset(set(report.keys())):
         missing_fields = []
         for required_field in required_fields:
             if required_field not in set(report.keys()):
@@ -438,7 +443,7 @@ def main(argv):
             "report file does not contain one of the required fields: %s",
             " ".join(missing_fields),
         )
-        sys.exit(0)
+        return 0
 
     apport.memdbg("consistency checks passed")
 
@@ -446,7 +451,7 @@ def main(argv):
         system_arch = apport.packaging.get_system_architecture()
         if system_arch != "amd64":
             apport.error("gdb sandboxes are only implemented for amd64 hosts")
-            sys.exit(0)
+            return 0
         # Create a .dwz directory if it doesn't exist
         if not os.path.exists("/usr/lib/debug/.dwz"):
             os.mkdir("/usr/lib/debug/.dwz")
@@ -532,7 +537,7 @@ def main(argv):
                                 " directory to the gdb sandbox's."
                                 " See LP: #1818918 for details."
                             )
-                            sys.exit(0)
+                            return 0
                         except FileExistsError:
                             if (
                                 os.readlink(f"/usr/lib/debug/.dwz/{target}")
@@ -546,7 +551,7 @@ def main(argv):
                         " system's /usr/lib/debug/.dwz directory to the"
                         " gdb sandbox's. See LP: #1818918 for details."
                     )
-                    sys.exit(0)
+                    return 0
 
     # interactive gdb session
     if options.gdb:
@@ -689,7 +694,8 @@ Thank you for your understanding, and sorry for the inconvenience!
         else:
             with open(options.output or options.report, "wb") as out:
                 report.write(out)
+    return 0
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
