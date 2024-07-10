@@ -36,7 +36,7 @@ from apport import Report
 from apport.crashdb import CrashDatabase, get_crashdb
 
 
-def parse_args():
+def parse_args(argv: list[str]) -> argparse.Namespace:
     """Parse command line options and return args namespace."""
 
     argparser = argparse.ArgumentParser()
@@ -193,7 +193,7 @@ def parse_args():
         help="apport .crash file or the crash ID to process",
     )
 
-    args = argparser.parse_args()
+    args = argparser.parse_args(argv)
 
     # catch invalid usage of -C without -S (cache is only used when making a
     # sandbox)
@@ -391,7 +391,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 
 
 # pylint: disable-next=missing-function-docstring
-def main():
+def main(argv):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
     # pylint: disable=too-many-statements
@@ -399,7 +399,7 @@ def main():
 
     gettext.textdomain("apport")
 
-    options = parse_args()
+    options = parse_args(argv)
 
     crashdb = get_crashdb(options.auth)
     apport.memdbg("got crash DB")
@@ -692,4 +692,4 @@ Thank you for your understanding, and sorry for the inconvenience!
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
