@@ -259,6 +259,29 @@ def _dom_remove_space(node):
             _dom_remove_space(c)
 
 
+def _get_gdb_path(gdb_sandbox: str | None, same_arch: bool) -> str:
+    """Determine path to GDB."""
+    gdb_sandbox_bin = os.path.join(gdb_sandbox, "usr", "bin") if gdb_sandbox else None
+    gdb_path = _which_extrapath("gdb", gdb_sandbox_bin)
+    if not gdb_path:
+        raise FileNotFoundError(
+            errno.ENOENT, os.strerror(errno.ENOENT), "gdb not found in retracing env"
+        )
+
+    if not same_arch:
+        # check if we have gdb-multiarch
+        ma = _which_extrapath("gdb-multiarch", gdb_sandbox_bin)
+        if ma:
+            gdb_path = ma
+        else:
+            sys.stderr.write(
+                "WARNING: Please install gdb-multiarch for processing "
+                'reports from foreign architectures. Results with "gdb" '
+                "will be very poor.\n"
+            )
+    return gdb_path
+
+
 def _run_hook(report, ui, hook):
     if not os.path.exists(hook):
         return False
@@ -1838,8 +1861,6 @@ class Report(problem_report.ProblemReport):
     def gdb_command(
         self, sandbox: str | None, gdb_sandbox: str | None = None
     ) -> tuple[list[str], dict[str, str]]:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
         """Build gdb command for this report.
 
         This builds a gdb command for processing the given report, by setting
@@ -1862,31 +1883,8 @@ class Report(problem_report.ProblemReport):
         ):
             same_arch = True
 
-        gdb_sandbox_bin = (
-            os.path.join(gdb_sandbox, "usr", "bin") if gdb_sandbox else None
-        )
-        gdb_path = _which_extrapath("gdb", gdb_sandbox_bin)
-        if not gdb_path:
-            raise FileNotFoundError(
-                errno.ENOENT,
-                os.strerror(errno.ENOENT),
-                "gdb not found in retracing env",
-            )
-
-        command = [gdb_path]
+        command = [_get_gdb_path(gdb_sandbox, same_arch)]
         environ: dict[str, str] = {}
-
-        if not same_arch:
-            # check if we have gdb-multiarch
-            ma = _which_extrapath("gdb-multiarch", gdb_sandbox_bin)
-            if ma:
-                command = [ma]
-            else:
-                sys.stderr.write(
-                    "WARNING: Please install gdb-multiarch for processing "
-                    'reports from foreign architectures. Results with "gdb" '
-                    "will be very poor.\n"
-                )
 
         if sandbox:
             native_multiarch = "x86_64-linux-gnu"
