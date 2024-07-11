@@ -34,8 +34,8 @@ class TestRecoverableProblem(unittest.TestCase):
     # False positive return statement for unittest.TestCase.fail
     # See https://github.com/pylint-dev/pylint/issues/4167
     # pylint: disable-next=inconsistent-return-statements
-    def _wait_for_report(self):
-        seconds = 0
+    def _wait_for_report(self) -> str:
+        seconds = 0.0
         while seconds < 10:
             crashes = os.listdir(self.report_dir)
             if crashes:
