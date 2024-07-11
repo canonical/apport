@@ -349,10 +349,10 @@ class UserInterface:
         self.gettext_domain = "apport"
         self.report: apport.report.Report | None = None
         self.report_file: str | None = None
-        self.cur_package = None
+        self.cur_package: str | None = None
         self.offer_restart = False
         self.specified_a_pkg = False
-        self.upload_progress = None
+        self.upload_progress: float | None = None
 
         try:
             self.crashdb = apport.crashdb.get_crashdb(None)
