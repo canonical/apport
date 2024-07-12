@@ -17,7 +17,7 @@ from apport.crashdb_impl.memory import CrashDatabase
 
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     # pylint: disable=missing-class-docstring,missing-function-docstring
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, "dupdb")
         self.crashes = CrashDatabase(
@@ -42,21 +42,21 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # we should have 5 crashes
         self.assertEqual(self.crashes.latest_id(), 4)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
 
-    def test_no_sample_data(self):
+    def test_no_sample_data(self) -> None:
         """No sample data is added by default."""
         self.crashes = CrashDatabase(None, {})
         self.assertEqual(self.crashes.latest_id(), -1)
         self.assertRaises(IndexError, self.crashes.download, 0)
 
-    def test_retrace_markers(self):
+    def test_retrace_markers(self) -> None:
         """Bookkeeping in retraced and dupchecked bugs."""
         self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
         self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
 
-    def test_dynamic_crashdb_conf(self):
+    def test_dynamic_crashdb_conf(self) -> None:
         """Dynamic code in crashdb.conf."""
         # use our memory crashdb
         with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
@@ -92,14 +92,14 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             self.assertNotIn("dyn_opion", db.options)
             self.assertEqual(db.options["whoami"], "dynname")
 
-    def test_accepts_default(self):
+    def test_accepts_default(self) -> None:
         """accepts(): default configuration."""
         # by default crash DBs accept any type
         self.assertTrue(self.crashes.accepts(apport.report.Report("Crash")))
         self.assertTrue(self.crashes.accepts(apport.report.Report("Bug")))
         self.assertTrue(self.crashes.accepts(apport.report.Report("weirdtype")))
 
-    def test_accepts_problem_types(self):
+    def test_accepts_problem_types(self) -> None:
         """accepts(): problem_types option in crashdb.conf."""
         # create a crash DB with type limits
         with tempfile.NamedTemporaryFile(mode="w+") as crashdb_conf:
@@ -129,7 +129,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     # Test memory.py implementation
     #
 
-    def test_submit(self):
+    def test_submit(self) -> None:
         """Crash uploading and downloading."""
         # setUp() already checks upload() and get_comment_url()
         r = self.crashes.download(0)
@@ -139,13 +139,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertRaises(IndexError, self.crashes.download, 5)
 
-    def test_get_affected_packages(self):
+    def test_get_affected_packages(self) -> None:
         self.assertEqual(self.crashes.get_affected_packages(0), ["foo"])
         self.assertEqual(self.crashes.get_affected_packages(1), ["foo"])
         self.assertEqual(self.crashes.get_affected_packages(2), ["bar"])
         self.assertEqual(self.crashes.get_affected_packages(3), ["pygoo"])
 
-    def test_update(self):
+    def test_update(self) -> None:
         """update()"""
         r = apport.report.Report()
         r["Package"] = "new"
@@ -160,7 +160,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertRaises(IndexError, self.crashes.update, 5, None, "")
 
-    def test_update_filter(self):
+    def test_update_filter(self) -> None:
         """update() with key_filter"""
         r = apport.report.Report()
         r["Package"] = "new"
@@ -175,7 +175,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertRaises(IndexError, self.crashes.update, 5, None, "")
 
-    def test_update_traces(self):
+    def test_update_traces(self) -> None:
         """update_traces()"""
         r = apport.report.Report()
         r["Package"] = "new"
@@ -190,11 +190,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 
-    def test_get_distro_release(self):
+    def test_get_distro_release(self) -> None:
         """get_distro_release()"""
         self.assertEqual(self.crashes.get_distro_release(0), "FooLinux Pi/2")
 
-    def test_status(self):
+    def test_status(self) -> None:
         """get_unfixed(), get_fixed_version(), duplicate_of(),
         close_duplicate()"""
         self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 3, 4]))
@@ -213,7 +213,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertEqual(self.crashes.get_fixed_version(99), "invalid")
 
-    def test_mark_regression(self):
+    def test_mark_regression(self) -> None:
         """mark_regression()"""
         self.crashes.reports[3]["fixed_version"] = "4.1"
 
@@ -228,7 +228,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     # Test crash duplication detection API of crashdb.py
     #
 
-    def test_duplicate_db_fixed(self):
+    def test_duplicate_db_fixed(self) -> None:
         """duplicate_db_fixed()"""
         self.crashes.init_duplicate_db(":memory:")
         self.assertIsNone(self.crashes.check_duplicate(0))
@@ -245,7 +245,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             {self.crashes.download(0).crash_signature(): (0, "42")},
         )
 
-    def test_duplicate_db_remove(self):
+    def test_duplicate_db_remove(self) -> None:
         """duplicate_db_remove()"""
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
@@ -276,7 +276,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             {self.crashes.download(0).crash_signature(): (0, None)},
         )
 
-    def test_check_duplicate(self):
+    def test_check_duplicate(self) -> None:
         """check_duplicate() and known()"""
         # db not yet initialized
         self.assertRaises(
@@ -418,7 +418,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             },
         )
 
-    def test_check_duplicate_multiple_regressions(self):
+    def test_check_duplicate_multiple_regressions(self) -> None:
         """check_duplicate() with multiple regressions.
 
         Bug #3 (version 3epsilon1) got fixed in 4.1. Bug #5 (version 4.3)
@@ -440,7 +440,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIsNone(self.crashes.check_duplicate(4))
         self.assertEqual(self.crashes.check_duplicate(6), (4, None))
 
-    def test_check_duplicate_utf8(self):
+    def test_check_duplicate_utf8(self) -> None:
         """check_duplicate() with UTF-8 strings"""
         # assertion failure, with UTF-8 strings
         r = apport.report.Report()
@@ -465,7 +465,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.crashes.duplicate_db_publish(self.dupdb_dir)
 
-    def test_check_duplicate_custom_signature(self):
+    def test_check_duplicate_custom_signature(self) -> None:
         """check_duplicate() with custom DuplicateSignature: field"""
         r = apport.report.Report()
         r["SourcePackage"] = "bash"
@@ -498,7 +498,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             },
         )
 
-    def test_check_duplicate_report_arg(self):
+    def test_check_duplicate_report_arg(self) -> None:
         """check_duplicate() with explicitly passing report"""
         self.crashes.init_duplicate_db(":memory:")
 
@@ -631,7 +631,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertEqual(self.crashes.check_duplicate(4), (3, None))
 
-    def test_known_address_sig(self):
+    def test_known_address_sig(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """known() for address signatures"""
@@ -758,7 +758,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertEqual(self.crashes.duplicate_db_dump(), {})
 
-    def test_duplicate_db_publish_long_sigs(self):
+    def test_duplicate_db_publish_long_sigs(self) -> None:
         """duplicate_db_publish() with very long signatures"""
         self.crashes.init_duplicate_db(":memory:")
 
@@ -779,7 +779,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.crashes.known(symb), "http://foo.bugs.example.com/0")
         self.assertEqual(self.crashes.known(addr), "http://foo.bugs.example.com/1")
 
-    def test_change_master_id(self):
+    def test_change_master_id(self) -> None:
         """duplicate_db_change_master_id()"""
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
@@ -822,7 +822,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             },
         )
 
-    def test_db_corruption(self):
+    def test_db_corruption(self) -> None:
         """Detection of DB file corruption."""
         try:
             (fd, db) = tempfile.mkstemp()

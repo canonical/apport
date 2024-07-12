@@ -29,7 +29,7 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     """Unit tests for the problem_report module."""
 
-    def test_add_tags(self):
+    def test_add_tags(self) -> None:
         """Test ProblemReport.add_tags()."""
         report = problem_report.ProblemReport()
         report.add_tags({"tag1"})
@@ -37,7 +37,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         report.add_tags(["tag2", "next_tag"])
         self.assertEqual(report["Tags"], "next_tag tag1 tag2")
 
-    def test_add_tag_drop_duplicates(self):
+    def test_add_tag_drop_duplicates(self) -> None:
         """Test ProblemReport.add_tags() dropping duplicates."""
         report = problem_report.ProblemReport()
         report.add_tags({"same"})
@@ -45,7 +45,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         report.add_tags(["same"])
         self.assertEqual(report["Tags"], "same")
 
-    def test_basic_operations(self):
+    def test_basic_operations(self) -> None:
         """Basic creation and operation."""
         pr = problem_report.ProblemReport()
         pr["foo"] = "bar"
@@ -66,7 +66,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["dot.key"], "1")
         self.assertEqual(pr["underscore_key"], "1")
 
-    def test_ctor_arguments(self):
+    def test_ctor_arguments(self) -> None:
         """non-default constructor arguments."""
         pr = problem_report.ProblemReport("KernelCrash")
         self.assertEqual(pr["ProblemType"], "KernelCrash")
@@ -87,7 +87,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         assert timestamp
         self.assertAlmostEqual(timestamp, 1389265200, delta=43200)
 
-    def test_get_timestamp_locale_german(self):
+    def test_get_timestamp_locale_german(self) -> None:
         """get_timestamp() returns date when LC_TIME is set."""
         now = datetime.datetime.now()
 
@@ -100,13 +100,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr.get_timestamp(), int(now.timestamp()))
         locale.setlocale(locale.LC_TIME, orig_ctime)
 
-    def test_get_timestamp_returns_none(self):
+    def test_get_timestamp_returns_none(self) -> None:
         """get_timestamp() returns None."""
         pr = problem_report.ProblemReport()
         del pr["Date"]
         self.assertIsNone(pr.get_timestamp())
 
-    def test_consistency_checks(self):
+    def test_consistency_checks(self) -> None:
         """Various error conditions."""
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, pr.__setitem__, "a b", "1")
@@ -157,7 +157,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         ).encode("UTF-8")
         self.assertEqual(out.getvalue(), expected)
 
-    def test_load(self):
+    def test_load(self) -> None:
         """load() with various formatting."""
         report = textwrap.dedent(
             f"""\
@@ -242,7 +242,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.load(io.BytesIO(b"ProblemType: Crash"))
         self.assertEqual(list(pr.keys()), ["ProblemType"])
 
-    def test_load_binary_blob(self):
+    def test_load_binary_blob(self) -> None:
         """Throw exception when binary file (e.g. core) is loaded."""
         report = problem_report.ProblemReport()
         with io.BytesIO(b"AB\xfc:CD") as report_file:
@@ -252,7 +252,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ):
                 report.load(report_file)
 
-    def test_load_missing_colon(self):
+    def test_load_missing_colon(self) -> None:
         """Throw exception when key-value line misses a colon as separator."""
         report = problem_report.ProblemReport()
         with io.BytesIO(b"\n") as report_file:
@@ -262,7 +262,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ):
                 report.load(report_file)
 
-    def test_load_invalid_utf8(self):
+    def test_load_invalid_utf8(self) -> None:
         """Throw exception when binary file is invalid UTF-8."""
         report = problem_report.ProblemReport()
         with io.BytesIO(b"\x7fELF\x02\x01\xb0j") as report_file:
@@ -272,7 +272,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ):
                 report.load(report_file)
 
-    def test_load_incorrect_padding(self):
+    def test_load_incorrect_padding(self) -> None:
         """Throw exception when base64 encoded data has incorrect padding."""
         report = problem_report.ProblemReport()
         content = (
@@ -370,7 +370,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             with io.BytesIO(content) as report_file:
                 report.load(report_file)
 
-    def test_write_fileobj(self):
+    def test_write_fileobj(self) -> None:
         """Write a report with a pointer to a file-like object."""
         tempbin = io.BytesIO(bin_data)
         tempasc = io.BytesIO(b"Hello World")
@@ -387,7 +387,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["BinFile"], tempbin.getvalue())
         self.assertEqual(pr["AscFile"], tempasc.getvalue().decode())
 
-    def test_write_empty_fileobj(self):
+    def test_write_empty_fileobj(self) -> None:
         """Write a report with a pointer to a file-like object with
         enforcing non-emptyness."""
         tempbin = io.BytesIO(b"")
@@ -403,7 +403,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         out = io.BytesIO()
         self.assertRaises(OSError, pr.write, out)
 
-    def test_read_file(self):
+    def test_read_file(self) -> None:
         """Read a report with binary data."""
         bin_report = textwrap.dedent(
             """\
@@ -436,7 +436,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["File"].get_value(), bin_data)
         self.assertEqual(pr["File"].name, "File")
 
-    def test_read_file_legacy(self):
+    def test_read_file_legacy(self) -> None:
         """Read a report with binary data in legacy format without gzip
         header."""
         bin_report = textwrap.dedent(
@@ -472,7 +472,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         out.seek(0)
         self.assertEqual(out.read(), b"AB" * 10 + b"\0" * 10 + b"Z")
 
-    def test_iter(self):
+    def test_iter(self) -> None:
         """problem_report.ProblemReport iteration."""
         pr = problem_report.ProblemReport()
         pr["foo"] = "bar"
@@ -485,7 +485,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertEqual(len([k for k in pr if k != "foo"]), 2)
 
-    def test_modify(self):
+    def test_modify(self) -> None:
         """reading, modifying fields, and writing back."""
         report = textwrap.dedent(
             """\
@@ -562,7 +562,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ],
         )
 
-    def test_write_mime_text(self):
+    def test_write_mime_text(self) -> None:
         """write_mime() for text values."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
@@ -663,7 +663,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         ).encode("UTF-8")
         self.assertEqual(parts[4].get_payload(decode=True), expected)
 
-    def test_write_mime_extra_headers(self):
+    def test_write_mime_extra_headers(self) -> None:
         """write_mime() with extra headers."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
@@ -687,7 +687,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertIn(b"Simple: bar", parts[1].get_payload(decode=True))
 
-    def test_write_mime_order(self):
+    def test_write_mime_order(self) -> None:
         """write_mime() with keys ordered."""
         pr = problem_report.ProblemReport(date="now!")
         pr["SecondText"] = "What"
@@ -734,7 +734,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ).encode(),
         )
 
-    def test_updating(self):
+    def test_updating(self) -> None:
         """new_keys() and write() with only_new=True."""
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(["ProblemType", "Date"]))
@@ -761,7 +761,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.write(out, only_new=True)
         self.assertEqual(out.getvalue(), b"NewKey: new new\n")
 
-    def test_import_dict(self):
+    def test_import_dict(self) -> None:
         """Import a dictionary with update()."""
         pr = problem_report.ProblemReport()
         pr["oldtext"] = "Hello world"
@@ -781,7 +781,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["newbin"], "11\000\001\002\xFFZZ")
         self.assertEqual(pr["overwrite"], "I am good")
 
-    def test_load_key_filter(self):
+    def test_load_key_filter(self) -> None:
         """Load a report with filtering keys."""
         report = textwrap.dedent(
             """\

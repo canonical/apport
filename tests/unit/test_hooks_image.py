@@ -23,7 +23,7 @@ class TestGeneralHookImage(unittest.TestCase):
     """Unit tests for data/general-hooks/image.py."""
 
     @unittest.mock.patch("os.path.isfile", MagicMock(return_value=True))
-    def test_add_info(self):
+    def test_add_info(self) -> None:
         """Test add_info() for Ubuntu 22.04 server cloud image."""
         report = problem_report.ProblemReport()
         open_mock = unittest.mock.mock_open(
@@ -41,7 +41,7 @@ class TestGeneralHookImage(unittest.TestCase):
         open_mock.assert_called_with("/etc/cloud/build.info", encoding="utf-8")
 
     @unittest.mock.patch("os.path.isfile", MagicMock(return_value=True))
-    def test_add_info_empty_build_info(self):
+    def test_add_info_empty_build_info(self) -> None:
         """Test add_info() with empty /etc/cloud/build.info."""
         report = problem_report.ProblemReport()
         open_mock = unittest.mock.mock_open(read_data="\n")
@@ -52,7 +52,7 @@ class TestGeneralHookImage(unittest.TestCase):
         open_mock.assert_called_with("/etc/cloud/build.info", encoding="utf-8")
 
     @unittest.mock.patch("os.path.isfile", MagicMock(return_value=True))
-    def test_add_info_unknown_field(self):
+    def test_add_info_unknown_field(self) -> None:
         """Test add_info() with unknown field in /etc/cloud/build.info."""
         report = problem_report.ProblemReport()
         open_mock = unittest.mock.mock_open(
@@ -68,7 +68,7 @@ class TestGeneralHookImage(unittest.TestCase):
         open_mock.assert_called_with("/etc/cloud/build.info", encoding="utf-8")
 
     @unittest.mock.patch("os.path.isfile")
-    def test_no_cloud_build_info(self, isfile_mock):
+    def test_no_cloud_build_info(self, isfile_mock: MagicMock) -> None:
         """Test add_info() with no /etc/cloud/build.info."""
         isfile_mock.return_value = False
         report = problem_report.ProblemReport()
