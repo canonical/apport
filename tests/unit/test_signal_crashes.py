@@ -34,22 +34,24 @@ class TestApport(unittest.TestCase):
     # pylint: disable=too-many-public-methods
     """Unit tests for data/apport."""
 
+    orig_report_dir: str
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.orig_report_dir = apport.fileutils.report_dir
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         apport.fileutils.report_dir = cls.orig_report_dir
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.workdir)
         apport.fileutils.report_dir = os.path.join(self.workdir, "crash")
         self.report_dir = pathlib.Path(apport.fileutils.report_dir)
 
     @unittest.mock.patch("subprocess.run")
-    def test_check_kernel_crash(self, run_mock):
+    def test_check_kernel_crash(self, run_mock: MagicMock) -> None:
         """Test found kernel crash dump."""
         self.report_dir.mkdir()
         vmcore = self.report_dir / "vmcore"
@@ -114,7 +116,7 @@ class TestApport(unittest.TestCase):
             error_logs.output[0], "apport-forward.socket.*systemd python module"
         )
 
-    def test_receive_arguments_via_socket_invalid_socket(self):
+    def test_receive_arguments_via_socket_invalid_socket(self) -> None:
         """Test receive_arguments_via_socket with invalid socket."""
         try:
             # pylint: disable=import-outside-toplevel
@@ -131,7 +133,7 @@ class TestApport(unittest.TestCase):
         apport_binary, "is_same_ns", MagicMock(return_value=False)
     )
     @unittest.mock.patch.object(apport_binary, "forward_crash_to_container")
-    def test_main_forward_crash_to_container(self, forward_mock):
+    def test_main_forward_crash_to_container(self, forward_mock: MagicMock) -> None:
         """Test main() to forward crash to container."""
         args = ["-p", "12345", "-P", "67890"]
         self.assertEqual(apport_binary.main(args), 0)
@@ -139,19 +141,19 @@ class TestApport(unittest.TestCase):
 
     @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
     @unittest.mock.patch.object(apport_binary, "start_apport")
-    def test_main_start(self, start_mock):
+    def test_main_start(self, start_mock: MagicMock) -> None:
         """Test calling apport with --start."""
         self.assertEqual(apport_binary.main(["--start"]), 0)
         start_mock.assert_called_once_with()
 
     @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
     @unittest.mock.patch.object(apport_binary, "stop_apport")
-    def test_main_stop(self, stop_mock):
+    def test_main_stop(self, stop_mock: MagicMock) -> None:
         """Test calling apport with --stop."""
         self.assertEqual(apport_binary.main(["--stop"]), 0)
         stop_mock.assert_called_once_with()
 
-    def test_start(self):
+    def test_start(self) -> None:
         """Test starting Apport crash handler."""
         open_mock = unittest.mock.mock_open()
         with unittest.mock.patch("builtins.open", open_mock):
@@ -161,7 +163,7 @@ class TestApport(unittest.TestCase):
         )
         self.assertEqual(open_mock.call_count, 3)
 
-    def test_consistency_checks_replaced_process(self):
+    def test_consistency_checks_replaced_process(self) -> None:
         """Test consistency_checks() for a replaced crash process ID."""
         pid = os.getpid()
         options = apport_binary.parse_arguments(["-p", str(pid)])
@@ -172,7 +174,7 @@ class TestApport(unittest.TestCase):
                 apport_binary.consistency_checks(options, now, proc_pid, crash_user)
             )
 
-    def test_consistency_checks_mismatching_uid(self):
+    def test_consistency_checks_mismatching_uid(self) -> None:
         """Test consistency_checks() for a mitmatching UID."""
         pid = os.getpid()
         crash_user = apport.user_group.get_process_user_and_group()
@@ -191,7 +193,7 @@ class TestApport(unittest.TestCase):
                 apport_binary.consistency_checks(options, 1, proc_pid, crash_user)
             )
 
-    def test_stop(self):
+    def test_stop(self) -> None:
         """Test stopping Apport crash handler."""
         open_mock = unittest.mock.mock_open()
         with unittest.mock.patch("builtins.open", open_mock):

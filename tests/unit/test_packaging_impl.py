@@ -2,6 +2,7 @@
 
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 from apport.packaging_impl import determine_packaging_implementation
 
@@ -11,7 +12,7 @@ class TestPackagingImpl(unittest.TestCase):
     """Test functions in apport/packaging_impl/__init__.py."""
 
     @unittest.mock.patch("platform.freedesktop_os_release")
-    def test_determine_ubuntu(self, os_release_mock):
+    def test_determine_ubuntu(self, os_release_mock: MagicMock) -> None:
         os_release_mock.return_value = {
             "PRETTY_NAME": "Ubuntu 22.04.1 LTS",
             "NAME": "Ubuntu",
@@ -25,7 +26,7 @@ class TestPackagingImpl(unittest.TestCase):
         os_release_mock.assert_called_once_with()
 
     @unittest.mock.patch("platform.freedesktop_os_release")
-    def test_determine_debian_unstable(self, os_release_mock):
+    def test_determine_debian_unstable(self, os_release_mock: MagicMock) -> None:
         os_release_mock.return_value = {
             "PRETTY_NAME": "Debian GNU/Linux bookworm/sid",
             "NAME": "Debian GNU/Linux",
