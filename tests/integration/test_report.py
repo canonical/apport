@@ -31,12 +31,14 @@ class T(unittest.TestCase):
     # pylint: disable=protected-access,too-many-public-methods
     """Test apport.report module."""
 
+    orig_data_dir: dict[str, str] | None
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.orig_data_dir = patch_data_dir(apport.report)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         restore_data_dir(apport.report, cls.orig_data_dir)
 
     def wait_for_proc_cmdline(self, pid: int, timeout_sec: float = 10.0) -> None:
@@ -55,7 +57,7 @@ class T(unittest.TestCase):
         )
 
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_proc_cmdline_failure(self, sleep_mock):
+    def test_wait_for_proc_cmdline_failure(self, sleep_mock: MagicMock) -> None:
         """Test wait_for_proc_cmdline() helper runs into timeout."""
         open_mock = unittest.mock.mock_open(read_data="")
         with unittest.mock.patch("builtins.open", open_mock):
@@ -65,7 +67,7 @@ class T(unittest.TestCase):
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 3)
 
-    def test_add_package_info(self):
+    def test_add_package_info(self) -> None:
         """add_package_info()."""
         # determine bash version
         bashversion = apport.packaging.get_version("bash")
@@ -93,7 +95,7 @@ class T(unittest.TestCase):
         pr.add_package_info()
         self.assertNotIn("Package", pr)
 
-    def test_add_os_info(self):
+    def test_add_os_info(self) -> None:
         """add_os_info()."""
         pr = apport.report.Report()
         pr.add_os_info()
@@ -110,7 +112,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["Uname"], "foonux 1.2")
         self.assertEqual(pr["DistroRelease"], dr)
 
-    def test_add_user_info(self):
+    def test_add_user_info(self) -> None:
         """add_user_info()."""
         pr = apport.report.Report()
         pr.add_user_info()
@@ -286,7 +288,7 @@ class T(unittest.TestCase):
         self.assertIn(lang, r["ProcEnviron"].encode("UTF-8"))
         self.assertIn("XDG_RUNTIME_DIR=<set>", r["ProcEnviron"])
 
-    def test_add_proc_info_current_desktop(self):
+    def test_add_proc_info_current_desktop(self) -> None:
         """add_proc_info() CurrentDesktop"""
         with subprocess.Popen(
             ["cat"], stdin=subprocess.PIPE, env={"LANG": "xx_YY.UTF-8"}
@@ -351,7 +353,7 @@ class T(unittest.TestCase):
             cat.communicate(b"")
         self.assertIn("PATH=(custom, user)", r["ProcEnviron"])
 
-    def test_check_interpreted(self):
+    def test_check_interpreted(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """_check_interpreted()."""
@@ -541,7 +543,7 @@ class T(unittest.TestCase):
             if restore_root:
                 os.setresuid(0, 0, -1)
 
-    def test_check_interpreted_no_exec(self):
+    def test_check_interpreted_no_exec(self) -> None:
         """_check_interpreted() does not run module code"""
         # python script through -m, with dot separator; top-level module
         pr = apport.report.Report()
@@ -561,7 +563,7 @@ class T(unittest.TestCase):
         self.assertNotIn("UnreportableReason", pr)
 
     @skip_if_command_is_missing("twistd")
-    def test_check_interpreted_twistd(self):
+    def test_check_interpreted_twistd(self) -> None:
         """_check_interpreted() for programs ran through twistd"""
         # LP#761374
         pr = apport.report.Report()
@@ -697,7 +699,7 @@ int main() { return f(42); }
         return pr
 
     @staticmethod
-    def _validate_core(core_path):
+    def _validate_core(core_path: str) -> None:
         subprocess.check_call(["sync"])
         count = 0
         while count < 21:
@@ -708,7 +710,7 @@ int main() { return f(42); }
         assert os.path.exists(core_path)
         subprocess.run(["readelf", "-n", core_path], check=True, stdout=subprocess.PIPE)
 
-    def _validate_gdb_fields(self, pr):
+    def _validate_gdb_fields(self, pr: apport.report.Report) -> None:
         self.assertIn("Stacktrace", pr)
         self.assertIn("ThreadStacktrace", pr)
         self.assertIn("StacktraceTop", pr)
@@ -724,7 +726,7 @@ int main() { return f(42); }
         self.assertIn("Thread 1 (", pr["ThreadStacktrace"])
         self.assertLessEqual(len(pr["StacktraceTop"].splitlines()), 5)
 
-    def test_add_gdb_info(self):
+    def test_add_gdb_info(self) -> None:
         """add_gdb_info() with core dump file reference."""
         pr = apport.report.Report()
         # should not throw an exception for missing fields
@@ -756,7 +758,7 @@ int main() { return f(42); }
         self.assertNotEqual(pr["Disassembly"], "")
         self.assertNotIn("AssertionMessage", pr)
 
-    def test_add_gdb_info_load(self):
+    def test_add_gdb_info_load(self) -> None:
         """add_gdb_info() with inline core dump."""
         with tempfile.NamedTemporaryFile() as rep:
             self._generate_sigsegv_report(rep)
@@ -769,7 +771,7 @@ int main() { return f(42); }
 
         self._validate_gdb_fields(pr)
 
-    def test_add_gdb_info_damaged(self):
+    def test_add_gdb_info_damaged(self) -> None:
         """add_gdb_info() with damaged core dump"""
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
@@ -788,7 +790,7 @@ int main() { return f(42); }
             "not a core dump: file format not recognized", pr["UnreportableReason"]
         )
 
-    def test_add_gdb_info_short_core_file(self):
+    def test_add_gdb_info_short_core_file(self) -> None:
         """add_gdb_info() with damaged core dump in gzip file"""
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
@@ -808,7 +810,7 @@ int main() { return f(42); }
         self.assertTrue(pr["UnreportableReason"].startswith("Invalid core dump"))
 
     @unittest.mock.patch("gzip.GzipFile.read")
-    def test_add_gdb_info_damaged_gz_core(self, mock_gzread):
+    def test_add_gdb_info_damaged_gz_core(self, mock_gzread: MagicMock) -> None:
         """add_gdb_info() with damaged gzip file of core dump"""
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
@@ -828,7 +830,7 @@ int main() { return f(42); }
         self.assertNotIn("Stacktrace", pr)
         self.assertNotIn("StacktraceTop", pr)
 
-    def test_add_gdb_info_exe_missing(self):
+    def test_add_gdb_info_exe_missing(self) -> None:
         """add_gdb_info() with missing executable"""
         pr = self._generate_sigsegv_report()
         # change it to something that doesn't exist
@@ -839,7 +841,7 @@ int main() { return f(42); }
     @unittest.mock.patch(
         "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
     )
-    def test_add_zz_parse_segv_details(self):
+    def test_add_zz_parse_segv_details(self) -> None:
         """parse-segv produces sensible results"""
         with tempfile.NamedTemporaryFile() as rep:
             self._generate_sigsegv_report(rep)
@@ -870,7 +872,7 @@ int main() { return f(42); }
             # data/general-hooks/parse_segv.py only runs for x86 and x86_64
             self.assertIn("not located in a known VMA region", pr["SegvAnalysis"])
 
-    def test_add_gdb_info_script(self):
+    def test_add_gdb_info_script(self) -> None:
         """add_gdb_info() with a script."""
         # This needs to handle different bash locations across releases
         # to get the core filename right
@@ -924,7 +926,7 @@ int main() { return f(42); }
             self._validate_gdb_fields(pr)
             self.assertIn("in kill_builtin", pr["Stacktrace"])
 
-    def test_add_gdb_info_abort(self):
+    def test_add_gdb_info_abort(self) -> None:
         """add_gdb_info() with SIGABRT/assert()
 
         If these come from an assert(), the report should have the assertion
@@ -1067,7 +1069,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
         self.assertIn("Assertion failed in main: 1 < 0", pr["AssertionMessage"])
 
-    def test_search_bug_patterns(self):
+    def test_search_bug_patterns(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """search_bug_patterns()."""
@@ -1253,7 +1255,7 @@ int main() { return f(42); }
             "gracefully handles nonexisting URL domain",
         )
 
-    def test_add_hooks_info(self):
+    def test_add_hooks_info(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """add_hooks_info()."""
@@ -1498,7 +1500,7 @@ int main() { return f(42); }
             apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
             apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
-    def test_add_hooks_info_opt(self):
+    def test_add_hooks_info_opt(self) -> None:
         """add_hooks_info() for a package in /opt"""
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
@@ -1557,7 +1559,7 @@ int main() { return f(42); }
             apport.report._opt_dir = orig_opt_dir
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
-    def test_add_hooks_info_errors(self, stderr_mock):
+    def test_add_hooks_info_errors(self, stderr_mock: MagicMock) -> None:
         """add_hooks_info() with errors in hooks"""
         orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
@@ -1625,7 +1627,7 @@ int main() { return f(42); }
             apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
             apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
 
-    def test_ignoring(self):
+    def test_ignoring(self) -> None:
         """mark_ignore() and check_ignored()."""
         orig_ignore_file = apport.report.apport.report._ignore_file
         workdir = tempfile.mkdtemp()
@@ -1688,7 +1690,7 @@ int main() { return f(42); }
             shutil.rmtree(workdir)
             apport.report.apport.report._ignore_file = orig_ignore_file
 
-    def test_denylisting(self):
+    def test_denylisting(self) -> None:
         """check_ignored() for system-wise denylist."""
         orig_denylist_dir = apport.report._DENYLIST_DIR
         apport.report._DENYLIST_DIR = tempfile.mkdtemp()
@@ -1740,7 +1742,7 @@ int main() { return f(42); }
             apport.report._DENYLIST_DIR = orig_denylist_dir
             apport.report._ignore_file = orig_ignore_file
 
-    def test_allowlisting(self):
+    def test_allowlisting(self) -> None:
         """check_ignored() for system-wise allowlist."""
         orig_allowlist_dir = apport.report._ALLOWLIST_DIR
         apport.report._ALLOWLIST_DIR = tempfile.mkdtemp()
@@ -1794,7 +1796,7 @@ int main() { return f(42); }
             apport.report._ALLOWLIST_DIR = orig_allowlist_dir
             apport.report.apport.report._ignore_file = orig_ignore_file
 
-    def test_obsolete_packages(self):
+    def test_obsolete_packages(self) -> None:
         """obsolete_packages()."""
         report = apport.report.Report()
         self.assertEqual(report.obsolete_packages(), [])
@@ -1823,7 +1825,7 @@ int main() { return f(42); }
         )
         self.assertEqual(report.obsolete_packages(), [])
 
-    def test_address_to_offset_live(self):
+    def test_address_to_offset_live(self) -> None:
         """_address_to_offset() for current /proc/pid/maps"""
         # this primarily checks that the parser actually gets along with the
         # real /proc/pid/maps and not just with our static test case above
@@ -1834,32 +1836,32 @@ int main() { return f(42); }
         self.assertEqual(res.split("+", 1)[1], "5")
         self.assertIn("python", res.split("+", 1)[0])
 
-    def test_command_output(self):
+    def test_command_output(self) -> None:
         out = apport.report._command_output(["echo", "hello"])
         self.assertEqual(out, "hello")
 
-    def test_command_output_passes_env(self):
+    def test_command_output_passes_env(self) -> None:
         fake_env = {"GCONV_PATH": "/tmp"}
         out = apport.report._command_output(["env"], env=fake_env)
         self.assertIn("GCONV_PATH", out)
 
-    def test_command_output_timeout(self):
+    def test_command_output_timeout(self) -> None:
         with self.assertRaisesRegex(OSError, "timed out after 0.1 seconds: fail$"):
             apport.report._command_output(
                 ["sh", "-c", "echo fail; sleep 3600"], timeout=0.1
             )
 
-    def test_command_output_timeout_no_output(self):
+    def test_command_output_timeout_no_output(self) -> None:
         with self.assertRaisesRegex(
             OSError, "timed out after 0.1 seconds with no stdout"
         ):
             apport.report._command_output(["sleep", "3600"], timeout=0.1)
 
-    def test_command_output_raises_error(self):
+    def test_command_output_raises_error(self) -> None:
         with self.assertRaisesRegex(OSError, "failed with exit code 1"):
             apport.report._command_output(["false"])
 
-    def test_extrapath_preferred(self):
+    def test_extrapath_preferred(self) -> None:
         """If extrapath is passed it is preferred."""
         bin_true = apport.report._which_extrapath("true", None)
         # need something to be preferred

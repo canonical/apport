@@ -15,6 +15,7 @@ import shutil
 import tempfile
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 from tests.helper import import_module_from_file
 from tests.paths import get_data_directory
@@ -27,7 +28,7 @@ whoopsie_upload_all = import_module_from_file(
 class TestWhoopsieUploadAll(unittest.TestCase):
     """Integration tests for whoopsie-upload-all."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.report_dir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.report_dir)
 
@@ -38,7 +39,7 @@ class TestWhoopsieUploadAll(unittest.TestCase):
         return report
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
-    def test_process_report_malformed_report(self, stderr_mock):
+    def test_process_report_malformed_report(self, stderr_mock: MagicMock) -> None:
         """Test process_report() raises MalformedProblemReport."""
         report = self._write_report(b"AB\xfc:CD\n")
         self.assertIsNone(whoopsie_upload_all.process_report(report))

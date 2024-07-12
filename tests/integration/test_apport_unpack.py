@@ -24,9 +24,12 @@ class TestApportUnpack(unittest.TestCase):
     UTF8_STR = b"a\xe2\x99\xa5b"
     BINDATA = b"\x00\x01\xFF\x40"
     env: dict[str, str]
+    report_file: str
+    unpack_dir: str
+    workdir: str
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.env = os.environ | local_test_environment() | {"LANGUAGE": "C.UTF-8"}
         cls.workdir = tempfile.mkdtemp()
 
@@ -45,14 +48,14 @@ class TestApportUnpack(unittest.TestCase):
         cls.unpack_dir = os.path.join(cls.workdir, "un pack")
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         shutil.rmtree(cls.workdir)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         if os.path.isdir(self.unpack_dir):
             shutil.rmtree(self.unpack_dir)
 
-    def test_unpack(self):
+    def test_unpack(self) -> None:
         """apport-unpack for all possible data types"""
         process = self._call_apport_unpack([self.report_file, self.unpack_dir])
         self.assertEqual(process.returncode, 0)
@@ -64,7 +67,7 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(self._get_unpack("binary"), self.BINDATA)
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
-    def test_unpack_stdin(self):
+    def test_unpack_stdin(self) -> None:
         """apport-unpack unpacks report from stdin"""
         with open(self.report_file, "rb") as report_file:
             process = subprocess.run(
@@ -85,14 +88,14 @@ class TestApportUnpack(unittest.TestCase):
         self.assertEqual(self._get_unpack("binary"), self.BINDATA)
         self.assertEqual(self._get_unpack("compressed"), b"FooFoo!")
 
-    def test_help(self):
+    def test_help(self) -> None:
         """Call apport-unpack with --help."""
         process = self._call_apport_unpack(["--help"])
         self.assertEqual(process.returncode, 0)
         self.assertEqual(process.stderr, "")
         self.assertTrue(process.stdout.startswith("usage:"), process.stdout)
 
-    def test_error(self):
+    def test_error(self) -> None:
         """Call apport-unpack with wrong arguments."""
         process = self._call_apport_unpack([])
         self.assertEqual(process.returncode, 2)
@@ -109,7 +112,7 @@ class TestApportUnpack(unittest.TestCase):
         self.assertIn("/nonexisting.crash", process.stderr)
         self.assertEqual(process.stdout, "")
 
-    def test_broken_report(self):
+    def test_broken_report(self) -> None:
         with tempfile.NamedTemporaryFile("wb") as report_file:
             report_file.write(b"AB\xfc:CD\n")
             report_file.flush()
@@ -124,7 +127,7 @@ class TestApportUnpack(unittest.TestCase):
         )
         self.assertEqual(process.stdout, "")
 
-    def test_broken_core_dump(self):
+    def test_broken_core_dump(self) -> None:
         """Test unpacking a report file that has a malformed CoreDump entry."""
         with tempfile.NamedTemporaryFile("wb") as report_file:
             report_file.write(
@@ -152,6 +155,6 @@ class TestApportUnpack(unittest.TestCase):
             stderr=subprocess.PIPE,
         )
 
-    def _get_unpack(self, fname):
+    def _get_unpack(self, fname: str) -> bytes:
         with open(os.path.join(self.unpack_dir, fname), "rb") as file_:
             return file_.read()

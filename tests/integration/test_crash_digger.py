@@ -27,7 +27,7 @@ from tests.paths import local_test_environment
 class T(unittest.TestCase):
     """Test crash-digger"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up config dir, crashdb.conf, and apport-retrace for testing"""
         self.env = os.environ | local_test_environment()
 
@@ -75,11 +75,11 @@ class T(unittest.TestCase):
         os.mkdir(apport.fileutils.report_dir)
         self.env["APPORT_REPORT_DIR"] = apport.fileutils.report_dir
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
         apport.fileutils.report_dir = self.orig_report_dir
 
-    def call(self, args):
+    def call(self, args: list[str]) -> tuple[str, str]:
         """Call crash-digger with given arguments.
 
         Return a pair (stdout, stderr).
@@ -94,7 +94,7 @@ class T(unittest.TestCase):
         )
         return (crash_digger.stdout, crash_digger.stderr)
 
-    def test_crashes(self):
+    def test_crashes(self) -> None:
         """Crash retracing."""
         (out, err) = self.call(
             [
@@ -130,7 +130,7 @@ class T(unittest.TestCase):
 
         self.assertFalse(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
-    def test_crashes_error(self):
+    def test_crashes_error(self) -> None:
         """Crash retracing if apport-retrace fails on bug #1."""
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
@@ -211,7 +211,7 @@ class T(unittest.TestCase):
 
         self.assertFalse(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
-    def test_crashes_transient_error(self):
+    def test_crashes_transient_error(self) -> None:
         """Crash retracing if apport-retrace reports a transient error."""
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
@@ -257,7 +257,7 @@ class T(unittest.TestCase):
 
         self.assertFalse(os.path.exists(self.lock_file))
 
-    def test_dupcheck(self):
+    def test_dupcheck(self) -> None:
         """Duplicate checking."""
         (out, err) = self.call(
             [
@@ -278,7 +278,7 @@ class T(unittest.TestCase):
         self.assertFalse(os.path.exists(self.apport_retrace_log))
         self.assertFalse(os.path.exists(self.lock_file))
 
-    def test_stderr_redirection(self):
+    def test_stderr_redirection(self) -> None:
         """apport-retrace's stderr is redirected to stdout."""
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write("#!/bin/sh\necho ApportRetraceError >&2\n")
@@ -297,7 +297,7 @@ class T(unittest.TestCase):
         self.assertEqual(err, "", f"no error messages:\n{err}")
         self.assertIn("ApportRetraceError", out)
 
-    def test_publish_db(self):
+    def test_publish_db(self) -> None:
         """Duplicate database publishing."""
         (out, err) = self.call(
             [
@@ -318,7 +318,7 @@ class T(unittest.TestCase):
 
         self.assertTrue(os.path.isdir(os.path.join(self.workdir, "dupdb", "sig")))
 
-    def test_alternate_crashdb(self):
+    def test_alternate_crashdb(self) -> None:
         """Alternate crash database name."""
         # existing DB "empty" has no crashes
         (out, err) = self.call(

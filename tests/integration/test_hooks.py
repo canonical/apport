@@ -32,18 +32,18 @@ class T(unittest.TestCase):
     env: dict[str, str]
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.data_dir = get_data_directory()
         cls.env = os.environ | local_test_environment()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         self.env["APPORT_REPORT_DIR"] = apport.fileutils.report_dir
 
         self.workdir = tempfile.mkdtemp()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
 
@@ -60,7 +60,7 @@ class T(unittest.TestCase):
         )
         self.assertIn("ProblemType: Crash", process.stdout)
 
-    def test_package_hook_nologs(self):
+    def test_package_hook_nologs(self) -> None:
         """package_hook without any log files."""
         ph = subprocess.run(
             [str(self.data_dir / "package_hook"), "-p", "bash"],
@@ -81,7 +81,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["Package"], f"bash {apport.packaging.get_version('bash')}")
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
-    def test_package_hook_uninstalled(self):
+    def test_package_hook_uninstalled(self) -> None:
         """package_hook on an uninstalled package (might fail to install)."""
         pkg = apport.packaging.get_uninstalled_package()
         ph = subprocess.run(
@@ -103,7 +103,7 @@ class T(unittest.TestCase):
         self.assertEqual(r["Package"], f"{pkg} (not installed)")
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
-    def test_package_hook_logs(self):
+    def test_package_hook_logs(self) -> None:
         """package_hook with a log dir and a log file."""
         with open(os.path.join(self.workdir, "log_1.log"), "w", encoding="utf-8") as f:
             f.write("Log 1\nbla")
@@ -159,7 +159,7 @@ class T(unittest.TestCase):
         self.assertEqual(r[log1key], "Log 1\nbla")
         self.assertEqual(r[log2key], "Yet\nanother\nlog")
 
-    def test_package_hook_tags(self):
+    def test_package_hook_tags(self) -> None:
         """package_hook with extra tags argument."""
         cmd = [
             str(self.data_dir / "package_hook"),
@@ -180,7 +180,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(r["Tags"], "dist-upgrade verybad")
 
-    def test_kernel_crashdump_kexec(self):
+    def test_kernel_crashdump_kexec(self) -> None:
         """kernel_crashdump using kexec-tools."""
         with open(os.path.join(apport.fileutils.report_dir, "vmcore"), "wb") as vmcore:
             vmcore.write(b"\x01" * 100)
@@ -225,7 +225,7 @@ class T(unittest.TestCase):
         self.assertIn("linux", r["Package"])
         self.assertIn(os.uname()[2].split("-")[0], r["Package"])
 
-    def test_kernel_crashdump_kdump(self):
+    def test_kernel_crashdump_kdump(self) -> None:
         """kernel_crashdump using kdump-tools."""
         timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
@@ -275,7 +275,7 @@ class T(unittest.TestCase):
         r.add_package_info(r["Package"])
         self.assertIn(os.uname()[2].split("-")[0], r["Package"])
 
-    def test_kernel_crashdump_log_symlink(self):
+    def test_kernel_crashdump_log_symlink(self) -> None:
         """Attempt DoS with vmcore.log symlink.
 
         We must only accept plain files, otherwise vmcore.log might be a
@@ -295,7 +295,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
-    def test_kernel_crashdump_kdump_log_symlink(self):
+    def test_kernel_crashdump_kdump_log_symlink(self) -> None:
         """Attempt DoS with dmesg symlink with kdump-tools."""
         timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
@@ -316,7 +316,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_kernel_crashdump_kdump_log_dir_symlink(self):
+    def test_kernel_crashdump_kdump_log_dir_symlink(self) -> None:
         """Attempted DoS with dmesg dir symlink with kdump-tools."""
         timedir = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M")
         vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
@@ -341,7 +341,7 @@ class T(unittest.TestCase):
         )
         self.assertEqual(apport.fileutils.get_new_reports(), [])
 
-    def _gcc_version_path(self):
+    def _gcc_version_path(self) -> tuple[str, str]:
         """Determine a valid version and executable path of gcc and return it
         as a tuple."""
         try:
@@ -364,7 +364,7 @@ class T(unittest.TestCase):
 
         return (gcc_ver, gcc_path)
 
-    def test_gcc_ide_hook_file(self):
+    def test_gcc_ide_hook_file(self) -> None:
         """gcc_ice_hook with a temporary file."""
         (gcc_version, gcc_path) = self._gcc_version_path()
 
@@ -398,7 +398,7 @@ class T(unittest.TestCase):
         self.assertNotEqual(r["Package"].split()[1], "")  # has package version
         self.assertIn("libc", r["Dependencies"])
 
-    def test_gcc_ide_hook_file_binary(self):
+    def test_gcc_ide_hook_file_binary(self) -> None:
         """gcc_ice_hook with a temporary file with binary data."""
         gcc_path = self._gcc_version_path()[1]
 
@@ -424,7 +424,7 @@ class T(unittest.TestCase):
                 r.load(f)
             self.assertEqual(r["PreprocessedSource"], test_source.read())
 
-    def test_gcc_ide_hook_pipe(self):
+    def test_gcc_ide_hook_pipe(self) -> None:
         """gcc_ice_hook with piping."""
         (gcc_version, gcc_path) = self._gcc_version_path()
 
@@ -453,7 +453,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(r["Package"].split()[0], f"gcc-{gcc_version}")
 
-    def test_kernel_oops_hook(self):
+    def test_kernel_oops_hook(self) -> None:
         test_source = """------------[ cut here ]------------
 kernel BUG at /tmp/oops.c:5!
 invalid opcode: 0000 [#1] SMP

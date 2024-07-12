@@ -24,21 +24,24 @@ class TestApportValgrind(unittest.TestCase):
     """Integration tests for bin/apport-valgrind."""
 
     maxDiff = None
+    env: dict[str, str]
+    pwd: str
+    workdir: str
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.env = os.environ | local_test_environment()
         cls.env.pop("DEBUGINFOD_URLS", None)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
         self.pwd = os.getcwd()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
-    def test_valgrind_min_installed(self):
+    def test_valgrind_min_installed(self) -> None:
         """Valgrind is installed and recent enough."""
         cmd = ["valgrind", "-q", "--extra-debuginfo-path=./", "ls"]
         (ret, out, err) = self._call(cmd)
@@ -46,7 +49,7 @@ class TestApportValgrind(unittest.TestCase):
         self.assertEqual(ret, 0)
         self.assertIn("tests", out)
 
-    def _call(self, argv):
+    def _call(self, argv: list[str]) -> tuple[int, str, str]:
         process = subprocess.run(
             argv,
             check=False,
@@ -57,7 +60,7 @@ class TestApportValgrind(unittest.TestCase):
         )
         return (process.returncode, process.stdout, process.stderr)
 
-    def test_help_display(self):
+    def test_help_display(self) -> None:
         """Display help."""
         cmd = ["apport-valgrind", "-h"]
         (ret, out, err) = self._call(cmd)
@@ -65,7 +68,7 @@ class TestApportValgrind(unittest.TestCase):
         self.assertEqual(ret, 0)
         self.assertIn("--help", out)
 
-    def test_invalid_args(self):
+    def test_invalid_args(self) -> None:
         """Return code is not 0 when invalid args are passed."""
         cmd = ["apport-valgrind", "-k", "pwd"]
         (ret, out, err) = self._call(cmd)
@@ -73,7 +76,7 @@ class TestApportValgrind(unittest.TestCase):
         self.assertNotEqual(ret, 0)
         self.assertIn("unrecognized arguments: -k", err)
 
-    def test_vlog_created(self):
+    def test_vlog_created(self) -> None:
         """apport-valgrind creates valgrind.log with expected content."""
         cmd = ["apport-valgrind", "--no-sandbox", "true"]
         os.chdir(self.workdir)
@@ -82,7 +85,7 @@ class TestApportValgrind(unittest.TestCase):
             os.path.exists("valgrind.log"), msg="Expected valgrind.log file not found."
         )
 
-    def test_intentional_mem_leak_detection(self):
+    def test_intentional_mem_leak_detection(self) -> None:
         """apport-valgrind log reports intentional memory leak."""
         os.chdir(self.workdir)
 
@@ -138,7 +141,7 @@ void makeleak(void){
             "in the valgrind log file but is not.",
         )
 
-    def test_unpackaged_exe(self):
+    def test_unpackaged_exe(self) -> None:
         """apport-valgrind creates valgrind log on unpackaged executable."""
         exepath = os.path.join(self.workdir, "pwd")
         shutil.copy("/bin/pwd", exepath)

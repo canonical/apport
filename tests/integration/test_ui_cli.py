@@ -30,17 +30,19 @@ class TestApportCli(unittest.TestCase):
     # pylint: disable=missing-function-docstring
     """Test apport-cli."""
 
+    orig_environ: dict[str, str]
+
     @classmethod
     def setUpClass(cls):
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         os.environ.clear()
         os.environ.update(cls.orig_environ)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = apport_cli.CLIUserInterface([APPORT_CLI_PATH])
         self.app.report = apport.report.Report()
         self.app.report.add_os_info()

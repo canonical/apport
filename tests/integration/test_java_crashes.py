@@ -25,7 +25,7 @@ from tests.paths import get_data_directory, local_test_environment
 class TestJavaCrashes(unittest.TestCase):
     """Integration tests for the Java crash collection support."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.env = os.environ | local_test_environment()
         datadir = get_data_directory()
         self.orig_report_dir = apport.fileutils.report_dir
@@ -40,11 +40,11 @@ class TestJavaCrashes(unittest.TestCase):
         if not self.apport_jar_path.exists():
             self.skipTest(f"{self.apport_jar_path} missing")
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
 
-    def test_crash_class(self):
+    def test_crash_class(self) -> None:
         """Crash in a .class file."""
         crash_class = self.crash_jar_path.with_suffix(".class")
         self.assertTrue(crash_class.exists(), f"{crash_class} missing")
@@ -65,7 +65,7 @@ class TestJavaCrashes(unittest.TestCase):
 
         self._check_crash_report(str(crash_class))
 
-    def test_crash_jar(self):
+    def test_crash_jar(self) -> None:
         """Crash in a .jar file."""
         self.assertTrue(self.crash_jar_path.exists(), f"{self.crash_jar_path} missing")
         java = subprocess.run(
@@ -85,7 +85,7 @@ class TestJavaCrashes(unittest.TestCase):
 
         self._check_crash_report(f"{self.crash_jar_path}!/crash.class")
 
-    def _check_crash_report(self, main_file):
+    def _check_crash_report(self, main_file: str) -> None:
         """Check that we have one crash report, and verify its contents."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "did not create a crash report")
