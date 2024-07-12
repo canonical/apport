@@ -11,7 +11,7 @@ import apport.packaging
 class T(unittest.TestCase):
     """Integration tests for the apport.packaging module."""
 
-    def test_get_uninstalled_package(self):
+    def test_get_uninstalled_package(self) -> None:
         """get_uninstalled_package()"""
         p = apport.packaging.get_uninstalled_package()
         self.assertIsNotNone(p)
@@ -19,7 +19,7 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, apport.packaging.get_version, p)
         self.assertTrue(apport.packaging.is_distro_package(p))
 
-    def test_get_os_version(self):
+    def test_get_os_version(self) -> None:
         """get_os_version()"""
         (n, v) = apport.packaging.get_os_version()
         self.assertEqual(type(n), str)

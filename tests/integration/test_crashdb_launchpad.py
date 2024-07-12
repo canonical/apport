@@ -23,6 +23,8 @@ import sys
 import tempfile
 import unittest
 import unittest.mock
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import MagicMock
 
 try:
@@ -39,13 +41,13 @@ from apport.report import Report
 _CACHE = {}
 
 
-def cache(func):
+def cache(func: Callable) -> Callable:
     """Decorate a function/method to cache the result of its call.
 
     The cache is ignored if force_fresh is set to True.
     """
 
-    def try_to_get_from_cache(*args, **kwargs):
+    def try_to_get_from_cache(*args: Any, **kwargs: Any) -> Any:
         if kwargs.get("force_fresh", False):
             return func(*args, **kwargs)
         if func.__name__ not in _CACHE:
@@ -73,7 +75,7 @@ class T(unittest.TestCase):
     # Generic tests, should work for all CrashDB implementations
     #
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.crashdb = self._get_instance()
 
         # create a local reference report so that we can compare
@@ -100,7 +102,7 @@ class T(unittest.TestCase):
         sys.stderr.write(f"(Created {name} report: {web_link}) ")
         return crash_id
 
-    def _create_project(self, name):
+    def _create_project(self, name: str) -> None:
         """Create a project using launchpadlib to be used by tests."""
         project = self.crashdb.launchpad.projects[name]
         if not project:
@@ -113,12 +115,12 @@ class T(unittest.TestCase):
             )
 
     @property
-    def hostname(self):
+    def hostname(self) -> str:
         """Get the Launchpad hostname for the given crashdb."""
         return self.crashdb.get_hostname()
 
     @cache
-    def get_segv_report(self, force_fresh=False):
+    def get_segv_report(self, force_fresh: bool = False) -> int:
         # force_fresh used by @cache, pylint: disable=unused-argument
         """Generate SEGV crash report.
 
@@ -132,7 +134,7 @@ class T(unittest.TestCase):
         return self._create_bug_from_report("SEGV", r)
 
     @cache
-    def get_python_report(self):
+    def get_python_report(self) -> int:
         """Generate Python crash report.
 
         Return the ID.
@@ -158,7 +160,7 @@ NameError: global name 'weird' is not defined"""
         return self._create_bug_from_report("Python", r)
 
     @cache
-    def get_uncommon_description_report(self, force_fresh=False):
+    def get_uncommon_description_report(self, force_fresh: bool = False) -> None:
         # force_fresh used by @cache, pylint: disable=unused-argument
         """File a bug report with an uncommon description.
 
@@ -193,7 +195,7 @@ and more
 
         return bug.id
 
-    def test_1_download(self):
+    def test_1_download(self) -> None:
         """download()"""
         r = self.crashdb.download(self.get_segv_report())
         self.assertEqual(r["ProblemType"], "Crash")
@@ -243,7 +245,7 @@ and more
             ),
         )
 
-    def test_2_update_traces(self):
+    def test_2_update_traces(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """update_traces()"""
@@ -337,7 +339,7 @@ and more
         r["StacktraceSource"] = "a\nb\nc\ne\nf\n\xff\xff\xff\n\f"
         self.crashdb.update_traces(self.get_segv_report(), r, "tests")
 
-    def test_get_comment_url(self):
+    def test_get_comment_url(self) -> None:
         """get_comment_url() for non-ASCII titles"""
         title = b"1\xc3\xa4\xe2\x99\xa52"
 
@@ -365,7 +367,7 @@ and more
             )
         )
 
-    def test_update_description(self):
+    def test_update_description(self) -> None:
         """update() with changing description"""
         bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
         bug = self.crashdb.launchpad.bugs.createBug(
@@ -398,7 +400,7 @@ and more
             self.crashdb.launchpad.bugs[crash_id].tags, ["apport-collected"]
         )
 
-    def test_update_comment(self):
+    def test_update_comment(self) -> None:
         """update() with appending comment"""
         bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
         # we need to fake an apport description separator here, since we
@@ -434,7 +436,7 @@ and more
             self.crashdb.launchpad.bugs[crash_id].tags, ["apport-collected"]
         )
 
-    def test_update_filter(self):
+    def test_update_filter(self) -> None:
         """update() with a key filter"""
         bug_target = self.crashdb.lp_distro.getSourcePackage(name="bash")
         bug = self.crashdb.launchpad.bugs.createBug(
@@ -472,31 +474,31 @@ and more
 
         self.assertEqual(self.crashdb.launchpad.bugs[crash_id].tags, [])
 
-    def test_get_distro_release(self):
+    def test_get_distro_release(self) -> None:
         """get_distro_release()"""
         self.assertEqual(
             self.crashdb.get_distro_release(self.get_segv_report()),
             self.ref_report["DistroRelease"],
         )
 
-    def test_get_affected_packages(self):
+    def test_get_affected_packages(self) -> None:
         """get_affected_packages()"""
         self.assertEqual(
             self.crashdb.get_affected_packages(self.get_segv_report()),
             [self.ref_report["SourcePackage"]],
         )
 
-    def test_is_reporter(self):
+    def test_is_reporter(self) -> None:
         """is_reporter()"""
         self.assertTrue(self.crashdb.is_reporter(self.get_segv_report()))
         self.assertFalse(self.crashdb.is_reporter(1))
 
-    def test_can_update(self):
+    def test_can_update(self) -> None:
         """can_update()"""
         self.assertTrue(self.crashdb.can_update(self.get_segv_report()))
         self.assertFalse(self.crashdb.can_update(1))
 
-    def test_duplicates(self):
+    def test_duplicates(self) -> None:
         """Test duplicate handling."""
         # initially we have no dups
         self.assertIsNone(self.crashdb.duplicate_of(self.get_segv_report()))
@@ -547,7 +549,7 @@ and more
         self.crashdb.mark_regression(segv_id, known_test_id)
         self._verify_marked_regression(segv_id)
 
-    def test_marking_segv(self):
+    def test_marking_segv(self) -> None:
         """Test processing status markings for signal crashes."""
         # mark_retraced()
         unretraced_before = self.crashdb.get_unretraced()
@@ -585,7 +587,7 @@ and more
             self.crashdb.get_fixed_version(self.get_segv_report()), "invalid"
         )
 
-    def test_marking_project(self):
+    def test_marking_project(self) -> None:
         """Test processing status markings for a project CrashDB."""
         # create a distro bug
         distro_bug = self.crashdb.launchpad.bugs.createBug(
@@ -621,7 +623,7 @@ and more
         )
         self.assertIsNone(self.crashdb.get_fixed_version(project_bug.id))
 
-    def test_marking_foreign_arch(self):
+    def test_marking_foreign_arch(self) -> None:
         """Test processing status markings for a project CrashDB."""
         # create a DB for fake arch
         launchpad_instance = os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
@@ -654,7 +656,7 @@ and more
             fakearch_unretraced_after, fakearch_unretraced_before.union(set([bug.id]))
         )
 
-    def test_marking_python(self):
+    def test_marking_python(self) -> None:
         """Test processing status markings for interpreter crashes."""
         unchecked_before = self.crashdb.get_dup_unchecked()
         self.assertIn(self.get_python_report(), unchecked_before)
@@ -667,7 +669,7 @@ and more
         )
         self.assertIsNone(self.crashdb.get_fixed_version(self.get_python_report()))
 
-    def test_update_traces_invalid(self):
+    def test_update_traces_invalid(self) -> None:
         """Test updating an invalid crash.
 
         This simulates a race condition where a crash being processed gets
@@ -712,7 +714,7 @@ and more
 
     @staticmethod
     @cache
-    def _get_instance():
+    def _get_instance() -> CrashDatabase:
         """Create a CrashDB instance."""
         launchpad_instance = os.environ.get("APPORT_LAUNCHPAD_INSTANCE") or "qastaging"
 
@@ -722,7 +724,7 @@ and more
         )
 
     @staticmethod
-    def _get_bug_target(db, report):
+    def _get_bug_target(db: CrashDatabase, report: Report) -> object | None:
         """Return the bug_target for this report."""
         project = db.options.get("project")
         if "SourcePackage" in report:
@@ -790,21 +792,21 @@ and more
 
         return bug.id, bug.web_link
 
-    def _mark_needs_retrace(self, crash_id):
+    def _mark_needs_retrace(self, crash_id: int) -> None:
         """Mark a report ID as needing retrace."""
         bug = self.crashdb.launchpad.bugs[crash_id]
         if self.crashdb.arch_tag not in bug.tags:
             bug.tags = bug.tags + [self.crashdb.arch_tag]
             bug.lp_save()
 
-    def _mark_needs_dupcheck(self, crash_id):
+    def _mark_needs_dupcheck(self, crash_id: int) -> None:
         """Mark a report ID as needing duplicate check."""
         bug = self.crashdb.launchpad.bugs[crash_id]
         if "need-duplicate-check" not in bug.tags:
             bug.tags = bug.tags + ["need-duplicate-check"]
             bug.lp_save()
 
-    def _mark_report_fixed(self, crash_id):
+    def _mark_report_fixed(self, crash_id: int) -> None:
         """Close a report ID as "fixed"."""
         bug = self.crashdb.launchpad.bugs[crash_id]
         tasks = list(bug.bug_tasks)
@@ -813,7 +815,7 @@ and more
         t.status = "Fix Released"
         t.lp_save()
 
-    def _mark_report_new(self, crash_id):
+    def _mark_report_new(self, crash_id: int) -> None:
         """Reopen a report ID as "new"."""
         bug = self.crashdb.launchpad.bugs[crash_id]
         tasks = list(bug.bug_tasks)
@@ -822,7 +824,7 @@ and more
         t.status = "New"
         t.lp_save()
 
-    def _verify_marked_regression(self, crash_id):
+    def _verify_marked_regression(self, crash_id: int) -> None:
         """Verify that report ID is marked as regression."""
         bug = self.crashdb.launchpad.bugs[crash_id]
         self.assertIn("regression-retracer", bug.tags)
@@ -884,7 +886,7 @@ NameError: global name 'weird' is not defined"""
         self.assertIsNone(crashdb.duplicate_of(crash_id))
         self.assertIsNone(crashdb.get_fixed_version(crash_id))
 
-    def test_download_robustness(self):
+    def test_download_robustness(self) -> None:
         """download() of uncommon description formats"""
         # only ProblemType/Architecture/DistroRelease in description
         r = self.crashdb.download(self.get_uncommon_description_report())
@@ -931,7 +933,7 @@ NameError: global name 'weird' is not defined"""
                 db.close_duplicate(Report(), b, None)
         sys.stderr.write("\n")
 
-    def test_marking_python_task_mangle(self):
+    def test_marking_python_task_mangle(self) -> None:
         """Test source package task fixup for marking interpreter
         scrashes."""
         self._mark_needs_dupcheck(self.get_python_report())

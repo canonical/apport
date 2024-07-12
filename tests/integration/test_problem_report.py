@@ -21,13 +21,13 @@ bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
 
-    def test_compressed_values(self):
+    def test_compressed_values(self) -> None:
         """Handle of CompressedValue values."""
         large_val = b"A" * 5000000
 
@@ -66,7 +66,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["Bin"], bin_data)
         self.assertEqual(pr["Large"], large_val.decode("ASCII"))
 
-    def test_write_append(self):
+    def test_write_append(self) -> None:
         """write() with appending to an existing file."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
@@ -176,7 +176,7 @@ class T(unittest.TestCase):
             with open(os.path.join(self.workdir, key), "rb") as f:
                 self.assertEqual(f.read(), expected)
 
-    def test_write_file(self):
+    def test_write_file(self) -> None:
         """Write a report with binary file data."""
         with tempfile.NamedTemporaryFile() as temp:
             temp.write(bin_data)
@@ -241,7 +241,7 @@ class T(unittest.TestCase):
                 ),
             )
 
-    def test_write_delayed_fileobj(self):
+    def test_write_delayed_fileobj(self) -> None:
         """Write a report with file pointers and delayed data."""
         (fout, fin) = os.pipe()
 
@@ -271,7 +271,7 @@ class T(unittest.TestCase):
         pr2.load(out)
         self.assertEqual(pr2["BinFile"], "ab" * 512 * 1024 + "hello world")
 
-    def test_big_file(self):
+    def test_big_file(self) -> None:
         """Write and re-decoding a big random file."""
         # create 1 MB random file
         with tempfile.NamedTemporaryFile() as temp:
@@ -308,7 +308,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["File"].get_value(), data)
         self.assertEqual(pr["File"].name, "File")
 
-    def test_size_limit(self):
+    def test_size_limit(self) -> None:
         """Write and a big random file with a size limit key."""
         # create 1 MB random file
         with tempfile.NamedTemporaryFile() as temp:
@@ -341,7 +341,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["Before"], "xtestx")
         self.assertEqual(pr["ZAfter"], "ytesty")
 
-    def test_add_to_existing(self):  # pylint: disable=too-many-statements
+    def test_add_to_existing(self) -> None:  # pylint: disable=too-many-statements
         """Add information to an existing report."""
         # original report
         pr = problem_report.ProblemReport()
@@ -420,7 +420,7 @@ class T(unittest.TestCase):
 
         os.unlink(rep)
 
-    def test_write_mime_binary(self):
+    def test_write_mime_binary(self) -> None:
         """write_mime() for binary values and file references."""
         with tempfile.NamedTemporaryFile() as temp:
             with tempfile.NamedTemporaryFile() as tempgz:
@@ -494,7 +494,7 @@ class T(unittest.TestCase):
         self.assertEqual(parts[6].get_filename(), "ZValue.gz")
         self.assertEqual(self.decode_gzipped_message(parts[6]), bin_data)
 
-    def test_write_mime_filter(self):
+    def test_write_mime_filter(self) -> None:
         """write_mime() with key filters."""
         pr = problem_report.ProblemReport(date="now!")
         pr["GoodText"] = "Hi"

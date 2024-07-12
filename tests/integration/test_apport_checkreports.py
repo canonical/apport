@@ -23,14 +23,14 @@ class TestApportCheckreports(unittest.TestCase):
     # pylint: disable=missing-function-docstring
     """Test apport-checkreports"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.data_dir = get_data_directory()
         self.env = os.environ | local_test_environment()
 
         self.report_dir = tempfile.mkdtemp()
         self.env["APPORT_REPORT_DIR"] = self.report_dir
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.report_dir)
 
     def _call(
@@ -63,18 +63,18 @@ class TestApportCheckreports(unittest.TestCase):
         if user and os.geteuid() == 0:
             os.chown(path, 1000, -1)
 
-    def test_has_no_system_report(self):
+    def test_has_no_system_report(self) -> None:
         self._write_report("_bin_sleep.1000.crash")
         self._call(args=["--system"], expected_returncode=1)
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_has_system_report(self):
+    def test_has_system_report(self) -> None:
         self._write_report("_usr_bin_yes.0.crash", user=False)
         self._call(args=["-s"], expected_returncode=0, expected_stdout="yes\n")
 
-    def test_has_user_report(self):
+    def test_has_user_report(self) -> None:
         self._write_report("_bin_sleep.1000.crash")
         self._call(expected_returncode=0, expected_stdout="sleep\n")
 
-    def test_no_report(self):
+    def test_no_report(self) -> None:
         self._call(expected_returncode=1)

@@ -77,6 +77,11 @@ class T(unittest.TestCase):
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
     maxDiff = None
+    orig_core_dir: str
+    orig_cwd: str
+    orig_environ: dict[str, str]
+    orig_ignore_file: str
+    orig_report_dir: str
 
     @classmethod
     def setUpClass(cls):
@@ -89,7 +94,7 @@ class T(unittest.TestCase):
         cls.orig_report_dir = apport.fileutils.report_dir
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         os.environ.clear()
         os.environ.update(cls.orig_environ)
         apport.fileutils.core_dir = cls.orig_core_dir
@@ -97,7 +102,7 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = cls.orig_report_dir
         os.chdir(cls.orig_cwd)
 
-    def setUp(self):
+    def setUp(self) -> None:
         # use local report dir
         self.report_dir = tempfile.mkdtemp()
         os.environ["APPORT_REPORT_DIR"] = self.report_dir
@@ -123,9 +128,9 @@ class T(unittest.TestCase):
         os.chdir("/tmp")
 
         # expected report name for test executable report
-        self.test_report = None
+        self.test_report: str | None = None
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         # permit tests to leave behind test_report, but nothing else
         if self.test_report and os.path.exists(self.test_report):
             apport.fileutils.delete_report(self.test_report)
@@ -297,7 +302,7 @@ class T(unittest.TestCase):
             test_proc.wait()
             test_proc2.wait()
 
-    def test_unpackaged_binary(self):
+    def test_unpackaged_binary(self) -> None:
         """Unpackaged binaries do not create a report."""
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
@@ -306,7 +311,7 @@ class T(unittest.TestCase):
         os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe, expect_report=False)
 
-    def test_unpackaged_script(self):
+    def test_unpackaged_script(self) -> None:
         """Unpackaged scripts do not create a report."""
         local_exe = os.path.join(self.workdir, "myscript")
         with open(local_exe, "w", encoding="utf-8") as f:
@@ -320,14 +325,14 @@ class T(unittest.TestCase):
         os.chdir(self.workdir)
         self.do_crash(command="./myscript", args=[], expect_report=False)
 
-    def test_unsupported_arguments_no_stderr(self):
+    def test_unsupported_arguments_no_stderr(self) -> None:
         """Write failure to log file when stderr is missing.
 
         The kernel calls apport with no stdout and stderr file
         descriptors set.
         """
 
-        def close_stdin_and_stderr():
+        def close_stdin_and_stderr() -> None:
             """Close stdin and stderr"""
             os.close(sys.stdout.fileno())
             os.close(sys.stderr.fileno())
@@ -345,15 +350,15 @@ class T(unittest.TestCase):
         self.assertIn("usage", logged)
         self.assertIn("the following arguments are required: -p/--pid", logged)
 
-    def test_ignore_sigquit(self):
+    def test_ignore_sigquit(self) -> None:
         """Apport ignores SIGQUIT."""
         self.do_crash(sig=signal.SIGQUIT, expect_report=False)
 
-    def test_ignore_sigxcpu(self):
+    def test_ignore_sigxcpu(self) -> None:
         """Apport ignores CPU time limit exceeded (SIGXCPU)."""
         self.do_crash(sig=signal.SIGXCPU, expect_report=False)
 
-    def test_leak_inaccessible_files(self):
+    def test_leak_inaccessible_files(self) -> None:
         """Existence of user-inaccessible files do not leak."""
         local_exe = os.path.join(self.workdir, "myscript")
         with open(local_exe, "w", encoding="utf-8") as f:
@@ -378,7 +383,7 @@ class T(unittest.TestCase):
         self.assertNotIn("InterpreterPath", pr)
         apport.fileutils.delete_report(leak)
 
-    def test_flood_limit(self):
+    def test_flood_limit(self) -> None:
         """Limitation of crash report flood."""
         count = 0
         while count < 7:
@@ -394,7 +399,7 @@ class T(unittest.TestCase):
         self.assertLess(count, 7, "stops flooding after less than 7 repeated crashes")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_nonreadable_exe(self):
+    def test_nonreadable_exe(self) -> None:
         """Report generation for non-readable executable."""
         # CVE-2015-1324: if a user cannot read an executable, it behaves much
         # like a suid root binary in terms of writing a core dump
@@ -412,7 +417,7 @@ class T(unittest.TestCase):
 
         self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
 
-    def test_core_dump_packaged(self):
+    def test_core_dump_packaged(self) -> None:
         """Packaged executables create core dumps on proper ulimits."""
         # for SEGV and ABRT we expect reports and core files
         for sig in (signal.SIGSEGV, signal.SIGABRT):
@@ -430,12 +435,12 @@ class T(unittest.TestCase):
             self.do_crash(expect_corefile=True)
             apport.fileutils.delete_report(self.test_report)
 
-    def test_core_dump_packaged_sigquit(self):
+    def test_core_dump_packaged_sigquit(self) -> None:
         """Packaged executables create core files, no report for SIGQUIT."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(expect_corefile=True, expect_report=False, sig=signal.SIGQUIT)
 
-    def test_core_dump_unpackaged(self):
+    def test_core_dump_unpackaged(self) -> None:
         """Unpackaged executables create core dumps on proper ulimits."""
         local_exe = os.path.join(self.workdir, "mybin")
         with open(local_exe, "wb") as dest:
@@ -454,7 +459,7 @@ class T(unittest.TestCase):
                     sig=sig,
                 )
 
-    def test_core_file_injection(self):
+    def test_core_file_injection(self) -> None:
         """Cannot inject core file."""
         # CVE-2015-1325: ensure that apport does not re-open its .crash report,
         # as that allows us to intercept and replace the report and tinker with
@@ -518,7 +523,7 @@ class T(unittest.TestCase):
 
         self.do_crash(expect_report=False)
 
-    def test_modify_after_start(self):
+    def test_modify_after_start(self) -> None:
         """Ignore executables which got modified after process started."""
         # create executable in a path we can modify which apport regards as
         # likely packaged
@@ -669,7 +674,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_setuid_keep(self):
+    def test_crash_setuid_keep(self) -> None:
         """Report generation for setuid program which stays root."""
         # create suid root executable in a path we can modify which apport
         # regards as likely packaged
@@ -691,7 +696,7 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_suid_dumpable_debug(self):
+    def test_crash_suid_dumpable_debug(self) -> None:
         """Report generation for setuid program with suid_dumpable set to 1.
 
         ping has cap_net_raw=ep and therefore do_crash needs root.
@@ -706,7 +711,7 @@ class T(unittest.TestCase):
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_setuid_drop(self):
+    def test_crash_setuid_drop(self) -> None:
         """Report generation for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
@@ -717,7 +722,7 @@ class T(unittest.TestCase):
         )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_setuid_unpackaged(self):
+    def test_crash_setuid_unpackaged(self) -> None:
         """Report generation for unpackaged setuid program."""
         # create suid root executable in a path we can modify which apport
         # regards as not packaged
@@ -754,7 +759,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["Signal"], "11")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
 
-    def test_core_dump_packaged_sigquit_via_socket(self):
+    def test_core_dump_packaged_sigquit_via_socket(self) -> None:
         """Executable create core files via socket, no report for SIGQUIT."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(
@@ -940,7 +945,7 @@ class T(unittest.TestCase):
             search_map_mock.assert_called()
 
         # call apport like systemd does via socket activation
-        def child_setup():
+        def child_setup() -> None:
             os.environ["LISTEN_FDNAMES"] = "connection"
             os.environ["LISTEN_FDS"] = "1"
             os.environ["LISTEN_PID"] = str(os.getpid())
@@ -981,9 +986,7 @@ class T(unittest.TestCase):
         )
         self.assertNotEqual(gdb.stdout.strip(), "")
 
-    def _check_report(
-        self, expect_report: bool = True, expected_owner: int | None = None
-    ) -> None:
+    def _check_report(self, expect_report=True, expected_owner=None):
         if not expect_report:
             self.assertEqual(apport.fileutils.get_all_reports(), [])
             return
@@ -1044,7 +1047,7 @@ class T(unittest.TestCase):
         command: str | None = None,
         expected_command: str | None = None,
         uid: int | None = None,
-        expect_corefile_owner: str | None = None,
+        expect_corefile_owner: int | None = None,
         args: list[str] | None = None,
         suid_dumpable: int = 1,
         hook_before_apport: Callable | None = None,
@@ -1252,7 +1255,9 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_core_file_core_not_created(self, sleep_mock, exists_mock):
+    def test_wait_for_core_file_core_not_created(
+        self, sleep_mock: MagicMock, exists_mock: MagicMock
+    ) -> None:
         """Test wait_for_core_file() helper runs into timeout for core file."""
         exists_mock.return_value = False
         with self.assertRaises(AssertionError):
@@ -1263,7 +1268,9 @@ class T(unittest.TestCase):
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_core_file_timeout(self, sleep_mock, process_mock, exists_mock):
+    def test_wait_for_core_file_timeout(
+        self, sleep_mock: MagicMock, process_mock: MagicMock, exists_mock: MagicMock
+    ) -> None:
         """Test wait_for_core_file() helper runs into timeout."""
         popenfile = collections.namedtuple("popenfile", ["path"])
         exists_mock.return_value = True
@@ -1302,7 +1309,7 @@ class T(unittest.TestCase):
         )
 
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_child_process(self, sleep_mock):
+    def test_wait_for_gdb_child_process(self, sleep_mock: MagicMock) -> None:
         """Test wait_for_gdb_child_process() helper method."""
         child = MagicMock(spec=psutil.Process)
         child.status.side_effect = ["tracing-stop", "running", "sleeping"]
@@ -1327,7 +1334,9 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_child_process_timeout(self, sleep_mock, process_mock):
+    def test_wait_for_gdb_child_process_timeout(
+        self, sleep_mock: MagicMock, process_mock: MagicMock
+    ) -> None:
         """Test wait_for_gdb_child_process() helper runs into timeout."""
         process_mock.return_value.children.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:

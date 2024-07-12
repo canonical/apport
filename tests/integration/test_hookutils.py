@@ -23,18 +23,18 @@ from tests.helper import skip_if_command_is_missing
 class T(unittest.TestCase):
     """Integration tests for the apport.hookutils module."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
 
     @skip_if_command_is_missing("/usr/bin/as")
-    def test_module_license_evaluation(self):
+    def test_module_license_evaluation(self) -> None:
         """Module licenses can be validated correctly."""
         # pylint: disable=protected-access
 
-        def _build_ko(license_name):
+        def _build_ko(license_name: str) -> str:
             ko_filename = os.path.join(self.workdir, f"{license_name}.ko")
             with tempfile.NamedTemporaryFile(
                 mode="w+", prefix=f"{license_name}-", suffix=".S"
@@ -69,7 +69,7 @@ class T(unittest.TestCase):
         self.assertIn(bad_ko, nonfree)
 
     @skip_if_command_is_missing("/sbin/modinfo")
-    def test_real_module_license_evaluation(self):
+    def test_real_module_license_evaluation(self) -> None:
         """Module licenses can be validated correctly for real module."""
         # pylint: disable=protected-access
         isofs_license = apport.hookutils._get_module_license("isofs")
@@ -193,7 +193,7 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file_if_exists(report, "/etc/../etc/passwd")
         self.assertEqual(list(report), [])
 
-    def test_recent_syslog(self):
+    def test_recent_syslog(self) -> None:
         """recent_syslog"""
         self.assertEqual(
             apport.hookutils.recent_syslog(re.compile("."), path="/nonexisting"), ""
@@ -210,7 +210,7 @@ class T(unittest.TestCase):
     @unittest.mock.patch(
         "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
     )
-    def test_attach_mac_events(self):
+    def test_attach_mac_events(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """attach_mac_events()"""
@@ -353,7 +353,7 @@ class T(unittest.TestCase):
         apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
         self.assertEqual(report["Tags"], "apparmor")
 
-    def test_recent_syslog_overflow(self):
+    def test_recent_syslog_overflow(self) -> None:
         """recent_syslog on a huge file"""
         log = os.path.join(self.workdir, "syslog")
         with open(log, "w", encoding="utf-8") as f:
@@ -378,7 +378,7 @@ class T(unittest.TestCase):
         is None,
         "no logind session",
     )
-    def test_in_session_of_problem(self):
+    def test_in_session_of_problem(self) -> None:
         """in_session_of_problem()"""
         report = apport.report.Report(date="Sat Jan  1 12:00:00 2011")
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
@@ -406,7 +406,7 @@ class T(unittest.TestCase):
         finally:
             locale.setlocale(locale.LC_TIME, orig_ctime)
 
-    def test_xsession_errors(self):
+    def test_xsession_errors(self) -> None:
         """xsession_errors()"""
         with open(
             os.path.join(self.workdir, ".xsession-errors"), "w", encoding="UTF-8"
@@ -486,7 +486,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         apport.hookutils.attach_conffiles(report, "nonexisting")
         apport.hookutils.attach_default_grub(report)
 
-    def test_command_output(self):
+    def test_command_output(self) -> None:
         """Test apport.hookutils.command_output."""
         orig_lcm = os.environ.get("LC_MESSAGES")
         os.environ["LC_MESSAGES"] = "en_US.UTF-8"
@@ -513,7 +513,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         self.assertEqual(out, "hello")
 
     @staticmethod
-    def _get_mem_usage():
+    def _get_mem_usage() -> int:
         """Get current memory usage in kB."""
         with open("/proc/self/status", encoding="utf-8") as f:
             for line in f:

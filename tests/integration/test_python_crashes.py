@@ -33,9 +33,11 @@ class T(unittest.TestCase):
     """Test apport_python_hook.py."""
 
     maxDiff = None
+    env: dict[str, str]
+    orig_report_dir: str
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.env = os.environ | local_test_environment()
         cls.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
@@ -43,14 +45,16 @@ class T(unittest.TestCase):
         atexit.register(shutil.rmtree, apport.fileutils.report_dir)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         apport.fileutils.report_dir = cls.orig_report_dir
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
 
-    def _test_crash(self, extracode="", scriptname=None, relpath=False):
+    def _test_crash(
+        self, extracode: str = "", scriptname: str | None = None, relpath: bool = False
+    ) -> str:
         """Create a test crash."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
@@ -107,7 +111,7 @@ func(42)
 
         return script
 
-    def test_general(self):
+    def test_general(self) -> None:
         """General operation of the Python crash hook."""
         script = self._test_crash()
 
@@ -151,7 +155,7 @@ func(42)
             "func\n    raise Exception(b'This should happen.", pr["Traceback"]
         )
 
-    def test_existing(self):
+    def test_existing(self) -> None:
         """Python crash hook overwrites seen existing files."""
         script = self._test_crash()
 
@@ -220,7 +224,7 @@ func(42)
         self.assertEqual(pr2["ExecutablePath"], script)
         self.assertEqual(pr1.crash_signature(), pr2.crash_signature())
 
-    def test_no_argv(self):
+    def test_no_argv(self) -> None:
         """With zapped sys.argv."""
         script = self._test_crash("import sys\nsys.argv = None")
 
@@ -263,7 +267,7 @@ func(42)
             )
         self.assertTrue(pr["Traceback"].startswith("Traceback"))
 
-    def test_python_env(self):
+    def test_python_env(self) -> None:
         """Python environmental variables appear in report."""
         self._test_crash()
 
@@ -280,14 +284,14 @@ func(42)
         self.assertIn("PYTHONPATH", pr["ProcEnviron"])
         self.assertIn("/my/bogus/path", pr["ProcEnviron"])
 
-    def _assert_no_reports(self):
+    def _assert_no_reports(self) -> None:
         """Assert that there are no crash reports."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(
             len(reports), 0, f"no crash reports present (cwd: {os.getcwd()})"
         )
 
-    def test_deleted_working_directory(self):
+    def test_deleted_working_directory(self) -> None:
         """Relative Python script from deleted working directory."""
         orig_cwd = os.getcwd()
         try:
@@ -343,7 +347,7 @@ func(42)
         self.assertEqual(process.returncode, 1)
         self._assert_no_reports()
 
-    def test_interactive(self):
+    def test_interactive(self) -> None:
         """Interactive Python sessions never generate a report."""
         orig_cwd = os.getcwd()
         try:
@@ -428,7 +432,7 @@ func(42)
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 0)
 
-    def test_no_flooding(self):
+    def test_no_flooding(self) -> None:
         """Limit successive reports."""
         count = 0
         limit = 5
@@ -449,7 +453,7 @@ func(42)
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
 
-    def test_generic_os_error(self):
+    def test_generic_os_error(self) -> None:
         """Raise OSError with errno and no known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
@@ -466,7 +470,7 @@ func(42)
         exe = pr["ExecutablePath"]
         self.assertEqual(pr.crash_signature(), f"{exe}:OSError(99):{exe}@11:g")
 
-    def test_generic_os_error_no_errno(self):
+    def test_generic_os_error_no_errno(self) -> None:
         """Raise OSError without errno and no known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
@@ -505,7 +509,7 @@ func(42)
                 self.assertIn(":FileNotFoundError:", pr.crash_signature())
                 self.assertIn("os.getcwd()\nFileNotFoundError", pr["Traceback"])
 
-    def test_subclassed_os_error(self):
+    def test_subclassed_os_error(self) -> None:
         """Raise OSError with known subclass."""
         self._test_crash(
             extracode=textwrap.dedent(
@@ -523,7 +527,7 @@ func(42)
         exe = pr["ExecutablePath"]
         self.assertEqual(pr.crash_signature(), f"{exe}:FileNotFoundError:{exe}@11:g")
 
-    def _load_report(self):
+    def _load_report(self) -> apport.Report:
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")

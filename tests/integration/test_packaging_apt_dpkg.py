@@ -23,7 +23,7 @@ class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access,too-many-public-methods
 
-    def setUp(self):
+    def setUp(self) -> None:
         # save and restore configuration file
         self.orig_conf = impl.configuration
         self.orig_environ = os.environ.copy()
@@ -33,13 +33,13 @@ class T(unittest.TestCase):
         impl._apt_cache = None
         impl._sandbox_apt_cache = None
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         impl.configuration = self.orig_conf
         os.environ.clear()
         os.environ.update(self.orig_environ)
         shutil.rmtree(self.workdir)
 
-    def test_check_files_md5(self):
+    def test_check_files_md5(self) -> None:
         """_check_files_md5()."""
         td = tempfile.mkdtemp()
         try:
@@ -78,18 +78,18 @@ class T(unittest.TestCase):
         finally:
             shutil.rmtree(td)
 
-    def test_get_version(self):
+    def test_get_version(self) -> None:
         """get_version()."""
         self.assertTrue(impl.get_version("libc6").startswith("2"))
         self.assertRaises(ValueError, impl.get_version, "nonexisting")
         self.assertRaises(ValueError, impl.get_version, "wukrainian")
 
-    def test_get_available_version(self):
+    def test_get_available_version(self) -> None:
         """get_available_version()."""
         self.assertTrue(impl.get_available_version("libc6").startswith("2"))
         self.assertRaises(ValueError, impl.get_available_version, "nonexisting")
 
-    def test_get_dependencies_depends_and_pre_depends(self):
+    def test_get_dependencies_depends_and_pre_depends(self) -> None:
         """get_dependencies() on package with both Depends and Pre-Depends."""
         d = impl.get_dependencies("bash")
         self.assertGreater(len(d), 2)
@@ -100,7 +100,7 @@ class T(unittest.TestCase):
                 continue
             self.assertTrue(impl.get_version(dep))
 
-    def test_get_dependencies_pre_depends_only(self):
+    def test_get_dependencies_pre_depends_only(self) -> None:
         """get_dependencies() on package with Pre-Depends only."""
         d = impl.get_dependencies("coreutils")
         self.assertGreaterEqual(len(d), 1)
@@ -108,20 +108,20 @@ class T(unittest.TestCase):
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
-    def test_get_dependencies_depends_only(self):
+    def test_get_dependencies_depends_only(self) -> None:
         """get_dependencies() on package with Depends only."""
         d = impl.get_dependencies("sysvinit-utils")
         self.assertIn("libc6", d)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
-    def test_get_source(self):
+    def test_get_source(self) -> None:
         """get_source()."""
         self.assertRaises(ValueError, impl.get_source, "nonexisting")
         self.assertEqual(impl.get_source("bash"), "bash")
         self.assertIn("glibc", impl.get_source("libc6"))
 
-    def test_get_package_origin(self):
+    def test_get_package_origin(self) -> None:
         """get_package_origin()."""
         # determine distro name
         distro = impl.get_os_version()[0]
@@ -133,12 +133,12 @@ class T(unittest.TestCase):
         self.assertEqual(impl.get_package_origin("bash"), distro)
         # no non-native test here, hard to come up with a generic one
 
-    def test_is_distro_package(self):
+    def test_is_distro_package(self) -> None:
         """is_distro_package()."""
         self.assertRaises(ValueError, impl.is_distro_package, "nonexisting")
         self.assertTrue(impl.is_distro_package("bash"))
 
-    def test_get_architecture(self):
+    def test_get_architecture(self) -> None:
         """get_architecture()."""
         self.assertRaises(ValueError, impl.get_architecture, "nonexisting")
         # just assume that bash uses the native architecture
@@ -151,12 +151,12 @@ class T(unittest.TestCase):
         system_arch = dpkg.stdout.strip()
         self.assertEqual(impl.get_architecture("bash"), system_arch)
 
-    def test_get_files(self):
+    def test_get_files(self) -> None:
         """get_files()."""
         self.assertRaises(ValueError, impl.get_files, "nonexisting")
         self.assertIn("/usr/share/man/man1/bash.1.gz", impl.get_files("bash"))
 
-    def test_get_file_package(self):
+    def test_get_file_package(self) -> None:
         """get_file_package() on installed files."""
         self.assertEqual(impl.get_file_package("/usr/bin/bash"), "bash")
         self.assertEqual(impl.get_file_package("/usr/bin/cat"), "coreutils")
@@ -169,7 +169,7 @@ class T(unittest.TestCase):
         self.assertIsNotNone(libc_so)
         self.assertEqual(impl.get_file_package(libc_so[-1]), "libc6")
 
-    def test_get_file_package_uninstalled(self):
+    def test_get_file_package_uninstalled(self) -> None:
         """get_file_package() on uninstalled packages."""
         # generate a test Contents.gz
         basedir = tempfile.mkdtemp()
@@ -471,7 +471,7 @@ Components: main
             "http://primary-mirror.example.com/distro/",
         )
 
-    def test_mirror_from_apt_sources(self):
+    def test_mirror_from_apt_sources(self) -> None:
         s = os.path.join(self.workdir, "sources.list")
 
         # valid file, should grab the first mirror
@@ -519,14 +519,14 @@ deb http://secondary.mirror tuxy extra
         actual = impl._get_primary_mirror_from_apt_sources(self.workdir)
         self.assertEqual(actual, expected)
 
-    def test_get_modified_conffiles(self):
+    def test_get_modified_conffiles(self) -> None:
         """get_modified_conffiles()"""
         # very shallow
         self.assertEqual(type(impl.get_modified_conffiles("bash")), type({}))
         self.assertEqual(type(impl.get_modified_conffiles("apport")), type({}))
         self.assertEqual(type(impl.get_modified_conffiles("nonexisting")), type({}))
 
-    def test_get_system_architecture(self):
+    def test_get_system_architecture(self) -> None:
         """get_system_architecture()."""
         arch = impl.get_system_architecture()
         # must be nonempty without line breaks
@@ -534,7 +534,7 @@ deb http://secondary.mirror tuxy extra
         self.assertNotIn("\n", arch)
 
     @skip_if_command_is_missing("dpkg-architecture")
-    def test_get_library_paths(self):
+    def test_get_library_paths(self) -> None:
         """get_library_paths()."""
         paths = impl.get_library_paths()
         # must be nonempty without line breaks
@@ -543,7 +543,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn("/lib", paths)
         self.assertNotIn("\n", paths)
 
-    def test_compare_versions(self):
+    def test_compare_versions(self) -> None:
         """compare_versions."""
         self.assertEqual(impl.compare_versions("1", "2"), -1)
         self.assertEqual(impl.compare_versions("1.0-1ubuntu1", "1.0-1ubuntu2"), -1)
@@ -552,7 +552,7 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(impl.compare_versions("1:1.0-1", "2007-2"), 1)
         self.assertEqual(impl.compare_versions("1:1.0-1~1", "1:1.0-1"), -1)
 
-    def test_enabled(self):
+    def test_enabled(self) -> None:
         """enabled."""
         impl.configuration = "/nonexisting"
         self.assertEqual(impl.enabled(), True)
@@ -575,11 +575,11 @@ deb http://secondary.mirror tuxy extra
             f.flush()
             self.assertEqual(impl.enabled(), True)
 
-    def test_get_kernel_package(self):
+    def test_get_kernel_package(self) -> None:
         """get_kernel_package()."""
         self.assertIn("linux", impl.get_kernel_package())
 
-    def test_package_name_glob(self):
+    def test_package_name_glob(self) -> None:
         """package_name_glob()."""
         self.assertGreater(len(impl.package_name_glob("a*")), 5)
         self.assertIn("bash", impl.package_name_glob("ba*h"))

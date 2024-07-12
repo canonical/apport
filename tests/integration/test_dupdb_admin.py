@@ -23,7 +23,11 @@ class TestDupdbAdmin(unittest.TestCase):
     # pylint: disable=missing-function-docstring
     """Test dupdb-admin"""
 
-    def setUp(self):
+    env: dict[str, str]
+    db_file: str
+    workdir: str
+
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
         self.db_file = os.path.join(self.workdir, "apport_duplicates.db")
         self.env = os.environ | local_test_environment()
@@ -33,7 +37,7 @@ class TestDupdbAdmin(unittest.TestCase):
         )
         self.crashes.init_duplicate_db(self.db_file)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
 
     def _call(
@@ -68,10 +72,10 @@ class TestDupdbAdmin(unittest.TestCase):
             ]
         return sorted(found_directories), sorted(found_files)
 
-    def test_dump_empty_database(self):
+    def test_dump_empty_database(self) -> None:
         self._call(["dump"])
 
-    def test_dump_database(self):
+    def test_dump_database(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(0))
         self.assertIsNone(self.crashes.check_duplicate(2))
         self.crashes.duplicate_db_fixed(2, "42")
@@ -86,27 +90,27 @@ class TestDupdbAdmin(unittest.TestCase):
         )
         self.assertIn("2: /usr/bin/broken:11:h:g:f:e:d [fixed in: 42]", lines[1])
 
-    def test_changeid(self):
+    def test_changeid(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(2))
         self._call(["changeid", "2", "1"])
         stdout = self._call(["dump"], expected_stdout=None)[0]
         self.assertIn("1: /usr/bin/broken:11:h:g:f:e:d [open]", stdout)
 
-    def test_changeid_missing_argument(self):
+    def test_changeid_missing_argument(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(2))
         stderr = self._call(["changeid", "2"], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: new_id", stderr)
 
-    def test_missing_db_file(self):
+    def test_missing_db_file(self) -> None:
         os.remove(self.db_file)
         stderr = self._call(["dump"], expected_returncode=1)[1]
         self.assertIn("file does not exist", stderr)
 
-    def test_no_command(self):
+    def test_no_command(self) -> None:
         stderr = self._call([], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: command", stderr)
 
-    def test_publish(self):
+    def test_publish(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(1))
         pub_path = f"{self.workdir}/www"
         self._call(["publish", pub_path])
@@ -114,20 +118,20 @@ class TestDupdbAdmin(unittest.TestCase):
         self.assertEqual(directories, ["address", "sig"])
         self.assertEqual(files, ["sig/_bin_crash_11"])
 
-    def test_publish_missing_argument(self):
+    def test_publish_missing_argument(self) -> None:
         stderr = self._call(["publish"], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: path", stderr)
 
-    def test_removeid(self):
+    def test_removeid(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(1))
         self._call(["removeid", "1"])
         self._call(["dump"])
 
-    def test_removeid_missing_argument(self):
+    def test_removeid_missing_argument(self) -> None:
         self.assertIsNone(self.crashes.check_duplicate(1))
         stderr = self._call(["removeid"], expected_returncode=2)[1]
         self.assertIn("the following arguments are required: id", stderr)
 
-    def test_unknown_command(self):
+    def test_unknown_command(self) -> None:
         stderr = self._call(["nonexisting"], expected_returncode=2)[1]
         self.assertIn("invalid choice: 'nonexisting'", stderr)

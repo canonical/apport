@@ -10,7 +10,7 @@
 """Integration tests for the apport.crashdb_impl.github module."""
 
 import unittest
-from unittest.mock import ANY, Mock, patch
+from unittest.mock import ANY, MagicMock, Mock, patch
 
 import apport.crashdb_impl.github
 
@@ -19,7 +19,7 @@ class TestGitHub(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.crashdb = self._get_gh_database("Lorem", "Ipsum")
         self.crashdb_barren = self._get_gh_database(None, None)
 
@@ -87,7 +87,7 @@ class TestGitHub(unittest.TestCase):
             )
 
     @patch("apport.crashdb_impl.github.Github.api_authentication")
-    def test_authentication_complete(self, mock_api):
+    def test_authentication_complete(self, mock_api: MagicMock) -> None:
         base_response = self.api_auth_return_value
         mocked = [base_response.copy() for i in range(7)]
         mocked[2]["error"] = "foo"
@@ -119,7 +119,7 @@ class TestGitHub(unittest.TestCase):
                 "Failed login", "Github authentication expired. Please try again."
             )
 
-    def test_not_implemented_methods(self):
+    def test_not_implemented_methods(self) -> None:
         ni = NotImplementedError
         self.assertRaises(ni, self.crashdb._mark_dup_checked, None, None)
         self.assertRaises(ni, self.crashdb.can_update, None)
@@ -140,7 +140,9 @@ class TestGitHub(unittest.TestCase):
         self.assertRaises(ni, self.crashdb.update, None, None, None, None)
 
     @staticmethod
-    def _get_gh_database(repository_owner, repository_name):
+    def _get_gh_database(
+        repository_owner: str | None, repository_name: str | None
+    ) -> apport.crashdb_impl.github.CrashDatabase:
         return apport.crashdb_impl.github.CrashDatabase(
             None,
             {

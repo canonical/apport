@@ -301,7 +301,7 @@ class T(unittest.TestCase):
         finally:
             locale.setlocale(locale.LC_NUMERIC, locale_numeric)
 
-    def test_get_size_loaded(self):
+    def test_get_size_loaded(self) -> None:
         """get_complete_size() and get_reduced_size() for loaded Reports"""
         self.ui.load_report(self.report_file.name)
 
@@ -324,7 +324,7 @@ class T(unittest.TestCase):
         self.assertTrue(rs > 51000)
         self.assertTrue(rs < 60000)
 
-    def test_get_size_constructed(self):
+    def test_get_size_constructed(self) -> None:
         """get_complete_size() and get_reduced_size() for on-the-fly Reports"""
         self.ui.report = apport.Report("Bug")
         self.ui.report["Hello"] = "World"
@@ -335,7 +335,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(s, self.ui.get_reduced_size())
 
-    def test_load_report(self):
+    def test_load_report(self) -> None:
         """load_report()"""
         # valid report
         self.ui.load_report(self.report_file.name)
@@ -369,7 +369,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, _("Invalid problem report"))
         self.assertEqual(self.ui.msg_severity, "error")
 
-    def test_restart(self):
+    def test_restart(self) -> None:
         """restart()"""
         # test with only ProcCmdline
         p = os.path.join(apport.fileutils.report_dir, "ProcCmdline")
@@ -401,7 +401,7 @@ class T(unittest.TestCase):
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
 
-    def test_collect_info_distro(self):
+    def test_collect_info_distro(self) -> None:
         """collect_info() on report without information (distro bug)"""
         # report without any information (distro bug)
         self.ui.report = apport.Report("Bug")
@@ -417,7 +417,7 @@ class T(unittest.TestCase):
             "no progress dialog for distro bug info collection",
         )
 
-    def test_collect_info_exepath(self):
+    def test_collect_info_exepath(self) -> None:
         """collect_info() on report with only ExecutablePath"""
         # report with only package information
         self.report = apport.Report("Bug")
@@ -454,7 +454,7 @@ class T(unittest.TestCase):
             "progress dialog for package bug info collection finished",
         )
 
-    def test_collect_info_package(self):
+    def test_collect_info_package(self) -> None:
         """collect_info() on report with a package"""
         # report with only package information
         self.ui.report = apport.Report("Bug")
@@ -497,7 +497,7 @@ class T(unittest.TestCase):
             "progress dialog for package bug info collection finished",
         )
 
-    def test_collect_info_permissions(self):
+    def test_collect_info_permissions(self) -> None:
         """collect_info() leaves the report accessible to the group"""
         self.ui.report = apport.Report("Bug")
         self.ui.cur_package = "bash"
@@ -523,7 +523,7 @@ class T(unittest.TestCase):
             if bash_hook:
                 f.write(f"    report['BashHook'] = '{bash_hook}'\n")
 
-    def test_collect_info_crashdb_spec(self):
+    def test_collect_info_crashdb_spec(self) -> None:
         """collect_info() with package hook that defines a CrashDB"""
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt': '1' }", "Moo")
         self.ui.report = apport.Report("Bug")
@@ -534,7 +534,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["BashHook"], "Moo")
         self.assertEqual(self.ui.crashdb.options["local_opt"], "1")
 
-    def test_collect_info_crashdb_name(self):
+    def test_collect_info_crashdb_name(self) -> None:
         """collect_info() with package hook that chooses a different CrashDB"""
         self._write_crashdb_config_hook("debug", "Moo")
         self.ui.report = apport.Report("Bug")
@@ -544,7 +544,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["BashHook"], "Moo")
         self.assertEqual(self.ui.crashdb.options["distro"], "debug")
 
-    def test_collect_info_crashdb_errors(self):
+    def test_collect_info_crashdb_errors(self) -> None:
         """collect_info() with package hook setting a broken CrashDB field"""
         # nonexisting implementation
         self._write_crashdb_config_hook("{ 'impl': 'nonexisting', 'local_opt': '1' }")
@@ -578,7 +578,7 @@ class T(unittest.TestCase):
         self.assertIn("package hook", self.ui.report["UnreportableReason"])
         self.assertFalse(os.path.exists("/tmp/pwned"))
 
-    def test_handle_duplicate(self):
+    def test_handle_duplicate(self) -> None:
         """handle_duplicate()"""
         self.ui.load_report(self.report_file.name)
         self.assertEqual(self.ui.handle_duplicate(), False)
@@ -602,12 +602,12 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "info")
         self.assertIsNone(self.ui.opened_url)
 
-    def test_run_nopending(self):
+    def test_run_nopending(self) -> None:
         """Run the frontend without any pending reports."""
         self.ui = UserInterfaceMock()
         self.assertEqual(self.ui.run_argv(), False)
 
-    def test_run_restart(self):
+    def test_run_restart(self) -> None:
         """Running the frontend with pending reports offers restart."""
         r = self._gen_test_crash()
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -618,14 +618,14 @@ class T(unittest.TestCase):
         self.ui.run_argv()
         self.assertEqual(self.ui.offer_restart, True)
 
-    def test_run_report_bug_noargs(self):
+    def test_run_report_bug_noargs(self) -> None:
         """run_report_bug() without specifying arguments"""
         self.ui = UserInterfaceMock(["ui-test", "-f"])
         self.assertEqual(self.ui.run_argv(), False)
         self.assertEqual(self.ui.msg_severity, "error")
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
-    def test_run_version(self, stdout_mock):
+    def test_run_version(self, stdout_mock: MagicMock) -> None:
         """run_report_bug() as "ubuntu-bug" with version argument"""
         self.ui = UserInterfaceMock(["ubuntu-bug", "-v"])
         self.assertEqual(self.ui.run_argv(), True)
@@ -745,7 +745,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.ic_progress_pulses > 0)
 
     @staticmethod
-    def _find_unused_pid():
+    def _find_unused_pid() -> int:
         """Find and return an unused PID."""
         pid = 1
         while True:
@@ -757,7 +757,7 @@ class T(unittest.TestCase):
                     break
         return pid
 
-    def test_run_report_bug_wrong_pid(self):
+    def test_run_report_bug_wrong_pid(self) -> None:
         """run_report_bug() for a nonexisting pid"""
         # silently ignore missing PID; this happens when the user closes
         # the application prematurely
@@ -783,7 +783,7 @@ class T(unittest.TestCase):
             if restore_root:
                 os.setresuid(0, 0, -1)
 
-    def test_run_report_bug_unpackaged_pid(self):
+    def test_run_report_bug_unpackaged_pid(self) -> None:
         """run_report_bug() for a pid of an unpackaged program"""
         # create unpackaged test program
         (fd, exename) = tempfile.mkstemp()
@@ -819,7 +819,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["SourcePackage"], "coreutils")
 
     @unittest.mock.patch("apport.packaging_impl.impl.get_version")
-    def test_run_report_bug_kernel_thread(self, get_version_mock):
+    def test_run_report_bug_kernel_thread(self, get_version_mock: MagicMock) -> None:
         """run_report_bug() for a pid of a kernel thread"""
         # The kernel package might not be installed in chroot environments.
         # Therefore mock get_version for the kernel package.
@@ -847,7 +847,7 @@ class T(unittest.TestCase):
         )
         get_version_mock.assert_any_call(kernel_package)
 
-    def test_run_report_bug_file(self):
+    def test_run_report_bug_file(self) -> None:
         """run_report_bug() with saving report into a file"""
         d = os.path.join(apport.fileutils.report_dir, "home")
         os.mkdir(d)
@@ -882,7 +882,7 @@ class T(unittest.TestCase):
         self.assertIsNone(self.ui.msg_severity)
         self.assertTrue(self.ui.present_details_shown)
 
-    def _gen_test_crash(self):
+    def _gen_test_crash(self) -> apport.Report:
         """Generate a Report with real crash data."""
         core_path = os.path.join(self.workdir, "core")
         try:
@@ -1000,7 +1000,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.report.check_ignored())
         self.assertEqual(self.ui.offer_restart, False)
 
-    def test_run_crash_abort(self):
+    def test_run_crash_abort(self) -> None:
         """run_crash() for an abort() without assertion message"""
         r = self._gen_test_crash()
         r["Signal"] = "6"
@@ -1135,7 +1135,7 @@ class T(unittest.TestCase):
             self.assertFalse(os.path.exists("/tmp/pwned"))
             self.assertIn("invalid Package:", self.ui.msg_text)
 
-    def test_run_crash_malicious_exec_path(self):
+    def test_run_crash_malicious_exec_path(self) -> None:
         """ExecutablePath: path traversal"""
         hook_dir = "/tmp/share/apport/package-hooks"
         os.makedirs(hook_dir, exist_ok=True)
@@ -1154,7 +1154,7 @@ class T(unittest.TestCase):
 
             self.assertFalse(os.path.exists("/tmp/pwned"))
 
-    def test_run_crash_ignore(self):
+    def test_run_crash_ignore(self) -> None:
         """run_crash() on a crash with the Ignore field"""
         self.report["Ignore"] = "True"
         self.report["ExecutablePath"] = "/bin/bash"
@@ -1188,7 +1188,7 @@ class T(unittest.TestCase):
             "memory", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
 
-    def test_run_crash_preretraced(self):
+    def test_run_crash_preretraced(self) -> None:
         """run_crash() pre-retraced reports.
 
         This happens with crashes which are pre-processed by
@@ -1254,7 +1254,7 @@ class T(unittest.TestCase):
         )
         self.assertTrue(self.ui.present_details_shown)
 
-    def test_run_crash_errors(self):
+    def test_run_crash_errors(self) -> None:
         """run_crash() on various error conditions"""
         # crash report with invalid Package name
         r = apport.Report()
@@ -1462,7 +1462,7 @@ class T(unittest.TestCase):
         ]
         return [s for s in sensitive_strings if s]
 
-    def test_run_crash_anonymity(self):
+    def test_run_crash_anonymity(self) -> None:
         """run_crash() anonymization"""
         r = self._gen_test_crash()
         utf8_val = b"\xc3\xa4 " + os.uname()[1].encode("UTF-8") + b" \xe2\x99\xa5 "
@@ -1508,7 +1508,7 @@ class T(unittest.TestCase):
             (uname[0], "0xDEADBEEF", uname[2], uname[3], uname[4])
         )
 
-        def fake_add_gdb_info(self):
+        def fake_add_gdb_info(self: apport.report.Report) -> None:
             self["Stacktrace"] = textwrap.dedent(
                 """\
                 #0  0xDEADBEEF in h (p=0x0) at crash.c:25
@@ -1543,7 +1543,7 @@ class T(unittest.TestCase):
             self.assertIsNone(self.ui.report.crash_signature_addresses())
         add_gdb_info_mock.assert_called_once()
 
-    def test_run_crash_anonymity_substring(self):
+    def test_run_crash_anonymity_substring(self) -> None:
         """run_crash() anonymization only catches whole words"""
         # pretend the hostname is "ed", a substring of e. g. "crashed"
         uname = os.uname()
@@ -1573,7 +1573,7 @@ class T(unittest.TestCase):
             self.assertEqual(self.ui.report["ProcInfo2"], '"hostname.localnet"')
             self.assertEqual(self.ui.report["ProcInfo3"], "education")
 
-    def test_run_crash_anonymity_escaping(self):
+    def test_run_crash_anonymity_escaping(self) -> None:
         """run_crash() anonymization escapes special chars"""
         # inject GECOS field with regexp control chars
         orig_getpwuid = pwd.getpwuid
@@ -1679,7 +1679,7 @@ class T(unittest.TestCase):
         self.assertIn("No additional information collected.", self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
-    def test_run_update_report_existing_package_from_bug(self):
+    def test_run_update_report_existing_package_from_bug(self) -> None:
         """run_update_report() on an existing package (from bug)"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
         self.ui.present_details_response = apport.ui.Action(report=True)
@@ -1698,7 +1698,7 @@ class T(unittest.TestCase):
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
 
-    def test_run_update_report_existing_package_cli_tags(self):
+    def test_run_update_report_existing_package_cli_tags(self) -> None:
         """run_update_report() on an existing package (CLI argument)
         with extra tag"""
         argv = ["ui-test", "-u", "1", "-p", "bash", "--tag", "foo"]
@@ -1718,7 +1718,7 @@ class T(unittest.TestCase):
         self.assertIn("ProcEnviron", self.ui.report)
         self.assertIn("foo", self.ui.report.get_tags())
 
-    def test_run_update_report_existing_package_cli_cmdname(self):
+    def test_run_update_report_existing_package_cli_cmdname(self) -> None:
         """run_update_report() on an existing package (-collect program)"""
         self.ui = UserInterfaceMock(["apport-collect", "-p", "bash", "1"])
         self.ui.present_details_response = apport.ui.Action(report=True)
@@ -1735,7 +1735,7 @@ class T(unittest.TestCase):
         self.assertIn("Dependencies", self.ui.report)
         self.assertIn("ProcEnviron", self.ui.report)
 
-    def test_run_update_report_noninstalled_but_hook(self):
+    def test_run_update_report_noninstalled_but_hook(self) -> None:
         """run_update_report() on an uninstalled package with a source hook"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
         self.ui.present_details_response = apport.ui.Action(report=True)
@@ -1757,7 +1757,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
 
-    def test_run_update_report_different_binary_source(self):
+    def test_run_update_report_different_binary_source(self) -> None:
         """run_update_report() on a source package which does not have
         a binary of the same name"""
         # this test assumes that the source package name is not an
@@ -1786,7 +1786,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["MachineType"], "Laptop")
         self.assertIn("ProcEnviron", self.ui.report)
 
-    def _run_hook(self, code):
+    def _run_hook(self, code: str) -> None:
         with open(
             os.path.join(self.hookdir, "coreutils.py"), "w", encoding="utf-8"
         ) as hook:
@@ -1797,7 +1797,7 @@ class T(unittest.TestCase):
         self.ui.args.package = "coreutils"
         self.ui.run_report_bug()
 
-    def test_interactive_hooks_information(self):
+    def test_interactive_hooks_information(self) -> None:
         """Interactive hooks: HookUI.information()"""
         self.ui.present_details_response = apport.ui.Action()
         self._run_hook(
@@ -1814,7 +1814,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["end"], "1")
         self.assertEqual(self.ui.msg_text, "InfoText")
 
-    def test_interactive_hooks_yesno(self):
+    def test_interactive_hooks_yesno(self) -> None:
         """Interactive hooks: HookUI.yesno()"""
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_yesno_response = True
@@ -1843,7 +1843,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["answer"], "None")
         self.assertEqual(self.ui.report["end"], "1")
 
-    def test_interactive_hooks_file(self):
+    def test_interactive_hooks_file(self) -> None:
         """Interactive hooks: HookUI.file()"""
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_file_response = "/etc/fstab"
@@ -1867,7 +1867,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["answer"], "None")
         self.assertEqual(self.ui.report["end"], "1")
 
-    def test_interactive_hooks_choices(self):
+    def test_interactive_hooks_choices(self) -> None:
         """Interactive hooks: HookUI.choice()"""
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.question_choice_response = [1]
@@ -1910,7 +1910,7 @@ class T(unittest.TestCase):
         assert self.ui.report
         self.assertEqual(self.ui.report["answer"], "None")
 
-    def test_interactive_hooks_cancel(self):
+    def test_interactive_hooks_cancel(self) -> None:
         """Interactive hooks: user cancels"""
         self.assertRaises(
             SystemExit,
@@ -2068,10 +2068,14 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.report["Package"].startswith("bash"))
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
-    def test_parse_argv_single_arg(self, stderr_mock):
+    def test_parse_argv_single_arg(self, stderr_mock: MagicMock) -> None:
         """parse_args() option inference for a single argument"""
 
-        def _chk(program_name, arg, expected_opts):
+        def _chk(
+            program_name: str,
+            arg: str | None,
+            expected_opts: dict[str, bool | int | str | list[str] | None],
+        ) -> None:
             argv = [program_name]
             if arg:
                 argv.append(arg)
@@ -2235,10 +2239,13 @@ class T(unittest.TestCase):
         )
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
-    def test_parse_argv_apport_bug(self, stderr_mock):
+    def test_parse_argv_apport_bug(self, stderr_mock: MagicMock) -> None:
         """parse_args() option inference when invoked as *-bug"""
 
-        def _chk(args, expected_opts):
+        def _chk(
+            args: list[str],
+            expected_opts: dict[str, bool | int | str | list[str] | None],
+        ) -> None:
             ui = apport.ui.UserInterface(["apport-bug"] + args)
             expected_opts["version"] = False
             self.assertEqual(ui.args.__dict__, expected_opts)
@@ -2498,7 +2505,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.upload_progress_pulses, 0)
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
 
-    def test_get_desktop_entry(self):
+    def test_get_desktop_entry(self) -> None:
         """Parsee .desktop files."""
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
             desktop_file.write(
@@ -2530,7 +2537,7 @@ class T(unittest.TestCase):
                 },
             )
 
-    def test_get_desktop_entry_broken(self):
+    def test_get_desktop_entry_broken(self) -> None:
         """Parse broken .desktop files."""
         # duplicate key
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
@@ -2596,7 +2603,7 @@ class T(unittest.TestCase):
 
             self.assertIsNone(self.ui.get_desktop_entry())
 
-    def test_wait_for_pid(self):
+    def test_wait_for_pid(self) -> None:
         # fork a test process
         with run_test_executable() as pid:
             pass

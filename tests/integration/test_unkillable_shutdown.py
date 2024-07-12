@@ -29,14 +29,14 @@ class TestUnkillableShutdown(unittest.TestCase):
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.data_dir = get_data_directory()
         self.env = os.environ | local_test_environment()
 
         self.report_dir = tempfile.mkdtemp()
         self.env["APPORT_REPORT_DIR"] = self.report_dir
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.report_dir)
 
     def _call(self, omit: list | None = None) -> None:
@@ -55,7 +55,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         self.assertEqual(process.stdout, "")
 
     @staticmethod
-    def _get_all_pids():
+    def _get_all_pids() -> list[int]:
         return [int(pid) for pid in os.listdir("/proc") if pid.isdigit()]
 
     @contextlib.contextmanager
@@ -86,7 +86,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         finally:
             runner.kill()
 
-    def test_omit_all_processes(self):
+    def test_omit_all_processes(self) -> None:
         """unkillable_shutdown will write no reports."""
         self._call(omit=self._get_all_pids())
         self.assertEqual(os.listdir(self.report_dir), [])
@@ -101,7 +101,7 @@ class TestUnkillableShutdown(unittest.TestCase):
             [f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.geteuid()}.crash"],
         )
 
-    def test_write_reports(self):
+    def test_write_reports(self) -> None:
         """unkillable_shutdown will write reports."""
         # Ensure that at least one process is honoured by unkillable_shutdown.
         with self._launch_process_with_different_session_id():

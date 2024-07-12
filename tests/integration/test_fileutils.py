@@ -11,6 +11,7 @@ import tempfile
 import time
 import unittest
 import unittest.mock
+from unittest.mock import MagicMock
 
 import apport.fileutils
 import apport.packaging
@@ -21,7 +22,11 @@ class T(unittest.TestCase):
     # pylint: disable=protected-access
     """Integration tests for the apport.fileutils module."""
 
-    def setUp(self):
+    orig_config_file: str
+    orig_core_dir: str
+    orig_report_dir: str
+
+    def setUp(self) -> None:
         self.orig_core_dir = apport.fileutils.core_dir
         apport.fileutils.core_dir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
@@ -37,7 +42,7 @@ class T(unittest.TestCase):
         apport.fileutils._config_file = self.orig_config_file
 
     @staticmethod
-    def _create_reports(create_inaccessible=False):
+    def _create_reports(create_inaccessible: bool = False) -> list[str]:
         """Create some test reports."""
         r1 = os.path.join(apport.fileutils.report_dir, "rep1.crash")
         r2 = os.path.join(apport.fileutils.report_dir, "rep2.crash")
@@ -56,7 +61,7 @@ class T(unittest.TestCase):
             return [r1, r2, ri]
         return [r1, r2]
 
-    def test_find_package_desktopfile(self):
+    def test_find_package_desktopfile(self) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
         """find_package_desktopfile()"""
@@ -137,13 +142,13 @@ class T(unittest.TestCase):
                 f"NoDisplay package {nodisplay}",
             )
 
-    def test_find_file_package(self):
+    def test_find_file_package(self) -> None:
         """find_file_package()"""
         self.assertEqual(apport.fileutils.find_file_package("/bin/bash"), "bash")
         self.assertEqual(apport.fileutils.find_file_package("/bin/cat"), "coreutils")
         self.assertIsNone(apport.fileutils.find_file_package("/nonexisting"))
 
-    def test_seen(self):
+    def test_seen(self) -> None:
         """get_new_reports() and seen_report()"""
         self.assertEqual(apport.fileutils.get_new_reports(), [])
         if os.getuid() == 0:
@@ -161,7 +166,7 @@ class T(unittest.TestCase):
             self.assertEqual(apport.fileutils.seen_report(r), True)
             self.assertEqual(set(apport.fileutils.get_new_reports()), nr)
 
-    def test_mark_hanging_process(self):
+    def test_mark_hanging_process(self) -> None:
         """mark_hanging_process()"""
         pr = problem_report.ProblemReport()
         pr["ExecutablePath"] = "/bin/bash"
@@ -171,14 +176,14 @@ class T(unittest.TestCase):
         expected = os.path.join(apport.fileutils.report_dir, base)
         self.assertTrue(os.path.exists(expected))
 
-    def test_mark_report_upload(self):
+    def test_mark_report_upload(self) -> None:
         """mark_report_upload()"""
         report = os.path.join(apport.fileutils.report_dir, "report.crash")
         apport.fileutils.mark_report_upload(report)
         expected = os.path.join(apport.fileutils.report_dir, "report.upload")
         self.assertTrue(os.path.exists(expected))
 
-    def test_mark_2nd_report_upload(self):
+    def test_mark_2nd_report_upload(self) -> None:
         """mark_report_upload() for a previously uploaded report"""
         upload = os.path.join(apport.fileutils.report_dir, "report.upload")
         with open(upload, "w", encoding="utf-8"):
@@ -196,7 +201,7 @@ class T(unittest.TestCase):
         report_st = os.stat(report)
         self.assertTrue(upload_st.st_mtime > report_st.st_mtime)
 
-    def test_get_all_reports(self):
+    def test_get_all_reports(self) -> None:
         """get_all_reports()"""
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         if os.getuid() == 0:
@@ -211,7 +216,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(set(apport.fileutils.get_all_reports()), set(tr))
 
-    def test_get_system_reports(self):
+    def test_get_system_reports(self) -> None:
         """get_all_system_reports() and get_new_system_reports()"""
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
@@ -233,7 +238,9 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch.object(os, "stat")
     @unittest.mock.patch.object(pwd, "getpwuid")
-    def test_get_system_reports_guest(self, getpwuid_mock, stat_mock):
+    def test_get_system_reports_guest(
+        self, getpwuid_mock: MagicMock, stat_mock: MagicMock
+    ) -> None:
         """get_all_system_reports() filters out reports from guest user"""
         self._create_reports()
 
@@ -242,7 +249,7 @@ class T(unittest.TestCase):
         getpwuid_mock.return_value.pw_name = "guest_tmp987"
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
-    def test_unwritable_report(self):
+    def test_unwritable_report(self) -> None:
         """get_all_reports() and get_new_reports() for unwritable report"""
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
@@ -259,7 +266,7 @@ class T(unittest.TestCase):
             self.assertEqual(set(apport.fileutils.get_new_reports()), set())
             self.assertEqual(set(apport.fileutils.get_all_reports()), set())
 
-    def test_delete_report(self):
+    def test_delete_report(self) -> None:
         """delete_report()"""
         tr = self._create_reports()
 
@@ -267,7 +274,7 @@ class T(unittest.TestCase):
             self.assertEqual(set(apport.fileutils.get_all_reports()), set(tr))
             apport.fileutils.delete_report(tr.pop())
 
-    def test_make_report_file(self):
+    def test_make_report_file(self) -> None:
         """make_report_file()"""
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, apport.fileutils.make_report_file, pr)
@@ -295,7 +302,7 @@ class T(unittest.TestCase):
         os.symlink(os.path.join(apport.fileutils.report_dir, "pwned"), path)
         self.assertRaises(OSError, apport.fileutils.make_report_file, pr)
 
-    def test_check_files_md5(self):
+    def test_check_files_md5(self) -> None:
         """check_files_md5()"""
         f1 = os.path.join(apport.fileutils.report_dir, "test 1.txt")
         f2 = os.path.join(apport.fileutils.report_dir, "test:2.txt")
@@ -333,7 +340,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             apport.fileutils.check_files_md5(sumfile), [f2], "file 2 wrong"
         )
 
-    def test_get_config(self):
+    def test_get_config(self) -> None:
         """get_config()"""
         # nonexisting
         apport.fileutils._config_file = "/nonexisting"
@@ -391,7 +398,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             self.assertEqual(apport.fileutils.get_config("inter", "test"), "%(two)s")
             apport.fileutils._get_config_parser.cache_clear()
 
-    def test_shared_libraries(self):
+    def test_shared_libraries(self) -> None:
         """shared_libraries()"""
         libs = apport.fileutils.shared_libraries(sys.executable)
         self.assertGreater(len(libs), 3)
@@ -406,7 +413,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         self.assertEqual(apport.fileutils.shared_libraries("/etc"), {})
         self.assertEqual(apport.fileutils.shared_libraries("/etc/passwd"), {})
 
-    def test_links_with_shared_library(self):
+    def test_links_with_shared_library(self) -> None:
         """links_with_shared_library()"""
         self.assertTrue(
             apport.fileutils.links_with_shared_library(sys.executable, "libc")
@@ -428,7 +435,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             apport.fileutils.links_with_shared_library("/etc/passwd", "libc")
         )
 
-    def test_get_core_path(self):
+    def test_get_core_path(self) -> None:
         """get_core_path()"""
         boot_id = apport.fileutils.get_boot_id()
 
@@ -468,7 +475,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
 
-    def test_clean_core_directory(self):
+    def test_clean_core_directory(self) -> None:
         """clean_core_directory()"""
         fake_uid = 5150
         extra_core_files = 4
