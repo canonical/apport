@@ -5,6 +5,7 @@
 
 import errno
 import os
+import pathlib
 import resource
 import shutil
 import signal
@@ -291,9 +292,11 @@ class T(unittest.TestCase):
     def wait_for_apport_to_finish(self, timeout_sec=10.0):
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
-    def wait_for_no_instance_running(self, program, timeout_sec=10.0):
+    def wait_for_no_instance_running(
+        self, program: pathlib.Path | str, timeout_sec: float = 10.0
+    ) -> None:
         while timeout_sec > 0:
-            if not pidof(program) - self.running_test_executables:
+            if not pidof(str(program)) - self.running_test_executables:
                 break
             time.sleep(0.2)
             timeout_sec -= 0.2
