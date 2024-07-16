@@ -9,6 +9,8 @@
 
 """Unit tests for apport.crash_impl.launchpad"""
 
+import re
+
 from apport.crashdb_impl.launchpad import CrashDatabase
 from apport.report import Report
 
@@ -88,3 +90,4 @@ def test_private_bug_headers():
     headers = crashdb._generate_upload_headers(report)
 
     assert headers.get("Private") == "yes"
+    assert not re.search(r"need-[a-z0-9]+-retrace", headers.get("Tags", ""))
