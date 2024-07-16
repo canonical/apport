@@ -285,7 +285,7 @@ class T(unittest.TestCase):
         with open(path, "w", encoding="utf-8") as symptom_script:
             symptom_script.write(content)
 
-    def test_format_filesize(self):
+    def test_format_filesize(self) -> None:
         """format_filesize()"""
         locale_numeric = locale.getlocale(locale.LC_NUMERIC)
         locale.setlocale(locale.LC_NUMERIC, "C")
@@ -295,9 +295,9 @@ class T(unittest.TestCase):
             self.assertEqual(self.ui.format_filesize(2560), "2.6 KB")
             self.assertEqual(self.ui.format_filesize(999999), "1000.0 KB")
             self.assertEqual(self.ui.format_filesize(1000000), "1.0 MB")
-            self.assertEqual(self.ui.format_filesize(2.7 * 1000000), "2.7 MB")
-            self.assertEqual(self.ui.format_filesize(1024 * 1000000), "1.0 GB")
-            self.assertEqual(self.ui.format_filesize(2560 * 1000000), "2.6 GB")
+            self.assertEqual(self.ui.format_filesize(2_700_000), "2.7 MB")
+            self.assertEqual(self.ui.format_filesize(1_024_000_000), "1.0 GB")
+            self.assertEqual(self.ui.format_filesize(2_560_000_000), "2.6 GB")
         finally:
             locale.setlocale(locale.LC_NUMERIC, locale_numeric)
 
