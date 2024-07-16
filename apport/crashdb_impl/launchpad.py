@@ -27,6 +27,7 @@ import tempfile
 import time
 import urllib.parse
 import urllib.request
+from typing import IO
 
 try:
     from httplib2 import FailedToDecompressContent
@@ -1063,25 +1064,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         ]:
             bug.subscribe(person=person)
 
-    def _generate_upload_blob(self, report):
-        """Generate a multipart/MIME temporary file for uploading.
-
-        You have to close the returned file object after you are done with it.
-        """
+    def _generate_upload_headers(self, report: apport.Report) -> dict[str, str]:
+        """Generate the headers for the multipart/MIME temporary file."""
         # set reprocessing tags
         hdr = {"Tags": f"apport-{report['ProblemType'].lower()}"}
-        a = report.get("PackageArchitecture")
-        if not a or a == "all":
-            a = report.get("Architecture")
-        if a:
-            hdr["Tags"] += f" {a}"
+        arch = report.get("PackageArchitecture")
+        if not arch or arch == "all":
+            arch = report.get("Architecture")
+        if arch:
+            hdr["Tags"] += f" {arch}"
         if "Tags" in report:
             hdr["Tags"] += f" {self._filter_tag_names(report['Tags'])}"
 
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
         if "DistroRelease" in report:
-            if a and (
+            if arch and (
                 "VmCore" in report
                 or "CoreDump" in report
                 or "LaunchpadPrivate" in report
@@ -1091,11 +1089,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     "LaunchpadSubscribe",
                     self.options.get("initial_subscriber", "apport"),
                 )
-                hdr["Tags"] += f" need-{a}-retrace"
+                hdr["Tags"] += f" need-{arch}-retrace"
             elif "Traceback" in report:
                 hdr["Private"] = "yes"
                 hdr["Subscribers"] = "apport"
                 hdr["Tags"] += " need-duplicate-check"
+
         if "DuplicateSignature" in report and "need-duplicate-check" not in hdr["Tags"]:
             hdr["Tags"] += " need-duplicate-check"
 
@@ -1103,7 +1102,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # reference until the link is shown in Launchpad's UI
         if "CheckboxSubmission" in report:
             hdr["HWDB-Submission"] = report["CheckboxSubmission"]
+        return hdr
 
+    def _generate_upload_blob(self, report: apport.Report) -> IO[bytes]:
+        """Generate a multipart/MIME temporary file for uploading.
+
+        You have to close the returned file object after you are done with it.
+        """
+        hdr = self._generate_upload_headers(report)
         # order in which keys should appear in the temporary file
         order = [
             "ProblemType",
