@@ -1079,11 +1079,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
         if "DistroRelease" in report:
-            if arch and (
-                "VmCore" in report
-                or "CoreDump" in report
-                or "LaunchpadPrivate" in report
-            ):
+            if "LaunchpadPrivate" in report:
+                hdr["Private"] = "yes"
+
+            if arch and ("VmCore" in report or "CoreDump" in report):
                 hdr["Private"] = "yes"
                 hdr["Subscribers"] = report.get(
                     "LaunchpadSubscribe",
