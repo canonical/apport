@@ -30,7 +30,7 @@ import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _, run_as_real_user
-from tests.helper import pidof, run_test_executable, skip_if_command_is_missing
+from tests.helper import pids_of, run_test_executable, skip_if_command_is_missing
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
@@ -245,7 +245,7 @@ class T(unittest.TestCase):
         os.environ["APPORT_IGNORE_OBSOLETE_PACKAGES"] = "1"
         os.environ["APPORT_DISABLE_DISTRO_CHECK"] = "1"
 
-        self.running_test_executables = pidof(self.TEST_EXECUTABLE)
+        self.running_test_executables = pids_of(self.TEST_EXECUTABLE)
 
     def update_report_file(self):
         self.report_file.seek(0)
@@ -267,7 +267,7 @@ class T(unittest.TestCase):
         self.report_file.close()
 
         self.assertEqual(
-            pidof(self.TEST_EXECUTABLE) - self.running_test_executables,
+            pids_of(self.TEST_EXECUTABLE) - self.running_test_executables,
             set(),
             "no stray test processes",
         )
@@ -903,7 +903,7 @@ class T(unittest.TestCase):
             ) as gdb:
                 timeout = 10.0
                 while timeout > 0:
-                    pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
+                    pids = pids_of(self.TEST_EXECUTABLE) - self.running_test_executables
                     if pids:
                         pid = pids.pop()
                         break
