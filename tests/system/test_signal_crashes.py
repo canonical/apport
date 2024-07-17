@@ -16,7 +16,7 @@ import time
 import unittest
 
 import apport.fileutils
-from tests.helper import get_init_system, pidof, skip_if_command_is_missing
+from tests.helper import get_init_system, pids_of, skip_if_command_is_missing
 from tests.paths import (
     get_data_directory,
     is_local_source_directory,
@@ -117,7 +117,7 @@ class T(unittest.TestCase):
             f"{self.TEST_EXECUTABLE.replace('/', '_')}.{os.getuid()}.crash",
         )
 
-        self.running_test_executables = pidof(self.TEST_EXECUTABLE)
+        self.running_test_executables = pids_of(self.TEST_EXECUTABLE)
 
     def tearDown(self):
         shutil.rmtree(self.report_dir)
@@ -237,7 +237,7 @@ class T(unittest.TestCase):
             + self.TEST_ARGS,
         )
         try:
-            pids = pidof(self.TEST_EXECUTABLE) - self.running_test_executables
+            pids = pids_of(self.TEST_EXECUTABLE) - self.running_test_executables
             self.assertEqual(len(pids), 1)
             os.kill(pids.pop(), signal.SIGSEGV)
 
@@ -296,7 +296,7 @@ class T(unittest.TestCase):
         self, program: pathlib.Path | str, timeout_sec: float = 10.0
     ) -> None:
         while timeout_sec > 0:
-            if not pidof(str(program)) - self.running_test_executables:
+            if not pids_of(str(program)) - self.running_test_executables:
                 break
             time.sleep(0.2)
             timeout_sec -= 0.2

@@ -52,8 +52,8 @@ def import_module_from_file(path: pathlib.Path) -> Any:
     return module
 
 
-def pidof(program: str) -> set[int]:
-    """Find the process ID of a running program.
+def pids_of(program: str) -> set[int]:
+    """Find the process IDs of a running program.
 
     This function wraps the pidof command and returns a set of
     process IDs.
