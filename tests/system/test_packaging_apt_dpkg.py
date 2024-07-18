@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import textwrap
 import typing
+from collections.abc import Iterator
 
 import pytest
 from apt import apt_pkg
@@ -25,6 +26,8 @@ from tests.helper import has_internet, skip_if_command_is_missing
 
 if shutil.which("dpkg") is None:
     pytest.skip("dpkg not installed", allow_module_level=True)
+
+AptStyle: typing.TypeAlias = typing.Literal["deb822", "one-line"]
 
 pytestmark = pytest.mark.parametrize(
     "apt_style",
@@ -41,35 +44,35 @@ pytestmark = pytest.mark.parametrize(
 
 
 @pytest.fixture(name="workdir")
-def fixture_workdir():
+def fixture_workdir() -> Iterator[str]:
     workdir = tempfile.mkdtemp()
     yield workdir
     shutil.rmtree(workdir)
 
 
 @pytest.fixture(name="cachedir")
-def fixture_cachedir(workdir):
+def fixture_cachedir(workdir: str) -> str:
     ret = os.path.join(workdir, "cache")
     os.makedirs(ret)
     return ret
 
 
 @pytest.fixture(name="rootdir")
-def fixture_rootdir(workdir):
+def fixture_rootdir(workdir: str) -> str:
     ret = os.path.join(workdir, "root")
     os.makedirs(ret)
     return ret
 
 
 @pytest.fixture(name="configdir")
-def fixture_configdir(workdir):
+def fixture_configdir(workdir: str) -> str:
     ret = os.path.join(workdir, "config")
     os.makedirs(ret)
     return ret
 
 
 @pytest.fixture(autouse=True)
-def environment(workdir):
+def environment(workdir: str) -> Iterator[None]:
     orig_environ = os.environ.copy()
     os.environ["HOME"] = workdir
     yield
@@ -78,7 +81,7 @@ def environment(workdir):
 
 
 @pytest.fixture(autouse=True)
-def reset_impl():
+def reset_impl() -> Iterator[None]:
     # pylint: disable=protected-access
     orig_conf = impl.configuration
     impl._apt_cache = None
@@ -88,7 +91,9 @@ def reset_impl():
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_versioned(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-locals,too-many-statements
     """install_packages() with versions and with cache"""
@@ -103,7 +108,7 @@ def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
         rootdir, configdir, release, list(wanted.items()), False, cachedir
     )
 
-    def sandbox_ver(pkg):
+    def sandbox_ver(pkg: str) -> str:
         with gzip.open(
             os.path.join(rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
         ) as f:
@@ -228,7 +233,9 @@ def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_unversioned(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """install_packages() without versions and no cache"""
     release = _setup_foonux_config(configdir, apt_style)
     obsolete = impl.install_packages(
@@ -276,7 +283,9 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_dependencies(configdir, rootdir, apt_style):
+def test_install_packages_dependencies(
+    configdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Test install packages's dependencies."""
     release = _setup_foonux_config(configdir, apt_style)
     # coreutils should always depend on libc6
@@ -301,7 +310,9 @@ def test_install_packages_dependencies(configdir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
+def test_install_packages_system(
+    cachedir: str, workdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     # pylint: disable=unused-argument
     """install_packages() with system configuration"""
     # trigger an unrelated package query here to get the cache set up,
@@ -352,7 +363,9 @@ def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_error(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """install_packages() with errors"""
     # sources.list with invalid format
     release = _setup_foonux_config(configdir, apt_style)
@@ -384,7 +397,9 @@ def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_permanent_sandbox(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """install_packages() with a permanent sandbox"""
     release = _setup_foonux_config(configdir, apt_style)
     zonetab = os.path.join(rootdir, "usr/share/zoneinfo/zone.tab")
@@ -492,8 +507,8 @@ def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_st
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
 def test_install_packages_permanent_sandbox_repack(
-    configdir, cachedir, rootdir, apt_style
-):
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     # Both packages needs to conflict with each other, because they
     # ship the same file.
     release = _setup_foonux_config(configdir, apt_style)
@@ -536,7 +551,9 @@ def test_install_packages_permanent_sandbox_repack(
 @pytest.mark.skipif(
     impl.get_system_architecture() == "armhf", reason="native armhf architecture"
 )
-def test_install_packages_armhf(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_armhf(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """install_packages() for foreign architecture armhf"""
     release = _setup_foonux_config(configdir, apt_style)
     wanted_version = "2.35-0ubuntu0"
@@ -569,7 +586,9 @@ def test_install_packages_armhf(configdir, cachedir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style):
+def test_install_packages_from_launchpad(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """install_packages() using packages only available on Launchpad"""
     release = _setup_foonux_config(configdir, apt_style, release="focal")
     # Wanted are superseded versions from -updates or -security.
@@ -582,7 +601,7 @@ def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style
         rootdir, configdir, release, list(wanted.items()), False, cachedir
     )
 
-    def sandbox_ver(pkg, debian=True):
+    def sandbox_ver(pkg: str, debian: bool = True) -> str:
         if debian:
             changelog = "changelog.Debian.gz"
         else:
@@ -631,7 +650,9 @@ def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
+def test_install_old_packages(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Sandbox will install older package versions from launchpad."""
     release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "libcurl4"
@@ -642,7 +663,7 @@ def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
 
     assert obsolete == ""
 
-    def sandbox_ver(pkg):
+    def sandbox_ver(pkg: str) -> str:
         with gzip.open(
             os.path.join(rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
         ) as f:
@@ -673,7 +694,9 @@ def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
+def test_get_source_tree_sandbox(
+    configdir: str, workdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     release = _setup_foonux_config(configdir, apt_style)
     out_dir = os.path.join(workdir, "out")
     os.mkdir(out_dir)
@@ -689,7 +712,9 @@ def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
+def test_get_source_tree_lp_sandbox(
+    configdir: str, workdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "curl"
     wanted_version = "7.81.0-1ubuntu1.2"  # superseded -security version
@@ -711,7 +736,9 @@ def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
 
 @skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
+def test_create_sources_for_a_named_ppa(
+    configdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Add sources.list entries for a named PPA."""
     ppa = "LP-PPA-daisy-pluckers-daisy-seeds"
     release = _setup_foonux_config(configdir, apt_style)
@@ -785,7 +812,9 @@ def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
 
 @skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
+def test_create_sources_for_an_unnamed_ppa(
+    configdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Add sources.list entries for an unnamed PPA."""
     ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
     release = _setup_foonux_config(configdir, apt_style, ppa=True)
@@ -853,7 +882,9 @@ def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
     assert apt_keys == ""
 
 
-def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
+def test_use_sources_for_a_ppa(
+    configdir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Use a sources.list.d file for a PPA."""
     ppa = "fooser-bar-ppa"
     release = _setup_foonux_config(configdir, apt_style, ppa=True)
@@ -893,7 +924,9 @@ def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
-def test_install_package_from_a_ppa(configdir, cachedir, rootdir, apt_style):
+def test_install_package_from_a_ppa(
+    configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
+) -> None:
     """Install a package from a PPA."""
     # Needs apport package in https://launchpad.net
     # /~apport-hackers/+archive/ubuntu/apport-autopkgtests
@@ -913,7 +946,7 @@ def test_install_package_from_a_ppa(configdir, cachedir, rootdir, apt_style):
 
     assert obsolete == ""
 
-    def sandbox_ver(pkg):
+    def sandbox_ver(pkg: str) -> str:
         with gzip.open(
             os.path.join(rootdir, "usr/share/doc", pkg, "changelog.Debian.gz")
         ) as f:
@@ -929,7 +962,7 @@ def _get_library_path(library_name: str, root_dir: str = "/") -> str:
     return libraries[0]
 
 
-def _ubuntu_archive_uri(arch=None):
+def _ubuntu_archive_uri(arch: str | None = None) -> str:
     """Return archive URI for the given architecture."""
     if arch is None:
         arch = impl.get_system_architecture()
@@ -983,7 +1016,7 @@ def _write_deb822_file(
 
 def _setup_foonux_config(
     configdir: str,
-    apt_style: typing.Literal["deb822", "one-line"],
+    apt_style: AptStyle,
     updates: bool = False,
     release: str = "jammy",
     ppa: bool = False,
@@ -1115,7 +1148,7 @@ def _write_source_file(
             )
 
 
-def assert_elf_arch(path, expected):
+def assert_elf_arch(path: str, expected: str) -> None:
     """Assert that an ELF file is for an expected machine type.
 
     Expected is a Debian-style architecture (i386, amd64, armhf)
@@ -1130,8 +1163,9 @@ def assert_elf_arch(path, expected):
     }
 
     # get ELF machine type
+    env: dict[str, str] = {}
     readelf = subprocess.run(
-        ["readelf", "-e", path], check=True, env={}, stdout=subprocess.PIPE, text=True
+        ["readelf", "-e", path], check=True, env=env, stdout=subprocess.PIPE, text=True
     )
     for line in readelf.stdout.splitlines():
         if line.startswith("  Machine:"):
