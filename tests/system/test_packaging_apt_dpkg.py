@@ -423,7 +423,7 @@ def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_st
     assert os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
 
     # Prevent packages from downloading.
-    orig_apt_proxy = apt_pkg.config.get("Acquire::http::Proxy")
+    orig_apt_proxy = apt_pkg.config.get("Acquire::http::Proxy", "")
     apt_pkg.config.set("Acquire::http::Proxy", "http://nonexistent")
     orig_http_proxy = os.environ.get("http_proxy")
     os.environ["http_proxy"] = "http://nonexistent"
