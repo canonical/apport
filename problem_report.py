@@ -492,9 +492,9 @@ class ProblemReport(collections.UserDict):
         return False
 
     @classmethod
-    def _try_unicode(cls, value: bytes | str) -> bytes | str:
+    def _try_unicode(cls, value: bytes) -> bytes | str:
         """Try to convert bytearray value to Unicode."""
-        if isinstance(value, bytes) and not cls.is_binary(value):
+        if not cls.is_binary(value):
             try:
                 return value.decode("UTF-8")
             except UnicodeDecodeError:
