@@ -201,7 +201,7 @@ func(42)
             "NoReply is an useless exception and should not create a report",
         )
 
-    def test_dbus_service_other_error(self):
+    def test_dbus_service_other_error(self) -> None:
         """Other DBusExceptions get an unwrapped original exception"""
         self._test_crash(
             extracode=textwrap.dedent(
@@ -220,13 +220,15 @@ func(42)
         self.assertIn("org.freedesktop.DBus.Error.UnknownMethod", pr["Traceback"])
         self.assertNotIn("DbusErrorAnalysis", pr)
         # we expect it to unwrap the actual exception from the DBusException
+        signature = pr.crash_signature()
+        assert signature
         self.assertIn(
             "dbus.exceptions.DBusException"
             "(org.freedesktop.DBus.Error.UnknownMethod):",
-            pr.crash_signature(),
+            signature,
         )
 
-    def _load_report(self):
+    def _load_report(self) -> apport.report.Report:
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")
