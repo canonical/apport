@@ -2,7 +2,9 @@
 
 import os
 import pathlib
+import re
 import shutil
+import signal
 import subprocess
 import tempfile
 import textwrap
@@ -38,7 +40,7 @@ def fixture_divide_by_zero_crash(module_workdir: pathlib.Path) -> str:
     executable = "/usr/bin/divide-by-zero"
     assert pathlib.Path(executable).exists()
     core_path = module_workdir / "divide-by-zero.core"
-    subprocess.run(
+    gdb = subprocess.run(
         [
             "gdb",
             "--batch",
@@ -51,14 +53,18 @@ def fixture_divide_by_zero_crash(module_workdir: pathlib.Path) -> str:
             executable,
         ],
         check=True,
+        stdout=subprocess.PIPE,
+        text=True,
     )
     assert core_path.exists()
+    signal_match = re.search("Program received signal (SIG[A-Z]+)", gdb.stdout)
+    assert signal_match, gdb.stdout
 
     # generate crash report
     report = Report()
     report["ExecutablePath"] = executable
-    report["Signal"] = "4"
-    report["SignalName"] = "SIGILL"
+    report["Signal"] = str(signal.Signals[signal_match.group(1)].value)
+    report["SignalName"] = signal_match.group(1)
     report.add_os_info()
     report.add_package_info()
     report["CoreDump"] = (str(core_path),)
