@@ -775,7 +775,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
-    def test_broken_crash_details(self):
+    def test_broken_crash_details(self) -> None:
         """Broken crash report with showing details."""
         # pylint: disable=attribute-defined-outside-init
         self.error_title = None
@@ -834,7 +834,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(self.app.crashdb.latest_id(), -1)
 
         # proper error message
-        self.assertIsNotNone(self.error_title)
+        assert self.error_text is not None
         self.assertIn("cannot be reported", self.error_text)
         self.assertIn("decompressing", self.error_text)
 
