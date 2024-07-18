@@ -140,7 +140,7 @@ class T(unittest.TestCase):
             shutil.rmtree(self.report_dir)
             shutil.rmtree(self.workdir)
 
-    def test_empty_core_dump(self):
+    def test_empty_core_dump(self) -> None:
         """Empty core dumps do not generate a report."""
         test_proc = self.create_test_process()
         try:
@@ -159,6 +159,7 @@ class T(unittest.TestCase):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
+                assert app.stdin is not None and app.stderr is not None
                 app.stdin.close()
                 assert app.wait() == 0, app.stderr.read()
                 app.stderr.close()
@@ -234,7 +235,7 @@ class T(unittest.TestCase):
         self.assertNotIn("root", pr["UserGroups"])
 
     @unittest.skip("fix test as multiple instances can be started within 30s")
-    def test_parallel_crash(self):
+    def test_parallel_crash(self) -> None:
         """Only one apport instance is ran at a time."""
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process("/bin/dd", args=[])
@@ -254,6 +255,7 @@ class T(unittest.TestCase):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
+                assert app.stdin is not None and app.stderr is not None
                 time.sleep(0.5)  # give it some time to grab the lock
 
                 with subprocess.Popen(
@@ -271,6 +273,7 @@ class T(unittest.TestCase):
                     stdin=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 ) as app2:
+                    assert app2.stdin is not None and app2.stderr is not None
                     # app should wait indefinitely for stdin, while app2 should
                     # terminate immediately (give it 5 seconds)
                     timeout = 50

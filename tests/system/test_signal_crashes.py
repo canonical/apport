@@ -166,6 +166,7 @@ class T(unittest.TestCase):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ) as app:
+                assert app.stdin is not None
                 # pipe an entire total memory size worth of spaces into it,
                 # which must be bigger than the 'usable' memory size. apport
                 # should digest that and the report should not have a core
