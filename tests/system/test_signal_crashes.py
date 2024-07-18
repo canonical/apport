@@ -147,7 +147,7 @@ class T(unittest.TestCase):
             r.load(f)
         totalmb = int(r["MemFree"].split()[0]) + int(r["Cached"].split()[0])
         totalmb = int(totalmb / 1024)
-        r = None
+        del r
 
         test_proc = self.create_test_process()
         try:
@@ -186,7 +186,7 @@ class T(unittest.TestCase):
                     totalmb -= 1
                 err = app.communicate()[1]
             self.assertEqual(app.returncode, 0, err)
-            onemb = None
+            del onemb
         finally:
             test_proc.kill()
             test_proc.wait()
