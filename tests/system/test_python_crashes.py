@@ -38,9 +38,10 @@ class T(unittest.TestCase):
     """Test apport_python_hook.py"""
 
     env: dict[str, str]
+    orig_report_dir: str
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.env = os.environ | local_test_environment()
         cls.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
@@ -48,10 +49,10 @@ class T(unittest.TestCase):
         atexit.register(shutil.rmtree, apport.fileutils.report_dir)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         apport.fileutils.report_dir = cls.orig_report_dir
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
 
@@ -97,7 +98,7 @@ func(42)
 
         return script
 
-    def test_dbus_service_unknown_invalid(self):
+    def test_dbus_service_unknown_invalid(self) -> None:
         """DBus.Error.ServiceUnknown with an invalid name"""
         self._test_crash(
             extracode=textwrap.dedent(
@@ -116,7 +117,7 @@ func(42)
             pr["DbusErrorAnalysis"], "no service file providing com.example.NotExisting"
         )
 
-    def test_dbus_service_unknown_wrongbus_notrunning(self):
+    def test_dbus_service_unknown_wrongbus_notrunning(self) -> None:
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (not running)"""
         subprocess.call(["killall", "gvfsd-metadata"])
@@ -139,7 +140,7 @@ func(42)
         )
         self.assertIn("gvfsd-metadata is not running", pr["DbusErrorAnalysis"])
 
-    def test_dbus_service_unknown_wrongbus_running(self):
+    def test_dbus_service_unknown_wrongbus_running(self) -> None:
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (running)"""
         self._test_crash(
@@ -166,7 +167,7 @@ func(42)
         )
         self.assertIn("gvfsd-metadata is running", pr["DbusErrorAnalysis"])
 
-    def test_dbus_service_timeout_running(self):
+    def test_dbus_service_timeout_running(self) -> None:
         """DBus.Error.NoReply with a running service"""
         # ensure the service is running
         metadata_obj = dbus.SessionBus().get_object(

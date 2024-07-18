@@ -11,14 +11,14 @@ SOME_ID = "a654870577ad2a2ab5b1"
 class TestGitHubQuery(unittest.TestCase):
     """System tests for the apport.crashdb_impl.github module."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.crashdb = self._get_gh_database("Lorem", "Ipsum")
         self.message_cb = Mock()
         self.github = apport.crashdb_impl.github.Github(
             self.crashdb.app_id, self.message_cb
         )
 
-    def test_api_authentication(self):
+    def test_api_authentication(self) -> None:
         """Test if we can contact Github authentication service."""
         with self.github as github:
             data = {"client_id": SOME_ID, "scope": "public_repo"}
@@ -39,7 +39,9 @@ class TestGitHubQuery(unittest.TestCase):
             self.assertIsInstance(response["interval"], int)
 
     @staticmethod
-    def _get_gh_database(repository_owner, repository_name):
+    def _get_gh_database(
+        repository_owner: str, repository_name: str
+    ) -> apport.crashdb_impl.github.CrashDatabase:
         return apport.crashdb_impl.github.CrashDatabase(
             None,
             {

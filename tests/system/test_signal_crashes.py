@@ -29,6 +29,14 @@ class T(unittest.TestCase):
     # pylint: disable=protected-access
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
+    apport_path: pathlib.Path | str | None
+    all_reports: list[str]
+    ifpath: str
+    orig_environ: dict[str, str]
+    orig_core_dir: str
+    orig_cwd: str
+    orig_ignore_file: str
+    orig_report_dir: str
 
     @classmethod
     def setUpClass(cls):
@@ -62,7 +70,7 @@ class T(unittest.TestCase):
         cls.orig_report_dir = apport.fileutils.report_dir
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         os.environ.clear()
         os.environ.update(cls.orig_environ)
         apport.fileutils.core_dir = cls.orig_core_dir
@@ -70,7 +78,7 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = cls.orig_report_dir
         os.chdir(cls.orig_cwd)
 
-    def setUp(self):
+    def setUp(self) -> None:
         if self.apport_path is None:
             self.skipTest(
                 "kernel crash dump helper is not active; please enable"
@@ -119,7 +127,7 @@ class T(unittest.TestCase):
 
         self.running_test_executables = pids_of(self.TEST_EXECUTABLE)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.workdir)
 
@@ -138,8 +146,9 @@ class T(unittest.TestCase):
             apport.fileutils.delete_report(r)
         self.assertEqual(unexpected_reports, [])
 
-    def test_limit_size(self):
+    def test_limit_size(self) -> None:
         """Core dumps are capped on available memory size."""
+        assert self.apport_path is not None
         # determine how much data we have to pump into apport in order to make
         # sure that it will refuse the core dump
         r = apport.Report()
@@ -216,7 +225,7 @@ class T(unittest.TestCase):
     )
     @skip_if_command_is_missing("systemd-run")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_system_slice(self):
+    def test_crash_system_slice(self) -> None:
         """Report generation for a protected process running in the system
         slice"""
         apport.fileutils.report_dir = self.orig_report_dir
@@ -290,7 +299,8 @@ class T(unittest.TestCase):
         time.sleep(0.3)  # needs some more setup time
         return process
 
-    def wait_for_apport_to_finish(self, timeout_sec=10.0):
+    def wait_for_apport_to_finish(self, timeout_sec: float = 10.0) -> None:
+        assert self.apport_path is not None
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
     def wait_for_no_instance_running(

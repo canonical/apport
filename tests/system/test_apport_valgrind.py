@@ -29,20 +29,22 @@ with open("/proc/meminfo", encoding="utf-8") as f:
 class TestApportValgrind(unittest.TestCase):
     """System tests for bin/apport-valgrind."""
 
+    env: dict[str, str]
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.env = os.environ | local_test_environment()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
         self.pwd = os.getcwd()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
     @unittest.skipIf(MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory")
-    def test_sandbox_cache_options(self):
+    def test_sandbox_cache_options(self) -> None:
         """apport-valgrind creates a user specified sandbox and cache"""
         sandbox = os.path.join(self.workdir, "test-sandbox")
         cache = os.path.join(self.workdir, "test-cache")

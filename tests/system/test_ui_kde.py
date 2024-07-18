@@ -61,6 +61,9 @@ class T(unittest.TestCase):
         "The collected information is being sent to the bug tracking system. "
         "This might take a few minutes.",
     )
+    argv: list[str]
+    distro: str
+    orig_environ: dict[str, str]
 
     @classmethod
     def setUpClass(cls):
@@ -74,11 +77,11 @@ class T(unittest.TestCase):
         cls.distro = r["DistroRelease"]
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         os.environ.clear()
         os.environ.update(cls.orig_environ)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
         os.environ["APPORT_REPORT_DIR"] = self.report_dir
@@ -106,7 +109,7 @@ class T(unittest.TestCase):
         with open(self.ui.report_file, "wb") as f:
             self.ui.report.write(f)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         if self.ui.dialog:
             QCoreApplication.processEvents()
             self.ui.dialog.done(0)
@@ -117,18 +120,18 @@ class T(unittest.TestCase):
         shutil.rmtree(self.report_dir)
         shutil.rmtree(self.hook_dir)
 
-    def test_close_button(self):
+    def test_close_button(self) -> None:
         """Clicking the close button on the window does not report the
         crash."""
 
-        def c():
+        def c() -> None:
             self.ui.dialog.reject()
 
         QTimer.singleShot(0, c)
         result = self.ui.ui_present_report_details(True)
         self.assertFalse(result.report)
 
-    def test_kernel_crash_layout(self):
+    def test_kernel_crash_layout(self) -> None:
         """Display crash dialog for kernel crash.
 
         +-----------------------------------------------------------------+
@@ -155,7 +158,7 @@ class T(unittest.TestCase):
         self.assertFalse(self.ui.dialog.closed_button.isVisible())
         self.assertFalse(self.ui.dialog.text.isVisible())
 
-    def test_package_crash_layout(self):
+    def test_package_crash_layout(self) -> None:
         """Display crash dialog for a failed package installation.
 
         +-----------------------------------------------------------------+
@@ -186,7 +189,7 @@ class T(unittest.TestCase):
             self.ui.dialog.text.text(), _("Package: apport 1.2.3~0ubuntu1")
         )
 
-    def test_regular_crash_thread_layout(self):
+    def test_regular_crash_thread_layout(self) -> None:
         """A thread of execution has failed, but the application persists."""
         self.ui.report["ProblemType"] = "Crash"
         self.ui.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
@@ -195,7 +198,7 @@ class T(unittest.TestCase):
         self.assertFalse(self.ui.dialog.closed_button.isVisible())
         self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
 
-    def test_regular_crash_layout(self):
+    def test_regular_crash_layout(self) -> None:
         """Display crash dialog for an application crash.
 
         +-----------------------------------------------------------------+
@@ -246,7 +249,7 @@ class T(unittest.TestCase):
             )
         )
 
-    def test_regular_crash_layout_restart(self):
+    def test_regular_crash_layout_restart(self) -> None:
         """Display crash dialog for an application crash offering a restart.
 
         +-----------------------------------------------------------------+
@@ -299,7 +302,7 @@ class T(unittest.TestCase):
             )
         )
 
-    def test_regular_crash_layout_norestart(self):
+    def test_regular_crash_layout_norestart(self) -> None:
         """Display crash dialog for an application crash offering no restart.
 
         +-----------------------------------------------------------------+
@@ -343,7 +346,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
         self.assertFalse(self.ui.dialog.closed_button.isVisible())
 
-    def test_system_crash_layout(self):
+    def test_system_crash_layout(self) -> None:
         """Display crash dialog for a system application crash.
 
         +-----------------------------------------------------------------+
@@ -383,7 +386,7 @@ class T(unittest.TestCase):
             str(self.ui.dialog.ignore_future_problems.text()).endswith("of this type")
         )
 
-    def test_apport_bug_package_layout(self):
+    def test_apport_bug_package_layout(self) -> None:
         """Display report detail dialog.
 
         +-------------------------------------------------------------------+
@@ -414,7 +417,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.dialog.cancel_button.isVisible())
         self.assertTrue(self.ui.dialog.treeview.isVisible())
 
-    def test_recoverable_crash_layout(self):
+    def test_recoverable_crash_layout(self) -> None:
         """Display crash dialog for a recoverable crash.
 
         +-----------------------------------------------------------------+
@@ -458,7 +461,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
         self.assertFalse(self.ui.dialog.closed_button.isVisible())
 
-    def test_ui_question_choice_hide_dialog(self):
+    def test_ui_question_choice_hide_dialog(self) -> None:
         """Test hiding/closing a UI question choice dialog.
 
         +---------------------+
@@ -475,7 +478,7 @@ class T(unittest.TestCase):
             apport_kde.Dialog, "__init__", include_instance=True
         ) as dialog_mock:
 
-            def hide_dialog():
+            def hide_dialog() -> None:
                 if dialog_mock.call_count >= 1:
                     dialog = dialog_mock.call_args[0][0]
                     if dialog.isVisible():
@@ -495,10 +498,10 @@ class T(unittest.TestCase):
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
-    def test_1_crash_nodetails(self):
+    def test_1_crash_nodetails(self) -> None:
         """Crash report without showing details"""
 
-        def cont():
+        def cont() -> None:
             if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
                 self.ui.dialog.continue_button.click()
                 return
@@ -532,10 +535,10 @@ class T(unittest.TestCase):
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
-    def test_1_crash_details(self):
+    def test_1_crash_details(self) -> None:
         """Crash report with showing details"""
 
-        def show_details():
+        def show_details() -> None:
             if self.ui.dialog and self.ui.dialog.show_details.isVisible():
                 self.ui.dialog.show_details.click()
                 QTimer.singleShot(1000, cont)
@@ -583,10 +586,10 @@ class T(unittest.TestCase):
     @unittest.mock.patch(
         "apport.fileutils.allowed_to_report", MagicMock(return_value=True)
     )
-    def test_1_crash_noaccept(self):
+    def test_1_crash_noaccept(self) -> None:
         """Crash report with non-accepting crash DB"""
 
-        def cont():
+        def cont() -> None:
             if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
                 self.ui.dialog.continue_button.click()
                 return
@@ -612,12 +615,12 @@ class T(unittest.TestCase):
         self.assertTrue(r["Package"].startswith("bash "))
         self.assertIn("libc", r["Dependencies"])
 
-    def test_bug_report_installed_package(self):
+    def test_bug_report_installed_package(self) -> None:
         """Bug report for installed package."""
         self.ui.report_file = None
         self.ui.args.package = "bash"
 
-        def c():
+        def c() -> None:
             if self.ui.dialog and self.ui.dialog.cancel_button.isVisible():
                 self.ui.dialog.cancel_button.click()
                 return
@@ -632,14 +635,14 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.report["Package"].startswith("bash "))
         self.assertNotEqual(self.ui.report["Dependencies"], "")
 
-    def test_bug_report_uninstalled_package(self):
+    def test_bug_report_uninstalled_package(self) -> None:
         """Bug report for uninstalled package"""
         pkg = apport.packaging.get_uninstalled_package()
 
         self.ui.report_file = None
         self.ui.args.package = pkg
 
-        def c():
+        def c() -> None:
             if self.ui.dialog and self.ui.dialog.cancel_button.isVisible():
                 self.ui.dialog.cancel_button.click()
                 return
@@ -656,11 +659,11 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["Package"], f"{pkg} (not installed)")
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
-    def test_1_update_report(self):
+    def test_1_update_report(self) -> None:
         """Updating an existing report"""
         self.ui.report_file = None
 
-        def cont():
+        def cont() -> None:
             if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
                 self.ui.dialog.continue_button.click()
                 return
@@ -689,12 +692,12 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.open_url.call_count, 0)
 
     @unittest.mock.patch.object(MainUserInterface, "open_url", MagicMock())
-    def test_1_update_report_different_binary_source(self):
+    def test_1_update_report_different_binary_source(self) -> None:
         """Updating an existing report on a source package which does not have
         a binary of the same name"""
         self.ui.report_file = None
 
-        def cont():
+        def cont() -> None:
             if self.ui.dialog and self.ui.dialog.continue_button.isVisible():
                 self.ui.dialog.continue_button.click()
                 return
@@ -738,7 +741,7 @@ class T(unittest.TestCase):
         # No URL in this mode
         self.assertEqual(self.ui.open_url.call_count, 0)
 
-    def test_administrator_disabled_reporting(self):
+    def test_administrator_disabled_reporting(self) -> None:
         QTimer.singleShot(0, QCoreApplication.quit)
         self.ui.ui_present_report_details(False)
         self.assertFalse(self.ui.dialog.send_error_report.isVisible())
