@@ -79,7 +79,7 @@ def fixture_divide_by_zero_crash(module_workdir: pathlib.Path) -> str:
 @pytest.fixture(name="workdir")
 def fixture_workdir() -> Iterator[pathlib.Path]:
     """Create a temporary work directory for the test case."""
-    workdir = tempfile.mkdtemp()
+    workdir = tempfile.mkdtemp(prefix="apport_retrace_system_test_", dir="/var/tmp")
     yield pathlib.Path(workdir)
     shutil.rmtree(workdir)
 
