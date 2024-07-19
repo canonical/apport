@@ -169,10 +169,14 @@ def _assert_sleep_retrace(report: Report) -> None:
     assert "seconds = 86400" in report["ThreadStacktrace"]
 
 
-def _assert_cache_has_content(cachedir: pathlib.Path, codename: str) -> None:
-    distro_cache = cachedir / CODENAME_DISTRO_RELEASE_MAP[codename]
-    assert list((distro_cache / "apt/var/lib/apt/lists").iterdir())
-    assert list((distro_cache / "apt/var/cache/apt/archives").iterdir())
+def _assert_cache_has_content(
+    cachedir: pathlib.Path, architecture: str, codename: str
+) -> None:
+    # pylint: disable=protected-access
+    release = CODENAME_DISTRO_RELEASE_MAP[codename]
+    aptroot = pathlib.Path(impl._apt_cache_root_dir(architecture, cachedir, release))
+    assert list((aptroot / "var/lib/apt/lists").iterdir())
+    assert list((aptroot / "var/cache/apt/archives").iterdir())
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
@@ -252,7 +256,7 @@ def test_retrace_jammy_sandbox(
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
     _assert_sleep_retrace(report)
-    _assert_cache_has_content(module_cachedir, "jammy")
+    _assert_cache_has_content(module_cachedir, "amd64", "jammy")
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
@@ -282,4 +286,4 @@ def test_retrace_jammy_sandbox_gdb_sandbox(
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
     _assert_sleep_retrace(report)
-    _assert_cache_has_content(module_cachedir, "jammy")
+    _assert_cache_has_content(module_cachedir, "amd64", "jammy")
