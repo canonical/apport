@@ -838,6 +838,20 @@ class __AptDpkgPackageInfo(PackageInfo):
         # TODO: Ubuntu specific
         return f"linux-image-{os.uname()[2]}"
 
+    def _apt_cache_root_dir(
+        self, architecture: str, cache_dir: pathlib.Path | str, release: str
+    ) -> str:
+        """Determine APT cache root directory.
+
+        release is the value of the report's 'DistroRelease' field or
+        "system" in case the current system configuration should be used.
+        """
+        if architecture != self.get_system_architecture():
+            aptroot_arch = architecture
+        else:
+            aptroot_arch = ""
+        return os.path.join(cache_dir, release, aptroot_arch, "apt")
+
     def install_packages(
         self,
         rootdir,
@@ -928,14 +942,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         # create apt sandbox
         if cache_dir:
             tmp_aptroot = False
-            if architecture != self.get_system_architecture():
-                aptroot_arch = architecture
-            else:
-                aptroot_arch = ""
-            if configdir:
-                aptroot = os.path.join(cache_dir, release, aptroot_arch, "apt")
-            else:
-                aptroot = os.path.join(cache_dir, "system", aptroot_arch, "apt")
+            aptroot = self._apt_cache_root_dir(
+                architecture, cache_dir, release if configdir else "system"
+            )
             if not os.path.isdir(aptroot):
                 os.makedirs(aptroot)
         else:
