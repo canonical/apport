@@ -21,7 +21,7 @@ CODENAME_DISTRO_RELEASE_MAP = {"jammy": "Ubuntu 22.04"}
 @pytest.fixture(name="module_workdir", scope="module")
 def fixture_module_workdir() -> Iterator[pathlib.Path]:
     """Create a temporary work directory for all test case in this module."""
-    workdir = tempfile.mkdtemp()
+    workdir = tempfile.mkdtemp(prefix="apport_retrace_system_tests_", dir="/var/tmp")
     yield pathlib.Path(workdir)
     shutil.rmtree(workdir)
 
