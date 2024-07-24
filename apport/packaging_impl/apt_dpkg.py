@@ -957,10 +957,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         apt.apt_pkg.config.set("Acquire::http::Proxy::api.launchpad.net", "DIRECT")
         apt.apt_pkg.config.set("Acquire::http::Proxy::launchpad.net", "DIRECT")
 
-        if verbose:
-            fetchProgress = apt.progress.text.AcquireProgress()
-        else:
+        if not verbose:
             fetchProgress = apt.progress.base.AcquireProgress()
+        else:
+            fetchProgress = apt.progress.text.AcquireProgress()
         if not tmp_aptroot:
             apt_cache = self._sandbox_cache(
                 aptroot,
