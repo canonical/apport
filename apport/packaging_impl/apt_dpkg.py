@@ -1575,6 +1575,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _update_given_file2pkg_mapping(
         file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
     ) -> None:
+        path_exclude_pattern = re.compile(
+            rb"^:|(boot|var|usr/(include|src|[^/]+/include"
+            rb"|share/(doc|gocode|help|icons|locale|man|texlive)))/"
+        )
         with gzip.open(contents_filename, "rb") as contents:
             if dist in {"trusty", "xenial"}:
                 # the first 32 lines are descriptive only for these
@@ -1583,34 +1587,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                     next(contents)
 
             for line in contents:
-                path = line.split()[0]
-                if path.split(b"/")[0] == b"usr":
-                    if path.split(b"/")[1] not in (
-                        b"lib",
-                        b"libexec",
-                        b"libx32",
-                        b"bin",
-                        b"sbin",
-                        b"share",
-                        b"games",
-                        b"Brother",
-                    ):
-                        continue
-                    if path.split(b"/")[1] == b"share" and path.split(b"/")[2] in {
-                        b"doc",
-                        b"icons",
-                        b"man",
-                        b"texlive",
-                        b"gocode",
-                        b"locale",
-                        b"help",
-                    }:
-                        continue
-                    package = line.split()[-1].split(b",")[0].split(b"/")[-1]
-                elif path.split(b"/")[0] in {b"lib", b"bin", b"sbin", b"etc"}:
-                    package = line.split()[-1].split(b",")[0].split(b"/")[-1]
-                else:
+                if path_exclude_pattern.match(line):
                     continue
+                parts = line.split()
+                path = parts[0]
+                package = parts[-1].split(b",")[0].split(b"/")[-1]
                 if path in file2pkg:
                     if package == file2pkg[path]:
                         continue
