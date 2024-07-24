@@ -31,6 +31,8 @@ from apport.packaging_impl.apt_dpkg import (
 class TestPackagingAptDpkg(unittest.TestCase):
     """Unit tests for apport.packaging_impl.apt_dpkg."""
 
+    maxDiff = None
+
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
         """is_distro_package() for package that has no candidate."""
@@ -211,3 +213,66 @@ bin/archdetect						    utils/archdetect-deb
             file2pkg, {b"bin/afio": b"afio", b"bin/archdetect": b"archdetect-deb"}
         )
         open_mock.assert_called_once_with("/fake_Contents", "rb")
+
+    def test_contents_path_filering(self) -> None:
+        """Test _update_given_file2pkg_mapping to ignore unrelevant files."""
+        # Test content taken from
+        # http://archive.ubuntu.com/ubuntu/dists/noble/Contents-amd64.gz
+        contents = b"""\
+bin/ip							    net/iproute2
+boot/ipxe.efi						    admin/grub-ipxe
+etc/dput.cf						    devel/dput
+lib/nut/clone						    admin/nut-server
+sbin/hdparm						    admin/hdparm
+usr/Brother/inf/braddprinter				    multiverse/text/brother-lpr-drivers-laser
+usr/aarch64-linux-gnu/include/ar.h			    libdevel/libc6-dev-arm64-cross
+usr/bin/git						    vcs/git
+usr/bin/xz						    utils/xz-utils
+usr/games/etr						    universe/games/extremetuxracer
+usr/include/apache2/os.h				    httpd/apache2-dev
+usr/include/x86_64-linux-gnu/bits/endian.h		    libdevel/libc6-dev
+usr/lib/7zip/7z.so					    universe/utils/7zip
+usr/lib/debug/.build-id/31/1c9c9b30d6991fb903ab459173c66eb8e7e895.debug debug/libc6-dbg
+usr/libexec/coreutils/libstdbuf.so			    utils/coreutils
+usr/libx32/ld.so					    libs/libc6-x32
+usr/sbin/zic						    libs/libc-bin
+usr/share/dicom3tools/gen.so				    universe/graphics/dicom3tools
+usr/share/doc/0install					    universe/admin/0install
+usr/share/gocode/src/launchpad.net/mgo			    universe/devel/golang-gopkg-mgo.v2-dev
+usr/share/help/C/eog/default.page			    gnome/eog
+usr/share/icons/gnome-colors-common/32x32/apps/konsole.png\
+  universe/gnome/gnome-colors-common
+usr/share/locale/de/LC_MESSAGES/apt.mo			    admin/apt
+usr/share/man/de/man1/man.1.gz				    doc/man-db
+usr/share/texlive/index.html				    universe/tex/texlive-base
+usr/src/broadcom-sta.tar.xz				    restricted/admin/broadcom-sta-source
+var/lib/ieee-data/iab.txt				    net/ieee-data
+"""
+
+        file2pkg: dict[bytes, bytes] = {}
+        open_mock = unittest.mock.mock_open(read_data=contents)
+        with unittest.mock.patch("gzip.open", open_mock):
+            # pylint: disable-next=protected-access
+            impl._update_given_file2pkg_mapping(file2pkg, "Contents-amd64", "noble")
+
+        self.assertEqual(
+            {k.decode(): v.decode() for k, v in file2pkg.items()},
+            {
+                "bin/ip": "iproute2",
+                "etc/dput.cf": "dput",
+                "lib/nut/clone": "nut-server",
+                "sbin/hdparm": "hdparm",
+                "usr/Brother/inf/braddprinter": "brother-lpr-drivers-laser",
+                "usr/bin/git": "git",
+                "usr/lib/debug/.build-id/31/1c9c9b30d6991fb903ab459173c66eb8e7e895"
+                ".debug": "libc6-dbg",
+                "usr/bin/xz": "xz-utils",
+                "usr/games/etr": "extremetuxracer",
+                "usr/lib/7zip/7z.so": "7zip",
+                "usr/libexec/coreutils/libstdbuf.so": "coreutils",
+                "usr/libx32/ld.so": "libc6-x32",
+                "usr/sbin/zic": "libc-bin",
+                "usr/share/dicom3tools/gen.so": "dicom3tools",
+            },
+        )
+        open_mock.assert_called_once_with("Contents-amd64", "rb")

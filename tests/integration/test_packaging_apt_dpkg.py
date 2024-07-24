@@ -185,7 +185,7 @@ class T(unittest.TestCase):
                     b"""\
 usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
-bo/gu/s                                                 na/mypackage
+usr/share/doc/frob-dev/copyright                        foo/frob-dev
 bin/true                                                admin/superutils
 """
                 )
@@ -228,14 +228,22 @@ bin/true                                                admin/superutils
             )
             cache_dir_files = sorted(os.listdir(cache_dir))
             self.assertEqual(len(cache_dir_files), 3)
-            self.assertIsNone(impl.get_file_package("/bo/gu/s", True, cache_dir))
+            self.assertIsNone(
+                impl.get_file_package(
+                    "usr/share/doc/frob-dev/copyright", True, cache_dir
+                )
+            )
 
             # valid cache, should not need to access the mirror
             impl.set_mirror("file:///foo/nonexisting")
             self.assertEqual(
                 impl.get_file_package("/bin/true", True, cache_dir), "superutils"
             )
-            self.assertIsNone(impl.get_file_package("/bo/gu/s", True, cache_dir))
+            self.assertIsNone(
+                impl.get_file_package(
+                    "usr/share/doc/frob-dev/copyright", True, cache_dir
+                )
+            )
             self.assertEqual(
                 impl.get_file_package("/lib/libnew.so.5", True, cache_dir), "libnew5"
             )
