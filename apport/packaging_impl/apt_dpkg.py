@@ -1667,8 +1667,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             # the update of the mapping only needs to be done once
             self._contents_update = False
 
-        if isinstance(file, bytes):
-            file = file.decode()
         if file[0] != "/":
             file = f"/{file}"
         files = [file[1:].encode()]
