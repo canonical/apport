@@ -356,7 +356,9 @@ def test_install_packages_system(
     orig_cwd = os.getcwd()
     try:
         os.chdir(workdir)
-        impl.install_packages("root", None, None, [("coreutils", None)], False, "cache")
+        impl.install_packages(
+            "root", None, release, [("coreutils", None)], False, "cache"
+        )
     finally:
         os.chdir(orig_cwd)
         assert os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
