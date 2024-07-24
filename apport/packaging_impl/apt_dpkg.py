@@ -1853,19 +1853,18 @@ class __AptDpkgPackageInfo(PackageInfo):
                     continue
                 origin_path = self._find_source_file_from_origin(origin, src_list_d)
                 extension = ".sources"
-                if origin_path:
-                    if origin_path.endswith(".list"):
-                        extension = ".list"
-                        with open(origin_path, encoding="utf-8") as src:
-                            source_list_content = [SourceEntry(line) for line in src]
-                    else:
-                        source_list_content = _parse_deb822_sources(origin_path)
-                else:
+                if not origin_path:
                     source_list_content = self.create_ppa_source_from_origin(
                         origin, distro_name, release_codename
                     )
                     if not WITH_DEB822_SUPPORT:
                         extension = ".list"
+                elif origin_path.endswith(".list"):
+                    extension = ".list"
+                    with open(origin_path, encoding="utf-8") as src:
+                        source_list_content = [SourceEntry(line) for line in src]
+                else:
+                    source_list_content = _parse_deb822_sources(origin_path)
                 if source_list_content:
                     with open(
                         os.path.join(
