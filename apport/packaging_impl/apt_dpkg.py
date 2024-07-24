@@ -1585,13 +1585,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
     ) -> None:
         with gzip.open(contents_filename, "rb") as contents:
-            line_num = 0
-            for line in contents:
-                line_num += 1
+            if dist in {"trusty", "xenial"}:
                 # the first 32 lines are descriptive only for these
                 # releases
-                if dist in {"trusty", "xenial"} and line_num < 33:
-                    continue
+                for _ in range(32):
+                    next(contents)
+
+            for line in contents:
                 path = line.split()[0]
                 if path.split(b"/")[0] == b"usr":
                     if path.split(b"/")[1] not in (
