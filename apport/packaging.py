@@ -302,8 +302,10 @@ class PackageInfo:
         # pylint: disable=no-self-use,unused-argument
         return False
 
-    def get_uninstalled_package(self):
+    def get_uninstalled_package(self) -> str:
         """Return a valid package name which is not installed.
+
+        Raises a ValueError in case no uninstalled package was found.
 
         This is only used in the test suite. The default implementation should
         work, but might be slow for your backend, so you might want to
@@ -317,7 +319,7 @@ class PackageInfo:
                 continue
             except ValueError:
                 return package
-        return None
+        raise ValueError
 
     _os_version = None
 
