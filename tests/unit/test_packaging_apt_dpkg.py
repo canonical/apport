@@ -159,3 +159,55 @@ Components: main
         _get_file2pkg_mapping_mock.assert_called_with(
             "/map_cachedir", impl.get_distro_codename(), "amd64"
         )
+
+    def test_contents_skip_xenial_header(self) -> None:
+        """Test _update_given_file2pkg_mapping skipping xenial Contents header."""
+        # Header taken from
+        # http://archive.ubuntu.com/ubuntu/dists/xenial/Contents-amd64.gz
+        contents = b"""\
+This file maps each file available in the Ubuntu
+system to the package from which it originates.  It includes packages
+from the DIST distribution for the ARCH architecture.
+
+You can use this list to determine which package contains a specific
+file, or whether or not a specific file is available.  The list is
+updated weekly, each architecture on a different day.
+
+When a file is contained in more than one package, all packages are
+listed.  When a directory is contained in more than one package, only
+the first is listed.
+
+The best way to search quickly for a file is with the Unix `grep'
+utility, as in `grep <regular expression> CONTENTS':
+
+ $ grep nose Contents
+ etc/nosendfile                                          net/sendfile
+ usr/X11R6/bin/noseguy                                   x11/xscreensaver
+ usr/X11R6/man/man1/noseguy.1x.gz                        x11/xscreensaver
+ usr/doc/examples/ucbmpeg/mpeg_encode/nosearch.param     graphics/ucbmpeg
+ usr/lib/cfengine/bin/noseyparker                        admin/cfengine
+
+This list contains files in all packages, even though not all of the
+packages are installed on an actual system at once.  If you want to
+find out which packages on an installed Debian system provide a
+particular file, you can use `dpkg --search <filename>':
+
+ $ dpkg --search /usr/bin/dselect
+ dpkg: /usr/bin/dselect
+
+
+FILE                                                    LOCATION
+:sexsend:sexget:					    universe/web/fex
+bin/afio						    multiverse/utils/afio
+bin/archdetect						    utils/archdetect-deb
+"""
+        file2pkg: dict[bytes, bytes] = {}
+        open_mock = unittest.mock.mock_open(read_data=contents)
+        with unittest.mock.patch("gzip.open", open_mock):
+            # pylint: disable-next=protected-access
+            impl._update_given_file2pkg_mapping(file2pkg, "/fake_Contents", "xenial")
+
+        self.assertEqual(
+            file2pkg, {b"bin/afio": b"afio", b"bin/archdetect": b"archdetect-deb"}
+        )
+        open_mock.assert_called_once_with("/fake_Contents", "rb")
