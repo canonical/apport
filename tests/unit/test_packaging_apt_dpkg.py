@@ -276,3 +276,30 @@ var/lib/ieee-data/iab.txt				    net/ieee-data
             },
         )
         open_mock.assert_called_once_with("Contents-amd64", "rb")
+
+    def test_contents_parse_path_with_spaces(self) -> None:
+        """Test _update_given_file2pkg_mapping to parse Contents file correctly."""
+        # Test content taken from
+        # http://archive.ubuntu.com/ubuntu/dists/noble/Contents-amd64.gz
+        contents = (
+            "usr/lib/iannix/Tools/JavaScript Library.js\t\t    "
+            "universe/sound/iannix\n"
+            "usr/lib/python3/dist-packages/ilorest/extensions/BIOS COMMANDS"
+            "/__init__.py universe/python/ilorest\n"
+        )
+
+        file2pkg: dict[bytes, bytes] = {}
+        open_mock = unittest.mock.mock_open(read_data=contents.encode())
+        with unittest.mock.patch("gzip.open", open_mock):
+            # pylint: disable-next=protected-access
+            impl._update_given_file2pkg_mapping(file2pkg, "Contents-amd64", "noble")
+
+        self.assertEqual(
+            {k.decode(): v.decode() for k, v in file2pkg.items()},
+            {
+                "usr/lib/iannix/Tools/JavaScript Library.js": "iannix",
+                "usr/lib/python3/dist-packages/ilorest/extensions/BIOS COMMANDS"
+                "/__init__.py": "ilorest",
+            },
+        )
+        open_mock.assert_called_once_with("Contents-amd64", "rb")
