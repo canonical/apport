@@ -1427,27 +1427,21 @@ class __AptDpkgPackageInfo(PackageInfo):
         raise ValueError("package does not exist")
 
     @staticmethod
-    def _check_files_md5(sumfile):
+    def _check_files_md5(sumfile: bytes) -> list[str]:
         """Call md5sum.
 
         This is separate from get_modified_files so that it is automatically
         testable.
         """
-        if os.path.exists(sumfile):
-            args = [sumfile]
-            stdin = None
-        else:
-            assert isinstance(sumfile, bytes), "md5sum list value must be a byte array"
-            args = []
-            stdin = sumfile
+        env: dict[str, str] = {}
         md5sum = subprocess.run(
-            ["/usr/bin/md5sum", "-c"] + args,
+            ["/usr/bin/md5sum", "-c"],
             check=False,
-            input=stdin,
+            input=sumfile,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd="/",
-            env={},
+            env=env,
         )
 
         # if md5sum succeeded, don't bother parsing the output
