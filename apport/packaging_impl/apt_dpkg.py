@@ -1598,9 +1598,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             for line in contents:
                 if path_exclude_pattern.match(line):
                     continue
-                parts = line.split()
-                path = parts[0]
-                package = parts[-1].split(b",")[0].split(b"/")[-1]
+                path, column2 = line.rsplit(maxsplit=1)
+                package = column2.split(b",")[0].split(b"/")[-1]
                 if path in file2pkg:
                     if package == file2pkg[path]:
                         continue
