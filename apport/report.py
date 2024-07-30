@@ -1891,7 +1891,13 @@ class Report(problem_report.ProblemReport):
         environ: dict[str, str] = {}
 
         if sandbox:
-            native_multiarch = "x86_64-linux-gnu"
+            arch = self.get("PackageArchitecture")
+            if not arch or arch == "all":
+                arch = self.get("Architecture")
+            sandbox_library_paths = [
+                f"{sandbox}{path}"
+                for path in packaging.get_library_paths(arch).split(":")
+            ]
             # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += [
                 "--ex",
@@ -1902,23 +1908,21 @@ class Report(problem_report.ProblemReport):
                 "add-auto-load-safe-path " + sandbox,
                 # needed to fix /lib64/ld-linux-x86-64.so.2 broken symlink
                 "--ex",
-                f"set solib-search-path {sandbox}/lib/{native_multiarch}"
-                f":{sandbox}/usr/lib/{native_multiarch}",
+                f"set solib-search-path {':'.join(sandbox_library_paths)}",
             ]
             if gdb_sandbox:
-                ld_lib_path = (
-                    f"{gdb_sandbox}/lib"
-                    f":{gdb_sandbox}/lib/{native_multiarch}"
-                    f":{gdb_sandbox}/usr/lib/{native_multiarch}"
-                    f":{gdb_sandbox}/usr/lib"
-                )
+                gdb_sandbox_library_paths = [
+                    f"{gdb_sandbox}{path}"
+                    for path in packaging.get_library_paths().split(":")
+                ]
+                ld_lib_path = ":".join(gdb_sandbox_library_paths)
                 pyhome = f"{gdb_sandbox}/usr"
                 # env settings need to be modified for gdb in a sandbox
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
                     "PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
-                    "GCONV_PATH": f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv",
+                    "GCONV_PATH": f"{gdb_sandbox}/usr/lib/x86_64-linux-gnu/gconv",
                 }
                 command[:0] = ["ld-linux-x86-64.so.2"]
                 command += ["--ex", f"set data-directory {gdb_sandbox}/usr/share/gdb"]
