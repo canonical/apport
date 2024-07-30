@@ -43,9 +43,9 @@ class RPMPackageInfo:
     # e.g. official_keylist = ('30c9ecf8','4f2a6fd2','897da07a','1ac70ce6')
     official_keylist = ()
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.ts = rpm.TransactionSet()  # connect to the rpmdb
-        self._mirror = None
+        self._mirror: str | None = None
 
     def get_version(self, package):
         """Return the installed version of a package."""
@@ -59,14 +59,14 @@ class RPMPackageInfo:
             return None
         return f"{hdr['e']}:{hdr['v']}-{hdr['r']}"
 
-    def get_available_version(self, package):
+    def get_available_version(self, package: str) -> str:
         """Return the latest available version of a package."""
         # used in report.py, which is used by the frontends
         raise NotImplementedError(
             "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
-    def get_dependencies(self, package):
+    def get_dependencies(self, package: str) -> list[str]:
         """Return a list of packages a package depends on."""
         hdr = self._get_header(package)
         # parse this package's Requires
@@ -84,12 +84,12 @@ class RPMPackageInfo:
                     reqs.append(rh_envra)
         return reqs
 
-    def get_source(self, package):
+    def get_source(self, package: str) -> str:
         """Return the source package name for a package."""
         hdr = self._get_header(package)
         return hdr["sourcerpm"]
 
-    def get_architecture(self, package):
+    def get_architecture(self, package: str) -> str:
         """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g.  an i386 Firefox
@@ -109,7 +109,7 @@ class RPMPackageInfo:
                 files.append(f)
         return files
 
-    def get_modified_files(self, package):
+    def get_modified_files(self, package: str) -> list[str]:
         """Return list of all modified files of a package."""
         hdr = self._get_header(package)
 
@@ -139,8 +139,13 @@ class RPMPackageInfo:
         return modified
 
     def get_file_package(
-        self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
-    ):
+        self,
+        file: str,
+        uninstalled: bool = False,
+        map_cachedir: str | None = None,
+        release: str | None = None,
+        arch: str | None = None,
+    ) -> str | None:
         """Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
@@ -160,7 +165,7 @@ class RPMPackageInfo:
         )
 
     @staticmethod
-    def get_system_architecture():
+    def get_system_architecture() -> str:
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
         rpmarch = subprocess.run(
@@ -172,7 +177,7 @@ class RPMPackageInfo:
         arch = rpmarch.stdout.strip()
         return arch
 
-    def is_distro_package(self, package):
+    def is_distro_package(self, package: str) -> bool:
         """Check if a package is a genuine distro package (True) or comes from
         a third-party source."""
         # This is a list of official keys, set by the concrete subclass
@@ -192,7 +197,7 @@ class RPMPackageInfo:
                 return True
         return False
 
-    def set_mirror(self, url):
+    def set_mirror(self, url: str) -> None:
         """Explicitly set a distribution mirror URL for operations that need to
         fetch distribution files/packages from the network.
 
@@ -224,7 +229,7 @@ class RPMPackageInfo:
             "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
-    def compare_versions(self, ver1, ver2):
+    def compare_versions(self, ver1: str, ver2: str) -> int:
         """Compare two package versions.
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
