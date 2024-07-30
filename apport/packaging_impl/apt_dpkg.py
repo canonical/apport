@@ -852,6 +852,70 @@ class __AptDpkgPackageInfo(PackageInfo):
             aptroot_arch = ""
         return os.path.join(cache_dir, release, aptroot_arch, "apt")
 
+    # pylint: disable-next=too-many-arguments
+    def _remove_conflicting_packages(
+        self, package, aptroot, apt_cache, candidate, archivedir, pkg_versions
+    ):
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches
+        virtual_mapping = self._virtual_mapping(aptroot)
+        # Remember all the virtual packages that this package provides,
+        # so that if we encounter that virtual package as a
+        # Conflicts/Replaces later, we know to remove this package from
+        # the cache.
+        for p in candidate.provides:
+            virtual_mapping.setdefault(p, set()).add(package)
+        conflicts = []
+        if "Conflicts" in candidate.record:
+            conflicts += apt.apt_pkg.parse_depends(candidate.record["Conflicts"])
+        if "Replaces" in candidate.record:
+            conflicts += apt.apt_pkg.parse_depends(candidate.record["Replaces"])
+        for conflict in conflicts:
+            # if the package conflicts with itself its wonky e.g.
+            # gdb in artful
+            if conflict[0][0] == candidate.package.name:
+                continue
+            # apt_pkg.parse_depends needs to handle the or operator,
+            # but as policy states it is invalid to use that in
+            # Replaces/Depends, we can safely choose the first value
+            # here.
+            conflict = conflict[0]
+            if apt_cache.is_virtual_package(conflict[0]):
+                try:
+                    providers = virtual_mapping[conflict[0]]
+                except KeyError:
+                    # We may not have seen the virtual package that
+                    # this conflicts with, so we can assume it's not
+                    # unpacked into the sandbox.
+                    continue
+                for p in providers:
+                    # if the candidate package being installed
+                    # conflicts with but also provides a virtual
+                    # package don't act on the candidate e.g.
+                    # libpam-modules and libpam-mkhomedir in artful
+                    if p == candidate.package.name:
+                        continue
+                    debs = os.path.join(archivedir, f"{p}_*.deb")
+                    for path in glob.glob(debs):
+                        ver = self._deb_version(path)
+                        if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
+                            os.unlink(path)
+                    try:
+                        del pkg_versions[p]
+                    except KeyError:
+                        pass
+                del providers
+            else:
+                debs = os.path.join(archivedir, f"{conflict[0]}_*.deb")
+                for path in glob.glob(debs):
+                    ver = self._deb_version(path)
+                    if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
+                        os.unlink(path)
+                        try:
+                            del pkg_versions[conflict[0]]
+                        except KeyError:
+                            pass
+
     def install_packages(
         self,
         rootdir,
@@ -1083,65 +1147,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
-                virtual_mapping = self._virtual_mapping(aptroot)
-                # Remember all the virtual packages that this package provides,
-                # so that if we encounter that virtual package as a
-                # Conflicts/Replaces later, we know to remove this package from
-                # the cache.
-                for p in candidate.provides:
-                    virtual_mapping.setdefault(p, set()).add(pkg)
-                conflicts = []
-                if "Conflicts" in candidate.record:
-                    conflicts += apt.apt_pkg.parse_depends(
-                        candidate.record["Conflicts"]
-                    )
-                if "Replaces" in candidate.record:
-                    conflicts += apt.apt_pkg.parse_depends(candidate.record["Replaces"])
-                for conflict in conflicts:
-                    # if the package conflicts with itself its wonky e.g.
-                    # gdb in artful
-                    if conflict[0][0] == candidate.package.name:
-                        continue
-                    # apt_pkg.parse_depends needs to handle the or operator,
-                    # but as policy states it is invalid to use that in
-                    # Replaces/Depends, we can safely choose the first value
-                    # here.
-                    conflict = conflict[0]
-                    if apt_cache.is_virtual_package(conflict[0]):
-                        try:
-                            providers = virtual_mapping[conflict[0]]
-                        except KeyError:
-                            # We may not have seen the virtual package that
-                            # this conflicts with, so we can assume it's not
-                            # unpacked into the sandbox.
-                            continue
-                        for p in providers:
-                            # if the candidate package being installed
-                            # conflicts with but also provides a virtual
-                            # package don't act on the candidate e.g.
-                            # libpam-modules and libpam-mkhomedir in artful
-                            if p == candidate.package.name:
-                                continue
-                            debs = os.path.join(archivedir, f"{p}_*.deb")
-                            for path in glob.glob(debs):
-                                ver = self._deb_version(path)
-                                if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
-                                    os.unlink(path)
-                            try:
-                                del pkg_versions[p]
-                            except KeyError:
-                                pass
-                        del providers
-                    else:
-                        debs = os.path.join(archivedir, f"{conflict[0]}_*.deb")
-                        for path in glob.glob(debs):
-                            ver = self._deb_version(path)
-                            if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
-                                os.unlink(path)
-                                try:
-                                    del pkg_versions[conflict[0]]
-                                except KeyError:
-                                    pass
+                self._remove_conflicting_packages(
+                    pkg, aptroot, apt_cache, candidate, archivedir, pkg_versions
+                )
 
             if candidate.architecture != "all" and install_dbg:
                 try:
