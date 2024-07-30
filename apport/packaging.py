@@ -13,6 +13,7 @@ import platform
 import re
 import subprocess
 import sys
+from collections.abc import Iterable
 
 
 class PackageInfo:
@@ -30,7 +31,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_available_version(self, package):
+    def get_available_version(self, package: str) -> str:
         """Return the latest available version of a package.
 
         Throw ValueError if package does not exist.
@@ -39,13 +40,13 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_dependencies(self, package):
+    def get_dependencies(self, package: str) -> list[str]:
         """Return a list of packages a package depends on."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_source(self, package):
+    def get_source(self, package: str) -> str:
         """Return the source package name for a package.
 
         Throw ValueError if package does not exist.
@@ -54,7 +55,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_package_origin(self, package):
+    def get_package_origin(self, package: str) -> str | None:
         """Return package origin.
 
         Return the repository name from which a package was installed, or None
@@ -66,7 +67,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def is_distro_package(self, package):
+    def is_distro_package(self, package: str) -> bool:
         """Check package origin.
 
         Return True if the package is a genuine distro package, or False if it
@@ -78,7 +79,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_architecture(self, package):
+    def get_architecture(self, package: str) -> str:
         """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g. an i386 Firefox
@@ -97,7 +98,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_modified_files(self, package):
+    def get_modified_files(self, package: str) -> list[str]:
         """Return list of all modified files of a package."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
@@ -116,8 +117,13 @@ class PackageInfo:
         return {}
 
     def get_file_package(
-        self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
-    ):
+        self,
+        file: str,
+        uninstalled: bool = False,
+        map_cachedir: str | None = None,
+        release: str | None = None,
+        arch: str | None = None,
+    ) -> str | None:
         """Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
@@ -135,7 +141,7 @@ class PackageInfo:
         )
 
     @staticmethod
-    def get_system_architecture():
+    def get_system_architecture() -> str:
         """Return the architecture of the system.
 
         This should use the notation of the particular distribution.
@@ -144,7 +150,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_library_paths(self):
+    def get_library_paths(self) -> str:
         """Return a list of default library search paths.
 
         The entries should be separated with a colon ':', like for
@@ -154,7 +160,7 @@ class PackageInfo:
         # simple default implementation, pylint: disable=no-self-use
         return "/lib:/usr/lib"
 
-    def set_mirror(self, url):
+    def set_mirror(self, url: str) -> None:
         """Explicitly set a distribution mirror URL.
 
         This might be called for operations that need to fetch distribution
@@ -188,7 +194,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def compare_versions(self, ver1, ver2):
+    def compare_versions(self, ver1: str, ver2: str) -> int:
         """Compare two package versions.
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
@@ -197,7 +203,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def enabled(self):
+    def enabled(self) -> bool:
         """Return whether Apport should generate crash reports.
 
         Signal crashes are controlled by /proc/sys/kernel/core_pattern, but
@@ -217,7 +223,7 @@ class PackageInfo:
 
         return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
 
-    def get_kernel_package(self):
+    def get_kernel_package(self) -> str:
         """Return the actual Linux kernel package name.
 
         This is used when the user reports a bug against the "linux" package.
@@ -226,20 +232,21 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
+    # pylint: disable-next=too-many-arguments
     def install_packages(
         self,
-        rootdir,
-        configdir,
-        release,
-        packages,
-        verbose=False,
-        cache_dir=None,
-        permanent_rootdir=False,
-        architecture=None,
-        origins=None,
-        install_dbg=True,
-        install_deps=False,
-    ):  # pylint: disable=too-many-arguments
+        rootdir: str,
+        configdir: str | None,
+        release: str,
+        packages: list[tuple[str, str | None]],
+        verbose: bool = False,
+        cache_dir: str | None = None,
+        permanent_rootdir: bool = False,
+        architecture: str | None = None,
+        origins: Iterable[str] | None = None,
+        install_dbg: bool = True,
+        install_deps: bool = False,
+    ) -> str:
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -291,7 +298,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def is_native_origin_package(self, package):
+    def is_native_origin_package(self, package: str) -> bool:
         """Check if a package is one which has been allow listed.
 
         Return True for a package which came from an origin which is listed in
@@ -324,13 +331,13 @@ class PackageInfo:
     _os_version = None
 
     @staticmethod
-    def _sanitize_operating_system_name(name):
+    def _sanitize_operating_system_name(name: str) -> str:
         # Strip GNU/Linux from e.g. "Debian GNU/Linux"
         if name.endswith(" GNU/Linux"):
             name = name.rsplit(maxsplit=1)[0]
         return name
 
-    def get_os_version(self):
+    def get_os_version(self) -> tuple[str, str]:
         """Return (osname, osversion) tuple.
 
         This is read from /etc/os-release, or if that doesn't exist,

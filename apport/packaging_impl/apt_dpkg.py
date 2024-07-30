@@ -45,7 +45,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 
 import apt
 import apt_pkg
@@ -159,26 +159,26 @@ class __AptDpkgPackageInfo(PackageInfo):
     """Concrete apport.packaging.PackageInfo class implementation for
     python-apt and dpkg, as found on Debian and derivatives such as Ubuntu."""
 
-    def __init__(self):
-        self._apt_cache = None
-        self._current_release_codename = None
-        self._sandbox_apt_cache = None
-        self._sandbox_apt_cache_arch = None
-        self._contents_dir = None
-        self._mirror = None
-        self._virtual_mapping_obj = None
-        self._contents_mapping_obj = None
+    def __init__(self) -> None:
+        self._apt_cache: apt.Cache | None = None
+        self._current_release_codename: str | None = None
+        self._sandbox_apt_cache: apt.Cache | None = None
+        self._sandbox_apt_cache_arch: str | None = None
+        self._contents_dir: str | None = None
+        self._mirror: str | None = None
+        self._virtual_mapping_obj: dict[str, set[str]] | None = None
+        self._contents_mapping_obj: dict[bytes, bytes] | None = None
         self._launchpad_base = "https://api.launchpad.net/devel"
         self._contents_update = False
 
-    def __del__(self):
+    def __del__(self) -> None:
         try:
             if self._contents_dir:
                 shutil.rmtree(self._contents_dir)
         except AttributeError:
             pass
 
-    def _virtual_mapping(self, configdir):
+    def _virtual_mapping(self, configdir: str) -> dict[str, set[str]]:
         if self._virtual_mapping_obj is not None:
             return self._virtual_mapping_obj
 
@@ -191,7 +191,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return self._virtual_mapping_obj
 
-    def _save_virtual_mapping(self, configdir):
+    def _save_virtual_mapping(self, configdir: str) -> None:
         mapping_file = os.path.join(configdir, "virtual_mapping.pickle")
         if self._virtual_mapping_obj is not None:
             with open(mapping_file, "wb") as fp:
@@ -300,11 +300,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             raise ValueError(f"package {package} does not exist")
         return inst.version
 
-    def get_available_version(self, package):
+    def get_available_version(self, package: str) -> str:
         """Return the latest available version of a package."""
         return self._apt_pkg(package).candidate.version
 
-    def get_dependencies(self, package):
+    def get_dependencies(self, package: str) -> list[str]:
         """Return a list of packages a package depends on."""
         cur_ver = self._apt_pkg(package).installed
         if not cur_ver:
@@ -315,7 +315,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             for d in cur_ver.get_dependencies("Depends", "PreDepends", "Recommends")
         ]
 
-    def get_source(self, package):
+    def get_source(self, package: str) -> str:
         """Return the source package name for a package."""
         if self._apt_pkg(package).installed:
             return self._apt_pkg(package).installed.source_name
@@ -323,7 +323,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._apt_pkg(package).candidate.source_name
         raise ValueError(f"package {package} does not exist")
 
-    def get_package_origin(self, package):
+    def get_package_origin(self, package: str) -> str | None:
         """Return package origin.
 
         Return the repository name from which a package was installed, or None
@@ -339,7 +339,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 return origin.origin
         return None
 
-    def is_distro_package(self, package):
+    def is_distro_package(self, package: str) -> bool:
         """Check if a package is a genuine distro package.
 
         Return True for a native distro package, False if it comes from a
@@ -365,7 +365,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return False
 
-    def is_native_origin_package(self, package):
+    def is_native_origin_package(self, package: str) -> bool:
         """Check if a package originated from a native location.
 
         Return True for a package which came from an origin which is listed in
@@ -490,7 +490,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             source_files.append(sfu)
         return source_files
 
-    def get_architecture(self, package):
+    def get_architecture(self, package: str) -> str:
         """Return the architecture of a package.
 
         This might differ on multiarch architectures (e. g. an i386 Firefox
@@ -509,7 +509,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return None
         return [f for f in output.splitlines() if not f.startswith("diverted")]
 
-    def get_modified_files(self, package):
+    def get_modified_files(self, package: str) -> list[str]:
         """Return list of all modified files of a package."""
         # get the maximum mtime of package files that we consider unmodified
         listfile = f"/var/lib/dpkg/info/{package}:{self.get_system_architecture()}.list"
@@ -641,8 +641,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         return match
 
     def get_file_package(
-        self, file, uninstalled=False, map_cachedir=None, release=None, arch=None
-    ):
+        self,
+        file: str,
+        uninstalled: bool = False,
+        map_cachedir: str | None = None,
+        release: str | None = None,
+        arch: str | None = None,
+    ) -> str | None:
         """Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
@@ -690,7 +695,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     @functools.cache
-    def get_system_architecture():
+    def get_system_architecture() -> str:
         """Return the architecture of the system, in the notation used by the
         particular distribution."""
         dpkg = subprocess.run(
@@ -700,7 +705,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert arch
         return arch
 
-    def get_library_paths(self):
+    def get_library_paths(self) -> str:
         """Return a list of default library search paths.
 
         The entries should be separated with a colon ':', like for
@@ -716,7 +721,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return f"/lib/{multiarch_triple}:/lib"
 
-    def set_mirror(self, url):
+    def set_mirror(self, url: str) -> None:
         """Explicitly set a distribution mirror URL for operations that need to
         fetch distribution files/packages from the network.
 
@@ -830,7 +835,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return root
 
-    def get_kernel_package(self):
+    def get_kernel_package(self) -> str:
         """Return the actual Linux kernel package name.
 
         This is used when the user reports a bug against the "linux" package.
@@ -854,8 +859,14 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     # pylint: disable-next=too-many-arguments
     def _remove_conflicting_packages(
-        self, package, aptroot, apt_cache, candidate, archivedir, pkg_versions
-    ):
+        self,
+        package: str,
+        aptroot: str,
+        apt_cache: apt.Cache,
+        candidate: apt.package.Version,
+        archivedir: str,
+        pkg_versions: dict[str, str],
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         virtual_mapping = self._virtual_mapping(aptroot)
@@ -916,20 +927,21 @@ class __AptDpkgPackageInfo(PackageInfo):
                         except KeyError:
                             pass
 
+    # pylint: disable-next=too-many-arguments
     def install_packages(
         self,
-        rootdir,
-        configdir,
-        release,
-        packages,
-        verbose=False,
-        cache_dir=None,
-        permanent_rootdir=False,
-        architecture=None,
-        origins=None,
-        install_dbg=True,
-        install_deps=False,
-    ):  # pylint: disable=too-many-arguments
+        rootdir: str,
+        configdir: str | None,
+        release: str,
+        packages: list[tuple[str, str | None]],
+        verbose: bool = False,
+        cache_dir: str | None = None,
+        permanent_rootdir: bool = False,
+        architecture: str | None = None,
+        origins: Iterable[str] | None = None,
+        install_dbg: bool = True,
+        install_deps: bool = False,
+    ) -> str:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
         # pylint: disable=too-many-nested-blocks,too-many-statements
@@ -1424,7 +1436,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     #
 
     @staticmethod
-    def _call_dpkg(args):
+    def _call_dpkg(args: list[str]) -> str:
         """Call dpkg with given arguments and return output, or return None on
         error."""
         dpkg = subprocess.run(
@@ -1493,7 +1505,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             f" couldn't find configured source contains the `deb` type in {apt_dir}"
         )
 
-    def _get_mirror(self):
+    def _get_mirror(self) -> str:
         """Return the distribution mirror URL.
 
         If it has not been set yet, it will be read from the system
@@ -1506,7 +1518,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
         return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
 
-    def _distro_release_to_codename(self, release):
+    def _distro_release_to_codename(self, release: str) -> str:
         """Map a DistroRelease: field value to a release code name."""
         # if we called install_packages() with a configdir, we can read the
         # codename from there
@@ -1632,7 +1644,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._update_given_file2pkg_mapping(file2pkg, contents_filename, dist)
         return file2pkg
 
-    def _search_contents(self, file, map_cachedir, release, arch):
+    def _search_contents(
+        self, file: str, map_cachedir: str | None, release: str | None, arch: str | None
+    ) -> str | None:
         """Search file in Contents.gz."""
         if not map_cachedir:
             if not self._contents_dir:
@@ -1791,8 +1805,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         return None
 
     def _build_apt_sandbox(
-        self, apt_root, apt_dir, distro_name, release_codename, origins
-    ):
+        self,
+        apt_root: str,
+        apt_dir: str,
+        distro_name: str,
+        release_codename: str,
+        origins: Iterable[str] | None,
+    ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
 
@@ -1925,7 +1944,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     )
 
     @staticmethod
-    def _deb_version(pkg):
+    def _deb_version(pkg: str) -> str:
         """Return the version of a .deb file."""
         dpkg = subprocess.run(
             ["dpkg-deb", "-f", pkg, "Version"], check=True, stdout=subprocess.PIPE
@@ -1934,7 +1953,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert out
         return out
 
-    def compare_versions(self, ver1, ver2):
+    def compare_versions(self, ver1: str, ver2: str) -> int:
         """Compare two package versions.
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
@@ -1943,7 +1962,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     _distro_codename = None
 
-    def get_distro_codename(self):
+    def get_distro_codename(self) -> str:
         """Get "lsb_release -sc", cache the result."""
         if self._distro_codename is None:
             try:
@@ -1963,7 +1982,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     _distro_name = None
 
-    def get_distro_name(self):
+    def get_distro_name(self) -> str:
         """Get osname from /etc/os-release, or if that doesn't exist,
         'lsb_release -sir' output and cache the result."""
         if self._distro_name is None:

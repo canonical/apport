@@ -158,7 +158,7 @@ def likely_packaged(file):
     )
 
 
-def find_file_package(file):
+def find_file_package(file: str) -> str | None:
     """Return the package that ships the given file.
 
     Return None if no package ships it.
