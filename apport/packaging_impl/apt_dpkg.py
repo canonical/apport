@@ -705,6 +705,18 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert arch
         return arch
 
+    @staticmethod
+    @functools.cache
+    def get_native_multiarch_triplet() -> str:
+        """Return the multiarch triplet for the system architecture"""
+        dpkg = subprocess.run(
+            ["dpkg-architecture", "-qDEB_HOST_MULTIARCH"],
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE,
+        )
+        return dpkg.stdout.strip()
+
     def get_library_paths(self) -> str:
         """Return a list of default library search paths.
 
@@ -712,14 +724,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        dpkg = subprocess.run(
-            ["dpkg-architecture", "-qDEB_HOST_MULTIARCH"],
-            check=True,
-            stdout=subprocess.PIPE,
-        )
-        multiarch_triple = dpkg.stdout.decode().strip()
-
-        return f"/lib/{multiarch_triple}:/lib"
+        return f"/lib/{self.get_native_multiarch_triplet()}:/lib"
 
     def set_mirror(self, url: str) -> None:
         """Explicitly set a distribution mirror URL for operations that need to
