@@ -857,7 +857,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self, package, aptroot, apt_cache, candidate, archivedir, pkg_versions
     ):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-branches,too-many-locals
         virtual_mapping = self._virtual_mapping(aptroot)
         # Remember all the virtual packages that this package provides,
         # so that if we encounter that virtual package as a
@@ -879,10 +879,10 @@ class __AptDpkgPackageInfo(PackageInfo):
             # but as policy states it is invalid to use that in
             # Replaces/Depends, we can safely choose the first value
             # here.
-            conflict = conflict[0]
-            if apt_cache.is_virtual_package(conflict[0]):
+            conflict_pkg, conflict_ver, conflict_comptype = conflict[0]
+            if apt_cache.is_virtual_package(conflict_pkg):
                 try:
-                    providers = virtual_mapping[conflict[0]]
+                    providers = virtual_mapping[conflict_pkg]
                 except KeyError:
                     # We may not have seen the virtual package that
                     # this conflicts with, so we can assume it's not
@@ -898,7 +898,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     debs = os.path.join(archivedir, f"{p}_*.deb")
                     for path in glob.glob(debs):
                         ver = self._deb_version(path)
-                        if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
+                        if apt.apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
                             os.unlink(path)
                     try:
                         del pkg_versions[p]
@@ -906,13 +906,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                         pass
                 del providers
             else:
-                debs = os.path.join(archivedir, f"{conflict[0]}_*.deb")
+                debs = os.path.join(archivedir, f"{conflict_pkg}_*.deb")
                 for path in glob.glob(debs):
                     ver = self._deb_version(path)
-                    if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
+                    if apt.apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
                         os.unlink(path)
                         try:
-                            del pkg_versions[conflict[0]]
+                            del pkg_versions[conflict_pkg]
                         except KeyError:
                             pass
 
