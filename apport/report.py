@@ -1887,7 +1887,7 @@ class Report(problem_report.ProblemReport):
         environ: dict[str, str] = {}
 
         if sandbox:
-            native_multiarch = "x86_64-linux-gnu"
+            native_multiarch = packaging.get_native_multiarch_triplet()
             # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += [
                 "--ex",

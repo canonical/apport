@@ -150,6 +150,15 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
+    @staticmethod
+    def get_native_multiarch_triplet() -> str:
+        """Return the GNU multiarch triplet for of the system architecture, if
+        applicable, raises NotImplementedError otherwise.
+        """
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass if applicable"
+        )
+
     def get_library_paths(self) -> str:
         """Return a list of default library search paths.
 
