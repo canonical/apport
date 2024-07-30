@@ -197,6 +197,10 @@ def _assert_cache_has_content(
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() == "s390x",
+    reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
+)
 def test_retrace_system_sandbox(
     workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
 ) -> None:
