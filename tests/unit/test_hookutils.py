@@ -6,7 +6,7 @@ import re
 import subprocess
 import unittest
 import unittest.mock
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 import apport.hookutils
 
@@ -186,3 +186,42 @@ class TestHookutils(unittest.TestCase):
             apport.hookutils.attach_upstart_logs({}, "apport")
         with self.assertWarns(PendingDeprecationWarning):
             apport.hookutils.attach_upstart_overrides({}, "nonexisting")
+
+    def test_recent_syslog_race_condition(self) -> None:
+        """Test recent_syslog reads stdout buffer after process completion.
+
+        LP: #2073935
+        """
+        with unittest.mock.patch("apport.hookutils.subprocess.Popen") as popen_mock:
+            process = unittest.mock.Mock()
+            popen_mock.return_value.__enter__.return_value = process
+            process.returncode = 0
+
+            process.poll = Mock(return_value=0)
+            process.stdout = MagicMock()
+            process.stdout.__iter__.side_effect = [iter([b"content"])]
+
+            match_content = apport.hookutils.recent_syslog(
+                re.compile("."), path="/nonexisting"
+            )
+            self.assertEqual(match_content, "content")
+
+    def test_recent_syslog_long_process(self) -> None:
+        """Test recent_syslog retrieves entire stdout."""
+        with unittest.mock.patch("apport.hookutils.subprocess.Popen") as popen_mock:
+            process = unittest.mock.Mock()
+            popen_mock.return_value.__enter__.return_value = process
+            process.returncode = 0
+
+            process.poll = Mock(side_effect=[None, 0])
+            process.stdout = MagicMock()
+            process.stdout.__iter__.side_effect = [
+                iter([b"test\n"]),
+                iter([b"content\n"]),
+            ]
+
+            match_content = apport.hookutils.recent_syslog(
+                re.compile("."), path="/nonexisting"
+            )
+
+            self.assertEqual(match_content, "test\ncontent\n")

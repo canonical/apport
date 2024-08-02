@@ -565,11 +565,17 @@ def attach_root_command_outputs(report, command_map):
 
 def __filter_re_process(pattern, process):
     lines = ""
+    # Get stdout while waiting for process to complete
     while process.poll() is None:
         for line in process.stdout:
             line = line.decode("UTF-8", errors="replace")
             if pattern.search(line):
                 lines += line
+    # Ensure all stdout is read after process completion
+    for line in process.stdout:
+        line = line.decode("UTF-8", errors="replace")
+        if pattern.search(line):
+            lines += line
     process.stdout.close()
     process.wait()
     if process.returncode == 0:
