@@ -3,8 +3,11 @@
 # pylint: disable=missing-class-docstring,missing-function-docstring
 
 import unittest
+from unittest.mock import MagicMock, patch
 
-from tests.helper import get_init_system, wrap_object
+import psutil
+
+from tests.helper import get_init_system, wait_for_sleeping_state, wrap_object
 
 
 class Multiply:  # pylint: disable=too-few-public-methods
@@ -29,3 +32,34 @@ class TestTestHelper(unittest.TestCase):
             multiply = Multiply(7)
             self.assertEqual(multiply.multiply(6), 42)
         mock.assert_called_once_with(7)
+
+    @patch("time.sleep")
+    @patch("psutil.Process", spec=psutil.Process)
+    def test_wait_for_sleeping_state(
+        self, process_mock: MagicMock, sleep_mock: MagicMock
+    ) -> None:
+        """Test wait_for_sleeping_state() helper method."""
+        process_mock.return_value.status.side_effect = [
+            "not-sleeping",
+            "also-not-sleeping",
+            "sleeping",
+        ]
+
+        wait_for_sleeping_state(1234567890)
+
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 2)
+        self.assertEqual(process_mock.return_value.status.call_count, 3)
+
+    @patch("time.sleep")
+    @patch("psutil.Process", spec=psutil.Process)
+    def test_wait_for_sleeping_state_timeout(
+        self, process_mock: MagicMock, sleep_mock: MagicMock
+    ) -> None:
+        """Test wait_for_sleeping_state() helper method times out."""
+        process_mock.return_value.status.return_value = "never-sleeps"
+        with self.assertRaises(TimeoutError):
+            wait_for_sleeping_state(1234567890, timeout=10)
+
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 101)
