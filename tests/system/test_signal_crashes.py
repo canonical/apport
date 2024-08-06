@@ -16,7 +16,13 @@ import time
 import unittest
 
 import apport.fileutils
-from tests.helper import get_init_system, pids_of, skip_if_command_is_missing
+from tests.helper import (
+    get_init_system,
+    pids_of,
+    skip_if_command_is_missing,
+    wait_for_process_to_appear,
+    wait_for_sleeping_state,
+)
 from tests.paths import (
     get_data_directory,
     is_local_source_directory,
@@ -247,9 +253,11 @@ class T(unittest.TestCase):
             + self.TEST_ARGS,
         )
         try:
-            pids = pids_of(self.TEST_EXECUTABLE) - self.running_test_executables
-            self.assertEqual(len(pids), 1)
-            os.kill(pids.pop(), signal.SIGSEGV)
+            sleep_pid = wait_for_process_to_appear(
+                self.TEST_EXECUTABLE, self.running_test_executables
+            )
+            wait_for_sleeping_state(sleep_pid)
+            os.kill(sleep_pid, signal.SIGSEGV)
 
             self.wait_for_no_instance_running(self.TEST_EXECUTABLE)
             self.wait_for_apport_to_finish()
