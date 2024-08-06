@@ -1297,7 +1297,7 @@ class T(unittest.TestCase):
             gdb_children = gdb_process.children()
             for process in gdb_children:
                 try:
-                    if process.status() == "tracing-stop":
+                    if process.status() != "sleeping":
                         continue
                     cmdline = process.cmdline()
                 except psutil.NoSuchProcess:  # pragma: no cover
@@ -1317,14 +1317,15 @@ class T(unittest.TestCase):
     def test_wait_for_gdb_sleeping_child_process(self, sleep_mock: MagicMock) -> None:
         """Test wait_for_gdb_sleeping_child_process() helper method."""
         child = MagicMock(spec=psutil.Process)
-        child.status.side_effect = ["tracing-stop", "running", "sleeping"]
-        child.cmdline.side_effect = [
-            ["/bin/sh", "-c", f"exec {self.TEST_EXECUTABLE}"],
-            [self.TEST_EXECUTABLE] + self.TEST_ARGS,
+        child.status.side_effect = [
+            "tracing-stop",  # child not yet started
+            "running",  # shell wrapper running
+            "sleeping",  # child ready
         ]
+        child.cmdline.side_effect = [[self.TEST_EXECUTABLE] + self.TEST_ARGS]
         with unittest.mock.patch("psutil.Process", spec=psutil.Process) as process_mock:
             process_mock.return_value.children.side_effect = [
-                [],
+                [],  # gdb hasn't started the child process yet
                 [child],  # child not started (tracing-stop)
                 [child],  # shell wrapper running
                 [child],  # child ready
@@ -1335,7 +1336,7 @@ class T(unittest.TestCase):
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 3)
         self.assertEqual(child.status.call_count, 3)
-        self.assertEqual(child.cmdline.call_count, 2)
+        self.assertEqual(child.cmdline.call_count, 1)
 
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
