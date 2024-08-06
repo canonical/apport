@@ -37,7 +37,12 @@ from unittest.mock import MagicMock
 import psutil
 
 import apport.fileutils
-from tests.helper import import_module_from_file, read_shebang, run_test_executable
+from tests.helper import (
+    import_module_from_file,
+    read_shebang,
+    run_test_executable,
+    wait_for_sleeping_state,
+)
 from tests.paths import get_data_directory, local_test_environment
 
 try:
@@ -1039,8 +1044,32 @@ class T(unittest.TestCase):
             else:
                 break
 
-        time.sleep(0.3)  # needs some more setup time
+        # sleep command needs extra time to get into "sleeping" state
+        if command == self.TEST_EXECUTABLE:
+            wait_for_sleeping_state(process.pid)
+
         return process
+
+    def test_create_test_sleep_process(self) -> None:
+        """Test create_test_process() helper method with sleep process."""
+        proc = self.create_test_process()
+        try:
+            self.assertEqual(psutil.Process(proc.pid).status(), "sleeping")
+        finally:
+            proc.kill()
+            proc.wait()
+
+    @unittest.mock.patch("tests.helper.wait_for_sleeping_state")
+    def test_create_test_non_sleep_process(self, wait_sleep_mock: MagicMock) -> None:
+        """Test create_test_process() helper method with non-sleep process."""
+        with (
+            unittest.mock.patch("os.access"),
+            unittest.mock.patch("subprocess.Popen"),
+            unittest.mock.patch("tests.integration.test_signal_crashes.open"),
+        ):
+            self.create_test_process(command="echo")
+
+        wait_sleep_mock.assert_not_called()
 
     # pylint: disable-next=too-many-arguments
     def do_crash(

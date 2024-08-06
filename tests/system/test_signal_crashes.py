@@ -14,6 +14,9 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import MagicMock, patch
+
+import psutil
 
 import apport.fileutils
 from tests.helper import (
@@ -304,8 +307,32 @@ class T(unittest.TestCase):
             else:
                 break
 
-        time.sleep(0.3)  # needs some more setup time
+        # sleep command needs extra time to get into "sleeping" state
+        if command == self.TEST_EXECUTABLE:
+            wait_for_sleeping_state(process.pid)
+
         return process
+
+    def test_create_test_sleep_process(self) -> None:
+        """Test create_test_process() helper method with sleep process."""
+        proc = self.create_test_process()
+        try:
+            self.assertEqual(psutil.Process(proc.pid).status(), "sleeping")
+        finally:
+            proc.kill()
+            proc.wait()
+
+    @patch("tests.helper.wait_for_sleeping_state")
+    def test_create_test_non_sleep_process(self, wait_sleep_mock: MagicMock) -> None:
+        """Test create_test_process() helper method with non-sleep process."""
+        with (
+            patch("os.access"),
+            patch("subprocess.Popen"),
+            patch("tests.system.test_signal_crashes.open"),
+        ):
+            self.create_test_process(command="echo")
+
+        wait_sleep_mock.assert_not_called()
 
     def wait_for_apport_to_finish(self, timeout_sec: float = 10.0) -> None:
         assert self.apport_path is not None
