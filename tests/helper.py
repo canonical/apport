@@ -8,12 +8,15 @@ import os
 import pathlib
 import shutil
 import subprocess
+import time
 import unittest.mock
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator, Iterator, Sequence
 from typing import Any
 from unittest.mock import MagicMock
+
+import psutil
 
 
 def get_init_system() -> str:
@@ -135,3 +138,22 @@ def wrap_object(
 
     with unittest.mock.patch.object(target, attribute, mocked_attribute):
         yield mock
+
+
+def wait_for_sleeping_state(pid: int, timeout: float = 5.0) -> None:
+    """Wait for sleep command to enter sleeping state."""
+    proc = psutil.Process(pid)
+    waited = 0.0
+    last_state = ""
+    while waited < timeout:
+        last_state = proc.status()
+        if last_state == "sleeping":
+            return
+
+        time.sleep(0.1)
+        waited += 0.1
+
+    raise TimeoutError(
+        f"{pid=} did not enter 'sleeping' state after {timeout=} seconds."
+        f" Got {last_state!r} instead."
+    )
