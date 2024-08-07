@@ -12,7 +12,7 @@ import time
 import unittest.mock
 import urllib.error
 import urllib.request
-from collections.abc import Callable, Generator, Iterator, Sequence
+from collections.abc import Callable, Generator, Iterator, Sequence, Set
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -157,3 +157,19 @@ def wait_for_sleeping_state(pid: int, timeout: float = 5.0) -> None:
         f"{pid=} did not enter 'sleeping' state after {timeout=} seconds."
         f" Got {last_state!r} instead."
     )
+
+
+def wait_for_process_to_appear(
+    process: str, already_running: Set[int], timeout: float = 5.0
+) -> int:
+    """Wait for process to appear and return its PID."""
+    waited = 0.0
+    while waited < timeout:
+        pids = pids_of(process) - already_running
+        if pids:
+            assert len(pids) == 1, f"Found more than one PID for {process!r}"
+            return pids.pop()
+        time.sleep(0.1)
+        timeout -= 0.1
+
+    raise TimeoutError(f"PID for {process!r} not found within {timeout=} seconds.")
