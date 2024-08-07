@@ -7,7 +7,12 @@ from unittest.mock import MagicMock, patch
 
 import psutil
 
-from tests.helper import get_init_system, wait_for_sleeping_state, wrap_object
+from tests.helper import (
+    get_init_system,
+    wait_for_process_to_appear,
+    wait_for_sleeping_state,
+    wrap_object,
+)
 
 
 class Multiply:  # pylint: disable=too-few-public-methods
@@ -63,3 +68,51 @@ class TestTestHelper(unittest.TestCase):
 
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 101)
+
+    @patch("time.sleep")
+    @patch("tests.helper.subprocess.check_output")
+    def test_wait_for_process_to_appear(
+        self, check_output_mock: MagicMock, sleep_mock: MagicMock
+    ) -> None:
+        """Test wait_for_process_to_appear() helper method."""
+        check_output_mock.side_effect = [
+            b"100 101 102",  # pre-existing processes
+            b"100 101 102 103",  # 103 is new
+        ]
+        pid: int = wait_for_process_to_appear("/bin/sleep", {100, 101, 102})
+
+        self.assertEqual(pid, 103)
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 1)
+
+    @patch("time.sleep")
+    @patch("tests.helper.subprocess.check_output")
+    def test_wait_for_process_to_appear_timeout(
+        self, check_output_mock: MagicMock, sleep_mock: MagicMock
+    ) -> None:
+        """Test wait_for_process_to_appear() helper method times out."""
+        check_output_mock.return_value = b""
+        with self.assertRaises(TimeoutError):
+            wait_for_process_to_appear("/bin/sleep", set(), timeout=10)
+
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 101)
+
+    @patch("time.sleep")
+    @patch("tests.helper.subprocess.check_output")
+    def test_wait_for_process_to_appear_multiple(
+        self, check_output_mock: MagicMock, sleep_mock: MagicMock
+    ) -> None:
+        """Test wait_for_process_to_appear() helper method raises AssertionError.
+
+        wait_for_process_to_appear expects to find only one PID.
+        """
+        check_output_mock.side_effect = [
+            b"100 101 102",  # pre-existing processes
+            b"100 101 102 103 104",  # 103 and 104 are new
+        ]
+        with self.assertRaises(AssertionError):
+            wait_for_process_to_appear("/bin/sleep", {100, 101, 102})
+
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 1)
