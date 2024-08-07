@@ -30,7 +30,12 @@ import apport.report
 import apport.ui
 import problem_report
 from apport.ui import _, run_as_real_user
-from tests.helper import pids_of, run_test_executable, skip_if_command_is_missing
+from tests.helper import (
+    pids_of,
+    run_test_executable,
+    skip_if_command_is_missing,
+    wait_for_process_to_appear,
+)
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
 ORIGINAL_SUBPROCESS_RUN = subprocess.run
@@ -901,35 +906,31 @@ class T(unittest.TestCase):
                 env={"HOME": self.workdir},
                 stdout=subprocess.PIPE,
             ) as gdb:
-                timeout = 10.0
-                while timeout > 0:
-                    pids = pids_of(self.TEST_EXECUTABLE) - self.running_test_executables
-                    if pids:
-                        pid = pids.pop()
-                        break
-                    time.sleep(0.01)
-                    timeout -= 0.01
-                else:
+
+                try:
+                    pid = wait_for_process_to_appear(
+                        self.TEST_EXECUTABLE,
+                        self.running_test_executables,
+                        timeout=10.0,
+                    )
+                    # generate crash report
+                    r = apport.Report()
+                    r["ExecutablePath"] = self.TEST_EXECUTABLE
+                    r["Signal"] = "11"
+                    r.add_proc_info(pid)
+                    r.add_user_info()
+                    r.add_os_info()
+                    r.add_package_info()
+
+                    # generate a core dump
+                    os.kill(pid, signal.SIGSEGV)
+                    os.waitpid(gdb.pid, 0)
+                    assert os.path.exists(core_path)
+                    r["CoreDump"] = (core_path,)
+                finally:
                     gdb.kill()
-                    self.fail(f"{self.TEST_EXECUTABLE} not started within 10 seconds")
-
-                # generate crash report
-                r = apport.Report()
-                r["ExecutablePath"] = self.TEST_EXECUTABLE
-                r["Signal"] = "11"
-                r.add_proc_info(pid)
-                r.add_user_info()
-                r.add_os_info()
-                r.add_package_info()
-
-                # generate a core dump
-                os.kill(pid, signal.SIGSEGV)
-                os.waitpid(gdb.pid, 0)
-                assert os.path.exists(core_path)
-                r["CoreDump"] = (core_path,)
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
-
         return r
 
     def test_run_crash(self):
