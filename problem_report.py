@@ -284,7 +284,7 @@ class CompressedValue:
         # legacy zlib format
         return zlib.decompress(self.compressed_value)
 
-    def write(self, file: typing.BinaryIO) -> None:
+    def write(self, file: typing.IO[bytes]) -> None:
         """Write uncompressed value into given file-like object."""
         assert self.compressed_value
 
@@ -343,7 +343,7 @@ class ProblemReport(collections.UserDict):
 
     def load(
         self,
-        file: gzip.GzipFile | typing.BinaryIO,
+        file: gzip.GzipFile | typing.IO[bytes],
         binary: bool | typing.Literal["compressed"] = True,
         key_filter: Iterable[str] | None = None,
     ) -> None:
@@ -399,7 +399,7 @@ class ProblemReport(collections.UserDict):
 
     def extract_keys(
         self,
-        file: gzip.GzipFile | typing.BinaryIO,
+        file: gzip.GzipFile | typing.IO[bytes],
         bin_keys: Iterable[str] | str,
         directory: str,
     ) -> None:
@@ -526,7 +526,7 @@ class ProblemReport(collections.UserDict):
                 continue
             yield key, self[key]
 
-    def write(self, file: typing.BinaryIO, only_new: bool = False) -> None:
+    def write(self, file: typing.IO[bytes], only_new: bool = False) -> None:
         """Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
@@ -588,7 +588,7 @@ class ProblemReport(collections.UserDict):
         binkeys.sort()
         return asckeys, binkeys
 
-    def _write_ascii_item(self, file: typing.BinaryIO, key: str) -> None:
+    def _write_ascii_item(self, file: typing.IO[bytes], key: str) -> None:
         v = self.data[key]
 
         # if it's a tuple, we have a file reference; read the contents
@@ -629,7 +629,7 @@ class ProblemReport(collections.UserDict):
 
     @staticmethod
     def _write_binary_item_base64_encoded(
-        file: typing.BinaryIO, key: str, chunks: Iterable[bytes]
+        file: typing.IO[bytes], key: str, chunks: Iterable[bytes]
     ) -> None:
         """Write out binary chunks as a base64-encoded RFC822 multiline field."""
         reset_position = file.tell()
@@ -724,7 +724,7 @@ class ProblemReport(collections.UserDict):
         yield block
 
     def _write_binary_item_compressed_and_encoded(
-        self, file: typing.BinaryIO, key: str
+        self, file: typing.IO[bytes], key: str
     ) -> None:
         """Write the binary keys with gzip compression and base64 encoding"""
         try:
