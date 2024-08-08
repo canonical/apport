@@ -35,7 +35,13 @@ match = ".*\\.py"
 extension-pkg-allow-list = ["apt_pkg"]
 
 # List of plugins (as comma separated values of python module names) to load,
-# usually to register additional checkers.
+# usually to register additional checkers. Following plugins are not wanted:
+#  * pylint.extensions.broad_try_clause
+#  * pylint.extensions.consider_ternary_expression
+#  * pylint.extensions.empty_comment
+#  * pylint.extensions.for_any_all
+#  * pylint.extensions.magic_value
+#  * pylint.extensions.while_used
 load-plugins = [
     "pylint.extensions.check_elif",
     "pylint.extensions.code_style",
