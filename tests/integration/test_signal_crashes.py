@@ -89,7 +89,7 @@ class T(unittest.TestCase):
     orig_report_dir: str
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
 
@@ -1013,7 +1013,12 @@ class T(unittest.TestCase):
             st.st_uid, expected_owner, f"{self.test_report} has correct owner"
         )
 
-    def create_test_process(self, command=None, uid=None, args=None):
+    def create_test_process(
+        self,
+        command: str | None = None,
+        uid: int | None = None,
+        args: list[str] | None = None,
+    ) -> subprocess.Popen:
         """Spawn test executable.
 
         Wait until it is fully running, and return its process.

@@ -91,7 +91,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         self._call(omit=self._get_all_pids())
         self.assertEqual(os.listdir(self.report_dir), [])
 
-    def test_omit_all_processes_except_one(self):
+    def test_omit_all_processes_except_one(self) -> None:
         """unkillable_shutdown will write exactly one report."""
         existing_pids = self._get_all_pids()
         with self._launch_process_with_different_session_id() as runner:

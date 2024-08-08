@@ -200,7 +200,7 @@ class T(unittest.TestCase):
     TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
     TEST_ARGS = ["86400"]
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
 
@@ -252,7 +252,7 @@ class T(unittest.TestCase):
 
         self.running_test_executables = pids_of(self.TEST_EXECUTABLE)
 
-    def update_report_file(self):
+    def update_report_file(self) -> None:
         self.report_file.seek(0)
         self.report_file.truncate()
         self.report.write(self.report_file)
