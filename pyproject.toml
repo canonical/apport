@@ -27,3 +27,66 @@ ignore_missing_imports = true
 # TODO: Address the ignored codes (except D203,D213)
 ignore = "D1,D203,D205,D209,D213,D400,D401,D402,D415"
 match = ".*\\.py"
+
+[tool.pylint.main]
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code.
+extension-pkg-allow-list = ["apt_pkg"]
+
+# List of plugins (as comma separated values of python module names) to load,
+# usually to register additional checkers.
+load-plugins = [
+    "pylint.extensions.check_elif",
+    "pylint.extensions.code_style",
+    "pylint.extensions.comparison_placement",
+    "pylint.extensions.consider_refactoring_into_while_condition",
+    "pylint.extensions.dict_init_mutate",
+    "pylint.extensions.docparams",
+    "pylint.extensions.dunder",
+    "pylint.extensions.eq_without_hash",
+    "pylint.extensions.no_self_use",
+    "pylint.extensions.private_import",
+    "pylint.extensions.set_membership",
+    "pylint.extensions.typing",
+]
+
+# Pickle collected data for later comparisons.
+persistent = false
+
+[tool.pylint.basic]
+# Good variable names which should always be accepted, separated by a comma.
+good-names = ["i", "j", "k", "lp", "ui", "_"]
+
+[tool.pylint.design]
+# Maximum number of arguments for function / method.
+max-args = 6
+
+# Maximum number of attributes for a class (see R0902).
+max-attributes = 9
+
+# Maximum number of public methods for a class (see R0904).
+max-public-methods = 25
+
+[tool.pylint.format]
+# Maximum number of characters on a single line.
+max-line-length = 88
+
+[tool.pylint."messages control"]
+# Disable the message, report, category or checker with the given id(s). You can
+# either give multiple identifiers separated by comma (,) or put this option
+# multiple times (only on the command line, not in the configuration file where
+# it should appear only once). You can also use "--disable=all" to disable
+# everything first and then re-enable specific checks. For example, if you want
+# to run only the similarities checker, you can use "--disable=all
+# --enable=similarities". If you want to run only the classes checker, but have
+# no Warning level messages displayed, use "--disable=all --enable=classes
+# --disable=W".
+disable = ["consider-using-assignment-expr", "duplicate-code", "fixme"]
+
+[tool.pylint.reports]
+# Tells whether to display a full report or only the messages.
+reports = false
+
+# Activate the evaluation score.
+score = false
