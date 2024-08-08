@@ -18,6 +18,7 @@ import apt
 
 from apport.packaging_impl.apt_dpkg import (
     WITH_DEB822_SUPPORT,
+    _map_mirror_to_arch,
     _parse_deb822_sources,
     _read_mirror_file,
     impl,
@@ -90,6 +91,30 @@ class TestPackagingAptDpkg(unittest.TestCase):
         self.assertEqual(impl.is_distro_package("apport"), True)
         getitem_mock.assert_called_once_with("apport")
         exists_mock.assert_called_once_with("/etc/system-image/channel.ini")
+
+    def test_map_mirror_to_arch_ports_to_primary(self) -> None:
+        """Test _map_mirror_to_arch() to map ports to primary."""
+        self.assertEqual(
+            _map_mirror_to_arch("http://de.ports.ubuntu.com/ubuntu-ports", "amd64"),
+            "http://de.archive.ubuntu.com/ubuntu",
+        )
+
+    def test_map_mirror_to_arch_ports_unchanged(self) -> None:
+        """Test _map_mirror_to_arch() to keep ports unchanged."""
+        uri = "http://de.ports.ubuntu.com/ubuntu-ports"
+        self.assertEqual(_map_mirror_to_arch(uri, "ppc64el"), uri)
+
+    def test_map_mirror_to_arch_primary_to_ports(self) -> None:
+        """Test _map_mirror_to_arch() to map primary to ports."""
+        self.assertEqual(
+            _map_mirror_to_arch("http://de.archive.ubuntu.com/ubuntu/", "s390x"),
+            "http://de.ports.ubuntu.com/ubuntu-ports",
+        )
+
+    def test_map_mirror_to_arch_primary_unchanged(self) -> None:
+        """Test _map_mirror_to_arch() to keep ports unchanged."""
+        uri = "http://de.archive.ubuntu.com/ubuntu"
+        self.assertEqual(_map_mirror_to_arch(uri, "amd64"), uri)
 
     @unittest.skipIf(not WITH_DEB822_SUPPORT, "no deb822 support")
     @unittest.mock.patch(

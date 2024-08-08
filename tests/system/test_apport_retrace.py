@@ -84,14 +84,16 @@ def fixture_workdir() -> Iterator[pathlib.Path]:
     shutil.rmtree(workdir)
 
 
-def setup_ubuntu_sandbox_config(configdir: pathlib.Path, release: str) -> None:
+def setup_ubuntu_sandbox_config(
+    configdir: pathlib.Path, release: str, arch: str
+) -> None:
     """Set up sandbox configuration for retracing Ubuntu crashes."""
     config_release_dir = configdir / CODENAME_DISTRO_RELEASE_MAP[release]
     codename_file = config_release_dir / "codename"
     sources_dir = config_release_dir / "sources.list.d"
     sources_file = sources_dir / "ubuntu.sources"
     # pylint: disable-next=protected-access
-    uri = impl._get_mirror()
+    uri = impl._get_mirror(arch)
 
     sources_dir.mkdir(parents=True)
     codename_file.write_text(release)
@@ -101,6 +103,7 @@ def setup_ubuntu_sandbox_config(configdir: pathlib.Path, release: str) -> None:
             Types: deb deb-src
             URIs: {uri}
             Suites: {release}
+            Architertures: {arch}
             Components: main
             Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
             """
@@ -113,7 +116,7 @@ def fixture_sandbox_config(workdir: pathlib.Path) -> str:
     """Setup a sandbox configuration that supports Ubuntu jammy."""
     config = workdir / "config"
     config.mkdir()
-    setup_ubuntu_sandbox_config(config, "jammy")
+    setup_ubuntu_sandbox_config(config, "jammy", "amd64")
     return str(config)
 
 
