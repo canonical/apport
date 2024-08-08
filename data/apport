@@ -234,7 +234,7 @@ def write_user_coredump(
     real_user: UserGroupID,
     pidstat: os.stat_result,
     coredump_fd: int | None = None,
-    from_report: typing.BinaryIO | None = None,
+    from_report: typing.IO[bytes] | None = None,
 ) -> None:
     # pylint: disable=too-many-arguments
     """Write the core into a directory if ulimit requests it."""
@@ -1013,7 +1013,7 @@ def process_crash_from_kernel_with_proc_pid(
         logger.error("could not determine ExecutablePath, aborting")
         return 1
 
-    def _write_coredump_callback(from_report: typing.BinaryIO | None = None) -> None:
+    def _write_coredump_callback(from_report: typing.IO[bytes] | None = None) -> None:
         write_user_coredump(
             core_path,
             core_ulimit,
@@ -1042,7 +1042,7 @@ def process_crash(
     info: apport.report.Report,
     real_user: UserGroupID,
     report_owner: UserGroupID,
-    write_coredump_callback: Callable[[typing.BinaryIO | None], None] | None = None,
+    write_coredump_callback: Callable[[typing.IO[bytes] | None], None] | None = None,
 ) -> int:
     """Process crash and return exit code."""
     # TODO: Split into smaller functions/methods
