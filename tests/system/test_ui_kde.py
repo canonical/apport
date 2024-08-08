@@ -66,7 +66,7 @@ class T(unittest.TestCase):
     orig_environ: dict[str, str]
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.orig_environ = os.environ.copy()
         os.environ |= local_test_environment()
         os.environ["LANGUAGE"] = "C"
