@@ -52,7 +52,7 @@ def native_crash() -> Report:
     return report
 
 
-def test_python_crash_headers():
+def test_python_crash_headers() -> None:
     # pylint: disable=protected-access
     """Test _generate_upload_headers in case of a Python crash"""
     crashdb = CrashDatabase(None, {"distro": "ubuntu"})
@@ -63,7 +63,7 @@ def test_python_crash_headers():
     assert headers.get("Private") == "yes"
 
 
-def test_native_crash_headers():
+def test_native_crash_headers() -> None:
     # pylint: disable=protected-access
     """Test _generate_upload_headers in case of a native crash"""
     crashdb = CrashDatabase(None, {"distro": "ubuntu"})
@@ -75,7 +75,7 @@ def test_native_crash_headers():
     assert headers.get("Private") == "yes"
 
 
-def test_private_bug_headers():
+def test_private_bug_headers() -> None:
     # pylint: disable=protected-access
     """Test _generate_upload_headers for a bug in a package for which
     the hook explicitly says it should be private"""
