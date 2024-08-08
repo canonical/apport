@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-13 16:28+0200\n"
-"PO-Revision-Date: 2020-07-10 14:15+0000\n"
-"Last-Translator: Marc Deslauriers <marc.deslauriers@canonical.com>\n"
+"PO-Revision-Date: 2024-07-23 19:30+0000\n"
+"Last-Translator: Dawid Wiktor <Unknown>\n"
 "Language-Team: English (Canada) <en_CA@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-08-08 15:00+0000\n"
+"X-Generator: Launchpad (build e3ace39cea497a5ecb83e8fb6dd8e7e169f02939)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -258,7 +258,7 @@ msgstr "xprop failed to determine process ID of the window"
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <report number>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
@@ -273,6 +273,7 @@ msgstr "Add an extra tag to the report. Can be specified multiple times."
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:1042
 msgid ""
@@ -778,15 +779,15 @@ msgstr "OK to send these as attachments? [y/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <report> <target directory>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Report file to unpack"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "directory to unpack report to"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."

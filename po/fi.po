@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-13 16:28+0200\n"
-"PO-Revision-Date: 2022-03-11 13:14+0000\n"
-"Last-Translator: Tuomas Lähteenmäki <Unknown>\n"
+"PO-Revision-Date: 2024-07-19 13:19+0000\n"
+"Last-Translator: Oi Suomi On! <Unknown>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2024-08-08 15:00+0000\n"
+"X-Generator: Launchpad (build e3ace39cea497a5ecb83e8fb6dd8e7e169f02939)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -260,7 +260,7 @@ msgstr "xprop ei onnistunut selvittämään ikkunaan ID-tunnistenumeroa"
 #: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <raporttinumero>"
 
 #: ../apport/ui.py:989
 msgid "Specify package name."
@@ -276,6 +276,8 @@ msgstr ""
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [vaihtoehdot] [oire|pid|paketti|ohjelmapolku|.apport/."
+"kaatumistiedosto]"
 
 #: ../apport/ui.py:1042
 msgid ""
@@ -791,15 +793,15 @@ msgstr "Sopiiko näiden lähettäminen liitteinä? [y/n] (y=kyllä, n=ei)"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <raportti> <kohdehakemisto>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Raporttitiedosto purettavaksi"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "hakemisto johon raportti puretaan"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -849,6 +851,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"ajettava tiedosto joka ajetaan valgrind:in muistintarkistustyökalulla "
+"muistivuodon havaitsemiseksi"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
