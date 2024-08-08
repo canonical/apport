@@ -506,6 +506,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.load(io.BytesIO(report))
 
         self.assertEqual(pr["Long"], "xxx\n.\nyyy")
+        self.assertEqual(pr["Short"], "Bar")
+        self.assertEqual(pr["File"], b"ABABABABABABABABABAB\0\0\0\0\0\0\0\0\0\0Z")
 
         # write back unmodified
         out = io.BytesIO()
