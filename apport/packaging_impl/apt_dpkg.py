@@ -125,6 +125,25 @@ def _load_all_sources(apt_dir: str) -> list[apt_sl.Deb822SourceEntry | SourceEnt
     return sources
 
 
+def _map_mirror_to_arch(uri: str, target_arch: str) -> str:
+    """Map the givin archive mirror URI to a valid one for the givin architecture.
+
+    The Ubuntu archive is split. The primary mirrors only has packages
+    for the amd64 and i386 architectures. The ports mirrors host all
+    remaining architectures.
+    """
+    if target_arch in {"amd64", "i386"}:
+        ports_match = re.match("http://([a-z.]+)?ports.ubuntu.com/ubuntu-ports/?", uri)
+        if ports_match:
+            return f"http://{ports_match.group(1)}archive.ubuntu.com/ubuntu"
+        return uri
+
+    primary_match = re.match("http://([a-z.]+)?archive.ubuntu.com/ubuntu/?$", uri)
+    if primary_match:
+        return f"http://{primary_match.group(1)}ports.ubuntu.com/ubuntu-ports"
+    return uri
+
+
 def _read_mirror_file(uri: str) -> list[str]:
     """Read an apt-transport-mirror configuration file.
 
@@ -1510,7 +1529,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             f" couldn't find configured source contains the `deb` type in {apt_dir}"
         )
 
-    def _get_mirror(self) -> str:
+    def _get_mirror(self, arch: str) -> str:
         """Return the distribution mirror URL.
 
         If it has not been set yet, it will be read from the system
@@ -1518,7 +1537,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         """
         if not self._mirror:
             self._mirror = self._get_primary_mirror_from_apt_sources("/etc/apt")
-        return self._mirror
+        return _map_mirror_to_arch(self._mirror, arch)
 
     def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
         return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
@@ -1539,7 +1558,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self, contents_filename: str, mtime: float | None, dist: str, arch: str
     ) -> bool:
         update = False
-        url = f"{self._get_mirror()}/dists/{dist}/Contents-{arch}.gz"
+        url = f"{self._get_mirror(arch)}/dists/{dist}/Contents-{arch}.gz"
         if mtime:
             # HTTPConnection requires server name e.g.
             # archive.ubuntu.com
