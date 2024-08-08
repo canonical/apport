@@ -426,7 +426,7 @@ usr/bin/frob                                            foo/frob
             shutil.rmtree(basedir)
             impl._distro_release_to_codename = orig_distro_release_to_codename
 
-    def test_get_file_package_diversion(self):
+    def test_get_file_package_diversion(self) -> None:
         """get_file_package() for a diverted file."""
         output = subprocess.check_output(["dpkg-divert", "--list"], env={}).decode()
 

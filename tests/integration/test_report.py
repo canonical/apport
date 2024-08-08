@@ -17,6 +17,7 @@ import textwrap
 import time
 import unittest
 import unittest.mock
+from typing import IO
 from unittest.mock import MagicMock
 
 import apport.packaging
@@ -624,18 +625,18 @@ class T(unittest.TestCase):
 
     def _generate_sigsegv_report(
         self,
-        file=None,
-        signal="11",
-        code="""
+        file: IO[bytes] | None = None,
+        signal: str = "11",
+        code: str = """
 int f(int x) {
     int* p = 0; *p = x;
     return x+1;
 }
 int main() { return f(42); }
 """,
-        args=None,
-        extra_gcc_args=None,
-    ):
+        args: list[str] | None = None,
+        extra_gcc_args: list[str] | None = None,
+    ) -> apport.report.Report:
         """Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
