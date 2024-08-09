@@ -809,13 +809,13 @@ def receive_arguments_via_socket() -> argparse.Namespace:
         sys.exit(0)
 
     # Extract and validate the fd
-    fds = listen_fds()
-    if len(fds) < 1:
+    socket_fds = listen_fds()
+    if len(socket_fds) < 1:
         logging.getLogger().error("Invalid socket activation, no fd provided")
         sys.exit(1)
 
     # Open the socket
-    sock = socket.fromfd(int(fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
+    sock = socket.fromfd(int(socket_fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
     atexit.register(sock.shutdown, socket.SHUT_RDWR)
 
     # Replace stdin by the socket activation fd
