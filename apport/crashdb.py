@@ -308,7 +308,7 @@ class CrashDatabase:
                     contents = dupdb_url.read().decode("UTF-8")
                 if "<title>404 Not Found" in contents:
                     continue
-            except (OSError, urllib.error.URLError):
+            except OSError:
                 # does not exist, failed to load, etc.
                 continue
 

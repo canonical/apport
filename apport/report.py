@@ -1244,7 +1244,7 @@ class Report(problem_report.ProblemReport):
         try:
             with urllib.request.urlopen(url) as request:
                 patterns = request.read().decode("UTF-8", errors="replace")
-        except (OSError, urllib.error.URLError):
+        except OSError:
             # doesn't exist or failed to load
             return None
 

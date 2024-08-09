@@ -465,7 +465,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             with urllib.request.urlopen(url) as response:
                 content = response.read()
-        except (urllib.error.URLError, urllib.error.HTTPError):
+        except urllib.error.URLError:
             apport.logging.warning("cannot connect to: %s", urllib.parse.unquote(url))
             return None
         except OSError:
@@ -1736,7 +1736,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 ) as response:
                     response.read()
                     return user, ppa_name
-            except (urllib.error.URLError, urllib.error.HTTPError):
+            except urllib.error.URLError:
                 index += 1
                 if index == len(components):
                     if try_ppa:
@@ -1786,7 +1786,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 debug_entry.comps = ["main/debug"]
                 debug_entry.suites = [release_codename]
                 return [main_entry, debug_entry]
-            except (urllib.error.URLError, urllib.error.HTTPError):
+            except urllib.error.URLError:
                 return [main_entry]
         else:
             ppa_line = (
@@ -1797,7 +1797,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 with contextlib.closing(urllib.request.urlopen(debug_url)) as response:
                     response.read()
                 add_debug = " main/debug"
-            except (urllib.error.URLError, urllib.error.HTTPError):
+            except urllib.error.URLError:
                 add_debug = ""
             return [
                 SourceEntry(ppa_line + add_debug),
