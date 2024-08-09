@@ -1,6 +1,43 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.30.0 (2024-08-09)
+-------------------
+
+### Changed
+
+* whoopsie-upload-all: exit with 0 if whoopsie is disabled
+  ([LP: #2069360](https://launchpad.net/bugs/2069360))
+* apport-retrace: exit without 0 on error
+* Add more type hints and mark Apport with `py.typed` marker
+* apt_dpkg: speed up APT Contents file parsing
+
+### Fixed
+
+* launchpad: don't systematically order retrace on private reports
+  ([LP: #2068933](https://launchpad.net/bugs/2068933))
+* apt_dpkg:
+  - fix parsing paths with spaces in APT Contents files
+  - Map mirror to correct URL for the architecture
+* report: gdb_command: don't hardcode the GNU triplet for the search paths
+* recent-syslog: read stdout after process completion
+  ([LP: #2073935](https://launchpad.net/bugs/2073935))
+* test:
+  - determine divide-by-zero signal dynamically
+  - Fix apport-retrace system tests on non-amd64
+    ([LP: #2069815](https://launchpad.net/bugs/2069815)):
+    - add different test for retrace with GDB if non-amd64
+    - apport_retrace: be more flexible on stack trace format
+    - apport_retrace: skip Jammy retracing if no gdb-multiarch on !amd64
+    - fix `_assert_cache_has_content` checks on non-amd64
+    - put apport-retrace temp files into `/var/tmp`
+  - retrace: skip the test using divide-by-zero on s390x until
+    [LP #2075204](https://launchpad.net/bugs/2075204) is fixed
+  - fix race condition in `wait_for_gdb_sleeping_child_process`
+    ([LP: #2073933](https://launchpad.net/bugs/2073933))
+  - fix flaky `test_crash_system_slice`
+    ([LP: #2076186](https://launchpad.net/bugs/2076186))
+
 2.29.0 (2024-06-13)
 -------------------
 
