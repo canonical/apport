@@ -142,13 +142,13 @@ class T(unittest.TestCase):
             os.path.join(self.workdir, "nonexistent"),
         )
         # Test exception handling: Non-binary and nonexistent key
-        tests = [
+        exception_tests = [
             (ValueError, "Txt"),
             (ValueError, ["Foo", "Txt"]),
             (KeyError, "Bar"),
             (KeyError, ["Foo", "Bar"]),
         ]
-        for exc, keys_arg in tests:
+        for exc, keys_arg in exception_tests:
             report.seek(0)
             self.assertRaises(exc, pr.extract_keys, report, keys_arg, self.workdir)
 
