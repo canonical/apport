@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 16:28+0200\n"
+"POT-Creation-Date: 2024-08-09 15:02+0200\n"
 "PO-Revision-Date: 2024-02-29 12:53+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -80,14 +80,14 @@ msgid ""
 msgstr ""
 "למחשבך אין די זכרון פנוי כדי לנתח את התקלה אוטומטית ולשלוח דוח למפתחים."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1862
+#: ../apport/ui.py:459 ../apport/ui.py:1867
 #, python-format
 msgid "Problem in %s"
 msgstr "תקלה ב־%s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
-#: ../apport/ui.py:1829 ../apport/ui.py:1835
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
+#: ../apport/ui.py:1834 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "דוח תקלה שגוי"
 
@@ -363,12 +363,12 @@ msgstr ""
 msgid "Can't remember send report status settings"
 msgstr "לא ניתן לשמור הגדרות מצב שליחת דיווח"
 
-#: ../apport/ui.py:1433 ../apport/ui.py:1446
+#: ../apport/ui.py:1436 ../apport/ui.py:1449
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "דיווח תקלה זה חל על תכנית שאינה מותקנת עוד."
 
-#: ../apport/ui.py:1466
+#: ../apport/ui.py:1469
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -377,42 +377,42 @@ msgstr "התקלה אירעה בתכנית %s שהשתנתה מאז קריסתה
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
+#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
 msgid "This problem report is damaged and cannot be processed."
 msgstr "דוח תקלה זה פגום ולכן לא ניתן לעבד אותו."
 
-#: ../apport/ui.py:1531
+#: ../apport/ui.py:1534
 msgid "This report is about a package that is not installed."
 msgstr "דיווח זה מתייחס לחבילה שאינה מותקנת."
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1541
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "אירעה שגיאה במהלך ניסיון עיבוד דוח תקלה זה:"
 
-#: ../apport/ui.py:1555
+#: ../apport/ui.py:1558
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 "מותקנות אצלך שתי גרסאות של היישום הזה, מול איזו מהן ברצונך לדווח על תקלה?"
 
-#: ../apport/ui.py:1560
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s snap"
 msgstr "%s snap"
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1564
 #, python-format
 msgid "%s deb package"
 msgstr "חבילת deb %s"
 
-#: ../apport/ui.py:1599
+#: ../apport/ui.py:1602
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 "%s מסופק על ידי snap שהופץ על ידי %s. יש ליצור אתם קשר דרך %s לקלבת עזרה."
 
-#: ../apport/ui.py:1604
+#: ../apport/ui.py:1607
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -421,37 +421,37 @@ msgstr ""
 "%s מסופק על ידי snap שהופץ על ידי %s. לא סופקה דרך ליצירת קשר, יש לבקר "
 "בפורום https://forum.snapcraft.io/‎ לקבלת עזרה."
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1693
 msgid "Could not determine the package or source package name."
 msgstr "לא ניתן לאתר את החבילה או את שם חבילת המקור."
 
-#: ../apport/ui.py:1721
+#: ../apport/ui.py:1724
 msgid "Unable to start web browser"
 msgstr "לא ניתן להפעיל את דפדפן האינטרנט."
 
-#: ../apport/ui.py:1722
+#: ../apport/ui.py:1725
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "לא ניתן להפעיל את דפדפן האינטרנט כדי לפתוח את %s."
 
-#: ../apport/ui.py:1791
+#: ../apport/ui.py:1796
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "לא ניתן להתחבר אל מסד נתוני הקריסות, יש לבדוק את החיבור לאינטרנט."
 
-#: ../apport/ui.py:1794
+#: ../apport/ui.py:1799
 msgid "Network problem"
 msgstr "תקלת רשת"
 
-#: ../apport/ui.py:1820
+#: ../apport/ui.py:1825
 msgid "Memory exhaustion"
 msgstr "תשישות הזכרון"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1827
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "למערכת שלך אין די זכרון פנוי כדי לעבד דוח תקלה זה."
 
-#: ../apport/ui.py:1867
+#: ../apport/ui.py:1872
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -462,11 +462,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1921 ../apport/ui.py:1933
+#: ../apport/ui.py:1926 ../apport/ui.py:1938
 msgid "Problem already known"
 msgstr "התקלה כבר מוכרת"
 
-#: ../apport/ui.py:1923
+#: ../apport/ui.py:1928
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -475,7 +475,7 @@ msgstr ""
 "תקלה זו כבר דווחה בדוח התקלה המוצג בדפדפן האינטרנט. נא לבדוק האם ניתן להוסיף "
 "מידע נוסף שעלול לעזור למפתחים בפתרון התקלה."
 
-#: ../apport/ui.py:1934
+#: ../apport/ui.py:1939
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "תקלה זו כבר דווחה למתכנתים. תודה רבה!"
 
@@ -534,8 +534,8 @@ msgstr "יש ל&שמור על קובץ הדוח לשליחה במועד מאוח
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "יש לבטל ולהת&עלם מקריסות עתידיות של גרסה זו של התכנה"
 
-#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
-#: ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "&ביטול"
 
@@ -564,7 +564,7 @@ msgstr ""
 "ניתן לשלוח את המידע שנאסף למפתחים כדי לשפר את היישום.\n"
 "פעולה זו עלולה להמשך מספר דקות."
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:513
 msgid "Uploading problem information"
 msgstr "פרטי התקלה נשלחים"
 
@@ -576,50 +576,50 @@ msgstr ""
 "המידע שנאסף נשלח כעת אל מערכת המעקב אחר התקלות.\n"
 "פעולה זו עלולה להמשך מספר דקות."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "&Done"
 msgstr "&סיום"
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:355
 msgid "none"
 msgstr "ללא"
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:356
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "נבחרו %s. ריבוי בחירות:"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "בחירות:"
 
-#: ../bin/apport-cli.py:384
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr "נתיב אל הקובץ (Enter לביטול):"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "הקובץ אינו קיים."
 
-#: ../bin/apport-cli.py:392
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "זוהי תיקייה."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr "כדי להמשיך, עליך לבקר בכתובת הבאה:"
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr "ניתן לטעון את הדפדפן כעת, או להעתיק כתובת זאת לדפדפן במחשב אחר."
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "טעינת הדפדפן כעת"
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr "אין דיווחי קריסות בהמתנה. ניתן לנסות את ‎--help לקבלת מידע נוסף."
 
@@ -857,7 +857,7 @@ msgstr "היישום %s סבל משגיאה פנימית, עמך הסליחה."
 msgid "Send"
 msgstr "שליחה"
 
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:621 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "הצגת פרטים"
@@ -903,11 +903,11 @@ msgstr "אם הבחנת בבעיות נוספות, כדאי לנסות להפע�
 msgid "Ignore future problems of this type"
 msgstr "התעלמות מתקלות חוזרות ונשנות מסוג זה"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:625 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "הסתרת הפרטים"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:555
 msgid "Apport"
 msgstr "Apport"
 
@@ -961,7 +961,7 @@ msgstr "המידע נאסף כדי לעזור למפתחים לתקן את הב�
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>נתוני הבעיה נשלחים</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:515
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1000,6 +1000,6 @@ msgstr ""
 "ניתן לשלוח את המידע שנאסף למפתחים כדי לשפר את התכנה. פעולה זו עלולה להמשך "
 "מספר דקות."
 
-#: ../kde/apport-kde.py:511
+#: ../kde/apport-kde.py:512
 msgid "Uploading Problem Information"
 msgstr "נתוני התקלה נשלחים"

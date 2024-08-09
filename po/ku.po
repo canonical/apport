@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 16:28+0200\n"
+"POT-Creation-Date: 2024-08-09 15:02+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
@@ -82,14 +82,14 @@ msgstr ""
 "Komputera te ne xwediyê têr bîr e ku bixeber vê pirsgirêkê analîz bike û "
 "raporekê ji pisporan re bişîne."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1862
+#: ../apport/ui.py:459 ../apport/ui.py:1867
 #, python-format
 msgid "Problem in %s"
 msgstr "Pirsgirêk di %s de"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
-#: ../apport/ui.py:1829 ../apport/ui.py:1835
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
+#: ../apport/ui.py:1834 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "Raporkirina pirsgirêkê ya ne derbasdar"
 
@@ -374,13 +374,13 @@ msgstr ""
 msgid "Can't remember send report status settings"
 msgstr "Mîhengên 'rewşa şandina raportê' nayê bîranîn."
 
-#: ../apport/ui.py:1433 ../apport/ui.py:1446
+#: ../apport/ui.py:1436 ../apport/ui.py:1449
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Ev rapora çewtiyan li ser bernameyên ku kîjan hêja ne sazkirî be tê sepandin."
 
-#: ../apport/ui.py:1466
+#: ../apport/ui.py:1469
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -391,79 +391,79 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
+#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Ev rapora pirsgirêkê xerabe ye û nayê kirin."
 
-#: ../apport/ui.py:1531
+#: ../apport/ui.py:1534
 msgid "This report is about a package that is not installed."
 msgstr "Ev rapor derheqê pakêteke nesazkirî de ye."
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1541
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Gava dixebitî ku vê rapora pirsgirêkê qeyd bike çewtiyek derket:"
 
-#: ../apport/ui.py:1555
+#: ../apport/ui.py:1558
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1560
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1564
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1599
+#: ../apport/ui.py:1602
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1604
+#: ../apport/ui.py:1607
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1693
 msgid "Could not determine the package or source package name."
 msgstr "Nikare pakêtê destnîşan bike an jî navê pakêtê bibîne."
 
-#: ../apport/ui.py:1721
+#: ../apport/ui.py:1724
 msgid "Unable to start web browser"
 msgstr "Nikare geroka webê bide destpêkirin"
 
-#: ../apport/ui.py:1722
+#: ../apport/ui.py:1725
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nikare geroka webê bide destpêkirin ji bo vekirina %s."
 
-#: ../apport/ui.py:1791
+#: ../apport/ui.py:1796
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nikare bi danegeha hilweşînê ve bê girêdan, Girêdana xwe yê întenetê kontrol "
 "bike."
 
-#: ../apport/ui.py:1794
+#: ../apport/ui.py:1799
 msgid "Network problem"
 msgstr "Pirsgirêka torê"
 
-#: ../apport/ui.py:1820
+#: ../apport/ui.py:1825
 msgid "Memory exhaustion"
 msgstr "Têrnekirina bîrkanê"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1827
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "Di pergala te de têr bîr tuneye ku kirara vê rapora çewtiyê bike."
 
-#: ../apport/ui.py:1867
+#: ../apport/ui.py:1872
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -474,11 +474,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1921 ../apport/ui.py:1933
+#: ../apport/ui.py:1926 ../apport/ui.py:1938
 msgid "Problem already known"
 msgstr "Pirsgirêk jixwe tê zanîn"
 
-#: ../apport/ui.py:1923
+#: ../apport/ui.py:1928
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -488,7 +488,7 @@ msgstr ""
 "hatiye raporkirin. Xêra xwe kontrol bike gelo tu dikarî ji bo alîkarbûna "
 "pêşvebiran agahiyeke zêdetir lê zêde bikî an na."
 
-#: ../apport/ui.py:1934
+#: ../apport/ui.py:1939
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Ev pirsgirêk ji pêşdebiran re jixwe hatiye raporkirin. Mala te ava!"
 
@@ -547,8 +547,8 @@ msgstr "Ji bo paşê bişînî yan jî tomar bikî ciye&kî din raporê veşêre
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
 
-#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
-#: ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "&Betal"
 
@@ -577,7 +577,7 @@ msgstr ""
 "Agahiyên civandî kare bê şandin ji pisporan re ji pêşxistina sepanê.\n"
 "Ev dibe ku çend xulekan bigire."
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:513
 msgid "Uploading problem information"
 msgstr "Agahiyên pirsgirêkê tên vebarkirin"
 
@@ -589,40 +589,40 @@ msgstr ""
 "Agahiyên civandî  ji pergala şopandina çewtiyan re tên şandin.\n"
 "Ev dibe ku çend xulekan bigire."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "&Done"
 msgstr "&Temam"
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:355
 msgid "none"
 msgstr "tune"
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:356
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Bijartî: %s. Bijartinên pirjimar:"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "Vebijêrk:"
 
-#: ../bin/apport-cli.py:384
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr "Riya pelê (\"Enter\" ji bo betalkirinê):"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "Pel tune"
 
-#: ../bin/apport-cli.py:392
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "Ev pêristek e."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr "Ji bo berdewamê divê tu serî li URL'ya jêr bidî."
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -630,11 +630,11 @@ msgstr ""
 "Tu karî niha gerokekê bixebitînî, yan jî URL'yê kopî bikî ji bo di "
 "kompûtereke din de binêrî."
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "Gerokekê bixebitîne"
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Raporên hilweşînê yê bendewar tunin. Ji bo agahiya zêdetir --help "
@@ -903,7 +903,7 @@ msgstr "Bibore, xetayeke navxweyî bi serê %s de hat."
 msgid "Send"
 msgstr "Bişîne"
 
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:621 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "Kîtekîtan Nîşan bide"
@@ -951,11 +951,11 @@ msgstr ""
 msgid "Ignore future problems of this type"
 msgstr "Di pêşerojê de guh nede pirsgirêkên bi vî awayî."
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:625 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "Dêtayan Veşêre"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:555
 msgid "Apport"
 msgstr "Apport"
 
@@ -1011,7 +1011,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Agahiyên pirsgirêkê tên barkirin</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:515
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1051,6 +1051,6 @@ msgstr ""
 "Agahiyên civandî, ji bo pêşvebirina sepanê ji pêşdebiran re dikare were "
 "şandin. Ev dibe ku çend deqeyan bigire."
 
-#: ../kde/apport-kde.py:511
+#: ../kde/apport-kde.py:512
 msgid "Uploading Problem Information"
 msgstr "Agahiyên Pirsgirêkê Têne Şandin"

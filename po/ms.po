@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 16:28+0200\n"
+"POT-Creation-Date: 2024-08-09 15:02+0200\n"
 "PO-Revision-Date: 2019-09-13 17:48+0000\n"
 "Last-Translator: abuyop <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
@@ -85,14 +85,14 @@ msgstr ""
 "Komputer anda tidak mempunyai ingatan bebas yang mencukupi untuk "
 "menganalisis masalah dan hantar laporan ke pembangun secara automatik."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1862
+#: ../apport/ui.py:459 ../apport/ui.py:1867
 #, python-format
 msgid "Problem in %s"
 msgstr "Masalah pada %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
-#: ../apport/ui.py:1829 ../apport/ui.py:1835
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
+#: ../apport/ui.py:1834 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "Laporan masalah tidak sah"
 
@@ -375,13 +375,13 @@ msgstr ""
 msgid "Can't remember send report status settings"
 msgstr "Tidak mengingati tetapan status laporan dihantar"
 
-#: ../apport/ui.py:1433 ../apport/ui.py:1446
+#: ../apport/ui.py:1436 ../apport/ui.py:1449
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Laporan masalah ini diterap kepada program yang mana ia tidak dipasang lagi."
 
-#: ../apport/ui.py:1466
+#: ../apport/ui.py:1469
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -392,19 +392,19 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
+#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Laporan masalah ini sudah rosak dan tidak boleh diproses."
 
-#: ../apport/ui.py:1531
+#: ../apport/ui.py:1534
 msgid "This report is about a package that is not installed."
 msgstr "Laporan ini berkenaan satu pakej yang tidak dipasang."
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1541
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Satu ralat berlaku semasa cuba memproses laporan masalah ini:"
 
-#: ../apport/ui.py:1555
+#: ../apport/ui.py:1558
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
@@ -412,24 +412,24 @@ msgstr ""
 "Anda telah memasang dua versi aplikasi ini, versi manakah mahu digunakan "
 "untuk melaporkan pepijat?"
 
-#: ../apport/ui.py:1560
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s snap"
 msgstr "snap %s"
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1564
 #, python-format
 msgid "%s deb package"
 msgstr "pakej deb %s"
 
-#: ../apport/ui.py:1599
+#: ../apport/ui.py:1602
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 "%s disediakan oleh snap yang diterbitkan oleh %s. Sila hubungi mereka "
 "melalui %s untuk mendapatkan bantuan."
 
-#: ../apport/ui.py:1604
+#: ../apport/ui.py:1607
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -439,41 +439,41 @@ msgstr ""
 "perhubungan telah disediakan; sila lawati forum di https://forum.snapcraft."
 "io/ untuk mendapatkan bantuan."
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1693
 msgid "Could not determine the package or source package name."
 msgstr "Tidak dapat mengenal pasti pakej atau nama sumber pakej."
 
-#: ../apport/ui.py:1721
+#: ../apport/ui.py:1724
 msgid "Unable to start web browser"
 msgstr "Tidak boleh memulakan pelayar sesawang"
 
-#: ../apport/ui.py:1722
+#: ../apport/ui.py:1725
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Tidak boleh mulakan pelayar sesawang untuk membuka %s."
 
-#: ../apport/ui.py:1791
+#: ../apport/ui.py:1796
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Tidak dapat menyambung ke pangkalan data kerosakan, sila semak sambungan "
 "internet anda."
 
-#: ../apport/ui.py:1794
+#: ../apport/ui.py:1799
 msgid "Network problem"
 msgstr "Masalah rangkaian"
 
-#: ../apport/ui.py:1820
+#: ../apport/ui.py:1825
 msgid "Memory exhaustion"
 msgstr "Kehabisan ingatan"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1827
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Sistem anda tidak mempunyai ingatan yang mencukupi untuk memproses laporan "
 "kerosakan ini."
 
-#: ../apport/ui.py:1867
+#: ../apport/ui.py:1872
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -484,11 +484,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1921 ../apport/ui.py:1933
+#: ../apport/ui.py:1926 ../apport/ui.py:1938
 msgid "Problem already known"
 msgstr "Masalah sudah pun diketahui"
 
-#: ../apport/ui.py:1923
+#: ../apport/ui.py:1928
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -498,7 +498,7 @@ msgstr ""
 "dalam pelayar sesawang. Sila semak jika anda boleh menambah maklumat "
 "lanjutan lagi yang dikira boleh dianggap berguna untuk para pembangun."
 
-#: ../apport/ui.py:1934
+#: ../apport/ui.py:1939
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Masalah ini sudah dilaporkan kepada pembangun. Terima kasih!"
 
@@ -559,8 +559,8 @@ msgstr ""
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Batal dan &abaikan kerosakan di masa hadapan untuk versi program ini"
 
-#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
-#: ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "&Batal"
 
@@ -590,7 +590,7 @@ msgstr ""
 "mempertingkatkan\n"
 "kualiti aplikasi. Ia mungkin mengambil masa beberapa minit."
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:513
 msgid "Uploading problem information"
 msgstr "Memuat naik maklumat masalah"
 
@@ -602,40 +602,40 @@ msgstr ""
 "Maklumat yang dikutip telah dihantar ke sistem penjejakan pepijat.\n"
 "Ia mungkin mengambil masa beberapa minit."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "&Done"
 msgstr "&Selesai"
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:355
 msgid "none"
 msgstr "tiada"
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:356
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Dipilih: %s. Pilihan berbilang:"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "Pilih:"
 
-#: ../bin/apport-cli.py:384
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr "Laluan ke fail (Enter untuk batal):"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "Fail tidak wujud."
 
-#: ../bin/apport-cli.py:392
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "Ini adalah sebuah direktori."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr "Untuk teruskan, anda mesti lawati URL berikut:"
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -643,11 +643,11 @@ msgstr ""
 "Anda boleh lancarkan pelayar sekarang, atau salin URL ini kedalam pelayar "
 "pada komputer lain."
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "Lancarkan sebuah pelayar sekarang"
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Tiada laporan kerosakan ditangguhkan. Cuba taip --help untuk maklumat lanjut."
@@ -917,7 +917,7 @@ msgstr "Maaf, %s telah mengalami ralat dalaman."
 msgid "Send"
 msgstr "Hantar"
 
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:621 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "Tunjuk Perincian"
@@ -963,11 +963,11 @@ msgstr "Jika anda mengalami masalah, cuba mulakan semula komputer."
 msgid "Ignore future problems of this type"
 msgstr "Abai masalah masa hadapan bagi jenis ini"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:625 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "Sembunyi Perincian"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:555
 msgid "Apport"
 msgstr "Apport"
 
@@ -1023,7 +1023,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Memuat naik maklumat masalah</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:515
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1063,6 +1063,6 @@ msgstr ""
 "Maklumat yang dikutip boleh dihantar kepada para pembangun untuk "
 "dipertingkatkan kualiti aplikasi. Ia mungkin mengambil masa beberapa minit."
 
-#: ../kde/apport-kde.py:511
+#: ../kde/apport-kde.py:512
 msgid "Uploading Problem Information"
 msgstr "Memuat Naik Maklumat Masalah"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 16:28+0200\n"
+"POT-Creation-Date: 2024-08-09 15:02+0200\n"
 "PO-Revision-Date: 2013-04-08 10:39+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Marathi <mr@li.org>\n"
@@ -78,14 +78,14 @@ msgstr ""
 "आपल्या संगणकावर आपोआप समस्या विश्लेषण आणि विकसकांसाठी एक अहवाल पाठवण्यासाठी अतिरीक्त "
 "मोकळी जागा नाही."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1862
+#: ../apport/ui.py:459 ../apport/ui.py:1867
 #, python-format
 msgid "Problem in %s"
 msgstr "%s यात समस्या"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
-#: ../apport/ui.py:1829 ../apport/ui.py:1835
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
+#: ../apport/ui.py:1834 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "अवैध समस्या अहवाल"
 
@@ -351,12 +351,12 @@ msgstr ""
 msgid "Can't remember send report status settings"
 msgstr ""
 
-#: ../apport/ui.py:1433 ../apport/ui.py:1446
+#: ../apport/ui.py:1436 ../apport/ui.py:1449
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "हा समस्या अहवाल जो आता स्थापित नाही अशा एक कार्यक्रमाला लागू होतो."
 
-#: ../apport/ui.py:1466
+#: ../apport/ui.py:1469
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -365,77 +365,77 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
+#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 
-#: ../apport/ui.py:1531
+#: ../apport/ui.py:1534
 msgid "This report is about a package that is not installed."
 msgstr ""
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1541
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "ही समस्या रिपोर्ट करण्याचा प्रयत्न करताना एक त्रुटी आली:"
 
-#: ../apport/ui.py:1555
+#: ../apport/ui.py:1558
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1560
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1564
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1599
+#: ../apport/ui.py:1602
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1604
+#: ../apport/ui.py:1607
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1693
 msgid "Could not determine the package or source package name."
 msgstr "संकुल उगम किंवा संकुल नाव निश्चित करू शकत नाही."
 
-#: ../apport/ui.py:1721
+#: ../apport/ui.py:1724
 msgid "Unable to start web browser"
 msgstr "वेब ब्राउजर सुरु करू शकत नाही"
 
-#: ../apport/ui.py:1722
+#: ../apport/ui.py:1725
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s उघडण्याकरिता वेब ब्राउजर सुरु करू शकत नाही."
 
-#: ../apport/ui.py:1791
+#: ../apport/ui.py:1796
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "क्रॅश माहितीकोशाला जोडू शकत नाही, आपले इंटरनेट कनेक्शन तपासा."
 
-#: ../apport/ui.py:1794
+#: ../apport/ui.py:1799
 msgid "Network problem"
 msgstr "संजाळ समस्या"
 
-#: ../apport/ui.py:1820
+#: ../apport/ui.py:1825
 msgid "Memory exhaustion"
 msgstr "स्मृती अपुरी पडली"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1827
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "आपल्या प्रणालीमध्ये हा क्रॅश अहवाल प्रक्रिया करण्यासाठी पुरेशी स्मृती नाही."
 
-#: ../apport/ui.py:1867
+#: ../apport/ui.py:1872
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -446,18 +446,18 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1921 ../apport/ui.py:1933
+#: ../apport/ui.py:1926 ../apport/ui.py:1938
 msgid "Problem already known"
 msgstr "समस्या अगोदरच माहित आहे"
 
-#: ../apport/ui.py:1923
+#: ../apport/ui.py:1928
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1934
+#: ../apport/ui.py:1939
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "ही समस्या आधीच विकसकांकडे आलेली आहे. धन्यवाद!"
 
@@ -514,8 +514,8 @@ msgstr "नंतर किंवा दुसरीकडे कुठेतर
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "रद्द करा आणि या कार्यक्रमाच्या या आवृत्तीचे भविष्यातील क्रॅशकडे दुर्लक्ष करा"
 
-#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
-#: ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "रद्द करा (&C)"
 
@@ -542,7 +542,7 @@ msgid ""
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:513
 msgid "Uploading problem information"
 msgstr "समस्या माहिती अपलोड होत आहे"
 
@@ -552,50 +552,50 @@ msgid ""
 "This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "&Done"
 msgstr "झाले (&D)"
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:355
 msgid "none"
 msgstr "काही नाही"
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:356
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "निवडलेले : %s. अनेक पर्याय :"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "पर्याय :"
 
-#: ../bin/apport-cli.py:384
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr "फाईलचा पथ (रद्द करण्यासाठी प्रविष्ट करा):"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "फाईल अस्तित्वात नाही."
 
-#: ../bin/apport-cli.py:392
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "हि संचयीका आहे."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr "सुरू ठेवण्यासाठी, आपण खालील URL ला भेट देणे आवश्यक आहे:"
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "ब्राऊजर दाखल करा"
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
@@ -819,7 +819,7 @@ msgstr "क्षमस्व, %s अंतर्गत त्रुटी आ�
 msgid "Send"
 msgstr "पाठवा"
 
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:621 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "तपशील दर्शवा"
@@ -865,11 +865,11 @@ msgstr "आपणास अजून समस्या आल्यास, स�
 msgid "Ignore future problems of this type"
 msgstr "या प्रकारच्या समस्येकडे दुर्लक्ष करा"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:625 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "तपशील लपवा"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:555
 msgid "Apport"
 msgstr "एप्पोर्ट"
 
@@ -925,7 +925,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>समस्या माहिती अपलोड चालू आहे</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:515
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -964,6 +964,6 @@ msgstr ""
 "गोळा माहिती अनुप्रयोग सुधारण्यासाठी विकसकांसाठी पाठविले जाऊ शकते. यास काही मिनिटे "
 "लागू शकतील."
 
-#: ../kde/apport-kde.py:511
+#: ../kde/apport-kde.py:512
 msgid "Uploading Problem Information"
 msgstr "समस्या माहिती अपलोड करत आहे"

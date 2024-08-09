@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-13 16:28+0200\n"
+"POT-Creation-Date: 2024-08-09 15:02+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Nick Andrik <nick.andrik@gmail.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
@@ -83,14 +83,14 @@ msgstr ""
 "Ο υπολογιστής σας δεν έχει αρκετή ελεύθερη μνήμη για να αναλύσει αυτόματα το "
 "πρόβλημα και να στείλει μια αναφορά στους προγραμματιστές."
 
-#: ../apport/ui.py:459 ../apport/ui.py:1862
+#: ../apport/ui.py:459 ../apport/ui.py:1867
 #, python-format
 msgid "Problem in %s"
 msgstr "Πρόβλημα στο %s"
 
 #: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1689
-#: ../apport/ui.py:1829 ../apport/ui.py:1835
+#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
+#: ../apport/ui.py:1834 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "Μη έγκυρη αναφορά προβλήματος"
 
@@ -385,12 +385,12 @@ msgid "Can't remember send report status settings"
 msgstr ""
 "Δεν μπορεί να αποθηκευθεί η ρύθμιση να μην στέλνονται αναφορές κατάστασης"
 
-#: ../apport/ui.py:1433 ../apport/ui.py:1446
+#: ../apport/ui.py:1436 ../apport/ui.py:1449
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Αυτή η αναφορά αφορά πρόγραμμα το οποίο έχει πλέον απεγκατασταθεί."
 
-#: ../apport/ui.py:1466
+#: ../apport/ui.py:1469
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -401,86 +401,86 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1525 ../apport/ui.py:1637 ../apport/ui.py:1833
+#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 "Αυτή η αναφορά προβλήματος έχει καταστραφεί και είναι αδύνατη η επεξεργασία "
 "της."
 
-#: ../apport/ui.py:1531
+#: ../apport/ui.py:1534
 msgid "This report is about a package that is not installed."
 msgstr "Αυτή η αναφορά είναι για ένα πακέτο που δεν έχει εγκατασταθεί."
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1541
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 "Παρουσιάστηκε ένα σφάλμα κατά την προσπάθεια επεξεργασίας αυτής της αναφοράς "
 "προβλήματος:"
 
-#: ../apport/ui.py:1555
+#: ../apport/ui.py:1558
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1560
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s snap"
 msgstr "%s snap"
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1564
 #, python-format
 msgid "%s deb package"
 msgstr "%s πακέτο deb"
 
-#: ../apport/ui.py:1599
+#: ../apport/ui.py:1602
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1604
+#: ../apport/ui.py:1607
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1690
+#: ../apport/ui.py:1693
 msgid "Could not determine the package or source package name."
 msgstr ""
 "Αδύνατος ο καθορισμός του πακέτου ή του ονόματος του πακέτου πηγαίου κώδικα."
 
-#: ../apport/ui.py:1721
+#: ../apport/ui.py:1724
 msgid "Unable to start web browser"
 msgstr "Αδύνατη η εκκίνηση του περιηγητή"
 
-#: ../apport/ui.py:1722
+#: ../apport/ui.py:1725
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Αδύνατη η εκκίνηση του περιηγητή για το άνοιγμα του %s."
 
-#: ../apport/ui.py:1791
+#: ../apport/ui.py:1796
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Αδυναμία σύνδεσης στη βάση δεδομένων καταρρεύσεων, παρακαλώ ελέγξτε τη "
 "σύνδεσή σας στο διαδίκτυο."
 
-#: ../apport/ui.py:1794
+#: ../apport/ui.py:1799
 msgid "Network problem"
 msgstr "Πρόβλημα δικτύου"
 
-#: ../apport/ui.py:1820
+#: ../apport/ui.py:1825
 msgid "Memory exhaustion"
 msgstr "Εξάντληση μνήμης"
 
-#: ../apport/ui.py:1822
+#: ../apport/ui.py:1827
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Το σύστημα δεν έχει αρκετή ελεύθερη μνήμη για τη διαδικασία αναφοράς "
 "κατάρρευσης."
 
-#: ../apport/ui.py:1867
+#: ../apport/ui.py:1872
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -491,11 +491,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1921 ../apport/ui.py:1933
+#: ../apport/ui.py:1926 ../apport/ui.py:1938
 msgid "Problem already known"
 msgstr "Πρόβλημα ήδη γνωστό"
 
-#: ../apport/ui.py:1923
+#: ../apport/ui.py:1928
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -505,7 +505,7 @@ msgstr ""
 "που βλέπετε. Παρακαλώ εξετάστε, αν μπορείτε να προσθέσετε κάποιες επιπλέον "
 "πληροφορίες, που να είναι χρήσιμες στους προγραμματιστές."
 
-#: ../apport/ui.py:1934
+#: ../apport/ui.py:1939
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 "Αυτό το πρόβλημα έχει ήδη αναφερθεί στους συντελεστές της εφαρμογής. Σας "
@@ -569,8 +569,8 @@ msgstr ""
 "Ακύρωση και αγνόηση μελλοντ&ικών καταρρεύσεων αυτής της έκδοσης του "
 "προγράμματος"
 
-#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:348
-#: ../bin/apport-cli.py:369
+#: ../bin/apport-cli.py:234 ../bin/apport-cli.py:314 ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "&Ακύρωση"
 
@@ -600,7 +600,7 @@ msgstr ""
 "ανάπτυξης για την περαιτέρω βελτίωση της\n"
 "εφαρμογής. Η αποστολή μπορεί να διαρκέσει μερικά λεπτά."
 
-#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:512
+#: ../bin/apport-cli.py:289 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:513
 msgid "Uploading problem information"
 msgstr "Αποστολή πληροφοριών προβλήματος"
 
@@ -613,41 +613,41 @@ msgstr ""
 "σφαλμάτων.\n"
 "Αυτό μπορεί να διαρκέσει μερικά λεπτά."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "&Done"
 msgstr "&Ολοκληρώθηκε"
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:355
 msgid "none"
 msgstr "κανένα"
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:356
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Επιλέχθηκε: %s. Πολλαπλές επιλογές:"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "Επιλογές:"
 
-#: ../bin/apport-cli.py:384
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr "Διαδρομή προς το αρχείο (πατήστε Enter για ακύρωση):"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "Το αρχείο δεν υπάρχει."
 
-#: ../bin/apport-cli.py:392
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "Αυτό είναι κατάλογος αρχείων."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 "Για να συνεχίσετε πρέπει να επισκεφθείτε αυτή τη διεύθυνση διαδικτύου (URL):"
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -655,11 +655,11 @@ msgstr ""
 "Μπορείτε να εκκινήσετε τώρα ένα περιηγητή ιστοσελίδων ή να αντιγράψετε αυτή "
 "τη διεύθυνση σε έναν περιηγητή σε άλλον υπολογιστή."
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "Εκκινήστε έναν περιηγητή ιστοσελίδων τώρα"
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Δεν εκκρεμούν αναφορές καταρρεύσεων. Δοκιμάστε την --help για περισσότερες "
@@ -941,7 +941,7 @@ msgstr "Συγνώμη, το %s παρουσίασε εσωτερικό σφάλ
 msgid "Send"
 msgstr "Αποστολή"
 
-#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:613 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:207 ../gtk/apport-gtk.py:621 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:330
 msgid "Show Details"
 msgstr "Προβολή λεπτομερειών"
@@ -990,11 +990,11 @@ msgstr ""
 msgid "Ignore future problems of this type"
 msgstr "Στο μέλλον να αγνοούνται προβλήματα αυτού του τύπου"
 
-#: ../gtk/apport-gtk.py:617 ../kde/apport-kde.py:327
+#: ../gtk/apport-gtk.py:625 ../kde/apport-kde.py:327
 msgid "Hide Details"
 msgstr "Απόκρυψη λεπτομεριών"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:551
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:381 ../kde/apport-kde.py:555
 msgid "Apport"
 msgstr "Apport"
 
@@ -1050,7 +1050,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Αποστολή πληροφοριών του προβλήματος</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:514
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:515
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1091,6 +1091,6 @@ msgstr ""
 "ανάπτυξης ώστε να βελτιώσουν την εφαρμογή. Αυτό μπορεί να διαρκέσει λίγα "
 "λεπτά."
 
-#: ../kde/apport-kde.py:511
+#: ../kde/apport-kde.py:512
 msgid "Uploading Problem Information"
 msgstr "Αποστολή πληροφοριών προβλήματος"
