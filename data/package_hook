@@ -12,6 +12,7 @@
 """Collect information about a package installation/upgrade failure."""
 
 import argparse
+import contextlib
 import os
 import sys
 
@@ -68,7 +69,10 @@ def main():
     # create report
     report = apport.Report("Package")
     report.add_package(options.package)
-    report["SourcePackage"] = apport.packaging.get_source(options.package)
+    # get_source can fail on distribution upgrades where the package in question has
+    # been removed from the newer release. See https://launchpad.net/bugs/2078695
+    with contextlib.suppress(ValueError):
+        report["SourcePackage"] = apport.packaging.get_source(options.package)
     report["ErrorMessage"] = (sys.stdin, False)
 
     if options.tags:

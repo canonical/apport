@@ -81,6 +81,27 @@ class T(unittest.TestCase):
         self.assertEqual(r["Package"], f"bash {apport.packaging.get_version('bash')}")
         self.assertEqual(r["ErrorMessage"], "something is wrong")
 
+    def test_package_hook_non_existing_package(self) -> None:
+        """package_hook on a package that does not exist (any more)."""
+        ph = subprocess.run(
+            [str(self.data_dir / "package_hook"), "-p", "non-existing-package"],
+            check=False,
+            env=self.env,
+            input=b"something is wrong",
+        )
+        self.assertEqual(ph.returncode, 0, "package_hook finished successfully")
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, "package_hook created a report")
+
+        report = apport.report.Report()
+        with open(reps[0], "rb") as report_file:
+            report.load(report_file)
+
+        self.assertEqual(report["ProblemType"], "Package")
+        self.assertEqual(report["Package"], "non-existing-package (not installed)")
+        self.assertEqual(report["ErrorMessage"], "something is wrong")
+
     def test_package_hook_uninstalled(self) -> None:
         """package_hook on an uninstalled package (might fail to install)."""
         pkg = apport.packaging.get_uninstalled_package()
