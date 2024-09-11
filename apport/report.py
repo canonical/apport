@@ -102,7 +102,9 @@ def _read_list_files_in_directory(directory: str) -> Iterator[str]:
             try:
                 with list_file.open(encoding="utf-8") as fd:
                     for line in fd:
-                        yield line.strip()
+                        stripped = line.strip()
+                        if stripped and not stripped.startswith("#"):
+                            yield stripped
             except OSError:
                 continue
     except OSError:
