@@ -1323,6 +1323,46 @@ No symbol table info available.
         pr.check_ignored()
         geteuid_mock.assert_called_once_with()
 
+    def test_read_list_files_in_directory(self) -> None:
+        """Test _read_list_files_in_directory()."""
+        with tempfile.TemporaryDirectory(prefix="apport-") as denylist_dir:
+            ignore_teamviewer = pathlib.Path(denylist_dir) / "ignore-teamviewer"
+            ignore_teamviewer.write_text(
+                "# Ignore TeamViewer crashes as it causes a crash in GDB\n"
+                "# due to a custom shared library they ship which misses\n"
+                " # the .text section (LP: #2041830) \n\n"
+                "/opt/teamviewer/tv_bin/TeamViewer\n"
+            )
+
+            denylist = set(apport.report._read_list_files_in_directory(denylist_dir))
+
+        self.assertEqual(denylist, {"/opt/teamviewer/tv_bin/TeamViewer"})
+
+    def test_read_list_files_in_directory_ignore_readme(self) -> None:
+        """Test _read_list_files_in_directory() ignoring README."""
+        with tempfile.TemporaryDirectory(prefix="apport-") as denylist_dir:
+            readme = pathlib.Path(denylist_dir) / "README"
+            readme.write_text("# Denylist for apport\n # more comments \n")
+
+            denylist = set(apport.report._read_list_files_in_directory(denylist_dir))
+
+        self.assertEqual(denylist, set())
+
+    def test_read_list_files_in_directory_skip_subdirs(self) -> None:
+        """Test _read_list_files_in_directory() skip sub-directories."""
+        with tempfile.TemporaryDirectory(prefix="apport-") as denylist_dir:
+            subdir = pathlib.Path(denylist_dir) / "subdir"
+            subdir.mkdir()
+            program1 = subdir / "program1"
+            program1.write_text("/bin/program1")
+            program1.chmod(0o200)
+            program2 = pathlib.Path(denylist_dir) / "program2"
+            program2.write_text("/bin/program2")
+
+            denylist = set(apport.report._read_list_files_in_directory(denylist_dir))
+
+        self.assertEqual(denylist, {"/bin/program2"})
+
     def test_suspend_resume(self) -> None:
         pr = apport.report.Report()
         pr["ProblemType"] = "KernelOops"
