@@ -632,7 +632,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
     def on_progress_window_close_event(
-        self, widget: Gtk.Widget, event: Gdk.Event
+        self, widget: Gtk.Widget, event: Gdk.Event | None = None
     ) -> None:
         # pylint: disable=unused-argument
         self.w("window_information_collection").hide()
