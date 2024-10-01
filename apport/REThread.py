@@ -17,14 +17,18 @@ import threading
 
 
 class REThread(threading.Thread):
-    """Thread with return values and exception propagation."""
+    """Thread with return values and exception propagation.
+
+    The thread is marked as daemon thread. The entire Python program exits
+    when no alive non-daemon threads are left.
+    """
 
     def __init__(self, group=None, target=None, name=None, args=(), kwargs=None):
         """Initialize Thread, identical to threading.Thread.__init__()."""
         if kwargs is None:
             kwargs = {}
 
-        threading.Thread.__init__(self, group, target, name, args, kwargs)
+        threading.Thread.__init__(self, group, target, name, args, kwargs, daemon=True)
         self.__target = target
         self.__args = args
         self.__kwargs = kwargs
