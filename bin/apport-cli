@@ -309,8 +309,8 @@ class CLIUserInterface(apport.ui.UserInterface):
         "None" on cancel/dialog closing.
         """
         dialog = CLIDialog(text, None)
-        r_yes = dialog.addbutton("&Yes")
-        r_no = dialog.addbutton("&No")
+        r_yes = dialog.addbutton(_("&Yes"))
+        r_no = dialog.addbutton(_("&No"))
         r_cancel = dialog.addbutton(_("&Cancel"))
         result = dialog.run()
         if result == r_yes:
