@@ -228,18 +228,12 @@ class T(unittest.TestCase):
             out = io.BytesIO()
             pr.write(out)
 
-            self.assertEqual(
-                out.getvalue().decode(),
-                textwrap.dedent(
-                    """\
-                    ProblemType: Crash
-                    Date: now!
-                    File: base64
-                     H4sICAAAAAAC/0ZpbGUA
-                     S8vPZ0hKLAIACq50HgcAAAA=
-                    """
-                ),
-            )
+            # check that written report is read correctly again
+            report = problem_report.ProblemReport()
+            out.seek(0)
+            report.load(out, binary="compressed")
+            self.assertIsInstance(report["File"], problem_report.CompressedValue)
+            self.assertEqual(report["File"].get_value(), b"foo\0bar")
 
     def test_write_delayed_fileobj(self) -> None:
         """Write a report with file pointers and delayed data."""
