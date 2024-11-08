@@ -1196,7 +1196,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.ui_update_view()
 
     @staticmethod
-    def has_click_event_connected(widget):
+    def has_click_event_connected(widget: Gtk.Widget) -> None:
         signal_id = GObject.signal_lookup("clicked", widget)
         signal_handler_id = GObject.signal_handler_find(
             widget,
