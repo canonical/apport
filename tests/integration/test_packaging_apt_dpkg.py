@@ -14,7 +14,7 @@ import tempfile
 import time
 import unittest
 
-from apport.packaging_impl.apt_dpkg import WITH_DEB822_SUPPORT, impl
+from apport.packaging_impl.apt_dpkg import impl
 from tests.helper import skip_if_command_is_missing
 
 
@@ -444,7 +444,6 @@ usr/bin/frob                                            foo/frob
 
         self.assertEqual(impl.get_file_package(file), pkg)
 
-    @unittest.skipUnless(WITH_DEB822_SUPPORT, "deb822 not supported on this system")
     def test_mirror_from_deb822_apt_sources(self) -> None:
         sources_list_d = pathlib.Path(self.workdir) / "sources.list.d"
         sources_list_d.mkdir()
