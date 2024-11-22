@@ -10,25 +10,25 @@
   <action id="com.ubuntu.apport.root-info">
     <_description>Collect system information</_description>
     <_message>Authentication is required to collect system information for this problem report</_message>
-    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/apport/root_info_wrapper</annotate>
-    <!-- <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate> -->
     <defaults>
       <allow_any>auth_admin</allow_any>
       <allow_inactive>auth_admin</allow_inactive>
       <allow_active>auth_admin</allow_active>
     </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/apport/root_info_wrapper</annotate>
+    <!-- <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate> -->
   </action>
 
   <action id="com.ubuntu.apport.apport-gtk-root">
     <_description>System problem reports</_description>
     <_message>Please enter your password to access problem reports of system programs</_message>
-    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/apport/apport-gtk</annotate>
-    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
     <defaults>
       <allow_any>auth_admin</allow_any>
       <allow_inactive>auth_admin</allow_inactive>
       <allow_active>auth_admin</allow_active>
     </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/apport/apport-gtk</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
   </action>
 
 </policyconfig>
