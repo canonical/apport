@@ -36,6 +36,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import psutil
+import pytest
 
 import apport.fileutils
 from tests.helper import (
@@ -56,6 +57,50 @@ except ImportError as import_error:
 
 APPORT_PATH = get_data_directory() / "apport"
 apport_binary = import_module_from_file(APPORT_PATH)
+
+
+@contextlib.contextmanager
+def create_dropsuid() -> Iterator[str]:
+    """Compiles a suid binary that immediately drops privilege then sleeps."""
+    DROPSUID_SOURCE = """
+        #include <unistd.h>
+        #include <stdio.h>
+        #include <errno.h>
+
+        int main() {
+            int euid = geteuid();
+            int uid = getuid();
+
+            // We need to be suid
+            if (uid == euid) {
+                fprintf(stderr, "uid: %d, euid: %d\\n", uid, euid);
+                return 1;
+            }
+            // This call is supposed to succeed?!
+            if (seteuid(uid)) {
+                fprintf(stderr, "errno: %d\\n", errno);
+                return 2;
+            }
+            // We actually check that it succeeded.
+            if (geteuid() != uid)
+                return 3;
+            sleep(60);
+            return 0;
+        }
+    """
+    if not os.path.exists("/usr/bin/gcc"):
+        pytest.skip("This test needs GCC available")
+    with tempfile.TemporaryDirectory(dir="/var/tmp") as d:
+        tempdir = Path(d)
+        source = tempdir / "dropsuid.c"
+        source.write_text(DROPSUID_SOURCE)
+        binary = tempdir / "dropsuid"
+        cmd = ["/usr/bin/gcc", "-g", str(source), "-o", str(binary)]
+        subprocess.run(cmd, check=True)
+        # Grant everyone read permission on the directory!
+        os.chmod(tempdir, 0o755)
+        os.chmod(binary, 0o4755)
+        yield str(binary)
 
 
 @contextlib.contextmanager
@@ -706,32 +751,23 @@ class T(unittest.TestCase):
             # run test program in /run (which should only be writable to root)
             self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
 
-    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_suid_dumpable_debug(self) -> None:
-        """Report generation for setuid program with suid_dumpable set to 1.
-
-        ping has cap_net_raw=ep and therefore do_crash needs root.
-        """
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
+        """Report generation for setuid program with suid_dumpable set to 1."""
         # if a user can crash a suid root binary, it should not create
         # core files if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
-        self.do_crash(
-            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=1
-        )
+        with create_suid() as suid:
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=1)
 
-    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self) -> None:
         """Report generation for setuid program which drops root."""
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
-        # if a user can crash a suid root binary, it should not create
-        # core files
-        self.do_crash(
-            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=2
-        )
+        with create_dropsuid() as dropsuid:
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            # if a user can crash a suid root binary, it should not create
+            # core files
+            self.do_crash(command=dropsuid, uid=MAIL_UID, suid_dumpable=2)
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self) -> None:
@@ -774,25 +810,21 @@ class T(unittest.TestCase):
             via_socket=True,
         )
 
-    @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop_via_socket(self):
         """Report generation via socket for setuid program which drops root."""
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(
-            command="/bin/ping",
-            args=["127.0.0.1"],
-            uid=MAIL_UID,
-            suid_dumpable=2,
-            via_socket=True,
-        )
+        with create_dropsuid() as dropsuid:
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            self.do_crash(
+                command=dropsuid, uid=MAIL_UID, suid_dumpable=2, via_socket=True
+            )
 
-        # check crash report
-        report = apport.Report()
-        with open(self.test_report, "rb") as report_file:
-            report.load(report_file)
-        self.assertEqual(report["Signal"], "11")
-        self.assertEqual(report["ExecutablePath"], os.path.realpath("/bin/ping"))
+            # check crash report
+            report = apport.Report()
+            with open(self.test_report, "rb") as report_file:
+                report.load(report_file)
+            self.assertEqual(report["Signal"], "11")
+            self.assertEqual(report["ExecutablePath"], dropsuid)
 
     @unittest.mock.patch("os.readlink")
     def test_is_not_same_ns(self, readlink_mock: MagicMock) -> None:
@@ -1137,7 +1169,6 @@ class T(unittest.TestCase):
                 self.gdb_command(command, args, gdb_core_file, uid),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
-                stdout=subprocess.DEVNULL,  # ping produces output!
                 **kwargs,
             )
         except FileNotFoundError as error:
