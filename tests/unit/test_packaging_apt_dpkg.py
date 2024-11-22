@@ -17,7 +17,6 @@ from unittest.mock import MagicMock
 import apt
 
 from apport.packaging_impl.apt_dpkg import (
-    WITH_DEB822_SUPPORT,
     _map_mirror_to_arch,
     _parse_deb822_sources,
     _read_mirror_file,
@@ -116,7 +115,6 @@ class TestPackagingAptDpkg(unittest.TestCase):
         uri = "http://de.archive.ubuntu.com/ubuntu"
         self.assertEqual(_map_mirror_to_arch(uri, "amd64"), uri)
 
-    @unittest.skipIf(not WITH_DEB822_SUPPORT, "no deb822 support")
     @unittest.mock.patch(
         "builtins.open",
         new_callable=unittest.mock.mock_open,
