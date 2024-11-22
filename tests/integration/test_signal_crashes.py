@@ -329,9 +329,9 @@ class T(unittest.TestCase):
         # absolute path
         self.do_crash(command=local_exe, args=[], expect_report=False)
 
-        # relative path
-        os.chdir(self.workdir)
-        self.do_crash(command="./myscript", args=[], expect_report=False)
+        self.do_crash(
+            command="./myscript", args=[], expect_report=False, cwd=self.workdir
+        )
 
     def test_unsupported_arguments_no_stderr(self) -> None:
         """Write failure to log file when stderr is missing.
@@ -693,14 +693,11 @@ class T(unittest.TestCase):
         os.close(fd)
         os.chmod(myexe, 0o4755)
 
-        # run test program in /run (which should only be writable to root)
-        os.chdir("/run")
-
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
         # if a user can crash a suid root binary, it should not create
         # core files
-        self.do_crash(command=myexe, uid=MAIL_UID, suid_dumpable=2)
+        self.do_crash(command=myexe, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
@@ -1090,6 +1087,7 @@ class T(unittest.TestCase):
         hook_before_apport: Callable | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
+        **kwargs: typing.Any,
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -1140,6 +1138,7 @@ class T(unittest.TestCase):
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
                 stdout=subprocess.DEVNULL,  # ping produces output!
+                **kwargs,
             )
         except FileNotFoundError as error:
             self.skipTest(f"{error.filename} not available")
