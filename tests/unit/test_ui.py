@@ -99,7 +99,5 @@ class TestUI(unittest.TestCase):
         open_mock.assert_called_once_with("https://example.org", new=1, autoraise=True)
         error_message_mock.assert_called_once_with(
             _("Unable to start web browser"),
-            # False positive on Ubuntu 22.04 "jammy"
-            # pylint: disable-next=consider-using-f-string
             _("Unable to start web browser to open %s.") % ("https://example.org"),
         )
