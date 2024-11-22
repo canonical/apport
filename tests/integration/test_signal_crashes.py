@@ -15,6 +15,7 @@
 
 import argparse
 import collections
+import contextlib
 import datetime
 import grp
 import os
@@ -30,7 +31,7 @@ import textwrap
 import time
 import typing
 import unittest
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -55,6 +56,20 @@ except ImportError as import_error:
 
 APPORT_PATH = get_data_directory() / "apport"
 apport_binary = import_module_from_file(APPORT_PATH)
+
+
+@contextlib.contextmanager
+def create_suid(tmpdir: str = "/var/tmp") -> Iterator[str]:
+    """Creates a `sleep` suid binary in a subdirectory of `tmpdir`."""
+    src_bin = os.path.realpath("/bin/sleep")
+    with tempfile.TemporaryDirectory(dir=tmpdir) as tempdir:
+        binary = f"{tempdir}/sleep"
+        shutil.copy(src_bin, binary)
+        # Grant everyone read permission on the directory!
+        os.chmod(tempdir, 0o755)
+        os.chmod(binary, 0o4755)
+        yield binary
+
 
 MAIL_UID = 8
 test_package = "coreutils"
@@ -684,20 +699,12 @@ class T(unittest.TestCase):
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_keep(self) -> None:
         """Report generation for setuid program which stays root."""
-        # create suid root executable in a path we can modify which apport
-        # regards as likely packaged
-        (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
-        self.addCleanup(os.unlink, myexe)
-        with open(self.TEST_EXECUTABLE, "rb") as f:
-            os.write(fd, f.read())
-        os.close(fd)
-        os.chmod(myexe, 0o4755)
-
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
-        # if a user can crash a suid root binary, it should not create
-        # core files
-        self.do_crash(command=myexe, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
+        with create_suid() as suid:
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            # if a user can crash a suid root binary, it should not create
+            # core files
+            # run test program in /run (which should only be writable to root)
+            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
@@ -731,24 +738,17 @@ class T(unittest.TestCase):
         """Report generation for unpackaged setuid program."""
         # create suid root executable in a path we can modify which apport
         # regards as not packaged
-        (fd, myexe) = tempfile.mkstemp(dir="/tmp")
-        self.addCleanup(os.unlink, myexe)
-        with open(self.TEST_EXECUTABLE, "rb") as f:
-            os.write(fd, f.read())
-        os.close(fd)
-        os.chmod(myexe, 0o4755)
-
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-
-        # if a user can crash a suid root binary, it should not create
-        # core files
-        self.do_crash(
-            command=myexe,
-            expect_corefile=False,
-            expect_report=False,
-            uid=MAIL_UID,
-            suid_dumpable=2,
-        )
+        with create_suid(tmpdir="/tmp") as suid:
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            # if a user can crash a suid root binary, it should not create
+            # core files
+            self.do_crash(
+                command=suid,
+                expect_corefile=False,
+                expect_report=False,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+            )
 
     def test_coredump_from_socket(self):
         """Forward a core dump through a socket.
