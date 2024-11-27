@@ -25,7 +25,6 @@ if len(sys.argv) != 3:
     )
     sys.exit(1)
 
-# workaround pylint-dev/pylint#7710, pylint: disable-next=unbalanced-tuple-unpacking
 (exename, sourcefile) = sys.argv[1:3]
 
 # create report

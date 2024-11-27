@@ -1064,8 +1064,7 @@ class T(unittest.TestCase):
         # set UTF-8 environment variable, to check proper parsing in apport
         os.putenv("utf8trap", b"\xc3\xa0\xc3\xa4")
         # caller needs to call .wait(), pylint: disable=consider-using-with
-        # False positive, see https://github.com/PyCQA/pylint/issues/7092
-        process = subprocess.Popen(  # pylint: disable=unexpected-keyword-arg
+        process = subprocess.Popen(
             [command] + args, env=env, stdout=subprocess.DEVNULL, user=uid
         )
 

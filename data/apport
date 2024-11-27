@@ -15,9 +15,6 @@ See https://wiki.ubuntu.com/Apport for details."""
 
 # pylint: disable=too-many-lines
 
-# pylint fails to import the apport module, because it has the same name.
-# See bug https://github.com/PyCQA/pylint/issues/7093
-# pylint: disable=c-extension-no-member,no-name-in-module,not-callable
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name,missing-function-docstring
 
