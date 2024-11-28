@@ -18,7 +18,6 @@ import collections
 import datetime
 import grp
 import os
-import pathlib
 import resource
 import shutil
 import signal
@@ -32,6 +31,7 @@ import time
 import typing
 import unittest
 from collections.abc import Callable
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import psutil
@@ -826,7 +826,7 @@ class T(unittest.TestCase):
     def test_crash_apport_from_systemd_coredump(self, reader_mock: MagicMock) -> None:
         """Report generation with apport from systemd-coredump."""
         with tempfile.TemporaryDirectory() as tmpdir, run_test_executable() as pid:
-            coredump_file = pathlib.Path(tmpdir) / "core.zst"
+            coredump_file = Path(tmpdir) / "core.zst"
             coredump_file.write_text("mocked core")
 
             now = datetime.datetime.now(tz=datetime.timezone.utc)
