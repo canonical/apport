@@ -61,7 +61,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     @contextlib.contextmanager
     def _launch_process_with_different_session_id(
         self,
-    ) -> Generator[multiprocessing.Process, None, None]:
+    ) -> Generator[multiprocessing.Process]:
         """Launch test executable with different session ID.
 
         getsid() will return a different ID than the current process.

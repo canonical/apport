@@ -644,7 +644,7 @@ class ProblemReport(collections.UserDict):
             file.truncate(reset_position)
             raise
 
-    def _generate_compressed_chunks(self, key: str) -> Generator[bytes, None, None]:
+    def _generate_compressed_chunks(self, key: str) -> Generator[bytes]:
         """Generator taking the value out of self.data and outputing it
         in compressed chunks of binary data.
 
