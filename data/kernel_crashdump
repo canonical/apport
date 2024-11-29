@@ -18,55 +18,64 @@ import re
 import apport
 import apport.fileutils
 
-pr = apport.Report("KernelCrash")
-package = apport.packaging.get_kernel_package()
-pr.add_package(package)
 
-pr.add_os_info()
+def main() -> None:
+    """Collect information about a kernel oops."""
+    pr = apport.Report("KernelCrash")
+    package = apport.packaging.get_kernel_package()
+    pr.add_package(package)
 
-vmcore_path = os.path.join(apport.fileutils.report_dir, "vmcore")
-# only accept plain files here, not symlinks; otherwise we might recursively
-# include the report, or similar DoS attacks
-if os.path.exists(f"{vmcore_path}.log"):
-    try:
-        log_fd = os.open(f"{vmcore_path}.log", os.O_RDONLY | os.O_NOFOLLOW)
-        pr["VmCoreLog"] = (os.fdopen(log_fd, "rb"),)
-        os.unlink(f"{vmcore_path}.log")
-    except OSError as error:
-        apport.fatal("Cannot open vmcore log: %s", str(error))
+    pr.add_os_info()
 
-if os.path.exists(vmcore_path):
-    try:
-        core_fd = os.open(vmcore_path, os.O_RDONLY | os.O_NOFOLLOW)
-        pr["VmCore"] = (os.fdopen(core_fd, "rb"),)
-        with apport.fileutils.make_report_file(pr) as f:
-            pr.write(f)
-    except OSError as error:
-        apport.fatal("Cannot create report: %s", str(error))
+    vmcore_path = os.path.join(apport.fileutils.report_dir, "vmcore")
+    # only accept plain files here, not symlinks; otherwise we might recursively
+    # include the report, or similar DoS attacks
+    if os.path.exists(f"{vmcore_path}.log"):
+        try:
+            log_fd = os.open(f"{vmcore_path}.log", os.O_RDONLY | os.O_NOFOLLOW)
+            pr["VmCoreLog"] = (os.fdopen(log_fd, "rb"),)
+            os.unlink(f"{vmcore_path}.log")
+        except OSError as error:
+            apport.fatal("Cannot open vmcore log: %s", str(error))
 
-    try:
-        os.unlink(vmcore_path)
-    except OSError:
-        pass  # huh, already gone?
-else:
-    # check for kdump-tools generated dmesg in timestamped dir
-    for dmesg_file in glob.glob(
-        os.path.join(apport.fileutils.report_dir, "*", "dmesg.*")
-    ):
-        timedir = os.path.dirname(dmesg_file)
-        timestamp = os.path.basename(timedir)
-        if re.match("^[0-9]{12}$", timestamp):
-            # we require the containing dir to be owned by root, to avoid users
-            # creating a symlink to someplace else and disclosing data; we just
-            # compare against euid here so that we can test this as non-root
-            if os.lstat(timedir).st_uid != os.geteuid():
-                apport.fatal("%s has unsafe permissions, ignoring", timedir)
-            report_name = f"{package}-{timestamp}.crash"
-            try:
-                crash_report = os.path.join(apport.fileutils.report_dir, report_name)
-                dmesg_fd = os.open(dmesg_file, os.O_RDONLY | os.O_NOFOLLOW)
-                pr["VmCoreDmesg"] = (os.fdopen(dmesg_fd, "rb"),)
-                with open(crash_report, "xb") as f:
-                    pr.write(f)
-            except OSError as error:
-                apport.fatal("Cannot create report: %s", str(error))
+    if os.path.exists(vmcore_path):
+        try:
+            core_fd = os.open(vmcore_path, os.O_RDONLY | os.O_NOFOLLOW)
+            pr["VmCore"] = (os.fdopen(core_fd, "rb"),)
+            with apport.fileutils.make_report_file(pr) as f:
+                pr.write(f)
+        except OSError as error:
+            apport.fatal("Cannot create report: %s", str(error))
+
+        try:
+            os.unlink(vmcore_path)
+        except OSError:
+            pass  # huh, already gone?
+    else:
+        # check for kdump-tools generated dmesg in timestamped dir
+        for dmesg_file in glob.glob(
+            os.path.join(apport.fileutils.report_dir, "*", "dmesg.*")
+        ):
+            timedir = os.path.dirname(dmesg_file)
+            timestamp = os.path.basename(timedir)
+            if re.match("^[0-9]{12}$", timestamp):
+                # we require the containing dir to be owned by root, to avoid users
+                # creating a symlink to someplace else and disclosing data; we just
+                # compare against euid here so that we can test this as non-root
+                if os.lstat(timedir).st_uid != os.geteuid():
+                    apport.fatal("%s has unsafe permissions, ignoring", timedir)
+                report_name = f"{package}-{timestamp}.crash"
+                try:
+                    crash_report = os.path.join(
+                        apport.fileutils.report_dir, report_name
+                    )
+                    dmesg_fd = os.open(dmesg_file, os.O_RDONLY | os.O_NOFOLLOW)
+                    pr["VmCoreDmesg"] = (os.fdopen(dmesg_fd, "rb"),)
+                    with open(crash_report, "xb") as f:
+                        pr.write(f)
+                except OSError as error:
+                    apport.fatal("Cannot create report: %s", str(error))
+
+
+if __name__ == "__main__":
+    main()
