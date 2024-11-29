@@ -110,7 +110,7 @@ def skip_if_command_is_missing(cmd: str) -> Callable:
 @contextlib.contextmanager
 def wrap_object(
     target: object, attribute: str, include_instance: bool = False
-) -> Generator[MagicMock, None, None]:
+) -> Generator[MagicMock]:
     """Wrap the named member on an object with a mock object.
 
     wrap_object() can be used as a context manager. Inside the
