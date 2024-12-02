@@ -323,6 +323,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
 
     @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_reading_zstd_compressed_value_nosize(self) -> None:
+        """Test reading zstd-compressed CompressedValue without a size header."""
+        report = problem_report.ProblemReport()
+        content = b"CoreDump: base64\n KLUv/QBYEQAAe30=\n"
+        with io.BytesIO(content) as report_file:
+            report.load(report_file, binary="compressed")
+        self.assertEqual(report["CoreDump"].get_value(), b"{}")
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_writing_zstd_compressed_value(self) -> None:
         """Test writing zstd-compressed CompressedValue."""
         compressed_value = problem_report.CompressedValue(
