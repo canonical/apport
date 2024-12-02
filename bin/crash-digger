@@ -28,6 +28,7 @@ from apport.crashdb import get_crashdb
 
 # pylint: disable-next=missing-class-docstring
 class CrashDigger:  # pylint: disable=too-many-instance-attributes
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def __init__(
         self,
         config_dir,
@@ -41,7 +42,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         publish_dir=None,
         crash_db=None,
         gdb_sandbox=False,
-    ):  # pylint: disable=too-many-arguments
+    ):
         """Initialize pools."""
 
         self.retrace_pool = set()

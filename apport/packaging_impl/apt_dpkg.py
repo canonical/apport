@@ -258,6 +258,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             self._apt_cache = apt.Cache(progress=progress)
         return self._apt_cache
 
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def _sandbox_cache(
         self,
         aptroot,
@@ -267,7 +268,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         release_codename,
         origins,
         arch,
-    ):  # pylint: disable=too-many-arguments
+    ):
         """Build apt sandbox and return apt.Cache(rootdir=) (initialized
         lazily).
 
@@ -871,7 +872,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             aptroot_arch = ""
         return os.path.join(cache_dir, release, aptroot_arch, "apt")
 
-    # pylint: disable-next=too-many-arguments
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def _remove_conflicting_packages(
         self,
         package: str,
@@ -941,7 +942,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                         except KeyError:
                             pass
 
-    # pylint: disable-next=too-many-arguments
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def install_packages(
         self,
         rootdir: str,

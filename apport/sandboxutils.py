@@ -129,7 +129,7 @@ def _move_base_files_first(pkgs: list[tuple[str, None | str]]) -> None:
             return
 
 
-# pylint: disable-next=too-many-arguments
+# pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def make_sandbox(
     report: apport.Report,
     config_dir: str | None,

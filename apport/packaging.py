@@ -241,7 +241,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    # pylint: disable-next=too-many-arguments
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def install_packages(
         self,
         rootdir: str,

@@ -1105,7 +1105,7 @@ class T(unittest.TestCase):
 
         wait_sleep_mock.assert_not_called()
 
-    # pylint: disable-next=too-many-arguments
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def do_crash(
         self,
         expect_corefile: bool = False,
