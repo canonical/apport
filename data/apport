@@ -227,6 +227,7 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
+# pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def write_user_coredump(
     core_path: str,
     limit: int,
@@ -236,7 +237,6 @@ def write_user_coredump(
     coredump_fd: int | None = None,
     from_report: typing.IO[bytes] | None = None,
 ) -> None:
-    # pylint: disable=too-many-arguments
     """Write the core into a directory if ulimit requests it."""
     logger = logging.getLogger()
 
