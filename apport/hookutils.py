@@ -792,6 +792,11 @@ def attach_network(report):
             report[var] = os.environ[var]
 
 
+def _get_wireless_devices() -> list[str]:
+    """Return list of wireless devices on the system."""
+    return [p.split("/")[4] for p in glob.glob("/sys/class/net/*/wireless")]
+
+
 def attach_wifi(report):
     """Attach wireless (WiFi) network information to report."""
     report["WifiSyslog"] = recent_syslog(
@@ -800,21 +805,18 @@ def attach_wifi(report):
             r"(\[\d+\])?:"
         )
     )
-    report["IwConfig"] = re.sub(
-        "ESSID:(.*)",
-        "ESSID:<hidden>",
-        re.sub(
-            "Encryption key:(.*)",
-            "Encryption key: <hidden>",
-            re.sub(
-                "Access Point: (.*)",
-                "Access Point: <hidden>",
-                command_output(["iwconfig"]),
-            ),
-        ),
-    )
     report["RfKill"] = command_output(["rfkill", "list"])
     if os.path.exists("/sbin/iw"):
+        for wireless_device in _get_wireless_devices():
+            report[f"IwDev{wireless_device.capitalize()}Link"] = re.sub(
+                "([0-9a-f]{2}:){5}[0-9a-f]{2}",
+                "<hidden-mac>",
+                re.sub(
+                    "SSID: (.*)",
+                    "SSID: <hidden>",
+                    command_output(["iw", "dev", wireless_device, "link"]),
+                ),
+            )
         iw_output = command_output(["iw", "reg", "get"])
     else:
         iw_output = "N/A"
