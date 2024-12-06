@@ -28,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import warnings
+from collections.abc import Mapping
 
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
@@ -506,8 +507,10 @@ def root_command_output(  # pylint: disable=redefined-builtin
     return output
 
 
-def attach_root_command_outputs(report, command_map):
-    """Execute multiple commands as root and put their outputs into report.
+def execute_multiple_root_commands(
+    command_map: Mapping[str, str]
+) -> dict[str, str | bytes]:
+    """Execute multiple commands as root and return their respective outputs.
 
     command_map is a keyname -> 'shell command' dictionary with the commands to
     run. They are all run through /bin/sh, so you need to take care of shell
@@ -520,6 +523,10 @@ def attach_root_command_outputs(report, command_map):
     This is preferable to using root_command_output() multiple times, as that
     will ask for the password every time.
     """
+    if not command_map:
+        return {}
+
+    output: dict[str, bytes | str] = {}
     wrapper_path = os.path.join(
         os.path.abspath(os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")),
         "root_info_wrapper",
@@ -552,15 +559,34 @@ def attach_root_command_outputs(report, command_map):
                 # _root_command_prefix
                 continue
             # opportunistically convert to strings, like command_output()
-            try:
-                buf = buf.decode("UTF-8")
-            except UnicodeDecodeError:
-                pass
             if buf:
-                report[keyname] = buf
-            f.close()
+                try:
+                    output[keyname] = buf.decode("UTF-8")
+                except UnicodeDecodeError:
+                    output[keyname] = buf
+        return output
     finally:
         shutil.rmtree(workdir)
+
+
+def attach_root_command_outputs(
+    report: ProblemReport, command_map: Mapping[str, str]
+) -> None:
+    """Execute multiple commands as root and put their outputs into report.
+
+    command_map is a keyname -> 'shell command' dictionary with the commands to
+    run. They are all run through /bin/sh, so you need to take care of shell
+    escaping yourself. To include stderr output of a command, end it with
+    "2>&1".
+
+    Just like root_command_output, this passes the command through pkexec,
+    unless the caller is already root.
+
+    This is preferable to using root_command_output() multiple times, as that
+    will ask for the password every time.
+    """
+    for k, v in execute_multiple_root_commands(command_map).items():
+        report[k] = v
 
 
 def __filter_re_process(pattern, process):
