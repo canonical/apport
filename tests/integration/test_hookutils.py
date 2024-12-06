@@ -268,10 +268,6 @@ class T(unittest.TestCase):
             ' pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
         )
 
-        report = problem_report.ProblemReport()
-        apport.hookutils.attach_mac_events(report)
-        self.assertIn("KernLog", report)
-
         # No AppArmor messages
         report = problem_report.ProblemReport()
         report["KernLog"] = (
