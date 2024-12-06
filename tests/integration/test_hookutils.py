@@ -53,6 +53,7 @@ class T(unittest.TestCase):
         """
         report = problem_report.ProblemReport()
         command_map = {
+            "BinaryBlob": r"printf '\303\050'",
             "EchoFoo": "echo foo",
             "EchoNothing": "echo",
             "EchoUnicode": "echo 'hä?'",
@@ -60,10 +61,12 @@ class T(unittest.TestCase):
 
         apport.hookutils.attach_root_command_outputs(report, command_map)
 
+        self.assertEqual(report["BinaryBlob"], b"\303\050")
         self.assertEqual(report["EchoFoo"], "foo")
         self.assertEqual(report["EchoUnicode"], "hä?")
         self.assertEqual(
-            set(report.keys()), {"Date", "EchoFoo", "EchoUnicode", "ProblemType"}
+            set(report.keys()),
+            {"Date", "BinaryBlob", "EchoFoo", "EchoUnicode", "ProblemType"},
         )
 
     @skip_if_command_is_missing("/usr/bin/as")
