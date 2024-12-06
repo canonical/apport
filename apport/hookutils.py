@@ -910,7 +910,7 @@ def attach_mac_events(report, profiles=None):
     if isinstance(profiles, str):
         profiles = [profiles]
 
-    mac_regex = r"audit\(|apparmor|selinux|security"
+    mac_regex = r"(?:audit\(|apparmor|selinux|security).*"
     mac_re = re.compile(mac_regex, re.IGNORECASE)
     aa_regex = 'apparmor="DENIED".+?profile=([^ ]+?)[ ]'
     aa_re = re.compile(aa_regex, re.IGNORECASE)
