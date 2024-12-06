@@ -18,16 +18,53 @@ import apport.hookutils
 import apport.report
 import problem_report
 from tests.helper import skip_if_command_is_missing
+from tests.paths import local_test_environment
 
 
 class T(unittest.TestCase):
     """Integration tests for the apport.hookutils module."""
+
+    orig_environ: dict[str, str]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.orig_environ = os.environ.copy()
+        os.environ |= local_test_environment()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.environ.clear()
+        os.environ.update(cls.orig_environ)
 
     def setUp(self) -> None:
         self.workdir = tempfile.mkdtemp()
 
     def tearDown(self) -> None:
         shutil.rmtree(self.workdir)
+
+    @unittest.mock.patch(
+        "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
+    )
+    def test_attach_root_command_outputs(self) -> None:
+        """attach_root_command_outputs()
+
+        To not require root for this test, execute only commands that do
+        not need root and mock _root_command_prefix().
+        """
+        report = problem_report.ProblemReport()
+        command_map = {
+            "EchoFoo": "echo foo",
+            "EchoNothing": "echo",
+            "EchoUnicode": "echo 'hä?'",
+        }
+
+        apport.hookutils.attach_root_command_outputs(report, command_map)
+
+        self.assertEqual(report["EchoFoo"], "foo")
+        self.assertEqual(report["EchoUnicode"], "hä?")
+        self.assertEqual(
+            set(report.keys()), {"Date", "EchoFoo", "EchoUnicode", "ProblemType"}
+        )
 
     @skip_if_command_is_missing("/usr/bin/as")
     def test_module_license_evaluation(self) -> None:
