@@ -915,15 +915,23 @@ def attach_mac_events(report, profiles=None):
     aa_regex = 'apparmor="DENIED".+?profile=([^ ]+?)[ ]'
     aa_re = re.compile(aa_regex, re.IGNORECASE)
 
+    privileged_commands = {}
     if "KernLog" not in report:
-        report["KernLog"] = "\n".join(
-            re.findall(mac_re, root_command_output(["dmesg"]))
-        )
+        privileged_commands["dmesg"] = "dmesg"
 
     if "AuditLog" not in report and os.path.exists("/var/run/auditd.pid"):
-        attach_root_command_outputs(
-            report, {"AuditLog": f'egrep "{mac_regex}" /var/log/audit/audit.log'}
+        privileged_commands["AuditLog"] = (
+            f'egrep "{mac_regex}" /var/log/audit/audit.log'
         )
+
+    privileged_outputs = execute_multiple_root_commands(privileged_commands)
+
+    if "dmesg" in privileged_outputs:
+        output = privileged_outputs["dmesg"]
+        assert isinstance(output, str)
+        report["KernLog"] = "\n".join(re.findall(mac_re, output))
+    if "AuditLog" in privileged_outputs:
+        report["AuditLog"] = privileged_outputs["AuditLog"]
 
     attach_file_if_exists(report, "/proc/version_signature", "ProcVersionSignature")
     attach_file(report, "/proc/cmdline", "ProcCmdline")
