@@ -937,7 +937,7 @@ def attach_mac_events(report, profiles=None):
     attach_file(report, "/proc/cmdline", "ProcCmdline")
 
     for match in re.findall(
-        aa_re, report.get("KernLog", "") + report.get("AuditLog", "")
+        aa_re, "\n".join((report.get("KernLog", ""), report.get("AuditLog", "")))
     ):
         if not profiles:
             report.add_tags(["apparmor"])
