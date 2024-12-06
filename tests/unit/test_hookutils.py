@@ -9,6 +9,7 @@ import unittest.mock
 from unittest.mock import MagicMock, Mock
 
 import apport.hookutils
+from problem_report import ProblemReport
 
 IW_REG_LIST_DE = b"""\
 global
@@ -141,6 +142,90 @@ class TestHookutils(unittest.TestCase):
         self.assertEqual(report, {"CurrentDmesg": "[30804.972250] CPU0 is up"})
 
         root_command_output_mock.assert_called_once_with(["dmesg"])
+
+    @staticmethod
+    @unittest.mock.patch("apport.hookutils.execute_multiple_root_commands")
+    @unittest.mock.patch("os.path.exists")
+    def test_attach_mac_events_no_profile(
+        path_exists_mock: MagicMock, multiple_root_commands_mock: MagicMock
+    ) -> None:
+        """attach_mac_events() with default profile"""
+        apparmor_status_line = """[ 3599.170011] audit: type=1326 audit(1733479659.940:2331): auid=1000 uid=1000 gid=1000 ses=3 subj=snap.chromium.chromium pid=26013 comm="chrome" exe="/snap/chromium/3002/usr/lib/chromium-browser/chrome" sig=0 arch=c000003e syscall=444 compat=0 ip=0x77858971e88d code=0x50000"""  # nopep8 pylint: disable=line-too-long
+        apparmor_denied_line = """[ 3599.407888] audit: type=1400 audit(1733479660.178:2332): apparmor="DENIED" operation="open" class="file" profile="snap.chromium.chromium" name="/etc/vulkan/implicit_layer.d/" pid=26219 comm="chrome" requested_mask="r" denied_mask="r" fsuid=1000 ouid=0"""  # nopep8 pylint: disable=line-too-long
+        bogus_line = """[30804.972250] CPU0 is up"""
+        # TODO: create fake audit logs and version_signature files
+        path_exists_mock.return_value = False
+        multiple_root_commands_mock.return_value = {
+            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+        }
+
+        report = ProblemReport()
+        apport.hookutils.attach_mac_events(report, profiles=None)
+
+        assert multiple_root_commands_mock.called
+        assert path_exists_mock.called
+
+        assert apparmor_denied_line[32:] in report["KernLog"]
+        assert apparmor_status_line[32:] in report["KernLog"]
+        assert "CPU0 is up" not in report["KernLog"]
+
+        assert "apparmor" in report.get_tags()
+
+    @staticmethod
+    @unittest.mock.patch("apport.hookutils.execute_multiple_root_commands")
+    @unittest.mock.patch("os.path.exists")
+    def test_attach_mac_events_good_profile(
+        path_exists_mock: MagicMock, multiple_root_commands_mock: MagicMock
+    ) -> None:
+        """attach_mac_events() with a matching profile"""
+        apparmor_status_line = """[ 3599.170011] audit: type=1326 audit(1733479659.940:2331): auid=1000 uid=1000 gid=1000 ses=3 subj=snap.chromium.chromium pid=26013 comm="chrome" exe="/snap/chromium/3002/usr/lib/chromium-browser/chrome" sig=0 arch=c000003e syscall=444 compat=0 ip=0x77858971e88d code=0x50000"""  # nopep8 pylint: disable=line-too-long
+        apparmor_denied_line = """[ 3599.407888] audit: type=1400 audit(1733479660.178:2332): apparmor="DENIED" operation="open" class="file" profile="snap.chromium.chromium" name="/etc/vulkan/implicit_layer.d/" pid=26219 comm="chrome" requested_mask="r" denied_mask="r" fsuid=1000 ouid=0"""  # nopep8 pylint: disable=line-too-long
+        bogus_line = """[30804.972250] CPU0 is up"""
+        # TODO: create fake audit logs and version_signature files
+        path_exists_mock.return_value = False
+        multiple_root_commands_mock.return_value = {
+            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+        }
+
+        report = ProblemReport()
+        apport.hookutils.attach_mac_events(report, profiles=["snap.chromium.chromium"])
+
+        assert multiple_root_commands_mock.called
+        assert path_exists_mock.called
+
+        assert apparmor_denied_line[32:] in report["KernLog"]
+        assert apparmor_status_line[32:] in report["KernLog"]
+        assert "CPU0 is up" not in report["KernLog"]
+
+        assert "apparmor" in report.get_tags()
+
+    @staticmethod
+    @unittest.mock.patch("apport.hookutils.execute_multiple_root_commands")
+    @unittest.mock.patch("os.path.exists")
+    def test_attach_mac_events_bad_profile(
+        path_exists_mock: MagicMock, multiple_root_commands_mock: MagicMock
+    ) -> None:
+        """attach_mac_events() with a bad profile"""
+        apparmor_status_line = """[ 3599.170011] audit: type=1326 audit(1733479659.940:2331): auid=1000 uid=1000 gid=1000 ses=3 subj=snap.chromium.chromium pid=26013 comm="chrome" exe="/snap/chromium/3002/usr/lib/chromium-browser/chrome" sig=0 arch=c000003e syscall=444 compat=0 ip=0x77858971e88d code=0x50000"""  # nopep8 pylint: disable=line-too-long
+        apparmor_denied_line = """[ 3599.407888] audit: type=1400 audit(1733479660.178:2332): apparmor="DENIED" operation="open" class="file" profile="snap.chromium.chromium" name="/etc/vulkan/implicit_layer.d/" pid=26219 comm="chrome" requested_mask="r" denied_mask="r" fsuid=1000 ouid=0"""  # nopep8 pylint: disable=line-too-long
+        bogus_line = """[30804.972250] CPU0 is up"""
+        # TODO: create fake audit logs and version_signature files
+        path_exists_mock.return_value = False
+        multiple_root_commands_mock.return_value = {
+            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+        }
+
+        report = ProblemReport()
+        apport.hookutils.attach_mac_events(report, profiles=["snap.firefox"])
+
+        assert multiple_root_commands_mock.called
+        assert path_exists_mock.called
+
+        assert apparmor_denied_line[32:] in report["KernLog"]
+        assert apparmor_status_line[32:] in report["KernLog"]
+        assert "CPU0 is up" not in report["KernLog"]
+
+        assert "apparmor" not in report.get_tags()
 
     def test_dmesg_overwrite(self) -> None:
         """attach_dmesg() does not overwrite already existing data"""
