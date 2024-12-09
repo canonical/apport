@@ -9,6 +9,7 @@ import unittest.mock
 from unittest.mock import MagicMock, Mock
 
 import apport.hookutils
+from problem_report import ProblemReport
 
 IW_REG_LIST_DE = b"""\
 global
@@ -189,6 +190,176 @@ class TestHookutils(unittest.TestCase):
             run_mock.call_args[0][0],
             ["journalctl", "--priority=warning", "-b", "--lines=1000"],
         )
+
+    @unittest.mock.patch("apport.hookutils.execute_multiple_root_commands")
+    def test_attach_mac_events_apparmor(
+        self, execute_multiple_root_commands_mock: MagicMock
+    ) -> None:
+        # TODO: Split into separate test cases
+        # pylint: disable=too-many-statements
+        """Test apparmor tag calculation of attach_mac_events()"""
+        execute_multiple_root_commands_mock.return_value = {}
+        denied_log = (
+            "[  351.624338] type=1400 audit(1343775571.688:27):"
+            ' apparmor="DENIED" operation="capable" parent=1'
+            ' profile="/usr/sbin/cupsd" pid=1361 comm="cupsd" pid=1361'
+            ' comm="cupsd" capability=36  capname="block_suspend"\n'
+        )
+
+        denied_hex = (
+            "[  351.624338] type=1400 audit(1343775571.688:27):"
+            ' apparmor="DENIED" operation="capable" parent=1'
+            ' profile=2F7573722F7362696E2F6375707364 pid=1361 comm="cupsd"'
+            ' pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
+        )
+
+        # No AppArmor messages
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = (
+            "[    2.997534] i915 0000:00:02.0:"
+            " power state changed by ACPI to D0\n"
+            "[    2.997541] i915 0000:00:02.0:"
+            " PCI INT A -> GSI 16 (level, low)\n"
+            "[    2.997544] i915 0000:00:02.0: setting latency timer to 64\n"
+            "[    3.061584] i915 0000:00:02.0: irq 42 for MSI/MSI-X\n"
+        )
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertNotIn("Tags", report)
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor message, but not a denial
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = (
+            "[   32.420248] type=1400 audit(1344562672.449:2):"
+            ' apparmor="STATUS" operation="profile_load" name="/sbin/dhclient"'
+            ' pid=894 comm="apparmor_parser"\n'
+        )
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertNotIn("Tags", report)
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, empty tags, no profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor hex-encoded denial, no profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_hex
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial in AuditLog
+        report = ProblemReport()
+        report["AuditLog"] = denied_log
+        report["KernLog"] = "some dmesg log"
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, pre-existing tags, no profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+        report["Tags"] = "bogustag"
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report["Tags"], "apparmor bogustag")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, single profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, regex profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/cups.*")
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, subset profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/cup")
+        self.assertNotIn("Tags", report)
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor hex-encoded denial, single profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_hex
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, single different profile specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/nonexistent")
+        self.assertNotIn("Tags", report)
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, multiple profiles specified
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+        profiles = ["/usr/bin/nonexistent", "/usr/sbin/cupsd"]
+
+        apport.hookutils.attach_mac_events(report, profiles)
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # AppArmor denial, multiple different profiles
+        report = ProblemReport()
+        report["AuditLog"] = "some audit log"
+        report["KernLog"] = denied_log
+        profiles = ["/usr/bin/nonexistent", "/usr/sbin/anotherone"]
+
+        apport.hookutils.attach_mac_events(report, profiles)
+        self.assertNotIn("Tags", report)
+        execute_multiple_root_commands_mock.assert_called_with({})
+
+        # Multiple AppArmor denials, second match
+        report = ProblemReport()
+        report["KernLog"] = (
+            "[  351.624338] type=1400 audit(1343775571.688:27):"
+            ' apparmor="DENIED" operation="capable" parent=1'
+            ' profile="/usr/sbin/blah" pid=1361 comm="cupsd" pid=1361'
+            ' comm="cupsd" capability=36  capname="block_suspend"\n'
+            "[  351.624338] type=1400 audit(1343775571.688:27):"
+            ' apparmor="DENIED" operation="capable" parent=1'
+            ' profile="/usr/sbin/cupsd" pid=1361 comm="cupsd" pid=1361'
+            ' comm="cupsd" capability=36  capname="block_suspend"\n'
+        )
+
+        apport.hookutils.attach_mac_events(report, "/usr/sbin/cupsd")
+        self.assertEqual(report["Tags"], "apparmor")
+        execute_multiple_root_commands_mock.assert_called_with({})
 
     @unittest.mock.patch("glob.glob")
     @unittest.mock.patch("os.path.exists")
