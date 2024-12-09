@@ -374,3 +374,10 @@ class TestHookutils(unittest.TestCase):
             )
 
             self.assertEqual(match_content, "test\ncontent\n")
+
+    @staticmethod
+    @unittest.mock.patch("subprocess.run")
+    def test_execute_multiple_root_commands_no_commands(run_mock: MagicMock) -> None:
+        outputs = apport.hookutils.execute_multiple_root_commands({})
+        assert not outputs
+        assert not run_mock.called
