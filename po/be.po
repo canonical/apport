@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-09 15:43+0100\n"
-"PO-Revision-Date: 2024-05-26 20:39+0000\n"
+"PO-Revision-Date: 2024-11-06 14:13+0000\n"
 "Last-Translator: Ubuntu Belarusian Translators Team <Unknown>\n"
 "Language-Team: Belarusian <be@li.org>\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2024-06-13 14:36+0000\n"
-"X-Generator: Launchpad (build bbfa2351d9d6a9ddfe262109428f7bf5516e65d1)\n"
+"X-Launchpad-Export-Date: 2024-12-06 11:20+0000\n"
+"X-Generator: Launchpad (build 39bd251485adde1a3ef538479f6c030babb8e251)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -27,22 +27,22 @@ msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
-"Патрабуецца аўтэнтыфікацыя, каб сабраць звесткі аб сістэме для адпраўкі "
-"справаздачы пра гэту праблему"
+"Патрабуецца аўтэнтыфікацыя, каб сабраць звесткі аб сістэме для гэтай "
+"справаздачы аб праблеме"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr "Справаздачы аб сістэмных памылках"
+msgstr "Справаздачы аб сістэмных праблемах"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
-"Калі ласка, увядзіце пароль для доступу да справаздач пра памылкі ў "
-"сістэмных праграмах"
+"Увядзіце свой пароль для доступу да справаздач аб памылках сістэмных "
+"праграмах"
 
 #: ../apport/ui.py:258
 msgid "This package does not seem to be installed correctly"
-msgstr "Падобна на тое, што гэты пакет усталяваны неправільна"
+msgstr "Верагодна, што гэты пакет усталяваны няправільна"
 
 #: ../apport/ui.py:268
 #, python-format
@@ -51,6 +51,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Здаецца, што гэта неафіцыйны пакет %s. Паўтарыце спробу пасля абнаўлення "
+"індэксаў даступных пакетаў. Калі гэта не дапаможа, выдаліце звязаныя "
+"староннія пакеты і паспрабуйце яшчэ раз."
 
 #: ../apport/ui.py:298
 #, python-format
@@ -60,7 +63,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"У Вашай сістэме ўсталяваныя састарэўшыя версіі некаторых пакетаў. Абнавіце "
+"У вашай сістэме некаторыя ўсталяваныя версіі пакетаў састарэлі. Абнавіце "
 "наступныя пакеты і праверце, ці засталася праблема:\n"
 "\n"
 "%s"
@@ -72,15 +75,15 @@ msgstr "невядомая праграма"
 #: ../apport/ui.py:451
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Прабачце, праграма «%s» аварыйна завяршыла сваю работу"
+msgstr "Прабачце, але праграма «%s» аварыйна завяршыла сваю працу"
 
 #: ../apport/ui.py:453
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"На Вашым кампутары недастаткова вольнай памяці для таго, каб аўтаматычна "
-"прааналізаваць няспраўнасць і даслаць справаздачу распрацоўшчыкам."
+"На вашым камп'ютары недастаткова свабоднай памяці, каб аўтаматычна "
+"прааналізаваць праблему і адправіць справаздачу распрацоўшчыкам."
 
 #: ../apport/ui.py:458 ../apport/ui.py:1866
 #, python-format
@@ -91,11 +94,11 @@ msgstr "Праблема ў %s"
 #: ../apport/ui.py:703 ../apport/ui.py:926 ../apport/ui.py:1691
 #: ../apport/ui.py:1833 ../apport/ui.py:1839
 msgid "Invalid problem report"
-msgstr "Няправільная справаздача пра памылку"
+msgstr "Памылковая справаздача аб праблеме"
 
 #: ../apport/ui.py:515
 msgid "You are not allowed to access this problem report."
-msgstr "У Вас не хапае правоў, каб паведамляць аб праблемах."
+msgstr "Вам забаронены доступ да справаздачы аб праблеме."
 
 #: ../apport/ui.py:523
 msgid "Error"
@@ -103,15 +106,16 @@ msgstr "Памылка"
 
 #: ../apport/ui.py:525
 msgid "There is not enough disk space available to process this report."
-msgstr "Недастаткова месца на дыску для апрацоўкі дадзенай справаздачы."
+msgstr "Недастаткова месца на дыску для апрацоўкі гэтай справаздачы."
 
 #: ../apport/ui.py:561
 msgid "No PID specified"
-msgstr ""
+msgstr "Не пазначаны PID"
 
 #: ../apport/ui.py:562
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
+"Неабходна пазначыць PID. Глядзіце --help для атрымання дадатковых звестак."
 
 #: ../apport/ui.py:571 ../apport/ui.py:676
 msgid "Invalid PID"
@@ -119,15 +123,15 @@ msgstr "Памылковы PID"
 
 #: ../apport/ui.py:571
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Пазначаны ідэнтыфікатар працэсу не існуе."
 
 #: ../apport/ui.py:576
 msgid "Not your PID"
-msgstr ""
+msgstr "Не ваш PID"
 
 #: ../apport/ui.py:577
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Пазначаны ідэнтыфікатар працэсу не належыць вам."
 
 #: ../apport/ui.py:634
 msgid "No package specified"
@@ -137,20 +141,20 @@ msgstr "Не пазначаны пакет"
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"Неабходна пазначыць пакет альбо PID. Запусціце праграму з параметрам --help "
-"каб атрымаць дадатковую інфармацыю."
+"Неабходна пазначыць пакет або PID. Глядзіце --help для атрымання дадатковых "
+"звестак."
 
 #: ../apport/ui.py:663
 msgid "Permission denied"
-msgstr "Доступ забаронены"
+msgstr "У дазволе адмоўлена"
 
 #: ../apport/ui.py:665
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"Пазначаны працэс запушчэны іншым карыстальнікам. Запусціце дадзеную праграму "
-"з правамі ўладальніка працэса альбо адміністратара сістэмы."
+"Пазначаны працэс не належыць вам. Запусціце гэту праграму з правамі "
+"ўладальніка працэсу або суперкарыстальніка."
 
 #: ../apport/ui.py:677
 msgid "The specified process ID does not belong to a program."
@@ -220,7 +224,7 @@ msgstr "Невядомы сімптом"
 #: ../apport/ui.py:895
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr "Сімптом  \"%s\" невядомы."
+msgstr "Сімптом  «%s» невядомы."
 
 #: ../apport/ui.py:933
 msgid ""
@@ -283,7 +287,8 @@ msgstr "Цокніце па намечаным акне каб запоўніц�
 #: ../apport/ui.py:1058
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
-"Запусціць у рэжыме абнаўлення памылкі. Можа прымаць дадатковы ключ - package."
+"Запусціць у рэжыме абнаўлення памылкі. Можа прымаць неабавязковы параметр -- "
+"package."
 
 #: ../apport/ui.py:1066
 msgid ""
@@ -506,7 +511,7 @@ msgstr "(%i байт)"
 
 #: ../bin/apport-cli.py:169 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:414
 msgid "(binary data)"
-msgstr "(двайковыя дадзеныя)"
+msgstr "(двайковыя даныя)"
 
 #: ../bin/apport-cli.py:209 ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:205
 msgid "Send problem report to the developers?"
@@ -527,7 +532,7 @@ msgstr "&Даслаць паведамленне (%s)"
 
 #: ../bin/apport-cli.py:222
 msgid "&Examine locally"
-msgstr "&Локальна перевірка"
+msgstr "&Лакальная праверка"
 
 #: ../bin/apport-cli.py:226
 msgid "&View report"
@@ -595,7 +600,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:349
 msgid "&Done"
-msgstr "&Зроблена"
+msgstr "&Гатова"
 
 #: ../bin/apport-cli.py:355
 msgid "none"
@@ -635,7 +640,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
-msgstr "Запусціць браўзар"
+msgstr "Запусціць браўзер"
 
 #: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
@@ -931,7 +936,7 @@ msgstr "Прабачце, пры ўсталяванні адбылася пам�
 #: ../gtk/apport-gtk.py:281 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:243
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr "У дадатку %s адбылася ўнутраная памылка."
+msgstr "У праграме %s адбылася ўнутраная памылка."
 
 #: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:248
 #, python-format
@@ -960,7 +965,7 @@ msgstr "Скасаваць"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr "Добра"
+msgstr "ОК"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -1020,7 +1025,7 @@ msgstr "Файл справаздачы Apport"
 
 #: ../kde/apport-kde.py:264
 msgid "Leave Closed"
-msgstr "Пакінуць зачыненым"
+msgstr "Пакінуць закрытым"
 
 #: ../kde/apport-kde.py:265 ../kde/apport-kde.py:432
 msgid "Relaunch"
