@@ -28,7 +28,7 @@ import subprocess
 import sys
 import tempfile
 import warnings
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
@@ -904,7 +904,9 @@ def attach_printing(report):
     )
 
 
-def attach_mac_events(report, profiles=None):
+def attach_mac_events(
+    report: ProblemReport, profiles: Iterable[str] | str | None = None
+) -> None:
     """Attach MAC information and events to the report."""
     # Allow specifying a string, or a list of strings
     if isinstance(profiles, str):
