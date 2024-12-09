@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-09 15:02+0200\n"
+"POT-Creation-Date: 2024-12-09 15:43+0100\n"
 "PO-Revision-Date: 2024-03-20 05:21+0000\n"
 "Last-Translator: 爽自由 <coby2023t@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <zh_TW@li.org>\n"
@@ -36,11 +36,11 @@ msgstr "系統問題報告"
 msgid "Please enter your password to access problem reports of system programs"
 msgstr "請輸入密碼以存取系統程式的問題報告"
 
-#: ../apport/ui.py:259
+#: ../apport/ui.py:258
 msgid "This package does not seem to be installed correctly"
 msgstr "這個軟體包似乎尚未正確安裝"
 
-#: ../apport/ui.py:269
+#: ../apport/ui.py:268
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -50,7 +50,7 @@ msgstr ""
 "這看起來不像是官方 %s 套件。請在套件索引更新後再試試。如果還是不行，移除相關"
 "的第三方套件後再試。"
 
-#: ../apport/ui.py:299
+#: ../apport/ui.py:298
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -62,111 +62,111 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:450
+#: ../apport/ui.py:449
 msgid "unknown program"
 msgstr "未知程式"
 
-#: ../apport/ui.py:452
+#: ../apport/ui.py:451
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "對不起，\"%s\" 程式已不正常關閉"
 
-#: ../apport/ui.py:454
+#: ../apport/ui.py:453
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr "閣下電腦無足夠可用記憶體供自動分析問題並向開發者傳送報告。"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1867
+#: ../apport/ui.py:458 ../apport/ui.py:1866
 #, python-format
 msgid "Problem in %s"
 msgstr "在 %s 中的問題"
 
-#: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
-#: ../apport/ui.py:1834 ../apport/ui.py:1840
+#: ../apport/ui.py:514 ../apport/ui.py:531 ../apport/ui.py:697
+#: ../apport/ui.py:703 ../apport/ui.py:926 ../apport/ui.py:1691
+#: ../apport/ui.py:1833 ../apport/ui.py:1839
 msgid "Invalid problem report"
 msgstr "無效的問題回報"
 
-#: ../apport/ui.py:516
+#: ../apport/ui.py:515
 msgid "You are not allowed to access this problem report."
 msgstr "您無權存取此問題報告。"
 
-#: ../apport/ui.py:524
+#: ../apport/ui.py:523
 msgid "Error"
 msgstr "錯誤"
 
-#: ../apport/ui.py:526
+#: ../apport/ui.py:525
 msgid "There is not enough disk space available to process this report."
 msgstr "無足夠磁碟空間處理此報告。"
 
-#: ../apport/ui.py:562
+#: ../apport/ui.py:561
 msgid "No PID specified"
 msgstr "沒有指定 PID"
 
-#: ../apport/ui.py:563
+#: ../apport/ui.py:562
 msgid "You need to specify a PID. See --help for more information."
 msgstr "您需要指定一個 PID。更多說明請見 --help。"
 
-#: ../apport/ui.py:572 ../apport/ui.py:677
+#: ../apport/ui.py:571 ../apport/ui.py:676
 msgid "Invalid PID"
 msgstr "PID 無效"
 
-#: ../apport/ui.py:572
+#: ../apport/ui.py:571
 msgid "The specified process ID does not exist."
 msgstr "指定的程序 ID 不存在。"
 
-#: ../apport/ui.py:577
+#: ../apport/ui.py:576
 msgid "Not your PID"
 msgstr "不是您的 PID"
 
-#: ../apport/ui.py:578
+#: ../apport/ui.py:577
 msgid "The specified process ID does not belong to you."
 msgstr "指定的程序 ID 不屬於您。"
 
-#: ../apport/ui.py:635
+#: ../apport/ui.py:634
 msgid "No package specified"
 msgstr "未指定軟體包"
 
-#: ../apport/ui.py:637
+#: ../apport/ui.py:636
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "您要指定軟體包或 PID。更多資訊請見 --help。"
 
-#: ../apport/ui.py:664
+#: ../apport/ui.py:663
 msgid "Permission denied"
 msgstr "權限不足"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:665
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr "指定的程序並不屬於您。請以程序擁有者或是 root 身份執行此程式。"
 
-#: ../apport/ui.py:678
+#: ../apport/ui.py:677
 msgid "The specified process ID does not belong to a program."
 msgstr "指定的程序 ID 並不屬於程式。"
 
-#: ../apport/ui.py:699
+#: ../apport/ui.py:698
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "徵狀判斷指令稿 %s 無法判斷出受影響的軟體包"
 
-#: ../apport/ui.py:705
+#: ../apport/ui.py:704
 #, python-format
 msgid "Package %s does not exist"
 msgstr "%s 軟體包不存在"
 
-#: ../apport/ui.py:734 ../apport/ui.py:932 ../apport/ui.py:965
-#: ../apport/ui.py:972
+#: ../apport/ui.py:733 ../apport/ui.py:931 ../apport/ui.py:964
+#: ../apport/ui.py:971
 msgid "Cannot create report"
 msgstr "無法建立報告"
 
-#: ../apport/ui.py:749 ../apport/ui.py:803 ../apport/ui.py:820
+#: ../apport/ui.py:748 ../apport/ui.py:802 ../apport/ui.py:819
 msgid "Updating problem report"
 msgstr "正在更新問題報告"
 
-#: ../apport/ui.py:751
+#: ../apport/ui.py:750
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -177,7 +177,7 @@ msgstr ""
 "\n"
 "請使用「apport-bug」來建立一份新的問題回報。"
 
-#: ../apport/ui.py:763
+#: ../apport/ui.py:762
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -196,24 +196,24 @@ msgstr ""
 "\n"
 "您真的想要繼續嗎？"
 
-#: ../apport/ui.py:803 ../apport/ui.py:820
+#: ../apport/ui.py:802 ../apport/ui.py:819
 msgid "No additional information collected."
 msgstr "沒有收集到額外的資訊。"
 
-#: ../apport/ui.py:876
+#: ../apport/ui.py:875
 msgid "What kind of problem do you want to report?"
 msgstr "您想要回報何種問題？"
 
-#: ../apport/ui.py:895
+#: ../apport/ui.py:894
 msgid "Unknown symptom"
 msgstr "不知名徵狀"
 
-#: ../apport/ui.py:896
+#: ../apport/ui.py:895
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "「%s」徵狀不為人所知。"
 
-#: ../apport/ui.py:934
+#: ../apport/ui.py:933
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -224,36 +224,36 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:950
+#: ../apport/ui.py:949
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr "在關閉本訊息後，請點擊應用程式視窗來回報有關它的訊息。"
 
-#: ../apport/ui.py:966 ../apport/ui.py:973
+#: ../apport/ui.py:965 ../apport/ui.py:972
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop 無法得知該視窗的程序 ID"
 
-#: ../apport/ui.py:988
+#: ../apport/ui.py:987
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr "%(prog)s <報告數字>"
 
-#: ../apport/ui.py:989
+#: ../apport/ui.py:988
 msgid "Specify package name."
 msgstr "指定軟體包名稱。"
 
-#: ../apport/ui.py:995 ../apport/ui.py:1123
+#: ../apport/ui.py:994 ../apport/ui.py:1122
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "加入額外標籤至回報中。可以多次分別指定。"
 
-#: ../apport/ui.py:1031
+#: ../apport/ui.py:1030
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%(prog)s [選項] [symptom|pid|package|program path|.apport/.crash 檔]"
 
-#: ../apport/ui.py:1042
+#: ../apport/ui.py:1041
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -262,21 +262,21 @@ msgstr ""
 "啟動為臭蟲歸檔模式。需要 --package 或再加上 --pid，或是只需 --pid。若兩者都未"
 "給予，顯示已知徵狀列表。(暗示若只有給予單一參數。)"
 
-#: ../apport/ui.py:1051
+#: ../apport/ui.py:1050
 msgid "Click a window as a target for filing a problem report."
 msgstr "請點擊要作為問題報告目標發送的視窗。"
 
-#: ../apport/ui.py:1059
+#: ../apport/ui.py:1058
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "以臭蟲更新模式啟動。可以加上選用的參數 --package。"
 
-#: ../apport/ui.py:1067
+#: ../apport/ui.py:1066
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr "建立關於症狀的錯誤報告。(暗示是否只要提供症狀名稱作為引數。)"
 
-#: ../apport/ui.py:1076
+#: ../apport/ui.py:1075
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -284,7 +284,7 @@ msgstr ""
 "在 --file-bug 模式中指定軟體包名稱。若指定 --pid 則前者不加亦可。(表示是否只"
 "要提供 pid 為引數。)"
 
-#: ../apport/ui.py:1087
+#: ../apport/ui.py:1086
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -293,11 +293,11 @@ msgstr ""
 "在 --file-bug 模式中指定一個正在執行中的程式。如果有指定，該臭蟲回報將包含更"
 "多資訊。(表示是否只要提供 pid 為引數。)"
 
-#: ../apport/ui.py:1095
+#: ../apport/ui.py:1094
 msgid "The provided pid is a hanging application."
 msgstr "提供的 pid 是懸凍的應用程式。"
 
-#: ../apport/ui.py:1103
+#: ../apport/ui.py:1102
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -306,7 +306,7 @@ msgstr ""
 "從特定的 .apport 或 .crash 檔案來回報當掉情形，代替等待中的 %s。（暗示若特定"
 "檔案是唯一給予的參數。）"
 
-#: ../apport/ui.py:1113
+#: ../apport/ui.py:1112
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -315,44 +315,44 @@ msgstr ""
 "在臭蟲歸檔模式中，收集的資訊將儲存在檔案中而不是將它回報。這個檔案可以稍後從"
 "不同機器回報。"
 
-#: ../apport/ui.py:1129
+#: ../apport/ui.py:1128
 msgid "Print the Apport version number."
 msgstr "列印 Apport 版本號碼。"
 
-#: ../apport/ui.py:1290
+#: ../apport/ui.py:1289
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "這會在終端機視窗中啟動 apport-retrace 以檢查程式當掉原因。"
 
-#: ../apport/ui.py:1294
+#: ../apport/ui.py:1293
 msgid "Run gdb session"
 msgstr "執行 gdb 作業階段"
 
-#: ../apport/ui.py:1295
+#: ../apport/ui.py:1294
 msgid "Run gdb session without downloading debug symbols"
 msgstr "執行 gdb 作業階段而不下載除錯符號"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1296
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "以完整的符號堆疊追蹤來更新 %s"
 
-#: ../apport/ui.py:1351
+#: ../apport/ui.py:1350
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr "儲存回報當機狀態時發生錯誤，無法設定自動或永不回報模式。"
 
-#: ../apport/ui.py:1355
+#: ../apport/ui.py:1354
 msgid "Can't remember send report status settings"
 msgstr "無法儲存「傳送回報狀態」設定"
 
-#: ../apport/ui.py:1436 ../apport/ui.py:1449
+#: ../apport/ui.py:1435 ../apport/ui.py:1448
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "此問題報告用於不再安裝的程式。"
 
-#: ../apport/ui.py:1469
+#: ../apport/ui.py:1468
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -361,40 +361,40 @@ msgstr "發生問題的程式 %s 自上次遭遇當掉之後已有變動。"
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1837
 msgid "This problem report is damaged and cannot be processed."
 msgstr "此問題報告已損壞故無法處理。"
 
-#: ../apport/ui.py:1534
+#: ../apport/ui.py:1533
 msgid "This report is about a package that is not installed."
 msgstr "這個是關於未安裝軟體包的回報。"
 
-#: ../apport/ui.py:1541
+#: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "試圖處理問題回報時遭遇錯誤："
 
-#: ../apport/ui.py:1558
+#: ../apport/ui.py:1557
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr "此應用程式您安裝了兩個版本，您想對哪一個版本回報臭蟲？"
 
-#: ../apport/ui.py:1563
+#: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
 msgstr "%s snap"
 
-#: ../apport/ui.py:1564
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
 msgstr "%s deb 套件包"
 
-#: ../apport/ui.py:1602
+#: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr "%s 的 snap 是由 %s 發行。可透過 %s 連絡他們尋找協助。"
 
-#: ../apport/ui.py:1607
+#: ../apport/ui.py:1606
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -403,37 +403,37 @@ msgstr ""
 "%s 是由 %s 所發布的 snap 。開發者沒有提供聯絡地址；請前往論壇 https://forum."
 "snapcraft.io/ 尋求協助。"
 
-#: ../apport/ui.py:1693
+#: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
 msgstr "無法決定軟體包或原始碼軟體包名稱。"
 
-#: ../apport/ui.py:1724
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "無法啟動網頁瀏覽器"
 
-#: ../apport/ui.py:1725
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "無法啟動網頁瀏覽器以開啟 %s。"
 
-#: ../apport/ui.py:1796
+#: ../apport/ui.py:1795
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "無法連接到當機資料庫，請檢查您的網路連線。"
 
-#: ../apport/ui.py:1799
+#: ../apport/ui.py:1798
 msgid "Network problem"
 msgstr "網路問題"
 
-#: ../apport/ui.py:1825
+#: ../apport/ui.py:1824
 msgid "Memory exhaustion"
 msgstr "記憶體耗盡"
 
-#: ../apport/ui.py:1827
+#: ../apport/ui.py:1826
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "您的系統沒有足夠的記憶體來處理此份當機報告。"
 
-#: ../apport/ui.py:1872
+#: ../apport/ui.py:1871
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -444,11 +444,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1926 ../apport/ui.py:1938
+#: ../apport/ui.py:1925 ../apport/ui.py:1937
 msgid "Problem already known"
 msgstr "已知問題"
 
-#: ../apport/ui.py:1928
+#: ../apport/ui.py:1927
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -457,7 +457,7 @@ msgstr ""
 "此問題在網路瀏覽器顯示之臭蟲報告中已回報。請檢查您是否能新增任何可能對開發者"
 "有幫助的進一步資訊。"
 
-#: ../apport/ui.py:1939
+#: ../apport/ui.py:1938
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "此問題已經回報給開發者。感謝您！"
 
@@ -557,6 +557,14 @@ msgid ""
 msgstr ""
 "已收集的資訊將傳送至臭蟲追蹤系統。\n"
 "這可能需要數分鐘。"
+
+#: ../bin/apport-cli.py:312
+msgid "&Yes"
+msgstr ""
+
+#: ../bin/apport-cli.py:313
+msgid "&No"
+msgstr ""
 
 #: ../bin/apport-cli.py:349
 msgid "&Done"

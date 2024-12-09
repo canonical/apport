@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-09 15:02+0200\n"
+"POT-Creation-Date: 2024-12-09 15:43+0100\n"
 "PO-Revision-Date: 2021-10-19 10:21+0000\n"
 "Last-Translator: id:sicklylife <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -38,11 +38,11 @@ msgstr ""
 "システムプログラムの問題レポートにアクセスするにはパスワードを入力してくださ"
 "い"
 
-#: ../apport/ui.py:259
+#: ../apport/ui.py:258
 msgid "This package does not seem to be installed correctly"
 msgstr "このパッケージは恐らく正常にインストールされていません"
 
-#: ../apport/ui.py:269
+#: ../apport/ui.py:268
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -53,7 +53,7 @@ msgstr ""
 "デックスを更新してから再度試してみてください。問題が解決しない場合、関連する"
 "サードパーティーのパッケージの削除も試してみてください。"
 
-#: ../apport/ui.py:299
+#: ../apport/ui.py:298
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -66,16 +66,16 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:450
+#: ../apport/ui.py:449
 msgid "unknown program"
 msgstr "不明なプログラム"
 
-#: ../apport/ui.py:452
+#: ../apport/ui.py:451
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "残念ながら、プログラム \"%s\" が予期せず終了しました"
 
-#: ../apport/ui.py:454
+#: ../apport/ui.py:453
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -83,70 +83,70 @@ msgstr ""
 "コンピューターに、問題を自動的に解析して開発者にレポートを送るための十分な空"
 "きメモリーがありません。"
 
-#: ../apport/ui.py:459 ../apport/ui.py:1867
+#: ../apport/ui.py:458 ../apport/ui.py:1866
 #, python-format
 msgid "Problem in %s"
 msgstr "%s に問題があります"
 
-#: ../apport/ui.py:515 ../apport/ui.py:532 ../apport/ui.py:698
-#: ../apport/ui.py:704 ../apport/ui.py:927 ../apport/ui.py:1692
-#: ../apport/ui.py:1834 ../apport/ui.py:1840
+#: ../apport/ui.py:514 ../apport/ui.py:531 ../apport/ui.py:697
+#: ../apport/ui.py:703 ../apport/ui.py:926 ../apport/ui.py:1691
+#: ../apport/ui.py:1833 ../apport/ui.py:1839
 msgid "Invalid problem report"
 msgstr "無効な問題のレポートです"
 
-#: ../apport/ui.py:516
+#: ../apport/ui.py:515
 msgid "You are not allowed to access this problem report."
 msgstr "この問題を報告するための権限がありません。"
 
-#: ../apport/ui.py:524
+#: ../apport/ui.py:523
 msgid "Error"
 msgstr "エラー"
 
-#: ../apport/ui.py:526
+#: ../apport/ui.py:525
 msgid "There is not enough disk space available to process this report."
 msgstr "このレポートを作成するための空きスペースがディスクにありません。"
 
-#: ../apport/ui.py:562
+#: ../apport/ui.py:561
 msgid "No PID specified"
 msgstr "PIDが指定されていません"
 
-#: ../apport/ui.py:563
+#: ../apport/ui.py:562
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 "PIDを指定する必要があります。詳細については --help の出力を確認してください。"
 
-#: ../apport/ui.py:572 ../apport/ui.py:677
+#: ../apport/ui.py:571 ../apport/ui.py:676
 msgid "Invalid PID"
 msgstr "無効なプロセスID"
 
-#: ../apport/ui.py:572
+#: ../apport/ui.py:571
 msgid "The specified process ID does not exist."
 msgstr "指定されたプロセスIDは存在しません。"
 
-#: ../apport/ui.py:577
+#: ../apport/ui.py:576
 msgid "Not your PID"
 msgstr "プロセスIDの所有者ではありません"
 
-#: ../apport/ui.py:578
+#: ../apport/ui.py:577
 msgid "The specified process ID does not belong to you."
 msgstr "あなたは指定されたプロセスIDの所有者ではありません。"
 
-#: ../apport/ui.py:635
+#: ../apport/ui.py:634
 msgid "No package specified"
 msgstr "パッケージが指定されていません"
 
-#: ../apport/ui.py:637
+#: ../apport/ui.py:636
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "パッケージまたはプロセスIDを指定する必要があります。詳細については --help の"
 "出力を確認してください。"
 
-#: ../apport/ui.py:664
+#: ../apport/ui.py:663
 msgid "Permission denied"
 msgstr "許可がありません"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:665
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -154,30 +154,30 @@ msgstr ""
 "このプロセスを操作する権限がありません。プロセスの所有者もしくはrootユーザー"
 "として実行してください。"
 
-#: ../apport/ui.py:678
+#: ../apport/ui.py:677
 msgid "The specified process ID does not belong to a program."
 msgstr "指定されたプロセスIDはプログラムに属していません。"
 
-#: ../apport/ui.py:699
+#: ../apport/ui.py:698
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Symptomスクリプト %s は、影響を受けたパッケージを特定していません"
 
-#: ../apport/ui.py:705
+#: ../apport/ui.py:704
 #, python-format
 msgid "Package %s does not exist"
 msgstr "パッケージ %s は存在しません"
 
-#: ../apport/ui.py:734 ../apport/ui.py:932 ../apport/ui.py:965
-#: ../apport/ui.py:972
+#: ../apport/ui.py:733 ../apport/ui.py:931 ../apport/ui.py:964
+#: ../apport/ui.py:971
 msgid "Cannot create report"
 msgstr "レポートを作成できません"
 
-#: ../apport/ui.py:749 ../apport/ui.py:803 ../apport/ui.py:820
+#: ../apport/ui.py:748 ../apport/ui.py:802 ../apport/ui.py:819
 msgid "Updating problem report"
 msgstr "問題点のレポートを更新中"
 
-#: ../apport/ui.py:751
+#: ../apport/ui.py:750
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -189,7 +189,7 @@ msgstr ""
 "\n"
 "\"apport-bug\"を使って新規にレポートを作成してください。"
 
-#: ../apport/ui.py:763
+#: ../apport/ui.py:762
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -209,24 +209,24 @@ msgstr ""
 "\n"
 "本当に進めますか?"
 
-#: ../apport/ui.py:803 ../apport/ui.py:820
+#: ../apport/ui.py:802 ../apport/ui.py:819
 msgid "No additional information collected."
 msgstr "収集する追加情報はありません。"
 
-#: ../apport/ui.py:876
+#: ../apport/ui.py:875
 msgid "What kind of problem do you want to report?"
 msgstr "どのような種類の問題を報告しますか？"
 
-#: ../apport/ui.py:895
+#: ../apport/ui.py:894
 msgid "Unknown symptom"
 msgstr "未知の現象"
 
-#: ../apport/ui.py:896
+#: ../apport/ui.py:895
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "現象 \"%s\" は知られていません。"
 
-#: ../apport/ui.py:934
+#: ../apport/ui.py:933
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -237,7 +237,7 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:950
+#: ../apport/ui.py:949
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -245,30 +245,30 @@ msgstr ""
 "このメッセージを閉じた後でアプリケーションウィンドウ上でクリックして、その問"
 "題について報告してください。"
 
-#: ../apport/ui.py:966 ../apport/ui.py:973
+#: ../apport/ui.py:965 ../apport/ui.py:972
 msgid "xprop failed to determine process ID of the window"
 msgstr "xpropはウィンドウのプロセスIDを特定できませんでした"
 
-#: ../apport/ui.py:988
+#: ../apport/ui.py:987
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr ""
 
-#: ../apport/ui.py:989
+#: ../apport/ui.py:988
 msgid "Specify package name."
 msgstr "パッケージ名を指定"
 
-#: ../apport/ui.py:995 ../apport/ui.py:1123
+#: ../apport/ui.py:994 ../apport/ui.py:1122
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "レポートに追加タグを追加します。複数回指定できます。"
 
-#: ../apport/ui.py:1031
+#: ../apport/ui.py:1030
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:1042
+#: ../apport/ui.py:1041
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -279,16 +279,16 @@ msgstr ""
 "ないときには、既知の現象のリストを表示します（暗黙の一つの引数が与えられた場"
 "合）。"
 
-#: ../apport/ui.py:1051
+#: ../apport/ui.py:1050
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 "問題レポートを埋めるには、ターゲットとなるウィンドウをクリックしてください。"
 
-#: ../apport/ui.py:1059
+#: ../apport/ui.py:1058
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "バグ更新モードを開始します。オプション --package が使用できます。"
 
-#: ../apport/ui.py:1067
+#: ../apport/ui.py:1066
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -296,7 +296,7 @@ msgstr ""
 "SYMPTOM（症状）についてのバグを報告します（唯一の引数は症状の名前を意味しま"
 "す）。"
 
-#: ../apport/ui.py:1076
+#: ../apport/ui.py:1075
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -304,7 +304,7 @@ msgstr ""
 "--file-bug モードで使用するパッケージ名を指定します。--pid が指定されている場"
 "合はオプション扱いになります（唯一の引数はパッケージ名を意味します）。"
 
-#: ../apport/ui.py:1087
+#: ../apport/ui.py:1086
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -314,11 +314,11 @@ msgstr ""
 "指定した場合、バグ報告にはより多くの情報が含まれます（唯一の引数はプロセスID"
 "を意味します）。"
 
-#: ../apport/ui.py:1095
+#: ../apport/ui.py:1094
 msgid "The provided pid is a hanging application."
 msgstr "指定されたpidはハングアップしたアプリケーションのものです。"
 
-#: ../apport/ui.py:1103
+#: ../apport/ui.py:1102
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -327,7 +327,7 @@ msgstr ""
 "クラッシュの報告を %s で保留中のプログラムのかわりに .apport または .crash "
 "ファイルで行う（ファイル名が引数のみで与えられた場合）。"
 
-#: ../apport/ui.py:1113
+#: ../apport/ui.py:1112
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -336,47 +336,47 @@ msgstr ""
 "バグファイリングモードでは、収集した情報は報告する代わりにファイルに保存され"
 "ます。このファイルは、後で別のコンピューターから報告することができます。"
 
-#: ../apport/ui.py:1129
+#: ../apport/ui.py:1128
 msgid "Print the Apport version number."
 msgstr "Apportのバージョン番号を表示します。"
 
-#: ../apport/ui.py:1290
+#: ../apport/ui.py:1289
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "クラッシュの解析を行うため端末ウィンドウでapport-retraceを起動します。"
 
-#: ../apport/ui.py:1294
+#: ../apport/ui.py:1293
 msgid "Run gdb session"
 msgstr "gdbセッションを実行"
 
-#: ../apport/ui.py:1295
+#: ../apport/ui.py:1294
 msgid "Run gdb session without downloading debug symbols"
 msgstr "デバッグシンボルをダウンロードせずgdbセッションを実行"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1296
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "%s を完全なシンボリックスタックトレースに更新する"
 
-#: ../apport/ui.py:1351
+#: ../apport/ui.py:1350
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 "クラッシュレポートの状態の保存に失敗しました。報告モードを「自動」または「し"
 "ない」に設定できません。"
 
-#: ../apport/ui.py:1355
+#: ../apport/ui.py:1354
 msgid "Can't remember send report status settings"
 msgstr "レポートの送信のステータス設定を記憶できません"
 
-#: ../apport/ui.py:1436 ../apport/ui.py:1449
+#: ../apport/ui.py:1435 ../apport/ui.py:1448
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "この問題レポートは、もうインストールされていないプログラムに対するものです。"
 
-#: ../apport/ui.py:1469
+#: ../apport/ui.py:1468
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -387,19 +387,19 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1528 ../apport/ui.py:1640 ../apport/ui.py:1838
+#: ../apport/ui.py:1527 ../apport/ui.py:1639 ../apport/ui.py:1837
 msgid "This problem report is damaged and cannot be processed."
 msgstr "この問題の報告は破損しており、処理することができません。"
 
-#: ../apport/ui.py:1534
+#: ../apport/ui.py:1533
 msgid "This report is about a package that is not installed."
 msgstr "このレポートは、インストールされていないパッケージに対するものです。"
 
-#: ../apport/ui.py:1541
+#: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "この問題の報告の処理中にエラーが発生しました:"
 
-#: ../apport/ui.py:1558
+#: ../apport/ui.py:1557
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
@@ -407,24 +407,24 @@ msgstr ""
 "このアプリケーションは2種類のバージョンがインストールされています。どちらのバ"
 "グを報告しますか？"
 
-#: ../apport/ui.py:1563
+#: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
 msgstr "snapの %s"
 
-#: ../apport/ui.py:1564
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
 msgstr "debパッケージの %s"
 
-#: ../apport/ui.py:1602
+#: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 "%s は %s が公開しているsnapです。バグ報告や質問については %s に連絡してくださ"
 "い。"
 
-#: ../apport/ui.py:1607
+#: ../apport/ui.py:1606
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
@@ -433,41 +433,41 @@ msgstr ""
 "%s は %s が公開しているsnapです。連絡先のアドレスは提供されていないため、バグ"
 "報告や質問については https://forum.snapcraft.io/ にアクセスしてください。"
 
-#: ../apport/ui.py:1693
+#: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
 msgstr "パッケージまたはソースパッケージ名を特定できませんでした。"
 
-#: ../apport/ui.py:1724
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "ウェブブラウザーを起動できません"
 
-#: ../apport/ui.py:1725
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s を開くためのウェブブラウザーを起動できません"
 
-#: ../apport/ui.py:1796
+#: ../apport/ui.py:1795
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "クラッシュデータベースに接続できませんでした。インターネット接続を確認してく"
 "ださい。"
 
-#: ../apport/ui.py:1799
+#: ../apport/ui.py:1798
 msgid "Network problem"
 msgstr "ネットワークの問題"
 
-#: ../apport/ui.py:1825
+#: ../apport/ui.py:1824
 msgid "Memory exhaustion"
 msgstr "メモリー不足"
 
-#: ../apport/ui.py:1827
+#: ../apport/ui.py:1826
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "コンピューターには、このクラッシュレポートを処理するのに十分なメモリーがあり"
 "ません。"
 
-#: ../apport/ui.py:1872
+#: ../apport/ui.py:1871
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -478,11 +478,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1926 ../apport/ui.py:1938
+#: ../apport/ui.py:1925 ../apport/ui.py:1937
 msgid "Problem already known"
 msgstr "問題は既知のものです"
 
-#: ../apport/ui.py:1928
+#: ../apport/ui.py:1927
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -491,7 +491,7 @@ msgstr ""
 "この問題は、ブラウザーに表示されたバグレポートですでに報告されています。開発"
 "者にとって役立つような、より詳しい情報を追加できるかどうか確認してください。"
 
-#: ../apport/ui.py:1939
+#: ../apport/ui.py:1938
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "この問題はすでに開発者に報告されています。ありがとうございます！"
 
@@ -592,6 +592,14 @@ msgid ""
 msgstr ""
 "収集された情報はバグトラッキングシステムに送信されます。\n"
 "しばらくお待ちください。"
+
+#: ../bin/apport-cli.py:312
+msgid "&Yes"
+msgstr ""
+
+#: ../bin/apport-cli.py:313
+msgid "&No"
+msgstr ""
 
 #: ../bin/apport-cli.py:349
 msgid "&Done"
