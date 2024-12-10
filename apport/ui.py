@@ -53,7 +53,7 @@ import apport.REThread
 from apport.packaging_impl import impl as packaging
 from apport.user_group import get_process_user_and_group
 
-__version__ = "2.30.0"
+__version__ = "2.31.0"
 
 
 symptom_script_dir = os.environ.get("APPORT_SYMPTOMS_DIR", "/usr/share/apport/symptoms")

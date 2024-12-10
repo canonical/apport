@@ -1,6 +1,44 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.31.0 (2024-12-10)
+-------------------
+
+### Added
+
+* report: Support comments in denylist files
+* hookutils: new helper `execute_multiple_root_commands`
+
+### Changed
+
+* Add Teamviewer to report-ignore
+  ([LP: #2041830](https://launchpad.net/bugs/2041830))
+* apport-cli: translate the answers Yes and No
+  ([LP: #2084650](https://launchpad.net/bugs/2084650))
+* apt_dpkg: drop support for systems without deb822 support
+* Increase required Python version to at least 3.11
+* hookutils: replace iwconfig call by iw dev link calls
+  ([LP: #2090790](https://launchpad.net/bugs/2090790))
+* hookutils: `attach_mac_events`: reduce the number of `pkexec` calls
+
+### Fixed
+
+* package_hook: Handle failures of removed packages
+  ([LP: #2078695](https://launchpad.net/bugs/2078695))
+* Fix hang when cancelling/closing Apport
+  ([LP: #1537310](https://launchpad.net/bugs/1537310))
+* apport-gtk: Fix `TypeError` on dialog close
+  ([LP: #2080524](https://launchpad.net/bugs/2080524))
+* test: do not check for exact encoded gzip data in `test_write_file`
+  ([LP: #2076269](https://launchpad.net/bugs/2076269))
+* com.ubuntu.apport.policy: fix order of entries
+  ([LP: #2084152](https://launchpad.net/bugs/2084152))
+* test_signal_crashes: replace the use of ping with a custom binary
+  ([LP: #2089387](https://launchpad.net/bugs/2089387))
+* Address complaints from pylint 3.3.1
+* hookutils: attach_mac_events: fix dmesg capture regex
+  ([LP: #2090887](https://launchpad.net/bugs/2090887))
+
 2.30.0 (2024-08-09)
 -------------------
 
