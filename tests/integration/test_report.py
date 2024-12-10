@@ -1559,6 +1559,47 @@ int main() { return f(42); }
             apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
             apport.report._opt_dir = orig_opt_dir
 
+    def test_add_hooks_info_snap(self) -> None:
+        """add_hooks_info() for a snap"""
+        orig_general_hook_dir = apport.report.GENERAL_HOOK_DIR
+        apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
+        orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
+        apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
+        orig_snap_dir = apport.report._snap_dir
+        apport.report._snap_dir = tempfile.mkdtemp()
+        try:
+            snap_hook_dir = os.path.join(
+                apport.report._snap_dir, "foo", "current", "apport", "package-hooks"
+            )
+            os.makedirs(snap_hook_dir)
+            with open(
+                os.path.join(snap_hook_dir, "foo.py"), "w", encoding="utf-8"
+            ) as fd:
+                fd.write(
+                    textwrap.dedent(
+                        """\
+                        def add_info(report, ui):
+                            report['PackageHook'] = '1'
+                        """
+                    )
+                )
+
+            r = apport.report.Report()
+            r["Package"] = "foo 0.2"
+            r["Snap"] = "foo"
+            r["ExecutablePath"] = f"{apport.report._snap_dir}/foo/current/bin/foo"
+
+            self.assertEqual(r.add_hooks_info(), False)
+            print(r)
+            self.assertEqual(r["PackageHook"], "1")
+        finally:
+            shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
+            shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
+            shutil.rmtree(apport.report._snap_dir)
+            apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
+            apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
+            apport.report._snap_dir = orig_snap_dir
+
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_add_hooks_info_errors(self, stderr_mock: MagicMock) -> None:
         """add_hooks_info() with errors in hooks"""
