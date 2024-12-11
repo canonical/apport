@@ -22,7 +22,7 @@ from apport.packaging_impl.apt_dpkg import (
     _parse_deb822_sources,
     impl,
 )
-from tests.helper import has_internet, skip_if_command_is_missing
+from tests.helper import has_internet
 from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
@@ -1052,20 +1052,7 @@ def _copy_ubuntu_keyrings(keyring_dir: str) -> None:
         pytest.skip(  # pragma: no cover
             f"{dbgsym_keyring} missing. Please install ubuntu-dbgsym-keyring!"
         )
-    # Convert from GPG keybox database format to OpenPGP Public Key format
-    output_dbgsym_keyring = os.path.join(keyring_dir, os.path.basename(dbgsym_keyring))
-    try:
-        with open(output_dbgsym_keyring, "wb") as gpg_key:
-            gpg_cmd = [
-                "gpg",
-                "--no-default-keyring",
-                "--keyring",
-                dbgsym_keyring,
-                "--export",
-            ]
-            subprocess.check_call(gpg_cmd, stdout=gpg_key)
-    except FileNotFoundError as error:  # pragma: no cover
-        pytest.skip(f"{error.filename} not available")
+    shutil.copy(dbgsym_keyring, keyring_dir)
 
 
 def _write_source_file(
