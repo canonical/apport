@@ -1909,33 +1909,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                     distro=distro_name,
                     ppa_name=urllib.parse.quote(ppa_name),
                 )
-                ppa_info = self.json_request(ppa_archive_url)
-                if not ppa_info:
+                ppa_key = self.json_request(
+                    f"{ppa_archive_url}?ws.op=getSigningKeyData"
+                )
+                if not ppa_key:
                     continue
-                try:
-                    signing_key_fingerprint = ppa_info["signing_key_fingerprint"]
-                except IndexError:
-                    apport.logging.warning(
-                        "Error: can't find signing_key_fingerprint at %s",
-                        ppa_archive_url,
-                    )
-                    continue
-                argv = [
-                    "apt-key",
-                    "--keyring",
-                    os.path.join(trusted_d, f"{origin}.gpg"),
-                    "adv",
-                    "--quiet",
-                    "--keyserver",
-                    "keyserver.ubuntu.com",
-                    "--recv-key",
-                    signing_key_fingerprint,
-                ]
-
-                if subprocess.call(argv) != 0:
-                    apport.logging.warning(
-                        "Unable to import key for %s", ppa_archive_url
-                    )
+                key_file = pathlib.Path(trusted_d) / f"{origin}.asc"
+                key_file.write_text(ppa_key, encoding="utf-8")
 
     @staticmethod
     def _deb_version(pkg: str) -> str:

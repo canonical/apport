@@ -7,6 +7,7 @@
 import glob
 import gzip
 import os
+import pathlib
 import shutil
 import subprocess
 import tempfile
@@ -19,6 +20,7 @@ from apt import apt_pkg
 
 from apport.packaging_impl.apt_dpkg import _parse_deb822_sources, impl
 from tests.helper import has_internet, skip_if_command_is_missing
+from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
     pytest.skip("dpkg not installed", allow_module_level=True)
@@ -721,7 +723,6 @@ def test_get_source_tree_lp_sandbox(
     assert res.endswith(f"/{wanted_package}-{upstream_version}")
 
 
-@skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
 def test_create_sources_for_a_named_ppa(
     configdir: str, rootdir: str, apt_style: AptStyle
@@ -752,33 +753,15 @@ def test_create_sources_for_a_named_ppa(
         and "http://ppa.launchpad.net/" "daisy-pluckers/daisy-seeds/ubuntu" in e.uris
     ]
 
-    gpg = subprocess.run(
-        [
-            "gpg",
-            "--no-options",
-            "--no-default-keyring",
-            "--no-auto-check-trustdb",
-            "--trust-model",
-            "always",
-            "--batch",
-            "--list-keys",
-            "--keyring",
-            os.path.join(
-                rootdir,
-                "etc",
-                "apt",
-                "trusted.gpg.d",
-                "LP-PPA-daisy-pluckers-daisy-seeds.gpg",
-            ),
-        ],
-        check=True,
-        stdout=subprocess.PIPE,
-    )
-    apt_keys = gpg.stdout.decode()
-    assert "Launchpad PPA for Daisy Pluckers" in apt_keys
+    trusted_gpg_d = pathlib.Path(rootdir) / "etc" / "apt" / "trusted.gpg.d"
+    actual_file = trusted_gpg_d / "LP-PPA-daisy-pluckers-daisy-seeds.asc"
+    actual_key = actual_file.read_text(encoding="utf-8")
+    expected_file = get_test_data_directory() / "LP-PPA-daisy-pluckers-daisy-seeds.asc"
+    expected_key = expected_file.read_text(encoding="utf-8")
+
+    assert expected_key == actual_key
 
 
-@skip_if_command_is_missing("gpg")
 @pytest.mark.skipif(not has_internet(), reason="online test")
 def test_create_sources_for_an_unnamed_ppa(
     configdir: str, rootdir: str, apt_style: AptStyle
@@ -811,26 +794,15 @@ def test_create_sources_for_an_unnamed_ppa(
         "apport-hackers/apport-autopkgtests/ubuntu" in e.uris
     ]
 
-    gpg = subprocess.run(
-        [
-            "gpg",
-            "--no-options",
-            "--no-default-keyring",
-            "--no-auto-check-trustdb",
-            "--trust-model",
-            "always",
-            "--batch",
-            "--list-keys",
-            "--keyring",
-            os.path.join(
-                rootdir, "etc", "apt", "trusted.gpg.d", "LP-PPA-apport-hackers.gpg"
-            ),
-        ],
-        check=True,
-        stdout=subprocess.PIPE,
+    trusted_gpg_d = pathlib.Path(rootdir) / "etc" / "apt" / "trusted.gpg.d"
+    actual_file = trusted_gpg_d / "LP-PPA-apport-hackers-apport-autopkgtests.asc"
+    actual_key = actual_file.read_text(encoding="utf-8")
+    expected_file = (
+        get_test_data_directory() / "LP-PPA-apport-hackers-apport-autopkgtests.asc"
     )
-    apt_keys = gpg.stdout.decode()
-    assert apt_keys == ""
+    expected_key = expected_file.read_text(encoding="utf-8")
+
+    assert expected_key == actual_key
 
 
 def test_use_sources_for_a_ppa(
