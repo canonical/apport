@@ -536,7 +536,7 @@ class ProblemReport(collections.UserDict):
             value = self[key]
             if value is None:
                 continue
-            yield key, self[key]
+            yield key, value
 
     def write(self, file: typing.IO[bytes], only_new: bool = False) -> None:
         """Write information into the given file-like object.
