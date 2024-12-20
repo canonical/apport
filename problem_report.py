@@ -503,7 +503,7 @@ class ProblemReport(collections.UserDict):
 
     def sorted_items(
         self, keys: Iterable[str] | None = None
-    ) -> Iterator[tuple[str, (bytes | CompressedValue | str | tuple)]]:
+    ) -> Iterator[tuple[str, (bytes | CompressedFile | CompressedValue | str | tuple)]]:
         """Iterate over all non-internal items sorted.
 
         The most interesting fields will be returned first. The remaining
