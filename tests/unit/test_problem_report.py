@@ -349,6 +349,14 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
         self.assertEqual(len(compressed_value), 65)
 
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_len_zstd_compressed_value_nosize(self) -> None:
+        """Test len() on zstd-compressed CompressedValue without a size header."""
+        compressed_value = problem_report.CompressedValue(
+            compressed_value=base64.b64decode(b"KLUv/QBYEQAAe30=")
+        )
+        self.assertEqual(len(compressed_value), 2)
+
     @unittest.mock.patch("builtins.__import__")
     def test_zstandard_missing(self, import_mock: MagicMock) -> None:
         """Test reading zstd-compressed data when zstandard is missing."""
