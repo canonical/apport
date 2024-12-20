@@ -1232,11 +1232,10 @@ class UserInterface:
         # report wasn't loaded, so count manually
         size = 0
         for k in self.report:
-            if self.report[k]:
-                try:
-                    size += self.report[k].get_on_disk_size()
-                except AttributeError:
-                    size += len(self.report[k])
+            try:
+                size += self.report[k].get_on_disk_size()
+            except AttributeError:
+                size += len(self.report[k])
         return size
 
     def get_reduced_size(self) -> int:
@@ -1245,11 +1244,10 @@ class UserInterface:
         size = 0
         for k in self.report:
             if k != "CoreDump":
-                if self.report[k]:
-                    try:
-                        size += self.report[k].get_on_disk_size()
-                    except AttributeError:
-                        size += len(self.report[k])
+                try:
+                    size += self.report[k].get_on_disk_size()
+                except AttributeError:
+                    size += len(self.report[k])
 
         return size
 
