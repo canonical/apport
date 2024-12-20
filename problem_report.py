@@ -30,6 +30,7 @@ import typing
 import zlib
 from collections.abc import Generator, Iterable, Iterator
 
+CHUNK_SIZE = 131_072  # 128 kB chunks
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
 ZSTANDARD_MAGIC_NUMBER = b"\x28\xB5\x2F\xFD"
@@ -305,13 +306,24 @@ class CompressedValue:
         # legacy zlib format
         file.write(zlib.decompress(self.compressed_value))
 
+    def _iter_compressed_value(self, chunk_size: int) -> Iterator[bytes]:
+        assert self.compressed_value
+        for i in range(0, self.get_compressed_size(), chunk_size):
+            yield self.compressed_value[i : i + chunk_size]
+
     def __len__(self) -> int:
         """Return length of uncompressed value."""
         assert self.compressed_value
         if self.compressed_value.startswith(GZIP_HEADER_START):
             return int(struct.unpack("<L", self.compressed_value[-4:])[0])
-        # legacy zlib format
-        return len(self.get_value())
+
+        # legacy zlib format and zstandard
+        length = 0
+        for block in self.decode_compressed_stream(
+            self._iter_compressed_value(CHUNK_SIZE)
+        ):
+            length += len(block)
+        return length
 
     def splitlines(self) -> list[bytes]:
         """Behaves like splitlines() for a normal string."""
