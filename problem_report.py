@@ -29,6 +29,7 @@ import time
 import typing
 import zlib
 from collections.abc import Generator, Iterable, Iterator
+from typing import TypeAlias
 
 CHUNK_SIZE = 131_072  # 128 kB chunks
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
@@ -330,6 +331,9 @@ class CompressedValue:
         return self.get_value().splitlines()
 
 
+ProblemReportValue: TypeAlias = bytes | CompressedFile | CompressedValue | str | tuple
+
+
 class ProblemReport(collections.UserDict):
     """Class to store, load, and handle problem reports."""
 
@@ -503,7 +507,7 @@ class ProblemReport(collections.UserDict):
 
     def sorted_items(
         self, keys: Iterable[str] | None = None
-    ) -> Iterator[tuple[str, (bytes | CompressedFile | CompressedValue | str | tuple)]]:
+    ) -> Iterator[tuple[str, ProblemReportValue]]:
         """Iterate over all non-internal items sorted.
 
         The most interesting fields will be returned first. The remaining
@@ -912,9 +916,7 @@ class ProblemReport(collections.UserDict):
         file.write(msg.as_string().encode("UTF-8"))
         file.write(b"\n")
 
-    def __setitem__(
-        self, k: str, v: bytes | CompressedFile | CompressedValue | str | tuple
-    ) -> None:
+    def __setitem__(self, k: str, v: ProblemReportValue) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
             raise ValueError(
