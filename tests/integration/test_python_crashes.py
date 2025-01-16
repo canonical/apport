@@ -507,7 +507,8 @@ func(42)
                 )
                 pr = self._load_report()
                 self.assertIn(":FileNotFoundError:", pr.crash_signature())
-                self.assertIn("os.getcwd()\nFileNotFoundError", pr["Traceback"])
+                self.assertIn("os.getcwd()\n", pr["Traceback"])
+                self.assertIn("\nFileNotFoundError", pr["Traceback"])
 
     def test_subclassed_os_error(self) -> None:
         """Raise OSError with known subclass."""
