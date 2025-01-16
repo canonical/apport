@@ -528,7 +528,7 @@ class UserInterface:
                 )
                 sys.exit(1)
             elif error.errno == errno.EIO:
-                self.ui_error_message(_("Invalid problem report"), error.strerror)
+                self.ui_error_message(_("Invalid problem report"), str(error.strerror))
                 sys.exit(1)
             raise
 
@@ -1830,7 +1830,7 @@ class UserInterface:
             return False
         except OSError as error:
             self.report = None
-            self.ui_error_message(_("Invalid problem report"), error.strerror)
+            self.ui_error_message(_("Invalid problem report"), str(error.strerror))
             return False
         except (TypeError, ValueError, AssertionError, zlib.error) as error:
             self.report = None
