@@ -13,11 +13,10 @@ import json
 import time
 import urllib.parse
 import urllib.request
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
-import apport
 import apport.crashdb
 
 
@@ -156,7 +155,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.issue_url = None
         self.github = None
 
-    def _format_report(self, report: apport.Report) -> dict:
+    def _format_report(self, report: Mapping[str, Any]) -> dict[str, str | list[str]]:
         """Formats report info as markdown and creates Github issue JSON."""
         body_markdown = ""
         for key, value in report.items():
@@ -176,7 +175,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def upload(
         self,
-        report: apport.Report,
+        report: Mapping[str, Any],
         progress_callback: Callable | None = None,
         user_message_callback: Callable | None = None,
     ) -> IssueHandle:
