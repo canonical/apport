@@ -19,6 +19,7 @@ import contextlib
 import datetime
 import grp
 import os
+import pathlib
 import resource
 import shutil
 import signal
@@ -381,13 +382,12 @@ class T(unittest.TestCase):
 
     def test_unpackaged_script(self) -> None:
         """Unpackaged scripts do not create a report."""
-        local_exe = os.path.join(self.workdir, "myscript")
-        with open(local_exe, "w", encoding="utf-8") as f:
-            f.write("#!/usr/bin/perl\nsleep(86400);\n")
-        os.chmod(local_exe, 0o755)
+        local_exe = pathlib.Path(self.workdir) / "myscript"
+        local_exe.write_bytes(b"#!/usr/bin/perl\nsleep(86400);\n")
+        local_exe.chmod(0o755)
 
         # absolute path
-        self.do_crash(command=local_exe, args=[], expect_report=False)
+        self.do_crash(command=str(local_exe), args=[], expect_report=False)
 
         self.do_crash(
             command="./myscript", args=[], expect_report=False, cwd=self.workdir
@@ -1118,6 +1118,7 @@ class T(unittest.TestCase):
         hook_before_apport: Callable | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
+        cwd: str | None = None,
         **kwargs: typing.Any,
     ) -> None:
         # TODO: Split into smaller functions/methods
@@ -1144,11 +1145,15 @@ class T(unittest.TestCase):
             command = self.TEST_EXECUTABLE
         if args is None:
             args = self.TEST_ARGS
-        if not os.access(command, os.X_OK):
-            self.skipTest(f"{command} is not executable")
+        if cwd:
+            command_path = os.path.join(cwd, command)
+        else:
+            command_path = command
+        if not os.access(command_path, os.X_OK):
+            self.skipTest(f"{command_path} is not executable")
 
         # Support calling scripts in GDB
-        shebang = read_shebang(command)
+        shebang = read_shebang(command_path)
         if shebang:
             args.insert(0, command)
             command = shebang
@@ -1168,6 +1173,7 @@ class T(unittest.TestCase):
                 self.gdb_command(command, args, gdb_core_file, uid),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
+                cwd=cwd,
                 **kwargs,
             )
         except FileNotFoundError as error:
