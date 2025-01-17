@@ -912,14 +912,14 @@ NameError: global name 'weird' is not defined"""
         # needs to have 13 consecutive valid bugs without dupes
         first_dup = 10070
         try:
-            for b in range(first_dup, first_dup + 13):
+            for bug_id in range(first_dup, first_dup + 13):
                 count += 1
-                sys.stderr.write(f"{b} ")
-                db.close_duplicate(Report(), b, self.get_segv_report())
-                b = db.launchpad.bugs[self.get_segv_report()]
-                has_escalation_tag = db.options["escalation_tag"] in b.tags
+                sys.stderr.write(f"{bug_id} ")
+                db.close_duplicate(Report(), bug_id, self.get_segv_report())
+                bug = db.launchpad.bugs[self.get_segv_report()]
+                has_escalation_tag = db.options["escalation_tag"] in bug.tags
                 has_escalation_subscription = any(
-                    s.person_link == p for s in b.subscriptions
+                    s.person_link == p for s in bug.subscriptions
                 )
                 if count <= 10:
                     self.assertFalse(has_escalation_tag)
@@ -928,9 +928,9 @@ NameError: global name 'weird' is not defined"""
                     self.assertTrue(has_escalation_tag)
                     self.assertTrue(has_escalation_subscription)
         finally:
-            for b in range(first_dup, first_dup + count):
-                sys.stderr.write(f"R{b} ")
-                db.close_duplicate(Report(), b, None)
+            for bug_id in range(first_dup, first_dup + count):
+                sys.stderr.write(f"R{bug_id} ")
+                db.close_duplicate(Report(), bug_id, None)
         sys.stderr.write("\n")
 
     def test_marking_python_task_mangle(self) -> None:
