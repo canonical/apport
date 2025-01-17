@@ -1165,7 +1165,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(self.report_file.name)
         self.assertIsNone(self.ui.msg_severity)
 
-    def test_run_crash_nocore(self):
+    def test_run_crash_nocore(self) -> None:
         """run_crash() for a crash dump without CoreDump"""
         # create a test executable
         with run_test_executable() as pid:
@@ -1185,6 +1185,7 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock()
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "error")
+        assert self.ui.msg_text is not None
         self.assertIn(
             "memory", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
