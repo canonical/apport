@@ -53,6 +53,7 @@ _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
 GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"
 PACKAGE_HOOK_DIR = f"{_data_dir}/package-hooks/"
 _opt_dir = "/opt"
+_snap_dir = "/snap"
 
 # path of the ignore file
 _ignore_file = os.environ.get("APPORT_IGNORE_FILE", "~/.apport-ignore.xml")
@@ -1192,6 +1193,12 @@ class Report(problem_report.ProblemReport):
                     os.path.join(opt_path, "share", "apport", "package-hooks")
                 )
                 opt_path = os.path.dirname(opt_path)
+
+        # Is a Snap, search under /snap/<snap-name> for hooks.
+        if "Snap" in self and package is not None:
+            hook_dirs.append(
+                os.path.join(_snap_dir, package, "current", "apport", "package-hooks")
+            )
 
         # common hooks
         for hook in sorted(glob.glob(GENERAL_HOOK_DIR + "/*.py")):
