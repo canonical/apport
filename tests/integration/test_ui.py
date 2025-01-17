@@ -22,7 +22,7 @@ import unittest
 import unittest.mock
 import urllib.error
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -53,6 +53,8 @@ def mock_run_calls_except_pgrep(
 class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
+
+    crashdb: apport.crashdb_impl.memory.CrashDatabase
 
     def __init__(self, argv: list[str] | None = None) -> None:
         # use our memory crashdb which is designed for testing
@@ -1612,7 +1614,7 @@ class T(unittest.TestCase):
             pwd.getpwuid = orig_getpwuid
             os.getuid = orig_getuid
 
-    def test_run_crash_known(self):
+    def test_run_crash_known(self) -> None:
         """run_crash() for already known problem"""
         r = self._gen_test_crash()
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -1622,8 +1624,8 @@ class T(unittest.TestCase):
         # known without URL
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui.crashdb.known = lambda r: True
-        self.ui.run_crash(report_file)
+        with patch.object(self.ui.crashdb, "known", return_value=True):
+            self.ui.run_crash(report_file)
         assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "1")
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1634,8 +1636,8 @@ class T(unittest.TestCase):
         # known with URL
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui.crashdb.known = lambda r: "http://myreport/1"
-        self.ui.run_crash(report_file)
+        with patch.object(self.ui.crashdb, "known", return_value="http://myreport/1"):
+            self.ui.run_crash(report_file)
         assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "http://myreport/1")
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1893,21 +1895,21 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["answer"], "None")
         self.assertEqual(self.ui.report["end"], "1")
 
-    def test_hooks_choices_db_no_accept(self):
+    def test_hooks_choices_db_no_accept(self) -> None:
         """HookUI.choice() but DB does not accept report."""
-        self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_choice_response = [1]
-        self._run_hook(
-            textwrap.dedent(
-                """\
-                report['begin'] = '1'
-                answer = ui.choice('YourChoice?', ['foo', 'bar'])
-                report['answer'] = str(answer)
-                report['end'] = '1'
-                """
+        with patch.object(self.ui.crashdb, "accepts", return_value=False):
+            self.ui.present_details_response = apport.ui.Action(report=True)
+            self.ui.question_choice_response = [1]
+            self._run_hook(
+                textwrap.dedent(
+                    """\
+                    report['begin'] = '1'
+                    answer = ui.choice('YourChoice?', ['foo', 'bar'])
+                    report['answer'] = str(answer)
+                    report['end'] = '1'
+                    """
+                )
             )
-        )
         assert self.ui.report
         self.assertEqual(self.ui.report["answer"], "None")
 
@@ -2428,54 +2430,47 @@ class T(unittest.TestCase):
         # mutually exclusive options
         self.assertRaises(SystemExit, _chk, ["-c", "/tmp/foo.report", "-u", "1234"], {})
 
-    def test_can_examine_locally_crash(self):
+    def test_can_examine_locally_crash(self) -> None:
         """can_examine_locally() for a crash report"""
         self.ui.load_report(self.report_file.name)
 
         orig_path = os.environ["PATH"]
-        orig_fn = self.ui.ui_has_terminal
         try:
-            self.ui.ui_has_terminal = lambda command: True
             os.environ["PATH"] = ""
-            self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(self.ui, "ui_has_terminal", return_value=True):
+                self.assertEqual(self.ui.can_examine_locally(), False)
 
-            src_bindir = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
-            )
-            # this will only work for running the tests in the source tree
-            if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
-                os.environ["PATH"] += f"{src_bindir}:{orig_path}"
-                self.assertEqual(self.ui.can_examine_locally(), True)
-            else:
-                # if we run tests in installed system, we just check that
-                # it doesn't crash
-                self.assertIn(self.ui.can_examine_locally(), [False, True])
+                src_bindir = os.path.join(
+                    os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
+                )
+                # this will only work for running the tests in the source tree
+                if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
+                    os.environ["PATH"] += f"{src_bindir}:{orig_path}"
+                    self.assertEqual(self.ui.can_examine_locally(), True)
+                else:
+                    # if we run tests in installed system, we just check that
+                    # it doesn't crash
+                    self.assertIn(self.ui.can_examine_locally(), [False, True])
 
-            self.ui.ui_has_terminal = lambda command: False
-            self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(self.ui, "ui_has_terminal", return_value=False):
+                self.assertEqual(self.ui.can_examine_locally(), False)
 
             # does not crash on NotImplementedError
-            self.ui.ui_has_terminal = orig_fn
             self.assertEqual(self.ui.can_examine_locally(), False)
 
         finally:
             os.environ["PATH"] = orig_path
-            self.ui.ui_has_terminal = orig_fn
 
-    def test_can_examine_locally_nocrash(self):
+    def test_can_examine_locally_nocrash(self) -> None:
         """can_examine_locally() for a non-crash report"""
         self.ui.load_report(self.report_file.name)
         assert self.ui.report
         del self.ui.report["CoreDump"]
 
-        orig_fn = self.ui.ui_has_terminal
-        try:
-            self.ui.ui_has_terminal = lambda command: True
+        with patch.object(self.ui, "ui_has_terminal", return_value=True):
             self.assertEqual(self.ui.can_examine_locally(), False)
-        finally:
-            self.ui.ui_has_terminal = orig_fn
 
-    def test_db_no_accept(self):
+    def test_db_no_accept(self) -> None:
         """Crash database does not accept report."""
         # FIXME: This behaviour is not really correct, but necessary as long as
         # we only support a single crashdb and have whoopsie hardcoded
@@ -2486,9 +2481,9 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
 
         # Pretend it does not accept report
-        self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
+        with patch.object(self.ui.crashdb, "accepts", return_value=False):
+            self.ui.present_details_response = apport.ui.Action(report=True)
+            self.assertEqual(self.ui.run_argv(), True)
 
         self.assertIsNone(self.ui.msg_severity)
         self.assertIsNone(self.ui.msg_title)
