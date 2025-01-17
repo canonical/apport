@@ -692,8 +692,8 @@ and more
         r = self.crashdb.download(crash_id)
         self.assertNotIn("CoreDump", r)
 
-    @unittest.mock.patch.object(CrashDatabase, "_get_source_version", MagicMock())
-    def test_get_fixed_version(self):
+    @unittest.mock.patch.object(CrashDatabase, "_get_source_version")
+    def test_get_fixed_version(self, get_source_version_mock: MagicMock) -> None:
         """get_fixed_version() for fixed bugs
 
         Other cases are already checked in test_marking_segv() (invalid
@@ -701,7 +701,7 @@ and more
         """
         # staging.launchpad.net often does not have Quantal, so mock-patch
         # it to a known value
-        CrashDatabase._get_source_version.return_value = "3.14"
+        get_source_version_mock.return_value = "3.14"
         self._mark_report_fixed(self.get_segv_report())
         fixed_ver = self.crashdb.get_fixed_version(self.get_segv_report())
         self.assertEqual(fixed_ver, "3.14")
