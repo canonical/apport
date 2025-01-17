@@ -54,6 +54,8 @@ class UserInterfaceMock(apport.ui.UserInterface):
     # pylint: disable=too-many-instance-attributes
     """Concrete apport.ui.UserInterface suitable for automatic testing"""
 
+    crashdb: apport.crashdb_impl.memory.CrashDatabase
+
     def __init__(self, argv: list[str] | None = None) -> None:
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
