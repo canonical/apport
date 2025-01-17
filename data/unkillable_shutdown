@@ -16,6 +16,7 @@ SIGTERM to them (which happens during computer shutdown in
 import argparse
 import errno
 import os
+from collections.abc import Container, Iterable
 
 import apport
 import apport.fileutils
@@ -37,7 +38,7 @@ def parse_argv():
     return parser.parse_args()
 
 
-def orphaned_processes(omit_pids):
+def orphaned_processes(omit_pids: Container[str]) -> Iterable[int]:
     """Yield an iterator of running process IDs.
 
     This excludes PIDs which do not have a valid /proc/pid/exe symlink (e. g.
@@ -77,10 +78,10 @@ def orphaned_processes(omit_pids):
             )
             continue
 
-        yield process
+        yield pid
 
 
-def do_report(pid, omit_pids):
+def do_report(pid: int, omit_pids: Iterable[str]) -> None:
     """Create a report for a particular PID."""
 
     report = apport.Report("Bug")
