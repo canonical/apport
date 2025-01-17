@@ -23,7 +23,7 @@ import apport.report
 
 
 # pylint: disable-next=missing-function-docstring
-def main():
+def main() -> None:
     # Check parameters
     argparser = argparse.ArgumentParser("%(prog) [options]")
     argparser.add_argument("-p", "--pid", action="store", type=int, dest="optpid")
