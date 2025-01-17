@@ -27,7 +27,7 @@ from apport.packaging_impl import impl as packaging
 
 
 # pylint: disable-next=missing-function-docstring
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv
 

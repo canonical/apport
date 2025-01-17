@@ -11,6 +11,7 @@
 # the full text of the license.
 
 import sys
+import types
 
 CONFIG = "/etc/default/apport"
 
@@ -31,7 +32,12 @@ def enabled():
         return True
 
 
-def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
+def apport_excepthook(
+    binary: str,
+    exc_type: type[BaseException],
+    exc_obj: BaseException,
+    exc_tb: types.TracebackType | None,
+) -> None:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals
     # pylint: disable=too-many-return-statements,too-many-statements
@@ -98,8 +104,10 @@ def apport_excepthook(binary, exc_type, exc_obj, exc_tb):
                 report["_PythonExceptionQualifier"] = name
 
         # disambiguate OSErrors with errno:
-        if exc_type == OSError and exc_obj.errno is not None:
-            report["_PythonExceptionQualifier"] = str(exc_obj.errno)
+        if exc_type == OSError:
+            assert isinstance(exc_obj, OSError)
+            if exc_obj.errno is not None:
+                report["_PythonExceptionQualifier"] = str(exc_obj.errno)
 
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
@@ -224,7 +232,11 @@ def install():
             except OSError:
                 return
 
-    def partial_apport_excepthook(exc_type, exc_obj, exc_tb):
+    def partial_apport_excepthook(
+        exc_type: type[BaseException],
+        exc_obj: BaseException,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
 
     sys.excepthook = partial_apport_excepthook
