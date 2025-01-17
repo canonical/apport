@@ -717,7 +717,7 @@ class Report(problem_report.ProblemReport):
 
     def add_proc_info(
         self,
-        pid: int | str | None = None,
+        pid: int | None = None,
         proc_pid_fd: int | None = None,
         extraenv: Iterable[str] | None = None,
     ) -> None:
@@ -744,8 +744,6 @@ class Report(problem_report.ProblemReport):
         - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
         - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
         """
-        if isinstance(pid, str):
-            pid = int(pid)
         if not proc_pid_fd:
             if not pid:
                 pid = self.pid or os.getpid()
