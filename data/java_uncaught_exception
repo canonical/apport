@@ -31,7 +31,7 @@ def make_title(report):
 
 
 # pylint: disable-next=missing-function-docstring
-def main():
+def main() -> int:
     if not packaging.enabled():
         return 1
 
