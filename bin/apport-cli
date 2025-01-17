@@ -159,12 +159,12 @@ class CLIUserInterface(apport.ui.UserInterface):
         max_show = 1000000
         for key, value in self.report.sorted_items():
             details += f"== {key} =================================\n"
-            # string value
-            keylen = len(value)
-            if isinstance(value, str) and keylen < max_show:
-                s = value
-            elif keylen >= max_show:
-                s = _("(%i bytes)") % keylen
+            if isinstance(value, str):
+                keylen = len(value)
+                if keylen < max_show:
+                    s = value
+                else:
+                    s = _("(%i bytes)") % keylen
             else:
                 s = _("(binary data)")
 
