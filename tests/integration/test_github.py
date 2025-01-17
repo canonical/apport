@@ -9,6 +9,7 @@
 
 """Integration tests for the apport.crashdb_impl.github module."""
 
+import typing
 import unittest
 from unittest.mock import ANY, MagicMock, Mock, patch
 
@@ -36,7 +37,7 @@ class TestGitHub(unittest.TestCase):
             "expires_in": 20,
         }
 
-    def test__format_report(self):
+    def test__format_report(self) -> None:
         data = {"bold1": "normal1", "bold2": "normal2"}
         expected_body = "**bold1**\nnormal1\n\n**bold2**\nnormal2\n\n"
 
@@ -48,11 +49,13 @@ class TestGitHub(unittest.TestCase):
     @patch("apport.crashdb_impl.github.Github.api_authentication")
     @patch("apport.crashdb_impl.github.Github.api_open_issue")
     @patch("apport.crashdb_impl.github.Github.authentication_complete")
-    def test_upload(self, mock_auth, mock_api, mock_api_auth):
+    def test_upload(
+        self, mock_auth: MagicMock, mock_api: MagicMock, mock_api_auth: MagicMock
+    ) -> None:
         mock_api.return_value = {"html_url": "doesntmatterhere"}
         mock_auth.return_value = True
         mock_api_auth.return_value = self.api_auth_return_value
-        nodata = {}
+        nodata: dict[str, typing.Any] = {}
         snapdata = {"SnapGitOwner": "gimli", "SnapGitName": "axe"}
 
         with self.github as github:
