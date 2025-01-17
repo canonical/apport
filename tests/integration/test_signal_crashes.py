@@ -19,6 +19,7 @@ import contextlib
 import datetime
 import grp
 import os
+import pathlib
 import resource
 import shutil
 import signal
@@ -381,13 +382,12 @@ class T(unittest.TestCase):
 
     def test_unpackaged_script(self) -> None:
         """Unpackaged scripts do not create a report."""
-        local_exe = os.path.join(self.workdir, "myscript")
-        with open(local_exe, "w", encoding="utf-8") as f:
-            f.write("#!/usr/bin/perl\nsleep(86400);\n")
-        os.chmod(local_exe, 0o755)
+        local_exe = pathlib.Path(self.workdir) / "myscript"
+        local_exe.write_bytes(b"#!/usr/bin/perl\nsleep(86400);\n")
+        local_exe.chmod(0o755)
 
         # absolute path
-        self.do_crash(command=local_exe, args=[], expect_report=False)
+        self.do_crash(command=str(local_exe), args=[], expect_report=False)
 
         self.do_crash(
             command="./myscript", args=[], expect_report=False, cwd=self.workdir
