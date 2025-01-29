@@ -9,9 +9,11 @@
 
 """Unit tests for apport.crash_impl.launchpad"""
 
+import io
 import re
+import unittest.mock
 
-from apport.crashdb_impl.launchpad import CrashDatabase
+from apport.crashdb_impl.launchpad import CrashDatabase, upload_blob
 from apport.report import Report
 
 
@@ -91,3 +93,24 @@ def test_private_bug_headers() -> None:
 
     assert headers.get("Private") == "yes"
     assert not re.search(r"need-[a-z0-9]+-retrace", headers.get("Tags", ""))
+
+
+@unittest.mock.patch("urllib.request.build_opener")
+def test_upload_blob_crlf(builder_mock: unittest.mock.MagicMock) -> None:
+    """Test that upload_blob encodes form data with CRLF as line separators,
+    as per HTTP 1.1 spec"""
+    builder_mock.return_value.open.return_value.info.return_value = {
+        "X-Launchpad-Blob-Token": 42
+    }
+
+    data = io.BytesIO(b"foobarbaz")
+    result = upload_blob(data, hostname="invalid.host")
+
+    builder_mock.assert_called_once()
+    builder_mock.return_value.open.assert_called_once()
+    req = builder_mock.return_value.open.call_args[0][0]
+    assert b"foobarbaz" in req.data
+    assert re.match(
+        rb'Content-Type: multipart/mixed; boundary="=+[0-9]+=+"\r\n', req.data
+    )
+    assert result == 42
