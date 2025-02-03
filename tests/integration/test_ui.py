@@ -1487,7 +1487,16 @@ class T(unittest.TestCase):
         self.ui.report.write(dump)
         report = dump.getvalue().decode("UTF-8")
 
-        for s in self._get_sensitive_strings():
+        sensitive_strings = self._get_sensitive_strings()
+
+        # In some environment the UID is just a generic name, e.g. buildd, that
+        # tends to also be used in image names and the likes.
+        build_name = self.ui.report.get("CloudBuildName", "")
+        for s in sensitive_strings:
+            if s in build_name:  # pragma: no cover
+                self.skipTest("Environment too generic for the test to be meaningful.")
+
+        for s in sensitive_strings:
             self.assertIsNone(
                 re.search(rf"\b{re.escape(s)}\b", report),
                 f"dump contains sensitive word '{s}':\n{report}",
