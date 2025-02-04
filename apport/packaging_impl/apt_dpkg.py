@@ -1043,6 +1043,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             aptroot = tempfile.mkdtemp()
 
         apt.apt_pkg.config.set("APT::Architecture", architecture)
+        # Disable foreign architectures or we might fail to download packages
+        # due to split archives. Clearing is not enough, we need to push our
+        # architecture into the list too, or apt runs dpkg --print-foreign-architectures
+        apt.apt_pkg.config.clear("APT::Architectures")
+        apt.apt_pkg.config.set("APT::Architectures::", architecture)
         apt.apt_pkg.config.set("Acquire::Languages", "none")
         # directly connect to Launchpad when downloading deb files
         apt.apt_pkg.config.set("Acquire::http::Proxy::api.launchpad.net", "DIRECT")
