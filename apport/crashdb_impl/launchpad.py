@@ -1236,8 +1236,8 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
 
     data_flat = io.BytesIO()
     gen = email.generator.BytesGenerator(data_flat, mangle_from_=False)
-    # HTTP 1.1 mandates CRLF line separators
-    gen.flatten(data, linesep="\r\n")
+    # HTTP 1.1 mandates CRLF line separators but LP prefers LF for now (LP: #2097632)
+    gen.flatten(data, linesep="\n")
 
     # do the request; we need to explicitly set the content type here, as it
     # defaults to x-www-form-urlencoded

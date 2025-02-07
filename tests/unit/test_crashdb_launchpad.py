@@ -96,9 +96,9 @@ def test_private_bug_headers() -> None:
 
 
 @unittest.mock.patch("urllib.request.build_opener")
-def test_upload_blob_crlf(builder_mock: unittest.mock.MagicMock) -> None:
-    """Test that upload_blob encodes form data with CRLF as line separators,
-    as per HTTP 1.1 spec"""
+def test_upload_blob_conform_to_lp(builder_mock: unittest.mock.MagicMock) -> None:
+    """Test that upload_blob does NOT encodes form data with CRLF as line separators,
+    despite HTTP 1.1 spec"""
     builder_mock.return_value.open.return_value.info.return_value = {
         "X-Launchpad-Blob-Token": 42
     }
@@ -110,7 +110,7 @@ def test_upload_blob_crlf(builder_mock: unittest.mock.MagicMock) -> None:
     builder_mock.return_value.open.assert_called_once()
     req = builder_mock.return_value.open.call_args[0][0]
     assert b"foobarbaz" in req.data
-    assert re.match(
-        rb'Content-Type: multipart/mixed; boundary="=+[0-9]+=+"\r\n', req.data
-    )
+    # Check that we have LF-separated headers (because LP expects LF
+    # line separators, see LP: #2097632)
+    assert re.match(rb"^([-A-Za-z]+: [^\r\n]+\n)+\n", req.data)
     assert result == 42
