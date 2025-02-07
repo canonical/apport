@@ -22,7 +22,7 @@ from tests.paths import local_test_environment
 class TestApportUnpack(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     UTF8_STR = b"a\xe2\x99\xa5b"
-    BINDATA = b"\x00\x01\xFF\x40"
+    BINDATA = b"\x00\x01\xff\x40"
     env: dict[str, str]
     report_file: str
     unpack_dir: str

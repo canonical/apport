@@ -424,7 +424,7 @@ class T(unittest.TestCase):
         gcc_path = self._gcc_version_path()[1]
 
         with tempfile.NamedTemporaryFile() as test_source:
-            test_source.write(b"int f(int x); \xFF\xFF")
+            test_source.write(b"int f(int x); \xff\xff")
             test_source.flush()
             test_source.seek(0)
 
