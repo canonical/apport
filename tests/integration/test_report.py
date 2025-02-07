@@ -1195,7 +1195,7 @@ int main() { return f(42); }
                 None,
                 "does not match on wrong Foo UTF-8 value",
             )
-            r_bash["Foo"] = b"\x01\xFF"
+            r_bash["Foo"] = b"\x01\xff"
             self.assertEqual(
                 r_bash.search_bug_patterns(pattern_url),
                 None,

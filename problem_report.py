@@ -34,7 +34,7 @@ from typing import TypeAlias
 CHUNK_SIZE = 131_072  # 128 kB chunks
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
 GZIP_HEADER_START = b"\037\213\010"
-ZSTANDARD_MAGIC_NUMBER = b"\x28\xB5\x2F\xFD"
+ZSTANDARD_MAGIC_NUMBER = b"\x28\xb5\x2f\xfd"
 
 
 class MalformedProblemReport(ValueError):

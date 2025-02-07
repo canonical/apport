@@ -508,7 +508,7 @@ def root_command_output(  # pylint: disable=redefined-builtin
 
 
 def execute_multiple_root_commands(
-    command_map: Mapping[str, str]
+    command_map: Mapping[str, str],
 ) -> dict[str, str | bytes]:
     """Execute multiple commands as root and return their respective outputs.
 

@@ -780,7 +780,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         d = {
             "newtext": "Goodbye world",
-            "newbin": "11\000\001\002\xFFZZ",
+            "newbin": "11\000\001\002\xffZZ",
             "overwrite": "I am good",
         }
 
@@ -788,7 +788,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["oldtext"], "Hello world")
         self.assertEqual(pr["oldbin"], bin_data)
         self.assertEqual(pr["newtext"], "Goodbye world")
-        self.assertEqual(pr["newbin"], "11\000\001\002\xFFZZ")
+        self.assertEqual(pr["newbin"], "11\000\001\002\xffZZ")
         self.assertEqual(pr["overwrite"], "I am good")
 
     def test_load_key_filter(self) -> None:
