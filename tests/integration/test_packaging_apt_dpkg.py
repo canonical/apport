@@ -13,6 +13,7 @@ import subprocess
 import tempfile
 import time
 import unittest
+from unittest.mock import MagicMock, patch
 
 from apport.packaging_impl.apt_dpkg import impl
 from tests.helper import skip_if_command_is_missing
@@ -252,13 +253,18 @@ bin/true                                                admin/superutils
         finally:
             shutil.rmtree(basedir)
 
-    def test_get_file_package_uninstalled_multiarch(self):
+    @patch.object(impl, "_distro_release_to_codename")
+    def test_get_file_package_uninstalled_multiarch(
+        self, distro_release_to_codename_mock: MagicMock
+    ) -> None:
         """get_file_package() on foreign arches and releases"""
-        # map "Foonux 3.14" to "mocky"
-        orig_distro_release_to_codename = impl._distro_release_to_codename
-        impl._distro_release_to_codename = (
-            lambda r: (r == "Foonux 3.14") and "mocky" or None
-        )
+
+        def _distro_release_to_codename(release: str) -> str:
+            """Map 'Foonux 3.14' to 'mocky'"""
+            assert release == "Foonux 3.14"
+            return "mocky"
+
+        distro_release_to_codename_mock.side_effect = _distro_release_to_codename
 
         # generate test Contents.gz for two fantasy architectures
         basedir = tempfile.mkdtemp()
@@ -424,7 +430,7 @@ usr/bin/frob                                            foo/frob
             )
         finally:
             shutil.rmtree(basedir)
-            impl._distro_release_to_codename = orig_distro_release_to_codename
+        distro_release_to_codename_mock.assert_called()
 
     def test_get_file_package_diversion(self) -> None:
         """get_file_package() for a diverted file."""
