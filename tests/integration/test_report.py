@@ -8,6 +8,7 @@ import atexit
 import grp
 import io
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -137,7 +138,7 @@ class T(unittest.TestCase):
         self.assertNotIn("UserGroups", report)
         geteuid_mock.assert_called_once_with()
 
-    def test_add_proc_info(self):
+    def test_add_proc_info(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """add_proc_info()."""
@@ -236,31 +237,30 @@ class T(unittest.TestCase):
         self.assertIn("[stack]", pr["ProcMaps"])
 
         # check correct handling of interpreted executables: python
-        (fd, testscript) = tempfile.mkstemp()
-        os.write(
-            fd,
-            textwrap.dedent(
-                f"""\
-                #!/usr/bin/{os.getenv('PYTHON', 'python3')}
-                import sys
-                sys.stdin.readline()
-                """
-            ).encode("ascii"),
-        )
-        os.close(fd)
-        os.chmod(testscript, 0o755)
-        with subprocess.Popen(
-            [testscript], stdin=subprocess.PIPE, stderr=subprocess.PIPE
-        ) as process:
-            self.wait_for_proc_cmdline(process.pid)
-            pr = apport.report.Report()
-            pr.add_proc_info(pid=process.pid)
-            process.communicate(b"\n")
-        self.assertEqual(pr["ExecutablePath"], testscript)
-        self.assertEqual(
-            int(pr["ExecutableTimestamp"]), int(os.stat(testscript).st_mtime)
-        )
-        os.unlink(testscript)
+        with tempfile.TemporaryDirectory(prefix="apport_") as tempdir:
+            testscript = pathlib.Path(tempdir) / "testscript.py"
+            testscript.write_text(
+                textwrap.dedent(
+                    f"""\
+                    #!/usr/bin/{os.getenv('PYTHON', 'python3')}
+                    import sys
+                    sys.stdin.readline()
+                    """
+                ),
+                encoding="ascii",
+            )
+            testscript.chmod(0o755)
+            with subprocess.Popen(
+                [str(testscript)], stdin=subprocess.PIPE, stderr=subprocess.PIPE
+            ) as process:
+                self.wait_for_proc_cmdline(process.pid)
+                pr = apport.report.Report()
+                pr.add_proc_info(pid=process.pid)
+                process.communicate(b"\n")
+            self.assertEqual(pr["ExecutablePath"], str(testscript))
+            self.assertEqual(
+                int(pr["ExecutableTimestamp"]), int(testscript.stat().st_mtime)
+            )
         self.assertIn("python", pr["InterpreterPath"])
         self.assertIn("python", pr["ProcMaps"])
         self.assertIn("[stack]", pr["ProcMaps"])
