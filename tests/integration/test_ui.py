@@ -22,7 +22,7 @@ import unittest
 import unittest.mock
 import urllib.error
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import apport.crashdb_impl.memory
 import apport.packaging
@@ -2430,52 +2430,45 @@ class T(unittest.TestCase):
         # mutually exclusive options
         self.assertRaises(SystemExit, _chk, ["-c", "/tmp/foo.report", "-u", "1234"], {})
 
-    def test_can_examine_locally_crash(self):
+    def test_can_examine_locally_crash(self) -> None:
         """can_examine_locally() for a crash report"""
         self.ui.load_report(self.report_file.name)
 
         orig_path = os.environ["PATH"]
-        orig_fn = self.ui.ui_has_terminal
         try:
-            self.ui.ui_has_terminal = lambda command: True
             os.environ["PATH"] = ""
-            self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(self.ui, "ui_has_terminal", return_value=True) as mock:
+                self.assertEqual(self.ui.can_examine_locally(), False)
 
-            src_bindir = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
-            )
-            # this will only work for running the tests in the source tree
-            if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
-                os.environ["PATH"] += f"{src_bindir}:{orig_path}"
-                self.assertEqual(self.ui.can_examine_locally(), True)
-            else:
-                # if we run tests in installed system, we just check that
-                # it doesn't crash
-                self.assertIn(self.ui.can_examine_locally(), [False, True])
+                src_bindir = os.path.join(
+                    os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
+                )
+                # this will only work for running the tests in the source tree
+                if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
+                    os.environ["PATH"] += f"{src_bindir}:{orig_path}"
+                    self.assertEqual(self.ui.can_examine_locally(), True)
+                    mock.assert_called_with()
+                else:
+                    # if we run tests in installed system, we just check that
+                    # it doesn't crash
+                    self.assertIn(self.ui.can_examine_locally(), [False, True])
 
-            self.ui.ui_has_terminal = lambda command: False
-            self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(self.ui, "ui_has_terminal", return_value=False):
+                self.assertEqual(self.ui.can_examine_locally(), False)
 
             # does not crash on NotImplementedError
-            self.ui.ui_has_terminal = orig_fn
             self.assertEqual(self.ui.can_examine_locally(), False)
 
         finally:
             os.environ["PATH"] = orig_path
-            self.ui.ui_has_terminal = orig_fn
 
-    def test_can_examine_locally_nocrash(self):
+    def test_can_examine_locally_nocrash(self) -> None:
         """can_examine_locally() for a non-crash report"""
         self.ui.load_report(self.report_file.name)
         assert self.ui.report
         del self.ui.report["CoreDump"]
 
-        orig_fn = self.ui.ui_has_terminal
-        try:
-            self.ui.ui_has_terminal = lambda command: True
-            self.assertEqual(self.ui.can_examine_locally(), False)
-        finally:
-            self.ui.ui_has_terminal = orig_fn
+        self.assertEqual(self.ui.can_examine_locally(), False)
 
     def test_db_no_accept(self):
         """Crash database does not accept report."""
