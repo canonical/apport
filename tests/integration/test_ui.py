@@ -1614,7 +1614,7 @@ class T(unittest.TestCase):
             pwd.getpwuid = orig_getpwuid
             os.getuid = orig_getuid
 
-    def test_run_crash_known(self):
+    def test_run_crash_known(self) -> None:
         """run_crash() for already known problem"""
         r = self._gen_test_crash()
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -1624,8 +1624,9 @@ class T(unittest.TestCase):
         # known without URL
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui.crashdb.known = lambda r: True
-        self.ui.run_crash(report_file)
+        with patch.object(self.ui.crashdb, "known", return_value=True) as mock:
+            self.ui.run_crash(report_file)
+        mock.assert_called()
         assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "1")
         self.assertEqual(self.ui.msg_severity, "info")
@@ -1636,8 +1637,11 @@ class T(unittest.TestCase):
         # known with URL
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui.crashdb.known = lambda r: "http://myreport/1"
-        self.ui.run_crash(report_file)
+        with patch.object(
+            self.ui.crashdb, "known", return_value="http://myreport/1"
+        ) as mock:
+            self.ui.run_crash(report_file)
+        mock.assert_called()
         assert self.ui.report
         self.assertEqual(self.ui.report["_KnownReport"], "http://myreport/1")
         self.assertEqual(self.ui.msg_severity, "info")
