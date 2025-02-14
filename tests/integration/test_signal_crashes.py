@@ -1118,6 +1118,7 @@ class T(unittest.TestCase):
         hook_before_apport: Callable | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
+        cwd: str | None = None,
         **kwargs: typing.Any,
     ) -> None:
         # TODO: Split into smaller functions/methods
@@ -1144,11 +1145,14 @@ class T(unittest.TestCase):
             command = self.TEST_EXECUTABLE
         if args is None:
             args = self.TEST_ARGS
-        if not os.access(command, os.X_OK):
-            self.skipTest(f"{command} is not executable")
+        if cwd:
+            command_path = os.path.join(cwd, command)
+        else:
+            command_path = command
+        assert os.access(command_path, os.X_OK)
 
         # Support calling scripts in GDB
-        shebang = read_shebang(command)
+        shebang = read_shebang(command_path)
         if shebang:
             args.insert(0, command)
             command = shebang
@@ -1168,6 +1172,7 @@ class T(unittest.TestCase):
                 self.gdb_command(command, args, gdb_core_file, uid),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
+                cwd=cwd,
                 **kwargs,
             )
         except FileNotFoundError as error:
