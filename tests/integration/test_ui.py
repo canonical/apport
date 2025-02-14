@@ -1899,23 +1899,24 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["answer"], "None")
         self.assertEqual(self.ui.report["end"], "1")
 
-    def test_hooks_choices_db_no_accept(self):
+    def test_hooks_choices_db_no_accept(self) -> None:
         """HookUI.choice() but DB does not accept report."""
-        self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_choice_response = [1]
-        self._run_hook(
-            textwrap.dedent(
-                """\
-                report['begin'] = '1'
-                answer = ui.choice('YourChoice?', ['foo', 'bar'])
-                report['answer'] = str(answer)
-                report['end'] = '1'
-                """
+        with patch.object(self.ui.crashdb, "accepts", return_value=False) as mock:
+            self.ui.present_details_response = apport.ui.Action(report=True)
+            self.ui.question_choice_response = [1]
+            self._run_hook(
+                textwrap.dedent(
+                    """\
+                    report['begin'] = '1'
+                    answer = ui.choice('YourChoice?', ['foo', 'bar'])
+                    report['answer'] = str(answer)
+                    report['end'] = '1'
+                    """
+                )
             )
-        )
         assert self.ui.report
         self.assertEqual(self.ui.report["answer"], "None")
+        mock.assert_called()
 
     def test_interactive_hooks_cancel(self) -> None:
         """Interactive hooks: user cancels"""
@@ -2474,7 +2475,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(self.ui.can_examine_locally(), False)
 
-    def test_db_no_accept(self):
+    def test_db_no_accept(self) -> None:
         """Crash database does not accept report."""
         # FIXME: This behaviour is not really correct, but necessary as long as
         # we only support a single crashdb and have whoopsie hardcoded
@@ -2485,13 +2486,14 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
 
         # Pretend it does not accept report
-        self.ui.crashdb.accepts = lambda r: False
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
+        with patch.object(self.ui.crashdb, "accepts", return_value=False) as mock:
+            self.ui.present_details_response = apport.ui.Action(report=True)
+            self.assertEqual(self.ui.run_argv(), True)
 
         self.assertIsNone(self.ui.msg_severity)
         self.assertIsNone(self.ui.msg_title)
         self.assertTrue(self.ui.present_details_shown)
+        mock.assert_called()
 
         # data was collected for whoopsie
         assert self.ui.report
