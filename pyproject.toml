@@ -15,6 +15,9 @@ line-length = 88
 skip = ".git,*.click,*.gif,*.po,*.png"
 ignore-words-list = "buildd"
 
+[tool.coverage.run]
+branch = true
+
 [tool.isort]
 line_length = 88
 profile = "black"
