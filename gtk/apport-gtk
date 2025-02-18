@@ -650,11 +650,16 @@ def text_to_markup(text: str) -> str:
     )
 
 
-if __name__ == "__main__":
+def main(argv: list[str]) -> None:
+    """GTK Apport user interface."""
     if not have_display:
         apport.fatal(
             "This program needs a running X session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )
-    app = GTKUserInterface(sys.argv)
+    app = GTKUserInterface(argv)
     app.run_argv()
+
+
+if __name__ == "__main__":
+    main(sys.argv)
