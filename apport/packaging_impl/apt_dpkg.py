@@ -1204,29 +1204,30 @@ class __AptDpkgPackageInfo(PackageInfo):
                     continue
                 for dep in cache_pkg.candidate.dependencies:
                     # the dependency may be satisfied by a different package
-                    if dep[0].name not in apt_cache:
-                        dep[0] = apt_cache.get_providing_packages(dep[0].name)[0]
+                    name = dep[0].name
+                    if name not in apt_cache:
+                        name = apt_cache.get_providing_packages(name)[0].name
                     # the version in dep is the one from pkg's dependencies,
                     # so use the version from the cache
-                    dep_pkg_vers = apt_cache[dep[0].name].candidate.version
+                    dep_pkg_vers = apt_cache[name].candidate.version
                     # if the dependency is in the list of packages we don't
                     # need to look up its dependencies again
-                    if dep[0].name in [pkg[0] for pkg in packages]:
+                    if name in [pkg[0] for pkg in packages]:
                         continue
                     # if the package is already extracted in the sandbox
                     # because the report needs that package we don't want to
                     # install a newer version which may cause a CRC mismatch
                     # with the installed dbg symbols
-                    if dep[0].name in pkg_versions:
-                        inst_version = pkg_versions[dep[0].name]
+                    if name in pkg_versions:
+                        inst_version = pkg_versions[name]
                         if self.compare_versions(inst_version, dep_pkg_vers) > -1:
-                            deps.append((dep[0].name, inst_version))
+                            deps.append((name, inst_version))
                         else:
-                            deps.append((dep[0].name, dep_pkg_vers))
+                            deps.append((name, dep_pkg_vers))
                     else:
-                        deps.append((dep[0].name, dep_pkg_vers))
-                    if dep[0].name not in [pkg[0] for pkg in packages]:
-                        packages.append((dep[0].name, None))
+                        deps.append((name, dep_pkg_vers))
+                    if name not in [pkg[0] for pkg in packages]:
+                        packages.append((name, None))
             packages.extend(deps)
 
         for pkg, ver in packages:
