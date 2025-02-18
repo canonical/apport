@@ -1230,6 +1230,27 @@ class __AptDpkgPackageInfo(PackageInfo):
                         packages.append((name, None))
             packages.extend(deps)
 
+        def get_package_from_launchpad(pkg: str, ver: str | None) -> bool:
+            """Try to get binary package from Launchpad and stage download.
+
+            Try to get Launchpad URL and SHA1 sum for the given binary package
+            version. In case of success add the package to acquire_queue
+            for a download later.
+
+            Return True in case the binary package was found on Launchpad.
+            """
+            (lp_url, sha1sum) = self.get_lp_binary_package(
+                release, pkg, ver, architecture
+            )
+            if lp_url:
+                acquire_queue.append(
+                    apt.apt_pkg.AcquireFile(
+                        fetcher, lp_url, hash=f"sha1:{sha1sum}", destdir=archivedir
+                    )
+                )
+                lp_cache[pkg] = ver
+            return bool(lp_url)
+
         for pkg, ver in packages:
             try:
                 cache_pkg = apt_cache[pkg]
@@ -1244,17 +1265,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                (lp_url, sha1sum) = self.get_lp_binary_package(
-                    release, pkg, ver, architecture
-                )
-                if lp_url:
-                    acquire_queue.append(
-                        apt.apt_pkg.AcquireFile(
-                            fetcher, lp_url, hash=f"sha1:{sha1sum}", destdir=archivedir
-                        )
-                    )
-                    lp_cache[pkg] = ver
-                else:
+                if not get_package_from_launchpad(pkg, ver):
                     obsolete += (
                         f"{pkg} version {ver} required,"
                         f" but {cache_pkg.candidate.version} is available\n"
@@ -1280,19 +1291,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                             dbg.candidate = dbg.versions[ver]
                             pkg_found = True
                         except KeyError:
-                            (lp_url, sha1sum) = self.get_lp_binary_package(
-                                release, dbg_pkg, ver, architecture
-                            )
-                            if lp_url:
-                                acquire_queue.append(
-                                    apt.apt_pkg.AcquireFile(
-                                        fetcher,
-                                        lp_url,
-                                        hash=f"sha1:{sha1sum}",
-                                        destdir=archivedir,
-                                    )
-                                )
-                                lp_cache[dbg_pkg] = ver
+                            if get_package_from_launchpad(dbg_pkg, ver):
                                 pkg_found = True
                             # if it can't be found in Launchpad failover to a
                             # code path that'll use -dbgsym packages
@@ -1346,19 +1345,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     apt_cache[p].candidate = apt_cache[p].versions[ver]
                                     pkg_found = True
                                 except KeyError:
-                                    (lp_url, sha1sum) = self.get_lp_binary_package(
-                                        release, p, ver, architecture
-                                    )
-                                    if lp_url:
-                                        acquire_queue.append(
-                                            apt.apt_pkg.AcquireFile(
-                                                fetcher,
-                                                lp_url,
-                                                hash=f"sha1:{sha1sum}",
-                                                destdir=archivedir,
-                                            )
-                                        )
-                                        lp_cache[p] = ver
+                                    if get_package_from_launchpad(p, ver):
                                         pkg_found = True
                             if not pkg_found:
                                 try:
@@ -1383,19 +1370,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                                     dbgsym.candidate = dbgsym.versions[ver]
                                     pkg_found = True
                                 except KeyError:
-                                    (lp_url, sha1sum) = self.get_lp_binary_package(
-                                        release, dbgsym_pkg, ver, architecture
-                                    )
-                                    if lp_url:
-                                        acquire_queue.append(
-                                            apt.apt_pkg.AcquireFile(
-                                                fetcher,
-                                                lp_url,
-                                                hash=f"sha1:{sha1sum}",
-                                                destdir=archivedir,
-                                            )
-                                        )
-                                        lp_cache[dbgsym_pkg] = ver
+                                    if get_package_from_launchpad(dbgsym_pkg, ver):
                                         pkg_found = True
                             if not pkg_found:
                                 try:
@@ -1413,19 +1388,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
                         except KeyError:
                             if ver:
-                                (lp_url, sha1sum) = self.get_lp_binary_package(
-                                    release, dbgsym_pkg, ver, architecture
-                                )
-                                if lp_url:
-                                    acquire_queue.append(
-                                        apt.apt_pkg.AcquireFile(
-                                            fetcher,
-                                            lp_url,
-                                            hash=f"sha1:{sha1sum}",
-                                            destdir=archivedir,
-                                        )
-                                    )
-                                    lp_cache[dbgsym_pkg] = ver
+                                if get_package_from_launchpad(dbgsym_pkg, ver):
                                     pkg_found = True
                             if not pkg_found:
                                 obsolete += f"no debug symbol package found for {pkg}\n"
