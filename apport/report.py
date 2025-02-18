@@ -1858,6 +1858,24 @@ class Report(problem_report.ProblemReport):
                     else:
                         self[k] = pattern.sub(repl, self[k])
 
+    def _provide_uncompressed_coredump_file(self) -> str:
+        coredump = self["CoreDump"]
+        if hasattr(coredump, "find"):
+            (fd, core) = tempfile.mkstemp(prefix="apport_core_")
+            atexit.register(os.unlink, core)
+            os.write(fd, coredump)
+            os.close(fd)
+        elif isinstance(coredump, problem_report.CompressedValue):
+            (fd, core) = tempfile.mkstemp(prefix="apport_core_")
+            atexit.register(os.unlink, core)
+            os.close(fd)
+            with open(core, "wb") as f:
+                coredump.write(f)
+        else:
+            # value is a file path
+            core = coredump[0]
+        return core
+
     def gdb_command(
         self, sandbox: str | None, gdb_sandbox: str | None = None
     ) -> tuple[list[str], dict[str, str]]:
@@ -1927,21 +1945,7 @@ class Report(problem_report.ProblemReport):
         command += ["--ex", f'file "{executable}"']
 
         if "CoreDump" in self:
-            if hasattr(self["CoreDump"], "find"):
-                (fd, core) = tempfile.mkstemp(prefix="apport_core_")
-                atexit.register(os.unlink, core)
-                os.write(fd, self["CoreDump"])
-                os.close(fd)
-            elif isinstance(self["CoreDump"], problem_report.CompressedValue):
-                (fd, core) = tempfile.mkstemp(prefix="apport_core_")
-                atexit.register(os.unlink, core)
-                os.close(fd)
-                with open(core, "wb") as f:
-                    self["CoreDump"].write(f)
-            else:
-                # value is a file path
-                core = self["CoreDump"][0]
-
+            core = self._provide_uncompressed_coredump_file()
             command += ["--ex", "core-file " + core]
 
         return command, environ
