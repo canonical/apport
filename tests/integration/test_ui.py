@@ -2065,6 +2065,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertIsNone(self.ui.msg_severity)
         self.assertIn("kind of problem", self.ui.msg_text)
+        assert self.ui.msg_choices is not None
         self.assertEqual(
             set(self.ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
         )
