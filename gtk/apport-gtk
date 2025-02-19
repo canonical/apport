@@ -36,8 +36,6 @@ except (AssertionError, ImportError, RuntimeError) as error:
     sys.stderr.write(f"Cannot start: {str(error)}\n")
     sys.exit(1)
 
-have_display = bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
-
 
 def find_xid_for_pid(pid: int) -> int | None:
     """Return the X11 Window (xid) for the supplied process ID."""
@@ -602,7 +600,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return None
 
     def ui_has_terminal(self) -> bool:
-        return have_display and self._get_terminal() is not None
+        return apport.ui.has_display() and self._get_terminal() is not None
 
     def ui_run_terminal(self, command: str) -> None:
         program = self._get_terminal()
@@ -652,7 +650,7 @@ def text_to_markup(text: str) -> str:
 
 def main(argv: list[str]) -> None:
     """GTK Apport user interface."""
-    if not have_display:
+    if not apport.ui.has_display():
         apport.fatal(
             "This program needs a running X session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
