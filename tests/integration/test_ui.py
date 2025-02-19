@@ -1227,7 +1227,7 @@ class T(unittest.TestCase):
         self.assertIsNone(self.ui.msg_title)
         self.assertTrue(self.ui.present_details_shown)
 
-    def test_run_crash_precollected(self):
+    def test_run_crash_precollected(self) -> None:
         """run_crash() on complete report on uninstalled package
 
         This happens when reporting a problem from a different machine through
@@ -1258,6 +1258,7 @@ class T(unittest.TestCase):
             f"has {self.ui.msg_severity} message:"
             f" {self.ui.msg_title}: {self.ui.msg_text}",
         )
+        assert self.ui.opened_url is not None
         self.assertTrue(
             self.ui.opened_url.startswith("http://coreutils.bugs.example.com")
         )
