@@ -84,6 +84,15 @@ def read_shebang(command: str) -> str | None:
 
 
 @contextlib.contextmanager
+def restore_os_environ() -> Generator[None]:
+    """Restore os.environ after leaving this context manager."""
+    orig_env = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(orig_env)
+
+
+@contextlib.contextmanager
 def run_test_executable(
     args: Sequence[str] = (os.path.realpath("/bin/sleep"), "86400"),
     env: dict[str, str] | None = None,
