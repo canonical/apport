@@ -29,7 +29,7 @@ def test_no_environment_variables() -> None:
         apport_kde.main([str(apport_kde_path)])
 
     assert (
-        stderr.getvalue() == "ERROR: This program needs a running X"
+        stderr.getvalue() == "ERROR: This program needs a running display server"
         ' session. Please see "man apport-cli" for a command line version of Apport.\n'
     )
     assert error.value.code == 1
