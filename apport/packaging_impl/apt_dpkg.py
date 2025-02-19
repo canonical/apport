@@ -1193,45 +1193,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         acquire_queue = []
         # add any dependencies to the packages list
         if install_deps:
-            deps = []
-            for pkg, ver in packages:
-                try:
-                    cache_pkg = apt_cache[pkg]
-                except KeyError:
-                    m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
-                    obsolete.append(f"{m}\n")
-                    apport.logging.warning("%s", m)
-                    continue
-                candidate = cache_pkg.candidate
-                assert candidate is not None
-                for dep in candidate.dependencies:
-                    # the dependency may be satisfied by a different package
-                    name = dep[0].name
-                    if name not in apt_cache:
-                        name = apt_cache.get_providing_packages(name)[0].name
-                    # the version in dep is the one from pkg's dependencies,
-                    # so use the version from the cache
-                    dep_candidate = apt_cache[name].candidate
-                    assert dep_candidate is not None
-                    dep_pkg_vers = dep_candidate.version
-                    # if the dependency is in the list of packages we don't
-                    # need to look up its dependencies again
-                    if name in [pkg[0] for pkg in packages]:
-                        continue
-                    # if the package is already extracted in the sandbox
-                    # because the report needs that package we don't want to
-                    # install a newer version which may cause a CRC mismatch
-                    # with the installed dbg symbols
-                    if name in pkg_versions:
-                        inst_version = pkg_versions[name]
-                        if self.compare_versions(inst_version, dep_pkg_vers) > -1:
-                            deps.append((name, inst_version))
-                        else:
-                            deps.append((name, dep_pkg_vers))
-                    else:
-                        deps.append((name, dep_pkg_vers))
-                    if name not in [pkg[0] for pkg in packages]:
-                        packages.append((name, None))
+            deps = self._collect_dependencies(
+                packages, pkg_versions, apt_cache, obsolete
+            )
             packages.extend(deps)
 
         def get_package_from_launchpad(pkg: str, ver: str | None) -> bool:
@@ -1428,6 +1392,55 @@ class __AptDpkgPackageInfo(PackageInfo):
     #
     # Internal helper methods
     #
+
+    # pylint: disable-next=too-many-locals
+    def _collect_dependencies(
+        self,
+        packages: list[tuple[str, str | None]],
+        pkg_versions: dict[str, str],
+        apt_cache: apt.Cache,
+        obsolete: list[str],
+    ) -> list[tuple[str, str]]:
+        deps = []
+        for pkg, _ in packages:
+            try:
+                cache_pkg = apt_cache[pkg]
+            except KeyError:
+                m = f"package {pkg.replace('%', '%%')} does not exist, ignoring"
+                obsolete.append(f"{m}\n")
+                apport.logging.warning("%s", m)
+                continue
+            candidate = cache_pkg.candidate
+            assert candidate is not None
+            for dep in candidate.dependencies:
+                # the dependency may be satisfied by a different package
+                name = dep[0].name
+                if name not in apt_cache:
+                    name = apt_cache.get_providing_packages(name)[0].name
+                # the version in dep is the one from pkg's dependencies,
+                # so use the version from the cache
+                dep_candidate = apt_cache[name].candidate
+                assert dep_candidate is not None
+                dep_pkg_vers = dep_candidate.version
+                # if the dependency is in the list of packages we don't
+                # need to look up its dependencies again
+                if name in [pkg[0] for pkg in packages]:
+                    continue
+                # if the package is already extracted in the sandbox
+                # because the report needs that package we don't want to
+                # install a newer version which may cause a CRC mismatch
+                # with the installed dbg symbols
+                if name in pkg_versions:
+                    inst_version = pkg_versions[name]
+                    if self.compare_versions(inst_version, dep_pkg_vers) > -1:
+                        deps.append((name, inst_version))
+                    else:
+                        deps.append((name, dep_pkg_vers))
+                else:
+                    deps.append((name, dep_pkg_vers))
+                if name not in [pkg[0] for pkg in packages]:
+                    packages.append((name, None))
+        return deps
 
     @staticmethod
     def _call_dpkg(args: list[str]) -> str:
