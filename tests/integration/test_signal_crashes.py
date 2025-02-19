@@ -32,7 +32,7 @@ import textwrap
 import time
 import typing
 import unittest
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -1241,7 +1241,9 @@ class T(unittest.TestCase):
         )
 
     @staticmethod
-    def gdb_command(command, args, core_file, uid):
+    def gdb_command(
+        command: str, args: Iterable[str], core_file: str, uid: int | None
+    ) -> list[str]:
         """Construct GDB arguments to call the test executable.
 
         GDB must be executed as root for test executables that use setuid.
@@ -1255,15 +1257,17 @@ class T(unittest.TestCase):
         """
         gdb_args = ["gdb", "--quiet", "-iex", "set debuginfod enable off"]
 
-        args = " ".join(f" {a}" for a in args)
+        cmd_args = " ".join(f" {a}" for a in args)
         if uid is not None:
-            args = f" --reuid={uid} --clear-groups /bin/sh -c 'exec {command}{args}'"
+            cmd_args = (
+                f" --reuid={uid} --clear-groups /bin/sh -c 'exec {command}{cmd_args}'"
+            )
             command = "/usr/bin/setpriv"
             gdb_args += ["--ex", "set follow-fork-mode child"]
 
         gdb_args += [
             "--ex",
-            f"run{args}",
+            f"run{cmd_args}",
             "--ex",
             f"generate-core-file {core_file}",
             command,
