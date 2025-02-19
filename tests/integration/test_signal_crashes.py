@@ -235,24 +235,24 @@ class T(unittest.TestCase):
 
         self._check_report(expect_report=False)
 
-    def test_crash_apport(self):
+    def test_crash_apport(self) -> None:
         """Report generation with apport."""
-        self.do_crash()
-        st = os.stat(self.test_report)
+        test_report = self.do_crash()
+        st = os.stat(test_report)
 
         # a subsequent crash does not alter unseen report
-        self.do_crash()
-        st2 = os.stat(self.test_report)
+        test_report = self.do_crash()
+        st2 = os.stat(test_report)
         self.assertEqual(st, st2, "original unseen report did not get overwritten")
 
         # a subsequent crash alters seen report
-        apport.fileutils.mark_report_seen(self.test_report)
-        self.do_crash()
-        st2 = os.stat(self.test_report)
+        apport.fileutils.mark_report_seen(test_report)
+        test_report = self.do_crash()
+        st2 = os.stat(test_report)
         self.assertNotEqual(st, st2, "original seen report gets overwritten")
 
         pr = apport.Report()
-        with open(self.test_report, "rb") as f:
+        with open(test_report, "rb") as f:
             pr.load(f)
         self.assertTrue(
             set(required_fields).issubset(set(pr.keys())), "report has required fields"
@@ -457,11 +457,11 @@ class T(unittest.TestCase):
         while count < 7:
             sys.stderr.write(f"{count} ")
             sys.stderr.flush()
-            self.do_crash()
+            test_report = self.do_crash()
             reports = apport.fileutils.get_new_reports()
             if not reports:
                 break
-            apport.fileutils.mark_report_seen(self.test_report)
+            apport.fileutils.mark_report_seen(test_report)
             count += 1
         self.assertGreater(count, 1, "gets at least 2 repeated crashes")
         self.assertLess(count, 7, "stops flooding after less than 7 repeated crashes")
@@ -491,17 +491,17 @@ class T(unittest.TestCase):
         for sig in (signal.SIGSEGV, signal.SIGABRT):
             for kb, exp_file in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
-                self.do_crash(
+                test_report = self.do_crash(
                     expect_corefile=exp_file,
                     expect_corefile_owner=os.geteuid(),
                     sig=sig,
                 )
-                self.check_report_coredump(self.test_report)
-                apport.fileutils.delete_report(self.test_report)
+                self.check_report_coredump(test_report)
+                apport.fileutils.delete_report(test_report)
 
             # creates core file with existing crash report, too
-            self.do_crash(expect_corefile=True)
-            apport.fileutils.delete_report(self.test_report)
+            test_report = self.do_crash(expect_corefile=True)
+            apport.fileutils.delete_report(test_report)
 
     def test_core_dump_packaged_sigquit(self) -> None:
         """Packaged executables create core files, no report for SIGQUIT."""
@@ -578,14 +578,14 @@ class T(unittest.TestCase):
         # do_crash verifies that we get the original core, not the injected one
         self.do_crash(expect_corefile=True, hook_before_apport=inject_bogus_report)
 
-    def test_ignore(self):
+    def test_ignore(self) -> None:
         """Ignore executables."""
-        self.do_crash()
+        test_report = self.do_crash()
 
         pr = apport.Report()
-        with open(self.test_report, "rb") as f:
+        with open(test_report, "rb") as f:
             pr.load(f)
-        os.unlink(self.test_report)
+        os.unlink(test_report)
 
         pr.mark_ignore()
 
@@ -786,16 +786,16 @@ class T(unittest.TestCase):
                 suid_dumpable=2,
             )
 
-    def test_coredump_from_socket(self):
+    def test_coredump_from_socket(self) -> None:
         """Forward a core dump through a socket.
 
         This is being used in a container via systemd activation, where the
         core dump gets read from /run/apport.socket.
         """
-        self.do_crash(via_socket=True)
+        test_report = self.do_crash(via_socket=True)
 
         pr = apport.Report()
-        with open(self.test_report, "rb") as f:
+        with open(test_report, "rb") as f:
             pr.load(f)
         self.assertEqual(pr["Signal"], "11")
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
@@ -811,17 +811,17 @@ class T(unittest.TestCase):
         )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
-    def test_crash_setuid_drop_via_socket(self):
+    def test_crash_setuid_drop_via_socket(self) -> None:
         """Report generation via socket for setuid program which drops root."""
         with create_dropsuid() as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            self.do_crash(
+            test_report = self.do_crash(
                 command=dropsuid, uid=MAIL_UID, suid_dumpable=2, via_socket=True
             )
 
             # check crash report
             report = apport.Report()
-            with open(self.test_report, "rb") as report_file:
+            with open(test_report, "rb") as report_file:
                 report.load(report_file)
             self.assertEqual(report["Signal"], "11")
             self.assertEqual(report["ExecutablePath"], dropsuid)
@@ -1120,7 +1120,7 @@ class T(unittest.TestCase):
         via_socket: bool = False,
         cwd: str | None = None,
         **kwargs: typing.Any,
-    ) -> None:
+    ) -> str:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Generate a test crash.
@@ -1239,6 +1239,7 @@ class T(unittest.TestCase):
             expect_report=expect_report,
             expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
         )
+        return self.test_report
 
     @staticmethod
     def gdb_command(
