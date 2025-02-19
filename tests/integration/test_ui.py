@@ -1031,7 +1031,7 @@ class T(unittest.TestCase):
         self.assertTrue(self.ui.present_details_shown)
 
     @skip_if_command_is_missing("gdb")
-    def test_run_crash_broken(self):
+    def test_run_crash_broken(self) -> None:
         """run_crash() for an invalid core dump"""
         # generate broken crash report
         r = apport.Report()
@@ -1047,12 +1047,13 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, "info", self.ui.msg_text)
+        assert self.ui.msg_text is not None
         self.assertIn("decompress", self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
-    def test_run_crash_argv_file(self):
+    def test_run_crash_argv_file(self) -> None:
         """run_crash() through a file specified on the command line"""
         # valid
         self.report["Package"] = "bash"
@@ -1078,6 +1079,7 @@ class T(unittest.TestCase):
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
 
+        assert self.ui.msg_text is not None
         self.assertIn(
             "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
@@ -1090,7 +1092,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_severity, "error")
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
-    def test_run_crash_unreportable(self):
+    def test_run_crash_unreportable(self) -> None:
         """run_crash() on a crash with the UnreportableReason field"""
         self.report["UnreportableReason"] = "It stinks."
         self.report["ExecutablePath"] = "/bin/bash"
@@ -1100,13 +1102,14 @@ class T(unittest.TestCase):
 
         self.ui.run_crash(self.report_file.name)
 
+        assert self.ui.msg_text is not None
         self.assertIn(
             "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
         )
         self.assertEqual(self.ui.msg_severity, "info")
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
-    def test_run_crash_malicious_crashdb(self):
+    def test_run_crash_malicious_crashdb(self) -> None:
         """run_crash() on a crash with malicious CrashDB"""
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
@@ -1119,10 +1122,11 @@ class T(unittest.TestCase):
         self.ui.run_crash(self.report_file.name)
 
         self.assertFalse(os.path.exists("/tmp/pwned"))
+        assert self.ui.msg_text is not None
         self.assertIn("invalid crash database definition", self.ui.msg_text)
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
-    def test_run_crash_malicious_package(self):
+    def test_run_crash_malicious_package(self) -> None:
         """Package: path traversal"""
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
             bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
@@ -1136,6 +1140,7 @@ class T(unittest.TestCase):
             self.ui.run_crash(self.report_file.name)
 
             self.assertFalse(os.path.exists("/tmp/pwned"))
+            assert self.ui.msg_text is not None
             self.assertIn("invalid Package:", self.ui.msg_text)
 
     def test_run_crash_malicious_exec_path(self) -> None:
@@ -1274,7 +1279,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.msg_title, _("Invalid problem report"))
         self.assertEqual(self.ui.msg_severity, "error")
 
-    def test_run_crash_uninstalled(self):
+    def test_run_crash_uninstalled(self) -> None:
         """run_crash() on reports with subsequently uninstalled packages"""
         # program got uninstalled between crash and report
         r = self._gen_test_crash()
@@ -1288,6 +1293,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _("Problem in bash"))
+        assert self.ui.msg_text is not None
         self.assertIn("not installed any more", self.ui.msg_text)
 
         # interpreted program got uninstalled between crash and report
@@ -1299,6 +1305,7 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _("Problem in bash"))
+        assert self.ui.msg_text is not None
         self.assertIn("not installed any more", self.ui.msg_text)
 
         # interpreter got uninstalled between crash and report
@@ -1310,9 +1317,10 @@ class T(unittest.TestCase):
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _("Problem in bash"))
+        assert self.ui.msg_text is not None
         self.assertIn("not installed any more", self.ui.msg_text)
 
-    def test_run_crash_updated_binary(self):
+    def test_run_crash_updated_binary(self) -> None:
         """run_crash() on binary that got updated in the meantime"""
         r = self._gen_test_crash()
         r["ExecutableTimestamp"] = str(int(r["ExecutableTimestamp"]) - 10)
@@ -1325,6 +1333,7 @@ class T(unittest.TestCase):
 
         assert self.ui.report
         self.assertNotIn("ExecutableTimestamp", self.ui.report)
+        assert self.ui.msg_text is not None
         self.assertIn(
             self.ui.report["ExecutablePath"],
             self.ui.msg_text,
@@ -1680,19 +1689,21 @@ class T(unittest.TestCase):
         self.assertIn("SourcePackage", r)
         self.assertNotIn("_Temp", r)
 
-    def test_run_update_report_nonexisting_package_from_bug(self):
+    def test_run_update_report_nonexisting_package_from_bug(self) -> None:
         """run_update_report() on a nonexisting package (from bug)"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
 
         self.assertEqual(self.ui.run_argv(), False)
+        assert self.ui.msg_text is not None
         self.assertIn("No additional information collected.", self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
-    def test_run_update_report_nonexisting_package_cli(self):
+    def test_run_update_report_nonexisting_package_cli(self) -> None:
         """run_update_report() on a nonexisting package (CLI argument)"""
         self.ui = UserInterfaceMock(["ui-test", "-u", "1", "-p", "bar"])
 
         self.assertEqual(self.ui.run_argv(), False)
+        assert self.ui.msg_text is not None
         self.assertIn("No additional information collected.", self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
@@ -1944,7 +1955,7 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
-    def test_run_symptom(self, stderr_mock):
+    def test_run_symptom(self, stderr_mock: MagicMock) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """run_symptom()"""
@@ -1952,6 +1963,7 @@ class T(unittest.TestCase):
         self.ui = UserInterfaceMock(["ui-test", "-s", "foobar"])
         self.ui.present_details_response = apport.ui.Action(report=True)
         self.assertEqual(self.ui.run_argv(), True)
+        assert self.ui.msg_text is not None
         self.assertIn('foobar" is not known', self.ui.msg_text)
         self.assertEqual(self.ui.msg_severity, "error")
 
@@ -2041,7 +2053,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.report["ProblemType"], "Bug")
         self.assertEqual(self.ui.report["q"], "True")
 
-    def test_run_report_bug_list_symptoms(self):
+    def test_run_report_bug_list_symptoms(self) -> None:
         """run_report_bug() without specifying arguments and available
         symptoms"""
         self._write_symptom_script(
@@ -2064,6 +2076,7 @@ class T(unittest.TestCase):
         self.ui.question_choice_response = None
         self.assertEqual(self.ui.run_argv(), True)
         self.assertIsNone(self.ui.msg_severity)
+        assert self.ui.msg_text is not None
         self.assertIn("kind of problem", self.ui.msg_text)
         assert self.ui.msg_choices is not None
         self.assertEqual(
