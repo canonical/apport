@@ -121,6 +121,11 @@ def _get_users_environ(uid: int) -> dict[str, str]:
     }
 
 
+def has_display() -> bool:
+    """Check if a display server is specified in the environment."""
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
 def run_as_real_user(
     args: list[str], *, get_user_env: bool = False, **kwargs: Any
 ) -> None:
