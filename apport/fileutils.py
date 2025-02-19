@@ -27,6 +27,7 @@ import socket
 import stat
 import subprocess
 import time
+from typing import IO
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -414,7 +415,7 @@ def increment_crash_counter(report: ProblemReport, filename: str) -> None:
         report["CrashCounter"] = str(crash_counter)
 
 
-def make_report_file(report, uid=None):
+def make_report_file(report: ProblemReport, uid: int | str | None = None) -> IO[bytes]:
     """Construct a canonical pathname for a report and open it for writing.
 
     If uid is not given, it defaults to the effective uid of the current
@@ -430,7 +431,7 @@ def make_report_file(report, uid=None):
     else:
         raise ValueError("report has neither ExecutablePath nor Package attribute")
 
-    if not uid:
+    if uid is None:
         uid = os.geteuid()
 
     path = os.path.join(report_dir, f"{subject}.{str(uid)}.crash")

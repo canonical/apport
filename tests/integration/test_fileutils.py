@@ -302,6 +302,15 @@ class T(unittest.TestCase):
         os.symlink(os.path.join(apport.fileutils.report_dir, "pwned"), path)
         self.assertRaises(OSError, apport.fileutils.make_report_file, pr)
 
+    def test_make_report_file_uid_0(self) -> None:
+        """make_report_file(report, uid=0)"""
+        report = problem_report.ProblemReport()
+        report["ExecutablePath"] = "/bin/sh"
+        with apport.fileutils.make_report_file(report, uid=0) as report_file:
+            self.assertEqual(
+                report_file.name, f"{apport.fileutils.report_dir}/_bin_sh.0.crash"
+            )
+
     def test_check_files_md5(self) -> None:
         """check_files_md5()"""
         f1 = os.path.join(apport.fileutils.report_dir, "test 1.txt")
