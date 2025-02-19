@@ -30,7 +30,7 @@ try:
     gi.require_version("GdkX11", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
     gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
-    from gi.repository import GdkX11, GLib, Gtk, Wnck
+    from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
     sys.stderr.write(f"Cannot start: {str(error)}\n")
@@ -640,7 +640,7 @@ def text_to_markup(text: str) -> str:
 
 def main(argv: list[str]) -> None:
     """GTK Apport user interface."""
-    if not apport.ui.has_display():
+    if not apport.ui.has_display() or Gdk.Display.get_default() is None:
         apport.fatal(
             "This program needs a running display server session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
