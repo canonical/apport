@@ -170,7 +170,7 @@ class T(unittest.TestCase):
         """mark_hanging_process()"""
         pr = problem_report.ProblemReport()
         pr["ExecutablePath"] = "/bin/bash"
-        apport.fileutils.mark_hanging_process(pr, "1")
+        apport.fileutils.mark_hanging_process(pr, 1)
         uid = str(os.getuid())
         base = f"_bin_bash.{uid}.1.hanging"
         expected = os.path.join(apport.fileutils.report_dir, base)

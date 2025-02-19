@@ -193,13 +193,13 @@ def find_snap(snap):
     return None
 
 
-def seen_report(report):
+def seen_report(report: str) -> bool:
     """Check whether the report file has already been processed earlier."""
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
 
-def mark_report_upload(report):
+def mark_report_upload(report: str) -> None:
     upload = f"{report.rsplit('.', 1)[0]}.upload"
     uploaded = f"{report.rsplit('.', 1)[0]}.uploaded"
     # if uploaded exists and is older than the report remove it and upload
@@ -212,7 +212,7 @@ def mark_report_upload(report):
         pass
 
 
-def mark_hanging_process(report, pid):
+def mark_hanging_process(report: ProblemReport, pid: int) -> None:
     if "ExecutablePath" in report:
         subject = report["ExecutablePath"].replace("/", "_")
     else:
@@ -225,7 +225,7 @@ def mark_hanging_process(report, pid):
         pass
 
 
-def mark_report_seen(report):
+def mark_report_seen(report: str) -> None:
     """Mark given report file as seen."""
     st = os.stat(report)
     try:
@@ -295,7 +295,7 @@ def get_sys_uid_max() -> int:
         return 999
 
 
-def get_all_reports():
+def get_all_reports() -> list[str]:
     """Return a list with all report files accessible to the calling user."""
     reports = []
     for r in glob.glob(os.path.join(report_dir, "*.crash")):
@@ -309,7 +309,7 @@ def get_all_reports():
     return reports
 
 
-def get_new_reports():
+def get_new_reports() -> list[str]:
     """Get new reports for calling user.
 
     Return a list with all report files which have not yet been processed
@@ -327,7 +327,7 @@ def get_new_reports():
     return reports
 
 
-def get_all_system_reports():
+def get_all_system_reports() -> list[str]:
     """Get all system reports.
 
     Return a list with all report files which belong to a system user.
@@ -358,7 +358,7 @@ def get_all_system_reports():
     return reports
 
 
-def get_new_system_reports():
+def get_new_system_reports() -> list[str]:
     """Get new system reports.
 
     Return a list with all report files which have not yet been processed
@@ -369,7 +369,7 @@ def get_new_system_reports():
     return [r for r in get_all_system_reports() if not seen_report(r)]
 
 
-def delete_report(report):
+def delete_report(report: str) -> None:
     """Delete the given report file.
 
     If unlinking the file fails due to a permission error (if report_dir is not
@@ -382,7 +382,7 @@ def delete_report(report):
             f.truncate(0)
 
 
-def get_recent_crashes(report):
+def get_recent_crashes(report: IO[bytes]) -> int:
     """Return the number of recent crashes for the given report file.
 
     Return the number of recent crashes (currently, crashes which happened more
@@ -438,7 +438,7 @@ def make_report_file(report: ProblemReport, uid: int | str | None = None) -> IO[
     return open(path, "xb")
 
 
-def check_files_md5(sumfile):
+def check_files_md5(sumfile: str) -> list[str]:
     """Check file integrity against md5 sum file.
 
     sumfile must be md5sum(1) format (relative to /).
@@ -530,7 +530,7 @@ def get_starttime(contents: str) -> int:
     return int(stripped.split()[19])
 
 
-def get_uid_and_gid(contents):
+def get_uid_and_gid(contents: str) -> tuple[int | None, int | None]:
     """Extract the uid and gid from the contents of a status file."""
     real_uid = None
     real_gid = None
@@ -545,7 +545,7 @@ def get_uid_and_gid(contents):
     return (real_uid, real_gid)
 
 
-def search_map(mapfd, uid):
+def search_map(mapfd: IO[str], uid: int) -> bool:
     """Search for an ID in a map fd."""
     for line in mapfd:
         fields = line.split()
@@ -561,7 +561,7 @@ def search_map(mapfd, uid):
     return False
 
 
-def get_boot_id():
+def get_boot_id() -> str:
     """Get the kernel boot id."""
     with open("/proc/sys/kernel/random/boot_id", encoding="utf-8") as f:
         boot_id = f.read().strip()
@@ -587,7 +587,7 @@ def get_process_environ(proc_pid_fd: int) -> dict[str, str]:
     return dict([entry.split("=", 1) for entry in environ.split("\0") if "=" in entry])
 
 
-def get_process_path(proc_pid_fd=None):
+def get_process_path(proc_pid_fd: int | None = None) -> str:
     """Get the process path from a proc directory file descriptor."""
     if proc_pid_fd is None:
         return "unknown"
@@ -651,7 +651,7 @@ def find_core_files_by_uid(uid):
     return uid_files
 
 
-def clean_core_directory(uid):
+def clean_core_directory(uid: int) -> None:
     """Remove old files from the core directory if there are more than
     the maximum allowed per uid.
     """
@@ -665,7 +665,7 @@ def clean_core_directory(uid):
             sorted_files.remove(sorted_files[0])
 
 
-def shared_libraries(path):
+def shared_libraries(path: str) -> dict[str, str]:
     """Get libraries with which the specified binary is linked.
 
     Return a library name -> path mapping, for example 'libc.so.6' ->
@@ -679,6 +679,7 @@ def shared_libraries(path):
         stderr=subprocess.STDOUT,
         universal_newlines=True,
     ) as ldd:
+        assert ldd.stdout is not None
         for line in ldd.stdout:
             try:
                 name, rest = line.split("=>", 1)
@@ -722,7 +723,7 @@ def should_skip_crash(report: ProblemReport, filename: str) -> str | None:
     return None
 
 
-def links_with_shared_library(path, lib):
+def links_with_shared_library(path: str, lib: str) -> bool:
     """Check if the binary at path links with the library named lib.
 
     path should be a fully qualified path (e.g. report['ExecutablePath']),
