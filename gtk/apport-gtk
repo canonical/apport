@@ -652,7 +652,7 @@ def main(argv: list[str]) -> None:
     """GTK Apport user interface."""
     if not apport.ui.has_display():
         apport.fatal(
-            "This program needs a running X session. Please see"
+            "This program needs a running display server session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )
     app = GTKUserInterface(argv)
