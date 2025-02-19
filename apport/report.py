@@ -1860,6 +1860,7 @@ class Report(problem_report.ProblemReport):
 
     def _provide_uncompressed_coredump_file(self) -> str:
         coredump = self["CoreDump"]
+        assert not isinstance(coredump, str)
         if hasattr(coredump, "find"):
             (fd, core) = tempfile.mkstemp(prefix="apport_core_")
             atexit.register(os.unlink, core)
