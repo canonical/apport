@@ -1202,14 +1202,18 @@ class __AptDpkgPackageInfo(PackageInfo):
                     obsolete.append(f"{m}\n")
                     apport.logging.warning("%s", m)
                     continue
-                for dep in cache_pkg.candidate.dependencies:
+                candidate = cache_pkg.candidate
+                assert candidate is not None
+                for dep in candidate.dependencies:
                     # the dependency may be satisfied by a different package
                     name = dep[0].name
                     if name not in apt_cache:
                         name = apt_cache.get_providing_packages(name)[0].name
                     # the version in dep is the one from pkg's dependencies,
                     # so use the version from the cache
-                    dep_pkg_vers = apt_cache[name].candidate.version
+                    dep_candidate = apt_cache[name].candidate
+                    assert dep_candidate is not None
+                    dep_pkg_vers = dep_candidate.version
                     # if the dependency is in the list of packages we don't
                     # need to look up its dependencies again
                     if name in [pkg[0] for pkg in packages]:
