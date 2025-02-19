@@ -124,7 +124,7 @@ class T(unittest.TestCase):
             nonfree = apport.hookutils.nonfree_kernel_modules(temp.name)
         self.assertNotIn("isofs", nonfree)
 
-    def test_attach_file(self):
+    def test_attach_file(self) -> None:
         """attach_file()"""
         with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
@@ -132,106 +132,108 @@ class T(unittest.TestCase):
             issue_contents = f.read().strip()
 
         # default key name
-        report = {}
+        report = problem_report.ProblemReport()
+        default_keys = set(report)
         apport.hookutils.attach_file(report, "/etc/passwd")
-        self.assertEqual(list(report), [".etc.passwd"])
+        self.assertEqual(set(report) - default_keys, {".etc.passwd"})
         self.assertEqual(report[".etc.passwd"], passwd_contents)
 
         # custom key name
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, "/etc/passwd", "Passwd")
-        self.assertEqual(list(report), ["Passwd"])
+        self.assertEqual(set(report) - default_keys, {"Passwd"})
         self.assertEqual(report["Passwd"], passwd_contents)
 
         # nonexisting file
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, "/nonexisting")
-        self.assertEqual(list(report), [".nonexisting"])
+        self.assertEqual(set(report) - default_keys, {".nonexisting"})
         self.assertTrue(report[".nonexisting"].startswith("Error: "))
 
         # symlink
         link = os.path.join(self.workdir, "symlink")
         os.symlink("/etc/passwd", link)
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, link, "Symlink")
-        self.assertEqual(list(report), ["Symlink"])
+        self.assertEqual(set(report) - default_keys, {"Symlink"})
         self.assertTrue(report["Symlink"].startswith("Error: "))
 
         # directory symlink
         link = os.path.join(self.workdir, "dirsymlink")
         os.symlink("/etc", link)
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, os.path.join(link, "passwd"), "DirSymlink")
-        self.assertEqual(list(report), ["DirSymlink"])
+        self.assertEqual(set(report) - default_keys, {"DirSymlink"})
         self.assertTrue(report["DirSymlink"].startswith("Error: "))
 
         # directory traversal
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, "/etc/../etc/passwd", "Traversal")
-        self.assertEqual(list(report), ["Traversal"])
+        self.assertEqual(set(report) - default_keys, {"Traversal"})
         self.assertTrue(report["Traversal"].startswith("Error: "))
 
         # existing key
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, "/etc/passwd")
         apport.hookutils.attach_file(report, "/etc/passwd")
-        self.assertEqual(list(report), [".etc.passwd"])
+        self.assertEqual(set(report) - default_keys, {".etc.passwd"})
         self.assertEqual(report[".etc.passwd"], passwd_contents)
 
         apport.hookutils.attach_file(
             report, "/etc/issue", ".etc.passwd", overwrite=False
         )
-        self.assertEqual(sorted(report.keys()), [".etc.passwd", ".etc.passwd_"])
+        self.assertEqual(set(report) - default_keys, {".etc.passwd", ".etc.passwd_"})
         self.assertEqual(report[".etc.passwd"], passwd_contents)
         self.assertEqual(report[".etc.passwd_"], issue_contents)
 
-    def test_attach_file_binary(self):
+    def test_attach_file_binary(self) -> None:
         """attach_file() for binary files"""
         myfile = os.path.join(self.workdir, "data")
         with open(myfile, "wb") as f:
             f.write(b"a\xc3\xb6b\xffx")
 
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file(report, myfile, key="data")
         self.assertEqual(report["data"], b"a\xc3\xb6b\xffx")
 
         apport.hookutils.attach_file(report, myfile, key="data", force_unicode=True)
         self.assertEqual(report["data"], b"a\xc3\xb6b\xef\xbf\xbdx".decode("UTF-8"))
 
-    def test_attach_file_if_exists(self):
+    def test_attach_file_if_exists(self) -> None:
         """attach_file_if_exists()"""
         with open("/etc/passwd", encoding="utf-8") as f:
             passwd_contents = f.read().strip()
 
         # default key name
-        report = {}
+        report = problem_report.ProblemReport()
+        default_keys = set(report)
         apport.hookutils.attach_file_if_exists(report, "/etc/passwd")
-        self.assertEqual(list(report), [".etc.passwd"])
+        self.assertEqual(set(report) - default_keys, {".etc.passwd"})
         self.assertEqual(report[".etc.passwd"], passwd_contents)
 
         # custom key name
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file_if_exists(report, "/etc/passwd", "Passwd")
-        self.assertEqual(list(report), ["Passwd"])
+        self.assertEqual(set(report) - default_keys, {"Passwd"})
         self.assertEqual(report["Passwd"], passwd_contents)
 
         # symlink
         link = os.path.join(self.workdir, "symlink")
         os.symlink("/etc/passwd", link)
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file_if_exists(report, link, "Symlink")
-        self.assertEqual(list(report), ["Symlink"])
+        self.assertEqual(set(report) - default_keys, {"Symlink"})
         self.assertTrue(report["Symlink"].startswith("Error: "))
 
         # nonexisting file
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file_if_exists(report, "/nonexisting")
-        self.assertEqual(list(report), [])
+        self.assertEqual(set(report) - default_keys, set())
 
         # directory traversal
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_file_if_exists(report, "/etc/../etc/passwd")
-        self.assertEqual(list(report), [])
+        self.assertEqual(set(report) - default_keys, set())
 
     def test_recent_syslog(self) -> None:
         """recent_syslog"""
@@ -367,9 +369,9 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
     @unittest.mock.patch(
         "apport.hookutils._root_command_prefix", MagicMock(return_value=[])
     )
-    def test_no_crashes():
+    def test_no_crashes() -> None:
         """Functions do not crash (very shallow)."""
-        report = {}
+        report = problem_report.ProblemReport()
         apport.hookutils.attach_hardware(report)
         apport.hookutils.attach_alsa(report)
         apport.hookutils.attach_network(report)
