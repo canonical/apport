@@ -202,6 +202,19 @@ def _read_package_version_dict(pkg_list_filename: str) -> dict[str, str]:
     return pkg_versions
 
 
+def _write_package_version_dict(
+    pkg_list_filename: str, pkg_versions: dict[str, str]
+) -> None:
+    pkgs = list(pkg_versions.keys())
+    pkgs.sort()
+    with open(pkg_list_filename, "w", encoding="utf-8") as f:
+        for p in pkgs:
+            f.write(p)
+            f.write(" ")
+            f.write(pkg_versions[p])
+            f.write("\n")
+
+
 def _unpack_packages(
     packages: list[tuple[str, str | None]],
     pkg_versions: dict[str, str],
@@ -1368,14 +1381,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         )
 
         # update package list
-        pkgs = list(pkg_versions.keys())
-        pkgs.sort()
-        with open(pkg_list, "w", encoding="utf-8") as f:
-            for p in pkgs:
-                f.write(p)
-                f.write(" ")
-                f.write(pkg_versions[p])
-                f.write("\n")
+        _write_package_version_dict(pkg_list, pkg_versions)
 
         if tmp_aptroot:
             shutil.rmtree(aptroot)
