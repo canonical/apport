@@ -1251,6 +1251,40 @@ class __AptDpkgPackageInfo(PackageInfo):
                 lp_cache[pkg] = ver
             return bool(lp_url)
 
+        def get_package(
+            pkg: str,
+            ver: str | None,
+            candidate: apt.package.Version,
+            base_pkg: str | None = None,
+            raise_if_missing: bool = False,
+        ) -> bool:
+            package = apt_cache[pkg]
+            pkg_found = False
+            # try to get the same version as pkg
+            if ver:
+                try:
+                    package.candidate = package.versions[ver]
+                    pkg_found = True
+                except KeyError:
+                    if get_package_from_launchpad(pkg, ver):
+                        pkg_found = True
+                    # if it can't be found in Launchpad failover to a
+                    # code path that'll use -dbgsym packages
+                    elif raise_if_missing:
+                        raise
+            if not pkg_found:
+                try:
+                    package.candidate = package.versions[candidate.version]
+                except KeyError:
+                    if base_pkg:
+                        obsolete.append(
+                            f"outdated debug symbol package for {base_pkg}:"
+                            f" package version {ver} or {candidate.version}"
+                            f" {pkg} version {package.candidate.version}\n"
+                        )
+            real_pkgs.add(pkg)
+            return pkg_found
+
         for pkg, ver in packages:
             try:
                 cache_pkg = apt_cache[pkg]
@@ -1282,31 +1316,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             if candidate.architecture != "all" and install_dbg:
                 try:
-                    dbg_pkg = f"{pkg}-dbg"
-                    dbg = apt_cache[dbg_pkg]
-                    pkg_found = False
-                    # try to get the same version as pkg
-                    if ver:
-                        try:
-                            dbg.candidate = dbg.versions[ver]
-                            pkg_found = True
-                        except KeyError:
-                            if get_package_from_launchpad(dbg_pkg, ver):
-                                pkg_found = True
-                            # if it can't be found in Launchpad failover to a
-                            # code path that'll use -dbgsym packages
-                            else:
-                                raise
-                    if not pkg_found:
-                        try:
-                            dbg.candidate = dbg.versions[candidate.version]
-                        except KeyError:
-                            obsolete.append(
-                                f"outdated -dbg package for {pkg}:"
-                                f" package version {ver}"
-                                f" -dbg version {dbg.candidate.version}\n"
-                            )
-                    real_pkgs.add(dbg_pkg)
+                    pkg_found = get_package(
+                        f"{pkg}-dbg", ver, candidate, pkg, raise_if_missing=True
+                    )
                 except KeyError:
                     # install all -dbg from the source package; lookup() just
                     # works from the current list pointer, we always need to
@@ -1338,57 +1350,16 @@ class __AptDpkgPackageInfo(PackageInfo):
                             # real_pkgs don't search for it again
                             if p in real_pkgs:
                                 continue
-                            pkg_found = False
-                            # prefer the version requested
-                            if ver:
-                                try:
-                                    apt_cache[p].candidate = apt_cache[p].versions[ver]
-                                    pkg_found = True
-                                except KeyError:
-                                    if get_package_from_launchpad(p, ver):
-                                        pkg_found = True
-                            if not pkg_found:
-                                try:
-                                    apt_cache[p].candidate = apt_cache[p].versions[
-                                        candidate.version
-                                    ]
-                                except KeyError:
-                                    # we don't really expect that, but it's
-                                    # possible that other binaries have a
-                                    # different version
-                                    pass
-                            real_pkgs.add(p)
+                            pkg_found = get_package(p, ver, candidate)
                     else:
                         pkg_found = False
-                        dbgsym_pkg = f"{pkg}-dbgsym"
                         try:
-                            dbgsym = apt_cache[dbgsym_pkg]
-                            real_pkgs.add(dbgsym_pkg)
-                            # prefer the version requested
-                            if ver:
-                                try:
-                                    dbgsym.candidate = dbgsym.versions[ver]
-                                    pkg_found = True
-                                except KeyError:
-                                    if get_package_from_launchpad(dbgsym_pkg, ver):
-                                        pkg_found = True
-                            if not pkg_found:
-                                try:
-                                    dbgsym.candidate = dbgsym.versions[
-                                        candidate.version
-                                    ]
-                                except KeyError:
-                                    obsolete.append(
-                                        f"outdated debug symbol package"
-                                        f" for {pkg}: package version"
-                                        f" {candidate.version}"
-                                        f" dbgsym version"
-                                        f" {dbgsym.candidate.version}\n"
-                                    )
-
+                            pkg_found = get_package(
+                                f"{pkg}-dbgsym", ver, candidate, pkg
+                            )
                         except KeyError:
                             if ver:
-                                if get_package_from_launchpad(dbgsym_pkg, ver):
+                                if get_package_from_launchpad(f"{pkg}-dbgsym", ver):
                                     pkg_found = True
                             if not pkg_found:
                                 obsolete.append(
