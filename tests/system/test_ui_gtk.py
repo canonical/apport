@@ -13,6 +13,7 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import io
 import os
 import shutil
 import subprocess
@@ -1165,6 +1166,19 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.app.run_crash(self.app.report_file)
 
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
+
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_help(self, stdout: io.StringIO, stderr: io.StringIO) -> None:
+        """Test apport-gtk --help."""
+        with self.assertRaisesRegex(SystemExit, "^0$"):
+            apport_gtk.main([str(apport_gtk_path), "--help"])
+
+        self.assertEqual(stderr.getvalue(), "")
+        self.assertRegex(stdout.getvalue(), "^usage: ")
+        self.assertIn(
+            "Report the crash from given .apport or .crash file", stdout.getvalue()
+        )
 
     def test_text_to_markup(self) -> None:
         """Test text_to_markup() with different URLs."""
