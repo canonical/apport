@@ -13,6 +13,7 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import io
 import os
 import shutil
 import tempfile
@@ -740,6 +741,19 @@ class T(unittest.TestCase):
 
         # No URL in this mode
         self.assertEqual(self.ui.open_url.call_count, 0)
+
+    @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_help(self, stdout: io.StringIO, stderr: io.StringIO) -> None:
+        """Test apport-kde --help."""
+        with self.assertRaisesRegex(SystemExit, "^0$"):
+            apport_kde.main([str(apport_kde_path), "--help"])
+
+        self.assertEqual(stderr.getvalue(), "")
+        self.assertRegex(stdout.getvalue(), "^usage: ")
+        self.assertIn(
+            "Report the crash from given .apport or .crash file", stdout.getvalue()
+        )
 
     def test_administrator_disabled_reporting(self) -> None:
         QTimer.singleShot(0, QCoreApplication.quit)

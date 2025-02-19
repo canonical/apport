@@ -583,12 +583,17 @@ class MainUserInterface(apport.ui.UserInterface):
         return filename or None
 
 
-if __name__ == "__main__":
+def main(argv: list[str]) -> None:
+    """Qt Apport User Interface"""
     if not os.environ.get("DISPLAY"):
         apport.logging.fatal(
             "This program needs a running X session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )
 
-    UserInterface = MainUserInterface(sys.argv)
+    UserInterface = MainUserInterface(argv)
     sys.exit(UserInterface.run_argv())
+
+
+if __name__ == "__main__":
+    main(sys.argv)
