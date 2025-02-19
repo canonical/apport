@@ -597,12 +597,15 @@ def get_process_path(proc_pid_fd=None):
         return "unknown"
 
 
-def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None):
+def get_core_path(
+    pid: int | None = None,
+    exe: str | None = None,
+    uid: int | None = None,
+    timestamp: int | None = None,
+    proc_pid_fd: int | None = None,
+) -> tuple[str, str]:
     """Get the path to a core file."""
-    if pid is None:
-        pid = "unknown"
-        timestamp = "unknown"
-    elif timestamp is None:
+    if pid is not None and timestamp is None:
         with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
             stat_contents = stat_file.read()
         timestamp = get_starttime(stat_contents)
@@ -616,7 +619,10 @@ def get_core_path(pid=None, exe=None, uid=None, timestamp=None, proc_pid_fd=None
 
     # This is similar to systemd-coredump, but with the exe name instead
     # of the command name
-    core_name = f"core.{exe}.{uid}.{get_boot_id()}.{str(pid)}.{str(timestamp)}"
+    if pid is None:
+        core_name = f"core.{exe}.{uid}.{get_boot_id()}.unknown.unknown"
+    else:
+        core_name = f"core.{exe}.{uid}.{get_boot_id()}.{pid}.{timestamp}"
 
     core_path = os.path.join(core_dir, core_name)
 
