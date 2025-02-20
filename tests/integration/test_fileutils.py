@@ -87,11 +87,8 @@ class T(unittest.TestCase):
 
             yield (pkg, display_num, no_display_num)
 
-    def test_find_package_desktopfile(self) -> None:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
-        """find_package_desktopfile()"""
-        # package without any .desktop file
+    def test_find_package_desktopfile_none(self) -> None:
+        """find_package_desktopfile() for a package without any .desktop file"""
         nodesktop = "bash"
         assert (
             len(
@@ -103,50 +100,53 @@ class T(unittest.TestCase):
             )
             == 0
         )
+        self.assertIsNone(
+            apport.fileutils.find_package_desktopfile(nodesktop),
+            f"no-desktop package {nodesktop}",
+        )
 
-        # find a package with one, a package with multiple .desktop files, and
-        # a package with a NoDisplay .desktop file
-        onedesktop = None
-        multidesktop = None
-        nodisplay = None
-        found_some = False
-        for pkg, display_num, no_display_num in self._packages_with_desktop_files():
-            found_some = True
-            if not nodisplay and display_num == 0 and no_display_num == 1:
-                nodisplay = pkg
-            elif not onedesktop and display_num == 1:
+    def test_find_package_desktopfile_one(self) -> None:
+        """find_package_desktopfile() for a package with exactly one .desktop file"""
+        for pkg, display_num, _ in self._packages_with_desktop_files():
+            if display_num == 1:
                 onedesktop = pkg
-            elif not multidesktop and display_num > 1:
-                multidesktop = pkg
-
-            if onedesktop and multidesktop and nodisplay:
                 break
+        else:
+            self.skipTest("no package with exactly one .desktop file found")
 
-        self.assertTrue(found_some)
+        d = apport.fileutils.find_package_desktopfile(onedesktop)
+        self.assertIsNotNone(d, f"one-desktop package {onedesktop}")
+        self.assertTrue(os.path.exists(d))
+        self.assertTrue(d.endswith(".desktop"))
 
-        if nodesktop:
-            self.assertEqual(
-                apport.fileutils.find_package_desktopfile(nodesktop),
-                None,
-                f"no-desktop package {nodesktop}",
-            )
-        if multidesktop:
-            self.assertEqual(
-                apport.fileutils.find_package_desktopfile(multidesktop),
-                None,
-                f"multi-desktop package {multidesktop}",
-            )
-        if onedesktop:
-            d = apport.fileutils.find_package_desktopfile(onedesktop)
-            self.assertIsNotNone(d, f"one-desktop package {onedesktop}")
-            self.assertTrue(os.path.exists(d))
-            self.assertTrue(d.endswith(".desktop"))
-        if nodisplay:
-            self.assertEqual(
-                apport.fileutils.find_package_desktopfile(nodisplay),
-                None,
-                f"NoDisplay package {nodisplay}",
-            )
+    def test_find_package_desktopfile_multiple(self) -> None:
+        """find_package_desktopfile() for a package without multiple .desktop files"""
+        for pkg, display_num, _ in self._packages_with_desktop_files():
+            if display_num > 1:
+                multidesktop = pkg
+                break
+        else:
+            self.skipTest("no package with multiple .desktop files found")
+
+        self.assertIsNone(
+            apport.fileutils.find_package_desktopfile(multidesktop),
+            f"multi-desktop package {multidesktop}",
+        )
+
+    def test_find_package_desktopfile_no_display(self) -> None:
+        """find_package_desktopfile() for a package with a NoDisplay .desktop file"""
+        nodisplay = None
+        for pkg, display_num, no_display_num in self._packages_with_desktop_files():
+            if display_num == 0 and no_display_num == 1:
+                nodisplay = pkg
+                break
+        # expect a package with a NoDisplay .desktop file, e. g. python3.XX
+        assert nodisplay is not None
+
+        self.assertIsNone(
+            apport.fileutils.find_package_desktopfile(nodisplay),
+            f"NoDisplay package {nodisplay}",
+        )
 
     def test_find_file_package(self) -> None:
         """find_file_package()"""
