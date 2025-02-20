@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-20 14:20+0100\n"
-"PO-Revision-Date: 2020-11-22 09:43+0000\n"
+"PO-Revision-Date: 2024-12-16 23:54+0000\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2025-02-20 13:32+0000\n"
+"X-Generator: Launchpad (build 78860d903de6d6d7dd5a0ade63efaca45d3467e2)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -234,6 +234,13 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Опције прозора се не могу користити на Wayland-у.\n"
+"\n"
+"Нађите ИД процеса прозора и тада покрените „ubuntu-bug <ИД процеса>“.\n"
+"\n"
+"ИД процеса можете наћи покренувши програм Пратилац система. На картици "
+"Процеси, потражите одговарајући програм. ИД процеса је број који се налази у "
+"колони ИД."
 
 #: ../apport/ui.py:954
 msgid ""
@@ -250,7 +257,7 @@ msgstr "икспроп није успео да одреди ИБ процеса
 #: ../apport/ui.py:992
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <izveštaj broj>"
 
 #: ../apport/ui.py:993
 msgid "Specify package name."
@@ -265,6 +272,7 @@ msgstr "Додаје додатну ознаку извештају. Може б
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [opcije] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:1046
 msgid ""
@@ -598,11 +606,11 @@ msgstr ""
 
 #: ../bin/apport-cli.py:312
 msgid "&Yes"
-msgstr ""
+msgstr "&Да"
 
 #: ../bin/apport-cli.py:313
 msgid "&No"
-msgstr ""
+msgstr "&Не"
 
 #: ../bin/apport-cli.py:349
 msgid "&Done"
@@ -798,15 +806,15 @@ msgstr "Да ли је у реду да пошаљем ове као прило�
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <izveštaj> <ciljni direktorijum>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Датотека извештаја за распакивање"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "фасцикла за распакивање извештаја"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -856,6 +864,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"извршна која ради под valgrind-овим алатом за проверу меморије за откривање "
+"цурења меморије"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
