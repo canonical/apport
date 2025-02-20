@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 import apport.hookutils
 import apport.report
 import problem_report
-from tests.helper import skip_if_command_is_missing
+from tests.helper import restore_os_environ, skip_if_command_is_missing
 from tests.paths import local_test_environment
 
 
@@ -302,6 +302,7 @@ class T(unittest.TestCase):
         finally:
             locale.setlocale(locale.LC_TIME, orig_ctime)
 
+    @restore_os_environ()
     def test_xsession_errors(self) -> None:
         """xsession_errors()"""
         with open(
@@ -334,36 +335,28 @@ The error was 'BadMatch (invalid parameter attributes)'.
 GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 """
             )
-        orig_home = os.environ.get("HOME")
-        try:
-            os.environ["HOME"] = self.workdir
+        os.environ["HOME"] = self.workdir
 
-            # explicit pattern
-            pattern = re.compile("notfound")
-            self.assertEqual(apport.hookutils.xsession_errors(pattern), "")
+        # explicit pattern
+        pattern = re.compile("notfound")
+        self.assertEqual(apport.hookutils.xsession_errors(pattern), "")
 
-            pattern = re.compile(r"^\w+-CRITICAL")
-            res = apport.hookutils.xsession_errors(pattern).splitlines()
-            self.assertEqual(len(res), 2)
-            self.assertTrue(res[0].startswith("EggSMClient-CRITICAL"))
-            self.assertTrue(res[1].startswith("GdkPixbuf-CRITICAL"))
+        pattern = re.compile(r"^\w+-CRITICAL")
+        res = apport.hookutils.xsession_errors(pattern).splitlines()
+        self.assertEqual(len(res), 2)
+        self.assertTrue(res[0].startswith("EggSMClient-CRITICAL"))
+        self.assertTrue(res[1].startswith("GdkPixbuf-CRITICAL"))
 
-            # default pattern includes glib assertions and X Errors
-            res = apport.hookutils.xsession_errors()
-            self.assertNotIn("nonstandard warning", res)
-            self.assertNotIn("keyring", res)
-            self.assertNotIn("credentials", res)
-            self.assertIn("WARNING: standard glib warning", res)
-            self.assertIn("GdkPixbuf-CRITICAL", res)
-            self.assertIn("'gnome-settings-daemon' received an X Window", res)
-            self.assertIn("BadMatch", res)
-            self.assertIn("serial 723", res)
-
-        finally:
-            if orig_home is not None:
-                os.environ["HOME"] = orig_home
-            else:
-                os.unsetenv("HOME")
+        # default pattern includes glib assertions and X Errors
+        res = apport.hookutils.xsession_errors()
+        self.assertNotIn("nonstandard warning", res)
+        self.assertNotIn("keyring", res)
+        self.assertNotIn("credentials", res)
+        self.assertIn("WARNING: standard glib warning", res)
+        self.assertIn("GdkPixbuf-CRITICAL", res)
+        self.assertIn("'gnome-settings-daemon' received an X Window", res)
+        self.assertIn("BadMatch", res)
+        self.assertIn("serial 723", res)
 
     @staticmethod
     @unittest.mock.patch(
@@ -384,9 +377,8 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 
     def test_command_output(self) -> None:
         """Test apport.hookutils.command_output."""
-        orig_lcm = os.environ.get("LC_MESSAGES")
-        os.environ["LC_MESSAGES"] = "en_US.UTF-8"
-        try:
+        with restore_os_environ():
+            os.environ["LC_MESSAGES"] = "en_US.UTF-8"
             # default mode: disable translations
             out = apport.hookutils.command_output(["env"])
             self.assertIn("LC_MESSAGES=C", out)
@@ -394,11 +386,6 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             # keep locale
             out = apport.hookutils.command_output(["env"], keep_locale=True)
             self.assertNotIn("LC_MESSAGES=C", out)
-        finally:
-            if orig_lcm is not None:
-                os.environ["LC_MESSAGES"] = orig_lcm
-            else:
-                del os.environ["LC_MESSAGES"]
 
         # nonexisting binary
         out = apport.hookutils.command_output(["/non existing"])
