@@ -11,6 +11,7 @@ import tempfile
 import time
 import unittest
 import unittest.mock
+from collections.abc import Iterator
 from unittest.mock import MagicMock
 
 import apport.fileutils
@@ -61,6 +62,31 @@ class T(unittest.TestCase):
             return [r1, r2, ri]
         return [r1, r2]
 
+    @staticmethod
+    def _packages_with_desktop_files() -> Iterator[tuple[str, int, int]]:
+        for d in sorted(os.listdir("/usr/share/applications/")):
+            if not d.endswith(".desktop"):
+                continue
+            path = os.path.join("/usr/share/applications/", d)
+            pkg = apport.packaging.get_file_package(path)
+            if pkg is None:
+                continue
+
+            display_num = 0
+            no_display_num = 0
+            for desktop_file in apport.packaging.get_files(pkg):
+                if not desktop_file.endswith(".desktop"):
+                    continue
+                if desktop_file.startswith("/usr/share/mimelnk"):
+                    continue
+                with open(desktop_file, "rb") as desktop_file:
+                    if b"NoDisplay=true" in desktop_file.read():
+                        no_display_num += 1
+                    else:
+                        display_num += 1
+
+            yield (pkg, display_num, no_display_num)
+
     def test_find_package_desktopfile(self) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches
@@ -84,28 +110,8 @@ class T(unittest.TestCase):
         multidesktop = None
         nodisplay = None
         found_some = False
-        for d in sorted(os.listdir("/usr/share/applications/")):
-            if not d.endswith(".desktop"):
-                continue
-            path = os.path.join("/usr/share/applications/", d)
-            pkg = apport.packaging.get_file_package(path)
-            if pkg is None:
-                continue
+        for pkg, display_num, no_display_num in self._packages_with_desktop_files():
             found_some = True
-
-            display_num = 0
-            no_display_num = 0
-            for desktop_file in apport.packaging.get_files(pkg):
-                if not desktop_file.endswith(".desktop"):
-                    continue
-                if desktop_file.startswith("/usr/share/mimelnk"):
-                    continue
-                with open(desktop_file, "rb") as desktop_file:
-                    if b"NoDisplay=true" in desktop_file.read():
-                        no_display_num += 1
-                    else:
-                        display_num += 1
-
             if not nodisplay and display_num == 0 and no_display_num == 1:
                 nodisplay = pkg
             elif not onedesktop and display_num == 1:
