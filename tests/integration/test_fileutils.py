@@ -6,6 +6,7 @@
 import glob
 import os
 import pwd
+import re
 import shutil
 import sys
 import tempfile
@@ -65,6 +66,7 @@ class T(unittest.TestCase):
 
     @staticmethod
     def _packages_with_desktop_files() -> Iterator[tuple[str, int, int]]:
+        desktop_path_re = re.compile("^/usr/share/applications/[^/]+.desktop$")
         for path in sorted(glob.glob("/usr/share/applications/*.desktop")):
             pkg = apport.packaging.get_file_package(path)
             if pkg is None:
@@ -73,9 +75,7 @@ class T(unittest.TestCase):
             display_num = 0
             no_display_num = 0
             for desktop_file in apport.packaging.get_files(pkg):
-                if not desktop_file.endswith(".desktop"):
-                    continue
-                if desktop_file.startswith("/usr/share/mimelnk"):
+                if not desktop_path_re.match(desktop_file):
                     continue
                 with open(desktop_file, "rb") as desktop_file:
                     if b"NoDisplay=true" in desktop_file.read():
