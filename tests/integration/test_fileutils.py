@@ -3,6 +3,7 @@
 # TODO: Address following pylint complaints
 # pylint: disable=invalid-name
 
+import glob
 import os
 import pwd
 import shutil
@@ -64,10 +65,7 @@ class T(unittest.TestCase):
 
     @staticmethod
     def _packages_with_desktop_files() -> Iterator[tuple[str, int, int]]:
-        for d in sorted(os.listdir("/usr/share/applications/")):
-            if not d.endswith(".desktop"):
-                continue
-            path = os.path.join("/usr/share/applications/", d)
+        for path in sorted(glob.glob("/usr/share/applications/*.desktop")):
             pkg = apport.packaging.get_file_package(path)
             if pkg is None:
                 continue
