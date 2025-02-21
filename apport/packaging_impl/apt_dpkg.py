@@ -1293,6 +1293,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     ver = cache_pkg.candidate.version
 
             candidate = cache_pkg.candidate
+            assert candidate is not None
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
