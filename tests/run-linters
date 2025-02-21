@@ -15,6 +15,7 @@
 set -eu
 
 PYTHON_FILES="apport apport_python_hook.py data problem_report.py setup.py setuptools_apport tests"
+test ! -d debian || PYTHON_FILES="$PYTHON_FILES debian"
 PYTHON_SCRIPTS_WITHOUT_APPORT=$(find bin data gtk kde -type f -executable ! -name apport-bug ! -name apport-collect ! -name is-enabled ! -name root_info_wrapper ! -name apport)
 PYTHON_SCRIPTS="$PYTHON_SCRIPTS_WITHOUT_APPORT data/apport"
 
