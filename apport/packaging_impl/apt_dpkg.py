@@ -20,6 +20,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # in older versions as well.
 from __future__ import annotations
 
+import collections
 import contextlib
 import datetime
 import fnmatch
@@ -44,7 +45,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping, MutableMapping
 
 import apt
 import apt.cache
@@ -218,7 +219,7 @@ def _write_package_version_dict(
 
 
 def _unpack_packages(
-    packages: list[tuple[str, str | None]],
+    packages: Mapping[str, str | None],
     pkg_versions: dict[str, str],
     apt_cache: apt.Cache,
     real_pkgs: set[str],
@@ -230,12 +231,11 @@ def _unpack_packages(
     """
     already_right_version = set()
     logger = logging.getLogger(__name__)
-    requested_pkgs = dict(packages)
     for p in real_pkgs:
         candidate = apt_cache[p].candidate
         assert candidate is not None
-        if p in requested_pkgs:
-            if requested_pkgs[p] is None:
+        if p in packages:
+            if packages[p] is None:
                 # We already have the latest version of this package
                 if pkg_versions.get(p) == candidate.version:
                     logger.debug("Removing %s which is already the right version", p)
@@ -243,7 +243,7 @@ def _unpack_packages(
                 else:
                     logger.debug("Installing %s version %s", p, candidate.version)
                     apt_cache[p].mark_install(False, False)
-            elif pkg_versions.get(p) != requested_pkgs[p]:
+            elif pkg_versions.get(p) != packages[p]:
                 logger.debug("Installing %s version %s", p, candidate.version)
                 apt_cache[p].mark_install(False, False)
             elif pkg_versions.get(p) != candidate.version:
@@ -1220,7 +1220,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         obsolete = self._install_packages(
             rootdir,
             release,
-            packages,
+            collections.OrderedDict(packages),
             verbose,
             permanent_rootdir,
             architecture,
@@ -1244,7 +1244,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self,
         rootdir: str,
         release: str,
-        packages: list[tuple[str, str | None]],
+        packages: MutableMapping[str, str | None],
         verbose: bool,
         permanent_rootdir: bool,
         architecture: str,
@@ -1278,7 +1278,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             deps = self._collect_dependencies(
                 packages, pkg_versions, apt_cache, obsolete
             )
-            packages.extend(deps)
+            packages.update(deps)
 
         def get_package_from_launchpad(pkg: str, ver: str | None) -> bool:
             """Try to get binary package from Launchpad and stage download.
@@ -1344,7 +1344,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             candidate = apt_cache[package].candidate
             return candidate is not None and "transitional" in candidate.description
 
-        for pkg, ver in packages:
+        for pkg, ver in packages.items():
             try:
                 cache_pkg = apt_cache[pkg]
             except KeyError:
@@ -1477,13 +1477,13 @@ class _AptDpkgPackageInfo(PackageInfo):
     # pylint: disable-next=too-many-locals
     def _collect_dependencies(
         self,
-        packages: list[tuple[str, str | None]],
+        packages: Mapping[str, str | None],
         pkg_versions: dict[str, str],
         apt_cache: apt.Cache,
         obsolete: list[str],
-    ) -> list[tuple[str, str]]:
-        packages_to_check = [pkg[0] for pkg in packages]
-        deps = []
+    ) -> collections.OrderedDict[str, str]:
+        packages_to_check = list(packages.keys())
+        deps = collections.OrderedDict()
         for pkg in packages_to_check:
             try:
                 cache_pkg = apt_cache[pkg]
@@ -1515,11 +1515,11 @@ class _AptDpkgPackageInfo(PackageInfo):
                 if name in pkg_versions:
                     inst_version = pkg_versions[name]
                     if self.compare_versions(inst_version, dep_pkg_vers) > -1:
-                        deps.append((name, inst_version))
+                        deps[name] = inst_version
                     else:
-                        deps.append((name, dep_pkg_vers))
+                        deps[name] = dep_pkg_vers
                 else:
-                    deps.append((name, dep_pkg_vers))
+                    deps[name] = dep_pkg_vers
                 if name not in packages_to_check:
                     packages_to_check.append(name)
         return deps
