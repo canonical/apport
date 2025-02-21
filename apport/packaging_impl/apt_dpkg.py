@@ -148,6 +148,50 @@ def _read_mirror_file(uri: str) -> list[str]:
     return mirrors
 
 
+def _unpack_packages(
+    packages: list[tuple[str, str | None]],
+    pkg_versions: dict[str, str],
+    apt_cache: apt.Cache,
+    real_pkgs: set[str],
+) -> set[str]:
+    """Unpack packages, weed out the ones that are already installed (for
+    permanent sandboxes)
+
+    Return a set of packages that are already the right version.
+    """
+    already_right_version = set()
+    logger = logging.getLogger(__name__)
+    requested_pkgs = dict(packages)
+    for p in real_pkgs:
+        candidate = apt_cache[p].candidate
+        assert candidate is not None
+        if p in requested_pkgs:
+            if requested_pkgs[p] is None:
+                # We already have the latest version of this package
+                if pkg_versions.get(p) == candidate.version:
+                    logger.debug("Removing %s which is already the right version", p)
+                    already_right_version.add(p)
+                else:
+                    logger.debug("Installing %s version %s", p, candidate.version)
+                    apt_cache[p].mark_install(False, False)
+            elif pkg_versions.get(p) != requested_pkgs[p]:
+                logger.debug("Installing %s version %s", p, candidate.version)
+                apt_cache[p].mark_install(False, False)
+            elif pkg_versions.get(p) != candidate.version:
+                logger.debug("Installing %s version %s", p, candidate.version)
+                apt_cache[p].mark_install(False, False)
+            else:
+                logger.debug("Removing %s which is already the right version", p)
+                already_right_version.add(p)
+        elif pkg_versions.get(p) != candidate.version:
+            logger.debug("Installing %s", p)
+            apt_cache[p].mark_install(False, False)
+        else:
+            logger.debug("Removing %s which is already the right version", p)
+            already_right_version.add(p)
+    return already_right_version
+
+
 def _usr_merge_alternative(path: str) -> str | None:
     """Determine /usr-merge alternative name.
 
@@ -1344,45 +1388,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                             if not pkg_found:
                                 obsolete += f"no debug symbol package found for {pkg}\n"
 
-        # unpack packages, weed out the ones that are already installed (for
-        # permanent sandboxes)
-        logger = logging.getLogger(__name__)
-        requested_pkgs = dict(packages)
-        for p in real_pkgs.copy():
-            if p in requested_pkgs:
-                if requested_pkgs[p] is None:
-                    # We already have the latest version of this package
-                    if pkg_versions.get(p) == apt_cache[p].candidate.version:
-                        logger.debug(
-                            "Removing %s which is already the right version", p
-                        )
-                        real_pkgs.remove(p)
-                    else:
-                        logger.debug(
-                            "Installing %s version %s",
-                            p,
-                            apt_cache[p].candidate.version,
-                        )
-                        apt_cache[p].mark_install(False, False)
-                elif pkg_versions.get(p) != requested_pkgs[p]:
-                    logger.debug(
-                        "Installing %s version %s", p, apt_cache[p].candidate.version
-                    )
-                    apt_cache[p].mark_install(False, False)
-                elif pkg_versions.get(p) != apt_cache[p].candidate.version:
-                    logger.debug(
-                        "Installing %s version %s", p, apt_cache[p].candidate.version
-                    )
-                    apt_cache[p].mark_install(False, False)
-                else:
-                    logger.debug("Removing %s which is already the right version", p)
-                    real_pkgs.remove(p)
-            elif pkg_versions.get(p) != apt_cache[p].candidate.version:
-                logger.debug("Installing %s", p)
-                apt_cache[p].mark_install(False, False)
-            else:
-                logger.debug("Removing %s which is already the right version", p)
-                real_pkgs.remove(p)
+        real_pkgs.difference_update(
+            _unpack_packages(packages, pkg_versions, apt_cache, real_pkgs)
+        )
 
         last_written = time.time()
         # fetch packages
