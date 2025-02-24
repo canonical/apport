@@ -950,7 +950,7 @@ class Report(problem_report.ProblemReport):
             "Stacktrace": "bt full",
             "ThreadStacktrace": "thread apply all bt full",
             "AssertionMessage": "print __abort_msg->msg",
-            "GLibAssertionMessage": "print __glib_assert_msg",
+            "GLibAssertionMessage": "print (char*) __glib_assert_msg",
             "NihAssertionMessage": "print (char*) __nih_abort_msg",
         }
         gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)

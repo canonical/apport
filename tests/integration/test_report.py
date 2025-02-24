@@ -660,8 +660,7 @@ int main() { return f(42); }
                 fd.write(code)
             try:
                 subprocess.run(
-                    ["gcc"] + extra_gcc_args + ["-g", "crash.c", "-o", "crash"],
-                    check=True,
+                    ["gcc", "-g", "crash.c", "-o", "crash"] + extra_gcc_args, check=True
                 )
             except FileNotFoundError as error:
                 self.skipTest(f"{error.filename} not available")
@@ -985,42 +984,25 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
         self.assertNotIn("AssertionMessage", pr)
 
-    # disabled: __glib_assert_msg symbol not available (LP: #1689344)
-    def disabled_test_add_gdb_info_abort_glib(self):
+    def test_add_gdb_info_abort_glib(self):
         """add_gdb_info() with glib assertion"""
-        (fd, script) = tempfile.mkstemp()
-        assert not os.path.exists("core")
+        code = textwrap.dedent(
+            """\
+            #include <glib.h>
+            int main() { g_assert_cmpint(1, <, 0); }
+            """
+        )
         try:
-            os.close(fd)
-
-            # create a test script which produces a core dump for us
-            with open(script, "w", encoding="utf-8") as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        #!/bin/sh
-                        gcc -o $0.bin -x c - \
-                            `pkg-config --cflags --libs glib-2.0` <<EOF
-                        #include <glib.h>
-                        int main() { g_assert_cmpint(1, <, 0); }
-                        EOF
-                        ulimit -c unlimited
-                        $0.bin 2>/dev/null
-                        """
-                    )
-                )
-            # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call(["/bin/sh", script]) != 0
-            self._validate_core("core")
-
-            pr = apport.report.Report()
-            pr["ExecutablePath"] = script + ".bin"
-            pr["CoreDump"] = ("core",)
-            pr.add_gdb_info()
-        finally:
-            os.unlink(script)
-            os.unlink(script + ".bin")
-            os.unlink("core")
+            process = subprocess.run(
+                ["pkg-config", "--cflags", "--libs", "glib-2.0"],
+                check=True,
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+        except FileNotFoundError as error:
+            self.skipTest(f"{error.filename} not available")
+        glib_flags = process.stdout.strip().split()
+        pr = self._generate_sigsegv_report(None, "6", code, None, glib_flags)
 
         self._validate_gdb_fields(pr)
         self.assertTrue(
