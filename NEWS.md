@@ -1,6 +1,43 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.32.0 (2025-02-26)
+-------------------
+
+### Added
+
+* Add some type hints
+
+### Changed
+
+* apt_dpkg: Replace apt-key with direct key download
+* apport-cli: only calculate length for strings to show
+* Format code with black 25
+* unkillable_shutdown: pass `pid` around as `int`
+* report: expect `pid` parameter of `add_proc_info` to be of type `int`
+* test: Remove conversion of dbgsym keyring
+
+### Fixed
+
+* ui:
+  - fix passing possible `None` to `ui_error_message`
+  - skip value not empty check in `get_complete_size`
+    ([LP: #2081708](https://launchpad.net/bugs/2081708))
+* problem_report: use iterator in `CompressedValue.__len__` to keep the memory
+  footprint small ([LP: #2081708](https://launchpad.net/bugs/2081708))
+* apt_dpkg: Clear `APT::Architectures` when setting architecture
+* apport-gtk: check for available display on startup
+  ([LP: #2006981](https://launchpad.net/bugs/2006981))
+* apport-kde: support launching on Wayland
+* fileutils: avoid `geteuid` call in `make_report_file` for `uid=0`
+* report: fix extracting glib assertion from crashdump
+* test:
+  - fix expected traceback for Python 3.13
+  - skip anonymization test on environments that are too generic
+    ([LP: #2097264](https://launchpad.net/bugs/2097264))
+  - support relative path in `do_crash`
+  - fix `test_find_package_desktopfile_multiple` to not use gnome-terminal
+
 2.31.0 (2024-12-10)
 -------------------
 
