@@ -1060,7 +1060,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # pylint: disable=protected-access
         team = self.options.get("triaging_team", "ubuntu-crashes-universe")
         person = f"{self.launchpad._root_uri}~{team}"
-        if not person.replace(str(self.launchpad._root_uri), "").strip("~") in [
+        if person.replace(str(self.launchpad._root_uri), "").strip("~") not in [
             str(sub).split("/", maxsplit=1)[-1] for sub in bug.subscriptions
         ]:
             bug.subscribe(person=person)
