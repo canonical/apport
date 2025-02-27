@@ -102,3 +102,29 @@ reports = false
 
 # Activate the evaluation score.
 score = false
+
+[tool.ruff]
+include = [
+    "pyproject.toml",
+    "**/*.py",
+    "bin/apport-cli",
+    "bin/apport-retrace",
+    "bin/apport-unpack",
+    "bin/apport-valgrind",
+    "bin/crash-digger",
+    "bin/dupdb-admin",
+    "data/apport",
+    "data/apport-checkreports",
+    "data/apportcheckresume",
+    "data/gcc_ice_hook",
+    "data/iwlwifi_error_dump",
+    "data/java_uncaught_exception",
+    "data/kernel_crashdump",
+    "data/kernel_oops",
+    "data/package_hook",
+    "data/recoverable_problem",
+    "data/unkillable_shutdown",
+    "data/whoopsie-upload-all",
+    "gtk/apport-gtk",
+    "kde/apport-kde",
+]
