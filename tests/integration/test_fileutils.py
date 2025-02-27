@@ -370,7 +370,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
 
             # nonempty
             f.write(
-                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n" b"[spethial]\none= 99\n"
+                b"[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n[spethial]\none= 99\n"
             )
             f.flush()
             self.assertIsNone(apport.fileutils.get_config("main", "foo"))

@@ -742,7 +742,7 @@ def test_create_sources_for_a_named_ppa(
         if {"deb", "deb-src"} == set(e.types)
         and "jammy" in e.suites
         and "main" in e.comps
-        and "http://ppa.launchpad.net/" "daisy-pluckers/daisy-seeds/ubuntu" in e.uris
+        and "http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu" in e.uris
     ]
     assert [
         e
@@ -750,7 +750,7 @@ def test_create_sources_for_a_named_ppa(
         if "deb" in e.types
         and "jammy" in e.suites
         and "main/debug" in e.comps
-        and "http://ppa.launchpad.net/" "daisy-pluckers/daisy-seeds/ubuntu" in e.uris
+        and "http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu" in e.uris
     ]
 
     trusted_gpg_d = pathlib.Path(rootdir) / "etc" / "apt" / "trusted.gpg.d"
