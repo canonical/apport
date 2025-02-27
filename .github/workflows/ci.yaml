@@ -32,6 +32,12 @@ jobs:
       - name: Run linter tests
         run: tests/run-linters
 
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
+
   unit-and-integration:
     runs-on: ubuntu-latest
     strategy:
