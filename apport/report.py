@@ -1613,7 +1613,7 @@ class Report(problem_report.ProblemReport):
         it exists.
         """
         if "ExecutablePath" not in self:
-            if not self["ProblemType"] in {"KernelCrash", "KernelOops"}:
+            if self["ProblemType"] not in {"KernelCrash", "KernelOops"}:
                 return None
 
         # kernel crash

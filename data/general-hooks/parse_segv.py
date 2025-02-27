@@ -374,7 +374,7 @@ def add_info(report):
             return
 
     # Only run on segv for x86 and x86_64...
-    if not report["Architecture"] in {"i386", "amd64"}:
+    if report["Architecture"] not in {"i386", "amd64"}:
         return
 
     try:
