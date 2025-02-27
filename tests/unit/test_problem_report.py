@@ -14,7 +14,7 @@ import textwrap
 import time
 import unittest
 import unittest.mock
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 try:
     import zstandard
@@ -410,6 +410,30 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["AscFile"] = (tempasc, False, None, True)
         out = io.BytesIO()
         self.assertRaises(OSError, pr.write, out)
+
+    @patch("problem_report.CompressedValue.iter_compressed.__defaults__", (48,))
+    def test_write_compressed_value(self) -> None:
+        """Write a report with a multi-line compressed value."""
+        report = problem_report.ProblemReport(date="now!")
+        report["BinValue"] = problem_report.CompressedValue(
+            compressed_value=b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff\x0b\xc9HUH\xcc"
+            b"+.O-R(\xc9W\xc8\xc9LK\xd5Q(\x01\x8a\x95\xe6e\x96\xa5\x16\x15\x03y\x89y)"
+            b"\n\xa9@veIFf^:\x00\xa6\xbfr\x950\x00\x00\x00"
+        )
+        out = io.BytesIO()
+        report.write(out)
+        self.assertEqual(
+            out.getvalue().decode(),
+            textwrap.dedent(
+                """\
+                ProblemType: Crash
+                Date: now!
+                BinValue: base64
+                 H4sIAAAAAAAC/wvJSFVIzCsuTy1SKMlXyMlMS9VRKAGKleZllqUWFQN5iXkpCqlA
+                 dmVJRmZeOgCmv3KVMAAAAA==
+                """
+            ),
+        )
 
     def test_read_file(self) -> None:
         """Read a report with binary data."""
