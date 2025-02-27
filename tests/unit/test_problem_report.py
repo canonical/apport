@@ -511,23 +511,40 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         ).encode()
 
         pr = problem_report.ProblemReport()
-        pr.load(io.BytesIO(report))
+        pr.load(io.BytesIO(report), binary="compressed")
 
         self.assertEqual(pr["Long"], "xxx\n.\nyyy")
         self.assertEqual(pr["Short"], "Bar")
-        self.assertEqual(pr["File"], b"ABABABABABABABABABAB\0\0\0\0\0\0\0\0\0\0Z")
+        self.assertEqual(
+            pr["File"].get_value(), b"ABABABABABABABABABAB\0\0\0\0\0\0\0\0\0\0Z"
+        )
 
         # write back unmodified
         out = io.BytesIO()
         pr.write(out)
-        self.assertEqual(out.getvalue(), report)
+        self.assertEqual(
+            out.getvalue().decode(),
+            textwrap.dedent(
+                """\
+                ProblemType: Crash
+                Date: now!
+                Long:
+                 xxx
+                 .
+                 yyy
+                Short: Bar
+                File: base64
+                 H4sICAAAAAAC/0ZpbGUAc3RyxIAMcBAFAK/2p9MfAAAA
+                """
+            ),
+        )
 
         pr["Short"] = "aaa\nbbb"
         pr["Long"] = "123"
         out = io.BytesIO()
         pr.write(out)
         self.assertEqual(
-            out.getvalue(),
+            out.getvalue().decode(),
             textwrap.dedent(
                 """\
                 ProblemType: Crash
@@ -537,10 +554,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                  aaa
                  bbb
                 File: base64
-                 H4sICAAAAAAC/0ZpbGUA
-                 c3RyxIAMcBAFAK/2p9MfAAAA
+                 H4sICAAAAAAC/0ZpbGUAc3RyxIAMcBAFAK/2p9MfAAAA
                 """
-            ).encode(),
+            ),
         )
 
     def test_sorted_items(self) -> None:

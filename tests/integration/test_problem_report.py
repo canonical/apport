@@ -188,21 +188,13 @@ class T(unittest.TestCase):
             out = io.BytesIO()
             pr.write(out)
 
-        self.assertEqual(
-            out.getvalue().decode(),
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                Afile: base64
-                 H4sICAAAAAAC/0FmaWxlAA==
-                 c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-                File: base64
-                 H4sICAAAAAAC/0ZpbGUA
-                 c3RyhEIGBoYoRiYAM5XUCxAAAAA=
-                """
-            ),
-        )
+        self.assertIn("Afile: base64\n", out.getvalue().decode())
+        self.assertIn("File: base64\n", out.getvalue().decode())
+        report = problem_report.ProblemReport()
+        out.seek(0)
+        report.load(out)
+        self.assertEqual(report["File"], bin_data)
+        self.assertEqual(report["Afile"], bin_data)
 
         # force compression/encoding bool
         with tempfile.NamedTemporaryFile() as temp:
