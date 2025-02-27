@@ -104,7 +104,7 @@ def apport_excepthook(
                 report["_PythonExceptionQualifier"] = name
 
         # disambiguate OSErrors with errno:
-        if exc_type == OSError:
+        if exc_type is OSError:
             assert isinstance(exc_obj, OSError)
             if exc_obj.errno is not None:
                 report["_PythonExceptionQualifier"] = str(exc_obj.errno)

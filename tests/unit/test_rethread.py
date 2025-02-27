@@ -51,7 +51,7 @@ class T(unittest.TestCase):
         t.join()
         # thread did not terminate normally, no return value
         self.assertRaises(AssertionError, t.return_value)
-        self.assertTrue(t.exc_info()[0] == ZeroDivisionError)
+        self.assertIs(t.exc_info()[0], ZeroDivisionError)
         exc = traceback.format_exception(
             t.exc_info()[0], t.exc_info()[1], t.exc_info()[2]
         )
