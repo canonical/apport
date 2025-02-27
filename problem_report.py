@@ -307,7 +307,8 @@ class CompressedValue:
         # legacy zlib format
         file.write(zlib.decompress(self.compressed_value))
 
-    def _iter_compressed_value(self, chunk_size: int) -> Iterator[bytes]:
+    def iter_compressed(self, chunk_size: int = CHUNK_SIZE) -> Iterator[bytes]:
+        """Iterate over the compressed content in chunks."""
         assert self.compressed_value
         for i in range(0, self.get_compressed_size(), chunk_size):
             yield self.compressed_value[i : i + chunk_size]
@@ -320,9 +321,7 @@ class CompressedValue:
 
         # legacy zlib format and zstandard
         length = 0
-        for block in self.decode_compressed_stream(
-            self._iter_compressed_value(CHUNK_SIZE)
-        ):
+        for block in self.decode_compressed_stream(self.iter_compressed()):
             length += len(block)
         return length
 
@@ -670,12 +669,8 @@ class ProblemReport(collections.UserDict):
         # TODO: split into smaller subgenerators
         # pylint: disable=too-many-branches
         value = self.data[key]
-        if isinstance(value, CompressedFile):
+        if isinstance(value, (CompressedFile, CompressedValue)):
             yield from value.iter_compressed()
-            return
-        if isinstance(value, CompressedValue):
-            assert value.compressed_value is not None
-            yield value.compressed_value
             return
         gzip_header = (
             GZIP_HEADER_START
