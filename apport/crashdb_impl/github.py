@@ -87,7 +87,7 @@ class Github:
 
         self.__authentication_data = {
             "client_id": self.__client_id,
-            "device_code": f'{response["device_code"]}',
+            "device_code": f"{response['device_code']}",
             "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
         }
         self.__cooldown = response["interval"]

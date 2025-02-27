@@ -66,7 +66,7 @@ class T(unittest.TestCase):
         os.write(
             fd,
             f"""\
-#!/usr/bin/env {os.getenv('PYTHON', 'python3')}
+#!/usr/bin/env {os.getenv("PYTHON", "python3")}
 import apport_python_hook
 apport_python_hook.install()
 
@@ -224,8 +224,7 @@ func(42)
         signature = pr.crash_signature()
         assert signature
         self.assertIn(
-            "dbus.exceptions.DBusException"
-            "(org.freedesktop.DBus.Error.UnknownMethod):",
+            "dbus.exceptions.DBusException(org.freedesktop.DBus.Error.UnknownMethod):",
             signature,
         )
 

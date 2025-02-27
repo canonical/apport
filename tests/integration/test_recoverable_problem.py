@@ -46,8 +46,7 @@ class TestRecoverableProblem(unittest.TestCase):
             time.sleep(0.1)
             seconds += 0.1
         self.fail(
-            f"timeout while waiting for .crash file to be created"
-            f" in {self.report_dir}."
+            f"timeout while waiting for .crash file to be created in {self.report_dir}."
         )
 
     @unittest.mock.patch("os.listdir")

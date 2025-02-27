@@ -45,8 +45,7 @@ class MalformedProblemReport(ValueError):
 
     def __init__(self, message: str, *args: object):
         super().__init__(
-            f"Malformed problem report: {message}."
-            f" Is this a proper .crash text file?",
+            f"Malformed problem report: {message}. Is this a proper .crash text file?",
             *args,
         )
 

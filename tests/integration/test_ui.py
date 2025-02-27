@@ -908,7 +908,6 @@ class T(unittest.TestCase):
                 env={"HOME": self.workdir},
                 stdout=subprocess.PIPE,
             ) as gdb:
-
                 try:
                     pid = wait_for_process_to_appear(
                         self.TEST_EXECUTABLE,
@@ -1996,9 +1995,7 @@ class T(unittest.TestCase):
         # working noninteractive script
         self._write_symptom_script(
             "itching.py",
-            "def run(report, ui):\n"
-            '  report["itch"] = "scratch"\n'
-            '  return "bash"\n',
+            'def run(report, ui):\n  report["itch"] = "scratch"\n  return "bash"\n',
         )
         self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
         self.ui.present_details_response = apport.ui.Action(report=True)

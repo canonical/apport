@@ -140,9 +140,7 @@ class T(unittest.TestCase):
 
         # ancient report
         r = io.BytesIO(
-            b"ProblemType: Crash\n"
-            b"Date: Wed Aug 01 00:00:01 1990\n"
-            b"CrashCounter: 3\n"
+            b"ProblemType: Crash\nDate: Wed Aug 01 00:00:01 1990\nCrashCounter: 3\n"
         )
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 

@@ -327,10 +327,7 @@ def attach_alsa_old(report):
                 codec = os.path.basename(codecpath)
                 for name in os.listdir(codecpath):
                     path = os.path.join(codecpath, name)
-                    key = (
-                        f"Card{card}.Codecs"
-                        f".{path_to_key(codec)}.{path_to_key(name)}"
-                    )
+                    key = f"Card{card}.Codecs.{path_to_key(codec)}.{path_to_key(name)}"
                     attach_file(report, path, key)
 
 

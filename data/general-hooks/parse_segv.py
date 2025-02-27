@@ -331,8 +331,7 @@ class ParseSegv:
         # Handle I/O port operations
         if self.insn in {"out", "in"} and not understood:
             msg = (
-                f"disallowed I/O port operation"
-                f" on port {self.register_value(self.src)}"
+                f"disallowed I/O port operation on port {self.register_value(self.src)}"
             )
             reason.append(msg)
             details.append(msg)

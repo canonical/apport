@@ -128,8 +128,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--dynamic-origins",
         action="store_true",
         help=_(
-            "Create and use third-party repositories from origins specified"
-            " in reports"
+            "Create and use third-party repositories from origins specified in reports"
         ),
     )
     argparser.add_argument(
@@ -683,8 +682,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                             crashdb.mark_retrace_failed(crashid, invalid_msg)
                         else:
                             apport.log(
-                                "Report has no crash signature,"
-                                " so retrace is flawed",
+                                "Report has no crash signature, so retrace is flawed",
                                 options.timestamps,
                             )
                             crashdb.mark_retrace_failed(crashid)

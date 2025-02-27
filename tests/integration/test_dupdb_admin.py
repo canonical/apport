@@ -84,8 +84,7 @@ class TestDupdbAdmin(unittest.TestCase):
         lines = stdout.rstrip().split("\n")
         self.assertEqual(len(lines), 2, lines)
         self.assertIn(
-            "0: /bin/crash:11:foo_bar:d01:raise:<signal handler called>:__frob"
-            " [open]",
+            "0: /bin/crash:11:foo_bar:d01:raise:<signal handler called>:__frob [open]",
             lines[0],
         )
         self.assertIn("2: /usr/bin/broken:11:h:g:f:e:d [fixed in: 42]", lines[1])

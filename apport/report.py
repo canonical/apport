@@ -1446,10 +1446,7 @@ class Report(problem_report.ProblemReport):
         if len(trace) < 1:
             return None
         if len(trace) < 3:
-            return (
-                f"{os.path.basename(self['ExecutablePath'])}"
-                f" crashed with {trace[0]}"
-            )
+            return f"{os.path.basename(self['ExecutablePath'])} crashed with {trace[0]}"
 
         trace_re = re.compile(r'^\s*File\s*"(\S+)".* in (.+)$')
         i = len(trace) - 1

@@ -167,7 +167,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             WhiteSpace:
               foo   bar
              baz
-               blip{'  '}
+               blip{"  "}
             """
         )
         pr = problem_report.ProblemReport()
@@ -275,11 +275,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_load_incorrect_padding(self) -> None:
         """Throw exception when base64 encoded data has incorrect padding."""
         report = problem_report.ProblemReport()
-        content = (
-            b"CoreDump: base64\n"
-            b" H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
-            b" 7Z0LYFPV/cdP0rQ\n"
-        )
+        content = b"CoreDump: base64\n H4sICAAAAAAC/0NvcmVEdW1wAA==\n 7Z0LYFPV/cdP0rQ\n"
         with io.BytesIO(content) as report_file:
             with self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
@@ -620,9 +616,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
              fourth
              fifth
             LargeMultiline:
-             {'A' * 120}
-             {'B' * 90}
-            Largeline: {'A' * 999}
+             {"A" * 120}
+             {"B" * 90}
+            Largeline: {"A" * 999}
             Simple: bar
             SimpleLineEnd: bar
             SimpleUTF8: 1äö2Φ3
@@ -665,7 +661,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             f"""\
              foo   bar
             baz
-              blip{'  '}
+              blip{"  "}
             line4
             line♥5!!
             łıµ€ ⅝

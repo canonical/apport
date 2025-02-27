@@ -131,8 +131,7 @@ class TestApportUnpack(unittest.TestCase):
         """Test unpacking a report file that has a malformed CoreDump entry."""
         with tempfile.NamedTemporaryFile("wb") as report_file:
             report_file.write(
-                b"CoreDump: base64\n H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
-                b" 7Z0LYFPV/cdP0rQ\n"
+                b"CoreDump: base64\n H4sICAAAAAAC/0NvcmVEdW1wAA==\n 7Z0LYFPV/cdP0rQ\n"
             )
             report_file.flush()
             process = self._call_apport_unpack([report_file.name, self.unpack_dir])

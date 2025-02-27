@@ -363,8 +363,7 @@ class UserInterface:
         except ImportError as error:
             # this can happen while upgrading python packages
             apport.logging.fatal(
-                "Could not import module, is a package upgrade in progress?"
-                " Error: %s",
+                "Could not import module, is a package upgrade in progress? Error: %s",
                 str(error),
             )
         except KeyError:

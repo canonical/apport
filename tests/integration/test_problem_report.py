@@ -88,7 +88,7 @@ class T(unittest.TestCase):
                 WhiteSpace:
                   foo   bar
                  baz
-                   blip{'  '}
+                   blip{"  "}
                 Extra: appended
                 """
             ),

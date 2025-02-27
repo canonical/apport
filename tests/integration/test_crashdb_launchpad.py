@@ -153,8 +153,7 @@ NameError: global name 'weird' is not defined"""
         r.add_user_info()
         self.assertEqual(
             r.standard_title(),
-            "foo crashed with NameError in fuzz():"
-            " global name 'weird' is not defined",
+            "foo crashed with NameError in fuzz(): global name 'weird' is not defined",
         )
 
         return self._create_bug_from_report("Python", r)
@@ -189,8 +188,7 @@ and more
             target=self.crashdb.lp_distro,
         )
         sys.stderr.write(
-            f"(Created uncommon description:"
-            f" https://{self.hostname}/bugs/{bug.id}) "
+            f"(Created uncommon description: https://{self.hostname}/bugs/{bug.id}) "
         )
 
         return bug.id
@@ -855,8 +853,7 @@ NameError: global name 'weird' is not defined"""
         r.add_user_info()
         self.assertEqual(
             r.standard_title(),
-            "foo crashed with NameError in fuzz():"
-            " global name 'weird' is not defined",
+            "foo crashed with NameError in fuzz(): global name 'weird' is not defined",
         )
 
         # file it

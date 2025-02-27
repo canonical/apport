@@ -1252,8 +1252,7 @@ No symbol table info available.
 
         # all resolvable, but too short
         pr["Stacktrace"] = (
-            "#0  0x00007f491fac5687 in kill ()"
-            " at ../sysdeps/unix/syscall-template.S:82"
+            "#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82"
         )
         self.assertIsNone(pr.crash_signature_addresses())
 

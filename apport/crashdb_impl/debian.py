@@ -8,7 +8,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-
 import email.mime.text
 import smtplib
 import tempfile

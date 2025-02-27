@@ -554,8 +554,7 @@ def forward_crash_to_container(
         with open("uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
             if not apport.fileutils.search_map(fd, task_uid):
                 logger.error(
-                    "host pid %s crashed in a container"
-                    " with no access to the binary",
+                    "host pid %s crashed in a container with no access to the binary",
                     options.global_pid,
                 )
                 return
@@ -567,8 +566,7 @@ def forward_crash_to_container(
         with open("gid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
             if not apport.fileutils.search_map(fd, task_gid):
                 logger.error(
-                    "host pid %s crashed in a container"
-                    " with no access to the binary",
+                    "host pid %s crashed in a container with no access to the binary",
                     options.global_pid,
                 )
                 return
@@ -925,8 +923,7 @@ def process_crash_from_kernel(options: argparse.Namespace) -> int:
             return process_crash_from_kernel_with_proc_pid(options, proc_pid)
     except FileNotFoundError as error:
         logging.getLogger().error(
-            "%s not found. "
-            "Cannot collect crash information for process %i any more.",
+            "%s not found. Cannot collect crash information for process %i any more.",
             error.filename,
             options.pid,
         )

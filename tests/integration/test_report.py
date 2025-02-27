@@ -242,7 +242,7 @@ class T(unittest.TestCase):
             testscript.write_text(
                 textwrap.dedent(
                     f"""\
-                    #!/usr/bin/{os.getenv('PYTHON', 'python3')}
+                    #!/usr/bin/{os.getenv("PYTHON", "python3")}
                     import sys
                     sys.stdin.readline()
                     """
