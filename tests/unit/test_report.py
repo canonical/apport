@@ -1489,12 +1489,14 @@ No symbol table info available.
         report_output = io.BytesIO()
         report.write(report_output)
 
-        expected_report = (
-            DIVIDE_BY_ZERO_REPORT + "CoreDump: base64\n"
-            " H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
-            " q3f1cWNiZGSAAgC2f6EYDwAAAA==\n"
+        report_without_coredump = re.sub(
+            "\nCoreDump:.*", "\n", report_output.getvalue().decode(), flags=re.DOTALL
         )
-        self.assertEqual(report_output.getvalue().decode(), expected_report)
+        self.assertEqual(report_without_coredump, DIVIDE_BY_ZERO_REPORT)
+        written_report = apport.report.Report()
+        report_output.seek(0)
+        written_report.load(report_output)
+        self.assertEqual(written_report["CoreDump"], coredump["COREDUMP"])
         stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
 
     @unittest.mock.patch("os.stat")
