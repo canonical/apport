@@ -259,9 +259,9 @@ class T(unittest.TestCase):
 
     def test_big_file(self) -> None:
         """Write and re-decoding a big random file."""
-        # create 1 MB random file
+        # create a big random file (not exceeding the chunk size to avoid line wrapping)
         with tempfile.NamedTemporaryFile() as temp:
-            data = os.urandom(1048576)
+            data = os.urandom(problem_report.CHUNK_SIZE)
             temp.write(data)
             temp.flush()
 

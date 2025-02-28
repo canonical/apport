@@ -201,9 +201,9 @@ class CompressedFile:
             self._compressed_file.close()
 
     def iter_compressed(self) -> Iterator[bytes]:
-        """Iterate over the compressed content of the file in 1 MB chunks."""
+        """Iterate over the compressed content of the file in chunks."""
         while True:
-            block = self._compressed_file.read(1048576)
+            block = self._compressed_file.read(CHUNK_SIZE)
             if not block:
                 break
             yield block
@@ -298,7 +298,7 @@ class CompressedValue:
         if self.compressed_value.startswith(GZIP_HEADER_START):
             with gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)) as gz:
                 while True:
-                    block = gz.read(1048576)
+                    block = gz.read(CHUNK_SIZE)
                     if not block:
                         break
                     file.write(block)
@@ -704,7 +704,7 @@ class ProblemReport(collections.UserDict):
                 # hard to change, pylint: disable=consider-using-with
                 f = open(value[0], "rb")  # file name
             while True:
-                block = f.read(1048576)
+                block = f.read(CHUNK_SIZE)
                 size += len(block)
                 crc = zlib.crc32(block, crc)
                 if limit is not None:
@@ -843,7 +843,7 @@ class ProblemReport(collections.UserDict):
                     out = io.BytesIO()
                     with gzip.GzipFile(k, mode="wb", fileobj=out, mtime=0) as gz:
                         while True:
-                            block = f.read(1048576)
+                            block = f.read(CHUNK_SIZE)
                             if block:
                                 gz.write(block)
                             else:
