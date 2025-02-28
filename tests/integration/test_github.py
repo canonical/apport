@@ -42,9 +42,10 @@ class TestGitHub(unittest.TestCase):
         expected_body = "**bold1**\nnormal1\n\n**bold2**\nnormal2\n\n"
 
         result = self.crashdb._format_report(data)
-        self.assertTrue("body" in result and result["body"] == expected_body)
-        self.assertTrue("title" in result)
-        self.assertTrue(self.crashdb.labels == set(result["labels"]))
+        self.assertIn("body", result)
+        self.assertEqual(result["body"], expected_body)
+        self.assertIn("title", result)
+        self.assertEqual(self.crashdb.labels, set(result["labels"]))
 
     @patch("apport.crashdb_impl.github.Github.api_authentication")
     @patch("apport.crashdb_impl.github.Github.api_open_issue")

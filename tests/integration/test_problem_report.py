@@ -278,14 +278,14 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(out)
 
-        self.assertTrue(pr["File"] == data)
+        self.assertEqual(pr["File"], data)
         self.assertEqual(pr["Before"], "xtestx")
         self.assertEqual(pr["ZAfter"], "ytesty")
 
         # write it again
         io2 = io.BytesIO()
         pr.write(io2)
-        self.assertTrue(out.getvalue() == io2.getvalue())
+        self.assertEqual(out.getvalue(), io2.getvalue())
 
         # check gzip compatibility
         out.seek(0)
@@ -321,9 +321,9 @@ class T(unittest.TestCase):
 
         self.assertNotIn("FileSmallLimit", pr)
         self.assertNotIn("FileLimitMinus1", pr)
-        self.assertTrue(pr["FileExactLimit"] == data)
-        self.assertTrue(pr["FileLimitPlus1"] == data)
-        self.assertTrue(pr["FileLimitNone"] == data)
+        self.assertEqual(pr["FileExactLimit"], data)
+        self.assertEqual(pr["FileLimitPlus1"], data)
+        self.assertEqual(pr["FileLimitNone"], data)
         self.assertEqual(pr["Before"], "xtestx")
         self.assertEqual(pr["ZAfter"], "ytesty")
 
