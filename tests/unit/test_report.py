@@ -1570,3 +1570,53 @@ No symbol table info available.
         tmpfile = called_cmd[-1]
         self.assertRegex(tmpfile, r"^/.*/apport_vmcore_\w{8}$")
         self.assertFalse(pathlib.Path(tmpfile).exists())
+
+    @unittest.mock.patch("subprocess.run")
+    def test_get_ld_search_paths(self, run_mock: MagicMock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=MagicMock(),
+            returncode=0,
+            stdout=textwrap.dedent(
+                """\
+                path.prefix="/usr"
+                path.sysconfdir="/etc"
+                path.system_dirs[0x0]="/lib/x86_64-linux-gnu/"
+                path.system_dirs[0x1]="/usr/lib/x86_64-linux-gnu/"
+                path.system_dirs[0x2]="/lib/"
+                path.system_dirs[0x3]="/usr/lib/"
+                """
+            ),
+        )
+        ld_search_paths = apport.report._get_ld_search_paths()
+        self.assertEqual(
+            ld_search_paths,
+            [
+                "/lib/x86_64-linux-gnu/",
+                "/usr/lib/x86_64-linux-gnu/",
+                "/lib/",
+                "/usr/lib/",
+            ],
+        )
+        run_mock.assert_called_once_with(
+            ["ld.so", "--list-diagnostics"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+
+    @unittest.mock.patch("subprocess.run")
+    def test_get_ld_search_paths_sorting(self, run_mock: MagicMock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=MagicMock(),
+            returncode=0,
+            stdout=textwrap.dedent(
+                """\
+                path.system_dirs[0x2]="third"
+                path.system_dirs[0x1]="second"
+                path.system_dirs[0x0]="first"
+                """
+            ),
+        )
+        ld_search_paths = apport.report._get_ld_search_paths("ld.so")
+        self.assertEqual(ld_search_paths, ["first", "second", "third"])
+        run_mock.assert_called_once()
