@@ -22,6 +22,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # in older versions as well.
 from __future__ import annotations
 
+import collections
 import contextlib
 import datetime
 import functools
@@ -45,7 +46,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping, MutableMapping
 
 import apt
 import apt_pkg
@@ -216,7 +217,7 @@ def _write_package_version_dict(
 
 
 def _unpack_packages(
-    packages: list[tuple[str, str | None]],
+    packages: Mapping[str, str | None],
     pkg_versions: dict[str, str],
     apt_cache: apt.Cache,
     real_pkgs: set[str],
@@ -228,12 +229,11 @@ def _unpack_packages(
     """
     already_right_version = set()
     logger = logging.getLogger(__name__)
-    requested_pkgs = dict(packages)
     for p in real_pkgs:
         candidate = apt_cache[p].candidate
         assert candidate is not None
-        if p in requested_pkgs:
-            if requested_pkgs[p] is None:
+        if p in packages:
+            if packages[p] is None:
                 # We already have the latest version of this package
                 if pkg_versions.get(p) == candidate.version:
                     logger.debug("Removing %s which is already the right version", p)
@@ -241,7 +241,7 @@ def _unpack_packages(
                 else:
                     logger.debug("Installing %s version %s", p, candidate.version)
                     apt_cache[p].mark_install(False, False)
-            elif pkg_versions.get(p) != requested_pkgs[p]:
+            elif pkg_versions.get(p) != packages[p]:
                 logger.debug("Installing %s version %s", p, candidate.version)
                 apt_cache[p].mark_install(False, False)
             elif pkg_versions.get(p) != candidate.version:
@@ -1070,7 +1070,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     ) -> str:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals
-        # pylint: disable=too-many-nested-blocks,too-many-statements
+        # pylint: disable=too-many-statements
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -1193,6 +1193,46 @@ class __AptDpkgPackageInfo(PackageInfo):
                 raise SystemError(str(error)) from error
             apt_cache.open()
 
+        obsolete = self._install_packages(
+            rootdir,
+            release,
+            collections.OrderedDict(packages),
+            verbose,
+            permanent_rootdir,
+            architecture,
+            install_dbg,
+            install_deps,
+            apt_cache,
+            aptroot,
+            fetchProgress,
+        )
+
+        if tmp_aptroot:
+            shutil.rmtree(aptroot)
+
+        if permanent_rootdir:
+            self._save_virtual_mapping(aptroot)
+
+        return "".join(obsolete)
+
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
+    def _install_packages(
+        self,
+        rootdir: str,
+        release: str,
+        packages: MutableMapping[str, str | None],
+        verbose: bool,
+        permanent_rootdir: bool,
+        architecture: str,
+        install_dbg: bool,
+        install_deps: bool,
+        apt_cache: apt.Cache,
+        aptroot: str,
+        fetchProgress: apt.progress.base.AcquireProgress,
+    ) -> list[str]:
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-many-nested-blocks,too-many-statements
         archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete: list[str] = []
@@ -1214,7 +1254,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             deps = self._collect_dependencies(
                 packages, pkg_versions, apt_cache, obsolete
             )
-            packages.extend(deps)
+            packages.update(deps)
 
         def get_package_from_launchpad(pkg: str, ver: str | None) -> bool:
             """Try to get binary package from Launchpad and stage download.
@@ -1271,7 +1311,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             real_pkgs.add(pkg)
             return pkg_found
 
-        for pkg, ver in packages:
+        for pkg, ver in packages.items():
             try:
                 cache_pkg = apt_cache[pkg]
             except KeyError:
@@ -1293,6 +1333,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     ver = cache_pkg.candidate.version
 
             candidate = cache_pkg.candidate
+            assert candidate is not None
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
@@ -1383,18 +1424,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         # update package list
         _write_package_version_dict(pkg_list, pkg_versions)
 
-        if tmp_aptroot:
-            shutil.rmtree(aptroot)
-
         # check bookkeeping that apt fetcher really got everything
         assert (
             not real_pkgs
         ), f"apt fetcher did not fetch these packages: {' '.join(real_pkgs)}"
 
-        if permanent_rootdir:
-            self._save_virtual_mapping(aptroot)
-
-        return "".join(obsolete)
+        return obsolete
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
@@ -1407,13 +1442,13 @@ class __AptDpkgPackageInfo(PackageInfo):
     # pylint: disable-next=too-many-locals
     def _collect_dependencies(
         self,
-        packages: list[tuple[str, str | None]],
+        packages: Mapping[str, str | None],
         pkg_versions: dict[str, str],
         apt_cache: apt.Cache,
         obsolete: list[str],
-    ) -> list[tuple[str, str]]:
-        deps = []
-        for pkg, _ in packages:
+    ) -> collections.OrderedDict[str, str | None]:
+        deps: collections.OrderedDict[str, str | None] = collections.OrderedDict()
+        for pkg in packages.keys():
             try:
                 cache_pkg = apt_cache[pkg]
             except KeyError:
@@ -1444,13 +1479,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if name in pkg_versions:
                     inst_version = pkg_versions[name]
                     if self.compare_versions(inst_version, dep_pkg_vers) > -1:
-                        deps.append((name, inst_version))
+                        deps[name] = inst_version
                     else:
-                        deps.append((name, dep_pkg_vers))
+                        deps[name] = dep_pkg_vers
                 else:
-                    deps.append((name, dep_pkg_vers))
+                    deps[name] = dep_pkg_vers
                 if name not in [pkg[0] for pkg in packages]:
-                    packages.append((name, None))
+                    deps[name] = None
         return deps
 
     @staticmethod
