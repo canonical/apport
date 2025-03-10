@@ -1012,46 +1012,6 @@ int main() { return f(42); }
             pr["AssertionMessage"],
         )
 
-    # disabled: __nih_abort_msg symbol not available (LP: #1580601)
-    def disabled_test_add_gdb_info_abort_libnih(self):
-        """add_gdb_info() with libnih assertion"""
-        (fd, script) = tempfile.mkstemp()
-        assert not os.path.exists("core")
-        try:
-            os.close(fd)
-
-            # create a test script which produces a core dump for us
-            with open(script, "w", encoding="utf-8") as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        #!/bin/sh
-                        gcc -o $0.bin -x c - \
-                            `pkg-config --cflags --libs libnih` <<EOF
-                        #include <libnih.h>
-                        int main() { nih_assert (1 < 0); }
-                        EOF
-                        ulimit -c unlimited
-                        $0.bin 2>/dev/null
-                        """
-                    )
-                )
-            # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call(["/bin/sh", script]) != 0
-            self._validate_core("core")
-
-            pr = apport.report.Report()
-            pr["ExecutablePath"] = script + ".bin"
-            pr["CoreDump"] = ("core",)
-            pr.add_gdb_info()
-        finally:
-            os.unlink(script)
-            os.unlink(script + ".bin")
-            os.unlink("core")
-
-        self._validate_gdb_fields(pr)
-        self.assertIn("Assertion failed in main: 1 < 0", pr["AssertionMessage"])
-
     def test_search_bug_patterns(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
