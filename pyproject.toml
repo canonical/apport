@@ -103,6 +103,9 @@ reports = false
 # Activate the evaluation score.
 score = false
 
+[tool.pytest.ini_options]
+addopts = "--cov-branch"
+
 [tool.ruff]
 include = [
     "pyproject.toml",
