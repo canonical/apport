@@ -69,8 +69,9 @@ run_pycodestyle() {
     echo "Running pycodestyle..."
     # E101 causes false positive on tests/unit/test_hookutils.py,
     # see https://github.com/PyCQA/pycodestyle/issues/376
+    # E704 complains about "def f(): ..."
     # . catches all *.py modules; we explicitly need to specify the programs
-    pycodestyle --max-line-length=88 -r --ignore=E101,E203,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
+    pycodestyle --max-line-length=88 -r --ignore=E101,E203,E704,W503 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 }
 
 run_pydocstyle() {
