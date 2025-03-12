@@ -9,7 +9,7 @@ import shutil
 import tempfile
 import textwrap
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import apport.report
 from apport.crashdb_impl.memory import CrashDatabase
@@ -764,20 +764,26 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # give #0 a long symbolic sig which needs lots of quoting
         symb = self.crashes.download(0)
-        symb.crash_signature = lambda: "s+" * 1000
 
         # and #1 a long addr sig
         addr = self.crashes.download(1)
-        addr.crash_signature_addresses = lambda: "0x1+/" * 1000
 
-        self.assertIsNone(self.crashes.known(symb))
-        self.assertIsNone(self.crashes.check_duplicate(0))
-        self.assertIsNone(self.crashes.known(addr))
-        self.assertIsNone(self.crashes.check_duplicate(1))
+        with (
+            patch.object(symb, "crash_signature", MagicMock(return_value="s+" * 1000)),
+            patch.object(
+                addr,
+                "crash_signature_addresses",
+                MagicMock(return_value="0x1+/" * 1000),
+            ),
+        ):
+            self.assertIsNone(self.crashes.known(symb))
+            self.assertIsNone(self.crashes.check_duplicate(0))
+            self.assertIsNone(self.crashes.known(addr))
+            self.assertIsNone(self.crashes.check_duplicate(1))
 
-        self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(symb), "http://foo.bugs.example.com/0")
-        self.assertEqual(self.crashes.known(addr), "http://foo.bugs.example.com/1")
+            self.crashes.duplicate_db_publish(self.dupdb_dir)
+            self.assertEqual(self.crashes.known(symb), "http://foo.bugs.example.com/0")
+            self.assertEqual(self.crashes.known(addr), "http://foo.bugs.example.com/1")
 
     def test_change_master_id(self) -> None:
         """duplicate_db_change_master_id()"""
