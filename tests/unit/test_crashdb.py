@@ -605,17 +605,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
             # addr DB should have both possible patterns on a
             # pylint: disable=protected-access
+            b_sig_addr = b.crash_signature_addresses()
+            assert b_sig_addr is not None
             self.assertEqual(
-                self.crashes._duplicate_search_address_signature(
-                    b.crash_signature_addresses()
-                ),
-                5,
+                self.crashes._duplicate_search_address_signature(b_sig_addr), 5
             )
+            s_sig_addr = s.crash_signature_addresses()
+            assert s_sig_addr is not None
             self.assertEqual(
-                self.crashes._duplicate_search_address_signature(
-                    s.crash_signature_addresses()
-                ),
-                5,
+                self.crashes._duplicate_search_address_signature(s_sig_addr), 5
             )
 
     def test_check_duplicate_reopen(self) -> None:
