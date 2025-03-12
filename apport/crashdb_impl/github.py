@@ -29,8 +29,8 @@ class Github:
         self.__client_id = client_id
         self.__authentication_data = None
         self.__access_token = None
-        self.__cooldown = None
-        self.__expiry = None
+        self.__cooldown = 0.0
+        self.__expiry = 0.0
         self.message_callback = message_callback
 
     def _post(self, url: str, data: str) -> Any:
@@ -99,8 +99,8 @@ class Github:
 
     def __exit__(self, *_: Any) -> None:
         self.__authentication_data = None
-        self.__cooldown = 0
-        self.__expiry = 0
+        self.__cooldown = 0.0
+        self.__expiry = 0.0
 
     def authentication_complete(self) -> bool:
         """Asks Github if the user has logged in already.
