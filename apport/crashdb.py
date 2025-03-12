@@ -19,6 +19,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Iterable
 from typing import Any
 
 from apport.packaging_impl import impl as packaging
@@ -376,6 +377,31 @@ class CrashDatabase:
         )
         self.duplicate_db.commit()
 
+    def _write_hash_files(
+        self, basedir: str, sig_crash_tuples: Iterable[tuple[str, int]]
+    ) -> None:
+        os.mkdir(basedir)
+        cur_hash = None
+        cur_file = None
+
+        for sig, crash_id in sig_crash_tuples:
+            h = self.duplicate_sig_hash(sig)
+            if h is None:
+                # some entries can't be represented in a single line
+                continue
+            if h != cur_hash:
+                cur_hash = h
+                if cur_file:
+                    cur_file.close()
+                # hard to change, pylint: disable-next=consider-using-with
+                cur_file = open(os.path.join(basedir, cur_hash), "w", encoding="utf-8")
+
+            assert cur_file is not None
+            cur_file.write(f"{crash_id} {sig}\n")
+
+        if cur_file:
+            cur_file.close()
+
     def duplicate_db_publish(self, publish_dir):
         """Create text files suitable for www publishing.
 
@@ -392,7 +418,6 @@ class CrashDatabase:
         built in a new directory which is the given one with ".new" appended,
         then moved to the given name in an almost atomic way.
         """
-        # hard to change, pylint: disable=consider-using-with
         assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
         # first create the temporary new dir; if that fails, nothing has been
@@ -401,54 +426,13 @@ class CrashDatabase:
         os.mkdir(out)
 
         # crash addresses
-        addr_base = os.path.join(out, "address")
-        os.mkdir(addr_base)
-        cur_hash = None
-        cur_file = None
-
         cur = self.duplicate_db.cursor()
-
         cur.execute("SELECT * from address_signatures ORDER BY signature")
-        for sig, crash_id in cur.fetchall():
-            h = self.duplicate_sig_hash(sig)
-            if h is None:
-                # some entries can't be represented in a single line
-                continue
-            if h != cur_hash:
-                cur_hash = h
-                if cur_file:
-                    cur_file.close()
-                cur_file = open(
-                    os.path.join(addr_base, cur_hash), "w", encoding="utf-8"
-                )
-
-            cur_file.write(f"{crash_id} {sig}\n")
-
-        if cur_file:
-            cur_file.close()
+        self._write_hash_files(os.path.join(out, "address"), cur.fetchall())
 
         # duplicate signatures
-        sig_base = os.path.join(out, "sig")
-        os.mkdir(sig_base)
-        cur_hash = None
-        cur_file = None
-
         cur.execute("SELECT signature, crash_id from crashes ORDER BY signature")
-        for sig, crash_id in cur.fetchall():
-            h = self.duplicate_sig_hash(sig)
-            if h is None:
-                # some entries can't be represented in a single line
-                continue
-            if h != cur_hash:
-                cur_hash = h
-                if cur_file:
-                    cur_file.close()
-                cur_file = open(os.path.join(sig_base, cur_hash), "wb")
-
-            cur_file.write(f"{crash_id} {sig}\n".encode("UTF-8"))
-
-        if cur_file:
-            cur_file.close()
+        self._write_hash_files(os.path.join(out, "sig"), cur.fetchall())
 
         # switch over tree; this is as atomic as we can be with directories
         if os.path.exists(publish_dir):
