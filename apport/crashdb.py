@@ -15,6 +15,7 @@
 import functools
 import os
 import shutil
+import sqlite3
 import sys
 import urllib.error
 import urllib.parse
@@ -81,10 +82,8 @@ class CrashDatabase:
         path specifies an SQLite database. It will be created if it does not
         exist yet.
         """
-        import sqlite3 as dbapi2  # pylint: disable=import-outside-toplevel
-
         assert (
-            dbapi2.paramstyle == "qmark"
+            sqlite3.paramstyle == "qmark"
         ), "this module assumes qmark dbapi parameter style"
 
         self.format_version = 3
@@ -92,7 +91,7 @@ class CrashDatabase:
         init = (
             not os.path.exists(path) or path == ":memory:" or os.path.getsize(path) == 0
         )
-        self.duplicate_db = dbapi2.connect(path, timeout=7200)
+        self.duplicate_db = sqlite3.connect(path, timeout=7200)
 
         if init:
             cur = self.duplicate_db.cursor()
