@@ -16,16 +16,17 @@ import functools
 import os
 import shutil
 import sys
+import typing
 import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, Literal
 
 from apport.packaging_impl import impl as packaging
 
 
-def _u(string):
+def _u(string: str | bytes) -> str:
     """Convert str to an unicode if it isn't already."""
     if isinstance(string, bytes):
         return string.decode("UTF-8", "ignore")
@@ -52,7 +53,7 @@ class CrashDatabase:
         self.duplicate_db = None
         self.format_version = None
 
-    def get_bugpattern_baseurl(self):
+    def get_bugpattern_baseurl(self) -> str | None:
         """Return the base URL for bug patterns.
 
         See apport.report.Report.search_bug_patterns() for details. If this
@@ -76,7 +77,7 @@ class CrashDatabase:
     #
     # Tests are in apport/crashdb_impl/memory.py.
 
-    def init_duplicate_db(self, path):
+    def init_duplicate_db(self, path: str) -> None:
         """Initialize duplicate database.
 
         path specifies an SQLite database. It will be created if it does not
@@ -329,7 +330,7 @@ class CrashDatabase:
 
         return None
 
-    def duplicate_db_fixed(self, crash_id, version):
+    def duplicate_db_fixed(self, crash_id: int, version: str | None) -> None:
         """Mark given crash ID as fixed in the duplicate database.
 
         version specifies the package version the crash was fixed in (None for
@@ -347,7 +348,7 @@ class CrashDatabase:
         assert n.rowcount == 1
         self.duplicate_db.commit()
 
-    def duplicate_db_remove(self, crash_id):
+    def duplicate_db_remove(self, crash_id: int) -> None:
         """Remove crash from the duplicate database.
 
         This happens when a report got rejected or manually duplicated.
@@ -359,7 +360,7 @@ class CrashDatabase:
         cur.execute("DELETE FROM address_signatures WHERE crash_id = ?", [crash_id])
         self.duplicate_db.commit()
 
-    def duplicate_db_change_master_id(self, old_id, new_id):
+    def duplicate_db_change_master_id(self, old_id: int, new_id: int) -> None:
         """Change a crash ID."""
         assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
@@ -401,7 +402,7 @@ class CrashDatabase:
         if cur_file:
             cur_file.close()
 
-    def duplicate_db_publish(self, publish_dir):
+    def duplicate_db_publish(self, publish_dir: str) -> None:
         """Create text files suitable for www publishing.
 
         Create a number of text files in the given directory which Apport
@@ -440,7 +441,7 @@ class CrashDatabase:
         if os.path.exists(f"{publish_dir}.old"):
             shutil.rmtree(f"{publish_dir}.old")
 
-    def _duplicate_db_upgrade(self, cur_format):
+    def _duplicate_db_upgrade(self, cur_format: int) -> None:
         """Upgrade database to current format."""
         # Format 3 added a primary key which can't be done as an upgrade in
         # SQLite
@@ -454,7 +455,9 @@ class CrashDatabase:
 
         assert cur_format == self.format_version
 
-    def _duplicate_search_signature(self, sig, crash_id):
+    def _duplicate_search_signature(
+        self, sig: str | bytes, crash_id: int
+    ) -> list[tuple[int, str]]:
         """Look up signature in the duplicate db.
 
         Return [(crash_id, fixed_version)] tuple list.
@@ -490,7 +493,7 @@ class CrashDatabase:
 
         return existing
 
-    def _duplicate_search_address_signature(self, sig):
+    def _duplicate_search_address_signature(self, sig: str | bytes) -> int | None:
         """Return ID for crash address signature.
 
         Return None if signature is unknown.
@@ -509,7 +512,17 @@ class CrashDatabase:
             return existing_ids[0][0]
         return None
 
-    def duplicate_db_dump(self, with_timestamps=False):
+    @typing.overload
+    def duplicate_db_dump(
+        self, with_timestamps: Literal[False] = False
+    ) -> dict[int, tuple[str, int | None]]: ...
+
+    @typing.overload
+    def duplicate_db_dump(
+        self, with_timestamps: Literal[True]
+    ) -> dict[int, tuple[str, int | None, str]]: ...
+
+    def duplicate_db_dump(self, with_timestamps: bool = False) -> dict[int, tuple]:
         """Return the entire duplicate database as a dictionary.
 
         The returned dictionary maps "signature" to (crash_id, fixed_version)
@@ -522,7 +535,7 @@ class CrashDatabase:
         """
         assert self.duplicate_db, "init_duplicate_db() needs to be called before"
 
-        dump = {}
+        dump: dict[int, tuple] = {}
         cur = self.duplicate_db.cursor()
         cur.execute("SELECT * FROM crashes")
         for sig, crash_id, ver, last_change in cur:
@@ -532,7 +545,7 @@ class CrashDatabase:
                 dump[sig] = (crash_id, ver)
         return dump
 
-    def _duplicate_db_sync_status(self, crash_id):
+    def _duplicate_db_sync_status(self, crash_id: int) -> None:
         """Update the duplicate db to the reality of the report in the
         crash db.
 
@@ -575,7 +588,7 @@ class CrashDatabase:
             self.duplicate_db_fixed(crash_id, None)
             return
 
-    def _duplicate_db_add_address_signature(self, sig, crash_id):
+    def _duplicate_db_add_address_signature(self, sig: str, crash_id: int) -> None:
         # consistency check
         existing = self._duplicate_search_address_signature(sig)
         if existing:
@@ -591,7 +604,7 @@ class CrashDatabase:
             )
             self.duplicate_db.commit()
 
-    def _duplicate_db_merge_id(self, dup, master):
+    def _duplicate_db_merge_id(self, dup: int, master: int) -> None:
         """Merge two crash IDs.
 
         This is necessary when having to mark a bug as a duplicate if it
@@ -608,7 +621,7 @@ class CrashDatabase:
         self.duplicate_db.commit()
 
     @staticmethod
-    def duplicate_sig_hash(sig):
+    def duplicate_sig_hash(sig: str) -> str | None:
         """Create a www/URL proof hash for a duplicate signature."""
         # cannot hash multi-line custom duplicate signatures
         if "\n" in sig:
@@ -725,13 +738,13 @@ class CrashDatabase:
             ],
         )
 
-    def get_distro_release(self, crash_id):
+    def get_distro_release(self, crash_id: int) -> str:
         """Get 'DistroRelease: <release>' from the report ID."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_unretraced(self):
+    def get_unretraced(self) -> set[int]:
         """Return set of crash IDs which have not been retraced yet.
 
         This should only include crashes which match the current host
@@ -741,7 +754,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_dup_unchecked(self):
+    def get_dup_unchecked(self) -> set[int]:
         """Return set of crash IDs which need duplicate checking.
 
         This is mainly useful for crashes of scripting languages such as
@@ -752,7 +765,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_unfixed(self):
+    def get_unfixed(self) -> set[int]:
         """Return an ID set of all crashes which are not yet fixed.
 
         The list must not contain bugs which were rejected or duplicate.
@@ -765,7 +778,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_fixed_version(self, crash_id):
+    def get_fixed_version(self, crash_id: int) -> str | None:
         """Return the package version that fixes a given crash.
 
         Return None if the crash is not yet fixed, or an empty string if the
@@ -781,19 +794,19 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_affected_packages(self, crash_id):
+    def get_affected_packages(self, crash_id: int) -> list[str]:
         """Return list of affected source packages for given ID."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def is_reporter(self, crash_id):
+    def is_reporter(self, crash_id: int) -> bool:
         """Check whether the user is the reporter of given ID."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def can_update(self, crash_id):
+    def can_update(self, crash_id: int) -> bool:
         """Check whether the user is eligible to update a report.
 
         A user should add additional information to an existing ID if (s)he is
@@ -805,7 +818,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def duplicate_of(self, crash_id):
+    def duplicate_of(self, crash_id: int) -> int | None:
         """Return master ID for a duplicate bug.
 
         If the bug is not a duplicate, return None.
@@ -823,7 +836,7 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_regression(self, crash_id, master):
+    def mark_regression(self, crash_id: int, master: int) -> None:
         """Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').
         """
@@ -831,13 +844,15 @@ class CrashDatabase:
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_retraced(self, crash_id):
+    def mark_retraced(self, crash_id: int) -> None:
         """Mark crash id as retraced."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
         )
 
-    def mark_retrace_failed(self, crash_id, invalid_msg=None):
+    def mark_retrace_failed(
+        self, crash_id: int, invalid_msg: str | None = None
+    ) -> None:
         """Mark crash id as 'failed to retrace'.
 
         If invalid_msg is given, the bug should be closed as invalid with given
@@ -914,7 +929,7 @@ def get_crashdb(
     return load_crashdb(auth_file, settings["databases"][name])
 
 
-def load_crashdb(auth_file, spec):
+def load_crashdb(auth_file: str | None, spec: dict[str, Any]) -> CrashDatabase:
     """Return a CrashDatabase object for a given DB specification.
 
     spec is a crash db configuration dictionary as described in get_crashdb().
