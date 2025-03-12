@@ -46,11 +46,12 @@ class Github:
             with urllib.request.urlopen(request, timeout=5.0) as response:
                 return json.loads(response.read())
         except urllib.error.URLError as err:
-            self.message_callback(
-                "Failed connection",
-                f"Failed connection to {url}.\n"
-                + "Please check your internet connection and try again.",
-            )
+            if self.message_callback:
+                self.message_callback(
+                    "Failed connection",
+                    f"Failed connection to {url}.\n"
+                    f"Please check your internet connection and try again.",
+                )
             raise err
         finally:
             self.__last_request = time.time()
@@ -83,7 +84,8 @@ class Github:
         url = response["verification_uri"]
         code = response["user_code"]
 
-        self.message_callback("Login required", prompt.format(url=url, code=code))
+        if self.message_callback:
+            self.message_callback("Login required", prompt.format(url=url, code=code))
 
         self.__authentication_data = {
             "client_id": self.__client_id,
@@ -112,9 +114,10 @@ class Github:
         current_time = time.time()
         waittime = self.__cooldown - (current_time - self.__last_request)
         if current_time + waittime > self.__expiry:
-            self.message_callback(
-                "Failed login", "Github authentication expired. Please try again."
-            )
+            if self.message_callback:
+                self.message_callback(
+                    "Failed login", "Github authentication expired. Please try again."
+                )
             raise RuntimeError("Github authentication expired")
         if waittime > 0:
             time.sleep(waittime)  # Avoids spamming the API
