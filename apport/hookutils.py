@@ -101,14 +101,15 @@ def read_file(path, force_unicode=False):
         else:
             os.close(fd)
             return "Error: path was not a regular file."
-        if force_unicode:
-            return contents.decode("UTF-8", errors="replace")
-        try:
-            return contents.decode("UTF-8")
-        except UnicodeDecodeError:
-            return contents
     except OSError as error:
         return f"Error: {str(error)}"
+
+    if force_unicode:
+        return contents.decode("UTF-8", errors="replace")
+    try:
+        return contents.decode("UTF-8")
+    except UnicodeDecodeError:
+        return contents
 
 
 def attach_file(report, path, key=None, overwrite=True, force_unicode=False):
