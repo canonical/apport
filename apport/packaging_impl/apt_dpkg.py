@@ -66,8 +66,7 @@ def _extract_downloaded_debs(
     real_pkgs: set[str],
 ) -> set[str]:
     remove_real_pkgs = set()
-    # False positive, see https://github.com/PyCQA/pylint/issues/7122
-    for i in fetcher.items:  # pylint: disable=not-an-iterable
+    for i in fetcher.items:
         if not i.destfile.endswith("deb"):
             continue
         out = subprocess.check_output(["dpkg-deb", "--show", i.destfile]).decode()
