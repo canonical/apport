@@ -11,6 +11,9 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 """Use the coredump in a crash report to regenerate the stack traces. This is
 helpful to get a trace with debug symbols."""
 
