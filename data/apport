@@ -1043,7 +1043,7 @@ def process_crash(
 ) -> int:
     """Process crash and return exit code."""
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-statements
+    # pylint: disable=too-complex,too-many-branches,too-many-statements
     logger = logging.getLogger()
 
     report = (

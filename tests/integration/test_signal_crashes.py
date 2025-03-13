@@ -1120,7 +1120,8 @@ class T(unittest.TestCase):
         **kwargs: typing.Any,
     ) -> str:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
         """Generate a test crash.
 
         This runs command (by default TEST_EXECUTABLE) in cwd, lets it crash,
