@@ -2,9 +2,6 @@
 
 """Dump ACPI tables."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import os
 import stat
 import sys

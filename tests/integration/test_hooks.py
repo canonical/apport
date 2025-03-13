@@ -9,9 +9,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import datetime
 import os
 import pathlib

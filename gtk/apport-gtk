@@ -49,7 +49,7 @@ def find_xid_for_pid(pid: int) -> int | None:
 
 class GTKUserInterface(apport.ui.UserInterface):
     # TODO: Address following pylint complaints
-    # pylint: disable=invalid-name,missing-function-docstring
+    # pylint: disable=missing-function-docstring
     """GTK UserInterface."""
 
     def w(self, widget: str) -> Gtk.Widget:

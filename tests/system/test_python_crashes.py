@@ -10,9 +10,6 @@
 
 """Test apport_python_hook.py"""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import atexit
 import os
 import shutil
