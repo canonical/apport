@@ -95,12 +95,11 @@ def read_file(path, force_unicode=False):
             os.close(fd)
             return "Error: path contained symlinks."
         # make sure the file isn't a FIFO or symlink
-        if stat.S_ISREG(st.st_mode):
-            with os.fdopen(fd, "rb") as f:
-                contents = f.read().strip()
-        else:
+        if not stat.S_ISREG(st.st_mode):
             os.close(fd)
             return "Error: path was not a regular file."
+        with os.fdopen(fd, "rb") as f:
+            contents = f.read().strip()
     except OSError as error:
         return f"Error: {str(error)}"
 
