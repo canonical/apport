@@ -63,10 +63,6 @@ load-plugins = [
 # Pickle collected data for later comparisons.
 persistent = false
 
-[tool.pylint.basic]
-# Good variable names which should always be accepted, separated by a comma.
-good-names = ["i", "j", "k", "lp", "ui", "_"]
-
 [tool.pylint.design]
 # Maximum number of arguments for function / method.
 max-args = 6
