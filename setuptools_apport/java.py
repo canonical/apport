@@ -29,7 +29,6 @@ class build_java(Command):
     def finalize_options(self) -> None:
         """Set final values for all options/attributes"""
 
-    # pylint: disable-next=no-self-use
     def run(self) -> None:
         """Build the Java .class and .jar files."""
         oldwd = os.getcwd()
