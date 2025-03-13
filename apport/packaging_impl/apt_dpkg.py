@@ -1068,8 +1068,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         install_deps: bool = False,
     ) -> str:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
-        # pylint: disable=too-many-nested-blocks,too-many-statements
+        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -1403,7 +1402,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     # Internal helper methods
     #
 
-    # pylint: disable-next=too-many-locals
     def _collect_dependencies(
         self,
         packages: list[tuple[str, str | None]],

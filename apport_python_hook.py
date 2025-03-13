@@ -162,8 +162,6 @@ def apport_excepthook(
 
 def dbus_service_unknown_analysis(exc_obj, report):
     """Analyze D-Bus service error and add analysis to report."""
-    # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-locals
     # pylint: disable=import-outside-toplevel; for Python startup time
     import re
     import subprocess
