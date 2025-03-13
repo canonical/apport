@@ -743,6 +743,8 @@ class UserInterface:
 
         return True
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def run_update_report(self) -> bool:
         """Update an existing bug with locally collected information."""
         # avoid irrelevant noise
@@ -1726,6 +1728,8 @@ class UserInterface:
         message = _("Unable to start web browser to open %s.") % url
         self.ui_error_message(title, message + error_details)
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def file_report(self) -> None:
         """Upload the current report and guide the user to the reporting
         web page."""

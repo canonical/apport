@@ -469,6 +469,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     is_patch=False,
                 )
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def update_traces(self, crash_id, report, comment=""):
         """Update the given report ID for retracing results.
 

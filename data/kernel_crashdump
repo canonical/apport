@@ -20,6 +20,8 @@ import apport.fileutils
 import apport.logging
 
 
+# TODO: Split into smaller functions/methods
+# pylint: disable-next=too-complex
 def main() -> None:
     """Collect information about a kernel oops."""
     pr = apport.Report("KernelCrash")
