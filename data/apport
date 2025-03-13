@@ -503,6 +503,8 @@ def is_same_ns(pid: int, ns: str) -> bool:
     return False
 
 
+# TODO: Split into smaller functions/methods
+# pylint: disable-next=too-complex
 def forward_crash_to_container(
     options: argparse.Namespace, coredump_fd: int = 0, has_cap_sys_admin: bool = True
 ) -> None:

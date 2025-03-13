@@ -629,6 +629,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             return None
         return [f for f in output.splitlines() if not f.startswith("diverted")]
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def get_modified_files(self, package: str) -> list[str]:
         """Return list of all modified files of a package."""
         # get the maximum mtime of package files that we consider unmodified
