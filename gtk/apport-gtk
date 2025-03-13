@@ -26,10 +26,10 @@ import apport.ui
 try:
     import gi
 
-    gi.require_version("Gdk", "3.0")  # noqa: E402, pylint: disable=C0413
-    gi.require_version("GdkX11", "3.0")  # noqa: E402, pylint: disable=C0413
-    gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
-    gi.require_version("Wnck", "3.0")  # noqa: E402, pylint: disable=C0413
+    gi.require_version("Gdk", "3.0")
+    gi.require_version("GdkX11", "3.0")
+    gi.require_version("Gtk", "3.0")
+    gi.require_version("Wnck", "3.0")
     from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
