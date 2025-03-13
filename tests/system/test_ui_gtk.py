@@ -10,8 +10,6 @@
 # the full text of the license.
 
 # pylint: disable=too-many-lines
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
 
 import io
 import os
@@ -48,7 +46,9 @@ if not GI_IMPORT_ERROR:
     apport_gtk = import_module_from_file(apport_gtk_path)
     GTKUserInterface = apport_gtk.GTKUserInterface
 else:
+    # pylint: disable-next=invalid-name
     apport_gtk = None
+    # pylint: disable-next=invalid-name
     GTKUserInterface = None
 
 
