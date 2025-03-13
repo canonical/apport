@@ -39,7 +39,7 @@ def apport_excepthook(
     exc_tb: types.TracebackType | None,
 ) -> None:
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals
+    # pylint: disable=too-complex,too-many-branches,too-many-locals
     # pylint: disable=too-many-return-statements,too-many-statements
     """Catch an uncaught exception and make a traceback."""
     # create and save a problem report. Note that exceptions in this code

@@ -145,7 +145,7 @@ class CrashDatabase:
 
     def check_duplicate(self, crash_id, report=None):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-statements
         """Check whether a crash is already known.
 
         If the crash is new, it will be added to the duplicate database and the
@@ -259,7 +259,7 @@ class CrashDatabase:
 
     def known(self, report):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         """Check if the crash db already knows about the crash signature.
 
         Check if the report has a DuplicateSignature, crash_signature(), or

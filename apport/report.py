@@ -598,7 +598,7 @@ class Report(problem_report.ProblemReport):
 
     def _check_interpreted(self) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         """Check if process is a script.
 
         Use ExecutablePath, ProcStatus and ProcCmdline to determine if
@@ -722,7 +722,7 @@ class Report(problem_report.ProblemReport):
         extraenv: Iterable[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -918,7 +918,7 @@ class Report(problem_report.ProblemReport):
         self, rootdir: str | None = None, gdb_sandbox: str | None = None
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
         """Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -1141,7 +1141,7 @@ class Report(problem_report.ProblemReport):
         self, ui: HookUI, package: str | None, srcpackage: str | None
     ) -> bool:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
 
         # determine package names, unless already given as arguments
         # avoid path traversal

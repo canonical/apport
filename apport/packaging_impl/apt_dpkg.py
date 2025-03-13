@@ -865,7 +865,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -993,7 +993,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         pkg_versions: dict[str, str],
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
         virtual_mapping = self._virtual_mapping(aptroot)
         # Remember all the virtual packages that this package provides,
         # so that if we encounter that virtual package as a
@@ -1068,7 +1068,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         install_deps: bool = False,
     ) -> str:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
         """Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -1809,7 +1810,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         origins: Iterable[str] | None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
 
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout

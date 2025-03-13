@@ -664,7 +664,7 @@ class ProblemReport(collections.UserDict):
         size limit, in which case it will also remove the value from self.data entirely.
         """
         # TODO: split into smaller subgenerators
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         value = self.data[key]
         if isinstance(value, (CompressedFile, CompressedValue)):
             yield from value.iter_compressed()
@@ -770,7 +770,8 @@ class ProblemReport(collections.UserDict):
         priority_fields=None,
     ):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
         """Write MIME/Multipart RFC 2822 formatted data into file.
 
         file must be a file-like object, not a path.  It needs to be opened in

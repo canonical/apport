@@ -23,7 +23,7 @@ from problem_report import ProblemReport
 def add_info(report: ProblemReport, ui: apport.ui.HookUI) -> None:
     """Add generic, general information to the problem report."""
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals
+    # pylint: disable=too-complex,too-many-branches,too-many-locals
     nonfree_modules = apport.hookutils.nonfree_kernel_modules()
     if nonfree_modules:
         report["NonfreeKernelModules"] = " ".join(nonfree_modules)
