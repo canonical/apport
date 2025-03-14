@@ -16,10 +16,10 @@ import contextlib
 import os
 import sys
 
-import apport
 import apport.fileutils
 import apport.logging
 import apport.report
+from apport.packaging_impl import impl as packaging
 
 
 def mkattrname(path):
@@ -74,7 +74,7 @@ def main():
     # get_source can fail on distribution upgrades where the package in question has
     # been removed from the newer release. See https://launchpad.net/bugs/2078695
     with contextlib.suppress(ValueError):
-        report["SourcePackage"] = apport.packaging.get_source(options.package)
+        report["SourcePackage"] = packaging.get_source(options.package)
     report["ErrorMessage"] = (sys.stdin, False)
 
     if options.tags:

@@ -18,8 +18,8 @@ reports are available, or with 1 if not."""
 import argparse
 import sys
 
-import apport
 from apport.fileutils import get_new_reports, get_new_system_reports
+from apport.packaging_impl import impl as packaging
 
 
 def parse_args():
@@ -43,7 +43,7 @@ else:
 if len(reports) > 0:
     for report in reports:
         print(report.split(".")[0].split("_")[-1])
-    if apport.packaging.enabled():
+    if packaging.enabled():
         sys.exit(0)
     else:
         print("new reports but apport disabled")

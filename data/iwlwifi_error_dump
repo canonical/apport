@@ -15,11 +15,11 @@ import os
 import re
 import sys
 
-import apport
 import apport.fileutils
 import apport.logging
 import apport.report
 from apport.hookutils import command_output
+from apport.packaging_impl import impl as packaging
 
 
 def main() -> None:
@@ -33,7 +33,7 @@ def main() -> None:
         sys.exit(1)
 
     pr = apport.report.Report("KernelCrash")
-    pr.add_package(apport.packaging.get_kernel_package())
+    pr.add_package(packaging.get_kernel_package())
     pr["Title"] = "iwlwifi firmware error"
     pr.add_os_info()
 
