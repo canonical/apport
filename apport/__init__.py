@@ -3,7 +3,6 @@
 # for faster module loading and avoiding circular dependencies
 # pylint: disable=import-outside-toplevel
 
-from apport.logging import error, fatal, log, memdbg, warning
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
@@ -17,6 +16,22 @@ __all__ = [
     "unicode_gettext",
     "warning",
 ]
+
+
+def _logging_function(function_name):
+    def _wrapped_logging_function(*args, **kwargs):
+        import apport.logging
+
+        return getattr(apport.logging, function_name)(*args, **kwargs)
+
+    return _wrapped_logging_function
+
+
+error = _logging_function("error")
+fatal = _logging_function("fatal")
+log = _logging_function("log")
+memdbg = _logging_function("memdbg")
+warning = _logging_function("warning")
 
 
 def unicode_gettext(message):
