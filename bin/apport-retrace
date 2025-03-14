@@ -30,6 +30,7 @@ from argparse import Namespace
 from gettext import gettext as _
 
 import apport
+import apport.logging
 import apport.sandboxutils
 from apport import Report
 from apport.crashdb import CrashDatabase, get_crashdb
@@ -338,20 +339,20 @@ def load_report(
             report = apport.Report()
             with open(options.report, "rb") as f:
                 report.load(f, binary="compressed")
-            apport.memdbg("loaded report from file")
+            apport.logging.memdbg("loaded report from file")
             return report, None
         except (MemoryError, TypeError, ValueError, OSError, zlib.error) as error:
-            apport.fatal("Cannot open report file: %s", str(error))
+            apport.logging.fatal("Cannot open report file: %s", str(error))
     elif options.report.isdigit():
         # crash ID
         try:
             crashid = int(options.report)
             report = crashdb.download(crashid)
-            apport.memdbg("downloaded report from crash DB")
+            apport.logging.memdbg("downloaded report from crash DB")
             return report, crashid
         except AssertionError as error:
             if "apport format data" in str(error):
-                apport.error("Broken report: %s", str(error))
+                apport.logging.error("Broken report: %s", str(error))
                 raise _LoadReportException(2) from None
             raise
         except (
@@ -367,7 +368,9 @@ def load_report(
             # close it with an informative message and exit cleanly
             # to not break crash-digger
             if options.auth and not options.output and not options.stdout:
-                apport.error("Broken report: %s, closing as invalid", str(error))
+                apport.logging.error(
+                    "Broken report: %s, closing as invalid", str(error)
+                )
                 crashdb.mark_retrace_failed(
                     options.report,
                     f"""Thank you for your report!
@@ -386,7 +389,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                 raise _LoadReportException(0) from None
             raise
     else:
-        apport.fatal(
+        apport.logging.fatal(
             '"%s" is neither an existing report file nor a crash ID', options.report
         )
 
@@ -396,14 +399,14 @@ def main(argv):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
     # pylint: disable=too-many-return-statements,too-many-statements
-    apport.memdbg("start")
+    apport.logging.memdbg("start")
 
     gettext.textdomain("apport")
 
     options = parse_args(argv)
 
     crashdb = get_crashdb(options.auth)
-    apport.memdbg("got crash DB")
+    apport.logging.memdbg("got crash DB")
 
     # load the report
     try:
@@ -421,7 +424,7 @@ def main(argv):
     if options.rebuild_package_info and "ExecutablePath" in report:
         report.add_package_info()
 
-    apport.memdbg("processed extra options from command line")
+    apport.logging.memdbg("processed extra options from command line")
 
     # consistency checks
     required_fields = set(
@@ -429,27 +432,27 @@ def main(argv):
     )
     if report["ProblemType"] == "KernelCrash":
         if not set(["Package", "VmCore"]).issubset(set(report.keys())):
-            apport.error("report file does not contain the required fields")
+            apport.logging.error("report file does not contain the required fields")
             return 2
-        apport.error("KernelCrash processing not implemented yet")
+        apport.logging.error("KernelCrash processing not implemented yet")
         return 3
     if not required_fields.issubset(set(report.keys())):
         missing_fields = []
         for required_field in required_fields:
             if required_field not in set(report.keys()):
                 missing_fields.append(required_field)
-        apport.error(
+        apport.logging.error(
             "report file does not contain one of the required fields: %s",
             " ".join(sorted(missing_fields)),
         )
         return 2
 
-    apport.memdbg("consistency checks passed")
+    apport.logging.memdbg("consistency checks passed")
 
     if options.gdb_sandbox:
         system_arch = apport.packaging.get_system_architecture()
         if system_arch != "amd64":
-            apport.error("gdb sandboxes are only implemented for amd64 hosts")
+            apport.logging.error("gdb sandboxes are only implemented for amd64 hosts")
             return 3
         # Create a .dwz directory if it doesn't exist
         if not os.path.exists("/usr/lib/debug/.dwz"):
@@ -565,17 +568,17 @@ def main(argv):
                     cmd += f"'{w}'"
                 else:
                     cmd += w
-            apport.log(f"Calling gdb command: {cmd}", options.timestamps)
-        apport.memdbg("before calling gdb")
+            apport.logging.log(f"Calling gdb command: {cmd}", options.timestamps)
+        apport.logging.memdbg("before calling gdb")
         subprocess.call(gdb_cmd, env=os.environ | environ)
     else:
         # regenerate gdb info
-        apport.memdbg("before collecting gdb info")
+        apport.logging.memdbg("before collecting gdb info")
         try:
             report.add_gdb_info(sandbox, gdb_sandbox)
         except OSError as error:
             if not options.auth:
-                apport.fatal("%s", str(error))
+                apport.logging.fatal("%s", str(error))
             if not options.confirm or confirm_traces(report):
                 invalid_msg = """Thank you for your report!
 
@@ -587,7 +590,7 @@ transit.
 Thank you for your understanding, and sorry for the inconvenience!
 """
                 crashdb.mark_retrace_failed(crashid, invalid_msg)
-            apport.fatal("%s", str(error))
+            apport.logging.fatal("%s", str(error))
         if options.sandbox == "system":
             apt_root = os.path.join(cache, "system", "apt")
         elif options.sandbox:
@@ -607,7 +610,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     modified = False
 
-    apport.memdbg("information collection done")
+    apport.logging.memdbg("information collection done")
 
     if options.remove_core:
         del report["CoreDump"]
@@ -621,7 +624,7 @@ Thank you for your understanding, and sorry for the inconvenience!
     if modified:
         if crashid is not None and not options.output:
             if not options.auth:
-                apport.fatal(
+                apport.logging.fatal(
                     "You need to specify --auth for uploading retraced results"
                     " back to the crash database."
                 )
@@ -638,25 +641,29 @@ Thank you for your understanding, and sorry for the inconvenience!
                             version = "fixed in latest version"
                         else:
                             version = f"fixed in version {res[1]}"
-                        apport.log(
+                        apport.logging.log(
                             f"Report is a duplicate of #{res[0]} ({version})",
                             options.timestamps,
                         )
                         update_bug = False
                     else:
-                        apport.log("Duplicate check negative", options.timestamps)
+                        apport.logging.log(
+                            "Duplicate check negative", options.timestamps
+                        )
 
                 if update_bug:
                     if "Stacktrace" in report:
                         crashdb.update_traces(crashid, report)
-                        apport.log(
+                        apport.logging.log(
                             f"New attachments uploaded to crash database"
                             f" LP: #{crashid}",
                             options.timestamps,
                         )
                     else:
                         # this happens when gdb crashes
-                        apport.log("No stack trace, invalid report", options.timestamps)
+                        apport.logging.log(
+                            "No stack trace, invalid report", options.timestamps
+                        )
 
                     if not report.has_useful_stacktrace():
                         if outdated_msg:
@@ -674,14 +681,14 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                            apport.log(
+                            apport.logging.log(
                                 "No crash signature and outdated packages,"
                                 " invalidating report",
                                 options.timestamps,
                             )
                             crashdb.mark_retrace_failed(crashid, invalid_msg)
                         else:
-                            apport.log(
+                            apport.logging.log(
                                 "Report has no crash signature,"
                                 " so retrace is flawed",
                                 options.timestamps,
