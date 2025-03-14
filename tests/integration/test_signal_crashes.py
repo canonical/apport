@@ -118,8 +118,6 @@ def create_suid(tmpdir: str = "/var/tmp") -> Iterator[str]:
 
 
 MAIL_UID = 8
-test_package = "coreutils"
-test_source = "coreutils"
 
 # (core ulimit (bytes), expect core file)
 core_ulimit_table = [(1000, False), (10000000, True), (-1, True)]
