@@ -1124,7 +1124,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         ]
 
         # write MIME/Multipart version into temporary file
-        # temporary file is returned, pylint: disable=consider-using-with
         mime = tempfile.TemporaryFile()
         report.write_mime(
             mime,

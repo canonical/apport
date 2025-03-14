@@ -1,8 +1,5 @@
 """Integration tests for the apport.hookutils module."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import locale
 import os
 import re

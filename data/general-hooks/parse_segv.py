@@ -14,7 +14,7 @@ of a segfault.  Currently very very simplistic, and only finds commonly
 understood situations for x86/x86_64."""
 
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-class-docstring,missing-function-docstring
+# pylint: disable=missing-class-docstring,missing-function-docstring
 
 import logging
 import re

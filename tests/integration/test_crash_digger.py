@@ -9,9 +9,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import os
 import pathlib
 import shutil
@@ -35,7 +32,6 @@ class T(unittest.TestCase):
 
         crashdb_conf = os.path.join(self.workdir, "crashdb.conf")
         with open(crashdb_conf, "w", encoding="utf-8") as f:
-            # pylint: disable=consider-using-f-string
             f.write(
                 textwrap.dedent(
                     """\

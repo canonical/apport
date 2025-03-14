@@ -10,7 +10,7 @@
 # the full text of the license.
 
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name,missing-class-docstring,missing-function-docstring
 
 import configparser
 import contextlib

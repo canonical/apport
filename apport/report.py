@@ -918,7 +918,7 @@ class Report(problem_report.ProblemReport):
         self, rootdir: str | None = None, gdb_sandbox: str | None = None
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-many-branches,too-many-locals
         """Add information from gdb.
 
         This requires that the report has a CoreDump and an

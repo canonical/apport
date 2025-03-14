@@ -63,10 +63,6 @@ load-plugins = [
 # Pickle collected data for later comparisons.
 persistent = false
 
-[tool.pylint.basic]
-# Good variable names which should always be accepted, separated by a comma.
-good-names = ["i", "j", "k", "lp", "ui", "_"]
-
 [tool.pylint.design]
 # Maximum number of arguments for function / method.
 max-args = 6
@@ -95,6 +91,12 @@ max-line-length = 88
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable = ["consider-using-assignment-expr", "duplicate-code", "fixme"]
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where it
+# should appear only once). See also the "--disable" option for examples.
+enable = ["useless-suppression"]
 
 [tool.pylint.reports]
 # Tells whether to display a full report or only the messages.

@@ -1,8 +1,5 @@
 """Integration tests for the apport.packaging module."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import unittest
 
 import apport.packaging

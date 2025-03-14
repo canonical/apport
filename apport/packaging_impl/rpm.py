@@ -22,9 +22,6 @@ distributions.
 # is_distro_package() as well, if you don't sign all your official packages
 # (cough cough Fedora rawhide cough)
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import hashlib
 import os
 import stat

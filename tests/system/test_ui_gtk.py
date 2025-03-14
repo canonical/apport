@@ -32,7 +32,7 @@ from tests.paths import get_data_directory, local_test_environment
 try:
     import gi
 
-    gi.require_version("Gtk", "3.0")  # noqa: E402, pylint: disable=C0413
+    gi.require_version("Gtk", "3.0")
     from gi.repository import GLib, GObject, Gtk
 
     GLib.log_set_always_fatal(

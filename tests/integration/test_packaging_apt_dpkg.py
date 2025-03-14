@@ -1,8 +1,5 @@
 """Integration tests for the apport.packaging_impl.apt_dpkg module."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import glob
 import gzip
 import os
