@@ -1580,10 +1580,8 @@ class Report(problem_report.ProblemReport):
                 obsolete.append(pkg)
         return obsolete
 
+    # pylint: disable-next=too-many-return-statements
     def crash_signature(self) -> str | None:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-return-statements
-        # pylint: disable=too-many-statements
         """Get a signature string for a crash.
 
         This is suitable for identifying duplicates.
@@ -1611,13 +1609,7 @@ class Report(problem_report.ProblemReport):
 
         # kernel crash
         if "Stacktrace" in self and self["ProblemType"] == "KernelCrash":
-            sig = "kernel"
-            regex = re.compile(r"^\s*\#\d+\s\[\w+\]\s(\w+)")
-            for line in self["Stacktrace"].splitlines():
-                m = regex.match(line)
-                if m:
-                    sig += ":" + (m.group(1))
-            return sig
+            return self._crash_signature_kernel_crash()
 
         # assertion failures
         if self.get("Signal") == "6" and "AssertionMessage" in self:
@@ -1627,102 +1619,123 @@ class Report(problem_report.ProblemReport):
 
         # signal crashes
         if "StacktraceTop" in self and "Signal" in self:
-            sig = f"{self['ExecutablePath']}:{self['Signal']}"
-            bt_fn_re = re.compile(r"^(?:([\w:~]+).*|(<signal handler called>)\s*)$")
-
-            lines = self["StacktraceTop"].splitlines()
-            if len(lines) < 2:
-                return None
-
-            for line in lines:
-                m = bt_fn_re.match(line)
-                if m:
-                    sig += ":" + (m.group(1) or m.group(2))
-                else:
-                    # this will also catch ??
-                    return None
-            return sig
+            return self._crash_signature_signal_crash()
 
         # Python crashes
         if "Traceback" in self:
-            trace = self["Traceback"].splitlines()
-
-            sig = ""
-            if len(trace) == 1:
-                # sometimes, Python exceptions do not have file references
-                m = re.match(r"(\w+): ", trace[0])
-                if not m:
-                    return None
-                return self["ExecutablePath"] + ":" + m.group(1)
-            if len(trace) < 3:
-                return None
-
-            loc_re = re.compile(r'^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
-            for line in trace:
-                m = loc_re.match(line)
-                if m:
-                    # if we have a function name, use this; for a a crash
-                    # outside of a function/method, fall back to the source
-                    # file location
-                    if m.group(3) != "<module>":
-                        sig += ":" + m.group(3)
-                    else:
-                        # resolve symlinks for more stable signatures
-                        f = m.group(1)
-                        if os.path.islink(f):
-                            f = os.path.realpath(f)
-                        sig += f":{f}@{m.group(2)}"
-
-            exc_name = trace[-1].split(":")[0]
-            try:
-                exc_name += f"({self['_PythonExceptionQualifier']})"
-            except KeyError:
-                pass
-            return self["ExecutablePath"] + ":" + exc_name + sig
+            return self._crash_signature_python_traceback()
 
         if self["ProblemType"] == "KernelOops" and "Failure" in self:
             if "suspend" in self["Failure"] or "resume" in self["Failure"]:
-                # Suspend / resume failure
-                sig = self["Failure"]
-                if self.get("MachineType"):
-                    sig += f":{self['MachineType']}"
-                if self.get("dmi.bios.version"):
-                    sig += f":{self['dmi.bios.version']}"
-                return sig
+                return self._crash_signature_suspend_resume_failure()
 
         # KernelOops crashes
         if "OopsText" in self:
-            in_trace_body = False
-            parts = []
-            for line in self["OopsText"].split("\n"):
-                if line.startswith("BUG: unable to handle"):
-                    parsed = re.search("^BUG: unable to handle (.*) at ", line)
-                    if parsed:
-                        match = parsed.group(1)
-                        assert (
-                            match
-                        ), f"could not parse expected problem type line: {line}"
-                        parts.append(match)
+            return self._crash_signature_kernel_oops()
 
-                if line.startswith("IP: "):
+        return None
+
+    def _crash_signature_kernel_crash(self) -> str | None:
+        sig = "kernel"
+        regex = re.compile(r"^\s*\#\d+\s\[\w+\]\s(\w+)")
+        for line in self["Stacktrace"].splitlines():
+            m = regex.match(line)
+            if m:
+                sig += ":" + (m.group(1))
+        return sig
+
+    def _crash_signature_kernel_oops(self) -> str | None:
+        in_trace_body = False
+        parts = []
+        for line in self["OopsText"].split("\n"):
+            if line.startswith("BUG: unable to handle"):
+                parsed = re.search("^BUG: unable to handle (.*) at ", line)
+                if parsed:
+                    match = parsed.group(1)
+                    assert match, f"could not parse expected problem type line: {line}"
+                    parts.append(match)
+
+            if line.startswith("IP: "):
+                match = self._extract_function_and_address(line)
+                if match:
+                    parts.append(match)
+
+            elif line.startswith("Call Trace:"):
+                in_trace_body = True
+
+            elif in_trace_body:
+                match = None
+                if line and line[0] == " ":
                     match = self._extract_function_and_address(line)
                     if match:
                         parts.append(match)
+                else:
+                    in_trace_body = False
+        if parts:
+            return ":".join(parts)
 
-                elif line.startswith("Call Trace:"):
-                    in_trace_body = True
-
-                elif in_trace_body:
-                    match = None
-                    if line and line[0] == " ":
-                        match = self._extract_function_and_address(line)
-                        if match:
-                            parts.append(match)
-                    else:
-                        in_trace_body = False
-            if parts:
-                return ":".join(parts)
         return None
+
+    def _crash_signature_python_traceback(self) -> str | None:
+        trace = self["Traceback"].splitlines()
+
+        sig = ""
+        if len(trace) == 1:
+            # sometimes, Python exceptions do not have file references
+            m = re.match(r"(\w+): ", trace[0])
+            if not m:
+                return None
+            return self["ExecutablePath"] + ":" + m.group(1)
+        if len(trace) < 3:
+            return None
+
+        loc_re = re.compile(r'^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
+        for line in trace:
+            m = loc_re.match(line)
+            if m:
+                # if we have a function name, use this; for a a crash
+                # outside of a function/method, fall back to the source
+                # file location
+                if m.group(3) != "<module>":
+                    sig += ":" + m.group(3)
+                else:
+                    # resolve symlinks for more stable signatures
+                    f = m.group(1)
+                    if os.path.islink(f):
+                        f = os.path.realpath(f)
+                    sig += f":{f}@{m.group(2)}"
+
+        exc_name = trace[-1].split(":")[0]
+        try:
+            exc_name += f"({self['_PythonExceptionQualifier']})"
+        except KeyError:
+            pass
+        return self["ExecutablePath"] + ":" + exc_name + sig
+
+    def _crash_signature_signal_crash(self) -> str | None:
+        sig = f"{self['ExecutablePath']}:{self['Signal']}"
+        bt_fn_re = re.compile(r"^(?:([\w:~]+).*|(<signal handler called>)\s*)$")
+
+        lines = self["StacktraceTop"].splitlines()
+        if len(lines) < 2:
+            return None
+
+        for line in lines:
+            m = bt_fn_re.match(line)
+            if m:
+                sig += ":" + (m.group(1) or m.group(2))
+            else:
+                # this will also catch ??
+                return None
+        return sig
+
+    def _crash_signature_suspend_resume_failure(self) -> str | None:
+        sig = self["Failure"]
+        if self.get("MachineType"):
+            sig += f":{self['MachineType']}"
+        if self.get("dmi.bios.version"):
+            sig += f":{self['dmi.bios.version']}"
+        return sig
 
     @staticmethod
     def _extract_function_and_address(line: str) -> str | None:
