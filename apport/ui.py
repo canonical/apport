@@ -777,27 +777,38 @@ class UserInterface:
 
         # list of affected source packages
         self.report = apport.Report("Bug")
+        # FIXME: for now we assume this is a binary package because it's just easier
+        # and it didn't work with a source package anyway.
         if self.args.package:
-            pkgs = [self.args.package.strip()]
+            binary = self.args.package.strip()
+            pkgs = {packaging.get_source(binary): set((binary,))}
         else:
-            pkgs = self.crashdb.get_affected_packages(self.args.update_report)
+            pkgs = {
+                src: packaging.get_installed_binaries(src)
+                for src in self.crashdb.get_affected_packages(self.args.update_report)
+            }
 
         info_collected = False
-        for p in pkgs:
+        assert self.report is not None
+        for src, binaries in pkgs.items():
             # print(f"Collecting apport information for source package {p}...")
-            self.cur_package = p
-            self.report["SourcePackage"] = p
-            self.report["Package"] = p  # no way to find this out
+            assert binaries
+            self.cur_package = src
+            self.report["SourcePackage"] = src
+            self.report["Package"] = src  # Slight abuse of the field but it's mandatory
+            self.report["InstalledBinaries"] = " ".join(sorted(binaries))
 
             # we either must have the package installed or a source package
             # hook available to collect sensible information
             try:
-                packaging.get_version(p)
+                packaging.get_version(next(iter(binaries)))
             except ValueError:
                 if not os.path.exists(
-                    os.path.join(apport.report.PACKAGE_HOOK_DIR, f"source_{p}.py")
+                    os.path.join(apport.report.PACKAGE_HOOK_DIR, f"source_{src}.py")
                 ):
-                    print(f"Package {p} not installed and no hook available, ignoring")
+                    print(
+                        f"Package {src} not installed and no hook available, ignoring"
+                    )
                     continue
             self.collect_info(ignore_uninstalled=True)
             info_collected = True
