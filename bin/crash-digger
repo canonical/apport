@@ -22,7 +22,7 @@ import subprocess
 import sys
 import zlib
 
-import apport
+import apport.logging
 from apport.crashdb import get_crashdb
 
 
@@ -58,7 +58,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         try:
             self.crashdb = get_crashdb(auth_file, name=crash_db)
         except KeyError:
-            apport.error("Crash database %s does not exist", crash_db)
+            apport.logging.error("Crash database %s does not exist", crash_db)
             sys.exit(1)
         self.lp = False
         try:
@@ -71,7 +71,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
-            apport.log(f"Available releases: {str(self.releases)}", True)
+            apport.logging.log(f"Available releases: {str(self.releases)}", True)
         else:
             self.releases = None
 
@@ -85,18 +85,20 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
 
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
-            apport.log(
+            apport.logging.log(
                 f"fill_pool: dup check pool now: {str(self.dupcheck_pool)}", True
             )
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
-            apport.log(f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True)
+            apport.logging.log(
+                f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True
+            )
 
     def retrace_next(self):
         """Grab an ID from the retrace pool and retrace it."""
 
         crash_id = self.retrace_pool.pop()
-        apport.log(
+        apport.logging.log(
             f"retracing {'LP: ' if self.lp else ''}#{crash_id}"
             f" (left in pool: {len(self.retrace_pool)})",
             True,
@@ -105,11 +107,13 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         try:
             rel = self.crashdb.get_distro_release(crash_id)
         except ValueError:
-            apport.log("could not determine release -- no DistroRelease field?", True)
+            apport.logging.log(
+                "could not determine release -- no DistroRelease field?", True
+            )
             self.crashdb.mark_retraced(crash_id)
             return
         if rel not in self.releases:
-            apport.log(
+            apport.logging.log(
                 f"crash is release {rel} which does not have a config"
                 f" available, skipping",
                 True,
@@ -138,14 +142,14 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
 
         result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
-            apport.log(
+            apport.logging.log(
                 f"retracing {'LP: ' if self.lp else ''}#{crash_id} failed"
                 f" with status: {result}",
                 True,
             )
             if result == 99:
                 self.retrace_pool = set()
-                apport.log("transient error reported; halting", True)
+                apport.logging.log("transient error reported; halting", True)
                 return
 
         self.crashdb.mark_retraced(crash_id)
@@ -154,7 +158,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         """Grab an ID from the dupcheck pool and process it."""
 
         crash_id = self.dupcheck_pool.pop()
-        apport.log(
+        apport.logging.log(
             f"checking {'LP: ' if self.lp else ''}#{crash_id} for duplicate"
             f" (left in pool: {len(self.dupcheck_pool)})",
             True,
@@ -171,11 +175,13 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             zlib.error,
         ) as error:
             if str(error) == "bug description must contain standard apport format data":
-                apport.log(f"Cannot download report: {str(error)}", True)
-                apport.error("Cannot download report %s: %s", crash_id, str(error))
+                apport.logging.log(f"Cannot download report: {str(error)}", True)
+                apport.logging.error(
+                    "Cannot download report %s: %s", crash_id, str(error)
+                )
                 return
-            apport.log(f"Cannot download report: {str(error)}", True)
-            apport.error("Cannot download report %i: %s", crash_id, str(error))
+            apport.logging.log(f"Cannot download report: {str(error)}", True)
+            apport.logging.error("Cannot download report %i: %s", crash_id, str(error))
             return
 
         res = self.crashdb.check_duplicate(crash_id, report)
@@ -186,9 +192,9 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
                 version = "fixed in latest version"
             else:
                 version = f"fixed in version {res[1]}"
-            apport.log(f"Report is a duplicate of #{res[0]} ({version})", True)
+            apport.logging.log(f"Report is a duplicate of #{res[0]} ({version})", True)
         else:
-            apport.log("Duplicate check negative", True)
+            apport.logging.log("Duplicate check negative", True)
 
     def run(self):
         """Process the work pools until they are empty."""
@@ -288,9 +294,9 @@ def parse_options():
     args = parser.parse_args()
 
     if not args.config_dir and not args.dupcheck_mode:
-        apport.fatal("Error: --config-dir or --dupcheck needs to be given")
+        apport.logging.fatal("Error: --config-dir or --dupcheck needs to be given")
     if not args.auth_file:
-        apport.fatal("Error: -a/--auth needs to be given")
+        apport.logging.fatal("Error: -a/--auth needs to be given")
 
     return args
 
