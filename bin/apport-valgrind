@@ -26,6 +26,7 @@ import sys
 from gettext import gettext as _
 
 import apport
+import apport.logging
 import apport.sandboxutils
 
 #
@@ -116,9 +117,9 @@ def _exit_on_interrupt():
 options = parse_options()
 
 try:
-    apport.memdbg("start")
-    apport.memdbg(f"Executable: {options.exe}")
-    apport.memdbg(f"Command arguments: {str(options)}")
+    apport.logging.memdbg("start")
+    apport.logging.memdbg(f"Executable: {options.exe}")
+    apport.logging.memdbg(f"Command arguments: {str(options)}")
 
     gettext.textdomain("apport")
 
@@ -142,13 +143,13 @@ try:
         report.add_os_info()
         report.add_package_info()
 
-        apport.memdbg("\nCreated report")
+        apport.logging.memdbg("\nCreated report")
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted during report creation\n")
     _exit_on_interrupt()
 
 
-apport.memdbg("About to handle sandbox")
+apport.logging.memdbg("About to handle sandbox")
 
 cache = None
 
@@ -168,7 +169,7 @@ except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while creating sandbox\n")
     _exit_on_interrupt()
 
-apport.memdbg("About to get path to sandbox")
+apport.logging.memdbg("About to get path to sandbox")
 
 debugrootdir = None
 
@@ -197,7 +198,7 @@ try:
         argv += [f"--extra-debuginfo-path={debugrootdir}/usr/lib/debug/"]
     argv += [exepath]
 
-    apport.memdbg("before calling valgrind")
+    apport.logging.memdbg("before calling valgrind")
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while preparing to create sandbox\n")
     _exit_on_interrupt()
@@ -210,4 +211,4 @@ except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while running valgrind\n")
     _exit_on_interrupt()
 
-apport.memdbg("information collection done")
+apport.logging.memdbg("information collection done")
