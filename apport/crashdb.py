@@ -81,7 +81,8 @@ class CrashDatabase:
         path specifies an SQLite database. It will be created if it does not
         exist yet.
         """
-        import sqlite3  # pylint: disable=import-outside-toplevel
+        # for faster Python startup time: pylint: disable-next=import-outside-toplevel
+        import sqlite3
 
         assert (
             sqlite3.paramstyle == "qmark"
