@@ -6,7 +6,7 @@ import time
 import typing
 
 
-def log(message, timestamp=False):
+def log(message: str, timestamp: bool = False) -> None:
     """Log the given string to stdout. Prepend timestamp if requested."""
     if timestamp:
         sys.stdout.write(f"{time.strftime('%x %X')}: ")
@@ -19,7 +19,7 @@ def fatal(msg: str, *args: typing.Any) -> typing.NoReturn:
     sys.exit(1)
 
 
-def error(msg, *args):
+def error(msg: str, *args: typing.Any) -> None:
     """Print out an error message."""
     if sys.stderr:
         sys.stderr.write("ERROR: ")
@@ -27,7 +27,7 @@ def error(msg, *args):
         sys.stderr.write("\n")
 
 
-def warning(msg, *args):
+def warning(msg: str, *args: typing.Any) -> None:
     """Print out an warning message."""
     if sys.stderr:
         sys.stderr.write("WARNING: ")
@@ -35,7 +35,7 @@ def warning(msg, *args):
         sys.stderr.write("\n")
 
 
-def memdbg(checkpoint):
+def memdbg(checkpoint: str) -> None:
     """Print current memory usage.
 
     This is only done if $APPORT_MEMDEBUG is set.
