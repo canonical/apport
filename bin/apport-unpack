@@ -27,7 +27,7 @@ from gettext import gettext as _
 from typing import BinaryIO
 
 import problem_report
-from apport import fatal
+from apport.logging import fatal
 
 
 def parse_args() -> argparse.Namespace:
