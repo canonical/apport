@@ -15,6 +15,7 @@ import sys
 
 import apport
 import apport.fileutils
+import apport.logging
 
 # parse command line arguments
 if len(sys.argv) != 3:
@@ -40,4 +41,4 @@ try:
     with apport.fileutils.make_report_file(pr) as f:
         pr.write(f)
 except OSError as error:
-    apport.fatal("Cannot create report: %s", str(error))
+    apport.logging.fatal("Cannot create report: %s", str(error))
