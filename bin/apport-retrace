@@ -30,7 +30,6 @@ from argparse import Namespace
 from gettext import gettext as _
 
 import apport
-import apport.fileutils
 import apport.sandboxutils
 from apport import Report
 from apport.crashdb import CrashDatabase, get_crashdb
