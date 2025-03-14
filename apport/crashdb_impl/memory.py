@@ -96,15 +96,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """Download the problem report from given ID and return a Report."""
         return self.reports[crash_id]["report"]
 
-    def get_affected_packages(self, crash_id):
+    def get_affected_packages(self, crash_id: int) -> list[str]:
         """Return list of affected source packages for given ID."""
         return [self.reports[crash_id]["report"]["SourcePackage"]]
 
-    def is_reporter(self, crash_id):
+    def is_reporter(self, crash_id: int) -> bool:
         """Check whether the user is the reporter of given ID."""
         return True
 
-    def can_update(self, crash_id):
+    def can_update(self, crash_id: int) -> bool:
         """Check whether the user is eligible to update a report.
 
         A user should add additional information to an existing ID if (s)he is
@@ -149,12 +149,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             r["report"].update(report)
 
-    def get_distro_release(self, crash_id):
+    def get_distro_release(self, crash_id: int) -> str:
         """Get 'DistroRelease: <release>' from the given report ID and return
         it."""
         return self.reports[crash_id]["report"]["DistroRelease"]
 
-    def get_unfixed(self):
+    def get_unfixed(self) -> set[int]:
         """Return an ID set of all crashes which are not yet fixed.
 
         The list must not contain bugs which were rejected or duplicate.
@@ -170,7 +170,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return result
 
-    def get_fixed_version(self, crash_id):
+    def get_fixed_version(self, crash_id: int) -> str | None:
         """Return the package version that fixes a given crash.
 
         Return None if the crash is not yet fixed, or an empty string if the
@@ -189,7 +189,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         except IndexError:
             return "invalid"
 
-    def duplicate_of(self, crash_id):
+    def duplicate_of(self, crash_id: int) -> int | None:
         """Return master ID for a duplicate bug.
 
         If the bug is not a duplicate, return None.
@@ -203,7 +203,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         self.reports[crash_id]["dup_of"] = master_id
 
-    def mark_regression(self, crash_id, master):
+    def mark_regression(self, crash_id: int, master: int) -> None:
         """Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').
         """
@@ -217,22 +217,24 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         except KeyError:
             pass  # happens when trying to check for dup twice
 
-    def mark_retraced(self, crash_id):
+    def mark_retraced(self, crash_id: int) -> None:
         """Mark crash id as retraced."""
         self.unretraced.remove(crash_id)
 
-    def mark_retrace_failed(self, crash_id, invalid_msg=None):
+    def mark_retrace_failed(
+        self, crash_id: int, invalid_msg: str | None = None
+    ) -> None:
         """Mark crash id as 'failed to retrace'.
 
         This is a no-op since this crash DB is not interested in it.
         """
 
-    def get_unretraced(self):
+    def get_unretraced(self) -> set[int]:
         """Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture."""
         return self.unretraced
 
-    def get_dup_unchecked(self):
+    def get_dup_unchecked(self) -> set[int]:
         """Return an ID set of all crashes which have not been checked for
         being a duplicate.
 
@@ -242,11 +244,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         return self.dup_unchecked
 
-    def latest_id(self):
+    def latest_id(self) -> int:
         """Return the ID of the most recently filed report."""
         return len(self.reports) - 1
 
-    def add_sample_data(self):
+    def add_sample_data(self) -> None:
         """Add some sample crash reports.
 
         This is mostly useful for test suites.

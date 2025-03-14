@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Self
 
 import apport.crashdb
 
@@ -25,12 +25,14 @@ class Github:
 
     __last_request: float = time.time()
 
-    def __init__(self, client_id, message_callback):
+    def __init__(
+        self, client_id: str, message_callback: Callable | None = None
+    ) -> None:
         self.__client_id = client_id
-        self.__authentication_data = None
+        self.__authentication_data: dict[str, str] | None = None
         self.__access_token = None
-        self.__cooldown = None
-        self.__expiry = None
+        self.__cooldown = 0.0
+        self.__expiry = 0.0
         self.message_callback = message_callback
 
     def _post(self, url: str, data: str) -> Any:
@@ -46,11 +48,12 @@ class Github:
             with urllib.request.urlopen(request, timeout=5.0) as response:
                 return json.loads(response.read())
         except urllib.error.URLError as err:
-            self.message_callback(
-                "Failed connection",
-                f"Failed connection to {url}.\n"
-                + "Please check your internet connection and try again.",
-            )
+            if self.message_callback:
+                self.message_callback(
+                    "Failed connection",
+                    f"Failed connection to {url}.\n"
+                    f"Please check your internet connection and try again.",
+                )
             raise err
         finally:
             self.__last_request = time.time()
@@ -64,7 +67,7 @@ class Github:
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
         return self._post(url, json.dumps(data))
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """Enters login process. At exit, login process ends."""
         data = {"client_id": self.__client_id, "scope": "public_repo"}
         url = "https://github.com/login/device/code"
@@ -83,7 +86,8 @@ class Github:
         url = response["verification_uri"]
         code = response["user_code"]
 
-        self.message_callback("Login required", prompt.format(url=url, code=code))
+        if self.message_callback:
+            self.message_callback("Login required", prompt.format(url=url, code=code))
 
         self.__authentication_data = {
             "client_id": self.__client_id,
@@ -97,8 +101,8 @@ class Github:
 
     def __exit__(self, *_: Any) -> None:
         self.__authentication_data = None
-        self.__cooldown = 0
-        self.__expiry = 0
+        self.__cooldown = 0.0
+        self.__expiry = 0.0
 
     def authentication_complete(self) -> bool:
         """Asks Github if the user has logged in already.
@@ -112,9 +116,10 @@ class Github:
         current_time = time.time()
         waittime = self.__cooldown - (current_time - self.__last_request)
         if current_time + waittime > self.__expiry:
-            self.message_callback(
-                "Failed login", "Github authentication expired. Please try again."
-            )
+            if self.message_callback:
+                self.message_callback(
+                    "Failed login", "Github authentication expired. Please try again."
+                )
             raise RuntimeError("Github authentication expired")
         if waittime > 0:
             time.sleep(waittime)  # Avoids spamming the API
@@ -167,7 +172,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "labels": list(self.labels),
         }
 
-    def _github_login(self, user_message_callback):
+    def _github_login(self, user_message_callback: Callable | None = None) -> Github:
         with Github(self.app_id, user_message_callback) as github:
             while not github.authentication_complete():
                 pass
@@ -216,7 +221,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "This method is not relevant for Github database implementation."
         )
 
-    def can_update(self, crash_id):
+    def can_update(self, crash_id: int) -> bool:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
@@ -231,27 +236,27 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "This method is not relevant for Github database implementation."
         )
 
-    def duplicate_of(self, crash_id):
+    def duplicate_of(self, crash_id: int) -> int | None:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def get_affected_packages(self, crash_id):
+    def get_affected_packages(self, crash_id: int) -> list[str]:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def get_distro_release(self, crash_id):
+    def get_distro_release(self, crash_id: int) -> str:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def get_dup_unchecked(self):
+    def get_dup_unchecked(self) -> set[int]:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def get_fixed_version(self, crash_id):
+    def get_fixed_version(self, crash_id: int) -> str | None:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
@@ -261,32 +266,34 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             "This method is not relevant for Github database implementation."
         )
 
-    def get_unfixed(self):
+    def get_unfixed(self) -> set[int]:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def get_unretraced(self):
+    def get_unretraced(self) -> set[int]:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def is_reporter(self, crash_id):
+    def is_reporter(self, crash_id: int) -> bool:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def mark_regression(self, crash_id, master):
+    def mark_regression(self, crash_id: int, master: int) -> None:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def mark_retrace_failed(self, crash_id, invalid_msg=None):
+    def mark_retrace_failed(
+        self, crash_id: int, invalid_msg: str | None = None
+    ) -> None:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
 
-    def mark_retraced(self, crash_id):
+    def mark_retraced(self, crash_id: int) -> None:
         raise NotImplementedError(
             "This method is not relevant for Github database implementation."
         )
