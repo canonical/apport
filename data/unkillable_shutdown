@@ -21,6 +21,7 @@ from collections.abc import Container, Iterable
 import apport
 import apport.fileutils
 import apport.hookutils
+import apport.logging
 
 
 def parse_argv():
@@ -53,7 +54,7 @@ def orphaned_processes(omit_pids: Container[str]) -> Iterable[int]:
         except ValueError:
             continue
         if pid == 1 or pid == my_pid or process in omit_pids:
-            apport.warning("ignoring: %s", process)
+            apport.logging.warning("ignoring: %s", process)
             continue
 
         try:
@@ -64,7 +65,7 @@ def orphaned_processes(omit_pids: Container[str]) -> Iterable[int]:
             continue
 
         if sid == my_sid:
-            apport.warning("ignoring same sid: %s", process)
+            apport.logging.warning("ignoring same sid: %s", process)
             continue
 
         try:
@@ -73,7 +74,7 @@ def orphaned_processes(omit_pids: Container[str]) -> Iterable[int]:
             if error.errno == errno.ENOENT:
                 # kernel thread or similar, silently ignore
                 continue
-            apport.warning(
+            apport.logging.warning(
                 "Could not read information about pid %s: %s", process, str(error)
             )
             continue
@@ -106,9 +107,11 @@ def do_report(pid: int, omit_pids: Iterable[str]) -> None:
         with apport.fileutils.make_report_file(report) as report_file:
             report.write(report_file)
     except FileExistsError as error:
-        apport.warning("Cannot create report: %s already exists", error.filename)
+        apport.logging.warning(
+            "Cannot create report: %s already exists", error.filename
+        )
     except OSError as error:
-        apport.fatal("Cannot create report: %s", str(error))
+        apport.logging.fatal("Cannot create report: %s", str(error))
 
 
 #
