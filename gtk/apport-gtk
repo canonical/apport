@@ -20,7 +20,7 @@ import subprocess
 import sys
 from gettext import gettext as _
 
-import apport
+import apport.logging
 import apport.ui
 
 try:
@@ -651,7 +651,7 @@ def text_to_markup(text: str) -> str:
 def main(argv: list[str]) -> None:
     """GTK Apport user interface."""
     if not apport.ui.has_display() or Gdk.Display.get_default() is None:
-        apport.fatal(
+        apport.logging.fatal(
             "This program needs a running display server session. Please see"
             ' "man apport-cli" for a command line version of Apport.'
         )

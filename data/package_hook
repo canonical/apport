@@ -18,6 +18,7 @@ import sys
 
 import apport
 import apport.fileutils
+import apport.logging
 
 
 def mkattrname(path):
@@ -92,7 +93,7 @@ def main():
         with apport.fileutils.make_report_file(report) as report_file:
             report.write(report_file)
     except OSError as error:
-        apport.fatal("Cannot create report: %s", str(error))
+        apport.logging.fatal("Cannot create report: %s", str(error))
 
 
 if __name__ == "__main__":
