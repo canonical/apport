@@ -18,6 +18,7 @@ import re
 import apport.fileutils
 import apport.logging
 import apport.report
+from apport.packaging_impl import impl as packaging
 
 
 # TODO: Split into smaller functions/methods
@@ -25,7 +26,7 @@ import apport.report
 def main() -> None:
     """Collect information about a kernel oops."""
     pr = apport.report.Report("KernelCrash")
-    package = apport.packaging.get_kernel_package()
+    package = packaging.get_kernel_package()
     pr.add_package(package)
 
     pr.add_os_info()

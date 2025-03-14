@@ -29,10 +29,10 @@ import zlib
 from argparse import Namespace
 from gettext import gettext as _
 
-import apport
 import apport.logging
 import apport.sandboxutils
 from apport.crashdb import CrashDatabase, get_crashdb
+from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
 
@@ -288,7 +288,7 @@ def gen_source_stacktrace(report, sandbox):
             version = report["Package"].split()[1]
         except (IndexError, KeyError):
             version = None
-        srcdir = apport.packaging.get_source_tree(
+        srcdir = packaging.get_source_tree(
             report["SourcePackage"], workdir, version, sandbox=sandbox
         )
         if not srcdir:
@@ -450,7 +450,7 @@ def main(argv):
     apport.logging.memdbg("consistency checks passed")
 
     if options.gdb_sandbox:
-        system_arch = apport.packaging.get_system_architecture()
+        system_arch = packaging.get_system_architecture()
         if system_arch != "amd64":
             apport.logging.error("gdb sandboxes are only implemented for amd64 hosts")
             return 3
