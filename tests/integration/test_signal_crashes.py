@@ -1113,7 +1113,7 @@ class T(unittest.TestCase):
         expect_corefile_owner: int | None = None,
         args: list[str] | None = None,
         suid_dumpable: int = 1,
-        hook_before_apport: Callable | None = None,
+        hook_before_apport: Callable[[], None] | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
         cwd: str | None = None,
