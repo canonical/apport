@@ -34,7 +34,7 @@ from problem_report import MalformedProblemReport
 
 def process_report(report):
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-return-statements
+    # pylint: disable=too-complex,too-many-branches,too-many-return-statements
     # pylint: disable=too-many-statements
     """Collect information for a report and mark for whoopsie upload
 

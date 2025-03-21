@@ -178,7 +178,7 @@ def thread_collect_info(
     report, reportfile, package, ui, symptom_script=None, ignore_uninstalled=False
 ):
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-statements
+    # pylint: disable=too-complex,too-many-branches,too-many-statements
     """Collect information about report.
 
     Encapsulate calls to add_*_info() and update given report, so that this
@@ -415,7 +415,7 @@ class UserInterface:
 
     def run_crash(self, report_file: str) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-return-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
         """Present and report a particular crash.
 
@@ -618,7 +618,7 @@ class UserInterface:
 
     def run_report_bug(self, symptom_script: str | None = None) -> bool:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-return-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-return-statements
         # pylint: disable=too-many-statements
         """Report a bug.
 
@@ -743,6 +743,8 @@ class UserInterface:
 
         return True
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def run_update_report(self) -> bool:
         """Update an existing bug with locally collected information."""
         # avoid irrelevant noise
@@ -903,7 +905,7 @@ class UserInterface:
 
     def run_argv(self) -> bool:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-return-statements
+        # pylint: disable=too-complex,too-many-return-statements
         """Call appropriate run_* method according to command line arguments.
 
         Return True if at least one report has been processed, and False
@@ -1008,7 +1010,7 @@ class UserInterface:
 
     def parse_argv(self, argv: list[str]) -> argparse.Namespace:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-statements
         """Parse command line options.
 
         If a single argument is given without any options, this tries to "do
@@ -1403,7 +1405,8 @@ class UserInterface:
         on_finished: Callable[[], None] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
         """Collect additional information.
 
         Call all the add_*_info() methods and display a progress dialog during
@@ -1725,6 +1728,8 @@ class UserInterface:
         message = _("Unable to start web browser to open %s.") % url
         self.ui_error_message(title, message + error_details)
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def file_report(self) -> None:
         """Upload the current report and guide the user to the reporting
         web page."""

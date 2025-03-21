@@ -398,7 +398,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 def main(argv):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
-    # pylint: disable=too-many-return-statements,too-many-statements
+    # pylint: disable=too-many-return-statements,too-many-statements,too-complex
     apport.logging.memdbg("start")
 
     gettext.textdomain("apport")

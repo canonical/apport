@@ -901,6 +901,8 @@ def attach_printing(report):
     )
 
 
+# TODO: Split into smaller functions/methods
+# pylint: disable-next=too-complex
 def attach_mac_events(
     report: ProblemReport, profiles: Iterable[str] | str | None = None
 ) -> None:

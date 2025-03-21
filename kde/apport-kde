@@ -136,7 +136,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, report, allowed_to_report, ui, desktop_info):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-statements
         if "DistroRelease" not in report:
             report.add_os_info()
         distro = report["DistroRelease"]

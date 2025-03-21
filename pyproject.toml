@@ -52,6 +52,7 @@ load-plugins = [
     "pylint.extensions.docstyle",
     "pylint.extensions.dunder",
     "pylint.extensions.eq_without_hash",
+    "pylint.extensions.mccabe",
     "pylint.extensions.no_self_use",
     "pylint.extensions.overlapping_exceptions",
     "pylint.extensions.private_import",
@@ -69,6 +70,9 @@ max-args = 6
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes = 9
+
+# McCabe complexity cyclomatic threshold
+max-complexity = 11
 
 # Maximum number of positional arguments for function / method.
 max-positional-arguments=6

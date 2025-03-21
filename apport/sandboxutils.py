@@ -141,7 +141,7 @@ def make_sandbox(
     dynamic_origins: bool = False,
 ) -> tuple[str, str, str]:
     # TODO: Split into smaller functions/methods
-    # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+    # pylint: disable=too-complex,too-many-branches,too-many-locals,too-many-statements
     """Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and

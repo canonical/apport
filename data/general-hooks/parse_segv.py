@@ -73,7 +73,7 @@ class ParseSegv:
 
     def parse_disassembly(self, disassembly):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         if not self.regs:
             raise ValueError("Registers not loaded yet!?")
         lines = disassembly.splitlines()
@@ -214,7 +214,7 @@ class ParseSegv:
 
     def calculate_arg(self, arg):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
 
         # Check for and pre-remove segment offset
         segment = 0
@@ -280,7 +280,7 @@ class ParseSegv:
 
     def report(self):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-statements
+        # pylint: disable=too-complex,too-many-branches,too-many-statements
         understood = False
         reason = []
         details = [f"Segfault happened at: {self.line}"]

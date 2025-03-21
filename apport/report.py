@@ -201,6 +201,8 @@ def _command_output(
     )
 
 
+# TODO: Split into smaller functions/methods
+# pylint: disable-next=too-complex
 def _check_bug_pattern(report, pattern):
     """Check if given report matches the given bug pattern XML DOM node.
 
@@ -598,7 +600,7 @@ class Report(problem_report.ProblemReport):
 
     def _check_interpreted(self) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         """Check if process is a script.
 
         Use ExecutablePath, ProcStatus and ProcCmdline to determine if
@@ -722,7 +724,7 @@ class Report(problem_report.ProblemReport):
         extraenv: Iterable[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -918,7 +920,7 @@ class Report(problem_report.ProblemReport):
         self, rootdir: str | None = None, gdb_sandbox: str | None = None
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches,too-many-locals
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
         """Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -1035,6 +1037,8 @@ class Report(problem_report.ProblemReport):
             if addr_signature:
                 self["StacktraceAddressSignature"] = addr_signature
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def _gen_stacktrace_top(self):
         """Build field StacktraceTop as the top five functions of Stacktrace.
 
@@ -1141,7 +1145,7 @@ class Report(problem_report.ProblemReport):
         self, ui: HookUI, package: str | None, srcpackage: str | None
     ) -> bool:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-complex,too-many-branches
 
         # determine package names, unless already given as arguments
         # avoid path traversal
@@ -1307,6 +1311,8 @@ class Report(problem_report.ProblemReport):
         except ValueError:
             return f"signal {signal_number}"
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def check_ignored(self) -> bool:
         """Check if current report should not be presented.
 
@@ -1807,6 +1813,8 @@ class Report(problem_report.ProblemReport):
 
         return f"{self['ExecutablePath']}:{self['Signal']}:{':'.join(stack)}"
 
+    # TODO: Split into smaller functions/methods
+    # pylint: disable-next=too-complex
     def anonymize(self) -> None:
         """Remove user identifying strings from the report.
 
