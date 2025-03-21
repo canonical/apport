@@ -10,7 +10,7 @@
 # the full text of the license.
 
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-class-docstring,missing-function-docstring
+# pylint: disable=missing-class-docstring,missing-function-docstring
 
 import configparser
 import contextlib
@@ -34,9 +34,9 @@ from problem_report import ProblemReport
 
 report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
 core_dir = os.environ.get("APPORT_COREDUMP_DIR", "/var/lib/apport/coredump")
-max_corefiles_per_uid = 5
+MAX_COREFILES_PER_UID = 5
 
-_config_file = "~/.config/apport/settings"
+_CONFIG_FILE = "~/.config/apport/settings"
 
 SNAPD_SOCKET = "/run/snapd.socket"
 
@@ -507,7 +507,7 @@ def get_config(section, setting, default=None, path=None, boolean=False):
     if not path:
         # Properly handle dropped privileges
         homedir = pwd.getpwuid(os.geteuid())[5]
-        path = _config_file.replace("~", homedir)
+        path = _CONFIG_FILE.replace("~", homedir)
 
     config = _get_config_parser(path)
 
@@ -659,8 +659,8 @@ def clean_core_directory(uid: int) -> None:
     sorted_files = sorted(uid_files, key=operator.itemgetter(1))
 
     # Subtract a extra one to make room for the new core file
-    if len(uid_files) > max_corefiles_per_uid - 1:
-        for _ in range(len(uid_files) - max_corefiles_per_uid + 1):
+    if len(uid_files) > MAX_COREFILES_PER_UID - 1:
+        for _ in range(len(uid_files) - MAX_COREFILES_PER_UID + 1):
             os.remove(os.path.join(core_dir, sorted_files[0][0]))
             sorted_files.remove(sorted_files[0])
 

@@ -10,9 +10,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import io
 import os
 import shutil
@@ -41,6 +38,7 @@ if not PYQT5_IMPORT_ERROR:
     apport_kde = import_module_from_file(apport_kde_path)
     MainUserInterface = apport_kde.MainUserInterface
 else:
+    # pylint: disable-next=invalid-name
     MainUserInterface = None
 
 

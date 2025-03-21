@@ -1009,7 +1009,7 @@ def _setup_foonux_config(
     keyring_dir = os.path.join(config_release_dir, "trusted.gpg.d")
     _copy_ubuntu_keyrings(keyring_dir)
     # Create an architecture specific symlink, otherwise it cannot be
-    # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
+    # found for armhf in _AptDpkgPackageInfo._build_apt_sandbox() as
     # that looks for trusted.gpg.d relative to sources.list.
     keyring_arch_dir = os.path.join(armhf_dir, "trusted.gpg.d")
     os.symlink("../trusted.gpg.d", keyring_arch_dir)

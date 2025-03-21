@@ -15,8 +15,11 @@
 #    w3m, lynx: do not work
 #    elinks: works
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-function-docstring
+# pylint: disable=missing-function-docstring
 
 import errno
 import os
