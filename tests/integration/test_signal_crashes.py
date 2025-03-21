@@ -18,6 +18,7 @@ import collections
 import contextlib
 import datetime
 import grp
+import io
 import os
 import pathlib
 import resource
@@ -942,8 +943,13 @@ class T(unittest.TestCase):
     def _call_apport(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
-        cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
-        subprocess.check_call(cmd, stdin=stdin)
+        with (
+            unittest.mock.patch("sys.stdin", io.TextIOWrapper(stdin)),
+            unittest.mock.patch.object(
+                apport_binary, "get_apport_starttime", return_value=int(time.time())
+            ),
+        ):
+            apport_binary.main(self._apport_args(process, sig, dump_mode))
 
     @staticmethod
     def _forward_crash_to_container(
