@@ -25,7 +25,7 @@ from apport.packaging_impl.apt_dpkg import (
 
 
 @unittest.mock.patch(
-    "apport.packaging_impl.apt_dpkg.__AptDpkgPackageInfo.get_os_version",
+    "apport.packaging_impl.apt_dpkg._AptDpkgPackageInfo.get_os_version",
     MagicMock(return_value=("Ubuntu", "22.04")),
 )
 class TestPackagingAptDpkg(unittest.TestCase):

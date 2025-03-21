@@ -12,7 +12,7 @@
 
 # pylint: disable=too-many-lines
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-function-docstring
+# pylint: disable=missing-function-docstring
 
 import atexit
 import email
@@ -1158,7 +1158,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
 
-_https_upload_callback = None
+_HTTPS_UPLOAD_CALLBACK = None
 
 
 #
@@ -1171,7 +1171,7 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
 
     def send(self, data):
         # if callback has not been set, call the old method
-        if not _https_upload_callback:
+        if not _HTTPS_UPLOAD_CALLBACK:
             http.client.HTTPSConnection.send(self, data)
             return
 
@@ -1179,7 +1179,7 @@ class HTTPSProgressConnection(http.client.HTTPSConnection):
         total = len(data)
         chunksize = 1024
         while sent < total:
-            _https_upload_callback(sent, total)
+            _HTTPS_UPLOAD_CALLBACK(sent, total)
             t1 = time.time()
             http.client.HTTPSConnection.send(self, data[sent : (sent + chunksize)])
             sent += chunksize
@@ -1218,8 +1218,8 @@ def upload_blob(blob, progress_callback=None, hostname="launchpad.net"):
     ticket = None
     url = f"https://{hostname}/+storeblob"
 
-    global _https_upload_callback  # pylint: disable=global-statement
-    _https_upload_callback = progress_callback
+    global _HTTPS_UPLOAD_CALLBACK  # pylint: disable=global-statement
+    _HTTPS_UPLOAD_CALLBACK = progress_callback
 
     # build the form-data multipart/MIME request
     data = email.mime.multipart.MIMEMultipart()

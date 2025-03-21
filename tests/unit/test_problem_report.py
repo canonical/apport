@@ -1,8 +1,5 @@
 """Unit tests for the problem_report module."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import base64
 import contextlib
 import datetime
@@ -23,7 +20,7 @@ except ImportError:
 
 import problem_report
 
-bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
+BIN_DATA = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
@@ -380,7 +377,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_write_fileobj(self) -> None:
         """Write a report with a pointer to a file-like object."""
-        tempbin = io.BytesIO(bin_data)
+        tempbin = io.BytesIO(BIN_DATA)
         tempasc = io.BytesIO(b"Hello World")
 
         pr = problem_report.ProblemReport(date="now!")
@@ -451,7 +448,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # test with reading everything
         pr = problem_report.ProblemReport()
         pr.load(io.BytesIO(bin_report))
-        self.assertEqual(pr["File"], bin_data)
+        self.assertEqual(pr["File"], BIN_DATA)
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
@@ -464,8 +461,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["Foo"], "Bar")
         self.assertEqual(pr.has_removed_fields(), False)
         self.assertTrue(isinstance(pr["File"], problem_report.CompressedValue))
-        self.assertEqual(len(pr["File"]), len(bin_data))
-        self.assertEqual(pr["File"].get_value(), bin_data)
+        self.assertEqual(len(pr["File"]), len(BIN_DATA))
+        self.assertEqual(pr["File"].get_value(), BIN_DATA)
         self.assertEqual(pr["File"].name, "File")
 
     def test_read_file_legacy(self) -> None:
@@ -815,7 +812,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """Import a dictionary with update()."""
         pr = problem_report.ProblemReport()
         pr["oldtext"] = "Hello world"
-        pr["oldbin"] = bin_data
+        pr["oldbin"] = BIN_DATA
         pr["overwrite"] = "I am crap"
 
         d = {
@@ -826,7 +823,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         pr.update(d)
         self.assertEqual(pr["oldtext"], "Hello world")
-        self.assertEqual(pr["oldbin"], bin_data)
+        self.assertEqual(pr["oldbin"], BIN_DATA)
         self.assertEqual(pr["newtext"], "Goodbye world")
         self.assertEqual(pr["newbin"], "11\000\001\002\xffZZ")
         self.assertEqual(pr["overwrite"], "I am good")
@@ -849,7 +846,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr = problem_report.ProblemReport()
         pr.load(io.BytesIO(report), key_filter=["DataYes", "GoodFile"])
         self.assertEqual(pr["DataYes"], "yesyes")
-        self.assertEqual(pr["GoodFile"], bin_data)
+        self.assertEqual(pr["GoodFile"], BIN_DATA)
         self.assertEqual(sorted(pr.keys()), ["DataYes", "GoodFile"])
 
     def test_get_on_disk_size(self) -> None:

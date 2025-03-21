@@ -36,7 +36,7 @@ report_dir = os.environ.get("APPORT_REPORT_DIR", "/var/crash")
 core_dir = os.environ.get("APPORT_COREDUMP_DIR", "/var/lib/apport/coredump")
 max_corefiles_per_uid = 5
 
-_config_file = "~/.config/apport/settings"
+_CONFIG_FILE = "~/.config/apport/settings"
 
 SNAPD_SOCKET = "/run/snapd.socket"
 
@@ -507,7 +507,7 @@ def get_config(section, setting, default=None, path=None, boolean=False):
     if not path:
         # Properly handle dropped privileges
         homedir = pwd.getpwuid(os.geteuid())[5]
-        path = _config_file.replace("~", homedir)
+        path = _CONFIG_FILE.replace("~", homedir)
 
     config = _get_config_parser(path)
 
