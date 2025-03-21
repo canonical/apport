@@ -489,7 +489,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         """clean_core_directory()"""
         fake_uid = 5150
         extra_core_files = 4
-        num_core_files = apport.fileutils.max_corefiles_per_uid + extra_core_files
+        num_core_files = apport.fileutils.MAX_COREFILES_PER_UID + extra_core_files
 
         # Create some test files
         for x in range(num_core_files):
@@ -517,15 +517,15 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
         apport.fileutils.clean_core_directory(fake_uid)
 
         # Make sure we have the proper number of test files. We should
-        # have one less than max_corefiles_per_uid.
+        # have one less than MAX_COREFILES_PER_UID.
         self.assertEqual(
-            apport.fileutils.max_corefiles_per_uid - 1,
+            apport.fileutils.MAX_COREFILES_PER_UID - 1,
             len(apport.fileutils.find_core_files_by_uid(fake_uid)),
         )
         self.assertEqual(1, len(apport.fileutils.find_core_files_by_uid(fake_uid + 1)))
 
         # Make sure we deleted the oldest ones
-        for x in range(apport.fileutils.max_corefiles_per_uid - 1):
+        for x in range(apport.fileutils.MAX_COREFILES_PER_UID - 1):
             offset = extra_core_files + x + 1
             core_path = apport.fileutils.get_core_path(
                 pid=123 + offset,
