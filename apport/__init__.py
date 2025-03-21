@@ -20,8 +20,16 @@ __all__ = [
 
 def _logging_function(function_name):
     def _wrapped_logging_function(*args, **kwargs):
+        import warnings
+
         import apport.logging
 
+        warnings.warn(
+            f"apport.{function_name}() is deprecated."
+            f" Please use apport.logging.{function_name}() directly instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return getattr(apport.logging, function_name)(*args, **kwargs)
 
     return _wrapped_logging_function
