@@ -1190,7 +1190,7 @@ class T(unittest.TestCase):
             raise
 
         try:
-            command_process = self.wait_for_gdb_sleeping_child_process(
+            command_process = self.wait_for_gdb_child_process(
                 gdb.pid, expected_command or command
             )
 
@@ -1369,17 +1369,17 @@ class T(unittest.TestCase):
     # False positive return statement for unittest.TestCase.fail
     # See https://github.com/pylint-dev/pylint/issues/4167
     # pylint: disable-next=inconsistent-return-statements
-    def wait_for_gdb_sleeping_child_process(
-        self, gdb_pid: int, command: str
+    def wait_for_gdb_child_process(
+        self, gdb_pid: int, command: str, expected_status: str = "sleeping"
     ) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
         timeout = 0.0
         while timeout < 5:
-            gdb_children = gdb_process.children()
+            gdb_children = gdb_process.children(recursive=True)
             for process in gdb_children:
                 try:
-                    if process.status() != "sleeping":
+                    if process.status() != expected_status:
                         continue
                     cmdline = process.cmdline()
                 except psutil.NoSuchProcess:  # pragma: no cover
@@ -1391,13 +1391,13 @@ class T(unittest.TestCase):
             timeout += 0.1
 
         self.fail(
-            f"GDB child process {command} not started within "
-            f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
+            f"GDB child process {command} with status {expected_status!r} not started"
+            f" within {int(timeout)} seconds. GDB children: {gdb_children!r}"
         )
 
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_sleeping_child_process(self, sleep_mock: MagicMock) -> None:
-        """Test wait_for_gdb_sleeping_child_process() helper method."""
+    def test_wait_for_gdb_child_process(self, sleep_mock: MagicMock) -> None:
+        """Test wait_for_gdb_child_process() helper method."""
         child = MagicMock(spec=psutil.Process)
         child.status.side_effect = [
             "tracing-stop",  # child not yet started
@@ -1413,7 +1413,7 @@ class T(unittest.TestCase):
                 [child],  # child ready
             ]
 
-            self.wait_for_gdb_sleeping_child_process(123456789, self.TEST_EXECUTABLE)
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
 
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 3)
@@ -1422,13 +1422,13 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_sleeping_child_process_timeout(
+    def test_wait_for_gdb_child_process_timeout(
         self, sleep_mock: MagicMock, process_mock: MagicMock
     ) -> None:
-        """Test wait_for_gdb_sleeping_child_process() helper runs into timeout."""
+        """Test wait_for_gdb_child_process() helper runs into timeout."""
         process_mock.return_value.children.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:
-            self.wait_for_gdb_sleeping_child_process(123456789, self.TEST_EXECUTABLE)
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 51)
