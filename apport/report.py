@@ -201,7 +201,7 @@ def _command_output(
     )
 
 
-def _check_bug_pattern(report, pattern):
+def _check_bug_pattern(report, pattern, *, yaql_engine=None):
     """Check if given report matches the given bug pattern XML DOM node.
 
     Return the bug URL on match, otherwise None.
@@ -210,41 +210,87 @@ def _check_bug_pattern(report, pattern):
         return None
 
     for c in pattern.childNodes:
-        # regular expression condition
-        if c.nodeType == xml.dom.Node.ELEMENT_NODE and c.nodeName == "re":
+        if c.nodeType != xml.dom.Node.ELEMENT_NODE:
+            continue
+        if c.nodeName not in ("re", "yaql"):
+            continue
+        try:
+            key = c.attributes["key"].nodeValue
+        except KeyError:
+            continue
+        if key not in report:
+            return None
+        c.normalize()
+        if not c.hasChildNodes() or c.childNodes[0].nodeType != xml.dom.Node.TEXT_NODE:
+            continue
+
+        if c.nodeName == "re":
+            # regular expression condition
+            regexp = c.childNodes[0].nodeValue
+            v = report[key]
+            if isinstance(v, problem_report.CompressedValue):
+                v = v.get_value()
+                regexp = regexp.encode("UTF-8")
+            elif isinstance(v, bytes):
+                regexp = regexp.encode("UTF-8")
             try:
-                key = c.attributes["key"].nodeValue
-            except KeyError:
+                re_c = re.compile(regexp)
+            except (re.error, TypeError, ValueError):
                 continue
-            if key not in report:
+            if not re_c.search(v):
                 return None
-            c.normalize()
-            if c.hasChildNodes() and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
-                regexp = c.childNodes[0].nodeValue
-                v = report[key]
-                if isinstance(v, problem_report.CompressedValue):
-                    v = v.get_value()
-                    regexp = regexp.encode("UTF-8")
-                elif isinstance(v, bytes):
-                    regexp = regexp.encode("UTF-8")
+        elif c.nodeName == "yaql":
+            if yaql_engine is None:
+                return None
+            import yaql  # pylint: disable=import-outside-toplevel
+
+            v = report[key]
+            if isinstance(v, problem_report.CompressedValue):
+                v = v.get_value()
+            expression = yaql_engine(c.childNodes[0].nodeValue)
+            try:
+                fmt = c.attributes["format"].nodeValue
+            except KeyError:
+                # Only JSON and YAML are supported for now. Since it is
+                # possible to parse JSON with a YAML parser, make it the
+                # default. For JSON, specifying format="json" will result in
+                # faster parsing though.
+                fmt = "yaml"
+            if fmt == "json":
+                import json  # pylint: disable=import-outside-toplevel
+
                 try:
-                    re_c = re.compile(regexp)
-                except (re.error, TypeError, ValueError):
-                    continue
-                if not re_c.search(v):
+                    data = json.loads(v)
+                except json.JSONDecodeError:
                     return None
+            elif fmt == "yaml":
+                import yaml  # pylint: disable=import-outside-toplevel
+
+                try:
+                    data = yaml.safe_load(v)
+                except yaml.YAMLError:
+                    return None
+            else:
+                apport.logging.warning("unsupported format for yaql: %s", fmt)
+                return None
+
+            try:
+                if not expression.evaluate(data=data):
+                    return None
+            except yaql.language.exceptions.YaqlException:
+                return None
 
     return pattern.attributes["url"].nodeValue
 
 
-def _check_bug_patterns(report, patterns):
+def _check_bug_patterns(report, patterns, *, yaql_engine=None):
     try:
         dom = xml.dom.minidom.parseString(patterns)
     except (xml.parsers.expat.ExpatError, UnicodeEncodeError):
         return None
 
     for pattern in dom.getElementsByTagName("pattern"):
-        url = _check_bug_pattern(report, pattern)
+        url = _check_bug_pattern(report, pattern, yaql_engine=yaql_engine)
         if url:
             return url
 
@@ -1242,7 +1288,14 @@ class Report(problem_report.ProblemReport):
         if "<title>404 Not Found" in patterns:
             return None
 
-        url = _check_bug_patterns(self, patterns)
+        try:
+            import yaql  # pylint: disable=import-outside-toplevel
+
+            yaql_engine = yaql.factory.YaqlFactory().create()
+        except ImportError:
+            yaql_engine = None
+
+        url = _check_bug_patterns(self, patterns, yaql_engine=yaql_engine)
         if url:
             return url
 
