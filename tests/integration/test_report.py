@@ -4,6 +4,7 @@
 
 import atexit
 import grp
+import importlib
 import io
 import os
 import pathlib
@@ -18,6 +19,8 @@ import unittest
 import unittest.mock
 from typing import IO
 from unittest.mock import MagicMock
+
+import pytest
 
 import apport.packaging
 import apport.report
@@ -1195,6 +1198,137 @@ int main() { return f(42); }
             None,
             "gracefully handles nonexisting URL domain",
         )
+
+    @pytest.mark.skipif(
+        not importlib.util.find_spec("yaql"),
+        reason="YAQL Python module is not installed",
+    )
+    def test_search_bug_patterns_yaql_installed(self) -> None:
+        self._test_search_bug_patterns_yaql(yaql_installed=True)
+
+    def test_search_bug_patterns_yaql_not_installed(self) -> None:
+        with unittest.mock.patch.dict(sys.modules, {"yaql": None}, clear=False):
+            self._test_search_bug_patterns_yaql(yaql_installed=False)
+
+    def _test_search_bug_patterns_yaql(self, yaql_installed: bool) -> None:
+        # create some test patterns
+        patterns = textwrap.dedent(
+            """\
+            <?xml version="1.0"?>
+            <patterns>
+                <pattern url="http://bugtracker.net/bugs/1">
+                    <re key="Package">subiquity</re>
+                    <yaql key="ProbeData" format="json">
+                        isDict($) and $.get("blockdev", {}).values().count() > 3
+                    </yaql>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/2">
+                    <re key="Package">subiquity</re>
+                    <yaql key="ProbeData">
+                        isDict($) and $.get("blockdev", {}).values().where(
+                            isDict($) and $.get("ID_PART_TABLE_TYPE") = "unsupported"
+                        ).any()
+                    </yaql>
+                </pattern>
+                <pattern url="http://bugtracker.net/bugs/3">
+                    <re key="Package">subiquity</re>
+                    <yaql key="CurtinPartitioningConfig" format="yaml">
+                        not $.storage.config.where(
+                            $.get("path") = "/"
+                        ).any()
+                    </yaql>
+                </pattern>
+            </patterns>"""
+        ).encode()
+
+        reports = []
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["ProbeData"] = (
+            """ {
+                "blockdev": {
+                    "/dev/sda": null, "/dev/sda1": null,
+                    "/dev/sda2": null, "/dev/sda3": null
+                }
+            } """
+        )
+
+        reports.append(r)
+
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["ProbeData"] = (
+            '{"blockdev": {"/dev/sda1": {"ID_PART_TABLE_TYPE": "unsupported"}}}'
+        )
+        reports.append(r)
+
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["CurtinPartitioningConfig"] = textwrap.dedent(
+            """
+            storage:
+              config:
+                - type: mount
+                  path: /home
+            """
+        )
+        reports.append(r)
+
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["ProbeData"] = (
+            """ {
+                "blockdev": {
+                    "/dev/sda": null, "/dev/sda1": null,
+                }
+            } """
+        )
+        reports.append(r)
+
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["ProbeData"] = "{}"
+        reports.append(r)
+
+        r = apport.report.Report()
+        r["Package"] = "subiquity"
+        r["ProbeData"] = "{"  # <- invalid JSON
+        reports.append(r)
+
+        if yaql_installed:
+            expected_values = [
+                ("http://bugtracker.net/bugs/1", None),
+                ("http://bugtracker.net/bugs/2", None),
+                ("http://bugtracker.net/bugs/3", None),
+                (None, "does not match any pattern"),
+                (None, "does not match empty JSON"),
+                (None, "does not match invalid JSON"),
+            ]
+        else:
+            expected_values = [
+                (None, "does not match without a YAQL engine") for _ in reports
+            ]
+
+        with tempfile.NamedTemporaryFile(prefix="apport-") as bug_pattern:
+            bug_pattern.write(patterns)
+            bug_pattern.flush()
+            pattern_url = f"file://{bug_pattern.name}"
+
+            for report, (expected_value, reason) in zip(reports, expected_values):
+                self.assertEqual(
+                    expected_value, report.search_bug_patterns(pattern_url), reason
+                )
+                # Also test with compressed values (only for those who have ProbeData)
+                if "ProbeData" in report:
+                    compressed = report.copy()
+                    compressed["ProbeData"] = problem_report.CompressedValue(
+                        report["ProbeData"].encode("utf-8")
+                    )
+                    self.assertEqual(
+                        expected_value,
+                        compressed.search_bug_patterns(pattern_url),
+                        reason,
+                    )
 
     def test_add_hooks_info(self) -> None:
         # TODO: Split into separate test cases
