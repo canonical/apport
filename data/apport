@@ -940,13 +940,12 @@ def process_crash_from_kernel_with_proc_pid(
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
-    coredump_fd = sys.stdin.fileno()
     real_user, pidstat = get_pid_info(proc_pid)
-
     process_start = get_process_starttime(proc_pid)
     if not consistency_checks(options, process_start, proc_pid, real_user):
         return 0
 
+    coredump_fd = sys.stdin.fileno()
     logger.info(
         "called for pid %s, signal %s, core limit %s, dump mode %s",
         options.pid,
