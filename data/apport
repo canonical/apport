@@ -1173,7 +1173,7 @@ def process_crash(
             gid = pwd.getpwnam("whoopsie").pw_gid
             os.fchown(fd, report_owner.uid, gid)
         except (OSError, KeyError):
-            os.fchown(fd, report_owner.uid, report_owner.gid)
+            os.fchown(fd, report_owner.uid, -1)
     except OSError as error:
         logger.error("Could not create report file: %s", str(error))
         return 1
