@@ -822,20 +822,21 @@ class T(unittest.TestCase):
         with (
             subprocess.Popen(command) as test_process,
             unittest.mock.patch("builtins.open", open_mock),
+            apport_binary.ProcPid(test_process.pid) as proc_pid,
         ):
             try:
-                same_ns = apport_binary.is_same_ns(test_process.pid, "mnt")
+                same_ns = apport_binary.is_same_ns(proc_pid, "mnt")
                 self.assertFalse(same_ns)
             finally:
                 test_process.kill()
         readlink_mock.assert_has_calls(
             [
-                unittest.mock.call(f"/proc/{test_process.pid}/ns/mnt"),
+                unittest.mock.call("ns/mnt", dir_fd=proc_pid.fd),
                 unittest.mock.call("/proc/self/ns/mnt"),
             ]
         )
         open_mock.assert_called_with(
-            f"/proc/{test_process.pid}/cgroup", encoding="utf-8"
+            "cgroup", encoding="utf-8", opener=proc_pid._opener
         )
 
     @unittest.skipIf(
@@ -965,7 +966,10 @@ class T(unittest.TestCase):
 
         with unittest.mock.patch("os.open") as os_open_mock:
             os_open_mock.side_effect = _mocked_os_open
-            apport_binary.forward_crash_to_container(args, coredump_fd, False)
+            with apport_binary.ProcPid(args.global_pid) as proc_pid:
+                apport_binary.forward_crash_to_container(
+                    args, proc_pid, coredump_fd, False
+                )
 
     def _call_apport_via_socket(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
