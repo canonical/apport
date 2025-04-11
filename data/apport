@@ -761,12 +761,7 @@ def main(args: list[str]) -> int:
         start_apport()
         return 0
 
-    if _check_global_pid_and_forward(options):
-        return 0
-    check_lock()
-
     try:
-        setup_signals()
         return process_crash_from_kernel(options)
     except (SystemExit, KeyboardInterrupt):
         pass
@@ -937,11 +932,17 @@ def _set_signal(report: apport.report.Report, signal_number: int) -> None:
         report["SignalName"] = signal.Signals(signal_number).name
 
 
+# pylint: disable-next=too-many-return-statements
 def process_crash_from_kernel_with_proc_pid(
     options: argparse.Namespace, proc_pid: ProcPid
 ) -> int:
     """Process crash and return exit code."""
     logger = logging.getLogger()
+
+    if _check_global_pid_and_forward(options):
+        return 0
+    check_lock()
+    setup_signals()
 
     real_user, pidstat = get_pid_info(proc_pid)
     process_start = get_process_starttime(proc_pid)

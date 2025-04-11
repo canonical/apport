@@ -129,15 +129,31 @@ class TestApport(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "^1$"):
             apport_binary.receive_arguments_via_socket()
 
-    @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
+    @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
     @unittest.mock.patch.object(
         apport_binary, "is_same_ns", MagicMock(return_value=False)
     )
     @unittest.mock.patch.object(apport_binary, "forward_crash_to_container")
-    def test_main_forward_crash_to_container(self, forward_mock: MagicMock) -> None:
-        """Test main() to forward crash to container."""
-        args = ["-p", "12345", "-P", "67890"]
-        self.assertEqual(apport_binary.main(args), 0)
+    def test_forward_crash_to_container(self, forward_mock: MagicMock) -> None:
+        """process_crash_from_kernel_with_proc_pid() to forward crash to container."""
+        fake_pid = 67890
+        yesterday = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100) - 86400
+        options = apport_binary.parse_arguments(["-p", "12345", "-P", str(fake_pid)])
+        with tempfile.TemporaryDirectory() as tmpdir:
+            stat = pathlib.Path(tmpdir) / "stat"
+            stat.write_text(f"{fake_pid} (name) ?{' x' * 18} {yesterday} ...\n")
+            status = pathlib.Path(tmpdir) / "status"
+            status.write_text("Name:\tname\nUid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\n")
+            exe = pathlib.Path(tmpdir) / "exe"
+            os.symlink(sys.executable, exe)
+            cmdline = pathlib.Path(tmpdir) / "cmdline"
+            cmdline.write_text("name\0")
+            with apport_binary.ProcPid(fake_pid, tmpdir) as proc_pid:
+                exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
+                    options, proc_pid
+                )
+
+        self.assertEqual(exit_code, 0)
         forward_mock.assert_called_once()
 
     @unittest.mock.patch.object(apport_binary, "init_error_log", MagicMock())
