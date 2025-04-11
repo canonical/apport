@@ -18,6 +18,7 @@ import collections
 import contextlib
 import datetime
 import grp
+import io
 import os
 import pathlib
 import resource
@@ -610,34 +611,19 @@ class T(unittest.TestCase):
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            app = subprocess.run(
-                [
-                    str(APPORT_PATH),
-                    "-p",
-                    str(test_proc.pid),
-                    "-s",
-                    "42",
-                    "-c",
-                    "0",
-                    "-d",
-                    "1",
-                ],
-                check=False,
-                input=b"foo",
-                stderr=subprocess.PIPE,
-            )
-            err = app.stderr.decode()
-            self.assertEqual(app.returncode, 0, err)
-            if os.getuid() > 0:
-                self.assertIn("executable was modified after program start", err)
-            else:
-                with open("/var/log/apport.log", encoding="utf-8") as f:
-                    lines = f.readlines()
-                self.assertIn("executable was modified after program start", lines[-1])
+            with self.assertLogs(level="ERROR") as info_logs:
+                with open(myexe, "rb") as fake_coredump_fd:
+                    self._call_apport_directly(
+                        psutil.Process(test_proc.pid), 42, 1, fake_coredump_fd
+                    )
+
         finally:
             test_proc.kill()
             test_proc.wait()
 
+        self.assertIn(
+            "executable was modified after program start", info_logs.output[0]
+        )
         self._check_report(expect_report=False)
 
     def test_logging_file(self):
@@ -939,7 +925,21 @@ class T(unittest.TestCase):
             process.exe().replace("/", "!"),
         ]
 
-    def _call_apport(
+    def _call_apport_directly(
+        self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
+    ) -> None:
+        with (
+            unittest.mock.patch("sys.stdin", io.TextIOWrapper(stdin)),
+            unittest.mock.patch.object(
+                apport_binary, "get_apport_starttime", return_value=int(time.time())
+            ),
+            unittest.mock.patch.object(apport_binary, "init_error_log"),
+            unittest.mock.patch.object(apport_binary, "setup_signals"),
+        ):
+            exit_code = apport_binary.main(self._apport_args(process, sig, dump_mode))
+        self.assertEqual(exit_code, 0)
+
+    def _call_apport_via_subprocess(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
         cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
@@ -1194,8 +1194,10 @@ class T(unittest.TestCase):
 
             if via_socket:
                 call_apport = self._call_apport_via_socket
+            elif uid is None:
+                call_apport = self._call_apport_directly
             else:
-                call_apport = self._call_apport
+                call_apport = self._call_apport_via_subprocess
             with open(gdb_core_file, "rb") as core_fd:
                 call_apport(command_process, sig, suid_dumpable, core_fd)
             os.unlink(gdb_core_file)
