@@ -196,6 +196,30 @@ class TestApport(unittest.TestCase):
                 apport_binary.consistency_checks(options, now, proc_pid, crash_user)
             )
 
+    @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
+    def test_consistency_checks_before_forwarding(self) -> None:
+        """Test that consistency checks are done before forwarding to container."""
+        fake_pid = 67890
+        future = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100) + 3600
+        options = apport_binary.parse_arguments(["-p", "12345", "-P", str(fake_pid)])
+        with (
+            self.assertLogs(level="ERROR") as info_logs,
+            tempfile.TemporaryDirectory() as tmpdir,
+        ):
+            stat = pathlib.Path(tmpdir) / "stat"
+            stat.write_text(f"{fake_pid} (name) ?{' x' * 18} {future} ...\n")
+            status = pathlib.Path(tmpdir) / "status"
+            status.write_text("Name:\tname\nUid:\t42\t42\t42\t42\nGid:\t7\t7\t7\t7\n")
+            with apport_binary.ProcPid(fake_pid, tmpdir) as proc_pid:
+                exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
+                    options, proc_pid
+                )
+
+        self.assertEqual(exit_code, 0)
+        self.assertIn(
+            "process was replaced after Apport started, ignoring", info_logs.output[0]
+        )
+
     def test_consistency_checks_mismatching_uid(self) -> None:
         """Test consistency_checks() for a mitmatching UID."""
         pid = os.getpid()

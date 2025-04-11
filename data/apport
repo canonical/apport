@@ -954,14 +954,15 @@ def process_crash_from_kernel_with_proc_pid(
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
-    if _check_global_pid_and_forward(options, proc_pid):
-        return 0
     check_lock()
     setup_signals()
 
     real_user, pidstat = get_pid_info(proc_pid)
     process_start = get_process_starttime(proc_pid)
     if not consistency_checks(options, process_start, proc_pid, real_user):
+        return 0
+
+    if _check_global_pid_and_forward(options, proc_pid):
         return 0
 
     coredump_fd = sys.stdin.fileno()
