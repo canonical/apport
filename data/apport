@@ -580,10 +580,10 @@ def forward_crash_to_container(
 
     # Validate that the crashed binary is owned
     # by the user namespace of the process
-    task_uid = proc_pid.stat("exe").st_uid
+    exe_stat = proc_pid.stat("exe")
     try:
         with proc_pid.open("uid_map") as fd:
-            if not apport.fileutils.search_map(fd, task_uid):
+            if not apport.fileutils.search_map(fd, exe_stat.st_uid):
                 logger.error(
                     "host pid %s crashed in a container"
                     " with no access to the binary",
@@ -593,10 +593,9 @@ def forward_crash_to_container(
     except FileNotFoundError:
         pass
 
-    task_gid = proc_pid.stat("exe").st_gid
     try:
         with proc_pid.open("gid_map") as fd:
-            if not apport.fileutils.search_map(fd, task_gid):
+            if not apport.fileutils.search_map(fd, exe_stat.st_gid):
                 logger.error(
                     "host pid %s crashed in a container"
                     " with no access to the binary",
