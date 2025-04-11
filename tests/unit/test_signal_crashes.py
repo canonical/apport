@@ -102,6 +102,11 @@ class TestApport(unittest.TestCase):
         self.assertEqual(sys.stderr, stderr)
         isatty_mock.assert_called_once_with(2)
 
+    def test_proc_pid_not_exist(self) -> None:
+        """Test ProcPid().exits() returning False."""
+        with apport_binary.ProcPid(os.getpid()) as proc_pid:
+            self.assertFalse(proc_pid.exists("nonexistent"))
+
     def test_receive_arguments_via_socket_import_error(self) -> None:
         """Test receive_arguments_via_socket() fail to import systemd."""
         with (

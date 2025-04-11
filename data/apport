@@ -69,10 +69,28 @@ class ProcPid(contextlib.ContextDecorator):
     def _opener(self, path: str | os.PathLike[str], flags: int) -> int:
         return os.open(path, flags, dir_fd=self.fd)
 
+    def exists(self, path: str | os.PathLike[str]) -> bool:
+        """Test whether a path relative to /proc/<pid> exists.
+
+        Returns False for broken symbolic links."""
+        try:
+            self.stat(path)
+        except (OSError, ValueError):
+            return False
+        return True
+
     def open(self, file: str) -> io.TextIOWrapper:
         """Open file relative to /proc/<pid> and return a stream."""
         assert self.fd is not None
         return open(file, encoding="utf-8", opener=self._opener)
+
+    def readlink(self, path: str | os.PathLike[str]) -> str:
+        """Return a string representing the path to which the symbolic link points."""
+        return os.readlink(path, dir_fd=self.fd)
+
+    def stat(self, path: str | os.PathLike[str]) -> os.stat_result:
+        """Get the status of a file or a file descriptor relative to /proc/<pid>."""
+        return os.stat(path, dir_fd=self.fd)
 
 
 def check_lock():
@@ -470,15 +488,13 @@ def is_systemd_watchdog_restart(signum: int, proc_pid: ProcPid) -> bool:
         return False
 
 
-def is_same_ns(pid: int, ns: str) -> bool:
-    if not os.path.exists(f"/proc/self/ns/{ns}") or not os.path.exists(
-        f"/proc/{pid}/ns/{ns}"
-    ):
+def is_same_ns(proc_pid: ProcPid, ns: str) -> bool:
+    if not os.path.exists(f"/proc/self/ns/{ns}") or not proc_pid.exists(f"ns/{ns}"):
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
     try:
-        if os.readlink(f"/proc/{pid}/ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
+        if proc_pid.readlink(f"ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
             # Check that the inode for both namespaces is the same
             return True
     except OSError as error:
@@ -488,7 +504,7 @@ def is_same_ns(pid: int, ns: str) -> bool:
 
     # check to see if the process is part of the system.slice (LP: #1870060)
     with contextlib.suppress(FileNotFoundError):
-        with open(f"/proc/{pid}/cgroup", encoding="utf-8") as cgroup:
+        with proc_pid.open("cgroup") as cgroup:
             for line in cgroup:
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
@@ -500,7 +516,10 @@ def is_same_ns(pid: int, ns: str) -> bool:
 # TODO: Split into smaller functions/methods
 # pylint: disable-next=too-complex
 def forward_crash_to_container(
-    options: argparse.Namespace, coredump_fd: int = 0, has_cap_sys_admin: bool = True
+    options: argparse.Namespace,
+    proc_pid: ProcPid,
+    coredump_fd: int = 0,
+    has_cap_sys_admin: bool = True,
 ) -> None:
     """Try to forward the crash to the container.
 
@@ -511,18 +530,12 @@ def forward_crash_to_container(
     forward the process information there.
     """
     logger = logging.getLogger()
-    proc_host_pid_fd = os.open(
-        f"/proc/{options.global_pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-    )
-
-    def proc_host_pid_opener(path, flags):
-        return os.open(path, flags, dir_fd=proc_host_pid_fd)
 
     # Validate that the target socket is owned
     # by the user namespace of the process
     try:
         sock_fd = os.open(
-            "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_host_pid_fd
+            "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_pid.fd
         )
         socket_uid = os.fstat(sock_fd).st_uid
     except (FileNotFoundError, ProcessLookupError):
@@ -533,7 +546,7 @@ def forward_crash_to_container(
         return
 
     try:
-        with open("uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("uid_map") as fd:
             if not apport.fileutils.search_map(fd, socket_uid):
                 logger.error(
                     "user is trying to trick apport into accessing"
@@ -545,9 +558,9 @@ def forward_crash_to_container(
 
     # Validate that the crashed binary is owned
     # by the user namespace of the process
-    task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
+    task_uid = proc_pid.stat("exe").st_uid
     try:
-        with open("uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("uid_map") as fd:
             if not apport.fileutils.search_map(fd, task_uid):
                 logger.error(
                     "host pid %s crashed in a container"
@@ -558,9 +571,9 @@ def forward_crash_to_container(
     except FileNotFoundError:
         pass
 
-    task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
+    task_gid = proc_pid.stat("exe").st_gid
     try:
-        with open("gid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("gid_map") as fd:
             if not apport.fileutils.search_map(fd, task_gid):
                 logger.error(
                     "host pid %s crashed in a container"
@@ -706,7 +719,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     return options
 
 
-def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
+def _check_global_pid_and_forward(
+    options: argparse.Namespace, proc_pid: ProcPid
+) -> bool:
     """Check the global PID if the crash happens in a container.
 
     Check if we received a valid global PID (kernel >= 3.12). If we do,
@@ -720,9 +735,9 @@ def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
     Returns True in case apport should exit with 0.
     """
     if options.global_pid is not None:
-        if not is_same_ns(options.global_pid, "mnt"):
-            if not is_same_ns(options.global_pid, "pid"):
-                forward_crash_to_container(options)
+        if not is_same_ns(proc_pid, "mnt"):
+            if not is_same_ns(proc_pid, "pid"):
+                forward_crash_to_container(options, proc_pid)
                 return True
             logging.getLogger().error(
                 "host pid %s crashed in a separate mount namespace, ignoring",
@@ -939,7 +954,7 @@ def process_crash_from_kernel_with_proc_pid(
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
-    if _check_global_pid_and_forward(options):
+    if _check_global_pid_and_forward(options, proc_pid):
         return 0
     check_lock()
     setup_signals()
