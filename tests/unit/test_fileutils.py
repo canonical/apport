@@ -5,6 +5,8 @@
 
 import io
 import os
+import pathlib
+import tempfile
 import time
 import unittest
 import unittest.mock
@@ -81,6 +83,47 @@ class T(unittest.TestCase):
             pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
         )
         expected = f"core._usr_bin_test.{str(os.getuid())}.boot-id.123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path_missing_timestamp(self, get_boot_id_mock: MagicMock) -> None:
+        """Test get_core_path() with missing timestamp parameter."""
+        get_boot_id_mock.return_value = "boot-id"
+        pid = os.getpid()
+        core_name, core_path = apport.fileutils.get_core_path(pid, "/usr/bin/python3")
+
+        with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
+            contents = stat_file.read()
+        starttime = apport.fileutils.get_starttime(contents)
+        expected = f"core._usr_bin_python3.{os.getuid()}.boot-id.{pid}.{starttime}"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path_proc_pid_fd(self, get_boot_id_mock: MagicMock) -> None:
+        """Test get_core_path() with proc_pid_fd provided."""
+        get_boot_id_mock.return_value = "boot-id"
+        fake_pid = 67890
+        now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            stat = pathlib.Path(tmpdir) / "stat"
+            stat.write_text(f"{fake_pid} (name) ?{' x' * 18} {now} ...\n")
+            exe = pathlib.Path(tmpdir) / "exe"
+            exe.symlink_to("/usr/bin/myprog")
+            fd = os.open(tmpdir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            try:
+                (core_name, core_path) = apport.fileutils.get_core_path(
+                    fake_pid, uid=42, proc_pid_fd=fd
+                )
+            finally:
+                os.close(fd)
+
+        expected = f"core._usr_bin_myprog.42.boot-id.{fake_pid}.{now}"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)
