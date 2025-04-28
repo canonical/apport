@@ -994,7 +994,7 @@ NameError: global name 'weird' is not defined"""
             with open("crash.c", "w", encoding="utf-8") as fd:
                 fd.write(
                     """
-int f(x) {
+int f(int x) {
     int* p = 0; *p = x;
     return x+1;
 }
