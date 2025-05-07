@@ -88,7 +88,7 @@ class TestApport(unittest.TestCase):
     def test_refine_core_ulimit_huge(self) -> None:
         """Test refine_core_ulimit() with huge limit."""
         options = apport_binary.parse_arguments(
-            ["-p", str(os.getpid()), "-c", str(pow(2, 64))]
+            ["-p", str(os.getpid()), "-d", "1", "-c", str(pow(2, 64))]
         )
         self.assertEqual(apport_binary.refine_core_ulimit(options), -1)
 
@@ -143,7 +143,9 @@ class TestApport(unittest.TestCase):
         """process_crash_from_kernel_with_proc_pid() to forward crash to container."""
         fake_pid = 67890
         yesterday = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100) - 86400
-        options = apport_binary.parse_arguments(["-p", "12345", "-P", str(fake_pid)])
+        options = apport_binary.parse_arguments(
+            ["-p", "12345", "-d", "1", "-P", str(fake_pid)]
+        )
         with tempfile.TemporaryDirectory() as tmpdir:
             stat = pathlib.Path(tmpdir) / "stat"
             stat.write_text(f"{fake_pid} (name) ?{' x' * 18} {yesterday} ...\n")
@@ -188,7 +190,7 @@ class TestApport(unittest.TestCase):
     def test_consistency_checks_replaced_process(self) -> None:
         """Test consistency_checks() for a replaced crash process ID."""
         pid = os.getpid()
-        options = apport_binary.parse_arguments(["-p", str(pid)])
+        options = apport_binary.parse_arguments(["-p", str(pid), "-d", "1"])
         now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
         crash_user = apport.user_group.get_process_user_and_group()
         with apport_binary.ProcPid(pid) as proc_pid:
@@ -201,7 +203,9 @@ class TestApport(unittest.TestCase):
         """Test that consistency checks are done before forwarding to container."""
         fake_pid = 67890
         future = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100) + 3600
-        options = apport_binary.parse_arguments(["-p", "12345", "-P", str(fake_pid)])
+        options = apport_binary.parse_arguments(
+            ["-p", "12345", "-d", "1", "-P", str(fake_pid)]
+        )
         with (
             self.assertLogs(level="ERROR") as info_logs,
             tempfile.TemporaryDirectory() as tmpdir,
@@ -228,6 +232,8 @@ class TestApport(unittest.TestCase):
             [
                 "-p",
                 str(pid),
+                "-d",
+                "1",
                 "-u",
                 str(crash_user.uid + 1),
                 "-g",
@@ -337,7 +343,8 @@ class TestApport(unittest.TestCase):
             with tempfile.NamedTemporaryFile() as stdin:
                 stdin_mock = io.FileIO(stdin.name)
                 with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
-                    self.assertEqual(apport_binary.main(["-p", str(fake_pid)]), 1)
+                    exit_code = apport_binary.main(["-p", str(fake_pid), "-d", "1"])
+                    self.assertEqual(exit_code, 1)
         self.assertIn("/proc/2147483647 not found", error_logs.output[0])
 
     @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
@@ -356,7 +363,16 @@ class TestApport(unittest.TestCase):
         which should be tested in a separate unit test.
         """
         is_systemd_watchdog_restart_mock.return_value = True
-        args = ["-p", str(os.getpid()), "-s", str(int(signal.SIGABRT)), "-c", "-1"]
+        args = [
+            "-p",
+            str(os.getpid()),
+            "-d",
+            "1",
+            "-s",
+            str(int(signal.SIGABRT)),
+            "-c",
+            "-1",
+        ]
         with self.assertLogs(level="ERROR") as error_logs:
             with tempfile.NamedTemporaryFile() as stdin:
                 stdin_mock = io.TextIOWrapper(io.FileIO(stdin.name))
