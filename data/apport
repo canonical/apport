@@ -520,6 +520,14 @@ def forward_crash_to_container(
     """
     logger = logging.getLogger()
 
+    if options.dump_mode != 1:
+        logger.error(
+            "Not forwarding crash with dump mode of %s to container"
+            " due to security concerns.",
+            options.dump_mode,
+        )
+        return
+
     # Validate that the target socket is owned
     # by the user namespace of the process
     try:

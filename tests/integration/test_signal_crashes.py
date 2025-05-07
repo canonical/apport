@@ -830,21 +830,13 @@ class T(unittest.TestCase):
         """Report generation via socket for setuid program which drops root."""
         with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            test_report = self.do_crash(
+            self.do_crash(
                 command=dropsuid,
-                expect_corefile=True,
-                expect_corefile_owner=0,
+                expect_report=False,
                 uid=MAIL_UID,
                 suid_dumpable=2,
                 via_socket=True,
             )
-
-            # check crash report
-            report = apport.Report()
-            with open(test_report, "rb") as report_file:
-                report.load(report_file)
-            self.assertEqual(report["Signal"], "11")
-            self.assertEqual(report["ExecutablePath"], dropsuid)
 
     @unittest.mock.patch("os.readlink")
     def test_is_not_same_ns(self, readlink_mock: MagicMock) -> None:
@@ -1021,7 +1013,11 @@ class T(unittest.TestCase):
             with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
                 search_map_mock.return_value = True
                 self._forward_crash_to_container(socket_path, args, stdin.fileno())
-                search_map_mock.assert_called()
+                if dump_mode == 2:
+                    search_map_mock.assert_not_called()
+                    return
+                else:
+                    search_map_mock.assert_called()
 
             # call apport like systemd does via socket activation
             def child_setup() -> None:
