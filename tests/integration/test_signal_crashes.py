@@ -976,23 +976,25 @@ class T(unittest.TestCase):
         server.bind(socket_path)
         server.listen(1)
 
-        args = apport_binary.parse_arguments(self._apport_args(process, sig, dump_mode))
-        with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
-            search_map_mock.return_value = True
-            self._forward_crash_to_container(socket_path, args, stdin.fileno())
-            search_map_mock.assert_called()
-
-        # call apport like systemd does via socket activation
-        def child_setup() -> None:
-            os.environ["LISTEN_FDNAMES"] = "connection"
-            os.environ["LISTEN_FDS"] = "1"
-            os.environ["LISTEN_PID"] = str(os.getpid())
-            # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
-            conn = server.accept()[0]
-            os.dup2(conn.fileno(), 3)
-            conn.close()
-
         try:
+            args = apport_binary.parse_arguments(
+                self._apport_args(process, sig, dump_mode)
+            )
+            with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
+                search_map_mock.return_value = True
+                self._forward_crash_to_container(socket_path, args, stdin.fileno())
+                search_map_mock.assert_called()
+
+            # call apport like systemd does via socket activation
+            def child_setup() -> None:
+                os.environ["LISTEN_FDNAMES"] = "connection"
+                os.environ["LISTEN_FDS"] = "1"
+                os.environ["LISTEN_PID"] = str(os.getpid())
+                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+                conn = server.accept()[0]
+                os.dup2(conn.fileno(), 3)
+                conn.close()
+
             subprocess.run(
                 [str(APPORT_PATH)],
                 check=True,
