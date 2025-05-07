@@ -801,19 +801,11 @@ class T(unittest.TestCase):
         self.do_crash(
             command=os.path.realpath("/bin/ping"),
             args=["127.0.0.1"],
-            expect_corefile=True,
-            expect_corefile_owner=0,
+            expect_report=False,
             uid=MAIL_UID,
             suid_dumpable=2,
             via_socket=True,
         )
-
-        # check crash report
-        report = apport.Report()
-        with open(self.test_report, "rb") as report_file:
-            report.load(report_file)
-        self.assertEqual(report["Signal"], "11")
-        self.assertEqual(report["ExecutablePath"], os.path.realpath("/bin/ping"))
 
     @unittest.mock.patch("os.readlink")
     def test_is_not_same_ns(self, readlink_mock: MagicMock) -> None:
@@ -972,7 +964,11 @@ class T(unittest.TestCase):
         with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
             search_map_mock.return_value = True
             self._forward_crash_to_container(socket_path, args, stdin.fileno())
-            search_map_mock.assert_called()
+            if dump_mode == 2:
+                search_map_mock.assert_not_called()
+                return
+            else:
+                search_map_mock.assert_called()
 
         # call apport like systemd does via socket activation
         def child_setup():
