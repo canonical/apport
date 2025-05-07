@@ -698,13 +698,11 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
 
     options = parser.parse_args(args)
 
-    if (
-        not options.pid
-        and not options.systemd_coredump_instance
-        and not options.start
-        and not options.stop
-    ):
-        parser.error("the following arguments are required: -p/--pid")
+    if not options.systemd_coredump_instance and not options.start and not options.stop:
+        if options.pid is None:
+            parser.error("the following arguments are required: -p/--pid")
+        if options.dump_mode is None:
+            parser.error("the following arguments are required: -d/--dump-mode")
 
     # In kernels before 5.3.0, an executable path with spaces may be split
     # into separate arguments. If options.executable_path is a list, join
