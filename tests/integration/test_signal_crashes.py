@@ -854,6 +854,7 @@ class T(unittest.TestCase):
             expected_report.add_user_info()
             expected_report.add_os_info()
             expected_report.add_package_info()
+            expected_report["CoredumpPackageJson"] = '{\n  "elfType": "coredump"\n}'
             expected_report["Signal"] = "11"
             expected_report["SignalName"] = "SIGSEGV"
             expected_report["_HooksRun"] = "no"

@@ -12,6 +12,7 @@
 # pylint: disable=too-many-lines
 
 import atexit
+import collections
 import datetime
 import errno
 import fnmatch
@@ -19,6 +20,7 @@ import glob
 import grp
 import importlib.util
 import io
+import json
 import logging
 import os
 import pathlib
@@ -2025,6 +2027,16 @@ class Report(problem_report.ProblemReport):
         assert isinstance(value, str)
         self[key] = value.rstrip()
 
+    def _add_elf_package_metadata(self, coredump: dict[str, object]) -> None:
+        value = coredump.get("COREDUMP_PACKAGE_JSON")
+        if value is None:
+            return
+        assert isinstance(value, str)
+        # Pretty-print (line-wrap) the JSON
+        # but keep the order in tact for reproducibility
+        decoded = json.loads(value, object_pairs_hook=collections.OrderedDict)
+        self["CoredumpPackageJson"] = json.dumps(decoded, indent=2)
+
     def _add_coredump_from_systemd_coredump(self, coredump: dict[str, object]) -> None:
         dump = coredump.get("COREDUMP")
         if dump:
@@ -2055,7 +2067,6 @@ class Report(problem_report.ProblemReport):
          * COREDUMP_HOSTNAME (str)
          * COREDUMP_OPEN_FDS (str)
          * COREDUMP_OWNER_UID (str)
-         * COREDUMP_PACKAGE_JSON (str)
          * COREDUMP_PACKAGE_NAME
          * COREDUMP_PACKAGE_VERSION
          * COREDUMP_PROC_AUXV (bytes)
@@ -2089,6 +2100,7 @@ class Report(problem_report.ProblemReport):
         report._add_str_from_coredump(coredump, "COREDUMP_CWD", "ProcCwd")
         report._add_str_from_coredump(coredump, "COREDUMP_PROC_MAPS", "ProcMaps")
         report._add_str_from_coredump(coredump, "COREDUMP_PROC_STATUS", "ProcStatus")
+        report._add_elf_package_metadata(coredump)
 
         environ = coredump.get("COREDUMP_ENVIRON")
         assert isinstance(environ, str)
