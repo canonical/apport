@@ -55,6 +55,12 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
+    def get_installed_binaries(self, source_package: str) -> set[str]:
+        """Return all installed binary packages for a given source."""
+        raise NotImplementedError(
+            "this method must be implemented by a concrete subclass"
+        )
+
     def get_package_origin(self, package: str) -> str | None:
         """Return package origin.
 

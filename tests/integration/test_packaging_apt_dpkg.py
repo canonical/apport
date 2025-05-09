@@ -113,6 +113,17 @@ class T(unittest.TestCase):
         self.assertEqual(impl.get_source("bash"), "bash")
         self.assertIn("glibc", impl.get_source("libc6"))
 
+    def test_get_installed_binaries_library(self) -> None:
+        binaries = impl.get_installed_binaries("glibc")
+        self.assertIn("libc6", binaries)
+        self.assertNotIn("glibc", binaries)
+
+    def test_get_installed_binaries_binary(self) -> None:
+        self.assertIn("bash", impl.get_installed_binaries("bash"))
+
+    def test_get_installed_binaries_none(self) -> None:
+        self.assertEqual(set(impl.get_installed_binaries("nonexisting")), set())
+
     def test_get_package_origin(self) -> None:
         """get_package_origin()."""
         # determine distro name

@@ -357,7 +357,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._sandbox_apt_cache = None
 
-    def _cache(self):
+    def _cache(self) -> apt.Cache:
         """Return apt.Cache() (initialized lazily)."""
         if not self._apt_cache:
             self._clear_apt_cache()
@@ -440,6 +440,14 @@ class _AptDpkgPackageInfo(PackageInfo):
         if self._apt_pkg(package).candidate:
             return self._apt_pkg(package).candidate.source_name
         raise ValueError(f"package {package} does not exist")
+
+    def get_installed_binaries(self, source_package: str) -> set[str]:
+        """Return all installed binary packages for a given source."""
+        return {
+            pkg.name
+            for pkg in self._cache()
+            if pkg.installed and (source_package == pkg.installed.source_name)
+        }
 
     def get_package_origin(self, package: str) -> str | None:
         """Return package origin.
