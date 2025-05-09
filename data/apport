@@ -316,8 +316,12 @@ def usable_ram():
 
 
 def _run_with_output_limit_and_timeout(
-    args, output_limit, timeout, close_fds=True, env=None
-):
+    args: list[str],
+    output_limit: int,
+    timeout: int,
+    close_fds: bool = True,
+    env: dict[str, str] | None = None,
+) -> tuple[bytes, bytes]:
     """Run command like subprocess.run() but with output limit and timeout.
 
     Return (stdout, stderr)."""
@@ -334,6 +338,7 @@ def _run_with_output_limit_and_timeout(
         env=env,
     )
     try:
+        assert process.stdout is not None and process.stderr is not None
         # Don't block so we don't deadlock
         os.set_blocking(process.stdout.fileno(), False)
         os.set_blocking(process.stderr.fileno(), False)

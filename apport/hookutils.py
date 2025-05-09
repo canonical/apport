@@ -743,6 +743,7 @@ def attach_gsettings_schema(report, schema):
     with subprocess.Popen(
         ["gsettings", "list-recursively", schema], env=env, stdout=subprocess.PIPE
     ) as gsettings:
+        assert gsettings.stdout is not None
         for line in gsettings.stdout:
             try:
                 (schema_name, key, value) = line.split(None, 2)
@@ -754,6 +755,7 @@ def attach_gsettings_schema(report, schema):
     with subprocess.Popen(
         ["gsettings", "list-recursively", schema], stdout=subprocess.PIPE
     ) as gsettings:
+        assert gsettings.stdout is not None
         for line in gsettings.stdout:
             try:
                 (schema_name, key, value) = line.split(None, 2)
