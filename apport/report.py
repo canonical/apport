@@ -380,7 +380,7 @@ class Report(problem_report.ProblemReport):
         """
         problem_report.ProblemReport.__init__(self, problem_type, date)
         self.pid: int | None = None
-        self._proc_maps_cache: list[tuple[int, int, str]] | None = None
+        self._proc_maps_cache: list[tuple[int, int, str]] = []
 
     @staticmethod
     def _customized_package_suffix(package: str) -> str:
@@ -1963,7 +1963,7 @@ class Report(problem_report.ProblemReport):
 
         return command, environ
 
-    def _address_to_offset(self, addr):
+    def _address_to_offset(self, addr: int) -> str | None:
         """Resolve a memory address to an ELF name and offset.
 
         This can be used for building duplicate signatures from non-symbolic
