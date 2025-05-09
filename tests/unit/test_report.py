@@ -122,8 +122,48 @@ Mems_allowed_list:	0
 voluntary_ctxt_switches:	3
 nonvoluntary_ctxt_switches:	0
 """
+DIVIDE_BY_ZERO_COREDUMP_PACKAGE_JSON = """\
+{
+  "elfType": "coredump",
+  "elfArchitecture": "AMD x86-64",
+  "/usr/bin/divide-by-zero": {
+    "type": "deb",
+    "os": "ubuntu",
+    "name": "chaos-marmosets",
+    "version": "0.2.0-1",
+    "architecture": "amd64",
+    "buildId": "24601d1b3f7720e1fd85f8ce46784527891e4a93"
+  },
+  "linux-vdso.so.1": {
+    "type": "deb",
+    "os": "ubuntu",
+    "name": "linux",
+    "version": "6.14.0-15.15",
+    "architecture": "amd64",
+    "buildId": "b6d4e1f58edbdcbaefeafda9ceb46b976dcb3c7a"
+  },
+  "ld-linux-x86-64.so.2": {
+    "type": "deb",
+    "os": "ubuntu",
+    "name": "glibc",
+    "version": "2.41-6ubuntu1",
+    "architecture": "amd64",
+    "buildId": "6a459ffce8a7a1a8ac06398efe8b5ad9cbbee781"
+  },
+  "libc.so.6": {
+    "type": "deb",
+    "os": "ubuntu",
+    "name": "glibc",
+    "version": "2.41-6ubuntu1",
+    "architecture": "amd64",
+    "buildId": "467f544f15035abef911999cbc14489edd0555ab"
+  }
+}
+"""
 DIVIDE_BY_ZERO_REPORT = f"""\
 ProblemType: Crash
+CoredumpPackageJson:
+{re.sub("^", " ", DIVIDE_BY_ZERO_COREDUMP_PACKAGE_JSON.rstrip(), flags=re.MULTILINE)}
 CurrentDesktop: Unity:Unity7:ubuntu
 Date: Mon Oct 30 13:40:03 2023
 ExecutablePath: /usr/bin/divide-by-zero
@@ -245,7 +285,19 @@ DIVIDE_BY_ZERO_SYSTEMD_COREDUMP = {
     "\n1:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n"
     "\n2:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n",
     "COREDUMP_OWNER_UID": "1000",
-    "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump","elfArchitecture":"AMD x86-64"}',
+    "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump","elfArchitecture":"AMD x86-64",'
+    '"/usr/bin/divide-by-zero":{"type":"deb","os":"ubuntu",'
+    '"name":"chaos-marmosets","version":"0.2.0-1",'
+    '"architecture":"amd64","buildId":"24601d1b3f7720e1fd85f8ce46784527891e4a93"},'
+    '"linux-vdso.so.1":{"type":"deb","os":"ubuntu",'
+    '"name":"linux","version":"6.14.0-15.15",'
+    '"architecture":"amd64","buildId":"b6d4e1f58edbdcbaefeafda9ceb46b976dcb3c7a"},'
+    '"ld-linux-x86-64.so.2":{"type":"deb","os":"ubuntu",'
+    '"name":"glibc","version":"2.41-6ubuntu1",'
+    '"architecture":"amd64","buildId":"6a459ffce8a7a1a8ac06398efe8b5ad9cbbee781"},'
+    '"libc.so.6":{"type":"deb","os":"ubuntu",'
+    '"name":"glibc","version":"2.41-6ubuntu1",'
+    '"architecture":"amd64","buildId":"467f544f15035abef911999cbc14489edd0555ab"}}',
     "COREDUMP_PID": 284582,
     "COREDUMP_PROC_AUXV": b"!" + b"\x00" * 8 + b"\x10\xde\xd4\xff\x7f\x00\x003",
     "COREDUMP_PROC_CGROUP": "0::/user.slice/user-1000.slice/user"
