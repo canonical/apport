@@ -58,43 +58,45 @@ except ImportError as import_error:
 APPORT_PATH = get_data_directory() / "apport"
 apport_binary = import_module_from_file(APPORT_PATH)
 
+# SUID binary that immediately drops privilege then sleeps
+DROPSUID_SOURCE = """\
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+
+int main() {
+    int euid = geteuid();
+    int uid = getuid();
+
+    // We need to be suid
+    if (uid == euid) {
+        fprintf(stderr, "uid: %d, euid: %d\\n", uid, euid);
+        return 1;
+    }
+    // This call is supposed to succeed?!
+    if (seteuid(uid)) {
+        fprintf(stderr, "errno: %d\\n", errno);
+        return 2;
+    }
+    // We actually check that it succeeded.
+    if (geteuid() != uid)
+        return 3;
+    sleep(60);
+    return 0;
+}
+"""
+
 
 @contextlib.contextmanager
-def create_dropsuid() -> Iterator[str]:
-    """Compiles a suid binary that immediately drops privilege then sleeps."""
-    dropsuid_source = """
-        #include <unistd.h>
-        #include <stdio.h>
-        #include <errno.h>
-
-        int main() {
-            int euid = geteuid();
-            int uid = getuid();
-
-            // We need to be suid
-            if (uid == euid) {
-                fprintf(stderr, "uid: %d, euid: %d\\n", uid, euid);
-                return 1;
-            }
-            // This call is supposed to succeed?!
-            if (seteuid(uid)) {
-                fprintf(stderr, "errno: %d\\n", errno);
-                return 2;
-            }
-            // We actually check that it succeeded.
-            if (geteuid() != uid)
-                return 3;
-            sleep(60);
-            return 0;
-        }
-    """
+def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator[str]:
+    """Compiles the given C code."""
     if not os.path.exists("/usr/bin/gcc"):
         pytest.skip("This test needs GCC available")
-    with tempfile.TemporaryDirectory(dir="/var/tmp") as d:
+    with tempfile.TemporaryDirectory(dir=tmpdir) as d:
         tempdir = Path(d)
-        source = tempdir / "dropsuid.c"
-        source.write_text(dropsuid_source)
-        binary = tempdir / "dropsuid"
+        source = tempdir / "{name}.c"
+        source.write_text(c_code)
+        binary = tempdir / name
         cmd = ["/usr/bin/gcc", "-g", str(source), "-o", str(binary)]
         subprocess.run(cmd, check=True)
         # Grant everyone read permission on the directory!
@@ -745,7 +747,7 @@ class T(unittest.TestCase):
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self) -> None:
         """Report generation for setuid program which drops root."""
-        with create_dropsuid() as dropsuid:
+        with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
             # if a user can crash a suid root binary, it should not create
             # core files
@@ -795,7 +797,7 @@ class T(unittest.TestCase):
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop_via_socket(self) -> None:
         """Report generation via socket for setuid program which drops root."""
-        with create_dropsuid() as dropsuid:
+        with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
             test_report = self.do_crash(
                 command=dropsuid, uid=MAIL_UID, suid_dumpable=2, via_socket=True
