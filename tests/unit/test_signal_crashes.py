@@ -20,6 +20,7 @@ import sys
 import tempfile
 import time
 import unittest
+import unittest.mock
 from unittest.mock import MagicMock
 
 import apport.fileutils

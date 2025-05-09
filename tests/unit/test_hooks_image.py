@@ -10,6 +10,7 @@
 """Unit tests for data/general-hooks/image.py."""
 
 import unittest
+import unittest.mock
 from unittest.mock import MagicMock
 
 import problem_report

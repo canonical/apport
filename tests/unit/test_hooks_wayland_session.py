@@ -10,6 +10,7 @@
 """Unit tests for data/general-hooks/wayland_session.py."""
 
 import unittest
+import unittest.mock
 
 import problem_report
 from tests.helper import import_module_from_file

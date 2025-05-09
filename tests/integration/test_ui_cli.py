@@ -15,6 +15,7 @@ import os
 import pathlib
 import tempfile
 import unittest
+import unittest.mock
 from gettext import gettext as _
 
 import apport.report

@@ -31,6 +31,7 @@ import textwrap
 import time
 import typing
 import unittest
+import unittest.mock
 from collections.abc import Callable, Iterable, Iterator
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -39,6 +40,7 @@ import psutil
 import pytest
 
 import apport.fileutils
+import apport.report
 from tests.helper import (
     import_module_from_file,
     read_shebang,
