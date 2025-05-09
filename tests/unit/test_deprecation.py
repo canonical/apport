@@ -10,7 +10,6 @@
 """Unit tests for deprecated functions in apport."""
 
 import unittest
-import unittest.mock
 
 from apport import fatal, unicode_gettext
 
