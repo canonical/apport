@@ -1979,21 +1979,19 @@ class Report(problem_report.ProblemReport):
         Return 'path+offset' when found, or None if address is not in any
         mapped range.
         """
-        self._build_proc_maps_cache()
-
-        for start, end, elf in self._proc_maps_cache:
+        for start, end, elf in self._build_proc_maps_cache():
             if start <= addr <= end:
                 return f"{elf}+{addr - start:x}"
 
         return None
 
-    def _build_proc_maps_cache(self) -> None:
+    def _build_proc_maps_cache(self) -> list[tuple[int, int, str]]:
         """Generate self._proc_maps_cache from ProcMaps field.
 
         This only gets done once.
         """
         if self._proc_maps_cache:
-            return
+            return self._proc_maps_cache
 
         assert "ProcMaps" in self
         self._proc_maps_cache = []
@@ -2019,6 +2017,7 @@ class Report(problem_report.ProblemReport):
             self._proc_maps_cache.append(
                 (int(m.group(1), 16), int(m.group(2), 16), m.group(3))
             )
+        return self._proc_maps_cache
 
     def _add_str_from_coredump(
         self, coredump: dict[str, object], coredump_key: str, key: str
