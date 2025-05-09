@@ -39,6 +39,7 @@ import psutil
 import apport.fileutils
 from tests.helper import (
     import_module_from_file,
+    pidfd_open,
     read_shebang,
     run_test_executable,
     wait_for_sleeping_state,
@@ -801,11 +802,19 @@ class T(unittest.TestCase):
         self.do_crash(
             command=os.path.realpath("/bin/ping"),
             args=["127.0.0.1"],
-            expect_report=False,
+            expect_corefile=True,
+            expect_corefile_owner=0,
             uid=MAIL_UID,
             suid_dumpable=2,
             via_socket=True,
         )
+
+        # check crash report
+        report = apport.Report()
+        with open(self.test_report, "rb") as report_file:
+            report.load(report_file)
+        self.assertEqual(report["Signal"], "11")
+        self.assertEqual(report["ExecutablePath"], os.path.realpath("/bin/ping"))
 
     @unittest.mock.patch("os.readlink")
     def test_is_not_same_ns(self, readlink_mock: MagicMock) -> None:
@@ -910,7 +919,9 @@ class T(unittest.TestCase):
     #
 
     @staticmethod
-    def _apport_args(process: psutil.Process, sig: int, dump_mode: int) -> list[str]:
+    def _apport_args(
+        process: psutil.Process, sig: int, dump_mode: int, pidfd: int
+    ) -> list[str]:
         return [
             f"-p{process.pid}",
             f"-s{sig}",
@@ -919,6 +930,7 @@ class T(unittest.TestCase):
             f"-P{process.pid}",
             f"-u{process.uids().real}",
             f"-g{process.gids().real}",
+            f"-F{pidfd}",
             "--",
             process.exe().replace("/", "!"),
         ]
@@ -926,8 +938,9 @@ class T(unittest.TestCase):
     def _call_apport(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
-        cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
-        subprocess.check_call(cmd, stdin=stdin)
+        with pidfd_open(process.pid) as pidfd:
+            cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode, pidfd)
+            subprocess.check_call(cmd, stdin=stdin, pass_fds=(pidfd,))
 
     @staticmethod
     def _forward_crash_to_container(
@@ -960,36 +973,35 @@ class T(unittest.TestCase):
         server.bind(socket_path)
         server.listen(1)
 
-        args = apport_binary.parse_arguments(self._apport_args(process, sig, dump_mode))
-        with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
-            search_map_mock.return_value = True
-            self._forward_crash_to_container(socket_path, args, stdin.fileno())
-            if dump_mode == 2:
-                search_map_mock.assert_not_called()
-                return
-            else:
+        with pidfd_open(process.pid) as pidfd:
+            args = apport_binary.parse_arguments(
+                self._apport_args(process, sig, dump_mode, pidfd)
+            )
+            with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
+                search_map_mock.return_value = True
+                self._forward_crash_to_container(socket_path, args, stdin.fileno())
                 search_map_mock.assert_called()
 
-        # call apport like systemd does via socket activation
-        def child_setup():
-            os.environ["LISTEN_FDNAMES"] = "connection"
-            os.environ["LISTEN_FDS"] = "1"
-            os.environ["LISTEN_PID"] = str(os.getpid())
-            # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
-            conn = server.accept()[0]
-            os.dup2(conn.fileno(), 3)
-            conn.close()
+            # call apport like systemd does via socket activation
+            def child_setup() -> None:
+                os.environ["LISTEN_FDNAMES"] = "connection"
+                os.environ["LISTEN_FDS"] = "1"
+                os.environ["LISTEN_PID"] = str(os.getpid())
+                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+                conn = server.accept()[0]
+                os.dup2(conn.fileno(), 3)
+                conn.close()
 
-        try:
-            subprocess.run(
-                [str(APPORT_PATH)],
-                check=True,
-                preexec_fn=child_setup,
-                pass_fds=[3],
-                stdin=subprocess.DEVNULL,
-            )
-        finally:
-            server.close()
+            try:
+                subprocess.run(
+                    [str(APPORT_PATH)],
+                    check=True,
+                    preexec_fn=child_setup,
+                    pass_fds=[3],
+                    stdin=subprocess.DEVNULL,
+                )
+            finally:
+                server.close()
 
     def _check_core_file_is_valid(self, core_path: str, command: str) -> None:
         st = os.stat(core_path)
