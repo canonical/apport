@@ -484,7 +484,13 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
+        self.do_crash(
+            command=myexe,
+            expect_corefile=True,
+            expect_corefile_owner=0,
+            uid=8,
+            suid_dumpable=2,
+        )
 
     def test_core_dump_packaged(self) -> None:
         """Packaged executables create core dumps on proper ulimits."""
@@ -734,28 +740,48 @@ class T(unittest.TestCase):
         """Report generation for setuid program which stays root."""
         with create_suid() as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
             # run test program in /run (which should only be writable to root)
-            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
+            self.do_crash(
+                command=suid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+                cwd="/run",
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_suid_dumpable_debug(self) -> None:
         """Report generation for setuid program with suid_dumpable set to 1."""
-        # if a user can crash a suid root binary, it should not create
-        # core files if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
+        # if a user can crash a suid root binary, it should create
+        # core files anyway if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
         with create_suid() as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=1)
+            self.do_crash(
+                command=suid,
+                expect_corefile=True,
+                expect_corefile_owner=MAIL_UID,
+                expected_owner=MAIL_UID,
+                uid=MAIL_UID,
+                suid_dumpable=1,
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self) -> None:
         """Report generation for setuid program which drops root."""
         with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
-            self.do_crash(command=dropsuid, uid=MAIL_UID, suid_dumpable=2)
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
+            self.do_crash(
+                command=dropsuid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self) -> None:
@@ -764,11 +790,12 @@ class T(unittest.TestCase):
         # regards as not packaged
         with create_suid(tmpdir="/tmp") as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
             self.do_crash(
                 command=suid,
-                expect_corefile=False,
+                expect_corefile=True,
+                expect_corefile_owner=0,
                 expect_report=False,
                 uid=MAIL_UID,
                 suid_dumpable=2,
@@ -804,7 +831,12 @@ class T(unittest.TestCase):
         with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
             test_report = self.do_crash(
-                command=dropsuid, uid=MAIL_UID, suid_dumpable=2, via_socket=True
+                command=dropsuid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+                via_socket=True,
             )
 
             # check crash report
@@ -1129,6 +1161,7 @@ class T(unittest.TestCase):
         expect_report: bool = True,
         via_socket: bool = False,
         cwd: str | None = None,
+        expected_owner: int | None = None,
         **kwargs: typing.Any,
     ) -> str:
         # TODO: Split into smaller functions/methods
@@ -1250,7 +1283,7 @@ class T(unittest.TestCase):
 
         self._check_report(
             expect_report=expect_report,
-            expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
+            expected_owner=0 if suid_dumpable == 2 else expected_owner,
         )
         return self.test_report
 
