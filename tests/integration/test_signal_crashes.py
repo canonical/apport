@@ -10,8 +10,6 @@
 """Integration tests for data/apport."""
 
 # pylint: disable=too-many-lines
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
 
 import argparse
 import collections
@@ -64,7 +62,7 @@ apport_binary = import_module_from_file(APPORT_PATH)
 @contextlib.contextmanager
 def create_dropsuid() -> Iterator[str]:
     """Compiles a suid binary that immediately drops privilege then sleeps."""
-    DROPSUID_SOURCE = """
+    dropsuid_source = """
         #include <unistd.h>
         #include <stdio.h>
         #include <errno.h>
@@ -95,7 +93,7 @@ def create_dropsuid() -> Iterator[str]:
     with tempfile.TemporaryDirectory(dir="/var/tmp") as d:
         tempdir = Path(d)
         source = tempdir / "dropsuid.c"
-        source.write_text(DROPSUID_SOURCE)
+        source.write_text(dropsuid_source)
         binary = tempdir / "dropsuid"
         cmd = ["/usr/bin/gcc", "-g", str(source), "-o", str(binary)]
         subprocess.run(cmd, check=True)

@@ -1,8 +1,5 @@
 """Integration tests for the problem_report module."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import email
 import gzip
 import io
@@ -15,7 +12,7 @@ import unittest
 
 import problem_report
 
-bin_data = b"ABABABABAB\0\0\0Z\x01\x02"
+BIN_DATA = b"ABABABABAB\0\0\0Z\x01\x02"
 
 
 class T(unittest.TestCase):
@@ -34,21 +31,21 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr["Foo"] = problem_report.CompressedValue(b"FooFoo!")
         pr["Bin"] = problem_report.CompressedValue()
-        pr["Bin"].set_value(bin_data)
+        pr["Bin"].set_value(BIN_DATA)
         pr["Large"] = problem_report.CompressedValue(large_val)
 
         self.assertTrue(isinstance(pr["Foo"], problem_report.CompressedValue))
         self.assertTrue(isinstance(pr["Bin"], problem_report.CompressedValue))
         self.assertEqual(pr["Foo"].get_value(), b"FooFoo!")
-        self.assertEqual(pr["Bin"].get_value(), bin_data)
+        self.assertEqual(pr["Bin"].get_value(), BIN_DATA)
         self.assertEqual(pr["Large"].get_value(), large_val)
         self.assertEqual(len(pr["Foo"]), 7)
-        self.assertEqual(len(pr["Bin"]), len(bin_data))
+        self.assertEqual(len(pr["Bin"]), len(BIN_DATA))
         self.assertEqual(len(pr["Large"]), len(large_val))
 
         out = io.BytesIO()
         pr["Bin"].write(out)
-        self.assertEqual(out.getvalue(), bin_data)
+        self.assertEqual(out.getvalue(), BIN_DATA)
         out = io.BytesIO()
         pr["Large"].write(out)
         self.assertEqual(out.getvalue(), large_val)
@@ -63,7 +60,7 @@ class T(unittest.TestCase):
         pr = problem_report.ProblemReport()
         pr.load(out)
         self.assertEqual(pr["Foo"], "FooFoo!")
-        self.assertEqual(pr["Bin"], bin_data)
+        self.assertEqual(pr["Bin"], BIN_DATA)
         self.assertEqual(pr["Large"], large_val.decode("ASCII"))
 
     def test_write_append(self) -> None:
@@ -95,7 +92,7 @@ class T(unittest.TestCase):
         )
 
         with tempfile.NamedTemporaryFile() as temp:
-            temp.write(bin_data)
+            temp.write(BIN_DATA)
             temp.flush()
 
             pr = problem_report.ProblemReport(date="now!")
@@ -112,7 +109,7 @@ class T(unittest.TestCase):
         pr.load(out)
 
         self.assertEqual(pr["Date"], "now!")
-        self.assertEqual(pr["File"], bin_data)
+        self.assertEqual(pr["File"], BIN_DATA)
         self.assertEqual(pr["Extra"], "appended")
 
     def test_extract_keys(self):
@@ -124,9 +121,9 @@ class T(unittest.TestCase):
         pr["Txt"] = "some text"
         pr["MoreTxt"] = "some more text"
         pr["Foo"] = problem_report.CompressedValue(b"FooFoo!")
-        pr["Uncompressed"] = bin_data
+        pr["Uncompressed"] = BIN_DATA
         pr["Bin"] = problem_report.CompressedValue()
-        pr["Bin"].set_value(bin_data)
+        pr["Bin"].set_value(BIN_DATA)
         pr["Large"] = problem_report.CompressedValue(large_val)
         pr["Multiline"] = problem_report.CompressedValue(b"\1\1\1\n\2\2\n\3\3\3")
 
@@ -155,8 +152,8 @@ class T(unittest.TestCase):
         # Check valid single elements
         tests = {
             "Foo": b"FooFoo!",
-            "Uncompressed": bin_data,
-            "Bin": bin_data,
+            "Uncompressed": BIN_DATA,
+            "Bin": BIN_DATA,
             "Large": large_val,
             "Multiline": b"\1\1\1\n\2\2\n\3\3\3",
         }
@@ -170,7 +167,7 @@ class T(unittest.TestCase):
 
         # Check element list
         report.seek(0)
-        tests = {"Foo": b"FooFoo!", "Uncompressed": bin_data}
+        tests = {"Foo": b"FooFoo!", "Uncompressed": BIN_DATA}
         pr.extract_keys(report, tests.keys(), self.workdir)
         for key, expected in tests.items():
             with open(os.path.join(self.workdir, key), "rb") as f:
@@ -179,7 +176,7 @@ class T(unittest.TestCase):
     def test_write_file(self) -> None:
         """Write a report with binary file data."""
         with tempfile.NamedTemporaryFile() as temp:
-            temp.write(bin_data)
+            temp.write(BIN_DATA)
             temp.flush()
 
             pr = problem_report.ProblemReport(date="now!")
@@ -193,8 +190,8 @@ class T(unittest.TestCase):
         report = problem_report.ProblemReport()
         out.seek(0)
         report.load(out)
-        self.assertEqual(report["File"], bin_data)
-        self.assertEqual(report["Afile"], bin_data)
+        self.assertEqual(report["File"], BIN_DATA)
+        self.assertEqual(report["Afile"], BIN_DATA)
 
         # force compression/encoding bool
         with tempfile.NamedTemporaryFile() as temp:
@@ -410,21 +407,21 @@ class T(unittest.TestCase):
         """write_mime() for binary values and file references."""
         with tempfile.NamedTemporaryFile() as temp:
             with tempfile.NamedTemporaryFile() as tempgz:
-                temp.write(bin_data)
+                temp.write(BIN_DATA)
                 temp.flush()
 
                 with gzip.GzipFile("File1", "w", fileobj=tempgz) as gz:
-                    gz.write(bin_data)
+                    gz.write(BIN_DATA)
                 tempgz.flush()
 
                 pr = problem_report.ProblemReport(date="now!")
                 pr["Context"] = "Test suite"
                 pr["File1"] = (temp.name,)
                 pr["File1.gz"] = (tempgz.name,)
-                pr["Value1"] = bin_data
+                pr["Value1"] = BIN_DATA
                 with open(tempgz.name, "rb") as f:
                     pr["Value1.gz"] = f.read()
-                pr["ZValue"] = problem_report.CompressedValue(bin_data)
+                pr["ZValue"] = problem_report.CompressedValue(BIN_DATA)
                 out = io.BytesIO()
                 pr.write_mime(out)
                 out.seek(0)
@@ -451,41 +448,41 @@ class T(unittest.TestCase):
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(parts[2].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[2].get_filename(), "File1.gz")
-        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[2]), BIN_DATA)
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         self.assertTrue(not parts[3].is_multipart())
         self.assertEqual(parts[3].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[3].get_filename(), "File1.gz")
-        self.assertEqual(self.decode_gzipped_message(parts[3]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[3]), BIN_DATA)
 
         # fifth part should be the Value1: value as gzip'ed attachment
         self.assertTrue(not parts[4].is_multipart())
         self.assertEqual(parts[4].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[4].get_filename(), "Value1.gz")
-        self.assertEqual(self.decode_gzipped_message(parts[4]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[4]), BIN_DATA)
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[5].is_multipart())
         self.assertEqual(parts[5].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[5].get_filename(), "Value1.gz")
-        self.assertEqual(self.decode_gzipped_message(parts[5]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[5]), BIN_DATA)
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[6].is_multipart())
         self.assertEqual(parts[6].get_content_type(), "application/x-gzip")
         self.assertEqual(parts[6].get_filename(), "ZValue.gz")
-        self.assertEqual(self.decode_gzipped_message(parts[6]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[6]), BIN_DATA)
 
     def test_write_mime_filter(self) -> None:
         """write_mime() with key filters."""
         pr = problem_report.ProblemReport(date="now!")
         pr["GoodText"] = "Hi"
         pr["BadText"] = "YouDontSeeMe"
-        pr["GoodBin"] = bin_data
+        pr["GoodBin"] = BIN_DATA
         pr["BadBin"] = "Y" + "\x05" * 10 + "-"
         out = io.BytesIO()
         pr.write_mime(out, skip_keys=["BadText", "BadBin"])
@@ -517,7 +514,7 @@ class T(unittest.TestCase):
 
         # third part should be the GoodBin: field as attachment
         self.assertTrue(not parts[2].is_multipart())
-        self.assertEqual(self.decode_gzipped_message(parts[2]), bin_data)
+        self.assertEqual(self.decode_gzipped_message(parts[2]), BIN_DATA)
 
     @staticmethod
     def decode_gzipped_message(message: email.message.Message) -> bytes:

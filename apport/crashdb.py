@@ -9,9 +9,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import functools
 import os
 import shutil
@@ -911,10 +908,10 @@ def get_crashdb(
         exec(compile(f.read(), conf, "exec"), settings)
 
     # Load third parties crashdb.conf
-    confdDir = f"{conf}.d"
-    if os.path.isdir(confdDir):
-        for cf in os.listdir(confdDir):
-            cfpath = os.path.join(confdDir, cf)
+    confd_dir = f"{conf}.d"
+    if os.path.isdir(confd_dir):
+        for cf in os.listdir(confd_dir):
+            cfpath = os.path.join(confd_dir, cf)
             if os.path.isfile(cfpath) and cf.endswith(".conf"):
                 try:
                     with open(cfpath, encoding="utf-8") as f:

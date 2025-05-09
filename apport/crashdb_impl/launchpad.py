@@ -12,7 +12,7 @@
 
 # pylint: disable=too-many-lines
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-function-docstring
+# pylint: disable=missing-function-docstring
 
 import atexit
 import email
@@ -44,7 +44,7 @@ import apport.report
 from apport.packaging_impl import impl as packaging
 
 DEFAULT_LAUNCHPAD_INSTANCE = "production"
-default_credentials_path = os.path.expanduser("~/.cache/apport/launchpad.credentials")
+DEFAULT_CREDENTIALS_PATH = os.path.expanduser("~/.cache/apport/launchpad.credentials")
 
 
 def filter_filename(attachments):
@@ -72,7 +72,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         You need to specify a launchpadlib-style credentials file to
         access launchpad. If you supply None, it will use
-        default_credentials_path (~/.cache/apport/launchpad.credentials).
+        DEFAULT_CREDENTIALS_PATH (~/.cache/apport/launchpad.credentials).
 
         Recognized options are:
         - distro: Name of the distribution in Launchpad
@@ -107,10 +107,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             lp_instance = options.get("launchpad_instance")
             if lp_instance:
                 auth = ".".join(
-                    (default_credentials_path, lp_instance.split("://", 1)[-1])
+                    (DEFAULT_CREDENTIALS_PATH, lp_instance.split("://", 1)[-1])
                 )
             else:
-                auth = default_credentials_path
+                auth = DEFAULT_CREDENTIALS_PATH
         apport.crashdb.CrashDatabase.__init__(self, auth, options)
 
         self.distro = options.get("distro")
@@ -1160,6 +1160,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
 
+# pylint: disable-next=invalid-name
 _https_upload_callback = None
 
 

@@ -13,8 +13,6 @@ This is used on Debian and derivatives such as Ubuntu.
 # the full text of the license.
 
 # pylint: disable=too-many-lines
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
 
 # From Python 3.12 on, it doesn't try to evaluate type signatures at runtime
 # anymore. This behaviour is helpful to us as Deb822SourceEntry isn't
@@ -273,7 +271,7 @@ def _usr_merge_alternative(path: str) -> str | None:
     return None
 
 
-class __AptDpkgPackageInfo(PackageInfo):
+class _AptDpkgPackageInfo(PackageInfo):
     # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Concrete apport.packaging.PackageInfo class implementation for
     python-apt and dpkg, as found on Debian and derivatives such as Ubuntu."""
@@ -373,7 +371,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self,
         aptroot,
         apt_dir,
-        fetchProgress,
+        fetch_progress,
         distro_name,
         release_codename,
         origins,
@@ -394,7 +392,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             self._sandbox_apt_cache_arch = arch
             try:
                 # We don't need to update this multiple times.
-                self._sandbox_apt_cache.update(fetchProgress)
+                self._sandbox_apt_cache.update(fetch_progress)
             except apt.cache.FetchFailedException as error:
                 raise SystemError(str(error)) from error
             self._sandbox_apt_cache.open()
@@ -917,8 +915,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     if apt.apt_pkg.config.find("Acquire::http::Proxy") != "":
                         proxy = apt.apt_pkg.config.find("Acquire::http::Proxy")
                         apt.apt_pkg.config.set("Acquire::http::Proxy", "")
-                    fetchProgress = apt.progress.base.AcquireProgress()
-                    fetcher = apt.apt_pkg.Acquire(fetchProgress)
+                    fetch_progress = apt.progress.base.AcquireProgress()
+                    fetcher = apt.apt_pkg.Acquire(fetch_progress)
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
@@ -1166,14 +1164,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         apt.apt_pkg.config.set("Acquire::http::Proxy::launchpad.net", "DIRECT")
 
         if not verbose:
-            fetchProgress = apt.progress.base.AcquireProgress()
+            fetch_progress = apt.progress.base.AcquireProgress()
         else:
-            fetchProgress = apt.progress.text.AcquireProgress()
+            fetch_progress = apt.progress.text.AcquireProgress()
         if not tmp_aptroot:
             apt_cache = self._sandbox_cache(
                 aptroot,
                 apt_dir,
-                fetchProgress,
+                fetch_progress,
                 self.get_distro_name(),
                 self._current_release_codename,
                 origins,
@@ -1189,7 +1187,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             )
             apt_cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
-                apt_cache.update(fetchProgress)
+                apt_cache.update(fetch_progress)
             except apt.cache.FetchFailedException as error:
                 raise SystemError(str(error)) from error
             apt_cache.open()
@@ -1207,7 +1205,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # mark packages for installation
         real_pkgs = set()
         lp_cache = {}
-        fetcher = apt.apt_pkg.Acquire(fetchProgress)
+        fetcher = apt.apt_pkg.Acquire(fetch_progress)
         # need to keep AcquireFile references
         acquire_queue = []
         # add any dependencies to the packages list
@@ -1972,4 +1970,4 @@ class __AptDpkgPackageInfo(PackageInfo):
         return self._distro_name
 
 
-impl = __AptDpkgPackageInfo()
+impl = _AptDpkgPackageInfo()
