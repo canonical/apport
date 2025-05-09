@@ -534,20 +534,20 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         b["Package"] = "bash 5"
 
         with (
-            unittest.mock.patch.object(
+            patch.object(
                 a, "crash_signature", MagicMock(return_value="/bin/bash:11:read:main")
             ),
-            unittest.mock.patch.object(
+            patch.object(
                 a,
                 "crash_signature_addresses",
                 MagicMock(return_value="/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"),
             ),
-            unittest.mock.patch.object(
+            patch.object(
                 s,
                 "crash_signature",
                 MagicMock(return_value="/bin/bash:11:__getch:read:main"),
             ),
-            unittest.mock.patch.object(
+            patch.object(
                 s,
                 "crash_signature_addresses",
                 MagicMock(
@@ -555,12 +555,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                     ":/bin/bash+DEAD"
                 ),
             ),
-            unittest.mock.patch.object(
+            patch.object(
                 b,
                 "crash_signature",
                 MagicMock(return_value="/bin/bash:11:__getch:read:main"),
             ),
-            unittest.mock.patch.object(
+            patch.object(
                 b,
                 "crash_signature_addresses",
                 MagicMock(return_value="/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD"),
