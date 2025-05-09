@@ -16,7 +16,7 @@ class build_java(Command):
     """Compile Java components of Apport"""
 
     description = __doc__
-    user_options = [("minimum-java-release=", "r", "Specify minimum Java release.")]
+    user_options = [("minimum_java_release=", "r", "Specify minimum Java release.")]
 
     def __init__(self, dist: Distribution, **kwargs: dict[str, typing.Any]) -> None:
         Command.__init__(self, dist, **kwargs)
