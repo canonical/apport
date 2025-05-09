@@ -445,46 +445,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
             apport.fileutils.links_with_shared_library("/etc/passwd", "libc")
         )
 
-    def test_get_core_path(self) -> None:
-        """get_core_path()"""
-        boot_id = apport.fileutils.get_boot_id()
-
-        # Basic test
-        (core_name, core_path) = apport.fileutils.get_core_path(
-            pid=123, exe="/usr/bin/test", uid=234, timestamp=222222
-        )
-        expected = f"core._usr_bin_test.234.{boot_id}.123.222222"
-        expected_path = os.path.join(apport.fileutils.core_dir, expected)
-        self.assertEqual(core_name, expected)
-        self.assertEqual(core_path, expected_path)
-
-        # Test dots in exe names
-        (core_name, core_path) = apport.fileutils.get_core_path(
-            pid=123, exe="/usr/bin/test.sh", uid=234, timestamp=222222
-        )
-        expected = f"core._usr_bin_test_sh.234.{boot_id}.123.222222"
-        expected_path = os.path.join(apport.fileutils.core_dir, expected)
-        self.assertEqual(core_name, expected)
-        self.assertEqual(core_path, expected_path)
-
-        # Test no exe name
-        (core_name, core_path) = apport.fileutils.get_core_path(
-            pid=123, exe=None, uid=234, timestamp=222222
-        )
-        expected = f"core.unknown.234.{boot_id}.123.222222"
-        expected_path = os.path.join(apport.fileutils.core_dir, expected)
-        self.assertEqual(core_name, expected)
-        self.assertEqual(core_path, expected_path)
-
-        # Test no uid
-        (core_name, core_path) = apport.fileutils.get_core_path(
-            pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
-        )
-        expected = f"core._usr_bin_test.{str(os.getuid())}.{boot_id}.123.222222"
-        expected_path = os.path.join(apport.fileutils.core_dir, expected)
-        self.assertEqual(core_name, expected)
-        self.assertEqual(core_path, expected_path)
-
     def test_clean_core_directory(self) -> None:
         """clean_core_directory()"""
         fake_uid = 5150

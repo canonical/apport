@@ -4,6 +4,7 @@
 # pylint: disable=missing-class-docstring,missing-function-docstring
 
 import io
+import os
 import time
 import unittest
 import unittest.mock
@@ -32,6 +33,58 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.likely_packaged("/tmp/foo"), False)
         # ignore crashes in /var/lib (LP#122859, LP#414368)
         self.assertEqual(apport.fileutils.likely_packaged("/var/lib/foo"), False)
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path(self, get_boot_id_mock: MagicMock) -> None:
+        """get_core_path() basic test"""
+        get_boot_id_mock.return_value = "<some-boot-id>"
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123, exe="/usr/bin/test", uid=234, timestamp=222222
+        )
+        expected = "core._usr_bin_test.234.<some-boot-id>.123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path_dots_in_exe(self, get_boot_id_mock: MagicMock) -> None:
+        """get_core_path() with dots in exe names"""
+        get_boot_id_mock.return_value = "<some-boot-id>"
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123, exe="/usr/bin/test.sh", uid=234, timestamp=222222
+        )
+        expected = "core._usr_bin_test_sh.234.<some-boot-id>.123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path_no_exe(self, get_boot_id_mock: MagicMock) -> None:
+        """get_core_path() with no exe name"""
+        get_boot_id_mock.return_value = "<some-boot-id>"
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123, exe=None, uid=234, timestamp=222222
+        )
+        expected = "core.unknown.234.<some-boot-id>.123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
+
+    @unittest.mock.patch("apport.fileutils.get_boot_id")
+    def test_get_core_path_no_uid(self, get_boot_id_mock: MagicMock) -> None:
+        """get_core_path() with no uid"""
+        get_boot_id_mock.return_value = "boot-id"
+        (core_name, core_path) = apport.fileutils.get_core_path(
+            pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
+        )
+        expected = f"core._usr_bin_test.{str(os.getuid())}.boot-id.123.222222"
+        expected_path = os.path.join(apport.fileutils.core_dir, expected)
+        self.assertEqual(core_name, expected)
+        self.assertEqual(core_path, expected_path)
+        get_boot_id_mock.assert_called_once_with()
 
     def test_get_login_defs(self) -> None:
         """Test get_login_defs()."""
