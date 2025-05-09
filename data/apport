@@ -79,6 +79,16 @@ class ProcPid(contextlib.ContextDecorator):
             return False
         return True
 
+    def has_same_pid(self, pidfd: int) -> bool:
+        """Check that the process ID matches the PID from the given pidfd.
+
+        In case the process ID has been reused for a new process, the
+        process ID from the pidfd will be -1 and thus this function
+        will return False.
+        """
+        other_pid = pidfd_getpid(pidfd)
+        return self.pid == other_pid
+
     def open(self, file: str) -> io.TextIOWrapper:
         """Open file relative to /proc/<pid> and return a stream."""
         assert self.fd is not None
@@ -91,6 +101,20 @@ class ProcPid(contextlib.ContextDecorator):
     def stat(self, path: str | os.PathLike[str]) -> os.stat_result:
         """Get the status of a file or a file descriptor relative to /proc/<pid>."""
         return os.stat(path, dir_fd=self.fd)
+
+
+def pidfd_getpid(pidfd: int) -> int:
+    """Get the associated pid from the pid file descriptor.
+
+    This function is equivalent to the identical named function in glibc.
+    """
+    pid_re = re.compile(rb"^Pid:\s*(-?[0-9]+)$")
+    with open(f"/proc/self/fdinfo/{pidfd}", "rb") as fdinfo_file:
+        for line in fdinfo_file:
+            match = pid_re.match(line)
+            if match:
+                return int(match.group(1))
+    raise OSError(errno.EBADF, f"{os.strerror(errno.EBADF)}: {pidfd}")
 
 
 def check_lock():
@@ -520,10 +544,11 @@ def forward_crash_to_container(
     """
     logger = logging.getLogger()
 
-    if options.dump_mode != 1:
+    if options.pidfd is None and options.dump_mode != 1:
+        # Note: If options.pidfd is set, proc_pid.has_same_pid() has been called before.
         logger.error(
             "Not forwarding crash with dump mode of %s to container"
-            " due to security concerns.",
+            " due to security concerns. Please provide --pidfd.",
             options.dump_mode,
         )
         return
@@ -653,7 +678,8 @@ def start_apport() -> None:
     """Start Apport crash handler."""
     create_directory(apport.fileutils.report_dir, 0o3777)
     write_to_proc_sys(
-        "kernel/core_pattern", f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E"
+        "kernel/core_pattern",
+        f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
     )
     write_to_proc_sys("fs/suid_dumpable", "2")
     write_to_proc_sys("kernel/core_pipe_limit", "10")
@@ -676,6 +702,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     parser.add_argument("-d", "--dump-mode", type=int, help="dump mode (%%d)")
     parser.add_argument(
         "-P", "--global-pid", type=int, help="pid in root namespace (%%P)"
+    )
+    parser.add_argument(
+        "-F", "--pidfd", nargs="?", type=int, help="pidfd for the crashed process (%%F)"
     )
     parser.add_argument("-u", "--uid", type=int, help="real UID (%%u)")
     parser.add_argument("-g", "--gid", type=int, help="real GID (%%g)")
@@ -849,6 +878,7 @@ def receive_arguments_via_socket() -> argparse.Namespace:
         core_ulimit=int(args[2]),
         dump_mode=int(args[3]),
         global_pid=None,
+        pidfd=None,
         uid=None,
         gid=None,
         executable_path=None,
@@ -918,6 +948,13 @@ def process_crash_from_kernel(options: argparse.Namespace) -> int:
         pid = options.global_pid
     try:
         with ProcPid(pid) as proc_pid:
+            if options.pidfd is not None and not proc_pid.has_same_pid(options.pidfd):
+                logging.getLogger().error(
+                    "The process %i has already been replaced by a new process"
+                    " with the same ID. Ignoring crash.",
+                    pid,
+                )
+                return 1
             return process_crash_from_kernel_with_proc_pid(options, proc_pid)
     except FileNotFoundError as error:
         logging.getLogger().error(
