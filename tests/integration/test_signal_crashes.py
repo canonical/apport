@@ -605,9 +605,8 @@ class T(unittest.TestCase):
         os.chmod(myexe, 0o755)
         time.sleep(1)
 
+        test_proc = self.create_test_process(command=myexe)
         try:
-            test_proc = self.create_test_process(command=myexe)
-
             # bump mtime of myexe to make it more recent than process start
             # time; ensure this works with file systems with only second
             # resolution
