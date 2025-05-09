@@ -2,9 +2,6 @@
 
 """Installer script for Apport."""
 
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
-
 import glob
 import logging
 import os.path
@@ -25,6 +22,7 @@ except ImportError:
 BASH_COMPLETIONS = "share/bash-completion/completions/"
 
 
+# pylint: disable-next=invalid-name
 class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
     """Java crash handler clean command."""
 
@@ -36,6 +34,7 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
                     os.unlink(os.path.join(root, f))
 
 
+# pylint: disable-next=invalid-name
 class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
     """Fix hashbang lines in scripts in data dir."""
 
@@ -103,24 +102,24 @@ from apport.ui import __version__  # noqa: E402, pylint: disable=C0413
 
 # determine systemd unit directory
 try:
-    systemd_unit_dir = subprocess.check_output(
+    SYSTEMD_UNIT_DIR = subprocess.check_output(
         ["pkg-config", "--variable=systemdsystemunitdir", "systemd"],
         universal_newlines=True,
     ).strip()
-    systemd_tmpfiles_dir = subprocess.check_output(
+    SYSTEMD_TMPFILES_DIR = subprocess.check_output(
         ["pkg-config", "--variable=tmpfilesdir", "systemd"], universal_newlines=True
     ).strip()
 except (FileNotFoundError, subprocess.CalledProcessError):
     # hardcoded fallback path
-    systemd_unit_dir = "/lib/systemd/system"
-    systemd_tmpfiles_dir = "/usr/lib/tmpfiles.d"
+    SYSTEMD_UNIT_DIR = "/lib/systemd/system"
+    SYSTEMD_TMPFILES_DIR = "/usr/lib/tmpfiles.d"
 
 try:
-    udev_dir = subprocess.check_output(
+    UDEV_DIR = subprocess.check_output(
         ["pkg-config", "--variable=udevdir", "udev"], text=True
     ).strip()
 except (FileNotFoundError, subprocess.CalledProcessError):
-    udev_dir = "/lib/udev"
+    UDEV_DIR = "/lib/udev"
 
 cmdclass = register_java_sub_commands(build_extra, install_fix_hashbangs)
 DistUtilsExtra.auto.setup(
@@ -144,16 +143,16 @@ DistUtilsExtra.auto.setup(
         ("share/apport", ["gtk/apport-gtk", "kde/apport-kde"]),
         (BASH_COMPLETIONS, glob.glob("data/bash-completion/*")),
         ("lib/pm-utils/sleep.d/", glob.glob("pm-utils/sleep.d/*")),
-        (f"{udev_dir}/rules.d", glob.glob("udev/*.rules")),
+        (f"{UDEV_DIR}/rules.d", glob.glob("udev/*.rules")),
         (
-            systemd_unit_dir,
+            SYSTEMD_UNIT_DIR,
             glob.glob("data/systemd/*.service") + glob.glob("data/systemd/*.socket"),
         ),
         (
-            f"{systemd_unit_dir}/systemd-coredump@.service.d",
+            f"{SYSTEMD_UNIT_DIR}/systemd-coredump@.service.d",
             ["data/systemd/systemd-coredump@.service.d/apport-coredump-hook.conf"],
         ),
-        (systemd_tmpfiles_dir, glob.glob("data/systemd/*.conf")),
+        (SYSTEMD_TMPFILES_DIR, glob.glob("data/systemd/*.conf")),
     ],
     cmdclass={
         "build": build_extra,

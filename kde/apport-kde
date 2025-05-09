@@ -12,8 +12,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# pylint: disable=invalid-name
+# pylint: enable=invalid-name
+
 # TODO: Address following pylint complaints
-# pylint: disable=invalid-name,missing-function-docstring
+# pylint: disable=missing-function-docstring
 
 import os
 import shutil
@@ -591,8 +594,8 @@ def main(argv: list[str]) -> None:
             ' "man apport-cli" for a command line version of Apport.'
         )
 
-    UserInterface = MainUserInterface(argv)
-    sys.exit(UserInterface.run_argv())
+    user_interface = MainUserInterface(argv)
+    sys.exit(user_interface.run_argv())
 
 
 if __name__ == "__main__":

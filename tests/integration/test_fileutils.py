@@ -31,7 +31,7 @@ class T(unittest.TestCase):
         apport.fileutils.core_dir = tempfile.mkdtemp()
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
-        self.orig_config_file = apport.fileutils._config_file
+        self.orig_config_file = apport.fileutils._CONFIG_FILE
 
     def tearDown(self):
         shutil.rmtree(apport.fileutils.core_dir)
@@ -39,7 +39,7 @@ class T(unittest.TestCase):
         shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
         self.orig_report_dir = None
-        apport.fileutils._config_file = self.orig_config_file
+        apport.fileutils._CONFIG_FILE = self.orig_config_file
 
     @staticmethod
     def _create_reports(create_inaccessible: bool = False) -> list[str]:
@@ -353,14 +353,14 @@ f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
     def test_get_config(self) -> None:
         """get_config()"""
         # nonexisting
-        apport.fileutils._config_file = "/nonexisting"
+        apport.fileutils._CONFIG_FILE = "/nonexisting"
         self.assertIsNone(apport.fileutils.get_config("main", "foo"))
         self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
         apport.fileutils._get_config_parser.cache_clear()
 
         # empty
         with tempfile.NamedTemporaryFile() as f:
-            apport.fileutils._config_file = f.name
+            apport.fileutils._CONFIG_FILE = f.name
             self.assertIsNone(apport.fileutils.get_config("main", "foo"))
             self.assertEqual(apport.fileutils.get_config("main", "foo", "moo"), "moo")
             apport.fileutils._get_config_parser.cache_clear()

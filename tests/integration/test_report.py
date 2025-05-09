@@ -1447,11 +1447,11 @@ int main() { return f(42); }
         apport.report.GENERAL_HOOK_DIR = tempfile.mkdtemp()
         orig_package_hook_dir = apport.report.PACKAGE_HOOK_DIR
         apport.report.PACKAGE_HOOK_DIR = tempfile.mkdtemp()
-        orig_opt_dir = apport.report._opt_dir
-        apport.report._opt_dir = tempfile.mkdtemp()
+        orig_opt_dir = apport.report._OPT_DIR
+        apport.report._OPT_DIR = tempfile.mkdtemp()
         try:
             opt_hook_dir = os.path.join(
-                apport.report._opt_dir,
+                apport.report._OPT_DIR,
                 "foolabs.example.com",
                 "foo",
                 "share",
@@ -1486,7 +1486,7 @@ int main() { return f(42); }
             r["Package"] = "foo-bin 0.2"
             r["SourcePackage"] = "foo"
             r["ExecutablePath"] = (
-                f"{apport.report._opt_dir}/foolabs.example.com/foo/bin/frob"
+                f"{apport.report._OPT_DIR}/foolabs.example.com/foo/bin/frob"
             )
 
             self.assertEqual(r.add_hooks_info(), False)
@@ -1494,10 +1494,10 @@ int main() { return f(42); }
         finally:
             shutil.rmtree(apport.report.GENERAL_HOOK_DIR)
             shutil.rmtree(apport.report.PACKAGE_HOOK_DIR)
-            shutil.rmtree(apport.report._opt_dir)
+            shutil.rmtree(apport.report._OPT_DIR)
             apport.report.GENERAL_HOOK_DIR = orig_general_hook_dir
             apport.report.PACKAGE_HOOK_DIR = orig_package_hook_dir
-            apport.report._opt_dir = orig_opt_dir
+            apport.report._OPT_DIR = orig_opt_dir
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_add_hooks_info_errors(self, stderr_mock: MagicMock) -> None:

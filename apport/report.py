@@ -10,8 +10,6 @@
 # the full text of the license.
 
 # pylint: disable=too-many-lines
-# TODO: Address following pylint complaints
-# pylint: disable=invalid-name
 
 import atexit
 import datetime
@@ -52,7 +50,7 @@ from apport.ui import HookUI, NoninteractiveHookUI
 _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
 GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"
 PACKAGE_HOOK_DIR = f"{_data_dir}/package-hooks/"
-_opt_dir = "/opt"
+_OPT_DIR = "/opt"
 
 # path of the ignore file
 _ignore_file = os.environ.get("APPORT_IGNORE_FILE", "~/.apport-ignore.xml")
@@ -1168,13 +1166,13 @@ class Report(problem_report.ProblemReport):
         # also search hooks in /opt, when program is from there
         opt_path = None
         exec_path = os.path.realpath(self.get("ExecutablePath", ""))
-        if exec_path.startswith(_opt_dir):
+        if exec_path.startswith(_OPT_DIR):
             opt_path = exec_path
         elif package:
             # check package contents
             try:
                 for f in apport.packaging.get_files(package):
-                    if f.startswith(_opt_dir) and os.path.isfile(f):
+                    if f.startswith(_OPT_DIR) and os.path.isfile(f):
                         opt_path = f
                         break
             except ValueError:
@@ -1182,7 +1180,7 @@ class Report(problem_report.ProblemReport):
                 pass
 
         if opt_path:
-            while len(opt_path) >= len(_opt_dir):
+            while len(opt_path) >= len(_OPT_DIR):
                 hook_dirs.append(
                     os.path.join(opt_path, "share", "apport", "package-hooks")
                 )
