@@ -9,6 +9,7 @@
 
 """Unit tests for data/apport."""
 
+import argparse
 import datetime
 import errno
 import io
@@ -16,6 +17,7 @@ import os
 import pathlib
 import shutil
 import signal
+import subprocess
 import sys
 import tempfile
 import time
@@ -25,7 +27,7 @@ from unittest.mock import MagicMock
 
 import apport.fileutils
 import apport.user_group
-from tests.helper import import_module_from_file
+from tests.helper import import_module_from_file, pidfd_open
 from tests.paths import get_data_directory
 
 apport_binary = import_module_from_file(get_data_directory() / "apport")
@@ -102,10 +104,41 @@ class TestApport(unittest.TestCase):
         self.assertEqual(sys.stderr, stderr)
         isatty_mock.assert_called_once_with(2)
 
+    def test_pidfd_getpid_process_gone(self) -> None:
+        """Test pidfd_getpid() for a pidfd where the process is gone."""
+        with subprocess.Popen(["sleep", "3600"]) as test_process:
+            try:
+                pidfd = os.pidfd_open(test_process.pid)
+            finally:
+                test_process.kill()
+        try:
+            pid = apport_binary.pidfd_getpid(pidfd)
+            self.assertEqual(pid, -1)
+        finally:
+            os.close(pidfd)
+
+    def test_pidfd_getpid_on_stdout(self) -> None:
+        """Test pidfd_getpid() on stdout which is an invalid pidfd."""
+        fd = sys.stdout.fileno()
+        with self.assertRaisesRegex(OSError, f"Bad file descriptor: {fd}"):
+            apport_binary.pidfd_getpid(fd)
+
     def test_proc_pid_not_exist(self) -> None:
         """Test ProcPid().exits() returning False."""
         with apport_binary.ProcPid(os.getpid()) as proc_pid:
             self.assertFalse(proc_pid.exists("nonexistent"))
+
+    def test_proc_pid_has_same_pid(self) -> None:
+        """Test ProcPid.has_same_pid() for same process."""
+        pid = os.getpid()
+        with apport_binary.ProcPid(pid) as proc_pid, pidfd_open(pid) as pidfd:
+            self.assertTrue(proc_pid.has_same_pid(pidfd))
+
+    def test_proc_pid_has_same_pid_false(self) -> None:
+        """Test ProcPid.has_same_pid() for different processes."""
+        pid = os.getpid()
+        with apport_binary.ProcPid(pid) as proc_pid, pidfd_open(1) as pidfd:
+            self.assertFalse(proc_pid.has_same_pid(pidfd))
 
     def test_receive_arguments_via_socket_import_error(self) -> None:
         """Test receive_arguments_via_socket() fail to import systemd."""
@@ -197,6 +230,40 @@ class TestApport(unittest.TestCase):
             self.assertFalse(
                 apport_binary.consistency_checks(options, now, proc_pid, crash_user)
             )
+
+    def test_process_crash_from_kernel_replaced_process(self) -> None:
+        """Test process_crash_from_kernel() to abort if process ID has been reused.
+
+        Instead of actual replacing the process with a new one with the same ID,
+        just use a different pidfd.
+        """
+        pidfd = os.pidfd_open(os.getpid())
+        with (
+            self.assertLogs(level="ERROR") as info_logs,
+            subprocess.Popen(["sleep", "3600"]) as test_process,
+        ):
+            try:
+                args = [
+                    "-p",
+                    str(test_process.pid),
+                    "-d",
+                    "1",
+                    "-P",
+                    str(test_process.pid),
+                    "-F",
+                    str(pidfd),
+                ]
+                options = apport_binary.parse_arguments(args)
+                exit_code = apport_binary.process_crash_from_kernel(options)
+            finally:
+                test_process.kill()
+
+        self.assertEqual(exit_code, 1)
+        self.assertIn(
+            f"The process {test_process.pid} has already been replaced by a new"
+            f" process with the same ID. Ignoring crash.",
+            info_logs.output[0],
+        )
 
     @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
     def test_consistency_checks_before_forwarding(self) -> None:
@@ -402,6 +469,70 @@ class TestApport(unittest.TestCase):
             " systemd-coredump@42-5846584-0.service found.",
             error_logs.output[0],
         )
+
+    def test_parse_arguments(self) -> None:
+        """Test parse_arguments()"""
+        args = [
+            "-p42477",
+            "-s4",
+            "-c0",
+            "-d1",
+            "-P42477",
+            "-u1000",
+            "-g1000",
+            "-F3",
+            "--",
+            "!usr!bin!divide-by-zero",
+        ]
+        options = apport_binary.parse_arguments(args)
+
+        expected_options = argparse.Namespace(
+            pid=42477,
+            signal_number=4,
+            core_ulimit=0,
+            dump_mode=1,
+            global_pid=42477,
+            pidfd=3,
+            uid=1000,
+            gid=1000,
+            executable_path="/usr/bin/divide-by-zero",
+            systemd_coredump_instance=None,
+            start=False,
+            stop=False,
+        )
+        self.assertEqual(options, expected_options)
+
+    def test_parse_arguments_kernel_without_pidfd(self) -> None:
+        """Test parse_arguments() from kernel without pidfd (%F) support."""
+        args = [
+            "-p42477",
+            "-s4",
+            "-c0",
+            "-d1",
+            "-P42477",
+            "-u1000",
+            "-g1000",
+            "-F",
+            "--",
+            "!usr!bin!divide-by-zero",
+        ]
+        options = apport_binary.parse_arguments(args)
+
+        expected_options = argparse.Namespace(
+            pid=42477,
+            signal_number=4,
+            core_ulimit=0,
+            dump_mode=1,
+            global_pid=42477,
+            pidfd=None,
+            uid=1000,
+            gid=1000,
+            executable_path="/usr/bin/divide-by-zero",
+            systemd_coredump_instance=None,
+            start=False,
+            stop=False,
+        )
+        self.assertEqual(options, expected_options)
 
     def test_systemd_journal_import_error(self) -> None:
         """Test handling missing systemd.journal library correctly."""
