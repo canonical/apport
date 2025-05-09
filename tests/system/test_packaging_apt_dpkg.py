@@ -13,8 +13,8 @@ import textwrap
 import typing
 from collections.abc import Iterator
 
+import apt_pkg
 import pytest
-from apt import apt_pkg
 
 from apport.packaging_impl.apt_dpkg import _parse_deb822_sources, impl
 from tests.helper import has_internet

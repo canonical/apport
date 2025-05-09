@@ -57,7 +57,7 @@ from apport.packaging import PackageInfo
 def _extract_downloaded_debs(
     rootdir: str,
     permanent_rootdir: bool,
-    fetcher: apt.apt_pkg.Acquire,
+    fetcher: apt_pkg.Acquire,
     last_written: float,
     lp_cache: dict[str, str | None],
     pkg_versions: dict[str, str],
@@ -515,7 +515,7 @@ class _AptDpkgPackageInfo(PackageInfo):
     def get_lp_binary_package(release, package, version, arch):
         """Get Launchpad URL and SHA1 sum for the given binary package version."""
         # allow unauthenticated downloads
-        apt.apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
+        apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
         # pylint: disable=import-outside-toplevel
         from launchpadlib.launchpad import Launchpad
 
@@ -912,21 +912,21 @@ class _AptDpkgPackageInfo(PackageInfo):
                 sf_urls = self.get_lp_source_package(srcpackage, version)
                 if sf_urls:
                     proxy = ""
-                    if apt.apt_pkg.config.find("Acquire::http::Proxy") != "":
-                        proxy = apt.apt_pkg.config.find("Acquire::http::Proxy")
-                        apt.apt_pkg.config.set("Acquire::http::Proxy", "")
+                    if apt_pkg.config.find("Acquire::http::Proxy") != "":
+                        proxy = apt_pkg.config.find("Acquire::http::Proxy")
+                        apt_pkg.config.set("Acquire::http::Proxy", "")
                     fetch_progress = apt.progress.base.AcquireProgress()
-                    fetcher = apt.apt_pkg.Acquire(fetch_progress)
+                    fetcher = apt_pkg.Acquire(fetch_progress)
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
-                            apt.apt_pkg.AcquireFile(fetcher, sf, destdir=output_dir)
+                            apt_pkg.AcquireFile(fetcher, sf, destdir=output_dir)
                         )
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
                         return None
                     if proxy:
-                        apt.apt_pkg.config.set("Acquire::http::Proxy", proxy)
+                        apt_pkg.config.set("Acquire::http::Proxy", proxy)
                     for dsc in glob.glob(os.path.join(output_dir, "*.dsc")):
                         subprocess.call(
                             ["dpkg-source", "-sn", "-x", dsc],
@@ -1003,9 +1003,9 @@ class _AptDpkgPackageInfo(PackageInfo):
             virtual_mapping.setdefault(p, set()).add(package)
         conflicts = []
         if "Conflicts" in candidate.record:
-            conflicts += apt.apt_pkg.parse_depends(candidate.record["Conflicts"])
+            conflicts += apt_pkg.parse_depends(candidate.record["Conflicts"])
         if "Replaces" in candidate.record:
-            conflicts += apt.apt_pkg.parse_depends(candidate.record["Replaces"])
+            conflicts += apt_pkg.parse_depends(candidate.record["Replaces"])
         for conflict in conflicts:
             # if the package conflicts with itself its wonky e.g.
             # gdb in artful
@@ -1034,7 +1034,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     debs = os.path.join(archivedir, f"{p}_*.deb")
                     for path in glob.glob(debs):
                         ver = self._deb_version(path)
-                        if apt.apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
+                        if apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
                             os.unlink(path)
                     try:
                         del pkg_versions[p]
@@ -1045,7 +1045,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                 debs = os.path.join(archivedir, f"{conflict_pkg}_*.deb")
                 for path in glob.glob(debs):
                     ver = self._deb_version(path)
-                    if apt.apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
+                    if apt_pkg.check_dep(ver, conflict_comptype, conflict_ver):
                         os.unlink(path)
                         try:
                             del pkg_versions[conflict_pkg]
@@ -1152,16 +1152,16 @@ class _AptDpkgPackageInfo(PackageInfo):
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        apt.apt_pkg.config.set("APT::Architecture", architecture)
+        apt_pkg.config.set("APT::Architecture", architecture)
         # Disable foreign architectures or we might fail to download packages
         # due to split archives. Clearing is not enough, we need to push our
         # architecture into the list too, or apt runs dpkg --print-foreign-architectures
-        apt.apt_pkg.config.clear("APT::Architectures")
-        apt.apt_pkg.config.set("APT::Architectures::", architecture)
-        apt.apt_pkg.config.set("Acquire::Languages", "none")
+        apt_pkg.config.clear("APT::Architectures")
+        apt_pkg.config.set("APT::Architectures::", architecture)
+        apt_pkg.config.set("Acquire::Languages", "none")
         # directly connect to Launchpad when downloading deb files
-        apt.apt_pkg.config.set("Acquire::http::Proxy::api.launchpad.net", "DIRECT")
-        apt.apt_pkg.config.set("Acquire::http::Proxy::launchpad.net", "DIRECT")
+        apt_pkg.config.set("Acquire::http::Proxy::api.launchpad.net", "DIRECT")
+        apt_pkg.config.set("Acquire::http::Proxy::launchpad.net", "DIRECT")
 
         if not verbose:
             fetch_progress = apt.progress.base.AcquireProgress()
@@ -1192,11 +1192,11 @@ class _AptDpkgPackageInfo(PackageInfo):
                 raise SystemError(str(error)) from error
             apt_cache.open()
 
-        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
+        archivedir = apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete: list[str] = []
 
-        src_records = apt.apt_pkg.SourceRecords()
+        src_records = apt_pkg.SourceRecords()
 
         # read original package list
         pkg_list = os.path.join(rootdir, "packages.txt")
@@ -1205,7 +1205,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         # mark packages for installation
         real_pkgs = set()
         lp_cache = {}
-        fetcher = apt.apt_pkg.Acquire(fetch_progress)
+        fetcher = apt_pkg.Acquire(fetch_progress)
         # need to keep AcquireFile references
         acquire_queue = []
         # add any dependencies to the packages list
@@ -1229,7 +1229,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             )
             if lp_url:
                 acquire_queue.append(
-                    apt.apt_pkg.AcquireFile(
+                    apt_pkg.AcquireFile(
                         fetcher, lp_url, hash=f"sha1:{sha1sum}", destdir=archivedir
                     )
                 )
@@ -1934,7 +1934,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
         """
-        return apt.apt_pkg.version_compare(ver1, ver2)
+        return apt_pkg.version_compare(ver1, ver2)
 
     _distro_codename = None
 
