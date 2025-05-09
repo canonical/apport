@@ -1774,6 +1774,7 @@ int main() { return f(42); }
         pr.add_proc_info()
         self.assertIsNone(pr._address_to_offset(0))
         res = pr._address_to_offset(int(pr["ProcMaps"].split("-", 1)[0], 16) + 5)
+        assert res is not None
         self.assertEqual(res.split("+", 1)[1], "5")
         self.assertIn("python", res.split("+", 1)[0])
 
