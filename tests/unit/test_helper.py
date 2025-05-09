@@ -3,7 +3,7 @@
 # pylint: disable=missing-class-docstring,missing-function-docstring
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 import psutil
 
@@ -27,7 +27,7 @@ class Multiply:  # pylint: disable=too-few-public-methods
 
 class TestTestHelper(unittest.TestCase):
     def test_get_init_systemd(self) -> None:
-        open_mock = unittest.mock.mock_open(read_data="systemd\n")
+        open_mock = mock_open(read_data="systemd\n")
         with patch("builtins.open", open_mock):
             self.assertEqual(get_init_system(), "systemd")
         open_mock.assert_called_once_with("/proc/1/comm", encoding="utf-8")
