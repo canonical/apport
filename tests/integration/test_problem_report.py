@@ -1,6 +1,7 @@
 """Integration tests for the problem_report module."""
 
 import email
+import email.message
 import gzip
 import io
 import os

@@ -3,6 +3,7 @@
 import io
 import tempfile
 import unittest
+import unittest.mock
 from unittest.mock import MagicMock
 
 from tests.helper import import_module_from_file
