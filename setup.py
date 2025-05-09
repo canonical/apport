@@ -35,11 +35,13 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
 
 
 # pylint: disable-next=invalid-name
-class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
-    """Fix hashbang lines in scripts in data dir."""
+class install_fix_completion_symlinks(DistUtilsExtra.auto.install_auto):
+    """Fix symlinks in the bash completion dir."""
 
-    def _fix_symlinks_in_bash_completion(self):
+    def run(self):
         log = logging.getLogger(__name__)
+        DistUtilsExtra.auto.install_auto.run(self)
+
         autoinstalled_completion_dir = os.path.join(
             self.install_data, "share", "apport", "bash-completion"
         )
@@ -66,32 +68,6 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
         # Clean-up left-over bash-completion from auto install
         if os.path.isdir(autoinstalled_completion_dir):
             os.rmdir(autoinstalled_completion_dir)
-
-    def run(self):
-        log = logging.getLogger(__name__)
-        DistUtilsExtra.auto.install_auto.run(self)
-        self._fix_symlinks_in_bash_completion()
-        new_hashbang = f"#!{sys.executable.rsplit('.', 1)[0]}\n"
-
-        for d in (
-            os.path.join(self.install_data, "share", "apport"),
-            os.path.join(self.install_data, "bin"),
-        ):
-            for path, _, files in os.walk(d):
-                for fname in files:
-                    f = os.path.join(path, fname)
-                    with open(f, encoding="utf-8") as fd:
-                        try:
-                            lines = fd.readlines()
-                        except UnicodeDecodeError:
-                            # ignore data files like spinner.gif
-                            continue
-                    if lines[0].startswith("#!") and "python" in lines[0]:
-                        log.info("Updating hashbang of %s", f)
-                        lines[0] = new_hashbang
-                        with open(f, "w", encoding="utf-8") as fd:
-                            for line in lines:
-                                fd.write(line)
 
 
 #
@@ -121,7 +97,7 @@ try:
 except (FileNotFoundError, subprocess.CalledProcessError):
     UDEV_DIR = "/lib/udev"
 
-cmdclass = register_java_sub_commands(build_extra, install_fix_hashbangs)
+cmdclass = register_java_sub_commands(build_extra, install_fix_completion_symlinks)
 DistUtilsExtra.auto.setup(
     name="apport",
     author="Martin Pitt",
@@ -157,7 +133,7 @@ DistUtilsExtra.auto.setup(
     cmdclass={
         "build": build_extra,
         "clean": clean_java_subdir,
-        "install": install_fix_hashbangs,
+        "install": install_fix_completion_symlinks,
     }
     | cmdclass,
 )
