@@ -415,7 +415,13 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
+        self.do_crash(
+            command=myexe,
+            expect_corefile=True,
+            expect_corefile_owner=0,
+            uid=8,
+            suid_dumpable=2,
+        )
 
     def test_core_dump_packaged(self):
         """Packaged executables create core dumps on proper ulimits."""
@@ -690,9 +696,15 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        # if a user can crash a suid root binary, it should not create
-        # core files
-        self.do_crash(command=myexe, uid=MAIL_UID, suid_dumpable=2)
+        # If a user can crash a suid root binary, the core file should
+        # only be readable by root.
+        self.do_crash(
+            command=myexe,
+            expect_corefile=True,
+            expect_corefile_owner=0,
+            uid=MAIL_UID,
+            suid_dumpable=2,
+        )
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
@@ -703,10 +715,16 @@ class T(unittest.TestCase):
         """
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        # if a user can crash a suid root binary, it should not create
-        # core files if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
+        # if a user can crash a suid root binary, it should create
+        # core files anyway if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
         self.do_crash(
-            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=1
+            command=os.path.realpath("/bin/ping"),
+            args=["127.0.0.1"],
+            expect_corefile=True,
+            expect_corefile_owner=MAIL_UID,
+            expected_owner=MAIL_UID,
+            uid=MAIL_UID,
+            suid_dumpable=1,
         )
 
     @unittest.skipUnless(os.path.exists("/bin/ping"), "this test needs /bin/ping")
@@ -715,10 +733,15 @@ class T(unittest.TestCase):
         """Report generation for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        # if a user can crash a suid root binary, it should not create
-        # core files
+        # If a user can crash a suid root binary, the core file should
+        # only be readable by root.
         self.do_crash(
-            command="/bin/ping", args=["127.0.0.1"], uid=MAIL_UID, suid_dumpable=2
+            command=os.path.realpath("/bin/ping"),
+            args=["127.0.0.1"],
+            expect_corefile=True,
+            expect_corefile_owner=0,
+            uid=MAIL_UID,
+            suid_dumpable=2,
         )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
@@ -735,11 +758,12 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        # if a user can crash a suid root binary, it should not create
-        # core files
+        # If a user can crash a suid root binary, the core file should
+        # only be readable by root.
         self.do_crash(
             command=myexe,
-            expect_corefile=False,
+            expect_corefile=True,
+            expect_corefile_owner=0,
             expect_report=False,
             uid=MAIL_UID,
             suid_dumpable=2,
@@ -775,8 +799,10 @@ class T(unittest.TestCase):
         """Report generation via socket for setuid program which drops root."""
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(
-            command="/bin/ping",
+            command=os.path.realpath("/bin/ping"),
             args=["127.0.0.1"],
+            expect_corefile=True,
+            expect_corefile_owner=0,
             uid=MAIL_UID,
             suid_dumpable=2,
             via_socket=True,
@@ -1083,6 +1109,7 @@ class T(unittest.TestCase):
         hook_before_apport: Callable | None = None,
         expect_report: bool = True,
         via_socket: bool = False,
+        expected_owner: int | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-many-branches,too-many-locals,too-many-statements
@@ -1196,7 +1223,7 @@ class T(unittest.TestCase):
 
         self._check_report(
             expect_report=expect_report,
-            expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
+            expected_owner=0 if suid_dumpable == 2 else expected_owner,
         )
 
     @staticmethod
