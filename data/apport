@@ -519,7 +519,7 @@ def forward_crash_to_container(
             "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_host_pid_fd
         )
         socket_uid = os.fstat(sock_fd).st_uid
-    except FileNotFoundError:
+    except (FileNotFoundError, ProcessLookupError):
         logger.error(
             "host pid %s crashed in a container without apport support",
             options.global_pid,
