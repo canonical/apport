@@ -1301,7 +1301,7 @@ class T(unittest.TestCase):
         self.assertIn("CoreDump", r)
         self.assertGreater(len(r["CoreDump"]), 5000)
         r.add_gdb_info()
-        self.assertIn("\n#2", r.get("Stacktrace"))
+        self.assertIn("\n#2", r["Stacktrace"])
 
     def wait_for_core_file(self, gdb_pid: int, core_file: str) -> None:
         """Wait for GDB to finish generating the core file.
