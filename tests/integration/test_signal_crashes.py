@@ -88,6 +88,34 @@ int main() {
 }
 """
 
+UNSHARE_CODE = """\
+#define _GNU_SOURCE
+#include <err.h>
+#include <sched.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+int main() {
+    if (unshare(CLONE_NEWNS | CLONE_NEWPID) == -1)
+        err(EXIT_FAILURE, "unshare");
+
+    pid_t child = fork();
+    if (child < 0) {
+        err(EXIT_FAILURE, "fork");
+    } else if (child > 0) {
+        int rc;
+        waitpid(child, &rc, 0);
+        return rc;
+    }
+
+    int zero = 0;
+    printf("42 / 0 = %i\\n", 42 / zero);
+    return 0;
+}
+"""
+
 
 @contextlib.contextmanager
 def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator[str]:
@@ -756,6 +784,28 @@ class T(unittest.TestCase):
             self.do_crash(command=dropsuid, uid=MAIL_UID, suid_dumpable=2)
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
+    def test_crash_unshare(self) -> None:
+        """Report generation for a binary that uses unshare and crashes.
+
+        This unshare test case simulates a container crash that does
+        not have Apport support.
+        """
+        with self.assertLogs(level="WARNING") as warning_logs:
+            with compile_c_code("unshare", UNSHARE_CODE) as unshare:
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                self.do_crash(
+                    command=unshare,
+                    command_dies=True,
+                    follow_fork=True,
+                    expect_report=False,
+                )
+
+        self.assertRegex(
+            warning_logs.output[0],
+            r"ERROR:root:host pid \d+ crashed in a container without apport support",
+        )
+
+    @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self) -> None:
         """Report generation for unpackaged setuid program."""
         # create suid root executable in a path we can modify which apport
@@ -1122,6 +1172,8 @@ class T(unittest.TestCase):
         expect_report: bool = True,
         via_socket: bool = False,
         cwd: str | None = None,
+        command_dies: bool = False,
+        follow_fork: bool = False,
         **kwargs: typing.Any,
     ) -> str:
         # TODO: Split into smaller functions/methods
@@ -1173,7 +1225,7 @@ class T(unittest.TestCase):
 
         try:
             gdb = subprocess.Popen(  # pylint: disable=consider-using-with
-                self.gdb_command(command, args, gdb_core_file, uid),
+                self.gdb_command(command, args, gdb_core_file, uid, follow_fork),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
                 cwd=cwd,
@@ -1187,11 +1239,14 @@ class T(unittest.TestCase):
             raise
 
         try:
-            command_process = self.wait_for_gdb_sleeping_child_process(
-                gdb.pid, expected_command or command
+            command_process = self.wait_for_gdb_child_process(
+                gdb.pid,
+                expected_command or command,
+                "tracing-stop" if command_dies else "sleeping",
             )
 
-            os.kill(command_process.pid, sig)
+            if not command_dies:
+                os.kill(command_process.pid, sig)
             self.wait_for_core_file(gdb.pid, gdb_core_file)
 
             if hook_before_apport:
@@ -1249,7 +1304,11 @@ class T(unittest.TestCase):
 
     @staticmethod
     def gdb_command(
-        command: str, args: Iterable[str], core_file: str, uid: int | None
+        command: str,
+        args: Iterable[str],
+        core_file: str,
+        uid: int | None,
+        follow_fork: bool = False,
     ) -> list[str]:
         """Construct GDB arguments to call the test executable.
 
@@ -1270,6 +1329,7 @@ class T(unittest.TestCase):
                 f" --reuid={uid} --clear-groups /bin/sh -c 'exec {command}{cmd_args}'"
             )
             command = "/usr/bin/setpriv"
+        if uid is not None or follow_fork:
             gdb_args += ["--ex", "set follow-fork-mode child"]
 
         gdb_args += [
@@ -1366,17 +1426,17 @@ class T(unittest.TestCase):
     # False positive return statement for unittest.TestCase.fail
     # See https://github.com/pylint-dev/pylint/issues/4167
     # pylint: disable-next=inconsistent-return-statements
-    def wait_for_gdb_sleeping_child_process(
-        self, gdb_pid: int, command: str
+    def wait_for_gdb_child_process(
+        self, gdb_pid: int, command: str, expected_status: str = "sleeping"
     ) -> psutil.Process:
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
         timeout = 0.0
         while timeout < 5:
-            gdb_children = gdb_process.children()
+            gdb_children = gdb_process.children(recursive=True)
             for process in gdb_children:
                 try:
-                    if process.status() != "sleeping":
+                    if process.status() != expected_status:
                         continue
                     cmdline = process.cmdline()
                 except psutil.NoSuchProcess:  # pragma: no cover
@@ -1388,13 +1448,13 @@ class T(unittest.TestCase):
             timeout += 0.1
 
         self.fail(
-            f"GDB child process {command} not started within "
-            f"{int(timeout)} seconds. GDB children: {gdb_children!r}"
+            f"GDB child process {command} with status {expected_status!r} not started"
+            f" within {int(timeout)} seconds. GDB children: {gdb_children!r}"
         )
 
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_sleeping_child_process(self, sleep_mock: MagicMock) -> None:
-        """Test wait_for_gdb_sleeping_child_process() helper method."""
+    def test_wait_for_gdb_child_process(self, sleep_mock: MagicMock) -> None:
+        """Test wait_for_gdb_child_process() helper method."""
         child = MagicMock(spec=psutil.Process)
         child.status.side_effect = [
             "tracing-stop",  # child not yet started
@@ -1410,7 +1470,7 @@ class T(unittest.TestCase):
                 [child],  # child ready
             ]
 
-            self.wait_for_gdb_sleeping_child_process(123456789, self.TEST_EXECUTABLE)
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
 
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 3)
@@ -1419,13 +1479,13 @@ class T(unittest.TestCase):
 
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
     @unittest.mock.patch("time.sleep")
-    def test_wait_for_gdb_sleeping_child_process_timeout(
+    def test_wait_for_gdb_child_process_timeout(
         self, sleep_mock: MagicMock, process_mock: MagicMock
     ) -> None:
-        """Test wait_for_gdb_sleeping_child_process() helper runs into timeout."""
+        """Test wait_for_gdb_child_process() helper runs into timeout."""
         process_mock.return_value.children.return_value = []
         with unittest.mock.patch.object(self, "fail") as fail_mock:
-            self.wait_for_gdb_sleeping_child_process(123456789, self.TEST_EXECUTABLE)
+            self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 51)
