@@ -551,7 +551,7 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        def inject_bogus_report():
+        def inject_bogus_report() -> None:
             read, write = os.pipe()
             pid = os.fork()
             if pid > 0:
@@ -567,6 +567,7 @@ class T(unittest.TestCase):
             # replace report with the crafted one above as soon as it exists
             # and becomes deletable for us; this is a busy loop, we need to be
             # really fast to intercept
+            assert self.test_report
             while True:
                 try:
                     os.unlink(self.test_report)
@@ -604,9 +605,8 @@ class T(unittest.TestCase):
         os.chmod(myexe, 0o755)
         time.sleep(1)
 
+        test_proc = self.create_test_process(command=myexe)
         try:
-            test_proc = self.create_test_process(command=myexe)
-
             # bump mtime of myexe to make it more recent than process start
             # time; ensure this works with file systems with only second
             # resolution
@@ -628,7 +628,7 @@ class T(unittest.TestCase):
         )
         self._check_report(expect_report=False)
 
-    def test_logging_file(self):
+    def test_logging_file(self) -> None:
         """Output to log file, if available."""
         test_proc = self.create_test_process()
         log = os.path.join(self.workdir, "apport.log")
@@ -675,6 +675,7 @@ class T(unittest.TestCase):
 
         self._check_report()
         pr = apport.Report()
+        assert self.test_report
         with open(self.test_report, "rb") as f:
             pr.load(f)
 
@@ -682,7 +683,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertEqual(pr["CoreDump"], b"hel\x01lo")
 
-    def test_logging_stderr(self):
+    def test_logging_stderr(self) -> None:
         """Output to stderr if log is not available."""
         test_proc = self.create_test_process()
         try:
@@ -720,6 +721,7 @@ class T(unittest.TestCase):
 
         self._check_report()
         pr = apport.Report()
+        assert self.test_report
         with open(self.test_report, "rb") as f:
             pr.load(f)
 
@@ -1034,6 +1036,7 @@ class T(unittest.TestCase):
         if expected_owner is None:
             expected_owner = os.geteuid()
 
+        assert self.test_report
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         st = os.stat(self.test_report)
         self.assertEqual(
@@ -1298,7 +1301,7 @@ class T(unittest.TestCase):
         self.assertIn("CoreDump", r)
         self.assertGreater(len(r["CoreDump"]), 5000)
         r.add_gdb_info()
-        self.assertIn("\n#2", r.get("Stacktrace"))
+        self.assertIn("\n#2", r["Stacktrace"])
 
     def wait_for_core_file(self, gdb_pid: int, core_file: str) -> None:
         """Wait for GDB to finish generating the core file.
