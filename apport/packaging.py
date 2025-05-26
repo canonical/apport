@@ -11,8 +11,6 @@
 
 import platform
 import re
-import subprocess
-import sys
 from collections.abc import Iterable
 
 
@@ -349,30 +347,13 @@ class PackageInfo:
     def get_os_version(self) -> tuple[str, str]:
         """Return (osname, osversion) tuple.
 
-        This is read from /etc/os-release, or if that doesn't exist,
-        'lsb_release -sir' output.
+        This is read from /etc/os-release.
         """
         if self._os_version:
             return self._os_version
 
-        try:
-            info = platform.freedesktop_os_release()
-            name = self._sanitize_operating_system_name(info["NAME"])
-            version = info.get("VERSION_ID")
-            if name and version:
-                self._os_version = (name, version)
-                return self._os_version
-        except OSError as error:
-            sys.stderr.write(f"{error}. Falling back to calling 'lsb_release -sir'.")
-
-        # fall back to lsb_release
-        lsb_release = subprocess.run(
-            ["lsb_release", "-sir"],
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        (name, version) = lsb_release.stdout.strip().replace("\n", " ").split()
-        self._os_version = (name.strip(), version.strip())
+        info = platform.freedesktop_os_release()
+        name = self._sanitize_operating_system_name(info["NAME"])
+        version = info.get("VERSION_ID", "n/a")
+        self._os_version = (name, version)
         return self._os_version
