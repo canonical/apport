@@ -327,3 +327,31 @@ var/lib/ieee-data/iab.txt				    net/ieee-data
             },
         )
         open_mock.assert_called_once_with("Contents-amd64", "rb")
+
+
+class TestPackaging(unittest.TestCase):
+    """Unit tests for apport.packaging.PackageInfo class."""
+
+    def setUp(self) -> None:
+        # pylint: disable-next=protected-access
+        impl._os_version = None
+
+    def tearDown(self) -> None:
+        # pylint: disable-next=protected-access
+        impl._os_version = None
+
+    @unittest.mock.patch("platform.freedesktop_os_release")
+    def test_get_os_version_debian_testing(self, os_release_mock: MagicMock) -> None:
+        """Test get_os_version() for Debian testing (no VERSION_ID set)."""
+        # platform.freedesktop_os_release() data from base-files 13.7
+        os_release_mock.return_value = {
+            "NAME": "Debian GNU/Linux",
+            "ID": "debian",
+            "PRETTY_NAME": "Debian GNU/Linux trixie/sid",
+            "VERSION_CODENAME": "trixie",
+            "HOME_URL": "https://www.debian.org/",
+            "SUPPORT_URL": "https://www.debian.org/support",
+            "BUG_REPORT_URL": "https://bugs.debian.org/",
+        }
+        self.assertEqual(impl.get_os_version(), ("Debian", "n/a"))
+        os_release_mock.assert_called_once_with()
