@@ -15,6 +15,7 @@ import unittest.mock
 from unittest.mock import MagicMock
 
 import apt
+import apt.package
 
 from apport.packaging_impl.apt_dpkg import (
     _map_mirror_to_arch,
