@@ -23,6 +23,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import apport.crashdb_impl.memory
+import apport.fileutils
 import apport.packaging
 import apport.report
 import apport.ui
