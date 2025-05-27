@@ -671,16 +671,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             )
 
             if not fixed_tasks:
-                fixed_distro = list(
-                    filter(
-                        lambda task: task.status == "Fix Released"
-                        and task.bug_target_name.lower() == self.distro.lower(),
-                        tasks,
-                    )
-                )
-                if fixed_distro:
-                    # fixed in distro inself (without source package)
-                    return ""
+                for task in tasks:
+                    if (
+                        task.status == "Fix Released"
+                        and task.bug_target_name.lower() == self.distro.lower()
+                    ):
+                        # fixed in distro itself (without source package)
+                        return ""
 
             if len(fixed_tasks) > 1:
                 apport.logging.warning(
