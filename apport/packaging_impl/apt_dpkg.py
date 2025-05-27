@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import contextlib
 import datetime
+import fnmatch
 import functools
 import glob
 import gzip
@@ -1397,7 +1398,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
-        return glob.fnmatch.filter(self._cache().keys(), nameglob)
+        return fnmatch.filter(self._cache().keys(), nameglob)
 
     #
     # Internal helper methods
