@@ -27,7 +27,7 @@ import tempfile
 import time
 import urllib.parse
 import urllib.request
-from typing import IO
+from typing import IO, Any
 
 try:
     from httplib2 import FailedToDecompressContent
@@ -67,7 +67,7 @@ def id_set(tasks):
 class CrashDatabase(apport.crashdb.CrashDatabase):
     """Launchpad implementation of crash database interface."""
 
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize Launchpad crash database.
 
         You need to specify a launchpadlib-style credentials file to

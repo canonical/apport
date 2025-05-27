@@ -151,7 +151,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     This is a Apport CrashDB implementation for interacting with Github issues
     """
 
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize some variables. Login is delayed until necessary."""
         apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
         self.repository_owner = options["repository_owner"]
@@ -159,7 +159,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.app_id = options["github_app_id"]
         self.labels = set(options["labels"])
         self.issue_url = None
-        self.github = None
+        self.github: Github | None = None
 
     def _format_report(self, report: Mapping[str, Any]) -> dict[str, str | list[str]]:
         """Formats report info as markdown and creates Github issue JSON."""
