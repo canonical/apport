@@ -67,7 +67,7 @@ def id_set(tasks):
 class CrashDatabase(apport.crashdb.CrashDatabase):
     """Launchpad implementation of crash database interface."""
 
-    def __init__(self, auth, options):
+    def __init__(self, auth_file, options):
         """Initialize Launchpad crash database.
 
         You need to specify a launchpadlib-style credentials file to
@@ -103,15 +103,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         if os.getenv("APPORT_LAUNCHPAD_INSTANCE"):
             options["launchpad_instance"] = os.getenv("APPORT_LAUNCHPAD_INSTANCE")
-        if not auth:
+        if not auth_file:
             lp_instance = options.get("launchpad_instance")
             if lp_instance:
-                auth = ".".join(
+                auth_file = ".".join(
                     (DEFAULT_CREDENTIALS_PATH, lp_instance.split("://", 1)[-1])
                 )
             else:
-                auth = DEFAULT_CREDENTIALS_PATH
-        apport.crashdb.CrashDatabase.__init__(self, auth, options)
+                auth_file = DEFAULT_CREDENTIALS_PATH
+        apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
 
         self.distro = options.get("distro")
         if self.distro:
@@ -128,7 +128,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             self.arch_tag = f"need-{packaging.get_system_architecture()}-retrace"
         self.options = options
-        self.auth = auth
+        self.auth = auth_file
         assert self.auth
 
         self.__launchpad = None
