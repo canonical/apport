@@ -15,7 +15,7 @@ import unittest
 import unittest.mock
 from unittest.mock import MagicMock
 
-from apport.packaging import PackageInfo
+from apport.package_info import PackageInfo
 from apport.report import Report
 from apport.sandboxutils import _move_base_files_first, make_sandbox
 

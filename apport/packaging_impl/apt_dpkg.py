@@ -55,7 +55,7 @@ import apt_pkg
 from aptsources.sourceslist import Deb822SourceEntry, SourceEntry
 
 import apport.logging
-from apport.packaging import PackageInfo
+from apport.package_info import PackageInfo
 
 
 # pylint: disable-next=too-many-arguments,too-many-positional-arguments
