@@ -578,12 +578,12 @@ class UserInterface:
         self.cur_package = apport.fileutils.find_file_package(path)
         self.report.add_os_info()
         allowed_to_report = apport.fileutils.allowed_to_report()
-        response = self.ui_present_report_details(allowed_to_report, modal_for=int(pid))
+        response = self.ui_present_report_details(allowed_to_report, modal_for=pid)
         if response.report:
             apport.fileutils.mark_hanging_process(self.report, pid)
-            os.kill(int(pid), signal.SIGABRT)
+            os.kill(pid, signal.SIGABRT)
         else:
-            os.kill(int(pid), signal.SIGKILL)
+            os.kill(pid, signal.SIGKILL)
 
         if response.restart:
             self.wait_for_pid(pid)
