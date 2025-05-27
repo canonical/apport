@@ -320,11 +320,13 @@ class _AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, "wb") as fp:
                 pickle.dump(self._virtual_mapping_obj, fp)
 
-    def _contents_mapping(self, configdir, release, arch):
+    def _contents_mapping(
+        self, configdir: str, release: str, arch: str
+    ) -> dict[bytes, bytes]:
         if (
             self._contents_mapping_obj
-            and self._contents_mapping_obj["release"] == release
-            and self._contents_mapping_obj["arch"] == arch
+            and self._contents_mapping_obj[b"release"] == release.encode()
+            and self._contents_mapping_obj[b"arch"] == arch.encode()
         ):
             return self._contents_mapping_obj
 
@@ -338,11 +340,14 @@ class _AptDpkgPackageInfo(PackageInfo):
                 self._contents_mapping_obj = pickle.load(fp)
             assert isinstance(self._contents_mapping_obj, dict)
         except (AssertionError, FileNotFoundError):
-            self._contents_mapping_obj = {"release": release, "arch": arch}
+            self._contents_mapping_obj = {
+                b"release": release.encode(),
+                b"arch": arch.encode(),
+            }
 
         return self._contents_mapping_obj
 
-    def _save_contents_mapping(self, configdir, release, arch):
+    def _save_contents_mapping(self, configdir: str, release: str, arch: str) -> None:
         mapping_file = os.path.join(
             configdir, f"contents_mapping-{release}-{arch}.pickle"
         )
