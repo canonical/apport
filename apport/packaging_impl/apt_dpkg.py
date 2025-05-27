@@ -432,7 +432,9 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def get_available_version(self, package: str) -> str:
         """Return the latest available version of a package."""
-        return self._apt_pkg(package).candidate.version
+        candidate = self._apt_pkg(package).candidate
+        assert candidate is not None
+        return candidate.version
 
     def get_dependencies(self, package: str) -> list[str]:
         """Return a list of packages a package depends on."""
@@ -1278,6 +1280,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     package.candidate = package.versions[candidate.version]
                 except KeyError:
                     if base_pkg:
+                        assert package.candidate is not None
                         obsolete.append(
                             f"outdated debug symbol package for {base_pkg}:"
                             f" package version {ver} or {candidate.version}"
@@ -1309,6 +1312,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
                 if not get_package_from_launchpad(pkg, ver):
+                    assert cache_pkg.candidate is not None
                     obsolete.append(
                         f"{pkg} version {ver} required,"
                         f" but {cache_pkg.candidate.version} is available\n"
@@ -1316,6 +1320,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     ver = cache_pkg.candidate.version
 
             candidate = cache_pkg.candidate
+            assert candidate is not None
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
@@ -1349,7 +1354,8 @@ class _AptDpkgPackageInfo(PackageInfo):
                         # only install dbg pkgs whose version matches
                         if ver:
                             for dbg in dbgs:
-                                if apt_cache[dbg].candidate.version != ver:
+                                dbg_candidate = apt_cache[dbg].candidate
+                                if dbg_candidate and dbg_candidate.version != ver:
                                     dbgs.remove(dbg)
                     else:
                         dbgs = []
