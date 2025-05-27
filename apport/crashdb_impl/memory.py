@@ -35,7 +35,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.unretraced = set()
         self.dup_unchecked = set()
 
-        self.upload_delay = 0
+        self.upload_delay = 0.0
         self.upload_msg = None
 
         if "sample_data" in options:
