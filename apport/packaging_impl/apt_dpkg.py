@@ -47,6 +47,10 @@ import urllib.request
 from collections.abc import Iterable, Iterator
 
 import apt
+import apt.cache
+import apt.package
+import apt.progress.base
+import apt.progress.text
 import apt_pkg
 from aptsources.sourceslist import Deb822SourceEntry, SourceEntry
 
