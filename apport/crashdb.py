@@ -445,6 +445,7 @@ class CrashDatabase:
         # SQLite
         if cur_format < 3:
             raise SystemError("Cannot upgrade database from format earlier than 3")
+        assert self.duplicate_db is not None
 
         cur = self.duplicate_db.cursor()
 
@@ -468,6 +469,7 @@ class CrashDatabase:
         never contain id, to avoid marking a bug as a duplicate of itself if a
         bug is reprocessed more than once.
         """
+        assert self.duplicate_db is not None
         cur = self.duplicate_db.cursor()
         cur.execute(
             "SELECT crash_id, fixed_version FROM crashes "
@@ -499,6 +501,7 @@ class CrashDatabase:
         if not sig:
             return None
 
+        assert self.duplicate_db is not None
         cur = self.duplicate_db.cursor()
 
         cur.execute(
@@ -596,6 +599,7 @@ class CrashDatabase:
                     f" already has that signature for ID {existing}"
                 )
         else:
+            assert self.duplicate_db is not None
             cur = self.duplicate_db.cursor()
             cur.execute(
                 "INSERT INTO address_signatures VALUES (?, ?)", (_u(sig), crash_id)
