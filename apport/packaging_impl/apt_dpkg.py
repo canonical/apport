@@ -1210,6 +1210,46 @@ class _AptDpkgPackageInfo(PackageInfo):
                 raise SystemError(str(error)) from error
             apt_cache.open()
 
+        obsolete = self._install_packages(
+            rootdir,
+            release,
+            packages,
+            verbose,
+            permanent_rootdir,
+            architecture,
+            install_dbg,
+            install_deps,
+            apt_cache,
+            aptroot,
+            fetch_progress,
+        )
+
+        if tmp_aptroot:
+            shutil.rmtree(aptroot)
+
+        if permanent_rootdir:
+            self._save_virtual_mapping(aptroot)
+
+        return "".join(obsolete)
+
+    # pylint: disable-next=too-many-arguments,too-many-positional-arguments
+    def _install_packages(
+        self,
+        rootdir: str,
+        release: str,
+        packages: list[tuple[str, str | None]],
+        verbose: bool,
+        permanent_rootdir: bool,
+        architecture: str,
+        install_dbg: bool,
+        install_deps: bool,
+        apt_cache: apt.Cache,
+        aptroot: str,
+        fetch_progress: apt.progress.base.AcquireProgress,
+    ) -> list[str]:
+        # TODO: Split into smaller functions/methods
+        # pylint: disable=too-complex,too-many-branches,too-many-locals
+        # pylint: disable=too-many-statements
         archivedir = apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete: list[str] = []
@@ -1412,18 +1452,12 @@ class _AptDpkgPackageInfo(PackageInfo):
         # update package list
         _write_package_version_dict(pkg_list, pkg_versions)
 
-        if tmp_aptroot:
-            shutil.rmtree(aptroot)
-
         # check bookkeeping that apt fetcher really got everything
         assert (
             not real_pkgs
         ), f"apt fetcher did not fetch these packages: {' '.join(real_pkgs)}"
 
-        if permanent_rootdir:
-            self._save_virtual_mapping(aptroot)
-
-        return "".join(obsolete)
+        return obsolete
 
     def package_name_glob(self, nameglob):
         """Return known package names which match given glob."""
