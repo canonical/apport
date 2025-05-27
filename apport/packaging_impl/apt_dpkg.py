@@ -305,10 +305,11 @@ class _AptDpkgPackageInfo(PackageInfo):
             return self._virtual_mapping_obj
 
         mapping_file = os.path.join(configdir, "virtual_mapping.pickle")
-        if os.path.exists(mapping_file):
+        try:
             with open(mapping_file, "rb") as fp:
                 self._virtual_mapping_obj = pickle.load(fp)
-        else:
+            assert isinstance(self._virtual_mapping_obj, dict)
+        except (AssertionError, FileNotFoundError):
             self._virtual_mapping_obj = {}
 
         return self._virtual_mapping_obj
@@ -332,10 +333,11 @@ class _AptDpkgPackageInfo(PackageInfo):
         )
         if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
             os.remove(mapping_file)
-        if os.path.exists(mapping_file):
+        try:
             with open(mapping_file, "rb") as fp:
                 self._contents_mapping_obj = pickle.load(fp)
-        else:
+            assert isinstance(self._contents_mapping_obj, dict)
+        except (AssertionError, FileNotFoundError):
             self._contents_mapping_obj = {"release": release, "arch": arch}
 
         return self._contents_mapping_obj
