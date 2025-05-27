@@ -545,7 +545,7 @@ class UserInterface:
         apport.fileutils.mark_report_upload(f)
         apport.fileutils.mark_report_seen(f)
 
-    def run_hang(self, pid: int) -> bool:
+    def run_hang(self, pid: int) -> None:
         """Report an application hanging.
 
         This will first present a dialog containing the information it can
@@ -558,13 +558,6 @@ class UserInterface:
         mark the report for uploading.
         """
         self.report = apport.Report("Hang")
-
-        if not self.args.pid:
-            self.ui_error_message(
-                _("No PID specified"),
-                _("You need to specify a PID. See --help for more information."),
-            )
-            return False
 
         try:
             self.report.add_proc_info(pid)
@@ -595,7 +588,6 @@ class UserInterface:
         if response.restart:
             self.wait_for_pid(pid)
             self.restart()
-        return True
 
     @staticmethod
     def wait_for_pid(pid: int) -> None:
@@ -915,7 +907,14 @@ class UserInterface:
             self.run_symptom()
             return True
         if self.args.hanging:
-            return self.run_hang(self.args.pid)
+            if not self.args.pid:
+                self.ui_error_message(
+                    _("No PID specified"),
+                    _("You need to specify a PID. See --help for more information."),
+                )
+                return False
+            self.run_hang(int(self.args.pid))
+            return True
         if self.args.filebug:
             return self.run_report_bug()
         if self.args.update_report is not None:
