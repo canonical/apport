@@ -416,6 +416,7 @@ class T(unittest.TestCase):
         # report without any information (distro bug)
         ui.report = apport.Report("Bug")
         ui.collect_info()
+        assert ui.report
         self.assertTrue(
             set(["Date", "Uname", "DistroRelease", "ProblemType"]).issubset(
                 set(ui.report.keys())
@@ -485,6 +486,7 @@ class T(unittest.TestCase):
             ui.collect_info()
 
         search_bug_patterns_mock.assert_called_once()
+        assert ui.report
         self.assertTrue(
             set(
                 [
@@ -541,6 +543,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertIn("CrashDB", ui.report)
         self.assertNotIn("UnreportableReason", ui.report)
         self.assertEqual(ui.report["BashHook"], "Moo")
@@ -553,6 +556,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertNotIn("UnreportableReason", ui.report)
         self.assertEqual(ui.report["BashHook"], "Moo")
         self.assertEqual(ui.crashdb.options["distro"], "debug")
@@ -565,6 +569,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertIn("nonexisting", ui.report["UnreportableReason"])
 
         # invalid syntax
@@ -572,6 +577,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertIn("package hook", ui.report["UnreportableReason"])
 
         # nonexisting name
@@ -579,6 +585,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertIn("nonexisting", ui.report["UnreportableReason"])
 
         # string with unsafe contents
@@ -589,6 +596,7 @@ class T(unittest.TestCase):
         ui.report = apport.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
+        assert ui.report
         self.assertIn("package hook", ui.report["UnreportableReason"])
         self.assertFalse(os.path.exists("/tmp/pwned"))
 
@@ -1248,6 +1256,7 @@ class T(unittest.TestCase):
 
         # now pretend to move it to a machine where the package is not
         # installed
+        assert ui.report
         ui.report["Package"] = "uninstalled_pkg 1"
         ui.report["ExecutablePath"] = "/usr/bin/uninstalled_program"
         ui.report["InterpreterPath"] = "/usr/bin/uninstalled_interpreter"
