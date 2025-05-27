@@ -629,10 +629,11 @@ class _AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)
         """
-        if self._apt_pkg(package).installed:
-            return self._apt_pkg(package).installed.architecture or "unknown"
-        if self._apt_pkg(package).candidate:
-            return self._apt_pkg(package).candidate.architecture or "unknown"
+        pkg = self._apt_pkg(package)
+        if pkg.installed:
+            return pkg.installed.architecture or "unknown"
+        if pkg.candidate:
+            return pkg.candidate.architecture or "unknown"
         raise ValueError(f"package {package} does not exist")
 
     def get_files(self, package):
