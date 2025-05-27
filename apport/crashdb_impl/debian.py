@@ -12,6 +12,7 @@
 import email.mime.text
 import smtplib
 import tempfile
+from typing import Any
 
 import apport.crashdb
 
@@ -25,7 +26,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     # TODO: Implement several missing abstract methods from parent class
     # pylint: disable=abstract-method
 
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize crash database connection.
 
         Debian implementation is pretty basic as most of its bug management
