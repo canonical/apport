@@ -89,15 +89,6 @@ run_pydocstyle() {
     pydocstyle ${PYTHON_FILES} ${PYTHON_SCRIPTS}
 }
 
-run_pyflakes() {
-    if ! type pyflakes3 >/dev/null 2>&1; then
-        echo "Skipping pyflakes3 tests, pyflakes3 is not installed"
-        return
-    fi
-    echo "Running pyflakes3..."
-    pyflakes3 ${PYTHON_FILES} ${PYTHON_SCRIPTS}
-}
-
 run_pylint() {
     if ! type pylint >/dev/null 2>&1; then
         echo "Skipping pylint tests, pylint is not installed"
@@ -116,7 +107,6 @@ else
     run_isort
     run_pycodestyle
     run_pydocstyle
-    run_pyflakes
     run_mypy
     run_pylint
     check_hardcoded_names
