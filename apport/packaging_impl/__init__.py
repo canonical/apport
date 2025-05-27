@@ -4,7 +4,7 @@ import importlib
 import os
 import platform
 
-from apport.packaging import PackageInfo
+from apport.package_info import PackageInfo
 
 
 def determine_packaging_implementation() -> str:
