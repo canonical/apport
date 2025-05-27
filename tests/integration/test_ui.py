@@ -226,8 +226,6 @@ class T(unittest.TestCase):
         apport.report._ignore_file = os.path.join(self.workdir, "apport-ignore.xml")
         os.mknod(apport.report._ignore_file)
 
-        self.ui = UserInterfaceMock()
-
         # demo report
         self.report = apport.Report()
         self.report["ExecutablePath"] = "/bin/bash"
@@ -269,7 +267,6 @@ class T(unittest.TestCase):
         os.unlink(apport.report._ignore_file)
         apport.report._ignore_file = self.orig_ignore_file
 
-        self.ui = None
         self.report_file.close()
 
         self.assertEqual(
@@ -293,67 +290,71 @@ class T(unittest.TestCase):
 
     def test_format_filesize(self) -> None:
         """format_filesize()"""
+        ui = UserInterfaceMock()
         locale_numeric = locale.getlocale(locale.LC_NUMERIC)
         locale.setlocale(locale.LC_NUMERIC, "C")
         try:
-            self.assertEqual(self.ui.format_filesize(0), "0.0 KB")
-            self.assertEqual(self.ui.format_filesize(2048), "2.0 KB")
-            self.assertEqual(self.ui.format_filesize(2560), "2.6 KB")
-            self.assertEqual(self.ui.format_filesize(999999), "1000.0 KB")
-            self.assertEqual(self.ui.format_filesize(1000000), "1.0 MB")
-            self.assertEqual(self.ui.format_filesize(2_700_000), "2.7 MB")
-            self.assertEqual(self.ui.format_filesize(1_024_000_000), "1.0 GB")
-            self.assertEqual(self.ui.format_filesize(2_560_000_000), "2.6 GB")
+            self.assertEqual(ui.format_filesize(0), "0.0 KB")
+            self.assertEqual(ui.format_filesize(2048), "2.0 KB")
+            self.assertEqual(ui.format_filesize(2560), "2.6 KB")
+            self.assertEqual(ui.format_filesize(999999), "1000.0 KB")
+            self.assertEqual(ui.format_filesize(1000000), "1.0 MB")
+            self.assertEqual(ui.format_filesize(2_700_000), "2.7 MB")
+            self.assertEqual(ui.format_filesize(1_024_000_000), "1.0 GB")
+            self.assertEqual(ui.format_filesize(2_560_000_000), "2.6 GB")
         finally:
             locale.setlocale(locale.LC_NUMERIC, locale_numeric)
 
     def test_get_size_loaded(self) -> None:
         """get_complete_size() and get_reduced_size() for loaded Reports"""
-        self.ui.load_report(self.report_file.name)
+        ui = UserInterfaceMock()
+        ui.load_report(self.report_file.name)
 
         fsize = os.path.getsize(self.report_file.name)
-        complete_ratio = float(self.ui.get_complete_size()) / fsize
+        complete_ratio = float(ui.get_complete_size()) / fsize
         self.assertAlmostEqual(complete_ratio, 1.0, delta=0.1)
 
-        rs = self.ui.get_reduced_size()
+        rs = ui.get_reduced_size()
         self.assertTrue(rs > 1000)
         self.assertTrue(rs < 10000)
 
         # now add some information (e. g. from package hooks)
-        assert self.ui.report
-        self.ui.report["ExtraInfo"] = "A" * 50000
-        s = self.ui.get_complete_size()
+        assert ui.report
+        ui.report["ExtraInfo"] = "A" * 50000
+        s = ui.get_complete_size()
         self.assertTrue(s >= fsize + 49900)
         self.assertTrue(s < fsize + 60000)
 
-        rs = self.ui.get_reduced_size()
+        rs = ui.get_reduced_size()
         self.assertTrue(rs > 51000)
         self.assertTrue(rs < 60000)
 
     def test_get_size_constructed(self) -> None:
         """get_complete_size() and get_reduced_size() for on-the-fly Reports"""
-        self.ui.report = apport.Report("Bug")
-        self.ui.report["Hello"] = "World"
+        ui = UserInterfaceMock()
+        ui.report = apport.Report("Bug")
+        ui.report["Hello"] = "World"
 
-        s = self.ui.get_complete_size()
+        s = ui.get_complete_size()
         self.assertTrue(s > 5)
         self.assertTrue(s < 100)
 
-        self.assertEqual(s, self.ui.get_reduced_size())
+        self.assertEqual(s, ui.get_reduced_size())
 
     def test_load_report(self) -> None:
         """load_report()"""
+        ui = UserInterfaceMock()
         # valid report
-        self.ui.load_report(self.report_file.name)
-        assert self.ui.report
-        self.assertEqual(set(self.ui.report.keys()), set(self.report.keys()))
-        self.assertEqual(self.ui.report["Package"], self.report["Package"])
+        ui.load_report(self.report_file.name)
+        assert ui.report
+        self.assertEqual(set(ui.report.keys()), set(self.report.keys()))
+        self.assertEqual(ui.report["Package"], self.report["Package"])
         self.assertEqual(
-            self.ui.report["CoreDump"].get_value(), self.report["CoreDump"].get_value()
+            ui.report["CoreDump"].get_value(), self.report["CoreDump"].get_value()
         )
-        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(ui.msg_title)
 
-        self.ui.clear_msg()
+        ui.clear_msg()
 
         # invalid base64 encoding
         self.report_file.seek(0)
@@ -370,21 +371,22 @@ class T(unittest.TestCase):
         )
         self.report_file.flush()
 
-        self.ui.load_report(self.report_file.name)
-        self.assertTrue(self.ui.report is None)
-        self.assertEqual(self.ui.msg_title, _("Invalid problem report"))
-        self.assertEqual(self.ui.msg_severity, "error")
+        ui.load_report(self.report_file.name)
+        self.assertTrue(ui.report is None)
+        self.assertEqual(ui.msg_title, _("Invalid problem report"))
+        self.assertEqual(ui.msg_severity, "error")
 
     def test_restart(self) -> None:
         """restart()"""
+        ui = UserInterfaceMock()
         # test with only ProcCmdline
         p = os.path.join(apport.fileutils.report_dir, "ProcCmdline")
         r = os.path.join(apport.fileutils.report_dir, "Custom")
         self.report["ProcCmdline"] = f"touch {p}"
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
+        ui.load_report(self.report_file.name)
 
-        self.ui.restart()
+        ui.restart()
         time.sleep(1)  # FIXME: race condition
         self.assertTrue(os.path.exists(p))
         self.assertTrue(not os.path.exists(r))
@@ -393,9 +395,9 @@ class T(unittest.TestCase):
         # test with RespawnCommand
         self.report["RespawnCommand"] = f"touch {r}"
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
+        ui.load_report(self.report_file.name)
 
-        self.ui.restart()
+        ui.restart()
         time.sleep(1)  # FIXME: race condition
         self.assertTrue(not os.path.exists(p))
         self.assertTrue(os.path.exists(r))
@@ -405,37 +407,39 @@ class T(unittest.TestCase):
         del self.report["RespawnCommand"]
         self.report["ProcCmdline"] = "/nonexisting"
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
+        ui.load_report(self.report_file.name)
 
     def test_collect_info_distro(self) -> None:
         """collect_info() on report without information (distro bug)"""
+        ui = UserInterfaceMock()
         # report without any information (distro bug)
-        self.ui.report = apport.Report("Bug")
-        self.ui.collect_info()
+        ui.report = apport.Report("Bug")
+        ui.collect_info()
         self.assertTrue(
             set(["Date", "Uname", "DistroRelease", "ProblemType"]).issubset(
-                set(self.ui.report.keys())
+                set(ui.report.keys())
             )
         )
         self.assertEqual(
-            self.ui.ic_progress_pulses,
+            ui.ic_progress_pulses,
             0,
             "no progress dialog for distro bug info collection",
         )
 
     def test_collect_info_exepath(self) -> None:
         """collect_info() on report with only ExecutablePath"""
+        ui = UserInterfaceMock()
         # report with only package information
         self.report = apport.Report("Bug")
         self.report["ExecutablePath"] = "/bin/bash"
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
+        ui.load_report(self.report_file.name)
         # add some tuple values, for robustness testing (might be added by
         # apport hooks)
-        assert self.ui.report
-        self.ui.report["Fstab"] = ("/etc/fstab", True)
-        self.ui.report["CompressedValue"] = problem_report.CompressedValue(b"Test")
-        self.ui.collect_info()
+        assert ui.report
+        ui.report["Fstab"] = ("/etc/fstab", True)
+        ui.report["CompressedValue"] = problem_report.CompressedValue(b"Test")
+        ui.collect_info()
         self.assertTrue(
             set(
                 [
@@ -448,36 +452,36 @@ class T(unittest.TestCase):
                     "Date",
                     "ExecutablePath",
                 ]
-            ).issubset(set(self.ui.report.keys()))
+            ).issubset(set(ui.report.keys()))
         )
         self.assertTrue(
-            self.ui.ic_progress_pulses > 0,
-            "progress dialog for package bug info collection",
+            ui.ic_progress_pulses > 0, "progress dialog for package bug info collection"
         )
         self.assertEqual(
-            self.ui.ic_progress_active,
+            ui.ic_progress_active,
             False,
             "progress dialog for package bug info collection finished",
         )
 
     def test_collect_info_package(self) -> None:
         """collect_info() on report with a package"""
+        ui = UserInterfaceMock()
         # report with only package information
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
 
         def search_bug_patterns(url: str) -> str | None:
-            progress_pulses = self.ui.ic_progress_pulses
+            progress_pulses = ui.ic_progress_pulses
             # wait for ui_pulse_info_collection_progress() call
-            while self.ui.ic_progress_pulses == progress_pulses:
+            while ui.ic_progress_pulses == progress_pulses:
                 time.sleep(0.01)
-            assert self.ui.report
-            return apport.report.Report.search_bug_patterns(self.ui.report, url)
+            assert ui.report
+            return apport.report.Report.search_bug_patterns(ui.report, url)
 
         with unittest.mock.patch.object(
-            self.ui.report, "search_bug_patterns", side_effect=search_bug_patterns
+            ui.report, "search_bug_patterns", side_effect=search_bug_patterns
         ) as search_bug_patterns_mock:
-            self.ui.collect_info()
+            ui.collect_info()
 
         search_bug_patterns_mock.assert_called_once()
         self.assertTrue(
@@ -491,24 +495,24 @@ class T(unittest.TestCase):
                     "DistroRelease",
                     "Date",
                 ]
-            ).issubset(set(self.ui.report.keys()))
+            ).issubset(set(ui.report.keys()))
         )
         self.assertTrue(
-            self.ui.ic_progress_pulses > 0,
-            "progress dialog for package bug info collection",
+            ui.ic_progress_pulses > 0, "progress dialog for package bug info collection"
         )
         self.assertEqual(
-            self.ui.ic_progress_active,
+            ui.ic_progress_active,
             False,
             "progress dialog for package bug info collection finished",
         )
 
     def test_collect_info_permissions(self) -> None:
         """collect_info() leaves the report accessible to the group"""
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.report_file = self.report_file.name
-        self.ui.collect_info()
+        ui = UserInterfaceMock()
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.report_file = self.report_file.name
+        ui.collect_info()
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
     def _write_crashdb_config_hook(
@@ -531,87 +535,91 @@ class T(unittest.TestCase):
 
     def test_collect_info_crashdb_spec(self) -> None:
         """collect_info() with package hook that defines a CrashDB"""
+        ui = UserInterfaceMock()
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt': '1' }", "Moo")
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertIn("CrashDB", self.ui.report)
-        self.assertNotIn("UnreportableReason", self.ui.report)
-        self.assertEqual(self.ui.report["BashHook"], "Moo")
-        self.assertEqual(self.ui.crashdb.options["local_opt"], "1")
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertIn("CrashDB", ui.report)
+        self.assertNotIn("UnreportableReason", ui.report)
+        self.assertEqual(ui.report["BashHook"], "Moo")
+        self.assertEqual(ui.crashdb.options["local_opt"], "1")
 
     def test_collect_info_crashdb_name(self) -> None:
         """collect_info() with package hook that chooses a different CrashDB"""
+        ui = UserInterfaceMock()
         self._write_crashdb_config_hook("debug", "Moo")
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertNotIn("UnreportableReason", self.ui.report)
-        self.assertEqual(self.ui.report["BashHook"], "Moo")
-        self.assertEqual(self.ui.crashdb.options["distro"], "debug")
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertNotIn("UnreportableReason", ui.report)
+        self.assertEqual(ui.report["BashHook"], "Moo")
+        self.assertEqual(ui.crashdb.options["distro"], "debug")
 
     def test_collect_info_crashdb_errors(self) -> None:
         """collect_info() with package hook setting a broken CrashDB field"""
+        ui = UserInterfaceMock()
         # nonexisting implementation
         self._write_crashdb_config_hook("{ 'impl': 'nonexisting', 'local_opt': '1' }")
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertIn("nonexisting", self.ui.report["UnreportableReason"])
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertIn("nonexisting", ui.report["UnreportableReason"])
 
         # invalid syntax
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt'")
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertIn("package hook", self.ui.report["UnreportableReason"])
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertIn("package hook", ui.report["UnreportableReason"])
 
         # nonexisting name
         self._write_crashdb_config_hook("nonexisting")
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertIn("nonexisting", self.ui.report["UnreportableReason"])
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertIn("nonexisting", ui.report["UnreportableReason"])
 
         # string with unsafe contents
         self._write_crashdb_config_hook(
             """{'impl': 'memory',"""
             """ 'trap': exec('open("/tmp/pwned", "w").close()')}"""
         )
-        self.ui.report = apport.Report("Bug")
-        self.ui.cur_package = "bash"
-        self.ui.collect_info()
-        self.assertIn("package hook", self.ui.report["UnreportableReason"])
+        ui.report = apport.Report("Bug")
+        ui.cur_package = "bash"
+        ui.collect_info()
+        self.assertIn("package hook", ui.report["UnreportableReason"])
         self.assertFalse(os.path.exists("/tmp/pwned"))
 
     def test_handle_duplicate(self) -> None:
         """handle_duplicate()"""
-        self.ui.load_report(self.report_file.name)
-        self.assertEqual(self.ui.handle_duplicate(), False)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
+        ui = UserInterfaceMock()
+        ui.load_report(self.report_file.name)
+        self.assertEqual(ui.handle_duplicate(), False)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
 
         demo_url = "http://example.com/1"
         self.report["_KnownReport"] = demo_url
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
-        self.assertEqual(self.ui.handle_duplicate(), True)
-        self.assertEqual(self.ui.msg_severity, "info")
-        self.assertEqual(self.ui.opened_url, demo_url)
+        ui.load_report(self.report_file.name)
+        self.assertEqual(ui.handle_duplicate(), True)
+        self.assertEqual(ui.msg_severity, "info")
+        self.assertEqual(ui.opened_url, demo_url)
 
-        self.ui.opened_url = None
+        ui.opened_url = None
         demo_url = "http://example.com/1"
         self.report["_KnownReport"] = "1"
         self.update_report_file()
-        self.ui.load_report(self.report_file.name)
-        self.assertEqual(self.ui.handle_duplicate(), True)
-        self.assertEqual(self.ui.msg_severity, "info")
-        self.assertIsNone(self.ui.opened_url)
+        ui.load_report(self.report_file.name)
+        self.assertEqual(ui.handle_duplicate(), True)
+        self.assertEqual(ui.msg_severity, "info")
+        self.assertIsNone(ui.opened_url)
 
     def test_run_nopending(self) -> None:
         """Run the frontend without any pending reports."""
-        self.ui = UserInterfaceMock()
-        self.assertEqual(self.ui.run_argv(), False)
+        ui = UserInterfaceMock()
+        self.assertEqual(ui.run_argv(), False)
 
     def test_run_restart(self) -> None:
         """Running the frontend with pending reports offers restart."""
@@ -619,136 +627,134 @@ class T(unittest.TestCase):
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action()
-        self.ui.run_argv()
-        self.assertEqual(self.ui.offer_restart, True)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
+        ui.run_argv()
+        self.assertEqual(ui.offer_restart, True)
 
     def test_run_report_bug_noargs(self) -> None:
         """run_report_bug() without specifying arguments"""
-        self.ui = UserInterfaceMock(["ui-test", "-f"])
-        self.assertEqual(self.ui.run_argv(), False)
-        self.assertEqual(self.ui.msg_severity, "error")
+        ui = UserInterfaceMock(["ui-test", "-f"])
+        self.assertEqual(ui.run_argv(), False)
+        self.assertEqual(ui.msg_severity, "error")
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def test_run_version(self, stdout_mock: MagicMock) -> None:
         """run_report_bug() as "ubuntu-bug" with version argument"""
-        self.ui = UserInterfaceMock(["ubuntu-bug", "-v"])
-        self.assertEqual(self.ui.run_argv(), True)
+        ui = UserInterfaceMock(["ubuntu-bug", "-v"])
+        self.assertEqual(ui.run_argv(), True)
         self.assertEqual(stdout_mock.getvalue(), f"{apport.ui.__version__}\n")
 
-    def test_file_report_nodelay(self):
+    def test_file_report_nodelay(self) -> None:
         """file_report() happy path without polling"""
-        self.ui = UserInterfaceMock()
-        self.ui.report = self.report
-        previous_id = self.ui.crashdb.latest_id()
-        self.ui.file_report()
-        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.msg_text)
+        ui = UserInterfaceMock()
+        ui.report = self.report
+        previous_id = ui.crashdb.latest_id()
+        ui.file_report()
+        self.assertNotEqual(ui.crashdb.latest_id(), previous_id)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.msg_text)
 
-    def test_file_report_upload_delay(self):
+    def test_file_report_upload_delay(self) -> None:
         """file_report() with some polling during upload"""
-        self.ui = UserInterfaceMock()
-        self.ui.report = self.report
-        self.ui.crashdb.upload_delay = 0.2  # Arbitrary value
-        previous_id = self.ui.crashdb.latest_id()
-        self.ui.file_report()
-        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.msg_text)
+        ui = UserInterfaceMock()
+        ui.report = self.report
+        ui.crashdb.upload_delay = 0.2  # Arbitrary value
+        previous_id = ui.crashdb.latest_id()
+        ui.file_report()
+        self.assertNotEqual(ui.crashdb.latest_id(), previous_id)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.msg_text)
 
-    def test_file_report_upload_message(self):
+    def test_file_report_upload_message(self) -> None:
         """file_report() with a message to the user"""
-        self.ui = UserInterfaceMock()
-        self.ui.report = self.report
-        self.ui.crashdb.upload_msg = ("test title", "test content")
-        previous_id = self.ui.crashdb.latest_id()
-        self.ui.file_report()
-        self.assertNotEqual(self.ui.crashdb.latest_id(), previous_id)
-        self.assertEqual(self.ui.msg_severity, "info")
-        self.assertEqual(self.ui.msg_title, "test title")
-        self.assertEqual(self.ui.msg_text, "test content")
+        ui = UserInterfaceMock()
+        ui.report = self.report
+        ui.crashdb.upload_msg = ("test title", "test content")
+        previous_id = ui.crashdb.latest_id()
+        ui.file_report()
+        self.assertNotEqual(ui.crashdb.latest_id(), previous_id)
+        self.assertEqual(ui.msg_severity, "info")
+        self.assertEqual(ui.msg_title, "test title")
+        self.assertEqual(ui.msg_text, "test content")
 
     def test_file_report_http_error(self) -> None:
         """file_report() fails with HTTPError."""
-        self.ui = UserInterfaceMock()
-        self.ui.report = self.report
-        with unittest.mock.patch.object(self.ui.crashdb, "upload") as upload_mock:
+        ui = UserInterfaceMock()
+        ui.report = self.report
+        with unittest.mock.patch.object(ui.crashdb, "upload") as upload_mock:
             # False positive for hdrs in urllib.error.HTTPError
             # See https://github.com/python/typeshed/issues/10092
             upload_mock.side_effect = urllib.error.HTTPError(
                 "https://example.com/", 502, "Bad Gateway", {}, fp=None  # type: ignore
             )
-            self.ui.file_report()
-        self.assertEqual(self.ui.msg_severity, "error")
-        self.assertEqual(self.ui.msg_title, "Network problem")
+            ui.file_report()
+        self.assertEqual(ui.msg_severity, "error")
+        self.assertEqual(ui.msg_title, "Network problem")
         self.assertEqual(
-            self.ui.msg_text,
+            ui.msg_text,
             "Cannot connect to crash database, please check your Internet"
             " connection.\n\nHTTP Error 502: Bad Gateway",
         )
 
-    def test_run_report_bug_package(self):
+    def test_run_report_bug_package(self) -> None:
         """run_report_bug() for a package"""
-        self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
+        ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
 
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertTrue(ui.present_details_shown)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://bash.bugs.example.com/{ui.crashdb.latest_id()}"
         )
 
-        assert self.ui.report
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Bug")
+        assert ui.report
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        self.assertEqual(ui.report["SourcePackage"], "bash")
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Bug")
 
         # should not crash on nonexisting package
         argv = ["ui-test", "-f", "-p", "nonexisting_gibberish"]
-        self.ui = UserInterfaceMock(argv)
+        ui = UserInterfaceMock(argv)
         try:
-            self.ui.run_argv()
+            ui.run_argv()
         except SystemExit:
             pass
 
-        self.assertEqual(self.ui.msg_severity, "error")
+        self.assertEqual(ui.msg_severity, "error")
 
-    def test_run_report_bug_pid_tags(self):
+    def test_run_report_bug_pid_tags(self) -> None:
         """run_report_bug() for a pid with extra tags"""
         with run_test_executable() as pid:
             # report a bug on text executable process
             argv = ["ui-test", "-f", "--tag", "foo", "-P", str(pid)]
-            self.ui = UserInterfaceMock(argv)
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.assertEqual(self.ui.run_argv(), True)
+            ui = UserInterfaceMock(argv)
+            ui.present_details_response = apport.ui.Action(report=True)
+            self.assertEqual(ui.run_argv(), True)
 
-        assert self.ui.report
-        self.assertIn("SourcePackage", self.ui.report)
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcMaps", self.ui.report)
-        self.assertEqual(self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
-        self.assertNotIn("ProcCmdline", self.ui.report)  # privacy!
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Bug")
-        self.assertIn("foo", self.ui.report.get_tags())
+        assert ui.report
+        self.assertIn("SourcePackage", ui.report)
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcMaps", ui.report)
+        self.assertEqual(ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
+        self.assertNotIn("ProcCmdline", ui.report)  # privacy!
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Bug")
+        self.assertIn("foo", ui.report.get_tags())
 
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://coreutils.bugs.example.com/{ui.crashdb.latest_id()}"
         )
-        self.assertTrue(self.ui.present_details_shown)
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
+        self.assertTrue(ui.present_details_shown)
+        self.assertTrue(ui.ic_progress_pulses > 0)
 
     @staticmethod
     def _find_unused_pid() -> int:
@@ -768,12 +774,11 @@ class T(unittest.TestCase):
         # silently ignore missing PID; this happens when the user closes
         # the application prematurely
         pid = self._find_unused_pid()
-        self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
-        self.ui.run_argv()
+        ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
+        ui.run_argv()
 
-    def test_run_report_bug_noperm_pid(self):
+    def test_run_report_bug_noperm_pid(self) -> None:
         """run_report_bug() for a pid which runs as a different user"""
-        self.ui = None
         restore_root = False
         if os.getuid() == 0:
             # temporarily drop to normal user "mail"
@@ -781,10 +786,10 @@ class T(unittest.TestCase):
             restore_root = True
 
         try:
-            self.ui = UserInterfaceMock(["ui-test", "-f", "-P", "1"])
-            self.ui.run_argv()
+            ui = UserInterfaceMock(["ui-test", "-f", "-P", "1"])
+            ui.run_argv()
 
-            self.assertEqual(self.ui.msg_severity, "error")
+            self.assertEqual(ui.msg_severity, "error")
         finally:
             if restore_root:
                 os.setresuid(0, 0, -1)
@@ -799,34 +804,34 @@ class T(unittest.TestCase):
         os.chmod(exename, 0o755)
 
         with run_test_executable([exename] + self.TEST_ARGS) as pid:
-            self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
-            self.assertRaises(SystemExit, self.ui.run_argv)
+            ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
+            self.assertRaises(SystemExit, ui.run_argv)
 
         os.unlink(exename)
-        self.assertEqual(self.ui.msg_severity, "error")
+        self.assertEqual(ui.msg_severity, "error")
 
     def test_run_report_hanging(self) -> None:
         with run_test_executable() as pid:
-            self.ui = UserInterfaceMock(["ui-test", "--hanging", str(pid)])
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.assertTrue(self.ui.run_argv())
+            ui = UserInterfaceMock(["ui-test", "--hanging", str(pid)])
+            ui.present_details_response = apport.ui.Action(report=True)
+            self.assertTrue(ui.run_argv())
 
-        assert self.ui.report
+        assert ui.report
         for expected_key in (
             "ProblemType",
             "ExecutablePath",
             "Package",
             "SourcePackage",
         ):
-            self.assertIn(expected_key, self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Hang")
-        self.assertEqual(self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
+            self.assertIn(expected_key, ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Hang")
+        self.assertEqual(ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
         self.assertIn(
-            self.ui.report["Package"].split(" ")[0],
+            ui.report["Package"].split(" ")[0],
             {"coreutils", "gnu-coreutils", "rust-coreutils"},
         )
         self.assertIn(
-            self.ui.report["SourcePackage"],
+            ui.report["SourcePackage"],
             {"busybox", "coreutils", "rust-coreutils", "toybox"},
         )
 
@@ -847,15 +852,14 @@ class T(unittest.TestCase):
         else:
             self.skipTest("no kernel thread found")
 
-        self.ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_argv()
-        assert self.ui.report
+        ui = UserInterfaceMock(["ui-test", "-f", "-P", str(pid)])
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_argv()
+        assert ui.report
 
         kernel_package = apport.packaging.get_kernel_package()
         self.assertEqual(
-            self.ui.report["Package"],
-            f"{kernel_package} {get_version_mock.return_value}",
+            ui.report["Package"], f"{kernel_package} {get_version_mock.return_value}"
         )
         get_version_mock.assert_any_call(kernel_package)
 
@@ -866,15 +870,15 @@ class T(unittest.TestCase):
         reportfile = os.path.join(d, "bashisbad.apport")
 
         argv = ["ui-test", "-f", "-p", "bash", "--save", reportfile]
-        self.ui = UserInterfaceMock(argv)
-        self.assertEqual(self.ui.run_argv(), True)
+        ui = UserInterfaceMock(argv)
+        self.assertEqual(ui.run_argv(), True)
 
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertFalse(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertFalse(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
+        self.assertTrue(ui.ic_progress_pulses > 0)
 
         r = apport.Report()
         with open(reportfile, "rb") as f:
@@ -886,13 +890,13 @@ class T(unittest.TestCase):
         self.assertEqual(r["ProblemType"], "Bug")
 
         # report it
-        self.ui = UserInterfaceMock(["ui-test", "-c", reportfile])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
+        ui = UserInterfaceMock(["ui-test", "-c", reportfile])
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
 
-        self.assertIsNone(self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_text)
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.present_details_shown)
 
     def _gen_test_crash(self) -> apport.Report:
         """Generate a Report with real crash data."""
@@ -940,7 +944,7 @@ class T(unittest.TestCase):
             self.skipTest(f"{error.filename} not available")
         return r
 
-    def test_run_crash(self):
+    def test_run_crash(self) -> None:
         """run_crash()"""
         r = self._gen_test_crash()
 
@@ -950,94 +954,95 @@ class T(unittest.TestCase):
         # cancel crash notification dialog
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action()
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
-        self.assertEqual(self.ui.offer_restart, False)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertEqual(ui.ic_progress_pulses, 0)
+        self.assertEqual(ui.offer_restart, False)
 
         # report in crash notification dialog, send full report
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://coreutils.bugs.example.com/{ui.crashdb.latest_id()}"
         )
-        self.assertFalse(self.ui.ic_progress_active)
-        self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertFalse(ui.ic_progress_active)
+        self.assertNotEqual(ui.ic_progress_pulses, 0)
+        self.assertTrue(ui.present_details_shown)
 
-        assert self.ui.report
-        self.assertIn("SourcePackage", self.ui.report)
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("Stacktrace", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertNotIn("ExecutableTimestamp", self.ui.report)
-        self.assertNotIn("StacktraceAddressSignature", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Crash")
-        self.assertTrue(len(self.ui.report["CoreDump"]) > 10000)
+        assert ui.report
+        self.assertIn("SourcePackage", ui.report)
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("Stacktrace", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertNotIn("ExecutableTimestamp", ui.report)
+        self.assertNotIn("StacktraceAddressSignature", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Crash")
+        self.assertTrue(len(ui.report["CoreDump"]) > 10000)
         self.assertTrue(
-            self.ui.report["Title"].startswith(
+            ui.report["Title"].startswith(
                 f"{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV"
             )
         )
 
         # so far we did not ignorelist, verify that
-        self.assertTrue(not self.ui.report.check_ignored())
+        self.assertTrue(not ui.report.check_ignored())
 
         # cancel crash notification dialog and ignorelist
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(ignore=True)
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(ignore=True)
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertEqual(ui.ic_progress_pulses, 0)
 
-        assert self.ui.report
-        self.assertTrue(self.ui.report.check_ignored())
-        self.assertEqual(self.ui.offer_restart, False)
+        assert ui.report
+        self.assertTrue(ui.report.check_ignored())
+        self.assertEqual(ui.offer_restart, False)
 
     def test_run_crash_abort(self) -> None:
         """run_crash() for an abort() without assertion message"""
+        ui = UserInterfaceMock()
         r = self._gen_test_crash()
         r["Signal"] = "6"
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
 
-        assert self.ui.report
-        self.assertIn("SourcePackage", self.ui.report)
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("Stacktrace", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertNotIn("ExecutableTimestamp", self.ui.report)
-        self.assertEqual(self.ui.report["Signal"], "6")
+        assert ui.report
+        self.assertIn("SourcePackage", ui.report)
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("Stacktrace", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertNotIn("ExecutableTimestamp", ui.report)
+        self.assertEqual(ui.report["Signal"], "6")
 
         # we disable the ABRT filtering, we want these crashes after all
-        # self.assertIn('assert', self.ui.msg_text, '%s: %s' %
-        #     (self.ui.msg_title, self.ui.msg_text))
-        # self.assertEqual(self.ui.msg_severity, 'info')
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.present_details_shown)
+        # self.assertIn('assert', ui.msg_text, '%s: %s' %
+        #     (ui.msg_title, ui.msg_text))
+        # self.assertEqual(ui.msg_severity, 'info')
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.present_details_shown)
 
     @skip_if_command_is_missing("gdb")
     def test_run_crash_broken(self) -> None:
         """run_crash() for an invalid core dump"""
+        ui = UserInterfaceMock()
         # generate broken crash report
         r = apport.Report()
         r["ExecutablePath"] = self.TEST_EXECUTABLE
@@ -1049,12 +1054,12 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, "info", self.ui.msg_text)
-        assert self.ui.msg_text is not None
-        self.assertIn("decompress", self.ui.msg_text)
-        self.assertTrue(self.ui.present_details_shown)
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertEqual(ui.msg_severity, "info", ui.msg_text)
+        assert ui.msg_text is not None
+        self.assertIn("decompress", ui.msg_text)
+        self.assertTrue(ui.present_details_shown)
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
@@ -1065,14 +1070,14 @@ class T(unittest.TestCase):
         self.update_report_file()
 
         argv = ["ui-test", "-c", self.report_file.name]
-        self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(argv)
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.assertEqual(self.ui.run_argv(), True)
+        self.assertEqual(ui.run_argv(), True)
 
-        self.assertIsNone(self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_text)
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.present_details_shown)
 
         # unreportable
         self.report["Package"] = "bash"
@@ -1080,59 +1085,58 @@ class T(unittest.TestCase):
         self.update_report_file()
 
         argv = ["ui-test", "-c", self.report_file.name]
-        self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
+        ui = UserInterfaceMock(argv)
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
 
-        assert self.ui.msg_text is not None
-        self.assertIn(
-            "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
-        )
-        self.assertEqual(self.ui.msg_severity, "info")
+        assert ui.msg_text is not None
+        self.assertIn("It stinks.", ui.msg_text, f"{ui.msg_title}: {ui.msg_text}")
+        self.assertEqual(ui.msg_severity, "info")
 
         # should not die with an exception on an invalid name
         argv = ["ui-test", "-c", "/nonexisting.crash"]
-        self.ui = UserInterfaceMock(argv)
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertEqual(self.ui.msg_severity, "error")
+        ui = UserInterfaceMock(argv)
+        self.assertEqual(ui.run_argv(), True)
+        self.assertEqual(ui.msg_severity, "error")
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_unreportable(self) -> None:
         """run_crash() on a crash with the UnreportableReason field"""
+        ui = UserInterfaceMock()
         self.report["UnreportableReason"] = "It stinks."
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
         self.update_report_file()
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.ui.run_crash(self.report_file.name)
+        ui.run_crash(self.report_file.name)
 
-        assert self.ui.msg_text is not None
-        self.assertIn(
-            "It stinks.", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
-        )
-        self.assertEqual(self.ui.msg_severity, "info")
+        assert ui.msg_text is not None
+        self.assertIn("It stinks.", ui.msg_text, f"{ui.msg_title}: {ui.msg_text}")
+        self.assertEqual(ui.msg_severity, "info")
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_malicious_crashdb(self) -> None:
         """run_crash() on a crash with malicious CrashDB"""
+        ui = UserInterfaceMock()
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
         self.report["CrashDB"] = (
             "{'impl': 'memory', 'crash_config': open('/tmp/pwned', 'w').close()}"
         )
         self.update_report_file()
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.ui.run_crash(self.report_file.name)
+        ui.run_crash(self.report_file.name)
 
         self.assertFalse(os.path.exists("/tmp/pwned"))
-        assert self.ui.msg_text is not None
-        self.assertIn("invalid crash database definition", self.ui.msg_text)
+        assert ui.msg_text is not None
+        self.assertIn("invalid crash database definition", ui.msg_text)
 
     @unittest.mock.patch("apport.report.Report.add_gdb_info", MagicMock())
     def test_run_crash_malicious_package(self) -> None:
         """Package: path traversal"""
+        ui = UserInterfaceMock()
         with tempfile.NamedTemporaryFile(suffix=".py") as bad_hook:
             bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
             bad_hook.flush()
@@ -1140,16 +1144,17 @@ class T(unittest.TestCase):
             self.report["ExecutablePath"] = "/bin/bash"
             self.report["Package"] = "../" * 20 + os.path.splitext(bad_hook.name)[0]
             self.update_report_file()
-            self.ui.present_details_response = apport.ui.Action(report=True)
+            ui.present_details_response = apport.ui.Action(report=True)
 
-            self.ui.run_crash(self.report_file.name)
+            ui.run_crash(self.report_file.name)
 
             self.assertFalse(os.path.exists("/tmp/pwned"))
-            assert self.ui.msg_text is not None
-            self.assertIn("invalid Package:", self.ui.msg_text)
+            assert ui.msg_text is not None
+            self.assertIn("invalid Package:", ui.msg_text)
 
     def test_run_crash_malicious_exec_path(self) -> None:
         """ExecutablePath: path traversal"""
+        ui = UserInterfaceMock()
         hook_dir = "/tmp/share/apport/package-hooks"
         os.makedirs(hook_dir, exist_ok=True)
         with tempfile.NamedTemporaryFile(dir=hook_dir, suffix=".py") as bad_hook:
@@ -1161,21 +1166,22 @@ class T(unittest.TestCase):
                 hook_dir, ""
             )
             self.update_report_file()
-            self.ui.present_details_response = apport.ui.Action(report=True)
+            ui.present_details_response = apport.ui.Action(report=True)
 
-            self.ui.run_crash(self.report_file.name)
+            ui.run_crash(self.report_file.name)
 
             self.assertFalse(os.path.exists("/tmp/pwned"))
 
     def test_run_crash_ignore(self) -> None:
         """run_crash() on a crash with the Ignore field"""
+        ui = UserInterfaceMock()
         self.report["Ignore"] = "True"
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "bash 1"
         self.update_report_file()
 
-        self.ui.run_crash(self.report_file.name)
-        self.assertIsNone(self.ui.msg_severity)
+        ui.run_crash(self.report_file.name)
+        self.assertIsNone(ui.msg_severity)
 
     def test_run_crash_nocore(self) -> None:
         """run_crash() for a crash dump without CoreDump"""
@@ -1194,13 +1200,11 @@ class T(unittest.TestCase):
             r.write(f)
 
         # run
-        self.ui = UserInterfaceMock()
-        self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, "error")
-        assert self.ui.msg_text is not None
-        self.assertIn(
-            "memory", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
-        )
+        ui = UserInterfaceMock()
+        ui.run_crash(report_file)
+        self.assertEqual(ui.msg_severity, "error")
+        assert ui.msg_text is not None
+        self.assertIn("memory", ui.msg_text, f"{ui.msg_title}: {ui.msg_text}")
 
     def test_run_crash_preretraced(self) -> None:
         """run_crash() pre-retraced reports.
@@ -1220,17 +1224,16 @@ class T(unittest.TestCase):
         # report in crash notification dialog, cancel details report
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action()
-        self.ui.run_crash(report_file)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
+        ui.run_crash(report_file)
         self.assertEqual(
-            self.ui.msg_severity,
+            ui.msg_severity,
             None,
-            f"has {self.ui.msg_severity} message:"
-            f" {self.ui.msg_title}: {self.ui.msg_text}",
+            f"has {ui.msg_severity} message:" f" {ui.msg_title}: {ui.msg_text}",
         )
-        self.assertIsNone(self.ui.msg_title)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_title)
+        self.assertTrue(ui.present_details_shown)
 
     def test_run_crash_precollected(self) -> None:
         """run_crash() on complete report on uninstalled package
@@ -1238,39 +1241,38 @@ class T(unittest.TestCase):
         This happens when reporting a problem from a different machine through
         copying a .crash file.
         """
-        self.ui.report = self._gen_test_crash()
-        self.ui.collect_info()
+        ui = UserInterfaceMock()
+        ui.report = self._gen_test_crash()
+        ui.collect_info()
 
         # now pretend to move it to a machine where the package is not
         # installed
-        self.ui.report["Package"] = "uninstalled_pkg 1"
-        self.ui.report["ExecutablePath"] = "/usr/bin/uninstalled_program"
-        self.ui.report["InterpreterPath"] = "/usr/bin/uninstalled_interpreter"
+        ui.report["Package"] = "uninstalled_pkg 1"
+        ui.report["ExecutablePath"] = "/usr/bin/uninstalled_program"
+        ui.report["InterpreterPath"] = "/usr/bin/uninstalled_interpreter"
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
-            self.ui.report.write(f)
+            ui.report.write(f)
 
         # report it
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.cur_package, "uninstalled_pkg")
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertEqual(ui.cur_package, "uninstalled_pkg")
         self.assertEqual(
-            self.ui.msg_severity,
+            ui.msg_severity,
             None,
-            f"has {self.ui.msg_severity} message:"
-            f" {self.ui.msg_title}: {self.ui.msg_text}",
+            f"has {ui.msg_severity} message:" f" {ui.msg_title}: {ui.msg_text}",
         )
-        assert self.ui.opened_url is not None
-        self.assertTrue(
-            self.ui.opened_url.startswith("http://coreutils.bugs.example.com")
-        )
-        self.assertTrue(self.ui.present_details_shown)
+        assert ui.opened_url is not None
+        self.assertTrue(ui.opened_url.startswith("http://coreutils.bugs.example.com"))
+        self.assertTrue(ui.present_details_shown)
 
     def test_run_crash_errors(self) -> None:
         """run_crash() on various error conditions"""
+        ui = UserInterfaceMock()
         # crash report with invalid Package name
         r = apport.Report()
         r["ExecutablePath"] = "/bin/bash"
@@ -1279,14 +1281,15 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertRaises(SystemExit, self.ui.run_crash, report_file)
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertRaises(SystemExit, ui.run_crash, report_file)
 
-        self.assertEqual(self.ui.msg_title, _("Invalid problem report"))
-        self.assertEqual(self.ui.msg_severity, "error")
+        self.assertEqual(ui.msg_title, _("Invalid problem report"))
+        self.assertEqual(ui.msg_severity, "error")
 
     def test_run_crash_uninstalled(self) -> None:
         """run_crash() on reports with subsequently uninstalled packages"""
+        ui = UserInterfaceMock()
         # program got uninstalled between crash and report
         r = self._gen_test_crash()
         r["ExecutablePath"] = "/bin/nonexisting"
@@ -1295,12 +1298,12 @@ class T(unittest.TestCase):
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _("Problem in bash"))
-        assert self.ui.msg_text is not None
-        self.assertIn("not installed any more", self.ui.msg_text)
+        self.assertEqual(ui.msg_title, _("Problem in bash"))
+        assert ui.msg_text is not None
+        self.assertIn("not installed any more", ui.msg_text)
 
         # interpreted program got uninstalled between crash and report
         r = apport.Report()
@@ -1308,11 +1311,11 @@ class T(unittest.TestCase):
         r["InterpreterPath"] = "/usr/bin/python"
         r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
 
-        self.ui.run_crash(report_file)
+        ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _("Problem in bash"))
-        assert self.ui.msg_text is not None
-        self.assertIn("not installed any more", self.ui.msg_text)
+        self.assertEqual(ui.msg_title, _("Problem in bash"))
+        assert ui.msg_text is not None
+        self.assertIn("not installed any more", ui.msg_text)
 
         # interpreter got uninstalled between crash and report
         r = apport.Report()
@@ -1320,37 +1323,34 @@ class T(unittest.TestCase):
         r["InterpreterPath"] = "/usr/bin/nonexisting"
         r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
 
-        self.ui.run_crash(report_file)
+        ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _("Problem in bash"))
-        assert self.ui.msg_text is not None
-        self.assertIn("not installed any more", self.ui.msg_text)
+        self.assertEqual(ui.msg_title, _("Problem in bash"))
+        assert ui.msg_text is not None
+        self.assertIn("not installed any more", ui.msg_text)
 
     def test_run_crash_updated_binary(self) -> None:
         """run_crash() on binary that got updated in the meantime"""
+        ui = UserInterfaceMock()
         r = self._gen_test_crash()
         r["ExecutableTimestamp"] = str(int(r["ExecutableTimestamp"]) - 10)
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
             r.write(f)
 
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
 
-        assert self.ui.report
-        self.assertNotIn("ExecutableTimestamp", self.ui.report)
-        assert self.ui.msg_text is not None
+        assert ui.report
+        self.assertNotIn("ExecutableTimestamp", ui.report)
+        assert ui.msg_text is not None
         self.assertIn(
-            self.ui.report["ExecutablePath"],
-            self.ui.msg_text,
-            f"{self.ui.msg_title}: {self.ui.msg_text}",
+            ui.report["ExecutablePath"], ui.msg_text, f"{ui.msg_title}: {ui.msg_text}"
         )
-        self.assertIn(
-            "changed", self.ui.msg_text, f"{self.ui.msg_title}: {self.ui.msg_text}"
-        )
-        self.assertEqual(self.ui.msg_severity, "info")
+        self.assertIn("changed", ui.msg_text, f"{ui.msg_title}: {ui.msg_text}")
+        self.assertEqual(ui.msg_severity, "info")
 
-    def test_run_crash_package(self):
+    def test_run_crash_package(self) -> None:
         """run_crash() for a package error"""
         # generate crash report
         r = apport.Report("Package")
@@ -1366,40 +1366,39 @@ class T(unittest.TestCase):
         # cancel crash notification dialog
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action()
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
-        self.assertTrue(self.ui.present_details_shown)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertEqual(ui.ic_progress_pulses, 0)
+        self.assertTrue(ui.present_details_shown)
 
         # report in crash notification dialog, send report
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://bash.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://bash.bugs.example.com/{ui.crashdb.latest_id()}"
         )
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertTrue(ui.present_details_shown)
 
-        assert self.ui.report
-        self.assertIn("SourcePackage", self.ui.report)
-        self.assertIn("Package", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Package")
+        assert ui.report
+        self.assertIn("SourcePackage", ui.report)
+        self.assertIn("Package", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Package")
 
         # verify that additional information has been collected
-        self.assertIn("Architecture", self.ui.report)
-        self.assertIn("DistroRelease", self.ui.report)
-        self.assertIn("Uname", self.ui.report)
+        self.assertIn("Architecture", ui.report)
+        self.assertIn("DistroRelease", ui.report)
+        self.assertIn("Uname", ui.report)
 
-    def test_run_crash_kernel(self):
+    def test_run_crash_kernel(self) -> None:
         """run_crash() for a kernel error"""
         package = apport.packaging.get_kernel_package()
         try:
@@ -1432,42 +1431,37 @@ class T(unittest.TestCase):
         # cancel crash notification dialog
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action()
-        self.ui.run_crash(report_file)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
+        ui.run_crash(report_file)
         self.assertEqual(
-            self.ui.msg_severity,
-            None,
-            f"error: {self.ui.msg_title} - {self.ui.msg_text}",
+            ui.msg_severity, None, f"error: {ui.msg_title} - {ui.msg_text}"
         )
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertEqual(ui.ic_progress_pulses, 0)
+        self.assertTrue(ui.present_details_shown)
 
         # report in crash notification dialog, send report
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
         self.assertEqual(
-            self.ui.msg_severity,
-            None,
-            f"{str(self.ui.msg_title)} {str(self.ui.msg_text)}",
+            ui.msg_severity, None, f"{str(ui.msg_title)} {str(ui.msg_text)}"
         )
-        self.assertIsNone(self.ui.msg_title)
+        self.assertIsNone(ui.msg_title)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://{src_pkg}.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://{src_pkg}.bugs.example.com/{ui.crashdb.latest_id()}"
         )
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertTrue(ui.present_details_shown)
 
-        assert self.ui.report
-        self.assertIn("SourcePackage", self.ui.report)
+        assert ui.report
+        self.assertIn("SourcePackage", ui.report)
         # did we run the hooks properly?
-        self.assertIn("KernelDebug", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "KernelCrash")
+        self.assertIn("KernelDebug", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "KernelCrash")
 
     @staticmethod
     def _get_sensitive_strings() -> list[str]:
@@ -1490,26 +1484,26 @@ class T(unittest.TestCase):
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
 
-        assert self.ui.report
-        self.assertNotIn("ProcCwd", self.ui.report)
+        assert ui.report
+        self.assertNotIn("ProcCwd", ui.report)
 
         dump = io.BytesIO()
         # this contains more or less random characters which might contain the
         # user name
-        del self.ui.report["CoreDump"]
-        self.ui.report.write(dump)
+        del ui.report["CoreDump"]
+        ui.report.write(dump)
         report = dump.getvalue().decode("UTF-8")
 
         sensitive_strings = self._get_sensitive_strings()
 
         # In some environment the UID is just a generic name, e.g. buildd, that
         # tends to also be used in image names and the likes.
-        build_name = self.ui.report.get("CloudBuildName", "")
+        build_name = ui.report.get("CloudBuildName", "")
         for s in sensitive_strings:
             if s in build_name:  # pragma: no cover
                 self.skipTest("Environment too generic for the test to be meaningful.")
@@ -1559,16 +1553,16 @@ class T(unittest.TestCase):
 
             # if this runs anonymization before the duplicate signature, then
             # this will fail, as 0xDEADhostname is an invalid address
-            self.ui = UserInterfaceMock()
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.ui.run_crash(report_file)
-            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+            ui = UserInterfaceMock()
+            ui.present_details_response = apport.ui.Action(report=True)
+            ui.run_crash(report_file)
+            self.assertIsNone(ui.msg_severity, ui.msg_text)
 
-            assert self.ui.report
-            self.assertEqual(self.ui.report["ProcAuxInfo"], "my hostname")
+            assert ui.report
+            self.assertEqual(ui.report["ProcAuxInfo"], "my hostname")
             # after anonymization this should mess up Stacktrace; this mostly
             # confirms that our test logic works
-            self.assertIsNone(self.ui.report.crash_signature_addresses())
+            self.assertIsNone(ui.report.crash_signature_addresses())
         add_gdb_info_mock.assert_called_once()
 
     def test_run_crash_anonymity_substring(self) -> None:
@@ -1585,21 +1579,21 @@ class T(unittest.TestCase):
             with open(report_file, "wb") as f:
                 r.write(f)
 
-            self.ui = UserInterfaceMock()
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.ui.run_crash(report_file)
-            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+            ui = UserInterfaceMock()
+            ui.present_details_response = apport.ui.Action(report=True)
+            ui.run_crash(report_file)
+            self.assertIsNone(ui.msg_severity, ui.msg_text)
 
-            assert self.ui.report
+            assert ui.report
             self.assertTrue(
-                self.ui.report["Title"].startswith(
+                ui.report["Title"].startswith(
                     f"{os.path.basename(self.TEST_EXECUTABLE)} crashed with SIGSEGV"
                 ),
-                self.ui.report["Title"],
+                ui.report["Title"],
             )
-            self.assertEqual(self.ui.report["ProcInfo1"], "my hostname")
-            self.assertEqual(self.ui.report["ProcInfo2"], '"hostname.localnet"')
-            self.assertEqual(self.ui.report["ProcInfo3"], "education")
+            self.assertEqual(ui.report["ProcInfo1"], "my hostname")
+            self.assertEqual(ui.report["ProcInfo2"], '"hostname.localnet"')
+            self.assertEqual(ui.report["ProcInfo3"], "education")
 
     def test_run_crash_anonymity_escaping(self) -> None:
         """run_crash() anonymization escapes special chars"""
@@ -1624,17 +1618,15 @@ class T(unittest.TestCase):
             with open(report_file, "wb") as f:
                 r.write(f)
 
-            self.ui = UserInterfaceMock()
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.ui.run_crash(report_file)
-            self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
+            ui = UserInterfaceMock()
+            ui.present_details_response = apport.ui.Action(report=True)
+            ui.run_crash(report_file)
+            self.assertIsNone(ui.msg_severity, ui.msg_text)
 
-            assert self.ui.report
-            self.assertEqual(
-                self.ui.report["ProcInfo1"], "That was User Name and friends"
-            )
-            self.assertEqual(self.ui.report["ProcInfo2"], "Call User Name!")
-            self.assertEqual(self.ui.report["ProcInfo3"], "(Hacker should stay")
+            assert ui.report
+            self.assertEqual(ui.report["ProcInfo1"], "That was User Name and friends")
+            self.assertEqual(ui.report["ProcInfo2"], "Call User Name!")
+            self.assertEqual(ui.report["ProcInfo3"], "(Hacker should stay")
         finally:
             pwd.getpwuid = orig_getpwuid
             os.getuid = orig_getuid
@@ -1643,36 +1635,36 @@ class T(unittest.TestCase):
         """run_crash() for already known problem"""
         r = self._gen_test_crash()
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
 
         # known without URL
         with open(report_file, "wb") as f:
             r.write(f)
-        with patch.object(self.ui.crashdb, "known", return_value=True) as mock:
-            self.ui.run_crash(report_file)
+        with patch.object(ui.crashdb, "known", return_value=True) as mock:
+            ui.run_crash(report_file)
         mock.assert_called()
-        assert self.ui.report
-        self.assertEqual(self.ui.report["_KnownReport"], "1")
-        self.assertEqual(self.ui.msg_severity, "info")
-        self.assertIsNone(self.ui.opened_url)
+        assert ui.report
+        self.assertEqual(ui.report["_KnownReport"], "1")
+        self.assertEqual(ui.msg_severity, "info")
+        self.assertIsNone(ui.opened_url)
 
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
         # known with URL
         with open(report_file, "wb") as f:
             r.write(f)
         with patch.object(
-            self.ui.crashdb, "known", return_value="http://myreport/1"
+            ui.crashdb, "known", return_value="http://myreport/1"
         ) as mock:
-            self.ui.run_crash(report_file)
+            ui.run_crash(report_file)
         mock.assert_called()
-        assert self.ui.report
-        self.assertEqual(self.ui.report["_KnownReport"], "http://myreport/1")
-        self.assertEqual(self.ui.msg_severity, "info")
-        self.assertEqual(self.ui.opened_url, "http://myreport/1")
+        assert ui.report
+        self.assertEqual(ui.report["_KnownReport"], "http://myreport/1")
+        self.assertEqual(ui.msg_severity, "info")
+        self.assertEqual(ui.opened_url, "http://myreport/1")
 
-    def test_run_crash_private_keys(self):
+    def test_run_crash_private_keys(self) -> None:
         """Do not upload private keys to crash DB."""
         r = self._gen_test_crash()
         r["_Temp"] = "boring"
@@ -1683,113 +1675,112 @@ class T(unittest.TestCase):
         # report
         with open(report_file, "wb") as f:
             r.write(f)
-        self.ui = UserInterfaceMock()
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.run_crash(report_file)
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.run_crash(report_file)
         self.assertEqual(
-            self.ui.opened_url,
-            f"http://coreutils.bugs.example.com/{self.ui.crashdb.latest_id()}",
+            ui.opened_url, f"http://coreutils.bugs.example.com/{ui.crashdb.latest_id()}"
         )
         # internal key should not be uploaded to the crash db
-        r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
+        r = ui.crashdb.download(ui.crashdb.latest_id())
         self.assertIn("SourcePackage", r)
         self.assertNotIn("_Temp", r)
 
     def test_run_update_report_nonexisting_package_from_bug(self) -> None:
         """run_update_report() on a nonexisting package (from bug)"""
-        self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
+        ui = UserInterfaceMock(["ui-test", "-u", "1"])
 
-        self.assertEqual(self.ui.run_argv(), False)
-        assert self.ui.msg_text is not None
-        self.assertIn("No additional information collected.", self.ui.msg_text)
-        self.assertFalse(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), False)
+        assert ui.msg_text is not None
+        self.assertIn("No additional information collected.", ui.msg_text)
+        self.assertFalse(ui.present_details_shown)
 
     def test_run_update_report_nonexisting_package_cli(self) -> None:
         """run_update_report() on a nonexisting package (CLI argument)"""
-        self.ui = UserInterfaceMock(["ui-test", "-u", "1", "-p", "bar"])
+        ui = UserInterfaceMock(["ui-test", "-u", "1", "-p", "bar"])
 
-        self.assertEqual(self.ui.run_argv(), False)
-        assert self.ui.msg_text is not None
-        self.assertIn("No additional information collected.", self.ui.msg_text)
-        self.assertFalse(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), False)
+        assert ui.msg_text is not None
+        self.assertIn("No additional information collected.", ui.msg_text)
+        self.assertFalse(ui.present_details_shown)
 
     def test_run_update_report_existing_package_from_bug(self) -> None:
         """run_update_report() on an existing package (from bug)"""
-        self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(["ui-test", "-u", "1"])
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.ui.crashdb.download(1)["SourcePackage"] = "bash"
-        self.ui.crashdb.download(1)["Package"] = "bash"
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertTrue(self.ui.present_details_shown)
+        ui.crashdb.download(1)["SourcePackage"] = "bash"
+        ui.crashdb.download(1)["Package"] = "bash"
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertTrue(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        assert self.ui.report
-        self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        assert ui.report
+        self.assertTrue(ui.report["Package"].startswith("bash "))
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
 
     def test_run_update_report_existing_package_cli_tags(self) -> None:
         """run_update_report() on an existing package (CLI argument)
         with extra tag"""
         argv = ["ui-test", "-u", "1", "-p", "bash", "--tag", "foo"]
-        self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(argv)
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertTrue(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        assert self.ui.report
-        self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertIn("foo", self.ui.report.get_tags())
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        assert ui.report
+        self.assertTrue(ui.report["Package"].startswith("bash "))
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertIn("foo", ui.report.get_tags())
 
     def test_run_update_report_existing_package_cli_cmdname(self) -> None:
         """run_update_report() on an existing package (-collect program)"""
-        self.ui = UserInterfaceMock(["apport-collect", "-p", "bash", "1"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(["apport-collect", "-p", "bash", "1"])
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertTrue(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        assert self.ui.report
-        self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        assert ui.report
+        self.assertTrue(ui.report["Package"].startswith("bash "))
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
 
     def test_run_update_report_noninstalled_but_hook(self) -> None:
         """run_update_report() on an uninstalled package with a source hook"""
-        self.ui = UserInterfaceMock(["ui-test", "-u", "1"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(["ui-test", "-u", "1"])
+        ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
             os.path.join(self.hookdir, "source_foo.py"), "w", encoding="utf-8"
         ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
-        self.assertEqual(self.ui.run_argv(), True, self.ui.report)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), True, ui.report)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertTrue(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        assert self.ui.report
-        self.assertEqual(self.ui.report["Package"], "foo (not installed)")
-        self.assertEqual(self.ui.report["MachineType"], "Laptop")
-        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        assert ui.report
+        self.assertEqual(ui.report["Package"], "foo (not installed)")
+        self.assertEqual(ui.report["MachineType"], "Laptop")
+        self.assertIn("ProcEnviron", ui.report)
 
     def test_run_update_report_different_binary_source(self) -> None:
         """run_update_report() on a source package which does not have
@@ -1800,27 +1791,27 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, apport.packaging.get_version, source_pkg)
 
         argv = ["ui-test", "-p", source_pkg, "-u", "1"]
-        self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(argv)
+        ui.present_details_response = apport.ui.Action(report=True)
 
         with open(
             os.path.join(self.hookdir, f"source_{source_pkg}.py"), "w", encoding="utf-8"
         ) as f:
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
 
-        self.assertEqual(self.ui.run_argv(), True, self.ui.report)
-        self.assertIsNone(self.ui.msg_severity, self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertIsNone(self.ui.opened_url)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertEqual(ui.run_argv(), True, ui.report)
+        self.assertIsNone(ui.msg_severity, ui.msg_text)
+        self.assertIsNone(ui.msg_title)
+        self.assertIsNone(ui.opened_url)
+        self.assertTrue(ui.present_details_shown)
 
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        assert self.ui.report
-        self.assertEqual(self.ui.report["Package"], f"{source_pkg} (not installed)")
-        self.assertEqual(self.ui.report["MachineType"], "Laptop")
-        self.assertIn("ProcEnviron", self.ui.report)
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        assert ui.report
+        self.assertEqual(ui.report["Package"], f"{source_pkg} (not installed)")
+        self.assertEqual(ui.report["MachineType"], "Laptop")
+        self.assertIn("ProcEnviron", ui.report)
 
-    def _run_hook(self, code: str) -> None:
+    def _run_hook(self, ui: UserInterfaceMock, code: str) -> None:
         with open(
             os.path.join(self.hookdir, "coreutils.py"), "w", encoding="utf-8"
         ) as hook:
@@ -1828,84 +1819,92 @@ class T(unittest.TestCase):
                 "def add_info(report, ui):\n%s\n"
                 % "\n".join([f"    {line}" for line in code.splitlines()])
             )
-        self.ui.args.package = "coreutils"
-        self.ui.run_report_bug()
+        ui.args.package = "coreutils"
+        ui.run_report_bug()
 
     def test_interactive_hooks_information(self) -> None:
         """Interactive hooks: HookUI.information()"""
-        self.ui.present_details_response = apport.ui.Action()
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action()
         self._run_hook(
+            ui,
             textwrap.dedent(
                 """\
                 report['begin'] = '1'
                 ui.information('InfoText')
                 report['end'] = '1'
                 """
-            )
+            ),
         )
-        assert self.ui.report
-        self.assertEqual(self.ui.report["begin"], "1")
-        self.assertEqual(self.ui.report["end"], "1")
-        self.assertEqual(self.ui.msg_text, "InfoText")
+        assert ui.report
+        self.assertEqual(ui.report["begin"], "1")
+        self.assertEqual(ui.report["end"], "1")
+        self.assertEqual(ui.msg_text, "InfoText")
 
     def test_interactive_hooks_yesno(self) -> None:
         """Interactive hooks: HookUI.yesno()"""
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_yesno_response = True
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.question_yesno_response = True
         self._run_hook(
+            ui,
             textwrap.dedent(
                 """\
                 report['begin'] = '1'
                 report['answer'] = str(ui.yesno('YesNo?'))
                 report['end'] = '1'
                 """
-            )
+            ),
         )
-        assert self.ui.report
-        self.assertEqual(self.ui.report["begin"], "1")
-        self.assertEqual(self.ui.report["end"], "1")
-        self.assertEqual(self.ui.msg_text, "YesNo?")
-        self.assertEqual(self.ui.report["answer"], "True")
+        assert ui.report
+        self.assertEqual(ui.report["begin"], "1")
+        self.assertEqual(ui.report["end"], "1")
+        self.assertEqual(ui.msg_text, "YesNo?")
+        self.assertEqual(ui.report["answer"], "True")
 
-        self.ui.question_yesno_response = False
-        self.ui.run_report_bug()
-        self.assertEqual(self.ui.report["answer"], "False")
-        self.assertEqual(self.ui.report["end"], "1")
+        ui.question_yesno_response = False
+        ui.run_report_bug()
+        self.assertEqual(ui.report["answer"], "False")
+        self.assertEqual(ui.report["end"], "1")
 
-        self.ui.question_yesno_response = None
-        self.ui.run_report_bug()
-        self.assertEqual(self.ui.report["answer"], "None")
-        self.assertEqual(self.ui.report["end"], "1")
+        ui.question_yesno_response = None
+        ui.run_report_bug()
+        self.assertEqual(ui.report["answer"], "None")
+        self.assertEqual(ui.report["end"], "1")
 
     def test_interactive_hooks_file(self) -> None:
         """Interactive hooks: HookUI.file()"""
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_file_response = "/etc/fstab"
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.question_file_response = "/etc/fstab"
         self._run_hook(
+            ui,
             textwrap.dedent(
                 """\
                 report['begin'] = '1'
                 report['answer'] = str(ui.file('YourFile?'))
                 report['end'] = '1'
                 """
-            )
+            ),
         )
-        assert self.ui.report
-        self.assertEqual(self.ui.report["begin"], "1")
-        self.assertEqual(self.ui.report["end"], "1")
-        self.assertEqual(self.ui.msg_text, "YourFile?")
-        self.assertEqual(self.ui.report["answer"], "/etc/fstab")
+        assert ui.report
+        self.assertEqual(ui.report["begin"], "1")
+        self.assertEqual(ui.report["end"], "1")
+        self.assertEqual(ui.msg_text, "YourFile?")
+        self.assertEqual(ui.report["answer"], "/etc/fstab")
 
-        self.ui.question_file_response = None
-        self.ui.run_report_bug()
-        self.assertEqual(self.ui.report["answer"], "None")
-        self.assertEqual(self.ui.report["end"], "1")
+        ui.question_file_response = None
+        ui.run_report_bug()
+        self.assertEqual(ui.report["answer"], "None")
+        self.assertEqual(ui.report["end"], "1")
 
     def test_interactive_hooks_choices(self) -> None:
         """Interactive hooks: HookUI.choice()"""
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_choice_response = [1]
+        ui = UserInterfaceMock()
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.question_choice_response = [1]
         self._run_hook(
+            ui,
             textwrap.dedent(
                 """\
                 report['begin'] = '1'
@@ -1913,25 +1912,27 @@ class T(unittest.TestCase):
                 report['answer'] = str(answer)
                 report['end'] = '1'
                 """
-            )
+            ),
         )
-        assert self.ui.report
-        self.assertEqual(self.ui.report["begin"], "1")
-        self.assertEqual(self.ui.report["end"], "1")
-        self.assertEqual(self.ui.msg_text, "YourChoice?")
-        self.assertEqual(self.ui.report["answer"], "[1]")
+        assert ui.report
+        self.assertEqual(ui.report["begin"], "1")
+        self.assertEqual(ui.report["end"], "1")
+        self.assertEqual(ui.msg_text, "YourChoice?")
+        self.assertEqual(ui.report["answer"], "[1]")
 
-        self.ui.question_choice_response = None
-        self.ui.run_report_bug()
-        self.assertEqual(self.ui.report["answer"], "None")
-        self.assertEqual(self.ui.report["end"], "1")
+        ui.question_choice_response = None
+        ui.run_report_bug()
+        self.assertEqual(ui.report["answer"], "None")
+        self.assertEqual(ui.report["end"], "1")
 
     def test_hooks_choices_db_no_accept(self) -> None:
         """HookUI.choice() but DB does not accept report."""
-        with patch.object(self.ui.crashdb, "accepts", return_value=False) as mock:
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.ui.question_choice_response = [1]
+        ui = UserInterfaceMock()
+        with patch.object(ui.crashdb, "accepts", return_value=False) as mock:
+            ui.present_details_response = apport.ui.Action(report=True)
+            ui.question_choice_response = [1]
             self._run_hook(
+                ui,
                 textwrap.dedent(
                     """\
                     report['begin'] = '1'
@@ -1939,17 +1940,19 @@ class T(unittest.TestCase):
                     report['answer'] = str(answer)
                     report['end'] = '1'
                     """
-                )
+                ),
             )
-        assert self.ui.report
-        self.assertEqual(self.ui.report["answer"], "None")
+        assert ui.report
+        self.assertEqual(ui.report["answer"], "None")
         mock.assert_called()
 
     def test_interactive_hooks_cancel(self) -> None:
         """Interactive hooks: user cancels"""
+        ui = UserInterfaceMock()
         self.assertRaises(
             SystemExit,
             self._run_hook,
+            ui,
             textwrap.dedent(
                 """\
                 report['begin'] = '1'
@@ -1965,35 +1968,36 @@ class T(unittest.TestCase):
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
         """run_symptom()"""
+        ui = UserInterfaceMock()
         # unknown symptom
-        self.ui = UserInterfaceMock(["ui-test", "-s", "foobar"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
-        assert self.ui.msg_text is not None
-        self.assertIn('foobar" is not known', self.ui.msg_text)
-        self.assertEqual(self.ui.msg_severity, "error")
+        ui = UserInterfaceMock(["ui-test", "-s", "foobar"])
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
+        assert ui.msg_text is not None
+        self.assertIn('foobar" is not known', ui.msg_text)
+        self.assertEqual(ui.msg_severity, "error")
 
         # does not determine package
         self._write_symptom_script("nopkg.py", "def run(report, ui):\n    pass\n")
-        self.ui = UserInterfaceMock(["ui-test", "-s", "nopkg"])
+        ui = UserInterfaceMock(["ui-test", "-s", "nopkg"])
         stderr_mock.truncate(0)
-        self.assertRaises(SystemExit, self.ui.run_argv)
+        self.assertRaises(SystemExit, ui.run_argv)
         err = stderr_mock.getvalue()
         self.assertIn("did not determine the affected package", err)
 
         # does not define run()
         self._write_symptom_script("norun.py", "def something(x, y):\n    return 1\n")
-        self.ui = UserInterfaceMock(["ui-test", "-s", "norun"])
+        ui = UserInterfaceMock(["ui-test", "-s", "norun"])
         stderr_mock.truncate(0)
-        self.assertRaises(SystemExit, self.ui.run_argv)
+        self.assertRaises(SystemExit, ui.run_argv)
         err = stderr_mock.getvalue()
         self.assertIn("norun.py crashed:", err)
 
         # crashing script
         self._write_symptom_script("crash.py", "def run(report, ui):\n    return 1/0\n")
-        self.ui = UserInterfaceMock(["ui-test", "-s", "crash"])
+        ui = UserInterfaceMock(["ui-test", "-s", "crash"])
         stderr_mock.truncate(0)
-        self.assertRaises(SystemExit, self.ui.run_argv)
+        self.assertRaises(SystemExit, ui.run_argv)
         err = stderr_mock.getvalue()
         self.assertIn("crash.py crashed:", err)
         self.assertIn("ZeroDivisionError:", err)
@@ -2005,32 +2009,32 @@ class T(unittest.TestCase):
             '  report["itch"] = "scratch"\n'
             '  return "bash"\n',
         )
-        self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.present_details_shown)
+        ui = UserInterfaceMock(["ui-test", "-s", "itching"])
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_text)
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.present_details_shown)
 
-        assert self.ui.report
-        self.assertEqual(self.ui.report["itch"], "scratch")
-        self.assertIn("DistroRelease", self.ui.report)
-        self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertEqual(self.ui.report["ProblemType"], "Bug")
+        assert ui.report
+        self.assertEqual(ui.report["itch"], "scratch")
+        self.assertIn("DistroRelease", ui.report)
+        self.assertEqual(ui.report["SourcePackage"], "bash")
+        self.assertTrue(ui.report["Package"].startswith("bash "))
+        self.assertEqual(ui.report["ProblemType"], "Bug")
 
         # working noninteractive script with extra tag
         argv = ["ui-test", "--tag", "foo", "-s", "itching"]
-        self.ui = UserInterfaceMock(argv)
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_text)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.present_details_shown)
+        ui = UserInterfaceMock(argv)
+        ui.present_details_response = apport.ui.Action(report=True)
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_text)
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.present_details_shown)
 
-        assert self.ui.report
-        self.assertEqual(self.ui.report["itch"], "scratch")
-        self.assertIn("foo", self.ui.report.get_tags())
+        assert ui.report
+        self.assertEqual(ui.report["itch"], "scratch")
+        self.assertIn("foo", ui.report.get_tags())
 
         # working interactive script
         self._write_symptom_script(
@@ -2044,20 +2048,20 @@ class T(unittest.TestCase):
                 """
             ),
         )
-        self.ui = UserInterfaceMock(["ui-test", "-s", "itching"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
-        self.ui.question_yesno_response = True
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertTrue(self.ui.present_details_shown)
-        self.assertEqual(self.ui.msg_text, "do you?")
+        ui = UserInterfaceMock(["ui-test", "-s", "itching"])
+        ui.present_details_response = apport.ui.Action(report=True)
+        ui.question_yesno_response = True
+        self.assertEqual(ui.run_argv(), True)
+        self.assertTrue(ui.present_details_shown)
+        self.assertEqual(ui.msg_text, "do you?")
 
-        assert self.ui.report
-        self.assertEqual(self.ui.report["itch"], "slap")
-        self.assertIn("DistroRelease", self.ui.report)
-        self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertTrue(self.ui.report["Package"].startswith("bash "))
-        self.assertEqual(self.ui.report["ProblemType"], "Bug")
-        self.assertEqual(self.ui.report["q"], "True")
+        assert ui.report
+        self.assertEqual(ui.report["itch"], "slap")
+        self.assertIn("DistroRelease", ui.report)
+        self.assertEqual(ui.report["SourcePackage"], "bash")
+        self.assertTrue(ui.report["Package"].startswith("bash "))
+        self.assertEqual(ui.report["ProblemType"], "Bug")
+        self.assertEqual(ui.report["q"], "True")
 
     def test_run_report_bug_list_symptoms(self) -> None:
         """run_report_bug() without specifying arguments and available
@@ -2076,34 +2080,32 @@ class T(unittest.TestCase):
             "bar.py", 'def run(report, ui):\n  return "coreutils"\n'
         )
 
-        self.ui = UserInterfaceMock(["ui-test", "-f"])
-        self.ui.present_details_response = apport.ui.Action(report=True)
+        ui = UserInterfaceMock(["ui-test", "-f"])
+        ui.present_details_response = apport.ui.Action(report=True)
 
-        self.ui.question_choice_response = None
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_severity)
-        assert self.ui.msg_text is not None
-        self.assertIn("kind of problem", self.ui.msg_text)
-        assert self.ui.msg_choices is not None
+        ui.question_choice_response = None
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_severity)
+        assert ui.msg_text is not None
+        self.assertIn("kind of problem", ui.msg_text)
+        assert ui.msg_choices is not None
         self.assertEqual(
-            set(self.ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
+            set(ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
         )
 
         # cancelled
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
-        self.assertIsNone(self.ui.report)
-        self.assertFalse(self.ui.present_details_shown)
+        self.assertEqual(ui.ic_progress_pulses, 0)
+        self.assertIsNone(ui.report)
+        self.assertFalse(ui.present_details_shown)
 
         # now, choose foo -> bash report
-        self.ui.question_choice_response = [
-            self.ui.msg_choices.index("foo does not work")
-        ]
-        self.assertEqual(self.ui.run_argv(), True)
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertTrue(self.ui.ic_progress_pulses > 0)
-        self.assertTrue(self.ui.present_details_shown)
-        assert self.ui.report
-        self.assertTrue(self.ui.report["Package"].startswith("bash"))
+        ui.question_choice_response = [ui.msg_choices.index("foo does not work")]
+        self.assertEqual(ui.run_argv(), True)
+        self.assertIsNone(ui.msg_severity)
+        self.assertTrue(ui.ic_progress_pulses > 0)
+        self.assertTrue(ui.present_details_shown)
+        assert ui.report
+        self.assertTrue(ui.report["Package"].startswith("bash"))
 
     @unittest.mock.patch("sys.stderr", new_callable=io.StringIO)
     def test_parse_argv_single_arg(self, stderr_mock: MagicMock) -> None:
@@ -2467,13 +2469,14 @@ class T(unittest.TestCase):
 
     def test_can_examine_locally_crash(self) -> None:
         """can_examine_locally() for a crash report"""
-        self.ui.load_report(self.report_file.name)
+        ui = UserInterfaceMock()
+        ui.load_report(self.report_file.name)
 
         orig_path = os.environ["PATH"]
         try:
             os.environ["PATH"] = ""
-            with patch.object(self.ui, "ui_has_terminal", return_value=True) as mock:
-                self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(ui, "ui_has_terminal", return_value=True) as mock:
+                self.assertEqual(ui.can_examine_locally(), False)
 
                 src_bindir = os.path.join(
                     os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "bin"
@@ -2481,64 +2484,66 @@ class T(unittest.TestCase):
                 # this will only work for running the tests in the source tree
                 if os.access(os.path.join(src_bindir, "apport-retrace"), os.X_OK):
                     os.environ["PATH"] += f"{src_bindir}:{orig_path}"
-                    self.assertEqual(self.ui.can_examine_locally(), True)
+                    self.assertEqual(ui.can_examine_locally(), True)
                     mock.assert_called_with()
                 else:
                     # if we run tests in installed system, we just check that
                     # it doesn't crash
-                    self.assertIn(self.ui.can_examine_locally(), [False, True])
+                    self.assertIn(ui.can_examine_locally(), [False, True])
 
-            with patch.object(self.ui, "ui_has_terminal", return_value=False):
-                self.assertEqual(self.ui.can_examine_locally(), False)
+            with patch.object(ui, "ui_has_terminal", return_value=False):
+                self.assertEqual(ui.can_examine_locally(), False)
 
             # does not crash on NotImplementedError
-            self.assertEqual(self.ui.can_examine_locally(), False)
+            self.assertEqual(ui.can_examine_locally(), False)
 
         finally:
             os.environ["PATH"] = orig_path
 
     def test_can_examine_locally_nocrash(self) -> None:
         """can_examine_locally() for a non-crash report"""
-        self.ui.load_report(self.report_file.name)
-        assert self.ui.report
-        del self.ui.report["CoreDump"]
+        ui = UserInterfaceMock()
+        ui.load_report(self.report_file.name)
+        assert ui.report
+        del ui.report["CoreDump"]
 
-        self.assertEqual(self.ui.can_examine_locally(), False)
+        self.assertEqual(ui.can_examine_locally(), False)
 
     def test_db_no_accept(self) -> None:
         """Crash database does not accept report."""
         # FIXME: This behaviour is not really correct, but necessary as long as
         # we only support a single crashdb and have whoopsie hardcoded
         # (see LP#957177)
+        ui = UserInterfaceMock()
+        latest_id_before = ui.crashdb.latest_id()
 
-        latest_id_before = self.ui.crashdb.latest_id()
-
-        self.ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
+        ui = UserInterfaceMock(["ui-test", "-f", "-p", "bash"])
 
         # Pretend it does not accept report
-        with patch.object(self.ui.crashdb, "accepts", return_value=False) as mock:
-            self.ui.present_details_response = apport.ui.Action(report=True)
-            self.assertEqual(self.ui.run_argv(), True)
+        with patch.object(ui.crashdb, "accepts", return_value=False) as mock:
+            ui.present_details_response = apport.ui.Action(report=True)
+            self.assertEqual(ui.run_argv(), True)
 
-        self.assertIsNone(self.ui.msg_severity)
-        self.assertIsNone(self.ui.msg_title)
-        self.assertTrue(self.ui.present_details_shown)
+        self.assertIsNone(ui.msg_severity)
+        self.assertIsNone(ui.msg_title)
+        self.assertTrue(ui.present_details_shown)
         mock.assert_called()
 
         # data was collected for whoopsie
-        assert self.ui.report
-        self.assertEqual(self.ui.report["SourcePackage"], "bash")
-        self.assertIn("Dependencies", self.ui.report)
-        self.assertIn("ProcEnviron", self.ui.report)
-        self.assertEqual(self.ui.report["ProblemType"], "Bug")
+        assert ui.report
+        self.assertEqual(ui.report["SourcePackage"], "bash")
+        self.assertIn("Dependencies", ui.report)
+        self.assertIn("ProcEnviron", ui.report)
+        self.assertEqual(ui.report["ProblemType"], "Bug")
 
         # no upload happened
-        self.assertIsNone(self.ui.opened_url)
-        self.assertEqual(self.ui.upload_progress_pulses, 0)
-        self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
+        self.assertIsNone(ui.opened_url)
+        self.assertEqual(ui.upload_progress_pulses, 0)
+        self.assertEqual(ui.crashdb.latest_id(), latest_id_before)
 
     def test_get_desktop_entry(self) -> None:
         """Parsee .desktop files."""
+        ui = UserInterfaceMock()
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
             desktop_file.write(
                 textwrap.dedent(
@@ -2555,8 +2560,8 @@ class T(unittest.TestCase):
             desktop_file.flush()
 
             self.report["DesktopFile"] = desktop_file.name
-            self.ui.report = self.report
-            info = self.ui.get_desktop_entry()
+            ui.report = self.report
+            info = ui.get_desktop_entry()
 
             self.assertEqual(
                 info,
@@ -2571,6 +2576,7 @@ class T(unittest.TestCase):
 
     def test_get_desktop_entry_broken(self) -> None:
         """Parse broken .desktop files."""
+        ui = UserInterfaceMock()
         # duplicate key
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
             desktop_file.write(
@@ -2590,8 +2596,8 @@ class T(unittest.TestCase):
             desktop_file.flush()
 
             self.report["DesktopFile"] = desktop_file.name
-            self.ui.report = self.report
-            info = self.ui.get_desktop_entry()
+            ui.report = self.report
+            info = ui.get_desktop_entry()
             self.assertEqual(
                 info,
                 {
@@ -2617,7 +2623,7 @@ class T(unittest.TestCase):
             )
             desktop_file.flush()
 
-            self.assertIsNone(self.ui.get_desktop_entry())
+            self.assertIsNone(ui.get_desktop_entry())
 
             # syntax error
             desktop_file.seek(0)
@@ -2633,13 +2639,15 @@ class T(unittest.TestCase):
             )
             desktop_file.flush()
 
-            self.assertIsNone(self.ui.get_desktop_entry())
+            self.assertIsNone(ui.get_desktop_entry())
 
+    # pylint: disable-next=no-self-use
     def test_wait_for_pid(self) -> None:
+        ui = UserInterfaceMock()
         # fork a test process
         with run_test_executable() as pid:
             pass
-        self.ui.wait_for_pid(pid)
+        ui.wait_for_pid(pid)
 
     @unittest.mock.patch("os.getgid", MagicMock(return_value=0))
     @unittest.mock.patch("os.getuid", MagicMock(return_value=0))
