@@ -442,10 +442,11 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def get_source(self, package: str) -> str:
         """Return the source package name for a package."""
-        if self._apt_pkg(package).installed:
-            return self._apt_pkg(package).installed.source_name
-        if self._apt_pkg(package).candidate:
-            return self._apt_pkg(package).candidate.source_name
+        pkg = self._apt_pkg(package)
+        if pkg.installed:
+            return pkg.installed.source_name
+        if pkg.candidate:
+            return pkg.candidate.source_name
         raise ValueError(f"package {package} does not exist")
 
     def get_package_origin(self, package: str) -> str | None:
