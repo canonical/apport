@@ -93,8 +93,11 @@ class T(unittest.TestCase):
             self.assertTrue(impl.get_version(dep))
 
     def test_get_dependencies_pre_depends_only(self) -> None:
-        """get_dependencies() on package with Pre-Depends only."""
-        d = impl.get_dependencies("coreutils")
+        """get_dependencies() on package with Pre-Depends only.
+
+        Check an essential package without Depends and Recommends.
+        """
+        d = impl.get_dependencies("gzip")
         self.assertGreaterEqual(len(d), 1)
         self.assertIn("libc6", d)
         for dep in d:
@@ -151,7 +154,6 @@ class T(unittest.TestCase):
     def test_get_file_package(self) -> None:
         """get_file_package() on installed files."""
         self.assertEqual(impl.get_file_package("/usr/bin/bash"), "bash")
-        self.assertEqual(impl.get_file_package("/usr/bin/cat"), "coreutils")
         self.assertEqual(impl.get_file_package("/etc/pam.conf"), "libpam-runtime")
         self.assertIsNone(impl.get_file_package("/nonexisting"))
 

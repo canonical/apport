@@ -198,9 +198,9 @@ class T(unittest.TestCase):
             self.assertEqual(pr.pid, cat.pid)
             cat.communicate(b"\n")
         self.assertEqual(pr["ProcCmdline"], "cat /foo\\ bar \\\\h \\\\\\ \\\\ -")
-        self.assertEqual(pr["ExecutablePath"], "/usr/bin/cat")
+        self.assertRegex(pr["ExecutablePath"], "/usr/bin/.*cat")
         self.assertNotIn("InterpreterPath", pr)
-        self.assertIn("/bin/cat", pr["ProcMaps"])
+        self.assertIn(pr["ExecutablePath"], pr["ProcMaps"])
         self.assertIn("[stack]", pr["ProcMaps"])
 
         # check correct handling of executable symlinks

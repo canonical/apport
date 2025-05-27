@@ -820,8 +820,14 @@ class T(unittest.TestCase):
             self.assertIn(expected_key, self.ui.report)
         self.assertEqual(self.ui.report["ProblemType"], "Hang")
         self.assertEqual(self.ui.report["ExecutablePath"], self.TEST_EXECUTABLE)
-        self.assertEqual(self.ui.report["Package"].split(" ")[0], "coreutils")
-        self.assertEqual(self.ui.report["SourcePackage"], "coreutils")
+        self.assertIn(
+            self.ui.report["Package"].split(" ")[0],
+            {"coreutils", "gnu-coreutils", "rust-coreutils"},
+        )
+        self.assertIn(
+            self.ui.report["SourcePackage"],
+            {"busybox", "coreutils", "rust-coreutils", "toybox"},
+        )
 
     @unittest.mock.patch("apport.packaging_impl.impl.get_version")
     def test_run_report_bug_kernel_thread(self, get_version_mock: MagicMock) -> None:
@@ -2226,10 +2232,10 @@ class T(unittest.TestCase):
         # executable
         _chk(
             "apport-cli",
-            "/usr/bin/tail",
+            "/usr/bin/gzip",
             {
                 "filebug": True,
-                "package": "coreutils",
+                "package": "gzip",
                 "pid": None,
                 "crash_file": None,
                 "symptom": None,
@@ -2387,10 +2393,10 @@ class T(unittest.TestCase):
 
         # executable name
         _chk(
-            ["/usr/bin/tail"],
+            ["/usr/bin/gzip"],
             {
                 "filebug": True,
-                "package": "coreutils",
+                "package": "gzip",
                 "pid": None,
                 "crash_file": None,
                 "symptom": None,

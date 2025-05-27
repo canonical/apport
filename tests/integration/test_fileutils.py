@@ -146,7 +146,6 @@ class T(unittest.TestCase):
     def test_find_file_package(self) -> None:
         """find_file_package()"""
         self.assertEqual(apport.fileutils.find_file_package("/bin/bash"), "bash")
-        self.assertEqual(apport.fileutils.find_file_package("/bin/cat"), "coreutils")
         self.assertIsNone(apport.fileutils.find_file_package("/nonexisting"))
 
     def test_seen(self) -> None:
