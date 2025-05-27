@@ -1286,6 +1286,14 @@ class _AptDpkgPackageInfo(PackageInfo):
             real_pkgs.add(pkg)
             return pkg_found
 
+        def is_transitional_package(package: str) -> bool:
+            """Checks if the package has "transitional" in the description.
+
+            Returns False in case no candidate version could be found.
+            """
+            candidate = apt_cache[package].candidate
+            return candidate is not None and "transitional" in candidate.description
+
         for pkg, ver in packages:
             try:
                 cache_pkg = apt_cache[pkg]
@@ -1335,7 +1343,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                             for p in src_records.binaries
                             if p.endswith("-dbg")
                             and p in apt_cache
-                            and "transitional" not in apt_cache[p].candidate.description
+                            and not is_transitional_package(p)
                         ]
                         # if a specific version of a package was requested
                         # only install dbg pkgs whose version matches
