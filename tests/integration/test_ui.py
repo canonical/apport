@@ -24,10 +24,10 @@ from unittest.mock import MagicMock, patch
 
 import apport.crashdb_impl.memory
 import apport.fileutils
-import apport.packaging
 import apport.report
 import apport.ui
 import problem_report
+from apport.packaging_impl import impl as packaging
 from apport.ui import _, run_as_real_user
 from tests.helper import (
     pids_of,
@@ -857,7 +857,7 @@ class T(unittest.TestCase):
         ui.run_argv()
         assert ui.report
 
-        kernel_package = apport.packaging.get_kernel_package()
+        kernel_package = packaging.get_kernel_package()
         self.assertEqual(
             ui.report["Package"], f"{kernel_package} {get_version_mock.return_value}"
         )
@@ -1400,9 +1400,9 @@ class T(unittest.TestCase):
 
     def test_run_crash_kernel(self) -> None:
         """run_crash() for a kernel error"""
-        package = apport.packaging.get_kernel_package()
+        package = packaging.get_kernel_package()
         try:
-            src_pkg = apport.packaging.get_source(package)
+            src_pkg = packaging.get_source(package)
         except ValueError:
             # Kernel package not installed (e.g. in container)
             src_pkg = "linux"
@@ -1788,7 +1788,7 @@ class T(unittest.TestCase):
         # this test assumes that the source package name is not an
         # installed binary package
         source_pkg = "shadow"
-        self.assertRaises(ValueError, apport.packaging.get_version, source_pkg)
+        self.assertRaises(ValueError, packaging.get_version, source_pkg)
 
         argv = ["ui-test", "-p", source_pkg, "-u", "1"]
         ui = UserInterfaceMock(argv)
