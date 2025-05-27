@@ -35,7 +35,7 @@ class CrashDatabase:
 
     # TODO: Check if some methods can be made private
     # pylint: disable=too-many-public-methods
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize crash database connection.
 
         You need to specify an implementation specific file with the
@@ -47,8 +47,11 @@ class CrashDatabase:
         """
         self.auth_file = auth_file
         self.options = options
-        self.duplicate_db = None
-        self.format_version = None
+        if typing.TYPE_CHECKING:  # pragma: no cover
+            # pylint: disable-next=import-outside-toplevel,unused-import
+            import sqlite3
+        self.duplicate_db: "sqlite3.Connection | None" = None
+        self.format_version: int | None = None
 
     def get_bugpattern_baseurl(self) -> str | None:
         """Return the base URL for bug patterns.

@@ -10,6 +10,7 @@
 # the full text of the license.
 
 import time
+from typing import Any
 
 import apport.crashdb
 import apport.report
@@ -22,7 +23,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     This is mainly useful for testing and debugging.
     """
 
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize crash database connection.
 
         This class does not support bug patterns and authentication.
@@ -31,12 +32,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # reports is a list of dictionaries with keys:
         # report, fixed_version, dup_of, comment
-        self.reports = []
-        self.unretraced = set()
-        self.dup_unchecked = set()
+        self.reports: list[dict[str, Any]] = []
+        self.unretraced: set[int] = set()
+        self.dup_unchecked: set[int] = set()
 
         self.upload_delay = 0.0
-        self.upload_msg = None
+        self.upload_msg: tuple[str, str] | None = None
 
         if "sample_data" in options:
             self.add_sample_data()
