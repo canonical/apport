@@ -559,13 +559,6 @@ class UserInterface:
         """
         self.report = apport.Report("Hang")
 
-        if not self.args.pid:
-            self.ui_error_message(
-                _("No PID specified"),
-                _("You need to specify a PID. See --help for more information."),
-            )
-            return False
-
         try:
             self.report.add_proc_info(pid)
         except ValueError as error:
@@ -915,7 +908,13 @@ class UserInterface:
             self.run_symptom()
             return True
         if self.args.hanging:
-            return self.run_hang(self.args.pid)
+            if not self.args.pid:
+                self.ui_error_message(
+                    _("No PID specified"),
+                    _("You need to specify a PID. See --help for more information."),
+                )
+                return False
+            return self.run_hang(int(self.args.pid))
         if self.args.filebug:
             return self.run_report_bug()
         if self.args.update_report is not None:
