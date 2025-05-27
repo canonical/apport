@@ -517,7 +517,9 @@ class _AptDpkgPackageInfo(PackageInfo):
         return False
 
     @staticmethod
-    def get_lp_binary_package(release, package, version, arch):
+    def get_lp_binary_package(
+        release: str, package: str, version: str | None, arch: str
+    ) -> tuple[str | None, str | None]:
         """Get Launchpad URL and SHA1 sum for the given binary package version."""
         # allow unauthenticated downloads
         apt_pkg.config.set("APT::Get::AllowUnauthenticated", "True")
@@ -553,10 +555,10 @@ class _AptDpkgPackageInfo(PackageInfo):
                 break
         if not bf_urls:
             return (None, None)
-        for bf in bf_urls:
-            # return the first binary file url since there being more than one
-            # is theoretical
-            return (bf["url"], bf["sha1"])
+        # return the first binary file url since there being more than one
+        # is theoretical
+        bf = next(iter(bf_urls))
+        return (bf["url"], bf["sha1"])
 
     @staticmethod
     def json_request(url, entries=False):
