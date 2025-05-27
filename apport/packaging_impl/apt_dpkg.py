@@ -540,7 +540,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         )
         if not bpph:
             return (None, None)
-        bf_urls = ""
+        bf_urls = {}
         for bp in bpph:
             if bp.status == "Deleted":
                 continue
