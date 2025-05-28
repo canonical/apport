@@ -42,6 +42,7 @@ import pytest
 import apport.fileutils
 import apport.report
 from tests.helper import (
+    get_gnu_coreutils_cmd,
     import_module_from_file,
     pidfd_open,
     read_shebang,
@@ -111,7 +112,7 @@ def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator
 @contextlib.contextmanager
 def create_suid(tmpdir: str = "/var/tmp") -> Iterator[str]:
     """Creates a `sleep` suid binary in a subdirectory of `tmpdir`."""
-    src_bin = os.path.realpath("/bin/sleep")
+    src_bin = get_gnu_coreutils_cmd("sleep")
     with tempfile.TemporaryDirectory(dir=tmpdir) as tempdir:
         binary = f"{tempdir}/sleep"
         shutil.copy(src_bin, binary)
@@ -142,7 +143,7 @@ required_fields = [
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access,too-many-public-methods
-    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_EXECUTABLE = get_gnu_coreutils_cmd("sleep")
     TEST_ARGS = ["86400"]
     maxDiff = None
     orig_core_dir: str

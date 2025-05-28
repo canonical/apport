@@ -19,6 +19,7 @@ import tempfile
 import unittest
 from collections.abc import Generator
 
+from tests.helper import get_gnu_coreutils_cmd
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -26,7 +27,7 @@ class TestUnkillableShutdown(unittest.TestCase):
     """Test unkillable_shutdown"""
 
     maxDiff = None
-    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_EXECUTABLE = get_gnu_coreutils_cmd("sleep")
     TEST_ARGS = ["86400"]
 
     def setUp(self) -> None:

@@ -19,6 +19,14 @@ from unittest.mock import MagicMock
 import psutil
 
 
+def get_gnu_coreutils_cmd(cmd: str) -> str:
+    """Determine path to GNU coreutils command."""
+    path = shutil.which(f"gnu{cmd}")
+    if path is not None:
+        return path
+    return os.path.realpath(f"/bin/{cmd}")
+
+
 def get_init_system() -> str:
     """Return the name of the running init system (PID 1)."""
     with open("/proc/1/comm", encoding="utf-8") as comm:
@@ -106,10 +114,11 @@ def restore_os_environ() -> Generator[None]:
 
 @contextlib.contextmanager
 def run_test_executable(
-    args: Sequence[str] = (os.path.realpath("/bin/sleep"), "86400"),
-    env: dict[str, str] | None = None,
+    args: Sequence[str] | None = None, env: dict[str, str] | None = None
 ) -> Iterator[int]:
     """Run test executable and yield the process ID. Kill process afterwards."""
+    if args is None:
+        args = (get_gnu_coreutils_cmd("sleep"), "86400")
     with subprocess.Popen(args, env=env) as test_process:
         try:
             yield test_process.pid
