@@ -30,6 +30,7 @@ import problem_report
 from apport.packaging_impl import impl as packaging
 from apport.ui import _, run_as_real_user
 from tests.helper import (
+    get_gnu_coreutils_cmd,
     pids_of,
     run_test_executable,
     skip_if_command_is_missing,
@@ -198,7 +199,7 @@ class T(unittest.TestCase):
     # pylint: disable=too-many-public-methods
     """Integration tests for apport.ui."""
 
-    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_EXECUTABLE = get_gnu_coreutils_cmd("sleep")
     TEST_ARGS = ["86400"]
 
     def setUp(self) -> None:
