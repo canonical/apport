@@ -1571,10 +1571,12 @@ int main() { return f(42); }
 
     def test_ignoring(self) -> None:
         """mark_ignore() and check_ignored()."""
-        orig_ignore_file = apport.report.apport.report._ignore_file
-        workdir = tempfile.mkdtemp()
-        apport.report.apport.report._ignore_file = os.path.join(workdir, "ignore.xml")
-        try:
+        with (
+            tempfile.TemporaryDirectory() as workdir,
+            unittest.mock.patch(
+                "apport.report._ignore_file", os.path.join(workdir, "ignore.xml")
+            ),
+        ):
             with open(os.path.join(workdir, "bash"), "w", encoding="utf-8") as fd:
                 fd.write("bash")
             with open(os.path.join(workdir, "crap"), "w", encoding="utf-8") as fd:
@@ -1614,9 +1616,7 @@ int main() { return f(42); }
             self.assertEqual(cp_rep.check_ignored(), False)
 
             # do not complain about an empty ignore file
-            with open(
-                apport.report.apport.report._ignore_file, "w", encoding="utf-8"
-            ) as fd:
+            with open(apport.report._ignore_file, "w", encoding="utf-8") as fd:
                 fd.write("")
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
@@ -1625,20 +1625,15 @@ int main() { return f(42); }
             # does not crash if the executable went away under our feet
             crap_rep["ExecutablePath"] = "/non existing"
             crap_rep.mark_ignore()
-            self.assertEqual(
-                os.path.getsize(apport.report.apport.report._ignore_file), 0
-            )
-        finally:
-            shutil.rmtree(workdir)
-            apport.report.apport.report._ignore_file = orig_ignore_file
+            self.assertEqual(os.path.getsize(apport.report._ignore_file), 0)
 
     def test_denylisting(self) -> None:
         """check_ignored() for system-wise denylist."""
-        orig_denylist_dir = apport.report._DENYLIST_DIR
-        apport.report._DENYLIST_DIR = tempfile.mkdtemp()
-        orig_ignore_file = apport.report._ignore_file
-        apport.report._ignore_file = "/nonexistent"
-        try:
+        with (
+            tempfile.TemporaryDirectory() as denylist_dir,
+            unittest.mock.patch("apport.report._DENYLIST_DIR", denylist_dir),
+            unittest.mock.patch("apport.report._ignore_file", "/nonexistent"),
+        ):
             bash_rep = apport.report.Report()
             bash_rep["ExecutablePath"] = "/bin/bash"
             crap_rep = apport.report.Report()
@@ -1679,18 +1674,14 @@ int main() { return f(42); }
                 fd.write("/bin/bash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), True)
-        finally:
-            shutil.rmtree(apport.report._DENYLIST_DIR)
-            apport.report._DENYLIST_DIR = orig_denylist_dir
-            apport.report._ignore_file = orig_ignore_file
 
     def test_allowlisting(self) -> None:
         """check_ignored() for system-wise allowlist."""
-        orig_allowlist_dir = apport.report._ALLOWLIST_DIR
-        apport.report._ALLOWLIST_DIR = tempfile.mkdtemp()
-        orig_ignore_file = apport.report.apport.report._ignore_file
-        apport.report.apport.report._ignore_file = "/nonexistent"
-        try:
+        with (
+            tempfile.TemporaryDirectory() as allowlist_dir,
+            unittest.mock.patch("apport.report._ALLOWLIST_DIR", allowlist_dir),
+            unittest.mock.patch("apport.report._ignore_file", "/nonexistent"),
+        ):
             bash_rep = apport.report.Report()
             bash_rep["ExecutablePath"] = "/bin/bash"
             crap_rep = apport.report.Report()
@@ -1733,10 +1724,6 @@ int main() { return f(42); }
                 fd.write("/bin/bas\n/bin/bashh\nbash\n")
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), False)
-        finally:
-            shutil.rmtree(apport.report._ALLOWLIST_DIR)
-            apport.report._ALLOWLIST_DIR = orig_allowlist_dir
-            apport.report.apport.report._ignore_file = orig_ignore_file
 
     def test_obsolete_packages(self) -> None:
         """obsolete_packages()."""
