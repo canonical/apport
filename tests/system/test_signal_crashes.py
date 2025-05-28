@@ -17,6 +17,7 @@ import psutil
 
 import apport.fileutils
 from tests.helper import (
+    get_gnu_coreutils_cmd,
     get_init_system,
     pids_of,
     skip_if_command_is_missing,
@@ -33,7 +34,7 @@ from tests.paths import (
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=protected-access
-    TEST_EXECUTABLE = os.path.realpath("/bin/sleep")
+    TEST_EXECUTABLE = get_gnu_coreutils_cmd("sleep")
     TEST_ARGS = ["86400"]
     apport_path: pathlib.Path | str | None
     all_reports: list[str]

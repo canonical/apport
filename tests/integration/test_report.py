@@ -22,7 +22,7 @@ from unittest.mock import MagicMock
 import apport.packaging
 import apport.report
 import problem_report
-from tests.helper import skip_if_command_is_missing
+from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
 from tests.paths import patch_data_dir, restore_data_dir
 
 
@@ -186,8 +186,9 @@ class T(unittest.TestCase):
         self.assertNotIn("InterpreterPath", pr)
 
         # check escaping of ProcCmdline
+        catcmd = get_gnu_coreutils_cmd("cat")
         with subprocess.Popen(
-            ["cat", "/foo bar", "\\h", "\\ \\", "-"],
+            [catcmd, "/foo bar", "\\h", "\\ \\", "-"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -197,8 +198,8 @@ class T(unittest.TestCase):
             pr.add_proc_info(pid=cat.pid)
             self.assertEqual(pr.pid, cat.pid)
             cat.communicate(b"\n")
-        self.assertEqual(pr["ProcCmdline"], "cat /foo\\ bar \\\\h \\\\\\ \\\\ -")
-        self.assertRegex(pr["ExecutablePath"], "/usr/bin/.*cat")
+        self.assertEqual(pr["ProcCmdline"], f"{catcmd} /foo\\ bar \\\\h \\\\\\ \\\\ -")
+        self.assertEqual(pr["ExecutablePath"], catcmd)
         self.assertNotIn("InterpreterPath", pr)
         self.assertIn(pr["ExecutablePath"], pr["ProcMaps"])
         self.assertIn("[stack]", pr["ProcMaps"])
