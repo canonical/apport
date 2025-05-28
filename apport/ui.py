@@ -915,8 +915,7 @@ class UserInterface:
             self.run_symptom()
             return True
         if self.args.hanging:
-            self.run_hang(self.args.pid)
-            return True
+            return self.run_hang(self.args.pid)
         if self.args.filebug:
             return self.run_report_bug()
         if self.args.update_report is not None:
