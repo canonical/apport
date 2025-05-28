@@ -11,8 +11,12 @@ Linter tests
 The script [run-linters](./run-linters) runs following linters on the source
 code:
 
+ * black
+ * isort
+ * mypy
  * pycodestyle
- * pyflakes
+ * pydocstyle
+ * pylint
 
 Unit tests
 ----------

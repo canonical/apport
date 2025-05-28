@@ -3,6 +3,8 @@
 # for faster module loading and avoiding circular dependencies
 # pylint: disable=import-outside-toplevel
 
+# Import apport.packaging to shadow it afterwards.
+import apport.packaging as _  # noqa: F401
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
