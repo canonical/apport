@@ -101,3 +101,13 @@ class TestUI(unittest.TestCase):
             _("Unable to start web browser"),
             _("Unable to start web browser to open %s.") % ("https://example.org"),
         )
+
+    @unittest.mock.patch("apport.ui.UserInterface.ui_error_message")
+    def test_hanging_without_pid(self, error_message_mock: MagicMock) -> None:
+        """Test calling apport --hanging without providing a process ID."""
+        ui = apport.ui.UserInterface(["ui-test", "--hanging"])
+        self.assertFalse(ui.run_argv())
+        error_message_mock.assert_called_once_with(
+            _("No PID specified"),
+            _("You need to specify a PID. See --help for more information."),
+        )
