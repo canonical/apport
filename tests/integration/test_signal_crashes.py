@@ -90,6 +90,34 @@ int main() {
 }
 """
 
+UNSHARE_CODE = """\
+#define _GNU_SOURCE
+#include <err.h>
+#include <sched.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+int main() {
+    if (unshare(CLONE_NEWNS | CLONE_NEWPID) == -1)
+        err(EXIT_FAILURE, "unshare");
+
+    pid_t child = fork();
+    if (child < 0) {
+        err(EXIT_FAILURE, "fork");
+    } else if (child > 0) {
+        int rc;
+        waitpid(child, &rc, 0);
+        return rc;
+    }
+
+    int zero = 0;
+    printf("42 / 0 = %i\\n", 42 / zero);
+    return 0;
+}
+"""
+
 
 @contextlib.contextmanager
 def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator[str]:
@@ -786,6 +814,30 @@ class T(unittest.TestCase):
             )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
+    def test_crash_unshare(self) -> None:
+        """Report generation for a binary that uses unshare and crashes.
+
+        This unshare test case simulates a container crash that does
+        not have Apport support.
+        """
+        with (
+            self.assertLogs(level="WARNING") as warning_logs,
+            compile_c_code("unshare", UNSHARE_CODE) as unshare,
+        ):
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            self.do_crash(
+                command=unshare,
+                command_dies=True,
+                follow_fork=True,
+                expect_report=False,
+            )
+
+        self.assertRegex(
+            warning_logs.output[0],
+            r"ERROR:root:host pid \d+ crashed in a container without apport support",
+        )
+
+    @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self) -> None:
         """Report generation for unpackaged setuid program."""
         # create suid root executable in a path we can modify which apport
@@ -1177,6 +1229,8 @@ class T(unittest.TestCase):
         via_socket: bool = False,
         cwd: str | None = None,
         expected_owner: int | None = None,
+        command_dies: bool = False,
+        follow_fork: bool = False,
         **kwargs: typing.Any,
     ) -> str:
         # TODO: Split into smaller functions/methods
@@ -1228,7 +1282,7 @@ class T(unittest.TestCase):
 
         try:
             gdb = subprocess.Popen(  # pylint: disable=consider-using-with
-                self.gdb_command(command, args, gdb_core_file, uid),
+                self.gdb_command(command, args, gdb_core_file, uid, follow_fork),
                 env={"HOME": self.workdir},
                 stdin=subprocess.PIPE,
                 cwd=cwd,
@@ -1243,10 +1297,13 @@ class T(unittest.TestCase):
 
         try:
             command_process = self.wait_for_gdb_child_process(
-                gdb.pid, expected_command or command
+                gdb.pid,
+                expected_command or command,
+                "tracing-stop" if command_dies else "sleeping",
             )
 
-            os.kill(command_process.pid, sig)
+            if not command_dies:
+                os.kill(command_process.pid, sig)
             self.wait_for_core_file(gdb.pid, gdb_core_file)
 
             if hook_before_apport:
@@ -1304,7 +1361,11 @@ class T(unittest.TestCase):
 
     @staticmethod
     def gdb_command(
-        command: str, args: Iterable[str], core_file: str, uid: int | None
+        command: str,
+        args: Iterable[str],
+        core_file: str,
+        uid: int | None,
+        follow_fork: bool = False,
     ) -> list[str]:
         """Construct GDB arguments to call the test executable.
 
@@ -1325,6 +1386,7 @@ class T(unittest.TestCase):
                 f" --reuid={uid} --clear-groups /bin/sh -c 'exec {command}{cmd_args}'"
             )
             command = "/usr/bin/setpriv"
+        if uid is not None or follow_fork:
             gdb_args += ["--ex", "set follow-fork-mode child"]
 
         gdb_args += [
