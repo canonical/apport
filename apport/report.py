@@ -286,6 +286,21 @@ def _get_gdb_path(gdb_sandbox: str | None, same_arch: bool) -> str:
     return gdb_path
 
 
+def _get_ld_search_paths(ld_so: str = "ld.so") -> list[str]:
+    """Query the given ld.so binary for the shared library search paths."""
+    diagnostics = subprocess.run(
+        [ld_so, "--list-diagnostics"], check=True, stdout=subprocess.PIPE, text=True
+    )
+    # Example matching line: path.system_dirs[0x0]="/lib/x86_64-linux-gnu/"
+    matches = re.findall(
+        r'^path\.system_dirs\[(0x[0-9a-f]+)\]="([^"]+)"$',
+        diagnostics.stdout,
+        flags=re.MULTILINE,
+    )
+    ld_search_paths = {int(index, 0): path for (index, path) in matches}
+    return [path for (index, path) in sorted(ld_search_paths.items())]
+
+
 def _run_hook(report, ui, hook):
     if not os.path.exists(hook):
         return False
@@ -1920,7 +1935,10 @@ class Report(problem_report.ProblemReport):
         environ: dict[str, str] = {}
 
         if sandbox:
-            native_multiarch = packaging.get_native_multiarch_triplet()
+            host_library_paths = _get_ld_search_paths(
+                "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+            )
+            sandbox_library_paths = [f"{sandbox}{path}" for path in host_library_paths]
             # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += [
                 "--ex",
@@ -1931,23 +1949,20 @@ class Report(problem_report.ProblemReport):
                 "add-auto-load-safe-path " + sandbox,
                 # needed to fix /lib64/ld-linux-x86-64.so.2 broken symlink
                 "--ex",
-                f"set solib-search-path {sandbox}/lib/{native_multiarch}"
-                f":{sandbox}/usr/lib/{native_multiarch}",
+                f"set solib-search-path {':'.join(sandbox_library_paths)}",
             ]
             if gdb_sandbox:
-                ld_lib_path = (
-                    f"{gdb_sandbox}/lib"
-                    f":{gdb_sandbox}/lib/{native_multiarch}"
-                    f":{gdb_sandbox}/usr/lib/{native_multiarch}"
-                    f":{gdb_sandbox}/usr/lib"
-                )
+                gdb_sandbox_library_paths = [
+                    f"{gdb_sandbox}{path}" for path in host_library_paths
+                ]
+                ld_lib_path = ":".join(gdb_sandbox_library_paths)
                 pyhome = f"{gdb_sandbox}/usr"
                 # env settings need to be modified for gdb in a sandbox
                 environ |= {
                     "LD_LIBRARY_PATH": ld_lib_path,
                     "PATH": ld_lib_path,
                     "PYTHONHOME": pyhome,
-                    "GCONV_PATH": f"{gdb_sandbox}/usr/lib/{native_multiarch}/gconv",
+                    "GCONV_PATH": f"{gdb_sandbox}/usr/lib/x86_64-linux-gnu/gconv",
                 }
                 command[:0] = ["ld-linux-x86-64.so.2"]
                 command += ["--ex", f"set data-directory {gdb_sandbox}/usr/share/gdb"]
