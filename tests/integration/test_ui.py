@@ -258,11 +258,9 @@ class T(unittest.TestCase):
         self.report.write(self.report_file)
         self.report_file.flush()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         apport.fileutils.report_dir = self.orig_report_dir
-        self.orig_report_dir = None
         apport.ui.symptom_script_dir = self.orig_symptom_script_dir
-        self.orig_symptom_script_dir = None
 
         # pylint: disable=protected-access
         os.unlink(apport.report._ignore_file)

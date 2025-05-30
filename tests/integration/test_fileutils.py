@@ -33,12 +33,11 @@ class T(unittest.TestCase):
         apport.fileutils.report_dir = tempfile.mkdtemp()
         self.orig_config_file = apport.fileutils._CONFIG_FILE
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(apport.fileutils.core_dir)
         apport.fileutils.core_dir = self.orig_core_dir
         shutil.rmtree(apport.fileutils.report_dir)
         apport.fileutils.report_dir = self.orig_report_dir
-        self.orig_report_dir = None
         apport.fileutils._CONFIG_FILE = self.orig_config_file
 
     @staticmethod
