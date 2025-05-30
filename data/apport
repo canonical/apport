@@ -473,15 +473,29 @@ def is_same_ns(pid: int, ns: str) -> bool:
     if not os.path.exists(f"/proc/self/ns/{ns}") or not os.path.exists(
         f"/proc/{pid}/ns/{ns}"
     ):
+        print(f"DEBUG: is_same_ns({pid}, {ns!r}): does not exist (True 1)")
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
     try:
+        path = os.readlink(f"/proc/{pid}/ns/{ns}")
+        print(
+            f"DEBUG: is_same_ns({pid}, {ns!r}): "
+            f"os.readlink('/proc/{pid}/ns/{ns}') = {path}"
+        )
+        path = os.readlink(f"/proc/self/ns/{ns}")
+        print(
+            f"DEBUG: is_same_ns({pid}, {ns!r}): "
+            f"os.readlink('/proc/self/ns/{ns}') = {path}"
+        )
         if os.readlink(f"/proc/{pid}/ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
             # Check that the inode for both namespaces is the same
+            print(f"DEBUG: is_same_ns({pid}, {ns!r}): same ns (True 2)")
             return True
     except OSError as error:
+        print(f"DEBUG: is_same_ns({pid}, {ns!r}): OSError: {error}")
         if error.errno == errno.ENOENT:
+            print(f"DEBUG: is_same_ns({pid}, {ns!r}): ENOENT (True 2)")
             return True
         raise
 
@@ -489,10 +503,13 @@ def is_same_ns(pid: int, ns: str) -> bool:
     with contextlib.suppress(FileNotFoundError):
         with open(f"/proc/{pid}/cgroup", encoding="utf-8") as cgroup:
             for line in cgroup:
+                print(f"DEBUG: is_same_ns({pid}, {ns!r}): cgroup line: {line}")
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
+                    print(f"DEBUG: is_same_ns({pid}, {ns!r}): system.slice (True 4)")
                     return True
 
+    print(f"DEBUG: is_same_ns({pid}, {ns!r}): False")
     return False
 
 
