@@ -15,12 +15,12 @@ import os
 import re
 
 import apport.fileutils
+import apport.hook_ui
 import apport.hookutils
-import apport.ui
 from problem_report import ProblemReport
 
 
-def add_info(report: ProblemReport, ui: apport.ui.HookUI) -> None:
+def add_info(report: ProblemReport, ui: apport.hook_ui.HookUI) -> None:
     """Add generic, general information to the problem report."""
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-complex,too-many-branches,too-many-locals
@@ -124,6 +124,6 @@ Do you want to continue the report process anyway?
 
 if __name__ == "__main__":
     r = ProblemReport()
-    add_info(r, apport.ui.NoninteractiveHookUI())
+    add_info(r, apport.hook_ui.NoninteractiveHookUI())
     for key, value in r.items():
         print(f"{key}: {value}")
