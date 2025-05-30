@@ -938,7 +938,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
-                            apt_pkg.AcquireFile(fetcher, sf, destdir=output_dir)
+                            apt_pkg.AcquireFile(fetcher, sf, None, destdir=output_dir)
                         )
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
