@@ -45,9 +45,9 @@ from collections.abc import Iterable, Iterator
 import apport.fileutils
 import apport.logging
 import problem_report
+from apport.hook_ui import HookUI, NoninteractiveHookUI
 from apport.hookutils import kill_pkttyagent
 from apport.packaging_impl import impl as packaging
-from apport.ui import HookUI, NoninteractiveHookUI
 
 _data_dir = os.environ.get("APPORT_DATA_DIR", "/usr/share/apport")
 GENERAL_HOOK_DIR = f"{_data_dir}/general-hooks/"

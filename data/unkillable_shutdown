@@ -18,10 +18,10 @@ import errno
 import os
 from collections.abc import Container, Iterable
 
-import apport
 import apport.fileutils
 import apport.hookutils
 import apport.logging
+import apport.report
 
 
 def parse_argv():
@@ -85,7 +85,7 @@ def orphaned_processes(omit_pids: Container[str]) -> Iterable[int]:
 def do_report(pid: int, omit_pids: Iterable[str]) -> None:
     """Create a report for a particular PID."""
 
-    report = apport.Report("Bug")
+    report = apport.report.Report("Bug")
     try:
         report.add_proc_info(pid)
     except (ValueError, AssertionError):

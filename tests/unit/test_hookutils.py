@@ -9,6 +9,7 @@ import unittest.mock
 from unittest.mock import MagicMock, Mock
 
 import apport.hookutils
+import apport.report
 from problem_report import ProblemReport
 
 IW_REG_LIST_DE = b"""\
@@ -242,7 +243,7 @@ class TestHookutils(unittest.TestCase):
         )
         now = datetime.datetime.now()
 
-        report = apport.Report(date=now.strftime("%a %b %d %H:%M:%S %Y"))
+        report = apport.report.Report(date=now.strftime("%a %b %d %H:%M:%S %Y"))
         apport.hookutils.attach_journal_errors(report)
 
         self.assertEqual(run_mock.call_count, 1)
@@ -264,7 +265,7 @@ class TestHookutils(unittest.TestCase):
             args=MagicMock(), returncode=0, stdout=b"journalctl output", stderr=b""
         )
 
-        report = apport.Report()
+        report = apport.report.Report()
         del report["Date"]
         apport.hookutils.attach_journal_errors(report)
 
@@ -490,7 +491,7 @@ class TestHookutils(unittest.TestCase):
             ),
         ]
 
-        report = apport.Report()
+        report = apport.report.Report()
         apport.hookutils.attach_wifi(report)
 
         self.assertEqual(report["WifiSyslog"], "some recent logs")
@@ -531,7 +532,7 @@ class TestHookutils(unittest.TestCase):
             args=MagicMock(), returncode=0, stdout=b"rfkill output", stderr=b""
         )
 
-        report = apport.Report()
+        report = apport.report.Report()
         apport.hookutils.attach_wifi(report)
 
         self.assertEqual(report["WifiSyslog"], "some recent logs")

@@ -227,7 +227,7 @@ class T(unittest.TestCase):
         os.mknod(apport.report._ignore_file)
 
         # demo report
-        self.report = apport.Report()
+        self.report = apport.report.Report()
         self.report["ExecutablePath"] = "/bin/bash"
         self.report["Package"] = "libfoo1 1-1"
         self.report["SourcePackage"] = "foo"
@@ -332,7 +332,7 @@ class T(unittest.TestCase):
     def test_get_size_constructed(self) -> None:
         """get_complete_size() and get_reduced_size() for on-the-fly Reports"""
         ui = UserInterfaceMock()
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.report["Hello"] = "World"
 
         s = ui.get_complete_size()
@@ -413,7 +413,7 @@ class T(unittest.TestCase):
         """collect_info() on report without information (distro bug)"""
         ui = UserInterfaceMock()
         # report without any information (distro bug)
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.collect_info()
         self.assertTrue(
             set(["Date", "Uname", "DistroRelease", "ProblemType"]).issubset(
@@ -430,7 +430,7 @@ class T(unittest.TestCase):
         """collect_info() on report with only ExecutablePath"""
         ui = UserInterfaceMock()
         # report with only package information
-        self.report = apport.Report("Bug")
+        self.report = apport.report.Report("Bug")
         self.report["ExecutablePath"] = "/bin/bash"
         self.update_report_file()
         ui.load_report(self.report_file.name)
@@ -467,7 +467,7 @@ class T(unittest.TestCase):
         """collect_info() on report with a package"""
         ui = UserInterfaceMock()
         # report with only package information
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
 
         def search_bug_patterns(url: str) -> str | None:
@@ -509,7 +509,7 @@ class T(unittest.TestCase):
     def test_collect_info_permissions(self) -> None:
         """collect_info() leaves the report accessible to the group"""
         ui = UserInterfaceMock()
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.report_file = self.report_file.name
         ui.collect_info()
@@ -537,7 +537,7 @@ class T(unittest.TestCase):
         """collect_info() with package hook that defines a CrashDB"""
         ui = UserInterfaceMock()
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt': '1' }", "Moo")
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertIn("CrashDB", ui.report)
@@ -549,7 +549,7 @@ class T(unittest.TestCase):
         """collect_info() with package hook that chooses a different CrashDB"""
         ui = UserInterfaceMock()
         self._write_crashdb_config_hook("debug", "Moo")
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertNotIn("UnreportableReason", ui.report)
@@ -561,21 +561,21 @@ class T(unittest.TestCase):
         ui = UserInterfaceMock()
         # nonexisting implementation
         self._write_crashdb_config_hook("{ 'impl': 'nonexisting', 'local_opt': '1' }")
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertIn("nonexisting", ui.report["UnreportableReason"])
 
         # invalid syntax
         self._write_crashdb_config_hook("{ 'impl': 'memory', 'local_opt'")
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertIn("package hook", ui.report["UnreportableReason"])
 
         # nonexisting name
         self._write_crashdb_config_hook("nonexisting")
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertIn("nonexisting", ui.report["UnreportableReason"])
@@ -585,7 +585,7 @@ class T(unittest.TestCase):
             """{'impl': 'memory',"""
             """ 'trap': exec('open("/tmp/pwned", "w").close()')}"""
         )
-        ui.report = apport.Report("Bug")
+        ui.report = apport.report.Report("Bug")
         ui.cur_package = "bash"
         ui.collect_info()
         self.assertIn("package hook", ui.report["UnreportableReason"])
@@ -880,7 +880,7 @@ class T(unittest.TestCase):
 
         self.assertTrue(ui.ic_progress_pulses > 0)
 
-        r = apport.Report()
+        r = apport.report.Report()
         with open(reportfile, "rb") as f:
             r.load(f)
 
@@ -898,7 +898,7 @@ class T(unittest.TestCase):
         self.assertIsNone(ui.msg_severity)
         self.assertTrue(ui.present_details_shown)
 
-    def _gen_test_crash(self) -> apport.Report:
+    def _gen_test_crash(self) -> apport.report.Report:
         """Generate a Report with real crash data."""
         core_path = os.path.join(self.workdir, "core")
         try:
@@ -925,7 +925,7 @@ class T(unittest.TestCase):
                         timeout=10.0,
                     )
                     # generate crash report
-                    r = apport.Report()
+                    r = apport.report.Report()
                     r["ExecutablePath"] = self.TEST_EXECUTABLE
                     r["Signal"] = "11"
                     r.add_proc_info(pid)
@@ -1044,7 +1044,7 @@ class T(unittest.TestCase):
         """run_crash() for an invalid core dump"""
         ui = UserInterfaceMock()
         # generate broken crash report
-        r = apport.Report()
+        r = apport.report.Report()
         r["ExecutablePath"] = self.TEST_EXECUTABLE
         r["Signal"] = "11"
         r["CoreDump"] = problem_report.CompressedValue(compressed_value=b"AAAAAAAA")
@@ -1188,7 +1188,7 @@ class T(unittest.TestCase):
         # create a test executable
         with run_test_executable() as pid:
             # generate crash report
-            r = apport.Report()
+            r = apport.report.Report()
             r["ExecutablePath"] = self.TEST_EXECUTABLE
             r["Signal"] = "42"
             r.add_proc_info(pid)
@@ -1274,7 +1274,7 @@ class T(unittest.TestCase):
         """run_crash() on various error conditions"""
         ui = UserInterfaceMock()
         # crash report with invalid Package name
-        r = apport.Report()
+        r = apport.report.Report()
         r["ExecutablePath"] = "/bin/bash"
         r["Package"] = "foobarbaz"
         report_file = os.path.join(apport.fileutils.report_dir, "test.crash")
@@ -1306,7 +1306,7 @@ class T(unittest.TestCase):
         self.assertIn("not installed any more", ui.msg_text)
 
         # interpreted program got uninstalled between crash and report
-        r = apport.Report()
+        r = apport.report.Report()
         r["ExecutablePath"] = "/bin/nonexisting"
         r["InterpreterPath"] = "/usr/bin/python"
         r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
@@ -1318,7 +1318,7 @@ class T(unittest.TestCase):
         self.assertIn("not installed any more", ui.msg_text)
 
         # interpreter got uninstalled between crash and report
-        r = apport.Report()
+        r = apport.report.Report()
         r["ExecutablePath"] = "/bin/sh"
         r["InterpreterPath"] = "/usr/bin/nonexisting"
         r["Traceback"] = "ZeroDivisionError: integer division or modulo by zero"
@@ -1353,7 +1353,7 @@ class T(unittest.TestCase):
     def test_run_crash_package(self) -> None:
         """run_crash() for a package error"""
         # generate crash report
-        r = apport.Report("Package")
+        r = apport.report.Report("Package")
         r["Package"] = "bash"
         r["SourcePackage"] = "bash"
         r["ErrorMessage"] = "It broke"
@@ -1421,7 +1421,7 @@ class T(unittest.TestCase):
             )
 
         # generate crash report
-        r = apport.Report("KernelCrash")
+        r = apport.report.Report("KernelCrash")
         r["Package"] = package
         r["SourcePackage"] = src_pkg
 
