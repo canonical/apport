@@ -254,7 +254,7 @@ class T(unittest.TestCase):
         st2 = os.stat(test_report)
         self.assertNotEqual(st, st2, "original seen report gets overwritten")
 
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(test_report, "rb") as f:
             pr.load(f)
         self.assertTrue(
@@ -445,7 +445,7 @@ class T(unittest.TestCase):
         leak = os.path.join(
             apport.fileutils.report_dir, f"_usr_bin_perl.{os.getuid()}.crash"
         )
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(leak, "rb") as f:
             pr.load(f)
         # On a leak, no report is created since the executable path will be
@@ -592,7 +592,7 @@ class T(unittest.TestCase):
         """Ignore executables."""
         test_report = self.do_crash()
 
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(test_report, "rb") as f:
             pr.load(f)
         os.unlink(test_report)
@@ -682,7 +682,7 @@ class T(unittest.TestCase):
         self.assertNotIn("Traceback", logged)
 
         self._check_report()
-        pr = apport.Report()
+        pr = apport.report.Report()
         assert self.test_report
         with open(self.test_report, "rb") as f:
             pr.load(f)
@@ -728,7 +728,7 @@ class T(unittest.TestCase):
         self.assertNotIn("Traceback", app.stderr)
 
         self._check_report()
-        pr = apport.Report()
+        pr = apport.report.Report()
         assert self.test_report
         with open(self.test_report, "rb") as f:
             pr.load(f)
@@ -811,7 +811,7 @@ class T(unittest.TestCase):
         """
         test_report = self.do_crash(via_socket=True)
 
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(test_report, "rb") as f:
             pr.load(f)
         self.assertEqual(pr["Signal"], "11")
@@ -842,7 +842,7 @@ class T(unittest.TestCase):
             )
 
             # check crash report
-            report = apport.Report()
+            report = apport.report.Report()
             with open(test_report, "rb") as report_file:
                 report.load(report_file)
             self.assertEqual(report["Signal"], "11")
@@ -940,7 +940,7 @@ class T(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         reader_mock.assert_called_once_with()
         self._check_report()
-        report = apport.Report()
+        report = apport.report.Report()
         with open(self.test_report, "rb") as report_file:
             report.load(report_file, binary="compressed")
         self.assertEqual(report["CoreDump"].compressed_value, b"mocked core")
@@ -1345,7 +1345,7 @@ class T(unittest.TestCase):
 
     def check_report_coredump(self, report_path):
         """Check that given report file has a valid core dump."""
-        r = apport.Report()
+        r = apport.report.Report()
         with open(report_path, "rb") as f:
             r.load(f)
         self.assertIn("CoreDump", r)

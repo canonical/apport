@@ -18,6 +18,7 @@ import tempfile
 
 import apport.fileutils
 import apport.logging
+import apport.report
 from apport.packaging_impl import impl as packaging
 
 
@@ -131,7 +132,7 @@ def _move_base_files_first(pkgs: list[tuple[str, None | str]]) -> None:
 
 # pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def make_sandbox(
-    report: apport.Report,
+    report: apport.report.Report,
     config_dir: str | None,
     cache_dir: str | None = None,
     sandbox_dir: str | None = None,
@@ -152,8 +153,8 @@ def make_sandbox(
     For unpackaged executables, there are no Dependencies. Packages for shared
     libraries are unpacked.
 
-    report is an apport.Report object to build a sandbox for. Presence of the
-    Package field determines whether to determine dependencies through
+    report is an apport.report.Report object to build a sandbox for. Presence
+    of the Package field determines whether to determine dependencies through
     packaging (via the optional report['Dependencies'] field), or through ldd
     via needed_runtime_packages() -> shared_libraries().  Usually
     report['Architecture'] and report['Uname'] are present.

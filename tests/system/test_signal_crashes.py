@@ -16,6 +16,7 @@ from unittest.mock import MagicMock, patch
 import psutil
 
 import apport.fileutils
+import apport.report
 from tests.helper import (
     get_gnu_coreutils_cmd,
     get_init_system,
@@ -158,7 +159,7 @@ class T(unittest.TestCase):
         assert self.apport_path is not None
         # determine how much data we have to pump into apport in order to make
         # sure that it will refuse the core dump
-        r = apport.Report()
+        r = apport.report.Report()
         with open("/proc/meminfo", "rb") as f:
             r.load(f)
         totalmb = int(r["MemFree"].split()[0]) + int(r["Cached"].split()[0])
@@ -211,7 +212,7 @@ class T(unittest.TestCase):
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(reports, [self.test_report])
 
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(reports[0], "rb") as f:
             pr.load(f)
         os.unlink(reports[0])

@@ -1069,7 +1069,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         ]:
             bug.subscribe(person=person)
 
-    def _generate_upload_headers(self, report: apport.Report) -> dict[str, str]:
+    def _generate_upload_headers(self, report: apport.report.Report) -> dict[str, str]:
         """Generate the headers for the multipart/MIME temporary file."""
         # set reprocessing tags
         hdr = {"Tags": f"apport-{report['ProblemType'].lower()}"}
@@ -1108,7 +1108,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hdr["HWDB-Submission"] = report["CheckboxSubmission"]
         return hdr
 
-    def _generate_upload_blob(self, report: apport.Report) -> IO[bytes]:
+    def _generate_upload_blob(self, report: apport.report.Report) -> IO[bytes]:
         """Generate a multipart/MIME temporary file for uploading.
 
         You have to close the returned file object after you are done with it.

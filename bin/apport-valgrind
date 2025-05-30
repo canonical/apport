@@ -28,8 +28,8 @@ import subprocess
 import sys
 from gettext import gettext as _
 
-import apport
 import apport.logging
+import apport.report
 import apport.sandboxutils
 
 #
@@ -140,7 +140,7 @@ except (KeyboardInterrupt, SystemExit):
 try:
     if not options.no_sandbox:
         # create report unless in no-sandbox mode
-        report = apport.Report()
+        report = apport.report.Report()
 
         report["ExecutablePath"] = exepath
         report.add_os_info()
