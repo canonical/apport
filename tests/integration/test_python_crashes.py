@@ -503,7 +503,9 @@ func(42)
                     relpath=relpath,
                 )
                 pr = self._load_report()
-                self.assertIn(":FileNotFoundError:", pr.crash_signature())
+                crash_signature = pr.crash_signature()
+                assert crash_signature is not None
+                self.assertIn(":FileNotFoundError:", crash_signature)
                 self.assertIn("os.getcwd()\n", pr["Traceback"])
                 self.assertIn("\nFileNotFoundError", pr["Traceback"])
 
