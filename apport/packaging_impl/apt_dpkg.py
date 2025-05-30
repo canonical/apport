@@ -641,8 +641,6 @@ class _AptDpkgPackageInfo(PackageInfo):
     def get_files(self, package):
         """Return list of files shipped by a package."""
         output = self._call_dpkg(["-L", package])
-        if output is None:
-            return None
         return [f for f in output.splitlines() if not f.startswith("diverted")]
 
     # TODO: Split into smaller functions/methods
