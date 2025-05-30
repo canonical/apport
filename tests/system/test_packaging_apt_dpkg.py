@@ -692,6 +692,7 @@ def test_get_source_tree_sandbox(
         rootdir, os.path.join(configdir, release), "ubuntu", "jammy", origins=None
     )
     res = impl.get_source_tree("base-files", out_dir, sandbox=rootdir)
+    assert res is not None
     assert os.path.isdir(os.path.join(res, "debian"))
     # this needs to be updated when the release in _setup_foonux_config
     # changes
@@ -714,6 +715,7 @@ def test_get_source_tree_lp_sandbox(
     res = impl.get_source_tree(
         wanted_package, out_dir, version=wanted_version, sandbox=rootdir
     )
+    assert res is not None
     assert os.path.isdir(os.path.join(res, "debian"))
     # this needs to be updated when the release in _setup_foonux_config
     # changes

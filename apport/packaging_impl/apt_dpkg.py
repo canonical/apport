@@ -422,7 +422,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         except KeyError:
             raise ValueError(f"package {package} does not exist") from None
 
-    def get_version(self, package):
+    def get_version(self, package: str) -> str:
         """Return the installed version of a package."""
         pkg = self._apt_pkg(package)
         inst = pkg.installed
@@ -638,11 +638,9 @@ class _AptDpkgPackageInfo(PackageInfo):
             return pkg.candidate.architecture or "unknown"
         raise ValueError(f"package {package} does not exist")
 
-    def get_files(self, package):
+    def get_files(self, package: str) -> list[str]:
         """Return list of files shipped by a package."""
         output = self._call_dpkg(["-L", package])
-        if output is None:
-            return None
         return [f for f in output.splitlines() if not f.startswith("diverted")]
 
     # TODO: Split into smaller functions/methods
@@ -699,7 +697,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             return self._check_files_md5(sums)
         return []
 
-    def get_modified_conffiles(self, package):
+    def get_modified_conffiles(self, package: str) -> dict[str, bytes | str]:
         """Return modified configuration files of a package.
 
         Return a file name -> file contents map of all configuration files of
@@ -716,7 +714,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         if dpkg.returncode != 0:
             return {}
 
-        modified = {}
+        modified: dict[str, bytes | str] = {}
         for line in dpkg.stdout.decode().splitlines():
             if not line:
                 continue
@@ -881,7 +879,13 @@ class _AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
+    def get_source_tree(
+        self,
+        srcpackage: str,
+        output_dir: str,
+        version: str | None = None,
+        sandbox: str | None = None,
+    ) -> str | None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-complex,too-many-branches,too-many-locals
         """Download source package and unpack it into output_dir.
@@ -938,7 +942,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     af_queue = []
                     for sf in sf_urls:
                         af_queue.append(
-                            apt_pkg.AcquireFile(fetcher, sf, destdir=output_dir)
+                            apt_pkg.AcquireFile(fetcher, sf, None, destdir=output_dir)
                         )
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
@@ -1459,7 +1463,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         return obsolete
 
-    def package_name_glob(self, nameglob):
+    def package_name_glob(self, nameglob: str) -> list[str]:
         """Return known package names which match given glob."""
         return fnmatch.filter(self._cache().keys(), nameglob)
 

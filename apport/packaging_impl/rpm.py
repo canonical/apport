@@ -44,16 +44,16 @@ class RPMPackageInfo:
         self.ts = rpm.TransactionSet()  # connect to the rpmdb
         self._mirror: str | None = None
 
-    def get_version(self, package):
+    def get_version(self, package: str) -> str:
         """Return the installed version of a package."""
         hdr = self._get_header(package)
         if hdr is None:
-            raise ValueError
+            raise ValueError(f"package {package} does not exist")
         # Note - "version" here seems to refer to the full EVR, so..
         if not hdr["e"]:
             return f"{hdr['v']}-{hdr['r']}"
         if not hdr["v"] or not hdr["r"]:
-            return None
+            raise ValueError(f"package {package} misses version information")
         return f"{hdr['e']}:{hdr['v']}-{hdr['r']}"
 
     def get_available_version(self, package: str) -> str:
@@ -97,7 +97,7 @@ class RPMPackageInfo:
         hdr = self._get_header(package)
         return hdr["arch"]
 
-    def get_files(self, package):
+    def get_files(self, package: str) -> list[str]:
         """Return list of files shipped by a package."""
         hdr = self._get_header(package)
         files = []
@@ -204,7 +204,13 @@ class RPMPackageInfo:
         # FIXME C&P from apt-dpkg implementation, might move to subclass
         self._mirror = url
 
-    def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
+    def get_source_tree(
+        self,
+        srcpackage: str,
+        output_dir: str,
+        version: str | None = None,
+        sandbox: str | None = None,
+    ) -> str | None:
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -240,7 +246,7 @@ class RPMPackageInfo:
             "method must be implemented by distro-specific RPMPackageInfo subclass"
         )
 
-    def package_name_glob(self, nameglob):
+    def package_name_glob(self, nameglob: str) -> list[str]:
         """Return known package names which match given glob."""
         raise NotImplementedError("TODO")
 

@@ -71,10 +71,10 @@ class T(unittest.TestCase):
 
             display_num = 0
             no_display_num = 0
-            for desktop_file in apport.packaging.get_files(pkg):
-                if not desktop_path_re.match(desktop_file):
+            for desktop_filename in apport.packaging.get_files(pkg):
+                if not desktop_path_re.match(desktop_filename):
                     continue
-                with open(desktop_file, "rb") as desktop_file:
+                with open(desktop_filename, "rb") as desktop_file:
                     if b"NoDisplay=true" in desktop_file.read():
                         no_display_num += 1
                     else:
