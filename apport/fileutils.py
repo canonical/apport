@@ -605,8 +605,16 @@ def get_core_path(
     proc_pid_fd: int | None = None,
 ) -> tuple[str, str]:
     """Get the path to a core file."""
+
+    def opener(path: str | os.PathLike[str], flags: int) -> int:
+        return os.open(path, flags, dir_fd=proc_pid_fd)
+
     if pid is not None and timestamp is None:
-        with open(f"/proc/{pid}/stat", encoding="utf-8") as stat_file:
+        if proc_pid_fd is not None:
+            stat_filename = "stat"
+        else:
+            stat_filename = f"/proc/{pid}/stat"
+        with open(stat_filename, encoding="utf-8", opener=opener) as stat_file:
             stat_contents = stat_file.read()
         timestamp = get_starttime(stat_contents)
 

@@ -54,6 +54,7 @@ class ProcPid(contextlib.ContextDecorator):
 
     def __init__(self, pid: int, path: str | None = None) -> None:
         self.path = path or f"/proc/{pid}"
+        self.pid = pid
         self.fd: int | None = None
 
     def __enter__(self):
@@ -68,10 +69,52 @@ class ProcPid(contextlib.ContextDecorator):
     def _opener(self, path: str | os.PathLike[str], flags: int) -> int:
         return os.open(path, flags, dir_fd=self.fd)
 
+    def exists(self, path: str | os.PathLike[str]) -> bool:
+        """Test whether a path relative to /proc/<pid> exists.
+
+        Returns False for broken symbolic links."""
+        try:
+            self.stat(path)
+        except (OSError, ValueError):
+            return False
+        return True
+
+    def has_same_pid(self, pidfd: int) -> bool:
+        """Check that the process ID matches the PID from the given pidfd.
+
+        In case the process ID has been reused for a new process, the
+        process ID from the pidfd will be -1 and thus this function
+        will return False.
+        """
+        other_pid = pidfd_getpid(pidfd)
+        return self.pid == other_pid
+
     def open(self, file: str) -> io.TextIOWrapper:
         """Open file relative to /proc/<pid> and return a stream."""
         assert self.fd is not None
         return open(file, encoding="utf-8", opener=self._opener)
+
+    def readlink(self, path: str | os.PathLike[str]) -> str:
+        """Return a string representing the path to which the symbolic link points."""
+        return os.readlink(path, dir_fd=self.fd)
+
+    def stat(self, path: str | os.PathLike[str]) -> os.stat_result:
+        """Get the status of a file or a file descriptor relative to /proc/<pid>."""
+        return os.stat(path, dir_fd=self.fd)
+
+
+def pidfd_getpid(pidfd: int) -> int:
+    """Get the associated pid from the pid file descriptor.
+
+    This function is equivalent to the identical named function in glibc.
+    """
+    pid_re = re.compile(rb"^Pid:\s*(-?[0-9]+)$")
+    with open(f"/proc/self/fdinfo/{pidfd}", "rb") as fdinfo_file:
+        for line in fdinfo_file:
+            match = pid_re.match(line)
+            if match:
+                return int(match.group(1))
+    raise OSError(errno.EBADF, f"{os.strerror(errno.EBADF)}: {pidfd}")
 
 
 def check_lock():
@@ -212,13 +255,11 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
-# pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def write_user_coredump(
     core_path: str,
     limit: int,
     proc_pid: ProcPid,
-    real_user: UserGroupID,
-    pidstat: os.stat_result,
+    report_owner: UserGroupID,
     coredump_fd: int | None = None,
     from_report: typing.IO[bytes] | None = None,
 ) -> None:
@@ -233,20 +274,11 @@ def write_user_coredump(
     if limit == 0:
         return
 
-    # don't write a core dump for suid/sgid/unreadable or otherwise
-    # protected executables, in accordance with core(5)
-    # (suid_dumpable==2 and core_pattern restrictions); when this happens,
-    # /proc/pid/stat is owned by root (or the user suid'ed to), but we already
-    # changed to the crashed process' uid
-    if UserGroupID(pidstat.st_uid, pidstat.st_gid) != real_user:
-        logger.error("disabling core dump for suid/sgid/unreadable executable")
-        return
-
     cwd = os.open("cwd", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY, dir_fd=proc_pid.fd)
 
     try:
         # Limit number of core files to prevent DoS
-        apport.fileutils.clean_core_directory(real_user.uid)
+        apport.fileutils.clean_core_directory(report_owner.uid)
         core_file = os.open(
             core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode=0o400, dir_fd=cwd
         )
@@ -295,7 +327,7 @@ def write_user_coredump(
             block = os.read(coredump_fd, 1048576)
 
     # Make sure the user can read it
-    os.fchown(core_file, real_user.uid, -1)
+    os.fchown(core_file, report_owner.uid, -1)
     os.close(core_file)
 
 
@@ -469,15 +501,13 @@ def is_systemd_watchdog_restart(signum: int, proc_pid: ProcPid) -> bool:
         return False
 
 
-def is_same_ns(pid: int, ns: str) -> bool:
-    if not os.path.exists(f"/proc/self/ns/{ns}") or not os.path.exists(
-        f"/proc/{pid}/ns/{ns}"
-    ):
+def is_same_ns(proc_pid: ProcPid, ns: str) -> bool:
+    if not os.path.exists(f"/proc/self/ns/{ns}") or not proc_pid.exists(f"ns/{ns}"):
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
     try:
-        if os.readlink(f"/proc/{pid}/ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
+        if proc_pid.readlink(f"ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
             # Check that the inode for both namespaces is the same
             return True
     except OSError as error:
@@ -487,7 +517,7 @@ def is_same_ns(pid: int, ns: str) -> bool:
 
     # check to see if the process is part of the system.slice (LP: #1870060)
     with contextlib.suppress(FileNotFoundError):
-        with open(f"/proc/{pid}/cgroup", encoding="utf-8") as cgroup:
+        with proc_pid.open("cgroup") as cgroup:
             for line in cgroup:
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
@@ -499,7 +529,10 @@ def is_same_ns(pid: int, ns: str) -> bool:
 # TODO: Split into smaller functions/methods
 # pylint: disable-next=too-complex
 def forward_crash_to_container(
-    options: argparse.Namespace, coredump_fd: int = 0, has_cap_sys_admin: bool = True
+    options: argparse.Namespace,
+    proc_pid: ProcPid,
+    coredump_fd: int = 0,
+    has_cap_sys_admin: bool = True,
 ) -> None:
     """Try to forward the crash to the container.
 
@@ -510,18 +543,21 @@ def forward_crash_to_container(
     forward the process information there.
     """
     logger = logging.getLogger()
-    proc_host_pid_fd = os.open(
-        f"/proc/{options.global_pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
-    )
 
-    def proc_host_pid_opener(path, flags):
-        return os.open(path, flags, dir_fd=proc_host_pid_fd)
+    if options.pidfd is None and options.dump_mode != 1:
+        # Note: If options.pidfd is set, proc_pid.has_same_pid() has been called before.
+        logger.error(
+            "Not forwarding crash with dump mode of %s to container"
+            " due to security concerns. Please provide --pidfd.",
+            options.dump_mode,
+        )
+        return
 
     # Validate that the target socket is owned
     # by the user namespace of the process
     try:
         sock_fd = os.open(
-            "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_host_pid_fd
+            "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_pid.fd
         )
         socket_uid = os.fstat(sock_fd).st_uid
     except (FileNotFoundError, ProcessLookupError):
@@ -532,7 +568,7 @@ def forward_crash_to_container(
         return
 
     try:
-        with open("uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("uid_map") as fd:
             if not apport.fileutils.search_map(fd, socket_uid):
                 logger.error(
                     "user is trying to trick apport into accessing"
@@ -544,9 +580,9 @@ def forward_crash_to_container(
 
     # Validate that the crashed binary is owned
     # by the user namespace of the process
-    task_uid = os.stat("exe", dir_fd=proc_host_pid_fd).st_uid
+    task_uid = proc_pid.stat("exe").st_uid
     try:
-        with open("uid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("uid_map") as fd:
             if not apport.fileutils.search_map(fd, task_uid):
                 logger.error(
                     "host pid %s crashed in a container"
@@ -557,9 +593,9 @@ def forward_crash_to_container(
     except FileNotFoundError:
         pass
 
-    task_gid = os.stat("exe", dir_fd=proc_host_pid_fd).st_gid
+    task_gid = proc_pid.stat("exe").st_gid
     try:
-        with open("gid_map", "r", encoding="utf-8", opener=proc_host_pid_opener) as fd:
+        with proc_pid.open("gid_map") as fd:
             if not apport.fileutils.search_map(fd, task_gid):
                 logger.error(
                     "host pid %s crashed in a container"
@@ -642,7 +678,8 @@ def start_apport() -> None:
     """Start Apport crash handler."""
     create_directory(apport.fileutils.report_dir, 0o3777)
     write_to_proc_sys(
-        "kernel/core_pattern", f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E"
+        "kernel/core_pattern",
+        f"|{__file__} -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
     )
     write_to_proc_sys("fs/suid_dumpable", "2")
     write_to_proc_sys("kernel/core_pipe_limit", "10")
@@ -666,6 +703,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "-P", "--global-pid", type=int, help="pid in root namespace (%%P)"
     )
+    parser.add_argument(
+        "-F", "--pidfd", nargs="?", type=int, help="pidfd for the crashed process (%%F)"
+    )
     parser.add_argument("-u", "--uid", type=int, help="real UID (%%u)")
     parser.add_argument("-g", "--gid", type=int, help="real GID (%%g)")
     parser.add_argument("executable_path", nargs="*", help="path of executable (%%E)")
@@ -684,13 +724,11 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
 
     options = parser.parse_args(args)
 
-    if (
-        not options.pid
-        and not options.systemd_coredump_instance
-        and not options.start
-        and not options.stop
-    ):
-        parser.error("the following arguments are required: -p/--pid")
+    if not options.systemd_coredump_instance and not options.start and not options.stop:
+        if options.pid is None:
+            parser.error("the following arguments are required: -p/--pid")
+        if options.dump_mode is None:
+            parser.error("the following arguments are required: -d/--dump-mode")
 
     # In kernels before 5.3.0, an executable path with spaces may be split
     # into separate arguments. If options.executable_path is a list, join
@@ -705,7 +743,9 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     return options
 
 
-def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
+def _check_global_pid_and_forward(
+    options: argparse.Namespace, proc_pid: ProcPid
+) -> bool:
     """Check the global PID if the crash happens in a container.
 
     Check if we received a valid global PID (kernel >= 3.12). If we do,
@@ -719,9 +759,9 @@ def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
     Returns True in case apport should exit with 0.
     """
     if options.global_pid is not None:
-        if not is_same_ns(options.global_pid, "mnt"):
-            if not is_same_ns(options.global_pid, "pid"):
-                forward_crash_to_container(options)
+        if not is_same_ns(proc_pid, "mnt"):
+            if not is_same_ns(proc_pid, "pid"):
+                forward_crash_to_container(options, proc_pid)
                 return True
             logging.getLogger().error(
                 "host pid %s crashed in a separate mount namespace, ignoring",
@@ -731,14 +771,12 @@ def _check_global_pid_and_forward(options: argparse.Namespace) -> bool:
 
         # If it doesn't look like the crash originated from within a full
         # container or if the is_same_ns() function fails open (returning
-        # True), then take the global pid and replace the local pid with
-        # it, then move on to normal handling.
+        # True), then take the global pid and move on to normal handling.
 
         # This bit is needed because some software like the chrome sandbox
         # will use container namespaces as a security measure but are still
         # otherwise host processes. When that's the case, we need to keep
         # handling those crashes locally using the global pid.
-        options.pid = options.global_pid
     return False
 
 
@@ -762,12 +800,7 @@ def main(args: list[str]) -> int:
         start_apport()
         return 0
 
-    if _check_global_pid_and_forward(options):
-        return 0
-    check_lock()
-
     try:
-        setup_signals()
         return process_crash_from_kernel(options)
     except (SystemExit, KeyboardInterrupt):
         pass
@@ -845,6 +878,7 @@ def receive_arguments_via_socket() -> argparse.Namespace:
         core_ulimit=int(args[2]),
         dump_mode=int(args[3]),
         global_pid=None,
+        pidfd=None,
         uid=None,
         gid=None,
         executable_path=None,
@@ -904,26 +938,30 @@ def refine_core_ulimit(options: argparse.Namespace) -> int:
         )
         core_ulimit = -1
 
-    if options.dump_mode == 2:
-        logging.getLogger().error(
-            "not creating core for pid with dump mode of %s", options.dump_mode
-        )
-        # a report should be created but not a core file
-        core_ulimit = 0
-
     return core_ulimit
 
 
 def process_crash_from_kernel(options: argparse.Namespace) -> int:
+    if options.global_pid is None:
+        pid = options.pid
+    else:
+        pid = options.global_pid
     try:
-        with ProcPid(options.pid) as proc_pid:
+        with ProcPid(pid) as proc_pid:
+            if options.pidfd is not None and not proc_pid.has_same_pid(options.pidfd):
+                logging.getLogger().error(
+                    "The process %i has already been replaced by a new process"
+                    " with the same ID. Ignoring crash.",
+                    pid,
+                )
+                return 1
             return process_crash_from_kernel_with_proc_pid(options, proc_pid)
     except FileNotFoundError as error:
         logging.getLogger().error(
             "%s not found. "
             "Cannot collect crash information for process %i any more.",
             error.filename,
-            options.pid,
+            pid,
         )
         return 1
 
@@ -934,22 +972,47 @@ def _set_signal(report: apport.report.Report, signal_number: int) -> None:
         report["SignalName"] = signal.Signals(signal_number).name
 
 
+def determine_report_owner(dump_mode: int, real_user: UserGroupID) -> UserGroupID:
+    """Determine who should be the owner of the crash report file.
+
+    For dump_mode 1 ("debug") the owner of the process can become the
+    crash report owner. For dump_mode 2 ("suidsafe") the crashed process
+    is a suid process and the report should be owned by root instead.
+
+    See proc_sys_fs(5) man page and
+    https://kernel.org/doc/html/latest/admin-guide/sysctl/fs.html#suid-dumpable
+    """
+    if dump_mode == 1:
+        return real_user
+    return UserGroupID(0, 0)
+
+
+# pylint: disable-next=too-many-return-statements
 def process_crash_from_kernel_with_proc_pid(
     options: argparse.Namespace, proc_pid: ProcPid
 ) -> int:
     """Process crash and return exit code."""
     logger = logging.getLogger()
 
-    coredump_fd = sys.stdin.fileno()
-    real_user, pidstat = get_pid_info(proc_pid)
+    check_lock()
+    setup_signals()
 
+    real_user, _ = get_pid_info(proc_pid)
     process_start = get_process_starttime(proc_pid)
     if not consistency_checks(options, process_start, proc_pid, real_user):
         return 0
 
+    if _check_global_pid_and_forward(options, proc_pid):
+        return 0
+
+    coredump_fd = sys.stdin.fileno()
     logger.info(
-        "called for pid %s, signal %s, core limit %s, dump mode %s",
-        options.pid,
+        "called for %s, signal %s, core limit %s, dump mode %s",
+        (
+            f"pid {options.pid}"
+            if options.global_pid is None
+            else f"global pid {options.global_pid}"
+        ),
         options.signal_number,
         options.core_ulimit,
         options.dump_mode,
@@ -958,14 +1021,13 @@ def process_crash_from_kernel_with_proc_pid(
     core_ulimit = refine_core_ulimit(options)
 
     core_path = apport.fileutils.get_core_path(
-        options.pid, options.executable_path, real_user.uid, process_start, proc_pid.fd
+        proc_pid.pid, options.executable_path, real_user.uid, process_start, proc_pid.fd
     )[1]
+    report_owner = determine_report_owner(options.dump_mode, real_user)
 
     # ignore SIGQUIT (it's usually deliberately generated by users)
     if options.signal_number == int(signal.SIGQUIT):
-        write_user_coredump(
-            core_path, core_ulimit, proc_pid, real_user, pidstat, coredump_fd
-        )
+        write_user_coredump(core_path, core_ulimit, proc_pid, report_owner, coredump_fd)
         return 0
 
     info = apport.report.Report("Crash")
@@ -1000,7 +1062,7 @@ def process_crash_from_kernel_with_proc_pid(
     # not be allowed to access.
     drop_privileges(real_user)
 
-    info.pid = options.pid
+    info.pid = proc_pid.pid
     info.add_proc_info(proc_pid_fd=proc_pid.fd)
 
     if "ExecutablePath" not in info:
@@ -1009,21 +1071,10 @@ def process_crash_from_kernel_with_proc_pid(
 
     def _write_coredump_callback(from_report: typing.IO[bytes] | None = None) -> None:
         write_user_coredump(
-            core_path,
-            core_ulimit,
-            proc_pid,
-            real_user,
-            pidstat,
-            coredump_fd,
-            from_report,
+            core_path, core_ulimit, proc_pid, report_owner, coredump_fd, from_report
         )
 
-    result = process_crash(
-        info,
-        real_user,
-        UserGroupID(pidstat.st_uid, pidstat.st_gid),
-        _write_coredump_callback,
-    )
+    result = process_crash(info, real_user, report_owner, _write_coredump_callback)
     if "CoreDump" not in info:
         logger.error(
             "core dump exceeded %i MiB, dropped to avoid memory overflow",

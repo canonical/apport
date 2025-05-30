@@ -43,6 +43,7 @@ import apport.fileutils
 import apport.report
 from tests.helper import (
     import_module_from_file,
+    pidfd_open,
     read_shebang,
     run_test_executable,
     wait_for_sleeping_state,
@@ -484,7 +485,13 @@ class T(unittest.TestCase):
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        self.do_crash(command=myexe, expect_corefile=False, uid=8, suid_dumpable=2)
+        self.do_crash(
+            command=myexe,
+            expect_corefile=True,
+            expect_corefile_owner=0,
+            uid=8,
+            suid_dumpable=2,
+        )
 
     def test_core_dump_packaged(self) -> None:
         """Packaged executables create core dumps on proper ulimits."""
@@ -734,28 +741,48 @@ class T(unittest.TestCase):
         """Report generation for setuid program which stays root."""
         with create_suid() as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
             # run test program in /run (which should only be writable to root)
-            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=2, cwd="/run")
+            self.do_crash(
+                command=suid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+                cwd="/run",
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_suid_dumpable_debug(self) -> None:
         """Report generation for setuid program with suid_dumpable set to 1."""
-        # if a user can crash a suid root binary, it should not create
-        # core files if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
+        # if a user can crash a suid root binary, it should create
+        # core files anyway if /proc/sys/fs/suid_dumpable is set to 1 ("debug")
         with create_suid() as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            self.do_crash(command=suid, uid=MAIL_UID, suid_dumpable=1)
+            self.do_crash(
+                command=suid,
+                expect_corefile=True,
+                expect_corefile_owner=MAIL_UID,
+                expected_owner=MAIL_UID,
+                uid=MAIL_UID,
+                suid_dumpable=1,
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_drop(self) -> None:
         """Report generation for setuid program which drops root."""
         with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
-            self.do_crash(command=dropsuid, uid=MAIL_UID, suid_dumpable=2)
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
+            self.do_crash(
+                command=dropsuid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+            )
 
     @unittest.skipIf(os.geteuid() != 0, "this test needs to be run as root")
     def test_crash_setuid_unpackaged(self) -> None:
@@ -764,11 +791,12 @@ class T(unittest.TestCase):
         # regards as not packaged
         with create_suid(tmpdir="/tmp") as suid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            # if a user can crash a suid root binary, it should not create
-            # core files
+            # If a user can crash a suid root binary, the core file should
+            # only be readable by root.
             self.do_crash(
                 command=suid,
-                expect_corefile=False,
+                expect_corefile=True,
+                expect_corefile_owner=0,
                 expect_report=False,
                 uid=MAIL_UID,
                 suid_dumpable=2,
@@ -804,7 +832,12 @@ class T(unittest.TestCase):
         with compile_c_code("dropsuid", DROPSUID_SOURCE) as dropsuid:
             resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
             test_report = self.do_crash(
-                command=dropsuid, uid=MAIL_UID, suid_dumpable=2, via_socket=True
+                command=dropsuid,
+                expect_corefile=True,
+                expect_corefile_owner=0,
+                uid=MAIL_UID,
+                suid_dumpable=2,
+                via_socket=True,
             )
 
             # check crash report
@@ -822,20 +855,21 @@ class T(unittest.TestCase):
         with (
             subprocess.Popen(command) as test_process,
             unittest.mock.patch("builtins.open", open_mock),
+            apport_binary.ProcPid(test_process.pid) as proc_pid,
         ):
             try:
-                same_ns = apport_binary.is_same_ns(test_process.pid, "mnt")
+                same_ns = apport_binary.is_same_ns(proc_pid, "mnt")
                 self.assertFalse(same_ns)
             finally:
                 test_process.kill()
         readlink_mock.assert_has_calls(
             [
-                unittest.mock.call(f"/proc/{test_process.pid}/ns/mnt"),
+                unittest.mock.call("ns/mnt", dir_fd=proc_pid.fd),
                 unittest.mock.call("/proc/self/ns/mnt"),
             ]
         )
         open_mock.assert_called_with(
-            f"/proc/{test_process.pid}/cgroup", encoding="utf-8"
+            "cgroup", encoding="utf-8", opener=proc_pid._opener
         )
 
     @unittest.skipIf(
@@ -917,7 +951,9 @@ class T(unittest.TestCase):
     #
 
     @staticmethod
-    def _apport_args(process: psutil.Process, sig: int, dump_mode: int) -> list[str]:
+    def _apport_args(
+        process: psutil.Process, sig: int, dump_mode: int, pidfd: int
+    ) -> list[str]:
         return [
             f"-p{process.pid}",
             f"-s{sig}",
@@ -926,6 +962,7 @@ class T(unittest.TestCase):
             f"-P{process.pid}",
             f"-u{process.uids().real}",
             f"-g{process.gids().real}",
+            f"-F{pidfd}",
             "--",
             process.exe().replace("/", "!"),
         ]
@@ -933,6 +970,7 @@ class T(unittest.TestCase):
     def _call_apport_directly(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
+
         with (
             unittest.mock.patch("sys.stdin", io.TextIOWrapper(stdin)),
             unittest.mock.patch.object(
@@ -940,15 +978,19 @@ class T(unittest.TestCase):
             ),
             unittest.mock.patch.object(apport_binary, "init_error_log"),
             unittest.mock.patch.object(apport_binary, "setup_signals"),
+            pidfd_open(process.pid) as pidfd,
         ):
-            exit_code = apport_binary.main(self._apport_args(process, sig, dump_mode))
+            exit_code = apport_binary.main(
+                self._apport_args(process, sig, dump_mode, pidfd)
+            )
         self.assertEqual(exit_code, 0)
 
     def _call_apport_via_subprocess(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
     ) -> None:
-        cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode)
-        subprocess.check_call(cmd, stdin=stdin)
+        with pidfd_open(process.pid) as pidfd:
+            cmd = [str(APPORT_PATH)] + self._apport_args(process, sig, dump_mode, pidfd)
+            subprocess.check_call(cmd, stdin=stdin, pass_fds=(pidfd,))
 
     @staticmethod
     def _forward_crash_to_container(
@@ -965,7 +1007,10 @@ class T(unittest.TestCase):
 
         with unittest.mock.patch("os.open") as os_open_mock:
             os_open_mock.side_effect = _mocked_os_open
-            apport_binary.forward_crash_to_container(args, coredump_fd, False)
+            with apport_binary.ProcPid(args.global_pid) as proc_pid:
+                apport_binary.forward_crash_to_container(
+                    args, proc_pid, coredump_fd, False
+                )
 
     def _call_apport_via_socket(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
@@ -979,31 +1024,34 @@ class T(unittest.TestCase):
         server.listen(1)
 
         try:
-            args = apport_binary.parse_arguments(
-                self._apport_args(process, sig, dump_mode)
-            )
-            with unittest.mock.patch("apport.fileutils.search_map") as search_map_mock:
-                search_map_mock.return_value = True
-                self._forward_crash_to_container(socket_path, args, stdin.fileno())
-                search_map_mock.assert_called()
+            with pidfd_open(process.pid) as pidfd:
+                args = apport_binary.parse_arguments(
+                    self._apport_args(process, sig, dump_mode, pidfd)
+                )
+                with unittest.mock.patch(
+                    "apport.fileutils.search_map"
+                ) as search_map_mock:
+                    search_map_mock.return_value = True
+                    self._forward_crash_to_container(socket_path, args, stdin.fileno())
+                    search_map_mock.assert_called()
 
-            # call apport like systemd does via socket activation
-            def child_setup() -> None:
-                os.environ["LISTEN_FDNAMES"] = "connection"
-                os.environ["LISTEN_FDS"] = "1"
-                os.environ["LISTEN_PID"] = str(os.getpid())
-                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
-                conn = server.accept()[0]
-                os.dup2(conn.fileno(), 3)
-                conn.close()
+                # call apport like systemd does via socket activation
+                def child_setup() -> None:
+                    os.environ["LISTEN_FDNAMES"] = "connection"
+                    os.environ["LISTEN_FDS"] = "1"
+                    os.environ["LISTEN_PID"] = str(os.getpid())
+                    # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+                    conn = server.accept()[0]
+                    os.dup2(conn.fileno(), 3)
+                    conn.close()
 
-            subprocess.run(
-                [str(APPORT_PATH)],
-                check=True,
-                preexec_fn=child_setup,
-                pass_fds=[3],
-                stdin=subprocess.DEVNULL,
-            )
+                subprocess.run(
+                    [str(APPORT_PATH)],
+                    check=True,
+                    preexec_fn=child_setup,
+                    pass_fds=[3],
+                    stdin=subprocess.DEVNULL,
+                )
         finally:
             server.close()
 
@@ -1125,6 +1173,7 @@ class T(unittest.TestCase):
         expect_report: bool = True,
         via_socket: bool = False,
         cwd: str | None = None,
+        expected_owner: int | None = None,
         **kwargs: typing.Any,
     ) -> str:
         # TODO: Split into smaller functions/methods
@@ -1246,7 +1295,7 @@ class T(unittest.TestCase):
 
         self._check_report(
             expect_report=expect_report,
-            expected_owner=0 if suid_dumpable == 2 else os.geteuid(),
+            expected_owner=0 if suid_dumpable == 2 else expected_owner,
         )
         return self.test_report
 

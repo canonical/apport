@@ -55,6 +55,18 @@ def import_module_from_file(path: pathlib.Path) -> Any:
     return module
 
 
+@contextlib.contextmanager
+def pidfd_open(pid: int) -> Iterator[int]:
+    """Return a file descriptor referring to the process pid.
+
+    This function provides os.pidfd_open() as context manager."""
+    pidfd = os.pidfd_open(pid)
+    try:
+        yield pidfd
+    finally:
+        os.close(pidfd)
+
+
 def pids_of(program: str) -> set[int]:
     """Find the process IDs of a running program.
 
