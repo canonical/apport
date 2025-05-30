@@ -49,13 +49,13 @@ class UHTTPConnection(http.client.HTTPConnection):
         http.client.HTTPConnection.__init__(self, "localhost")
         self.path = path
 
-    def connect(self):
+    def connect(self) -> None:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect(self.path)
         self.sock = sock
 
 
-def allowed_to_report():
+def allowed_to_report() -> bool:
     """Check whether crash reporting is enabled."""
     if not os.access("/usr/bin/whoopsie", os.X_OK):
         return True
@@ -67,7 +67,7 @@ def allowed_to_report():
         return False
 
 
-def get_dbus_socket(dbus_addr):
+def get_dbus_socket(dbus_addr: str) -> str | None:
     """Extract the socket from a DBus address."""
     if not dbus_addr:
         return None
@@ -93,7 +93,7 @@ def get_dbus_socket(dbus_addr):
     return parts[1]
 
 
-def find_package_desktopfile(package):
+def find_package_desktopfile(package: str | None) -> str | None:
     """Return a package's .desktop file.
 
     If given package is installed and has a single .desktop file, return the
@@ -126,7 +126,7 @@ def find_package_desktopfile(package):
     return desktopfile
 
 
-def likely_packaged(file):
+def likely_packaged(file: str) -> bool:
     """Check whether the given file is likely to belong to a package.
 
     This is semi-decidable: A return value of False is definitive, a True value
