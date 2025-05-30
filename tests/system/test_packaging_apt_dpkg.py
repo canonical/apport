@@ -313,12 +313,12 @@ def test_install_packages_system(
         rootdir,
         None,
         release,
-        [("coreutils", impl.get_version("coreutils")), ("tzdata", "1.1")],
+        [("gzip", impl.get_version("gzip")), ("tzdata", "1.1")],
         False,
         cachedir,
     )
 
-    assert os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
+    assert os.path.exists(os.path.join(rootdir, "/usr/bin/gzip"))
     assert os.path.exists(os.path.join(rootdir, "usr/share/zoneinfo/zone.tab"))
 
     # complains about obsolete packages
@@ -331,22 +331,20 @@ def test_install_packages_system(
         os.path.join(cachedir, "system", "apt", "var", "cache", "apt", "archives")
     )
     cache_names = [p.split("_")[0] for p in cache]
-    assert "coreutils" in cache_names
-    assert "coreutils-dbgsym" in cache_names
+    assert "gzip" in cache_names
+    assert "gzip-dbgsym" in cache_names
     assert "tzdata" in cache_names
 
     # works with relative paths and existing cache
-    os.unlink(os.path.join(rootdir, "usr/bin/stat"))
+    os.unlink(os.path.join(rootdir, "usr/bin/gzip"))
     os.unlink(os.path.join(rootdir, "packages.txt"))
     orig_cwd = os.getcwd()
     try:
         os.chdir(workdir)
-        impl.install_packages(
-            "root", None, release, [("coreutils", None)], False, "cache"
-        )
+        impl.install_packages("root", None, release, [("gzip", None)], False, "cache")
     finally:
         os.chdir(orig_cwd)
-        assert os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
+        assert os.path.exists(os.path.join(rootdir, "usr/bin/gzip"))
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
