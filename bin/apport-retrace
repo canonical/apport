@@ -32,8 +32,8 @@ from gettext import gettext as _
 import apport
 import apport.logging
 import apport.sandboxutils
-from apport import Report
 from apport.crashdb import CrashDatabase, get_crashdb
+from apport.report import Report
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -336,7 +336,7 @@ def load_report(
     # load the report
     if os.path.exists(options.report):
         try:
-            report = apport.Report()
+            report = Report()
             with open(options.report, "rb") as f:
                 report.load(f, binary="compressed")
             apport.logging.memdbg("loaded report from file")
@@ -492,7 +492,7 @@ def main(argv):
                 gdb_sandbox = sandbox
         else:
             gdb_packages = ["gdb", "gdb-multiarch"]
-            fake_report = apport.Report()
+            fake_report = Report()
             # if the report has no Architecture the host one will be used
             fake_report["DistroRelease"] = report["DistroRelease"]
             # use a empty ProcMaps so needed_runtimes packages won't want

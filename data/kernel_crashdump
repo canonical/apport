@@ -15,16 +15,16 @@ import glob
 import os
 import re
 
-import apport
 import apport.fileutils
 import apport.logging
+import apport.report
 
 
 # TODO: Split into smaller functions/methods
 # pylint: disable-next=too-complex
 def main() -> None:
     """Collect information about a kernel oops."""
-    pr = apport.Report("KernelCrash")
+    pr = apport.report.Report("KernelCrash")
     package = apport.packaging.get_kernel_package()
     pr.add_package(package)
 

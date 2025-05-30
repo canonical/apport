@@ -187,7 +187,7 @@ func(42)
         # load report for this
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")
-        pr1 = apport.Report()
+        pr1 = apport.report.Report()
         with open(reports[0], "rb") as f:
             pr1.load(f)
         for report in apport.fileutils.get_all_reports():
@@ -211,7 +211,7 @@ func(42)
         # get report for symlinked crash
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")
-        pr2 = apport.Report()
+        pr2 = apport.report.Report()
         with open(reports[0], "rb") as f:
             pr2.load(f)
 
@@ -527,11 +527,11 @@ func(42)
         exe = pr["ExecutablePath"]
         self.assertEqual(pr.crash_signature(), f"{exe}:FileNotFoundError:{exe}@11:g")
 
-    def _load_report(self) -> apport.Report:
+    def _load_report(self) -> apport.report.Report:
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(reports[0], "rb") as f:
             pr.load(f)
         return pr

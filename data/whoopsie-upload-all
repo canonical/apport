@@ -27,8 +27,8 @@ import sys
 import time
 import zlib
 
-import apport
 import apport.fileutils
+import apport.report
 from problem_report import MalformedProblemReport
 
 
@@ -70,7 +70,7 @@ def process_report(report):
 
     report_stat = None
 
-    r = apport.Report()
+    r = apport.report.Report()
     # make sure we're actually on the hook to write this updated report
     # before we start doing expensive collection operations
     try:

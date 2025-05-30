@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Self
 
 import apport.crashdb
+import apport.report
 
 
 class Github:
@@ -211,7 +212,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return IssueHandle(url=response["html_url"])
 
-    def get_comment_url(self, report: apport.Report, handle: IssueHandle) -> str:
+    def get_comment_url(self, report: apport.report.Report, handle: IssueHandle) -> str:
         """Return a URL that should be opened after report has been uploaded
         and upload() returned handle.
         """

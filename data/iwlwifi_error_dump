@@ -18,6 +18,7 @@ import sys
 import apport
 import apport.fileutils
 import apport.logging
+import apport.report
 from apport.hookutils import command_output
 
 
@@ -31,7 +32,7 @@ def main() -> None:
     if not os.path.exists(sysfs_path):
         sys.exit(1)
 
-    pr = apport.Report("KernelCrash")
+    pr = apport.report.Report("KernelCrash")
     pr.add_package(apport.packaging.get_kernel_package())
     pr["Title"] = "iwlwifi firmware error"
     pr.add_os_info()

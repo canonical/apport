@@ -19,6 +19,7 @@ import sys
 from gettext import gettext as _
 
 import apport.fileutils
+import apport.report
 
 checksum = None
 if len(sys.argv) > 1:
@@ -26,7 +27,7 @@ if len(sys.argv) > 1:
 
 oops = sys.stdin.read()
 
-pr = apport.Report("KernelOops")
+pr = apport.report.Report("KernelOops")
 pr["Failure"] = "oops"
 pr["Tags"] = "kernel-oops"
 pr["Annotation"] = _(

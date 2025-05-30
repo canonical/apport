@@ -13,9 +13,9 @@
 
 import sys
 
-import apport
 import apport.fileutils
 import apport.logging
+import apport.report
 
 # parse command line arguments
 if len(sys.argv) != 3:
@@ -29,7 +29,7 @@ if len(sys.argv) != 3:
 (exename, sourcefile) = sys.argv[1:3]
 
 # create report
-pr = apport.Report()
+pr = apport.report.Report()
 pr["ExecutablePath"] = exename
 if sourcefile == "-":
     pr["PreprocessedSource"] = (sys.stdin, False)
