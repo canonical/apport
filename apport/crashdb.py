@@ -35,7 +35,7 @@ class CrashDatabase:
 
     # TODO: Check if some methods can be made private
     # pylint: disable=too-many-public-methods
-    def __init__(self, auth_file, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize crash database connection.
 
         You need to specify an implementation specific file with the
@@ -47,8 +47,11 @@ class CrashDatabase:
         """
         self.auth_file = auth_file
         self.options = options
-        self.duplicate_db = None
-        self.format_version = None
+        if typing.TYPE_CHECKING:  # pragma: no cover
+            # pylint: disable-next=import-outside-toplevel,unused-import
+            import sqlite3
+        self.duplicate_db: "sqlite3.Connection | None" = None
+        self.format_version: int | None = None
 
     def get_bugpattern_baseurl(self) -> str | None:
         """Return the base URL for bug patterns.
@@ -445,6 +448,7 @@ class CrashDatabase:
         # SQLite
         if cur_format < 3:
             raise SystemError("Cannot upgrade database from format earlier than 3")
+        assert self.duplicate_db is not None
 
         cur = self.duplicate_db.cursor()
 
@@ -468,6 +472,7 @@ class CrashDatabase:
         never contain id, to avoid marking a bug as a duplicate of itself if a
         bug is reprocessed more than once.
         """
+        assert self.duplicate_db is not None
         cur = self.duplicate_db.cursor()
         cur.execute(
             "SELECT crash_id, fixed_version FROM crashes "
@@ -499,6 +504,7 @@ class CrashDatabase:
         if not sig:
             return None
 
+        assert self.duplicate_db is not None
         cur = self.duplicate_db.cursor()
 
         cur.execute(
@@ -596,6 +602,7 @@ class CrashDatabase:
                     f" already has that signature for ID {existing}"
                 )
         else:
+            assert self.duplicate_db is not None
             cur = self.duplicate_db.cursor()
             cur.execute(
                 "INSERT INTO address_signatures VALUES (?, ?)", (_u(sig), crash_id)

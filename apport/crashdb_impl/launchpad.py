@@ -27,7 +27,7 @@ import tempfile
 import time
 import urllib.parse
 import urllib.request
-from typing import IO
+from typing import IO, Any
 
 try:
     from httplib2 import FailedToDecompressContent
@@ -67,7 +67,7 @@ def id_set(tasks):
 class CrashDatabase(apport.crashdb.CrashDatabase):
     """Launchpad implementation of crash database interface."""
 
-    def __init__(self, auth, options):
+    def __init__(self, auth_file: str | None, options: dict[str, Any]) -> None:
         """Initialize Launchpad crash database.
 
         You need to specify a launchpadlib-style credentials file to
@@ -103,15 +103,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         if os.getenv("APPORT_LAUNCHPAD_INSTANCE"):
             options["launchpad_instance"] = os.getenv("APPORT_LAUNCHPAD_INSTANCE")
-        if not auth:
+        if not auth_file:
             lp_instance = options.get("launchpad_instance")
             if lp_instance:
-                auth = ".".join(
+                auth_file = ".".join(
                     (DEFAULT_CREDENTIALS_PATH, lp_instance.split("://", 1)[-1])
                 )
             else:
-                auth = DEFAULT_CREDENTIALS_PATH
-        apport.crashdb.CrashDatabase.__init__(self, auth, options)
+                auth_file = DEFAULT_CREDENTIALS_PATH
+        apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
 
         self.distro = options.get("distro")
         if self.distro:
@@ -128,7 +128,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             self.arch_tag = f"need-{packaging.get_system_architecture()}-retrace"
         self.options = options
-        self.auth = auth
+        self.auth = auth_file
         assert self.auth
 
         self.__launchpad = None
@@ -671,16 +671,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             )
 
             if not fixed_tasks:
-                fixed_distro = list(
-                    filter(
-                        lambda task: task.status == "Fix Released"
-                        and task.bug_target_name.lower() == self.distro.lower(),
-                        tasks,
-                    )
-                )
-                if fixed_distro:
-                    # fixed in distro inself (without source package)
-                    return ""
+                for task in tasks:
+                    if (
+                        task.status == "Fix Released"
+                        and task.bug_target_name.lower() == self.distro.lower()
+                    ):
+                        # fixed in distro itself (without source package)
+                        return ""
 
             if len(fixed_tasks) > 1:
                 apport.logging.warning(
