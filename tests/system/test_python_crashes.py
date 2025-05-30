@@ -230,7 +230,7 @@ func(42)
         """Ensure that there is exactly one crash report and load it."""
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, "crashed Python program produced a report")
-        pr = apport.Report()
+        pr = apport.report.Report()
         with open(reports[0], "rb") as f:
             pr.load(f)
         return pr

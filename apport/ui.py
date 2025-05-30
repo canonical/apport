@@ -47,6 +47,7 @@ from typing import Any
 import apport.crashdb
 import apport.fileutils
 import apport.logging
+import apport.report
 import apport.REThread
 from apport.hook_ui import HookUI, NoninteractiveHookUI
 from apport.packaging_impl import impl as packaging
@@ -558,7 +559,7 @@ class UserInterface:
         noninteractive processes will collect the remaining information and
         mark the report for uploading.
         """
-        self.report = apport.Report("Hang")
+        self.report = apport.report.Report("Hang")
 
         if not self.args.pid:
             self.ui_error_message(
@@ -643,7 +644,7 @@ class UserInterface:
             )
             return False
 
-        self.report = apport.Report("Bug")
+        self.report = apport.report.Report("Bug")
 
         # if PID is given, add info
         if self.args.pid:
@@ -777,7 +778,7 @@ class UserInterface:
                 return False
 
         # list of affected source packages
-        self.report = apport.Report("Bug")
+        self.report = apport.report.Report("Bug")
         if self.args.package:
             pkgs = [self.args.package.strip()]
         else:
@@ -1820,7 +1821,7 @@ class UserInterface:
         returned.
         """
         try:
-            self.report = apport.Report()
+            self.report = apport.report.Report()
             with open(path, "rb") as f:
                 self.report.load(f, binary="compressed")
             if "ProblemType" not in self.report:

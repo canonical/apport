@@ -19,6 +19,7 @@ import sys
 import apport
 import apport.fileutils
 import apport.logging
+import apport.report
 
 
 def mkattrname(path):
@@ -68,7 +69,7 @@ def main():
     options = parse_args()
 
     # create report
-    report = apport.Report("Package")
+    report = apport.report.Report("Package")
     report.add_package(options.package)
     # get_source can fail on distribution upgrades where the package in question has
     # been removed from the newer release. See https://launchpad.net/bugs/2078695
