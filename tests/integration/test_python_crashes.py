@@ -405,7 +405,7 @@ func(42)
                 r = apport.report.Report()
                 r["ExecutablePath"] = script
                 r.mark_ignore()
-                r = None
+                del r
 
                 process = subprocess.run(
                     [script, "testarg1", "testarg2"],
