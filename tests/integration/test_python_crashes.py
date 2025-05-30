@@ -190,8 +190,8 @@ func(42)
         pr1 = apport.Report()
         with open(reports[0], "rb") as f:
             pr1.load(f)
-        for f in apport.fileutils.get_all_reports():
-            os.unlink(f)
+        for report in apport.fileutils.get_all_reports():
+            os.unlink(report)
 
         script_link = os.path.join(os.path.dirname(script), "script-link")
         os.symlink(os.path.basename(script), script_link)
