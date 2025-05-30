@@ -41,13 +41,13 @@ and pass two arguments:
    python -c 'import apport; help(apport.Report)'
    ```
 
- - An instance of `apport.ui.HookUI` which can be used to interactively get more
-   information from the user, such as asking for doing a particular action,
+ - An instance of `apport.hook_ui.HookUI` which can be used to interactively get
+   more information from the user, such as asking for doing a particular action,
    yes/no question, multiple choices, or a file selector. Please see the Python
    help for available functions:
 
    ```sh
-   python -c 'import apport.ui; help(apport.ui.HookUI)'
+   python -c 'import apport.hook_ui; help(apport.hook_ui.HookUI)'
    ```
 
 Hook behaviour
