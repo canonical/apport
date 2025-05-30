@@ -369,7 +369,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._sandbox_apt_cache = None
 
-    def _cache(self):
+    def _cache(self) -> apt.Cache:
         """Return apt.Cache() (initialized lazily)."""
         if not self._apt_cache:
             self._clear_apt_cache()
@@ -381,14 +381,14 @@ class _AptDpkgPackageInfo(PackageInfo):
     # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def _sandbox_cache(
         self,
-        aptroot,
-        apt_dir,
-        fetch_progress,
-        distro_name,
-        release_codename,
-        origins,
-        arch,
-    ):
+        aptroot: str,
+        apt_dir: str,
+        fetch_progress: apt.progress.base.AcquireProgress,
+        distro_name: str,
+        release_codename: str,
+        origins: Iterable[str] | None,
+        arch: str,
+    ) -> apt.Cache:
         """Build apt sandbox and return apt.Cache(rootdir=) (initialized
         lazily).
 
@@ -412,7 +412,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             self._sandbox_apt_cache.clear()
         return self._sandbox_apt_cache
 
-    def _apt_pkg(self, package):
+    def _apt_pkg(self, package: str) -> apt.Package:
         """Return apt.Cache()[package] (initialized lazily).
 
         Throw a ValueError if the package does not exist.
@@ -742,7 +742,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         return modified
 
     @staticmethod
-    def __fgrep_files(pattern, file_list):
+    def __fgrep_files(pattern: str, file_list: list[str]) -> str | None:
         """Call fgrep for a pattern on given file list and return the first
         matching file, or None if no file matches."""
         match = None
