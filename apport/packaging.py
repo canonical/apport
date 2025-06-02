@@ -20,7 +20,7 @@ class PackageInfo:
     # default global configuration file
     configuration = "/etc/default/apport"
 
-    def get_version(self, package):
+    def get_version(self, package: str) -> str:
         """Return the installed version of a package.
 
         Throw ValueError if package does not exist.
@@ -87,7 +87,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_files(self, package):
+    def get_files(self, package: str) -> list[str]:
         """Return list of files shipped by a package.
 
         Throw ValueError if package does not exist.
@@ -102,7 +102,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_modified_conffiles(self, package):
+    def get_modified_conffiles(self, package: str) -> dict[str, bytes | str]:
         """Return modified configuration files of a package.
 
         Return a file name -> file contents map of all configuration files of
@@ -180,7 +180,13 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def get_source_tree(self, srcpackage, output_dir, version=None, sandbox=None):
+    def get_source_tree(
+        self,
+        srcpackage: str,
+        output_dir: str,
+        version: str | None = None,
+        sandbox: str | None = None,
+    ) -> str | None:
         """Download source package and unpack it into output_dir.
 
         This also has to care about applying patches etc., so that output_dir
@@ -299,7 +305,7 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass"
         )
 
-    def package_name_glob(self, nameglob):
+    def package_name_glob(self, nameglob: str) -> list[str]:
         """Return known package names which match given glob."""
         raise NotImplementedError(
             "this method must be implemented by a concrete subclass"
