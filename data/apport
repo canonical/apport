@@ -580,10 +580,11 @@ def forward_crash_to_container(
 
     # Validate that the crashed binary is owned
     # by the user namespace of the process
-    task_uid = proc_pid.stat("exe").st_uid
+    exe_path = f"root{proc_pid.readlink('exe')}"
+    exe_stat = proc_pid.stat(exe_path)
     try:
         with proc_pid.open("uid_map") as fd:
-            if not apport.fileutils.search_map(fd, task_uid):
+            if not apport.fileutils.search_map(fd, exe_stat.st_uid):
                 logger.error(
                     "host pid %s crashed in a container"
                     " with no access to the binary",
@@ -593,10 +594,9 @@ def forward_crash_to_container(
     except FileNotFoundError:
         pass
 
-    task_gid = proc_pid.stat("exe").st_gid
     try:
         with proc_pid.open("gid_map") as fd:
-            if not apport.fileutils.search_map(fd, task_gid):
+            if not apport.fileutils.search_map(fd, exe_stat.st_gid):
                 logger.error(
                     "host pid %s crashed in a container"
                     " with no access to the binary",
@@ -914,11 +914,11 @@ def consistency_checks(
 
     # check if the executable was modified after the process started (e. g.
     # package got upgraded in between).
-    exe_mtime = os.stat("exe", dir_fd=proc_pid.fd).st_mtime
+    exe_path = f"root{proc_pid.readlink('exe')}"
     process_mtime = os.lstat("cmdline", dir_fd=proc_pid.fd).st_mtime
     if (
-        not os.path.exists(os.readlink("exe", dir_fd=proc_pid.fd))
-        or exe_mtime > process_mtime
+        not proc_pid.exists(exe_path)
+        or proc_pid.stat(exe_path).st_mtime > process_mtime
     ):
         logger.error("executable was modified after program start, ignoring")
         return False
