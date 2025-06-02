@@ -186,6 +186,10 @@ class TestApport(unittest.TestCase):
             status.write_text("Name:\tname\nUid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\n")
             exe = pathlib.Path(tmpdir) / "exe"
             os.symlink(sys.executable, exe)
+            root = pathlib.Path(tmpdir) / "root"
+            container_exe = root / pathlib.Path(sys.executable).relative_to("/")
+            container_exe.parent.mkdir(parents=True)
+            container_exe.touch(mode=0o755)
             cmdline = pathlib.Path(tmpdir) / "cmdline"
             cmdline.write_text("name\0")
             with apport_binary.ProcPid(fake_pid, tmpdir) as proc_pid:
