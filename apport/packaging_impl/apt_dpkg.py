@@ -1474,6 +1474,7 @@ class _AptDpkgPackageInfo(PackageInfo):
     # Internal helper methods
     #
 
+    # pylint: disable-next=too-many-locals
     def _collect_dependencies(
         self,
         packages: list[tuple[str, str | None]],
@@ -1481,8 +1482,9 @@ class _AptDpkgPackageInfo(PackageInfo):
         apt_cache: apt.Cache,
         obsolete: list[str],
     ) -> list[tuple[str, str]]:
+        packages_to_check = [pkg[0] for pkg in packages]
         deps = []
-        for pkg, _ in packages:
+        for pkg in packages_to_check:
             try:
                 cache_pkg = apt_cache[pkg]
             except KeyError:
@@ -1504,7 +1506,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                 dep_pkg_vers = dep_candidate.version
                 # if the dependency is in the list of packages we don't
                 # need to look up its dependencies again
-                if name in [pkg[0] for pkg in packages]:
+                if name in packages_to_check:
                     continue
                 # if the package is already extracted in the sandbox
                 # because the report needs that package we don't want to
@@ -1518,8 +1520,8 @@ class _AptDpkgPackageInfo(PackageInfo):
                         deps.append((name, dep_pkg_vers))
                 else:
                     deps.append((name, dep_pkg_vers))
-                if name not in [pkg[0] for pkg in packages]:
-                    packages.append((name, None))
+                if name not in packages_to_check:
+                    packages_to_check.append(name)
         return deps
 
     @staticmethod
