@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-20 14:20+0100\n"
-"PO-Revision-Date: 2018-05-09 23:32+0000\n"
+"PO-Revision-Date: 2025-04-10 19:37+0000\n"
 "Last-Translator: karm <melo@carmu.com>\n"
 "Language-Team: Interlingua <ia@li.org>\n"
 "Language: ia\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2025-06-04 11:20+0000\n"
+"X-Generator: Launchpad (build c425d5702ce6a53fe8d94ca38038ac108957fda2)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -51,6 +51,9 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Isto non sembla esser un pacchetto %s official. Retenta post le "
+"actualisation del indices de pacchettos disponibile, si illo non functiona "
+"alora remove le pacchettos de tertie partes associate e retenta."
 
 #: ../apport/ui.py:303
 #, python-format
@@ -108,11 +111,11 @@ msgstr ""
 
 #: ../apport/ui.py:566
 msgid "No PID specified"
-msgstr ""
+msgstr "Necun PID specificate"
 
 #: ../apport/ui.py:567
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "Tu debe specificar un PID. Vide --help pro altere informationes."
 
 #: ../apport/ui.py:576 ../apport/ui.py:681
 msgid "Invalid PID"
@@ -120,15 +123,15 @@ msgstr "PID invalide"
 
 #: ../apport/ui.py:576
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "Le ID de processo specificate non existe."
 
 #: ../apport/ui.py:581
 msgid "Not your PID"
-msgstr ""
+msgstr "Non tu PID"
 
 #: ../apport/ui.py:582
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "Le ID de processo specificate non pertine a te."
 
 #: ../apport/ui.py:639
 msgid "No package specified"
@@ -236,6 +239,15 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Le option del fenestra non pote esser usate sur Wayland.\n"
+"\n"
+"Trova le ID de processo del fenestra e pois exeque 'ubuntu-bug <process "
+"ID>'.\n"
+"\n"
+"Le ID de processo pote esser trovate exequente le application de "
+"Surveliantia de systema. In le scheda Processos, rola usque tu trova le "
+"application correcte. Le ID de processo es le numero in le lista in le "
+"columna ID."
 
 #: ../apport/ui.py:954
 msgid ""
@@ -252,7 +264,7 @@ msgstr "xprop ha mancate a determinar le ID de processo del fenestra"
 #: ../apport/ui.py:992
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <numero de reporto>"
 
 #: ../apport/ui.py:993
 msgid "Specify package name."
@@ -267,6 +279,8 @@ msgstr "Adder un tag extra al reporto. Pote esser specificate multiple vices."
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [optiones] [symptoma|pid|pacchetto|route de programma|"
+"file .apport/.crash]"
 
 #: ../apport/ui.py:1046
 msgid ""
@@ -367,10 +381,12 @@ msgstr "Ajornar %s con le tracia del pila plenmente symbolic"
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Le reservation del stato de reporto de crash falleva. Impossibile predefinir "
+"modo de reportar automatic o jammais."
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Impossibile rememorar parametros del stato de invio reportos"
 
 #: ../apport/ui.py:1438 ../apport/ui.py:1451
 msgid ""
@@ -407,21 +423,24 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Tu ha duo versiones installate de iste application, contra qual vole tu "
+"reportar un error?"
 
 #: ../apport/ui.py:1565
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1566
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "%s pacchetto deb"
 
 #: ../apport/ui.py:1604
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s es fornite per un snap publicate per %s. Contacta illes via %s pro adjuta."
 
 #: ../apport/ui.py:1609
 #, python-format
@@ -429,6 +448,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s es fornite per un snap publicate per %s. Nulle adresse de contacto ha "
+"essite fornite; visita le forum a https://forum.snapcraft.io/ pro le adjuta."
 
 #: ../apport/ui.py:1695
 msgid "Could not determine the package or source package name."
@@ -594,11 +615,11 @@ msgstr ""
 
 #: ../bin/apport-cli.py:312
 msgid "&Yes"
-msgstr ""
+msgstr "Si &Y"
 
 #: ../bin/apport-cli.py:313
 msgid "&No"
-msgstr ""
+msgstr "&No"
 
 #: ../bin/apport-cli.py:349
 msgid "&Done"
@@ -795,15 +816,15 @@ msgstr "OK a inviar istes como attaccamentos? [s/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <report> <directorio de destination>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "File de reporto a dispacchettar"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "directorio  pro dispacchettar le reporto"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -852,6 +873,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"le executabile que es exequite sub le application memcheck de valgrind pro "
+"le detection del perdita de memoria"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
@@ -989,7 +1012,7 @@ msgstr "<big><b>Displacente, ha occurrite un error interne.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Rememorar isto in futuro"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -997,7 +1020,7 @@ msgstr "Ignorar le futur problema de iste version del programma"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Relancear iste application"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -1005,7 +1028,7 @@ msgstr "_Examinar localmente"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "non inviar"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
