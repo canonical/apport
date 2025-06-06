@@ -34,6 +34,16 @@ class TestPackagingAptDpkg(unittest.TestCase):
 
     maxDiff = None
 
+    def setUp(self) -> None:
+        # Clear APT cache to allow mocking it
+        # pylint: disable-next=protected-access
+        impl._apt_cache = None
+
+    def tearDown(self) -> None:
+        # Clear APT cache to clear cached mocks
+        # pylint: disable-next=protected-access
+        impl._apt_cache = None
+
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
         """is_distro_package() for package that has no candidate."""
