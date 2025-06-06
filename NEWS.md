@@ -1,6 +1,66 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.33.0 (2025-06-06)
+-------------------
+
+### Added
+
+* Check Python code with ruff
+* Include ELF package metadata from systemd-coredump
+* test: support coreutils rename to gnu-coreutils
+  ([LP: #2111595](https://launchpad.net/bugs/2111595))
+
+### Changed
+
+* problem_report:
+  - write `CompressedValue` in chunks as well
+  - reduce chunk size from 1 MB to 128 kB
+* report: drop support for libnih
+* Deprecate logging functions in base apport module
+* Check cyclomatic complexity
+* Fix invalid non-public names (i.e. use upper case for global constants)
+* setup.py: remove the shebang mangling code
+* packaging: drop lsb_release support from `get_os_version()`
+* apt_dpkg: check return type of `pickle.load()`
+* ui: split `HookUI` class into separate module
+* fileutils: let `find_core_files_by_uid` return a list of tuples
+* Rename `apport/packaging.py` to `apport/package_info.py`
+* Stop importing from base apport module directly
+* Lazy load elements in base apport module
+* Add more type hints
+* Split some big functions into smaller ones
+* test: drop running pyflakes
+
+### Fixed
+
+* SECURITY UPDATE: Report file insecure permissions
+  ([LP: #2106338](https://launchpad.net/bugs/2106338))
+  - Do not change report group to report owner's primary group.
+  - CVE-2025-5467
+* SECURITY UPDATE: Race condition when forwarding core files to containers
+  ([LP: #2107472](https://launchpad.net/bugs/2107472))
+  - apport: move `consistency_checks` call further up
+  - apport: do not override `options.pid`
+  - apport: open `/proc/<pid>` as early as possible
+  - fileutils: respect `proc_pid_fd` in `get_core_path`
+  - apport: use opened `/proc/<pid>` everywhere
+  - apport: do consistency check before forwarding crashes
+  - apport: require `--dump-mode` to be specified
+  - apport: determine report owner by `dump_mode`
+  - apport: do not forward crash for `dump_mode == 2`
+  - apport: support pidfd (%F) parameter from kernel
+  - CVE-2025-5054
+* setuptools/java: use snakecase for option name
+  ([LP: #2111595](https://launchpad.net/bugs/2111595))
+* apport: catch `ProcessLookupError` in `forward_crash_to_container`
+  ([LP: #2080499](https://launchpad.net/bugs/2080499))
+* apport: look for the exe within the proc root mount
+  ([LP: #2112272](https://launchpad.net/bugs/2112272))
+* ui: fix return value for `--hanging` case in `run_argv`
+* test: do not check for exact encoded gzip data
+  ([LP: #2076269](https://launchpad.net/bugs/2076269))
+
 2.32.0 (2025-02-26)
 -------------------
 
