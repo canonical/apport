@@ -111,19 +111,6 @@ def _read_list_files_in_directory(directory: str) -> Iterator[str]:
         pass
 
 
-def _read_proc_link(
-    path: str, pid: int | None = None, dir_fd: int | None = None
-) -> str:
-    """Use readlink() to resolve link.
-
-    Return a string representing the path to which the symbolic link points.
-    """
-    if dir_fd is not None:
-        return os.readlink(path, dir_fd=dir_fd)
-
-    return os.readlink(f"/proc/{pid}/{path}")
-
-
 def _read_proc_file(
     path: str, pid: int | None = None, dir_fd: int | None = None
 ) -> str:
@@ -778,7 +765,7 @@ class Report(problem_report.ProblemReport):
                 raise
 
         try:
-            self["ProcCwd"] = _read_proc_link("cwd", pid, proc_pid_fd)
+            self["ProcCwd"] = os.readlink("cwd", dir_fd=proc_pid_fd)
         except OSError:
             pass
         self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
@@ -787,7 +774,7 @@ class Report(problem_report.ProblemReport):
         self["ProcMaps"] = _read_maps(proc_pid_fd)
         if "ExecutablePath" not in self:
             try:
-                self["ExecutablePath"] = _read_proc_link("exe", pid, proc_pid_fd)
+                self["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
             except PermissionError as error:
                 raise ValueError("not accessible") from error
             except OSError as error:
