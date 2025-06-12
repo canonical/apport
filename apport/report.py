@@ -720,8 +720,6 @@ class Report(problem_report.ProblemReport):
         proc_pid_fd: int | None = None,
         extraenv: Iterable[str] | None = None,
     ) -> None:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-complex
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -759,11 +757,14 @@ class Report(problem_report.ProblemReport):
                     raise ValueError("invalid process") from error
                 raise
 
+        self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
+        self._add_proc_info(proc_pid_fd)
+
+    def _add_proc_info(self, proc_pid_fd: int) -> None:
         try:
             self["ProcCwd"] = os.readlink("cwd", dir_fd=proc_pid_fd)
         except OSError:
             pass
-        self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
         self["ProcStatus"] = _read_proc_file("status", proc_pid_fd)
         self["ProcCmdline"] = _read_proc_file("cmdline", proc_pid_fd).rstrip("\0")
         self["ProcMaps"] = _read_maps(proc_pid_fd)
