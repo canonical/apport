@@ -827,7 +827,13 @@ class Report(problem_report.ProblemReport):
             pass
 
     def _add_executable_timestamp(self) -> None:
-        self["ExecutableTimestamp"] = str(int(os.stat(self["ExecutablePath"]).st_mtime))
+        exe_path = self["ExecutablePath"]
+        try:
+            exe_stat = os.stat(exe_path)
+        except FileNotFoundError:
+            self["ExecutableTimestamp"] = f"Error: Executable '{exe_path}' not found"
+            return
+        self["ExecutableTimestamp"] = str(int(exe_stat.st_mtime))
 
     def add_proc_environ(
         self,
