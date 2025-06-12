@@ -111,31 +111,13 @@ def _read_list_files_in_directory(directory: str) -> Iterator[str]:
         pass
 
 
-def _read_proc_link(
-    path: str, pid: int | None = None, dir_fd: int | None = None
-) -> str:
-    """Use readlink() to resolve link.
-
-    Return a string representing the path to which the symbolic link points.
-    """
-    if dir_fd is not None:
-        return os.readlink(path, dir_fd=dir_fd)
-
-    return os.readlink(f"/proc/{pid}/{path}")
-
-
-def _read_proc_file(
-    path: str, pid: int | None = None, dir_fd: int | None = None
-) -> str:
+def _read_proc_file(path: str, dir_fd: int) -> str:
     """Read file content.
 
     Return its content, or return a textual error if it failed.
     """
     try:
-        if dir_fd is None:
-            proc_file: int | str = f"/proc/{pid}/{path}"
-        else:
-            proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
+        proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
 
         with io.open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
@@ -778,16 +760,16 @@ class Report(problem_report.ProblemReport):
                 raise
 
         try:
-            self["ProcCwd"] = _read_proc_link("cwd", pid, proc_pid_fd)
+            self["ProcCwd"] = os.readlink("cwd", dir_fd=proc_pid_fd)
         except OSError:
             pass
         self.add_proc_environ(pid=pid, proc_pid_fd=proc_pid_fd, extraenv=extraenv)
-        self["ProcStatus"] = _read_proc_file("status", pid, proc_pid_fd)
-        self["ProcCmdline"] = _read_proc_file("cmdline", pid, proc_pid_fd).rstrip("\0")
+        self["ProcStatus"] = _read_proc_file("status", proc_pid_fd)
+        self["ProcCmdline"] = _read_proc_file("cmdline", proc_pid_fd).rstrip("\0")
         self["ProcMaps"] = _read_maps(proc_pid_fd)
         if "ExecutablePath" not in self:
             try:
-                self["ExecutablePath"] = _read_proc_link("exe", pid, proc_pid_fd)
+                self["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
             except PermissionError as error:
                 raise ValueError("not accessible") from error
             except OSError as error:
@@ -820,7 +802,7 @@ class Report(problem_report.ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                val = _read_proc_file("attr/current", pid, proc_pid_fd)
+                val = _read_proc_file("attr/current", proc_pid_fd)
                 if val != "unconfined":
                     self["ProcAttrCurrent"] = val
         except OSError:
