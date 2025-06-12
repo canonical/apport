@@ -1363,6 +1363,20 @@ No symbol table info available.
 """
         self.assertIsNone(pr.crash_signature_addresses())
 
+    def test_crash_signature_addresses_error_in_proc_maps(self) -> None:
+        """crash_signature_addresses() with error in ProcMaps"""
+        report = apport.report.Report()
+        report["ExecutablePath"] = "/usr/bin/sleep"
+        report["Signal"] = "42"
+        with tempfile.TemporaryDirectory() as proc_pid_dir:
+            pid_fd = os.open(proc_pid_dir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+            report.add_proc_info(proc_pid_fd=pid_fd)
+            os.close(pid_fd)
+            self.assertIn("[Errno ", report["ProcMaps"])
+        report["Stacktrace"] = "mocked stack trace"
+
+        self.assertIsNone(report.crash_signature_addresses())
+
     @staticmethod
     @unittest.mock.patch("os.geteuid")
     def test_missing_uid(geteuid_mock: MagicMock) -> None:
