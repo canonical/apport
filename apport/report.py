@@ -721,7 +721,7 @@ class Report(problem_report.ProblemReport):
         extraenv: Iterable[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-complex,too-many-branches
+        # pylint: disable=too-complex
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -767,19 +767,7 @@ class Report(problem_report.ProblemReport):
         self["ProcStatus"] = _read_proc_file("status", proc_pid_fd)
         self["ProcCmdline"] = _read_proc_file("cmdline", proc_pid_fd).rstrip("\0")
         self["ProcMaps"] = _read_maps(proc_pid_fd)
-        if "ExecutablePath" not in self:
-            try:
-                self["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
-            except PermissionError as error:
-                raise ValueError("not accessible") from error
-            except OSError as error:
-                if error.errno == errno.ENOENT:
-                    raise ValueError("invalid process") from error
-                raise
-        for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
-            if self["ExecutablePath"].startswith(f"/{p}/"):
-                self["ExecutablePath"] = self["ExecutablePath"][len(f"/{p}") :]
-                break
+        self._add_executable_path(proc_pid_fd)
         if not os.path.exists(self["ExecutablePath"]):
             raise ValueError(f"{self['ExecutablePath']} does not exist")
 
@@ -807,6 +795,21 @@ class Report(problem_report.ProblemReport):
                     self["ProcAttrCurrent"] = val
         except OSError:
             pass
+
+    def _add_executable_path(self, proc_pid_fd: int) -> None:
+        if "ExecutablePath" not in self:
+            try:
+                self["ExecutablePath"] = os.readlink("exe", dir_fd=proc_pid_fd)
+            except PermissionError as error:
+                raise ValueError("not accessible") from error
+            except OSError as error:
+                if error.errno == errno.ENOENT:
+                    raise ValueError("invalid process") from error
+                raise
+        for p in ("rofs", "rwfs", "squashmnt", "persistmnt"):
+            if self["ExecutablePath"].startswith(f"/{p}/"):
+                self["ExecutablePath"] = self["ExecutablePath"][len(f"/{p}") :]
+                break
 
     def _add_executable_timestamp(self) -> None:
         self["ExecutableTimestamp"] = str(int(os.stat(self["ExecutablePath"]).st_mtime))
