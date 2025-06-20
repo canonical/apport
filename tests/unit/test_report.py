@@ -1577,6 +1577,24 @@ No symbol table info available.
         self.assertEqual(report_output.getvalue().decode(), DIVIDE_BY_ZERO_REPORT)
         stat_mock.assert_called_once_with("/usr/bin/divide-by-zero")
 
+    def test_report_from_systemd_coredump_missing_executable(self) -> None:
+        """Test converting systemd-coredump with the executable missing.
+
+        See also https://launchpad.net/bugs/2098792
+        """
+        coredump = DIVIDE_BY_ZERO_SYSTEMD_COREDUMP.copy()
+        coredump["COREDUMP_EXE"] = "/tmp/executable-already-gone"
+
+        report = apport.report.Report.from_systemd_coredump(coredump)
+
+        self.assertEqual(report["ExecutablePath"], "/tmp/executable-already-gone")
+        self.assertEqual(
+            report["ExecutableTimestamp"],
+            "Error: Executable '/tmp/executable-already-gone' not found",
+        )
+
+        self.assertIsNone(report.get_executable_timestamp())
+
     def test_add_kernel_crash_info_no_vmcore(self) -> None:
         """add_kernel_crash_info() on a non-kernel crash."""
         report = apport.report.Report()
