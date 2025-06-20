@@ -125,19 +125,21 @@ class TestApport(unittest.TestCase):
 
     def test_proc_pid_not_exist(self) -> None:
         """Test ProcPid().exits() returning False."""
-        with apport_binary.ProcPid(os.getpid()) as proc_pid:
-            self.assertFalse(proc_pid.exists("nonexistent"))
+        proc_pid = apport_binary.ProcPid(os.getpid())
+        self.assertFalse(proc_pid.exists("nonexistent"))
 
     def test_proc_pid_has_same_pid(self) -> None:
         """Test ProcPid.has_same_pid() for same process."""
         pid = os.getpid()
-        with apport_binary.ProcPid(pid) as proc_pid, pidfd_open(pid) as pidfd:
+        proc_pid = apport_binary.ProcPid(pid)
+        with pidfd_open(pid) as pidfd:
             self.assertTrue(proc_pid.has_same_pid(pidfd))
 
     def test_proc_pid_has_same_pid_false(self) -> None:
         """Test ProcPid.has_same_pid() for different processes."""
         pid = os.getpid()
-        with apport_binary.ProcPid(pid) as proc_pid, pidfd_open(1) as pidfd:
+        proc_pid = apport_binary.ProcPid(pid)
+        with pidfd_open(1) as pidfd:
             self.assertFalse(proc_pid.has_same_pid(pidfd))
 
     def test_receive_arguments_via_socket_import_error(self) -> None:
@@ -192,10 +194,10 @@ class TestApport(unittest.TestCase):
             container_exe.touch(mode=0o755)
             cmdline = pathlib.Path(tmpdir) / "cmdline"
             cmdline.write_text("name\0")
-            with apport_binary.ProcPid(fake_pid, tmpdir) as proc_pid:
-                exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
-                    options, proc_pid
-                )
+            proc_pid = apport_binary.ProcPid(fake_pid, tmpdir)
+            exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
+                options, proc_pid
+            )
 
         self.assertEqual(exit_code, 0)
         forward_mock.assert_called_once()
@@ -230,10 +232,10 @@ class TestApport(unittest.TestCase):
         options = apport_binary.parse_arguments(["-p", str(pid), "-d", "1"])
         now = int(time.clock_gettime(time.CLOCK_BOOTTIME) * 100)
         crash_user = apport.user_group.get_process_user_and_group()
-        with apport_binary.ProcPid(pid) as proc_pid:
-            self.assertFalse(
-                apport_binary.consistency_checks(options, now, proc_pid, crash_user)
-            )
+        proc_pid = apport_binary.ProcPid(pid)
+        self.assertFalse(
+            apport_binary.consistency_checks(options, now, proc_pid, crash_user)
+        )
 
     def test_process_crash_from_kernel_replaced_process(self) -> None:
         """Test process_crash_from_kernel() to abort if process ID has been reused.
@@ -285,10 +287,10 @@ class TestApport(unittest.TestCase):
             stat.write_text(f"{fake_pid} (name) ?{' x' * 18} {future} ...\n")
             status = pathlib.Path(tmpdir) / "status"
             status.write_text("Name:\tname\nUid:\t42\t42\t42\t42\nGid:\t7\t7\t7\t7\n")
-            with apport_binary.ProcPid(fake_pid, tmpdir) as proc_pid:
-                exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
-                    options, proc_pid
-                )
+            proc_pid = apport_binary.ProcPid(fake_pid, tmpdir)
+            exit_code = apport_binary.process_crash_from_kernel_with_proc_pid(
+                options, proc_pid
+            )
 
         self.assertEqual(exit_code, 0)
         self.assertIn(
@@ -311,10 +313,10 @@ class TestApport(unittest.TestCase):
                 str(crash_user.gid + 1),
             ]
         )
-        with apport_binary.ProcPid(pid) as proc_pid:
-            self.assertFalse(
-                apport_binary.consistency_checks(options, 1, proc_pid, crash_user)
-            )
+        proc_pid = apport_binary.ProcPid(pid)
+        self.assertFalse(
+            apport_binary.consistency_checks(options, 1, proc_pid, crash_user)
+        )
 
     def test_stop(self) -> None:
         """Test stopping Apport crash handler."""
@@ -340,10 +342,10 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
-            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
-                self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user), True
-                )
+            proc_pid = apport_binary.ProcPid(12345, tmpdir)
+            self.assertEqual(
+                apport_binary.is_closing_session(proc_pid, crash_user), True
+            )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 
@@ -353,10 +355,10 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DISPLAY=:0\0")
-            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
-                self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user), False
-                )
+            proc_pid = apport_binary.ProcPid(12345, tmpdir)
+            self.assertEqual(
+                apport_binary.is_closing_session(proc_pid, crash_user), False
+            )
 
     def test_is_closing_session_no_determine_socket(self) -> None:
         """Test is_closing_session() cannot determine D-Bus socket."""
@@ -364,10 +366,10 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:/run/user/42/bus\0")
-            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
-                self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user), False
-                )
+            proc_pid = apport_binary.ProcPid(12345, tmpdir)
+            self.assertEqual(
+                apport_binary.is_closing_session(proc_pid, crash_user), False
+            )
 
     def test_is_closing_session_socket_not_exists(self) -> None:
         """Test is_closing_session() where D-Bus socket does not exist."""
@@ -376,10 +378,10 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
-            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
-                self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user), False
-                )
+            proc_pid = apport_binary.ProcPid(12345, tmpdir)
+            self.assertEqual(
+                apport_binary.is_closing_session(proc_pid, crash_user), False
+            )
 
     @unittest.mock.patch("os.setresgid", MagicMock())
     @unittest.mock.patch("os.setresuid", MagicMock())
@@ -397,10 +399,10 @@ class TestApport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = pathlib.Path(tmpdir) / "environ"
             env.write_text("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1337/bus\0")
-            with apport_binary.ProcPid(12345, tmpdir) as proc_pid:
-                self.assertEqual(
-                    apport_binary.is_closing_session(proc_pid, crash_user), False
-                )
+            proc_pid = apport_binary.ProcPid(12345, tmpdir)
+            self.assertEqual(
+                apport_binary.is_closing_session(proc_pid, crash_user), False
+            )
         path_exist_mock.assert_called_once_with("/run/user/1337/bus")
         run_mock.assert_called_once()
 

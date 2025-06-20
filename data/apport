@@ -49,22 +49,18 @@ from problem_report import CompressedFile
 LOG_FORMAT = "%(levelname)s: apport (pid %(process)s) %(asctime)s: %(message)s"
 
 
-class ProcPid(contextlib.ContextDecorator):
-    """Context manager to access /proc/<pid>."""
+class ProcPid:
+    """Access /proc/<pid>."""
 
     def __init__(self, pid: int, path: str | None = None) -> None:
         self.path = path or f"/proc/{pid}"
         self.pid = pid
-        self.fd: int | None = None
-
-    def __enter__(self):
         self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
-        return self
 
-    def __exit__(self, *exc):
-        if self.fd is not None:
-            os.close(self.fd)
-        return False
+    def __del__(self) -> None:
+        fd = getattr(self, "fd", None)
+        if fd is not None:
+            os.close(fd)
 
     def _opener(self, path: str | os.PathLike[str], flags: int) -> int:
         return os.open(path, flags, dir_fd=self.fd)
@@ -947,15 +943,7 @@ def process_crash_from_kernel(options: argparse.Namespace) -> int:
     else:
         pid = options.global_pid
     try:
-        with ProcPid(pid) as proc_pid:
-            if options.pidfd is not None and not proc_pid.has_same_pid(options.pidfd):
-                logging.getLogger().error(
-                    "The process %i has already been replaced by a new process"
-                    " with the same ID. Ignoring crash.",
-                    pid,
-                )
-                return 1
-            return process_crash_from_kernel_with_proc_pid(options, proc_pid)
+        proc_pid = ProcPid(pid)
     except FileNotFoundError as error:
         logging.getLogger().error(
             "%s not found. "
@@ -964,6 +952,14 @@ def process_crash_from_kernel(options: argparse.Namespace) -> int:
             pid,
         )
         return 1
+    if options.pidfd is not None and not proc_pid.has_same_pid(options.pidfd):
+        logging.getLogger().error(
+            "The process %i has already been replaced by a new process"
+            " with the same ID. Ignoring crash.",
+            pid,
+        )
+        return 1
+    return process_crash_from_kernel_with_proc_pid(options, proc_pid)
 
 
 def _set_signal(report: apport.report.Report, signal_number: int) -> None:
