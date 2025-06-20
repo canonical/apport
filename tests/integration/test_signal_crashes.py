@@ -856,8 +856,8 @@ class T(unittest.TestCase):
         with (
             subprocess.Popen(command) as test_process,
             unittest.mock.patch("builtins.open", open_mock),
-            apport_binary.ProcPid(test_process.pid) as proc_pid,
         ):
+            proc_pid = apport_binary.ProcPid(test_process.pid)
             try:
                 same_ns = apport_binary.is_same_ns(proc_pid, "mnt")
                 self.assertFalse(same_ns)
@@ -1008,10 +1008,8 @@ class T(unittest.TestCase):
 
         with unittest.mock.patch("os.open") as os_open_mock:
             os_open_mock.side_effect = _mocked_os_open
-            with apport_binary.ProcPid(args.global_pid) as proc_pid:
-                apport_binary.forward_crash_to_container(
-                    args, proc_pid, coredump_fd, False
-                )
+            proc_pid = apport_binary.ProcPid(args.global_pid)
+            apport_binary.forward_crash_to_container(args, proc_pid, coredump_fd, False)
 
     def _call_apport_via_socket(
         self, process: psutil.Process, sig: int, dump_mode: int, stdin: typing.IO
