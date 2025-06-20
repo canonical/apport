@@ -1460,8 +1460,8 @@ class UserInterface:
                     return
 
         # check if binary changed since the crash happened
-        if "ExecutablePath" in self.report and "ExecutableTimestamp" in self.report:
-            orig_time = int(self.report["ExecutableTimestamp"])
+        orig_time = self.report.get_executable_timestamp()
+        if orig_time is not None:
             del self.report["ExecutableTimestamp"]
             cur_time = int(os.stat(self.report["ExecutablePath"]).st_mtime)
 
