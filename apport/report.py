@@ -1906,6 +1906,13 @@ class Report(problem_report.ProblemReport):
             core = coredump[0]
         return core
 
+    def get_executable_timestamp(self) -> int | None:
+        """Get ExecutableTimestamp if present and valid."""
+        try:
+            return int(self["ExecutableTimestamp"])
+        except (KeyError, ValueError):
+            return None
+
     def gdb_command(
         self, sandbox: str | None, gdb_sandbox: str | None = None
     ) -> tuple[list[str], dict[str, str]]:
