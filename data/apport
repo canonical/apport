@@ -49,6 +49,10 @@ from problem_report import CompressedFile
 LOG_FORMAT = "%(levelname)s: apport (pid %(process)s) %(asctime)s: %(message)s"
 
 
+class ProcPidNotFoundError(FileNotFoundError):
+    """FileNotFoundError specific for /proc/<pid>."""
+
+
 class ProcPid(contextlib.ContextDecorator):
     """Context manager to access /proc/<pid>."""
 
@@ -57,8 +61,11 @@ class ProcPid(contextlib.ContextDecorator):
         self.pid = pid
         self.fd: int | None = None
 
-    def __enter__(self):
-        self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+    def __enter__(self) -> "ProcPid":
+        try:
+            self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
+        except FileNotFoundError as error:
+            raise ProcPidNotFoundError(*error.args, error.filename) from error
         return self
 
     def __exit__(self, *exc):
@@ -956,7 +963,7 @@ def process_crash_from_kernel(options: argparse.Namespace) -> int:
                 )
                 return 1
             return process_crash_from_kernel_with_proc_pid(options, proc_pid)
-    except FileNotFoundError as error:
+    except ProcPidNotFoundError as error:
         logging.getLogger().error(
             "%s not found. "
             "Cannot collect crash information for process %i any more.",
