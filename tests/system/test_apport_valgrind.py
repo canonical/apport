@@ -15,7 +15,7 @@ import subprocess
 import tempfile
 import unittest
 
-from tests.helper import skip_if_command_is_missing
+from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
 from tests.paths import local_test_environment
 
 with open("/proc/meminfo", encoding="utf-8") as f:
@@ -55,7 +55,7 @@ class TestApportValgrind(unittest.TestCase):
             sandbox,
             "--cache",
             cache,
-            "/usr/bin/true",
+            get_gnu_coreutils_cmd("true"),
         ]
         subprocess.check_call(cmd, env=self.env)
 
