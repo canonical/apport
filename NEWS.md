@@ -1,6 +1,20 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.33.1 (2025-07-04)
+-------------------
+
+### Fixed
+
+* report:
+  - check for errors in `ProcMaps` in `crash_signature_addresses`
+    ([LP: #2114171](https://launchpad.net/bugs/2114171))
+  - Handle `FileNotFoundError` when determining `ExecutableTimestamp`
+    ([LP: #2098792](https://launchpad.net/bugs/2098792))
+* apport: Do not hide `FileNotFoundError` during crash handling
+* test: use `true` from GNU coreutils
+  ([LP: #2111595](https://launchpad.net/bugs/2111595))
+
 2.33.0 (2025-06-06)
 -------------------
 
