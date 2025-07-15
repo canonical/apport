@@ -37,6 +37,7 @@ import pickle
 import platform
 import re
 import shutil
+import sqlite3
 import stat
 import subprocess
 import sys
@@ -276,6 +277,142 @@ def _usr_merge_alternative(path: str) -> str | None:
     return None
 
 
+class _Path2Package(Mapping[str, str]):
+    """Path to Debian package mapping.
+
+    A backing SQLite database is open on __init__ and closed on object
+    deletion. The data is stored in unnormalized form for creation speed
+    and code simplicity.
+
+    If database_file is set to `None` an in-memory database will be used.
+    """
+
+    def __init__(self, database_file: pathlib.Path | None = None) -> None:
+        self.database_file = database_file
+        self.connection = self._connect()
+        if (
+            database_file is None
+            or not database_file.exists()
+            or database_file.stat().st_size == 0
+        ):
+            self._create_tables()
+
+    def __del__(self) -> None:
+        """Close the SQLite database connection on object deletion."""
+        if hasattr(self, "connection"):
+            self.connection.close()
+
+    def _connect(self) -> sqlite3.Connection:
+        """Opens a connection to the SQLite database file.
+
+        If database_file is set to `None` an in-memory database will be used.
+        """
+        if self.database_file:
+            database = f"file://{self.database_file.absolute()}"
+        else:
+            database = ":memory:"
+        connection = sqlite3.connect(database)
+        if hasattr(connection, "autocommit"):
+            connection.autocommit = False
+        return connection
+
+    def _create_tables(self) -> None:
+        """Create SQLite database tables."""
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "CREATE TABLE path_package("
+            "  path TEXT PRIMARY KEY UNIQUE NOT NULL,"
+            "  package TEXT NOT NULL)"
+        )
+        self.connection.commit()
+
+    def __getitem__(self, key: str) -> str:
+        cursor = self.connection.execute(
+            "SELECT package FROM path_package WHERE path = ?", (key,)
+        )
+        found = cursor.fetchone()
+        if found is None:
+            raise KeyError(key)
+        return found[0]
+
+    def __iter__(self) -> Iterator[str]:
+        cursor = self.connection.execute(
+            "SELECT path FROM path_package ORDER BY path ASC"
+        )
+        while True:
+            found = cursor.fetchone()
+            if found is None:
+                return
+            yield found[0]
+
+    def __len__(self) -> int:
+        cursor = self.connection.execute("SELECT COUNT(*) FROM path_package")
+        found = cursor.fetchone()
+        assert found is not None
+        return found[0]
+
+    def __setitem__(self, key: str, value: str) -> None:
+        """Set new value in datadase.
+
+        Warning: The new value is only inserted into the database but
+        not committed for better performance. A database commit needs
+        to be done to persist the change.
+        """
+        self.connection.execute(
+            "INSERT INTO path_package VALUES(?, ?) "
+            "ON CONFLICT(path) DO UPDATE SET package=excluded.package",
+            (key, value),
+        )
+
+    def is_empty(self) -> bool:
+        """Check if the database is empty."""
+        cursor = self.connection.execute("SELECT 1 FROM path_package LIMIT 1")
+        return cursor.fetchone() is None
+
+    @staticmethod
+    def _insert_many(cursor: sqlite3.Cursor, path2pkg: Mapping[str, str]) -> None:
+        cursor.executemany(
+            "INSERT INTO path_package VALUES(?, ?) "
+            "ON CONFLICT(path) DO UPDATE SET package=excluded.package",
+            path2pkg.items(),
+        )
+
+    def update_from_contents_file(
+        self, contents_filename: str, dist: str, group_inserts: int = 100
+    ) -> None:
+        """Update database with entries from the Contents file.
+
+        Existing paths will be overwritten by new entries.
+        """
+        cursor = self.connection.cursor()
+        path2pkg = {}
+
+        path_exclude_pattern = re.compile(
+            r"^:|(boot|var|usr/(include|src|[^/]+/include"
+            r"|share/(doc|gocode|help|icons|locale|man|texlive)))/"
+        )
+        with gzip.open(contents_filename, "rt") as contents:
+            if dist in {"trusty", "xenial"}:
+                # the first 32 lines are descriptive only for these
+                # releases
+                for _ in range(32):
+                    next(contents)
+
+            for line in contents:
+                if path_exclude_pattern.match(line):
+                    continue
+                path, column2 = line.rsplit(maxsplit=1)
+                package = column2.split(",")[0].split("/")[-1]
+
+                path2pkg[path] = package
+                if len(path2pkg) >= group_inserts:
+                    self._insert_many(cursor, path2pkg)
+                    path2pkg = {}
+        if path2pkg:
+            self._insert_many(cursor, path2pkg)
+        self.connection.commit()
+
+
 class _AptDpkgPackageInfo(PackageInfo):
     # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Concrete apport.packaging.PackageInfo class implementation for
@@ -289,7 +426,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self._contents_dir: str | None = None
         self._mirror: str | None = None
         self._virtual_mapping_obj: dict[str, set[str]] | None = None
-        self._contents_mapping_obj: dict[bytes, bytes] | None = None
+        self._contents_mapping_obj: _Path2Package | None = None
         self._launchpad_base = "https://api.launchpad.net/devel"
         self._contents_update = False
 
@@ -322,43 +459,17 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def _contents_mapping(
         self, configdir: str, release: str, arch: str
-    ) -> dict[bytes, bytes]:
-        if (
-            self._contents_mapping_obj
-            and self._contents_mapping_obj[b"release"] == release.encode()
-            and self._contents_mapping_obj[b"arch"] == arch.encode()
-        ):
-            return self._contents_mapping_obj
-
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
+    ) -> _Path2Package:
+        mapping_file = (
+            pathlib.Path(configdir) / f"contents_mapping-{release}-{arch}.sqlite3"
         )
-        if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
-            os.remove(mapping_file)
-        try:
-            with open(mapping_file, "rb") as fp:
-                self._contents_mapping_obj = pickle.load(fp)
-            assert isinstance(self._contents_mapping_obj, dict)
-        except (AssertionError, FileNotFoundError):
-            self._contents_mapping_obj = {
-                b"release": release.encode(),
-                b"arch": arch.encode(),
-            }
+        if self._contents_mapping_obj:
+            if self._contents_mapping_obj.database_file == mapping_file:
+                return self._contents_mapping_obj
+            del self._contents_mapping_obj
 
+        self._contents_mapping_obj = _Path2Package(mapping_file)
         return self._contents_mapping_obj
-
-    def _save_contents_mapping(self, configdir: str, release: str, arch: str) -> None:
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
-        )
-        if self._contents_mapping_obj is not None:
-            try:
-                with open(mapping_file, "wb") as fp:
-                    pickle.dump(self._contents_mapping_obj, fp)
-            # rather than crashing on systems with little memory just don't
-            # write the crash file
-            except MemoryError:
-                pass
 
     def _clear_apt_cache(self) -> None:
         # The rootdir option to apt.Cache modifies the global state
@@ -1683,55 +1794,27 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         return contents_filename
 
-    @staticmethod
-    def _update_given_file2pkg_mapping(
-        file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
-    ) -> None:
-        path_exclude_pattern = re.compile(
-            rb"^:|(boot|var|usr/(include|src|[^/]+/include"
-            rb"|share/(doc|gocode|help|icons|locale|man|texlive)))/"
-        )
-        with gzip.open(contents_filename, "rb") as contents:
-            if dist in {"trusty", "xenial"}:
-                # the first 32 lines are descriptive only for these
-                # releases
-                for _ in range(32):
-                    next(contents)
-
-            for line in contents:
-                if path_exclude_pattern.match(line):
-                    continue
-                path, column2 = line.rsplit(maxsplit=1)
-                package = column2.split(b",")[0].split(b"/")[-1]
-                if path in file2pkg:
-                    if package == file2pkg[path]:
-                        continue
-                    # if the package was updated use the update
-                    # b/c everyone should have packages from
-                    # -updates and -security installed
-                file2pkg[path] = package
-
     def _get_file2pkg_mapping(
         self, map_cachedir: str, release: str, arch: str
-    ) -> dict[bytes, bytes]:
+    ) -> _Path2Package:
         # this is ordered by likelihood of installation with the most common
         # last
         # XXX - maybe we shouldn't check -security and -updates if it is the
         # devel release as they will be old and empty
+        path2package = self._contents_mapping(map_cachedir, release, arch)
         for pocket in ("-proposed", "", "-security", "-updates"):
             dist = f"{release}{pocket}"
             contents_filename = self._get_contents_file(map_cachedir, dist, arch)
             if contents_filename is None:
                 continue
-            file2pkg = self._contents_mapping(map_cachedir, release, arch)
             # if the mapping is empty build it
-            if not file2pkg or len(file2pkg) == 2:
+            if path2package.is_empty():
                 self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
-                self._update_given_file2pkg_mapping(file2pkg, contents_filename, dist)
-        return file2pkg
+                path2package.update_from_contents_file(contents_filename, dist)
+        return path2package
 
     def _search_contents(
         self, file: str, map_cachedir: str | None, release: str | None, arch: str | None
@@ -1750,21 +1833,16 @@ class _AptDpkgPackageInfo(PackageInfo):
             release = self._distro_release_to_codename(release)
 
         contents_mapping = self._get_file2pkg_mapping(map_cachedir, release, arch)
-        # the file only needs to be saved after an update
-        if self._contents_update:
-            self._save_contents_mapping(map_cachedir, release, arch)
-            # the update of the mapping only needs to be done once
-            self._contents_update = False
 
         if file[0] != "/":
             file = f"/{file}"
-        files = [file[1:].encode()]
+        files = [file[1:]]
         usrmerge_file = _usr_merge_alternative(file)
         if usrmerge_file:
-            files.append(usrmerge_file[1:].encode())
+            files.append(usrmerge_file[1:])
         for filename in files:
             try:
-                pkg = contents_mapping[filename].decode()
+                pkg = contents_mapping[filename]
                 return pkg
             except KeyError:
                 pass
