@@ -1434,13 +1434,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         last_written = time.time()
         # fetch packages
-        try:
-            apt_cache.fetch_archives(fetcher=fetcher)
-        except apt.cache.FetchFailedException as error:
-            apport.logging.error(
-                "Package download error, try again later: %s", str(error)
-            )
-            sys.exit(1)  # transient error
+        self._fetch_packages(apt_cache, fetcher)
 
         if verbose:
             print("Extracting downloaded debs...")
@@ -1593,6 +1587,31 @@ class _AptDpkgPackageInfo(PackageInfo):
             "cannot determine default mirror:"
             f" couldn't find configured source contains the `deb` type in {apt_dir}"
         )
+
+    @staticmethod
+    def _fetch_packages(
+        apt_cache: apt.cache.Cache, fetcher: apt_pkg.Acquire | None = None
+    ) -> None:
+        backoff = 1.0
+        while True:
+            try:
+                apt_cache.fetch_archives(fetcher=fetcher)
+                break
+            except apt.cache.FetchFailedException as error:
+                if backoff <= 3600 and "Too Many Requests" in str(error):
+                    apport.logging.warning(
+                        "Package download error, retrying in %i second(s): %s",
+                        backoff,
+                        str(error),
+                    )
+                else:
+                    apport.logging.error(
+                        "Package download error, try again later: %s", str(error)
+                    )
+                    sys.exit(1)  # transient error
+
+            time.sleep(backoff)
+            backoff *= 2
 
     def _get_mirror(self, arch: str) -> str:
         """Return the distribution mirror URL.
