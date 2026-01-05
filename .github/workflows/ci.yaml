@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
     container:
-      image: ubuntu:questing
+      image: ubuntu:resolute
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -44,12 +44,12 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - debian:bookworm-slim
+          - debian:trixie-slim
           - debian:testing-slim
           - ubuntu:noble
-          - ubuntu:oracular
           - ubuntu:plucky
           - ubuntu:questing
+          - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -135,9 +135,9 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:oracular
           - ubuntu:plucky
           - ubuntu:questing
+          - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
     steps:
@@ -169,9 +169,9 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:oracular
           - ubuntu:plucky
           - ubuntu:questing
+          - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
