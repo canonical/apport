@@ -14,10 +14,25 @@ import pytest
 
 from apport.packaging_impl.apt_dpkg import impl
 from apport.report import Report
-from tests.helper import has_internet
-from tests.paths import get_test_data_directory, local_test_environment
+from tests.helper import has_internet, import_module_from_file
+from tests.paths import (
+    get_bin_directory,
+    get_test_data_directory,
+    local_test_environment,
+)
 
 CODENAME_DISTRO_RELEASE_MAP = {"jammy": "Ubuntu 22.04"}
+apport_retrace = import_module_from_file(get_bin_directory() / "apport-retrace")
+
+
+@pytest.fixture(scope="module", autouse=True)
+def fixture_local_test_environment() -> Iterator[None]:
+    """Apply the needed environment variables when running tests locally."""
+    orig_environ = os.environ.copy()
+    os.environ |= local_test_environment()
+    yield
+    os.environ.clear()
+    os.environ.update(orig_environ)
 
 
 @pytest.fixture(name="module_workdir", scope="module")
@@ -209,9 +224,7 @@ def test_retrace_system_sandbox(
 ) -> None:
     """Retrace a divide-by-zero crash in a system sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -221,7 +234,7 @@ def test_retrace_system_sandbox(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace.main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -238,7 +251,6 @@ def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
 ) -> None:
     """Refuse to retrace a crash in a non-amd64 system sandbox with a GDB sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
         "apport-retrace",
         "-v",
@@ -251,7 +263,7 @@ def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    ret = subprocess.run(cmd, check=False, env=env, capture_output=True, text=True)
+    ret = subprocess.run(cmd, check=False, capture_output=True, text=True)
     assert ret.returncode == 3
     assert "gdb sandboxes are only implemented for amd64 hosts" in ret.stderr
 
@@ -266,9 +278,7 @@ def test_retrace_system_sandbox_gdb_sandbox(
 ) -> None:
     """Retrace a divide-by-zero crash in a system sandbox with a GDB sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -279,7 +289,7 @@ def test_retrace_system_sandbox_gdb_sandbox(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace.main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -297,9 +307,7 @@ def test_retrace_jammy_sandbox(
     """Retrace a sleep crash from jammy in a sandbox."""
     crash = get_test_data_directory() / "jammy_usr_bin_sleep.1000.crash"
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -311,7 +319,7 @@ def test_retrace_jammy_sandbox(
         str(workdir / "apport_sandbox"),
         str(crash),
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace.main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -330,9 +338,7 @@ def test_retrace_jammy_sandbox_gdb_sandbox(
     """Retrace a sleep crash from jammy in a sandbox with a GDB sandbox."""
     crash = get_test_data_directory() / "jammy_usr_bin_sleep.1000.crash"
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -345,7 +351,7 @@ def test_retrace_jammy_sandbox_gdb_sandbox(
         str(workdir / "apport_sandbox"),
         str(crash),
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace.main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
