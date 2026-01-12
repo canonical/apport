@@ -38,7 +38,7 @@ from tests.helper import (
 )
 from tests.paths import local_test_environment, patch_data_dir, restore_data_dir
 
-ORIGINAL_SUBPROCESS_RUN = subprocess.run
+original_subprocess_run = subprocess.run
 
 
 def mock_run_calls_except_pgrep(
@@ -46,7 +46,7 @@ def mock_run_calls_except_pgrep(
 ) -> subprocess.CompletedProcess:
     """Wrap subprocess.run() doing no-ops except for pgrep."""
     if args[0] == "pgrep":
-        return ORIGINAL_SUBPROCESS_RUN(args, check=check, **kwargs)
+        return original_subprocess_run(args, check=check, **kwargs)
     return subprocess.CompletedProcess(args, 0)
 
 
