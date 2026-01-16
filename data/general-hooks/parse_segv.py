@@ -63,10 +63,12 @@ class ParseSegv:
         return maps
 
     @staticmethod
-    def parse_regs(reg_str):
+    def parse_regs(reg_str: str) -> dict[str, int]:
         regs = {}
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]
+            if hexvalue == "<unavailable>":
+                continue
             regs[reg] = int(hexvalue, 16)
             logging.debug("%s:0x%08x", reg, regs[reg])
         return regs
