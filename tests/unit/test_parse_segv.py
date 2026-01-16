@@ -64,6 +64,35 @@ fooff          0x0  0
 fop            0x5d8    1496
 mxcsr          0x1f80   [ IM DM ZM OM UM PM ]
 """
+REGS64VIRT = """\
+rax            0x0                 0
+rbx            0x0                 0
+rcx            0x555555557e08      93824992247304
+rdx            0x2a                42
+rsi            0x7fffffffedb8      140737488350648
+rdi            0x2a                42
+rbp            0x7fffffffec90      0x7fffffffec90
+rsp            0x7fffffffec90      0x7fffffffec90
+r8             0x7ffff7fa6680      140737353770624
+r9             0x7ffff7fa7fe0      140737353777120
+r10            0x7fffffffe9f0      140737488349680
+r11            0x202               514
+r12            0x1                 1
+r13            0x7ffff7ffd000      140737354125312
+r14            0x7fffffffedc8      140737488350664
+r15            0x555555557e08      93824992247304
+rip            0x55555555513f      0x55555555513f <f+22>
+eflags         0x10246             [ PF ZF IF RF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+pl3_ssp        <unavailable>
+fs_base        0x7ffff7d90740      140737351583552
+gs_base        0x0                 0
+"""
 MAPS = """\
 00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026c000-0026d000 ---p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
@@ -131,6 +160,24 @@ DISASM = """\
 0x08083579 <main+57>:   pop    %ebp
 0x0808357a <main+58>:   lea    -0x4(%ecx),%esp
 0x0808357d <main+61>:   ret
+"""
+DISASM64 = """\
+=> 0x55555555513f <f+22>:	mov    %edx,(%rax)
+   0x555555555141 <f+24>:	mov    -0x14(%rbp),%eax
+   0x555555555144 <f+27>:	add    $0x1,%eax
+   0x555555555147 <f+30>:	pop    %rbp
+   0x555555555148 <f+31>:	ret
+   0x555555555149 <main>:	push   %rbp
+   0x55555555514a <main+1>:	mov    %rsp,%rbp
+   0x55555555514d <main+4>:	mov    $0x2a,%edi
+   0x555555555152 <main+9>:	call   0x555555555129 <f>
+   0x555555555157 <main+14>:	pop    %rbp
+   0x555555555158 <main+15>:	ret
+   0x555555555159:	add    %al,(%rax)
+   0x55555555515b:	add    %cl,-0x7d(%rax)
+   0x55555555515e <_fini+2>:	in     (%dx),%al
+   0x55555555515f <_fini+3>:	or     %cl,-0x7d(%rax)
+   0x555555555162 <_fini+6>:	(bad)
 """
 
 
@@ -289,6 +336,15 @@ class TestHookParseSegv(unittest.TestCase):
         self.assertEqual(segv.insn, "push", segv.insn)
         self.assertEqual(segv.src, "%ecx", segv.src)
         self.assertEqual(segv.dest, "(%esp)", segv.dest)
+
+    def test_unavailable_register(self) -> None:
+        """Test pl3_ssp register value being unavailable."""
+        segv = parse_segv.ParseSegv(REGS64VIRT, DISASM64, "")
+        self.assertNotIn("pl3_ssp", segv.regs)
+        self.assertLessEqual(
+            {"rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp"}, set(segv.regs)
+        )
+        self.assertLessEqual({f"r{i}" for i in range(8, 16)}, set(segv.regs))
 
     def test_ioport_operation(self) -> None:
         """I/O port violations."""
