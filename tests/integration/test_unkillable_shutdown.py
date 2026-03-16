@@ -26,6 +26,7 @@ from tests.paths import get_data_directory, local_test_environment
 def run_test_executable(
     command: str, args: list[str], queue: multiprocessing.Queue
 ) -> None:
+    """Runs cmd with a different session ID."""
     os.setsid()
     cmd = [command] + args
     with subprocess.Popen(cmd) as test_process:
@@ -76,7 +77,6 @@ class TestUnkillableShutdown(unittest.TestCase):
 
         getsid() will return a different ID than the current process.
         """
-
         queue: multiprocessing.Queue = multiprocessing.Queue()
         runner = multiprocessing.Process(
             target=run_test_executable,
