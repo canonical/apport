@@ -234,9 +234,6 @@ def anonymized_udevdb(udevdb: str) -> str:
     # FIXME This regexp substitution breaks the DEVLINKS property by removing
     # everything after "by-label"
     udevdb = re.sub(r"by-label/(.*)", "by-label/<hidden>", udevdb)
-    udevdb = re.sub(r"ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", udevdb)
-    udevdb = re.sub(r"ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", udevdb)
-    udevdb = re.sub(r"by-label/(.*)", "by-label/<hidden>", udevdb)
     return udevdb
 
 
