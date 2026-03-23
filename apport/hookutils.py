@@ -224,6 +224,22 @@ def attach_dmi(report):
         )
 
 
+def anonymized_udevdb(udevdb: str) -> str:
+    """Take the output of udevadm info -e and return a string with redacted
+    filesystem labels."""
+    # In the future, we probably want to redact the GPT partition names as
+    # well.
+    udevdb = re.sub(r"ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", udevdb)
+    udevdb = re.sub(r"ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", udevdb)
+    # FIXME This regexp substitution breaks the DEVLINKS property by removing
+    # everything after "by-label"
+    udevdb = re.sub(r"by-label/(.*)", "by-label/<hidden>", udevdb)
+    udevdb = re.sub(r"ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", udevdb)
+    udevdb = re.sub(r"ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", udevdb)
+    udevdb = re.sub(r"by-label/(.*)", "by-label/<hidden>", udevdb)
+    return udevdb
+
+
 def attach_hardware(report):
     """Attach a standard set of hardware-related data to the report, including:
 
@@ -255,18 +271,10 @@ def attach_hardware(report):
     report["Lsusb-v"] = command_output(["lsusb", "-v"])
     report["Lsusb-t"] = command_output(["lsusb", "-t"])
     report["ProcModules"] = command_output(["sort", "/proc/modules"])
-    report["UdevDb"] = command_output(["udevadm", "info", "--export-db"])
+    report["UdevDb"] = anonymized_udevdb(
+        command_output(["udevadm", "info", "--export-db"])
+    )
     report["acpidump"] = root_command_output(["/usr/share/apport/dump_acpi_tables.py"])
-
-    # anonymize partition labels
-    labels = report["UdevDb"]
-    labels = re.sub("ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", labels)
-    labels = re.sub("ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", labels)
-    labels = re.sub("by-label/(.*)", "by-label/<hidden>", labels)
-    labels = re.sub("ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", labels)
-    labels = re.sub("ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", labels)
-    labels = re.sub("by-label/(.*)", "by-label/<hidden>", labels)
-    report["UdevDb"] = labels
 
     attach_dmi(report)
 
