@@ -231,9 +231,13 @@ def anonymized_udevdb(udevdb: str) -> str:
     # well.
     udevdb = re.sub(r"ID_FS_LABEL=(.*)", "ID_FS_LABEL=<hidden>", udevdb)
     udevdb = re.sub(r"ID_FS_LABEL_ENC=(.*)", "ID_FS_LABEL_ENC=<hidden>", udevdb)
-    # FIXME This regexp substitution breaks the DEVLINKS property by removing
-    # everything after "by-label"
-    udevdb = re.sub(r"by-label/(.*)", "by-label/<hidden>", udevdb)
+    # by-label can match with multiple properties - and will match in the
+    # middle of some properties such as DEVLINKS. So we should not replace the
+    # whole line like we're doing for ID_FS_LABEL. Example of matches:
+    # * S: disk/by-label/{label}
+    # * S: disk/by-path/.../by-label/{label}
+    # * E: DEVLINKS=[...] /dev/disk/by-label/{label} /dev/disk/by-uuid/... [...]
+    udevdb = re.sub(r"by-label/[^ /\n]*", "by-label/<hidden>", udevdb)
     return udevdb
 
 

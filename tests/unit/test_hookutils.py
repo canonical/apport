@@ -185,7 +185,6 @@ E: ID_FS_LABEL=john-doe-rootfs
 E: ID_FS_LABEL_ENC=john-doe-rootfs
 E: DEVLINKS=/dev/disk/by-path/pci-0000:00:04.0-part/by-partuuid/2722bff2-40ac-47e6-8025-5b7889adb69a /dev/disk/by-path/pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-partnum/1 /dev/disk/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/pci-0000:00:04.0-part/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/virtio-pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-label/john-doe-rootfs /dev/disk/by-label/john-doe-rootfs /dev/disk/by-diskseq/9-part1 /dev/disk/by-partuuid/2722bff2-40ac-47e6-8025-5b7889adb69a
 """  # nopep8 pylint: disable=line-too-long
-        # Note that the DEVLINKS property is accidentally cut.
         expected = """
 P: /devices/pci0000:00/0000:00:04.0/virtio2/block/vda/vda1
 S: disk/by-path/pci-0000:00:04.0-part/by-label/<hidden>
@@ -194,7 +193,7 @@ E: DEVPATH=/devices/pci0000:00/0000:00:04.0/virtio2/block/vda/vda1
 E: DEVNAME=/dev/vda1
 E: ID_FS_LABEL=<hidden>
 E: ID_FS_LABEL_ENC=<hidden>
-E: DEVLINKS=/dev/disk/by-path/pci-0000:00:04.0-part/by-partuuid/2722bff2-40ac-47e6-8025-5b7889adb69a /dev/disk/by-path/pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-partnum/1 /dev/disk/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/pci-0000:00:04.0-part/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/virtio-pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-label/<hidden>
+E: DEVLINKS=/dev/disk/by-path/pci-0000:00:04.0-part/by-partuuid/2722bff2-40ac-47e6-8025-5b7889adb69a /dev/disk/by-path/pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-partnum/1 /dev/disk/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/pci-0000:00:04.0-part/by-uuid/e6134f84-e3eb-4ae4-8c43-959b9740bd3e /dev/disk/by-path/virtio-pci-0000:00:04.0-part1 /dev/disk/by-path/pci-0000:00:04.0-part/by-label/<hidden> /dev/disk/by-label/<hidden> /dev/disk/by-diskseq/9-part1 /dev/disk/by-partuuid/2722bff2-40ac-47e6-8025-5b7889adb69a
 """  # nopep8 pylint: disable=line-too-long
 
         self.assertEqual(expected, apport.hookutils.anonymized_udevdb(udevdb))
