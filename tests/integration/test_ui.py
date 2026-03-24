@@ -507,6 +507,61 @@ class T(unittest.TestCase):
             "progress dialog for package bug info collection finished",
         )
 
+    def test_collect_info_package_crash(self) -> None:
+        """collect_info() on report with a package that crashed"""
+        ui = UserInterfaceMock()
+        ui.report = apport.report.Report("Crash")
+        ui.report["ExecutablePath"] = "/usr/bin/bash"
+        orig_crashdb_known = ui.crashdb.known
+
+        def search_bug_patterns(url: str) -> str | None:
+            progress_pulses = ui.ic_progress_pulses
+            # wait for ui_pulse_info_collection_progress() call
+            while ui.ic_progress_pulses == progress_pulses:
+                time.sleep(0.01)
+            assert ui.report
+            return apport.report.Report.search_bug_patterns(ui.report, url)
+
+        def crashdb_known(report: apport.report.Report) -> str | None:
+            progress_pulses = ui.ic_progress_pulses
+            # wait for ui_pulse_info_collection_progress() call
+            while ui.ic_progress_pulses == progress_pulses:
+                time.sleep(0.01)
+            return orig_crashdb_known(report)
+
+        with (
+            unittest.mock.patch.object(
+                ui.report, "search_bug_patterns", side_effect=search_bug_patterns
+            ) as search_bug_patterns_mock,
+            unittest.mock.patch.object(
+                ui.crashdb, "known", side_effect=crashdb_known
+            ) as crashdb_known_mock,
+        ):
+            ui.collect_info()
+
+        search_bug_patterns_mock.assert_called_once()
+        crashdb_known_mock.assert_called_once()
+        assert ui.report
+        self.assertTrue(
+            {
+                "Date",
+                "Dependencies",
+                "DistroRelease",
+                "ExecutablePath",
+                "Package",
+                "ProblemType",
+                "SourcePackage",
+                "Uname",
+            }.issubset(set(ui.report.keys()))
+        )
+        self.assertGreater(
+            ui.ic_progress_pulses, 0, "progress dialog for package bug info collection"
+        )
+        self.assertFalse(
+            ui.ic_progress_active,
+            "progress dialog for package bug info collection finished",
+        )
+
     def test_collect_info_permissions(self) -> None:
         """collect_info() leaves the report accessible to the group"""
         ui = UserInterfaceMock()
