@@ -56,6 +56,22 @@ class T(unittest.TestCase):
             f"/proc/{pid}/cmdline not readable within {int(elapsed_time)} seconds."
         )
 
+    def _assert_open_fds_valid(self, open_fds: str) -> None:
+        """Assert that OpenFds contains well-formed FD entries."""
+        entries = open_fds.split("\n\n")
+        self.assertGreaterEqual(len(entries), 1)
+        for entry in entries:
+            lines = entry.split("\n")
+            # First line is FD_NUM:TARGET_PATH
+            self.assertRegex(lines[0], r"^\d+:\S")
+            # Remaining lines are fdinfo fields (key:\tvalue)
+            fdinfo_keys = set()
+            for fdinfo_line in lines[1:]:
+                self.assertRegex(fdinfo_line, r"^[a-zA-Z_]+:\t")
+                fdinfo_keys.add(fdinfo_line.split(":\t", 1)[0])
+            self.assertIn("pos", fdinfo_keys)
+            self.assertIn("flags", fdinfo_keys)
+
     @unittest.mock.patch("time.sleep")
     def test_wait_for_proc_cmdline_failure(self, sleep_mock: MagicMock) -> None:
         """Test wait_for_proc_cmdline() helper runs into timeout."""
@@ -157,6 +173,8 @@ class T(unittest.TestCase):
             self.assertNotIn("LANG=", pr["ProcEnviron"])
         self.assertNotIn("USER", pr["ProcEnviron"])
         self.assertNotIn("PWD", pr["ProcEnviron"])
+        self.assertIn("OpenFds", pr)
+        self._assert_open_fds_valid(pr["OpenFds"])
         self.assertRegex(pr["ExecutablePath"], rf"^({re.escape(sys.argv[0])}|.*\.py)$")
         self.assertEqual(
             int(pr["ExecutableTimestamp"]), int(os.stat(pr["ExecutablePath"]).st_mtime)

@@ -160,6 +160,25 @@ DIVIDE_BY_ZERO_COREDUMP_PACKAGE_JSON = """\
   }
 }
 """
+DIVIDE_BY_ZERO_OPEN_FDS = """\
+0:/dev/pts/2
+pos:	0
+flags:	0104002
+mnt_id:	40
+ino:	6
+
+1:/dev/pts/2
+pos:	0
+flags:	0104002
+mnt_id:	40
+ino:	6
+
+2:/dev/pts/2
+pos:	0
+flags:	0104002
+mnt_id:	40
+ino:	6
+"""
 DIVIDE_BY_ZERO_REPORT = f"""\
 ProblemType: Crash
 CoredumpPackageJson:
@@ -168,6 +187,8 @@ CurrentDesktop: Unity:Unity7:ubuntu
 Date: Mon Oct 30 13:40:03 2023
 ExecutablePath: /usr/bin/divide-by-zero
 ExecutableTimestamp: 1688310044
+OpenFds:
+{re.sub("^", " ", DIVIDE_BY_ZERO_OPEN_FDS.rstrip(), flags=re.MULTILINE)}
 ProcCmdline: divide-by-zero
 ProcCwd: /home/user/something
 ProcEnviron:
@@ -280,10 +301,7 @@ DIVIDE_BY_ZERO_SYSTEMD_COREDUMP = {
     "COREDUMP_EXE": "/usr/bin/divide-by-zero",
     "COREDUMP_GID": 1000,
     "COREDUMP_HOSTNAME": "hostname",
-    "COREDUMP_OPEN_FDS": "0:/dev/pts/2\npos:\t0\nflags:\t02002002\n"
-    "mnt_id:\t27\nino:\t5\n"
-    "\n1:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n"
-    "\n2:/dev/pts/2\npos:\t0\nflags:\t02002002\nmnt_id:\t27\nino:\t5\n",
+    "COREDUMP_OPEN_FDS": DIVIDE_BY_ZERO_OPEN_FDS,
     "COREDUMP_OWNER_UID": "1000",
     "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump","elfArchitecture":"AMD x86-64",'
     '"/usr/bin/divide-by-zero":{"type":"deb","os":"ubuntu",'

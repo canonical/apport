@@ -912,7 +912,7 @@ class T(unittest.TestCase):
                 "COREDUMP_FILENAME": str(coredump_file),
                 "COREDUMP_GID": os.getgid(),
                 "COREDUMP_HOSTNAME": "mocked hostname",
-                "COREDUMP_OPEN_FDS": "mocked open file descriptors",
+                "COREDUMP_OPEN_FDS": expected_report["OpenFds"],
                 "COREDUMP_OWNER_UID": os.getuid(),
                 "COREDUMP_PACKAGE_JSON": '{"elfType":"coredump"}',
                 "COREDUMP_PID": pid,
