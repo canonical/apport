@@ -181,7 +181,7 @@ environment.
 
     \item [UserGroups:] (optional) System groups of the user reporting the
     problem; for privacy reasons this should only include IDs smaller than
-    `SYS_GID_MAX` (specified in `/etc/login.defs` which defaults to 999 on
+    \verb!SYS_GID_MAX! (specified in \verb!/etc/login.defs! which defaults to 999 on
     Debian based systems), no groups which belong to other real users.
 
     \item [Tags:] (optional) A space-delimited list of tags that may be passed
@@ -201,6 +201,12 @@ package).
 
     \item [InterpreterPath:] (required for scripts) Contents of
     \verb!/proc/pid/exe! if the process is an interpreted script
+
+    \item [OpenFds:] (optional) Open file descriptors and their associated
+    information, from \verb!/proc/pid/fd! (symlink targets) and
+    \verb!/proc/pid/fdinfo! (file descriptor metadata). Each entry shows
+    \verb!FD_NUM:TARGET_PATH! followed by \verb!fdinfo! lines, with entries
+    separated by blank lines.
 
     \item [ProcEnviron:] (required) A subset of the process' environment, from
     \verb!/proc/pid/env!; this should only show some standard variables that do

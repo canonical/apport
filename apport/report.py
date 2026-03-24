@@ -111,6 +111,79 @@ def _read_list_files_in_directory(directory: str) -> Iterator[str]:
         pass
 
 
+def _read_fd_entry(entry: str, fd_dir_fd: int, fdinfo_dir_fd: int) -> str | None:
+    """Read info for a single file descriptor entry.
+
+    Return formatted string with the FD's target path and fdinfo
+    metadata, or None if the FD no longer exists.
+    """
+    try:
+        target = os.readlink(entry, dir_fd=fd_dir_fd)
+    except FileNotFoundError:
+        # FD closed between listdir and readlink
+        return None
+    line = f"{entry}:{target}"
+
+    try:
+        with open(
+            entry,
+            encoding="UTF-8",
+            errors="replace",
+            opener=lambda path, mode: os.open(
+                path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=fdinfo_dir_fd
+            ),
+        ) as fd:
+            info = fd.read()
+    except OSError:
+        return line
+
+    if info:
+        line += "\n" + info.rstrip("\n")
+    return line
+
+
+def _read_open_fds(proc_pid_fd: int) -> str:
+    """Read open file descriptors and their fdinfo from /proc/pid.
+
+    Return a formatted string with each FD's target path and fdinfo
+    metadata, or return a textual error if it failed.
+    """
+    try:
+        fd_dir_fd = os.open(
+            "fd",
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_DIRECTORY,
+            dir_fd=proc_pid_fd,
+        )
+    except OSError as error:
+        return "Error: " + str(error)
+
+    try:
+        fdinfo_dir_fd = os.open(
+            "fdinfo",
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_DIRECTORY,
+            dir_fd=proc_pid_fd,
+        )
+    except OSError as error:
+        os.close(fd_dir_fd)
+        return "Error: " + str(error)
+
+    try:
+        entries = os.listdir(fd_dir_fd)
+
+        parts = []
+        for entry in entries:
+            part = _read_fd_entry(entry, fd_dir_fd, fdinfo_dir_fd)
+            if part is not None:
+                parts.append(part)
+
+        return "\n\n".join(parts)
+    except OSError as error:
+        return "Error: " + str(error)
+    finally:
+        os.close(fdinfo_dir_fd)
+        os.close(fd_dir_fd)
+
+
 def _read_proc_link(
     path: str, pid: int | None = None, dir_fd: int | None = None
 ) -> str:
@@ -752,6 +825,7 @@ class Report(problem_report.ProblemReport):
           interpreted; otherwise this key does not exist
         - ExecutableTimestamp: time stamp of ExecutablePath, for comparing at
           report time
+        - OpenFds: open file descriptors and their fdinfo metadata
         - ProcEnviron: A subset of the process' environment (only some standard
           variables that do not disclose potentially sensitive information,
           plus the ones mentioned in extraenv)
@@ -777,6 +851,7 @@ class Report(problem_report.ProblemReport):
                     raise ValueError("invalid process") from error
                 raise
 
+        self["OpenFds"] = _read_open_fds(proc_pid_fd)
         try:
             self["ProcCwd"] = _read_proc_link("cwd", pid, proc_pid_fd)
         except OSError:
@@ -2092,7 +2167,6 @@ class Report(problem_report.ProblemReport):
          * COREDUMP_CONTAINER_CMDLINE (str)
          * COREDUMP_GID (int)
          * COREDUMP_HOSTNAME (str)
-         * COREDUMP_OPEN_FDS (str)
          * COREDUMP_OWNER_UID (str)
          * COREDUMP_PACKAGE_NAME
          * COREDUMP_PACKAGE_VERSION
@@ -2125,6 +2199,7 @@ class Report(problem_report.ProblemReport):
         report._add_str_from_coredump(coredump, "COREDUMP_CMDLINE", "ProcCmdline")
         report._add_str_from_coredump(coredump, "COREDUMP_EXE", "ExecutablePath")
         report._add_str_from_coredump(coredump, "COREDUMP_CWD", "ProcCwd")
+        report._add_str_from_coredump(coredump, "COREDUMP_OPEN_FDS", "OpenFds")
         report._add_str_from_coredump(coredump, "COREDUMP_PROC_MAPS", "ProcMaps")
         report._add_str_from_coredump(coredump, "COREDUMP_PROC_STATUS", "ProcStatus")
         report._add_elf_package_metadata(coredump)
