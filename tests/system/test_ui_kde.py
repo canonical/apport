@@ -1,4 +1,4 @@
-"""Qt 5 Apport User Interface tests"""
+"""Qt 6 Apport User Interface tests"""
 
 # Copyright (C) 2015 Harald Sitter <sitter@kde.org>
 # Copyright (C) 2012 Canonical Ltd.
@@ -21,12 +21,12 @@ from gettext import gettext as _
 from unittest.mock import MagicMock
 
 try:
-    from PyQt5.QtCore import QCoreApplication, QTimer
-    from PyQt5.QtWidgets import QFileDialog, QProgressBar, QTreeWidget
+    from PyQt6.QtCore import QCoreApplication, QTimer
+    from PyQt6.QtWidgets import QFileDialog, QProgressBar, QTreeWidget
 
-    PYQT5_IMPORT_ERROR = None
+    PYQT6_IMPORT_ERROR = None
 except ImportError as error:
-    PYQT5_IMPORT_ERROR = error
+    PYQT6_IMPORT_ERROR = error
 
 import apport.crashdb_impl.memory
 import apport.report
@@ -34,7 +34,7 @@ from tests.helper import import_module_from_file, wrap_object
 from tests.paths import get_data_directory, local_test_environment
 
 apport_kde_path = get_data_directory("kde") / "apport-kde"
-if not PYQT5_IMPORT_ERROR:
+if not PYQT6_IMPORT_ERROR:
     apport_kde = import_module_from_file(apport_kde_path)
     MainUserInterface = apport_kde.MainUserInterface
 else:
@@ -42,7 +42,7 @@ else:
     MainUserInterface = None
 
 
-@unittest.skipIf(PYQT5_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT5_IMPORT_ERROR}")
+@unittest.skipIf(PYQT6_IMPORT_ERROR, f"PyQt/PyKDE not available: {PYQT6_IMPORT_ERROR}")
 class T(unittest.TestCase):
     # pylint: disable=missing-class-docstring,missing-function-docstring
     # pylint: disable=too-many-public-methods
@@ -142,8 +142,9 @@ class T(unittest.TestCase):
         +-----------------------------------------------------------------+
         """
         self.ui.report["ProblemType"] = "KernelCrash"
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(),
@@ -171,8 +172,9 @@ class T(unittest.TestCase):
         """
         self.ui.report["ProblemType"] = "Package"
         self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(),
@@ -192,7 +194,7 @@ class T(unittest.TestCase):
         """A thread of execution has failed, but the application persists."""
         self.ui.report["ProblemType"] = "Crash"
         self.ui.report["ProcStatus"] = "Name:\tsystemd\nPid:\t1"
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(True)
         self.assertFalse(self.ui.dialog.closed_button.isVisible())
         self.assertEqual(self.ui.dialog.continue_button.text(), _("Continue"))
@@ -221,8 +223,9 @@ class T(unittest.TestCase):
                 """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
-            QTimer.singleShot(0, QCoreApplication.quit)
+            QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
             self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(),
@@ -271,8 +274,9 @@ class T(unittest.TestCase):
                 """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
-            QTimer.singleShot(0, QCoreApplication.quit)
+            QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
             self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(),
@@ -320,8 +324,9 @@ class T(unittest.TestCase):
                 """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
-            QTimer.singleShot(0, QCoreApplication.quit)
+            QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
             self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(
             self.ui.dialog.heading.text(),
             _("The application Apport has closed unexpectedly."),
@@ -350,8 +355,9 @@ class T(unittest.TestCase):
         self.ui.report["ProblemType"] = "Crash"
         self.ui.report["CrashCounter"] = "1"
         self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(),
@@ -388,8 +394,9 @@ class T(unittest.TestCase):
         +-------------------------------------------------------------------+
         """
         self.ui.report_file = None
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(
             self.ui.dialog.heading.text(), _("Send problem report to the developers?")
@@ -429,8 +436,9 @@ class T(unittest.TestCase):
                 """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
-            QTimer.singleShot(0, QCoreApplication.quit)
+            QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
             self.ui.ui_present_report_details(True)
+        self.ui.dialog.show()
         self.assertEqual(self.ui.dialog.windowTitle(), self.distro.split()[0])
         msg = "The application Apport has experienced an internal error."
         self.assertEqual(self.ui.dialog.heading.text(), msg)
@@ -738,7 +746,7 @@ class T(unittest.TestCase):
         )
 
     def test_administrator_disabled_reporting(self) -> None:
-        QTimer.singleShot(0, QCoreApplication.quit)
+        QTimer.singleShot(0, lambda: self.ui.dialog.done(0))
         self.ui.ui_present_report_details(False)
         self.assertFalse(self.ui.dialog.send_error_report.isVisible())
         self.assertFalse(self.ui.dialog.send_error_report.isChecked())

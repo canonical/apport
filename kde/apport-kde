@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
-"""Qt 5 Apport User Interface"""
+"""Qt 6 Apport User Interface"""
 
+# Copyright (C) 2026 Erich Eickmeyer <eeickmeyer@ubuntu.com>
 # Copyright (C) 2015 Harald Sitter <sitter@kde.org>
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Richard A. Johnson <nixternal@ubuntu.com>
@@ -28,10 +29,10 @@ import apport.logging
 import apport.ui
 
 try:
-    from PyQt5 import uic
-    from PyQt5.QtCore import QByteArray, QLibraryInfo, QLocale, Qt, QTimer, QTranslator
-    from PyQt5.QtGui import QIcon, QMovie, QPainter
-    from PyQt5.QtWidgets import (
+    from PyQt6 import uic
+    from PyQt6.QtCore import QByteArray, QLibraryInfo, QLocale, Qt, QTimer, QTranslator
+    from PyQt6.QtGui import QIcon, QMovie, QPainter
+    from PyQt6.QtWidgets import (
         QApplication,
         QCheckBox,
         QDialog,
@@ -44,6 +45,7 @@ try:
         QRadioButton,
         QTreeWidget,
         QTreeWidgetItem,
+        QVBoxLayout,
     )
 except ImportError as error:
     # this can happen while upgrading python packages
@@ -78,7 +80,7 @@ class Dialog(QDialog):
     """Main dialog wrapper"""
 
     def __init__(self, ui_data_path, ui, title, heading, text):
-        QDialog.__init__(self, None, Qt.Window)
+        QDialog.__init__(self, None, Qt.WindowType.Window)
 
         uic.loadUi(os.path.join(ui_data_path, ui), self)
 
@@ -91,7 +93,7 @@ class Dialog(QDialog):
         text_label.setText(text)
 
     def on_buttons_clicked(self, button):
-        if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
+        if self.sender().buttonRole(button) == QDialogButtonBox.ButtonRole.ActionRole:
             button.window().done(2)
 
 
@@ -106,7 +108,7 @@ class ChoicesDialog(Dialog):
 
     def on_buttons_clicked(self, button):
         Dialog.on_buttons_clicked(self, button)
-        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+        if self.sender().buttonRole(button) == QDialogButtonBox.ButtonRole.RejectRole:
             sys.exit(0)
 
 
@@ -120,7 +122,7 @@ class ProgressDialog(Dialog):
 
     def on_buttons_clicked(self, button):
         Dialog.on_buttons_clicked(self, button)
-        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+        if self.sender().buttonRole(button) == QDialogButtonBox.ButtonRole.RejectRole:
             sys.exit(0)
 
     def set(self, value: float | None = None) -> None:
@@ -323,7 +325,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
         self.done(3)
 
     def on_cancel_button_clicked(self):
-        self.done(QDialog.Rejected)
+        self.done(QDialog.DialogCode.Rejected)
 
     def on_show_details_clicked(self):
         if not self.treeview.isVisible():
@@ -365,7 +367,7 @@ class UserPassDialog(Dialog):
 
     def on_buttons_clicked(self, button):
         Dialog.on_buttons_clicked(self, button)
-        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+        if self.sender().buttonRole(button) == QDialogButtonBox.ButtonRole.RejectRole:
             sys.exit(0)
 
 
@@ -379,14 +381,17 @@ class MainUserInterface(apport.ui.UserInterface):
         self.dialog: ReportDialog | None = None
         self.progress: ProgressDialog | None = None
 
-        self.app = QApplication(argv)
+        existing = QApplication.instance()
+        self.app = (
+            existing if isinstance(existing, QApplication) else QApplication(argv)
+        )
         self.app.setApplicationName("apport-kde")
         self.app.setApplicationDisplayName(_("Apport"))
         self.app.setWindowIcon(QIcon.fromTheme("apport"))
         translator = QTranslator()
         translator.load(
             f"qtbase_{QLocale.system().name()}",
-            QLibraryInfo.location(QLibraryInfo.TranslationsPath),
+            QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath),
         )
         self.app.installTranslator(translator)
 
@@ -422,10 +427,10 @@ class MainUserInterface(apport.ui.UserInterface):
         desktop_info = self.get_desktop_entry()
         self.dialog = ReportDialog(self.report, allowed_to_report, self, desktop_info)
 
-        response = self.dialog.exec_()
+        response = self.dialog.exec()
 
         return_value = apport.ui.Action()
-        if response == QDialog.Rejected:
+        if response == QDialog.DialogCode.Rejected:
             return return_value
         if response == 3:
             return_value.examine = True
@@ -535,11 +540,16 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_question_yesno(self, text: str) -> bool | None:
         response = QMessageBox.question(
-            None, "", text, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
+            None,
+            "",
+            text,
+            QMessageBox.StandardButton.Yes
+            | QMessageBox.StandardButton.No
+            | QMessageBox.StandardButton.Cancel,
         )
-        if response == QMessageBox.Yes:
+        if response == QMessageBox.StandardButton.Yes:
             return True
-        if response == QMessageBox.No:
+        if response == QMessageBox.StandardButton.No:
             return False
         return None
 
@@ -557,23 +567,26 @@ class MainUserInterface(apport.ui.UserInterface):
         """
         dialog = ChoicesDialog(self.ui_data_path, _("Apport"), text)
 
-        b = None
+        vbox_choices = dialog.findChild(QVBoxLayout, "vbox_choices")
+        assert isinstance(vbox_choices, QVBoxLayout)
+
         for option in options:
             if multiple:
-                b = QCheckBox(option)
+                vbox_choices.addWidget(QCheckBox(option))
             else:
-                b = QRadioButton(option)
-            dialog.vbox_choices.addWidget(b)
+                vbox_choices.addWidget(QRadioButton(option))
 
-        response = dialog.exec_()
+        response = dialog.exec()
 
-        if response == QDialog.Rejected:
+        if response == QDialog.DialogCode.Rejected:
             return None
 
         return [
             c
-            for c in range(0, dialog.vbox_choices.count())
-            if dialog.vbox_choices.itemAt(c).widget().isChecked()
+            for c in range(0, vbox_choices.count())
+            if (item := vbox_choices.itemAt(c)) is not None
+            and (widget := item.widget()) is not None
+            and widget.isChecked()  # type: ignore[attr-defined]
         ]
 
     def ui_question_file(self, text: str) -> str | None:
