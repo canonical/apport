@@ -32,9 +32,6 @@ class TestRecoverableProblem(unittest.TestCase):
         self.env["APPORT_REPORT_DIR"] = self.report_dir
         self.datadir = get_data_directory()
 
-    # False positive return statement for unittest.TestCase.fail
-    # See https://github.com/pylint-dev/pylint/issues/4167
-    # pylint: disable-next=inconsistent-return-statements
     def _wait_for_report(self) -> str:
         seconds = 0.0
         while seconds < 10:
