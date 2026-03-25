@@ -1420,7 +1420,6 @@ class T(unittest.TestCase):
 
     # False positive return statement for unittest.TestCase.fail
     # See https://github.com/pylint-dev/pylint/issues/4167
-    # pylint: disable-next=inconsistent-return-statements
     def wait_for_gdb_child_process(
         self, gdb_pid: int, command: str, expected_status: str = "sleeping"
     ) -> psutil.Process:
