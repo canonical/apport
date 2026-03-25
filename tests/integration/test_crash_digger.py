@@ -32,23 +32,18 @@ class T(unittest.TestCase):
 
         crashdb_conf = os.path.join(self.workdir, "crashdb.conf")
         with open(crashdb_conf, "w", encoding="utf-8") as f:
-            f.write(
-                textwrap.dedent(
-                    """\
-                    default = "memory"
-                    databases = {
-                        "memory": {
-                            "impl": "memory",
-                            "distro": "Testux",
-                            "sample_data": "1",
-                            "dupdb_url": "%s",
-                        },
-                        "empty": {"impl": "memory", "distro": "Foonux"},
-                    }
-                    """
-                    % os.path.join(self.workdir, "dupdb")
-                )
-            )
+            f.write(textwrap.dedent("""\
+                default = "memory"
+                databases = {
+                    "memory": {
+                        "impl": "memory",
+                        "distro": "Testux",
+                        "sample_data": "1",
+                        "dupdb_url": "%s",
+                    },
+                    "empty": {"impl": "memory", "distro": "Foonux"},
+                }
+                """ % os.path.join(self.workdir, "dupdb")))
 
         self.config_dir = os.path.join(self.workdir, "config")
         os.mkdir(self.config_dir)
@@ -92,7 +87,7 @@ class T(unittest.TestCase):
 
     def test_crashes(self) -> None:
         """Crash retracing."""
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -131,22 +126,18 @@ class T(unittest.TestCase):
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
-            f.write(
-                textwrap.dedent(
-                    f"""\
-                    #!/bin/sh
-                    echo "$@" >> {self.apport_retrace_log}
-                    while [ -n "$2" ]; do shift; done
-                    if [ "$1" = 1 ]; then
-                        echo "cannot frobnicate bug" >&2
-                        exit 1
-                    fi
-                    """
-                )
-            )
+            f.write(textwrap.dedent(f"""\
+                #!/bin/sh
+                echo "$@" >> {self.apport_retrace_log}
+                while [ -n "$2" ]; do shift; done
+                if [ "$1" = 1 ]; then
+                    echo "cannot frobnicate bug" >&2
+                    exit 1
+                fi
+                """))
         os.chmod(self.apport_retrace, 0o755)
 
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -183,7 +174,7 @@ class T(unittest.TestCase):
 
     def test_crash_gdb_sandbox(self) -> None:
         """Crash retracing with --gdb-sandbox."""
-        (out, err) = self.call(
+        out, err = self.call(
             ["-c", self.config_dir, "-a", "/dev/zero", "--gdb-sandbox", "-v"]
         )
         self.assertEqual(err, "", f"no error messages:\n{err}")
@@ -212,19 +203,15 @@ class T(unittest.TestCase):
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, f"{self.apport_retrace}.bak")
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
-            f.write(
-                textwrap.dedent(
-                    f"""\
-                    #!/bin/sh
-                    echo "$@" >> {self.apport_retrace_log}
-                    while [ -n "$2" ]; do shift; done
-                    if [ "$1" = 1 ]; then
-                        echo "cannot frobnicate crash db" >&2
-                        exit 99
-                    fi
-                    """
-                )
-            )
+            f.write(textwrap.dedent(f"""\
+                #!/bin/sh
+                echo "$@" >> {self.apport_retrace_log}
+                while [ -n "$2" ]; do shift; done
+                if [ "$1" = 1 ]; then
+                    echo "cannot frobnicate crash db" >&2
+                    exit 99
+                fi
+                """))
         os.chmod(self.apport_retrace, 0o755)
 
         out = self.call(
@@ -255,7 +242,7 @@ class T(unittest.TestCase):
 
     def test_dupcheck(self) -> None:
         """Duplicate checking."""
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-a",
                 "/dev/zero",
@@ -278,7 +265,7 @@ class T(unittest.TestCase):
         """apport-retrace's stderr is redirected to stdout."""
         with open(self.apport_retrace, "w", encoding="utf-8") as f:
             f.write("#!/bin/sh\necho ApportRetraceError >&2\n")
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -295,7 +282,7 @@ class T(unittest.TestCase):
 
     def test_publish_db(self) -> None:
         """Duplicate database publishing."""
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -317,7 +304,7 @@ class T(unittest.TestCase):
     def test_alternate_crashdb(self) -> None:
         """Alternate crash database name."""
         # existing DB "empty" has no crashes
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,
@@ -335,7 +322,7 @@ class T(unittest.TestCase):
         self.assertNotIn("failed with status", out)
 
         # nonexisting DB
-        (out, err) = self.call(
+        out, err = self.call(
             [
                 "-c",
                 self.config_dir,

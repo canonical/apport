@@ -157,7 +157,7 @@ def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
     """
     first_line = next(entry)
     try:
-        (key_in_bytes, first_line_value) = first_line.split(b":", 1)
+        key_in_bytes, first_line_value = first_line.split(b":", 1)
     except ValueError:
         raise MalformedProblemReport(
             f"Line {first_line.decode(errors='backslashreplace')!r}"

@@ -17,12 +17,12 @@ class T(unittest.TestCase):
 
     def test_get_os_version(self) -> None:
         """get_os_version()"""
-        (n, v) = apport.packaging.get_os_version()
+        n, v = apport.packaging.get_os_version()
         self.assertEqual(type(n), str)
         self.assertEqual(type(v), str)
         self.assertGreater(len(n), 1)
         self.assertGreater(len(v), 0)
 
         # second one uses caching, should be identical
-        (n2, v2) = apport.packaging.get_os_version()
+        n2, v2 = apport.packaging.get_os_version()
         self.assertEqual((n, v), (n2, v2))

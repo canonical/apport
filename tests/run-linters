@@ -34,8 +34,8 @@ run_black() {
         return
     fi
     black_version=$(black --version | head -n1 | cut -d' ' -f 2)
-    if test "${black_version%%.*}" -lt 25; then
-        echo "Skipping black tests, black $black_version is installed but version >= 25 is needed"
+    if test "${black_version%%.*}" -lt 26; then
+        echo "Skipping black tests, black $black_version is installed but version >= 26 is needed"
         return
     fi
     echo "Running black..."

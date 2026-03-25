@@ -401,13 +401,11 @@ class T(unittest.TestCase):
         report["Signal"] = "11"
         report["SignalName"] = "SIGSEGV"
         report["ExecutablePath"] = "/bin/bash"
-        report["StacktraceTop"] = textwrap.dedent(
-            """\
+        report["StacktraceTop"] = textwrap.dedent("""\
             foo()
             bar(x=3)
             baz()
-            """
-        )
+            """)
         self.assertEqual(report.standard_title(), "bash crashed with SIGSEGV in foo()")
 
         # unnamed signal crash
@@ -443,9 +441,7 @@ class T(unittest.TestCase):
         # Python crash
         report = apport.report.Report()
         report["ExecutablePath"] = "/usr/share/apport/apport-gtk"
-        report[
-            "Traceback"
-        ] = """\
+        report["Traceback"] = """\
 Traceback (most recent call last):
 File "/usr/share/apport/apport-gtk", line 202, in <module>
 app.run_argv()
@@ -481,14 +477,12 @@ NameError: global name 'subprocess' is not defined"""
         # Python crash with custom message
         report = apport.report.Report()
         report["ExecutablePath"] = "/usr/share/apport/apport-gtk"
-        report["Traceback"] = textwrap.dedent(
-            """\
+        report["Traceback"] = textwrap.dedent("""\
             Traceback (most recent call last):
               File "/x/foo.py", line 242, in setup_chooser
                 raise "Moo"
             Mo?o[a-1]
-            """
-        )
+            """)
 
         self.assertEqual(
             report.standard_title(),
@@ -498,9 +492,7 @@ NameError: global name 'subprocess' is not defined"""
         # Python crash with custom message with newlines (LP #190947)
         report = apport.report.Report()
         report["ExecutablePath"] = "/usr/share/apport/apport-gtk"
-        report[
-            "Traceback"
-        ] = """\
+        report["Traceback"] = """\
 Traceback (most recent call last):
   File "/x/foo.py", line 242, in setup_chooser
     raise "\nKey: "+key+" isn't set.\n\
@@ -517,9 +509,7 @@ Restarting AWN usually solves this issue"""
         # Python crash at top level in module
         report = apport.report.Report()
         report["ExecutablePath"] = "/usr/bin/gnome-about"
-        report[
-            "Traceback"
-        ] = """\
+        report["Traceback"] = """\
 Traceback (most recent call last):
   File "/usr/bin/gnome-about", line 30, in <module>
     import pygtk
@@ -537,14 +527,12 @@ ImportError: No module named nonexistent
         # Python crash at top level in main program
         report = apport.report.Report()
         report["ExecutablePath"] = "/usr/bin/dcut"
-        report["Traceback"] = textwrap.dedent(
-            """\
+        report["Traceback"] = textwrap.dedent("""\
             Traceback (most recent call last):
               File "/usr/bin/dcut", line 28, in <module>
                 import nonexistent
             ImportError: No module named nonexistent
-            """
-        )
+            """)
         self.assertEqual(
             report.standard_title(),
             "dcut crashed with ImportError in __main__: No module named nonexistent",
@@ -575,13 +563,11 @@ ImportError: No module named nonexistent
         report["Signal"] = "11"
         report["SignalName"] = "SIGSEGV"
         report["ExecutablePath"] = "/bin/bash"
-        report["StacktraceTop"] = textwrap.dedent(
-            """\
+        report["StacktraceTop"] = textwrap.dedent("""\
             foo()
             bar(x=3)
             baz()
-            """
-        )
+            """)
         report["PackageArchitecture"] = "amd64"
         report["Architecture"] = "amd64"
         self.assertEqual(report.standard_title(), "bash crashed with SIGSEGV in foo()")
@@ -609,8 +595,7 @@ ImportError: No module named nonexistent
         """_gen_stacktrace_top()."""
         # nothing to chop off
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x10000488 in h (p=0x0) at crash.c:25
             #1  0x100004c8 in g (x=1, y=42) at crash.c:26
             #2  0x10000514 in f (x=1) at crash.c:27
@@ -618,25 +603,21 @@ ImportError: No module named nonexistent
             #4  0x10000530 in d (x=1) at crash.c:29
             #5  0x10000530 in c (x=1) at crash.c:30
             #6  0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 h (p=0x0) at crash.c:25
                 g (x=1, y=42) at crash.c:26
                 f (x=1) at crash.c:27
                 e (x=1) at crash.c:28
-                d (x=1) at crash.c:29"""
-            ),
+                d (x=1) at crash.c:29"""),
         )
 
         # nothing to chop off: some addresses missing (LP #269133)
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0 h (p=0x0) at crash.c:25
             #1  0x100004c8 in g (x=1, y=42) at crash.c:26
             #2 f (x=1) at crash.c:27
@@ -644,25 +625,21 @@ ImportError: No module named nonexistent
             #4  0x10000530 in d (x=1) at crash.c:29
             #5  0x10000530 in c (x=1) at crash.c:30
             #6  0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 h (p=0x0) at crash.c:25
                 g (x=1, y=42) at crash.c:26
                 f (x=1) at crash.c:27
                 e (x=1) at crash.c:28
-                d (x=1) at crash.c:29"""
-            ),
+                d (x=1) at crash.c:29"""),
         )
 
         # single signal handler invocation
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x10000488 in raise () from /lib/libpthread.so.0
             #1  0x100004c8 in ??
             #2  <signal handler called>
@@ -670,24 +647,20 @@ ImportError: No module named nonexistent
             #4  0x10000530 in d (x=1) at crash.c:29
             #5  0x10000530 in c (x=1) at crash.c:30
             #6  0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 e (x=1) at crash.c:28
                 d (x=1) at crash.c:29
                 c (x=1) at crash.c:30
-                main () at crash.c:31"""
-            ),
+                main () at crash.c:31"""),
         )
 
         # single signal handler invocation: some addresses missing
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x10000488 in raise () from /lib/libpthread.so.0
             #1  ??
             #2  <signal handler called>
@@ -695,24 +668,20 @@ ImportError: No module named nonexistent
             #4  d (x=1) at crash.c:29
             #5  0x10000530 in c (x=1) at crash.c:30
             #6  0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 e (x=1) at crash.c:28
                 d (x=1) at crash.c:29
                 c (x=1) at crash.c:30
-                main () at crash.c:31"""
-            ),
+                main () at crash.c:31"""),
         )
 
         # stacked signal handler; should only cut the first one
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x10000488 in raise () from /lib/libpthread.so.0
             #1  0x100004c8 in ??
             #2  <signal handler called>
@@ -722,26 +691,21 @@ ImportError: No module named nonexistent
             #6  <signal handler called>
             #7  0x10000530 in c (x=1) at crash.c:30
             #8  0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 e (x=1) at crash.c:28
                 d (x=1) at crash.c:29
                 raise () from /lib/libpthread.so.0
                 <signal handler called>
-                c (x=1) at crash.c:30"""
-            ),
+                c (x=1) at crash.c:30"""),
         )
 
         # Gnome assertion; should unwind the logs and assert call
         r = apport.report.Report()
-        r[
-            "Stacktrace"
-        ] = """\
+        r["Stacktrace"] = """\
 #0  0xb7d39cab in IA__g_logv (log_domain=<value optimized out>,\
  log_level=G_LOG_LEVEL_ERROR,
     format=0xb7d825f0 "file %s: line %d (%s):\
@@ -795,9 +759,7 @@ dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267""",
 
         # XError (taken from LP#848808)
         r = apport.report.Report()
-        r[
-            "Stacktrace"
-        ] = """\
+        r["Stacktrace"] = """\
 #0  0x007cf416 in __kernel_vsyscall ()
 No symbol table info available.
 #1  0x01017c8f in __GI_raise (sig=6)\
@@ -836,9 +798,7 @@ meta_window_flush_calc_showing (window=0x91ccfc8) at core/window.c:1806""",
 
         # another XError (taken from LP#834403)
         r = apport.report.Report()
-        r[
-            "Stacktrace"
-        ] = """\
+        r["Stacktrace"] = """\
 #0  g_logv (log_domain=0x7fd41db08a46 "Gdk", log_level=<optimized out>,\
  format=0x7fd41db12e87 "%s", args1=0x7fff50bf0c18)\
  at /build/buildd/glib2.0-2.29.16/./glib/gmessages.c:577
@@ -884,23 +844,20 @@ dispatch_queue () at canberra-gtk-module.c:815""",
 
         # problem with too old gdb, only assertion, nothing else
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x00987416 in __kernel_vsyscall ()
             No symbol table info available.
             #1  0x00ebecb1 in *__GI_raise (sig=6)
                     selftid = 945
             #2  0x00ec218e in *__GI_abort () at abort.c:59
                     save_stage = Unhandled dwarf expression opcode 0x9f
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(r["StacktraceTop"], "")
 
         # ignore uninteresting frames
         r = apport.report.Report()
-        r["Stacktrace"] = textwrap.dedent(
-            """\
+        r["Stacktrace"] = textwrap.dedent("""\
             #0  0x00987416 in __kernel_vsyscall ()
             #1  __strchr_sse42 () at strchr.S:97
             #2 h (p=0x0) at crash.c:25
@@ -912,19 +869,16 @@ dispatch_queue () at canberra-gtk-module.c:815""",
             #8  0x10000530 in d (x=1) at crash.c:29
             #9  0x10000530 in c (x=1) at crash.c:30
             #10 0x10000550 in main () at crash.c:31
-            """
-        )
+            """)
         r._gen_stacktrace_top()
         self.assertEqual(
             r["StacktraceTop"],
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 h (p=0x0) at crash.c:25
                 g (x=1, y=42) at crash.c:26
                 f (x=1) at crash.c:27
                 e (x=1) at crash.c:28
-                d (x=1) at crash.c:29"""
-            ),
+                d (x=1) at crash.c:29"""),
         )
 
     @unittest.mock.patch("shutil.which", MagicMock(return_value=None))
@@ -947,28 +901,24 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         r["Signal"] = "42"
         r["ExecutablePath"] = "/bin/crash"
 
-        r["StacktraceTop"] = textwrap.dedent(
-            """\
+        r["StacktraceTop"] = textwrap.dedent("""\
             foo_bar (x=1) at crash.c:28
             d01 (x=1) at crash.c:29
             raise () from /lib/libpthread.so.0
             <signal handler called>
-            __frob::~frob (x=1) at crash.c:30"""
-        )
+            __frob::~frob (x=1) at crash.c:30""")
 
         self.assertEqual(
             r.crash_signature(),
             "/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob::~frob",
         )
 
-        r["StacktraceTop"] = textwrap.dedent(
-            """\
+        r["StacktraceTop"] = textwrap.dedent("""\
             foo_bar (x=1) at crash.c:28
             ??
             raise () from /lib/libpthread.so.0
             <signal handler called>
-            __frob (x=1) at crash.c:30"""
-        )
+            __frob (x=1) at crash.c:30""")
         self.assertIsNone(r.crash_signature())
 
         r["StacktraceTop"] = ""
@@ -976,8 +926,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
 
         # Python crashes
         del r["Signal"]
-        r["Traceback"] = textwrap.dedent(
-            """\
+        r["Traceback"] = textwrap.dedent("""\
             Traceback (most recent call last):
               File "test.py", line 7, in <module>
                 print(_f(5))
@@ -985,8 +934,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
                 return g_foo00(x+1)
               File "test.py", line 2, in g_foo00
                 return x/0
-            ZeroDivisionError: integer division or modulo by zero"""
-        )
+            ZeroDivisionError: integer division or modulo by zero""")
         self.assertEqual(
             r.crash_signature(), "/bin/crash:ZeroDivisionError:test.py@7:_f:g_foo00"
         )
@@ -1000,9 +948,7 @@ dispatch_queue () at canberra-gtk-module.c:815""",
 
         # kernel
         r["ProblemType"] = "KernelCrash"
-        r[
-            "Stacktrace"
-        ] = """
+        r["Stacktrace"] = """
 crash 4.0-8.9
 GNU gdb 6.1
 GDB is free software, covered by the GNU General Public License, and you are
@@ -1111,9 +1057,7 @@ RUNQUEUES[0]: c6002320
 
         # kernel oops
         report = apport.report.Report("KernelOops")
-        report[
-            "OopsText"
-        ] = """
+        report["OopsText"] = """
 BUG: unable to handle kernel paging request at ffffb4ff
 IP: [<c11e4690>] ext4_get_acl+0x80/0x210
 *pde = 01874067 *pte = 00000000
@@ -1203,9 +1147,7 @@ CR2: 00000000ffffb4ff
 
         self.assertRaises(AssertionError, pr._address_to_offset, 0)
 
-        pr[
-            "ProcMaps"
-        ] = """
+        pr["ProcMaps"] = """
 00400000-004df000 r-xp 00000000 08:02 1044485                  /bin/bash
 006de000-006df000 r--p 000de000 08:02 1044485                  /bin/bash
 01596000-01597000 rw-p 00000000 00:00 0
@@ -1241,9 +1183,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
     def test_address_to_offset_arm(self) -> None:
         """_address_to_offset() for ARM /proc/pid/maps"""
         pr = apport.report.Report()
-        pr[
-            "ProcMaps"
-        ] = """
+        pr["ProcMaps"] = """
 00008000-0000e000 r-xp 00000000 08:01 13243326   /usr/lib/dconf/dconf-service
 00017000-00038000 rw-p 00000000 00:00 0          [heap]
 40017000-4001d000 rw-p 00000000 00:00 0
@@ -1276,9 +1216,7 @@ ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
 
         pr["ExecutablePath"] = "/bin/bash"
         pr["Signal"] = "42"
-        pr[
-            "ProcMaps"
-        ] = """
+        pr["ProcMaps"] = """
 00400000-004df000 r-xp 00000000 08:02 1044485                  /bin/bash
 006de000-006df000 r--p 000de000 08:02 1044485                  /bin/bash
 01596000-01597000 rw-p 00000000 00:00 0
@@ -1298,9 +1236,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
         self.assertIsNone(pr.crash_signature_addresses())
 
         # good stack trace
-        pr[
-            "Stacktrace"
-        ] = """
+        pr["Stacktrace"] = """
 #0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
 No locals.
 #1  0x000000000043fd51 in kill_pid ()
@@ -1326,9 +1262,7 @@ No symbol table info available.
         self.assertIsNone(pr.crash_signature_addresses())
 
         # one unresolvable, but long enough
-        pr[
-            "Stacktrace"
-        ] = """
+        pr["Stacktrace"] = """
 #0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
 No locals.
 #1  0x000001000043fd51 in kill_pid ()
@@ -1345,9 +1279,7 @@ No symbol table info available.
 
         # one true unresolvable, and some "low address" artifacts; should be
         # identical to the one above
-        pr[
-            "Stacktrace"
-        ] = """
+        pr["Stacktrace"] = """
 #0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
 No locals.
 #1  0x000001000043fd51 in kill_pid ()
@@ -1365,9 +1297,7 @@ No symbol table info available.
         self.assertEqual(pr.crash_signature_addresses(), sig)
 
         # two unresolvables, 2/7 is too much
-        pr[
-            "Stacktrace"
-        ] = """
+        pr["Stacktrace"] = """
 #0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
 No locals.
 #1  0x000001000043fd51 in kill_pid ()
@@ -1676,16 +1606,14 @@ No symbol table info available.
         run_mock.return_value = subprocess.CompletedProcess(
             args=MagicMock(),
             returncode=0,
-            stdout=textwrap.dedent(
-                """\
+            stdout=textwrap.dedent("""\
                 path.prefix="/usr"
                 path.sysconfdir="/etc"
                 path.system_dirs[0x0]="/lib/x86_64-linux-gnu/"
                 path.system_dirs[0x1]="/usr/lib/x86_64-linux-gnu/"
                 path.system_dirs[0x2]="/lib/"
                 path.system_dirs[0x3]="/usr/lib/"
-                """
-            ),
+                """),
         )
         ld_search_paths = apport.report._get_ld_search_paths()
         self.assertEqual(
@@ -1709,13 +1637,11 @@ No symbol table info available.
         run_mock.return_value = subprocess.CompletedProcess(
             args=MagicMock(),
             returncode=0,
-            stdout=textwrap.dedent(
-                """\
+            stdout=textwrap.dedent("""\
                 path.system_dirs[0x2]="third"
                 path.system_dirs[0x1]="second"
                 path.system_dirs[0x0]="first"
-                """
-            ),
+                """),
         )
         ld_search_paths = apport.report._get_ld_search_paths("ld.so")
         self.assertEqual(ld_search_paths, ["first", "second", "third"])

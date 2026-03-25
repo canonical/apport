@@ -57,7 +57,7 @@ class T(unittest.TestCase):
         """Create a test crash."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
-        (fd, script) = tempfile.mkstemp(dir="/var/tmp")
+        fd, script = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, script)
 
         os.write(
@@ -97,15 +97,11 @@ func(42)
 
     def test_dbus_service_unknown_invalid(self) -> None:
         """DBus.Error.ServiceUnknown with an invalid name"""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                import dbus
-                bus = dbus.SessionBus()
-                obj = bus.get_object('com.example.NotExisting', '/Foo')
-                """
-            )
-        )
+        self._test_crash(extracode=textwrap.dedent("""\
+            import dbus
+            bus = dbus.SessionBus()
+            obj = bus.get_object('com.example.NotExisting', '/Foo')
+            """))
 
         pr = self._load_report()
         self.assertTrue(pr["Traceback"].startswith("Traceback"), pr["Traceback"])
@@ -118,16 +114,12 @@ func(42)
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (not running)"""
         subprocess.call(["killall", "gvfsd-metadata"])
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                import dbus
-                obj = dbus.SystemBus().get_object(
-                    'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
-                )
-                """
+        self._test_crash(extracode=textwrap.dedent("""\
+            import dbus
+            obj = dbus.SystemBus().get_object(
+                'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
             )
-        )
+            """))
 
         pr = self._load_report()
         self.assertIn("org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"])
@@ -140,21 +132,17 @@ func(42)
     def test_dbus_service_unknown_wrongbus_running(self) -> None:
         """DBus.Error.ServiceUnknown with a valid name on a different bus
         (running)"""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                import dbus
-                # let the service be activated, to ensure it is running
-                obj = dbus.SessionBus().get_object(
-                    'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
-                )
-                assert obj
-                obj = dbus.SystemBus().get_object(
-                    'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
-                )
-                """
+        self._test_crash(extracode=textwrap.dedent("""\
+            import dbus
+            # let the service be activated, to ensure it is running
+            obj = dbus.SessionBus().get_object(
+                'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
             )
-        )
+            assert obj
+            obj = dbus.SystemBus().get_object(
+                'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
+            )
+            """))
 
         pr = self._load_report()
         self.assertIn("org.freedesktop.DBus.Error.ServiceUnknown", pr["Traceback"])
@@ -175,19 +163,15 @@ func(42)
         # timeout of zero will always fail with NoReply
         try:
             subprocess.call(["killall", "-STOP", "gvfsd-metadata"])
-            self._test_crash(
-                extracode=textwrap.dedent(
-                    """\
-                    import dbus
-                    obj = dbus.SessionBus().get_object(
-                        'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
-                    )
-                    assert obj
-                    i = dbus.Interface(obj, 'org.freedesktop.DBus.Peer')
-                    i.Ping(timeout=1)
-                    """
+            self._test_crash(extracode=textwrap.dedent("""\
+                import dbus
+                obj = dbus.SessionBus().get_object(
+                    'org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata'
                 )
-            )
+                assert obj
+                i = dbus.Interface(obj, 'org.freedesktop.DBus.Peer')
+                i.Ping(timeout=1)
+                """))
         finally:
             subprocess.call(["killall", "-CONT", "gvfsd-metadata"])
 
@@ -201,17 +185,13 @@ func(42)
 
     def test_dbus_service_other_error(self) -> None:
         """Other DBusExceptions get an unwrapped original exception"""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                import dbus
-                obj = dbus.SessionBus().get_object(
-                    'org.gtk.vfs.Daemon', '/org/gtk/vfs/Daemon'
-                )
-                dbus.Interface(obj, 'org.gtk.vfs.Daemon').Nonexisting(1)
-                """
+        self._test_crash(extracode=textwrap.dedent("""\
+            import dbus
+            obj = dbus.SessionBus().get_object(
+                'org.gtk.vfs.Daemon', '/org/gtk/vfs/Daemon'
             )
-        )
+            dbus.Interface(obj, 'org.gtk.vfs.Daemon').Nonexisting(1)
+            """))
 
         pr = self._load_report()
         self.assertTrue(pr["Traceback"].startswith("Traceback"), pr["Traceback"])

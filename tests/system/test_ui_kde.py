@@ -213,16 +213,12 @@ class T(unittest.TestCase):
         self.ui.report["CrashCounter"] = "1"
         self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
-            fp.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Version=1.0
-                    Name=Apport
-                    Type=Application
-                    """
-                )
-            )
+            fp.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Version=1.0
+                Name=Apport
+                Type=Application
+                """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
@@ -267,16 +263,12 @@ class T(unittest.TestCase):
         self.ui.report["ProcCmdline"] = "apport-bug apport"
         self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
-            fp.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Version=1.0
-                    Name=Apport
-                    Type=Application
-                    """
-                )
-            )
+            fp.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Version=1.0
+                Name=Apport
+                Type=Application
+                """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
@@ -320,16 +312,12 @@ class T(unittest.TestCase):
         self.ui.report["ProcCmdline"] = "apport-bug apport"
         self.ui.report["Package"] = "apport 1.2.3~0ubuntu1"
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
-            fp.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Version=1.0
-                    Name=Apport
-                    Type=Application
-                    """
-                )
-            )
+            fp.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Version=1.0
+                Name=Apport
+                Type=Application
+                """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
@@ -433,16 +421,12 @@ class T(unittest.TestCase):
         self.ui.report["DialogBody"] = "Some developer-specified error text."
 
         with tempfile.NamedTemporaryFile(mode="w+") as fp:
-            fp.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Version=1.0
-                    Name=Apport
-                    Type=Application
-                    """
-                )
-            )
+            fp.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Version=1.0
+                Name=Apport
+                Type=Application
+                """))
             fp.flush()
             self.ui.report["DesktopFile"] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)

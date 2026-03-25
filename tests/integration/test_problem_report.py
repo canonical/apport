@@ -78,8 +78,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(
             out.getvalue().decode(),
-            textwrap.dedent(
-                f"""\
+            textwrap.dedent(f"""\
                 ProblemType: Crash
                 Date: now!
                 Simple: bar
@@ -88,8 +87,7 @@ class T(unittest.TestCase):
                  baz
                    blip{'  '}
                 Extra: appended
-                """
-            ),
+                """),
         )
 
         with tempfile.NamedTemporaryFile() as temp:
@@ -205,13 +203,11 @@ class T(unittest.TestCase):
 
             self.assertEqual(
                 out.getvalue().decode(),
-                textwrap.dedent(
-                    """\
+                textwrap.dedent("""\
                     ProblemType: Crash
                     Date: now!
                     File: foo\0bar
-                    """
-                ),
+                    """),
             )
 
             pr["File"] = (temp.name, True)
@@ -227,7 +223,7 @@ class T(unittest.TestCase):
 
     def test_write_delayed_fileobj(self) -> None:
         """Write a report with file pointers and delayed data."""
-        (fout, fin) = os.pipe()
+        fout, fin = os.pipe()
 
         if os.fork() == 0:
             os.close(fout)
@@ -332,7 +328,7 @@ class T(unittest.TestCase):
         pr["old1"] = "11"
         pr["old2"] = "22"
 
-        (fd, rep) = tempfile.mkstemp()
+        fd, rep = tempfile.mkstemp()
         os.close(fd)
         with open(rep, "wb") as f:
             pr.write(f)
@@ -504,13 +500,11 @@ class T(unittest.TestCase):
         self.assertIsNone(parts[1].get_filename())
         self.assertEqual(
             parts[1].get_payload(decode=True),
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 ProblemType: Crash
                 Date: now!
                 GoodText: Hi
-                """
-            ).encode(),
+                """).encode(),
         )
 
         # third part should be the GoodBin: field as attachment

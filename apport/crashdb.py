@@ -102,21 +102,17 @@ class CrashDatabase:
             cur.execute("CREATE TABLE version (format INTEGER NOT NULL)")
             cur.execute("INSERT INTO version VALUES (?)", [self.format_version])
 
-            cur.execute(
-                """CREATE TABLE crashes (
+            cur.execute("""CREATE TABLE crashes (
                 signature VARCHAR(255) NOT NULL,
                 crash_id INTEGER NOT NULL,
                 fixed_version VARCHAR(50),
                 last_change TIMESTAMP,
-                CONSTRAINT crashes_pk PRIMARY KEY (crash_id))"""
-            )
+                CONSTRAINT crashes_pk PRIMARY KEY (crash_id))""")
 
-            cur.execute(
-                """CREATE TABLE address_signatures (
+            cur.execute("""CREATE TABLE address_signatures (
                 signature VARCHAR(1000) NOT NULL,
                 crash_id INTEGER NOT NULL,
-                CONSTRAINT address_signatures_pk PRIMARY KEY (signature))"""
-            )
+                CONSTRAINT address_signatures_pk PRIMARY KEY (signature))""")
 
             self.duplicate_db.commit()
 

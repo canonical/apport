@@ -305,8 +305,7 @@ class T(unittest.TestCase):
         with open(
             os.path.join(self.workdir, ".xsession-errors"), "w", encoding="UTF-8"
         ) as f:
-            f.write(
-                """\
+            f.write("""\
 Loading profile from /etc/profile
 gnome-session[1948]: WARNING: standard glib warning
 EggSMClient-CRITICAL **: egg_sm_client_set_mode: standard glib assertion
@@ -330,8 +329,7 @@ The error was 'BadMatch (invalid parameter attributes)'.
    backtrace from your debugger if you break on the gdk_x_error() function.)"
 
 GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
-"""
-            )
+""")
         os.environ["HOME"] = self.workdir
 
         # explicit pattern

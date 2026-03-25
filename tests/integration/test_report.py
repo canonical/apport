@@ -257,13 +257,11 @@ class T(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="apport_") as tempdir:
             testscript = pathlib.Path(tempdir) / "testscript.py"
             testscript.write_text(
-                textwrap.dedent(
-                    f"""\
+                textwrap.dedent(f"""\
                     #!/usr/bin/{os.getenv('PYTHON', 'python3')}
                     import sys
                     sys.stdin.readline()
-                    """
-                ),
+                    """),
                 encoding="ascii",
             )
             testscript.chmod(0o755)
@@ -760,17 +758,13 @@ int main() { return f(42); }
         self.assertNotIn("AssertionMessage", pr)
 
         # crash where gdb generates output on stderr
-        pr = self._generate_sigsegv_report(
-            code=textwrap.dedent(
-                """\
-                int main() {
-                    void     (*function)(void);
-                    function = 0;
-                    function();
-                }
-                """
-            )
-        )
+        pr = self._generate_sigsegv_report(code=textwrap.dedent("""\
+            int main() {
+                void     (*function)(void);
+                function = 0;
+                function();
+            }
+            """))
         self._validate_gdb_fields(pr)
         self.assertNotEqual(pr["Disassembly"], "")
         self.assertNotIn("AssertionMessage", pr)
@@ -900,16 +894,12 @@ int main() { return f(42); }
 
             # create a test script which produces a core dump for us
             with open(script, "w", encoding="utf-8") as fd:
-                fd.write(
-                    textwrap.dedent(
-                        f"""\
-                        #!{shell}
-                        cd `dirname $0`
-                        ulimit -c unlimited
-                        kill -SEGV $$
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent(f"""\
+                    #!{shell}
+                    cd `dirname $0`
+                    ulimit -c unlimited
+                    kill -SEGV $$
+                    """))
             os.chmod(script, 0o755)
 
             core_path = os.path.join(workdir, "core")
@@ -950,14 +940,10 @@ int main() { return f(42); }
         message. Otherwise it should be marked as not reportable.
         """
         # abort with assert
-        pr = self._generate_sigsegv_report(
-            code=textwrap.dedent(
-                """\
-                #include <assert.h>
-                int main() { assert(1 < 0); }
-                """
-            )
-        )
+        pr = self._generate_sigsegv_report(code=textwrap.dedent("""\
+            #include <assert.h>
+            int main() { assert(1 < 0); }
+            """))
         self._validate_gdb_fields(pr)
         self.assertIn(
             "crash.c:2: main: Assertion `1 < 0' failed.", pr["AssertionMessage"]
@@ -968,16 +954,14 @@ int main() { return f(42); }
 
         # abort with internal error
         pr = self._generate_sigsegv_report(
-            code=textwrap.dedent(
-                """\
+            code=textwrap.dedent("""\
                 #include <string.h>
                 int main(int argc, char *argv[]) {
                     char buf[8];
                     strcpy(buf, argv[1]);
                     return 0;
                 }
-                """
-            ),
+                """),
             args=["aaaaaaaaaaaaaaaa"],
             extra_gcc_args=["-O2", "-D_FORTIFY_SOURCE=2"],
         )
@@ -990,25 +974,19 @@ int main() { return f(42); }
         self.assertFalse(pr["AssertionMessage"].endswith("\\n"), pr["AssertionMessage"])
 
         # abort without assertion
-        pr = self._generate_sigsegv_report(
-            code=textwrap.dedent(
-                """\
-                #include <stdlib.h>
-                int main() { abort(); }
-                """
-            )
-        )
+        pr = self._generate_sigsegv_report(code=textwrap.dedent("""\
+            #include <stdlib.h>
+            int main() { abort(); }
+            """))
         self._validate_gdb_fields(pr)
         self.assertNotIn("AssertionMessage", pr)
 
     def test_add_gdb_info_abort_glib(self) -> None:
         """add_gdb_info() with glib assertion"""
-        code = textwrap.dedent(
-            """\
+        code = textwrap.dedent("""\
             #include <glib.h>
             int main() { g_assert_cmpint(1, <, 0); }
-            """
-        )
+            """)
         try:
             process = subprocess.run(
                 ["pkg-config", "--cflags", "--libs", "glib-2.0"],
@@ -1034,8 +1012,7 @@ int main() { return f(42); }
         # pylint: disable=too-many-statements
         """search_bug_patterns()."""
         # create some test patterns
-        patterns = textwrap.dedent(
-            """\
+        patterns = textwrap.dedent("""\
             <?xml version="1.0"?>
             <patterns>
                 <pattern url="http://bugtracker.net/bugs/1">
@@ -1064,8 +1041,7 @@ int main() { return f(42); }
                     <re key="Package">^update-notifier</re>
                     <re key="LogFile">AssertionError ‽</re>
                 </pattern>
-            </patterns>"""
-        ).encode()
+            </patterns>""").encode()
 
         # invalid XML
         invalid = b'<?xml version="1.0"?>\n</patterns>'
@@ -1229,64 +1205,48 @@ int main() { return f(42); }
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        import sys
-                        def add_info(report):
-                            report['Order'] = f'{report.get("Order", "")} foo'
-                            report['Field1'] = 'Field 1'
-                            report['Field2'] = 'Field 2\\nBla'
-                            if 'Spethial' in report:
-                                raise StopIteration
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    import sys
+                    def add_info(report):
+                        report['Order'] = f'{report.get("Order", "")} foo'
+                        report['Field1'] = 'Field 1'
+                        report['Field2'] = 'Field 2\\nBla'
+                        if 'Spethial' in report:
+                            raise StopIteration
+                    """))
 
             with open(
                 os.path.join(apport.report.GENERAL_HOOK_DIR, "foo1.py"),
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report):
-                            report['Order'] = f'{report.get("Order", "")} foo1'
-                            report['CommonField1'] = 'CommonField 1'
-                            if report['Package'] == 'commonspethial':
-                                raise StopIteration
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report):
+                        report['Order'] = f'{report.get("Order", "")} foo1'
+                        report['CommonField1'] = 'CommonField 1'
+                        if report['Package'] == 'commonspethial':
+                            raise StopIteration
+                    """))
             with open(
                 os.path.join(apport.report.GENERAL_HOOK_DIR, "foo2.py"),
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report):
-                            report['Order'] = f'{report.get("Order", "")} foo2'
-                            report['CommonField2'] = 'CommonField 2'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report):
+                        report['Order'] = f'{report.get("Order", "")} foo2'
+                        report['CommonField2'] = 'CommonField 2'
+                    """))
             with open(
                 os.path.join(apport.report.GENERAL_HOOK_DIR, "foo3.py"),
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['Order'] = f'{report.get("Order", "")} foo3'
-                            report['CommonField3'] = str(ui)
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['Order'] = f'{report.get("Order", "")} foo3'
+                        report['CommonField3'] = str(ui)
+                    """))
 
             # should only catch .py files
             with open(
@@ -1294,15 +1254,11 @@ int main() { return f(42); }
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report):
-                            report['Order'] = f'{report.get("Order", "")} notme'
-                            report['BadField'] = 'XXX'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report):
+                        report['Order'] = f'{report.get("Order", "")} notme'
+                        report['BadField'] = 'XXX'
+                    """))
             r = apport.report.Report()
             r["Package"] = "bar"
             # should not throw any exceptions
@@ -1409,18 +1365,14 @@ int main() { return f(42); }
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['Order'] = f'{report.get("Order", "")} source_foo'
-                            report['Field1'] = 'Field 1'
-                            report['Field2'] = 'Field 2\\nBla'
-                            if report['Package'] == 'spethial':
-                                raise StopIteration
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['Order'] = f'{report.get("Order", "")} source_foo'
+                        report['Field1'] = 'Field 1'
+                        report['Field2'] = 'Field 2\\nBla'
+                        if report['Package'] == 'spethial':
+                            raise StopIteration
+                    """))
             r = apport.report.Report()
             r["SourcePackage"] = "foo"
             r["Package"] = "libfoo 3"
@@ -1481,25 +1433,17 @@ int main() { return f(42); }
             with open(
                 os.path.join(opt_hook_dir, "source_foo.py"), "w", encoding="utf-8"
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['SourceHook'] = '1'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['SourceHook'] = '1'
+                    """))
             with open(
                 os.path.join(opt_hook_dir, "foo-bin.py"), "w", encoding="utf-8"
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['BinHook'] = '1'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['BinHook'] = '1'
+                    """))
 
             r = apport.report.Report()
             r["Package"] = "foo-bin 0.2"
@@ -1531,31 +1475,23 @@ int main() { return f(42); }
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['BinHookBefore'] = '1'
-                            1/0
-                            report['BinHookAfter'] = '1'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['BinHookBefore'] = '1'
+                        1/0
+                        report['BinHookAfter'] = '1'
+                    """))
             with open(
                 os.path.join(apport.report.PACKAGE_HOOK_DIR, "source_foo.py"),
                 "w",
                 encoding="utf-8",
             ) as fd:
-                fd.write(
-                    textwrap.dedent(
-                        """\
-                        def add_info(report, ui):
-                            report['SourceHookBefore'] = '1'
-                            unknown()
-                            report['SourceHookAfter'] = '1'
-                        """
-                    )
-                )
+                fd.write(textwrap.dedent("""\
+                    def add_info(report, ui):
+                        report['SourceHookBefore'] = '1'
+                        unknown()
+                        report['SourceHookAfter'] = '1'
+                    """))
 
             r = apport.report.Report()
             r["Package"] = "fooprogs 0.2"

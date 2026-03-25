@@ -710,7 +710,7 @@ class Report(problem_report.ProblemReport):
         name = None
         for line in self["ProcStatus"].splitlines():
             try:
-                (k, v) = line.split("\t", 1)
+                k, v = line.split("\t", 1)
             except ValueError:
                 continue
             if k == "Name:":
@@ -1972,12 +1972,12 @@ class Report(problem_report.ProblemReport):
         coredump = self["CoreDump"]
         assert not isinstance(coredump, str)
         if isinstance(coredump, bytes):
-            (fd, core) = tempfile.mkstemp(prefix="apport_core_")
+            fd, core = tempfile.mkstemp(prefix="apport_core_")
             atexit.register(os.unlink, core)
             os.write(fd, coredump)
             os.close(fd)
         elif isinstance(coredump, problem_report.CompressedValue):
-            (fd, core) = tempfile.mkstemp(prefix="apport_core_")
+            fd, core = tempfile.mkstemp(prefix="apport_core_")
             atexit.register(os.unlink, core)
             os.close(fd)
             with open(core, "wb") as f:

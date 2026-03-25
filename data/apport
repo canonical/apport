@@ -168,7 +168,7 @@ def get_pid_info(proc_pid: ProcPid) -> tuple[UserGroupID, os.stat_result]:
     # (this matters when suid_dumpable is enabled)
     with proc_pid.open("status") as status_file:
         contents = status_file.read()
-    (real_uid, real_gid) = apport.fileutils.get_uid_and_gid(contents)
+    real_uid, real_gid = apport.fileutils.get_uid_and_gid(contents)
 
     assert real_uid is not None, "failed to parse Uid"
     assert real_gid is not None, "failed to parse Gid"

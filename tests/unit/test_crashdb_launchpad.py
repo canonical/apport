@@ -25,9 +25,7 @@ def python_crash() -> Report:
     report["PackageArchitecture"] = "all"
     report["DistroRelease"] = "Ubuntu 24.04"
     report["ExecutablePath"] = "/usr/bin/pygoo"
-    report[
-        "Traceback"
-    ] = """Traceback (most recent call last):
+    report["Traceback"] = """Traceback (most recent call last):
   File "test.py", line 7, in <module>
     print(_f(5))
   File "test.py", line 5, in _f

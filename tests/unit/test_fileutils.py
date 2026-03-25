@@ -40,7 +40,7 @@ class T(unittest.TestCase):
     def test_get_core_path(self, get_boot_id_mock: MagicMock) -> None:
         """get_core_path() basic test"""
         get_boot_id_mock.return_value = "<some-boot-id>"
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_name, core_path = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test", uid=234, timestamp=222222
         )
         expected = "core._usr_bin_test.234.<some-boot-id>.123.222222"
@@ -53,7 +53,7 @@ class T(unittest.TestCase):
     def test_get_core_path_dots_in_exe(self, get_boot_id_mock: MagicMock) -> None:
         """get_core_path() with dots in exe names"""
         get_boot_id_mock.return_value = "<some-boot-id>"
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_name, core_path = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test.sh", uid=234, timestamp=222222
         )
         expected = "core._usr_bin_test_sh.234.<some-boot-id>.123.222222"
@@ -66,7 +66,7 @@ class T(unittest.TestCase):
     def test_get_core_path_no_exe(self, get_boot_id_mock: MagicMock) -> None:
         """get_core_path() with no exe name"""
         get_boot_id_mock.return_value = "<some-boot-id>"
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_name, core_path = apport.fileutils.get_core_path(
             pid=123, exe=None, uid=234, timestamp=222222
         )
         expected = "core.unknown.234.<some-boot-id>.123.222222"
@@ -79,7 +79,7 @@ class T(unittest.TestCase):
     def test_get_core_path_no_uid(self, get_boot_id_mock: MagicMock) -> None:
         """get_core_path() with no uid"""
         get_boot_id_mock.return_value = "boot-id"
-        (core_name, core_path) = apport.fileutils.get_core_path(
+        core_name, core_path = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
         )
         expected = f"core._usr_bin_test.{str(os.getuid())}.boot-id.123.222222"
@@ -117,7 +117,7 @@ class T(unittest.TestCase):
             exe.symlink_to("/usr/bin/myprog")
             fd = os.open(tmpdir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
             try:
-                (core_name, core_path) = apport.fileutils.get_core_path(
+                core_name, core_path = apport.fileutils.get_core_path(
                     fake_pid, uid=42, proc_pid_fd=fd
                 )
             finally:
@@ -374,6 +374,6 @@ class T(unittest.TestCase):
             "a\nUid: 0\nGid: 0",
             "a\nUid: 0\nGid:",
         ):
-            (uid, gid) = apport.fileutils.get_uid_and_gid(template % name)
+            uid, gid = apport.fileutils.get_uid_and_gid(template % name)
             self.assertEqual(uid, 1000)
             self.assertEqual(gid, 2000)

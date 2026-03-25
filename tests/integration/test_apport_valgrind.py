@@ -44,7 +44,7 @@ class TestApportValgrind(unittest.TestCase):
     def test_valgrind_min_installed(self) -> None:
         """Valgrind is installed and recent enough."""
         cmd = ["valgrind", "-q", "--extra-debuginfo-path=./", "ls"]
-        (ret, out, err) = self._call(cmd)
+        ret, out, err = self._call(cmd)
         self.assertEqual(err, "")
         self.assertEqual(ret, 0)
         self.assertIn("tests", out)
@@ -63,7 +63,7 @@ class TestApportValgrind(unittest.TestCase):
     def test_help_display(self) -> None:
         """Display help."""
         cmd = ["apport-valgrind", "-h"]
-        (ret, out, err) = self._call(cmd)
+        ret, out, err = self._call(cmd)
         self.assertEqual(err, "")
         self.assertEqual(ret, 0)
         self.assertIn("--help", out)
@@ -71,7 +71,7 @@ class TestApportValgrind(unittest.TestCase):
     def test_invalid_args(self) -> None:
         """Return code is not 0 when invalid args are passed."""
         cmd = ["apport-valgrind", "-k", "pwd"]
-        (ret, out, err) = self._call(cmd)
+        ret, out, err = self._call(cmd)
         self.assertEqual(out, "")
         self.assertNotEqual(ret, 0)
         self.assertIn("unrecognized arguments: -k", err)

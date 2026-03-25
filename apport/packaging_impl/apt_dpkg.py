@@ -74,7 +74,7 @@ def _extract_downloaded_debs(
         if not i.destfile.endswith("deb"):
             continue
         out = subprocess.check_output(["dpkg-deb", "--show", i.destfile]).decode()
-        (p, v) = out.strip().split()
+        p, v = out.strip().split()
         if (
             not permanent_rootdir
             or p not in pkg_versions
@@ -200,7 +200,7 @@ def _read_package_version_dict(pkg_list_filename: str) -> dict[str, str]:
                 line = line.strip()
                 if not line:
                     continue
-                (p, v) = line.split()
+                p, v = line.split()
                 pkg_versions[p] = v
     return pkg_versions
 
@@ -1289,7 +1289,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
             Return True in case the binary package was found on Launchpad.
             """
-            (lp_url, sha1sum) = self.get_lp_binary_package(
+            lp_url, sha1sum = self.get_lp_binary_package(
                 release, pkg, ver, architecture
             )
             if lp_url:

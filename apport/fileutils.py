@@ -165,7 +165,7 @@ def find_file_package(file: str) -> str | None:
     Return None if no package ships it.
     """
     # resolve symlinks in directories
-    (directory, name) = os.path.split(file)
+    directory, name = os.path.split(file)
     resolved_dir = os.path.realpath(directory)
     if os.path.isdir(resolved_dir):
         file = os.path.join(resolved_dir, name)

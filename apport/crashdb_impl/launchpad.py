@@ -307,7 +307,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if b"Uname:" in description:
                 # this will take care of bugs like LP #315728 where stuff
                 # is added after the apport data
-                (part1, part2) = description.split(b"Uname:", 1)
+                part1, part2 = description.split(b"Uname:", 1)
                 description = (
                     part1.replace(b"\n\n", b"\n")
                     + b"Uname:"

@@ -259,9 +259,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         r["Signal"] = "11"
         r["ExecutablePath"] = "/bin/crash"
 
-        r[
-            "StacktraceTop"
-        ] = """foo_bar (x=1) at crash.c:28
+        r["StacktraceTop"] = """foo_bar (x=1) at crash.c:28
 d01 (x=1) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
@@ -277,9 +275,7 @@ __frob (x=1) at crash.c:30"""
         r["Signal"] = "11"
         r["ExecutablePath"] = "/bin/crash"
 
-        r[
-            "StacktraceTop"
-        ] = """foo_bar (x=2) at crash.c:28
+        r["StacktraceTop"] = """foo_bar (x=2) at crash.c:28
 d01 (x=3) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
@@ -294,9 +290,7 @@ __frob (x=4) at crash.c:30"""
         r["Signal"] = "11"
         r["ExecutablePath"] = "/usr/bin/broken"
 
-        r[
-            "StacktraceTop"
-        ] = """h (p=0x0) at crash.c:25
+        r["StacktraceTop"] = """h (p=0x0) at crash.c:25
 g (x=1, y=42) at crash.c:26
 f (x=1) at crash.c:27
 e (x=1) at crash.c:28
@@ -309,9 +303,7 @@ d (x=1) at crash.c:29"""
         r["SourcePackage"] = "pygoo"
         r["DistroRelease"] = "Testux 2.2"
         r["ExecutablePath"] = "/usr/bin/pygoo"
-        r[
-            "Traceback"
-        ] = """Traceback (most recent call last):
+        r["Traceback"] = """Traceback (most recent call last):
   File "test.py", line 7, in <module>
     print(_f(5))
   File "test.py", line 5, in _f
@@ -328,9 +320,7 @@ ZeroDivisionError: integer division or modulo by zero"""
         r["SourcePackage"] = "pygoo"
         r["DistroRelease"] = "Testux 2.2"
         r["ExecutablePath"] = "/usr/bin/pygoo"
-        r[
-            "Traceback"
-        ] = """Traceback (most recent call last):
+        r["Traceback"] = """Traceback (most recent call last):
   File "test.py", line 7, in <module>
     print(_f(5))
   File "test.py", line 5, in _f

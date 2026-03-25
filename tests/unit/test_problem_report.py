@@ -132,32 +132,26 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["UnprintableUnicode"] = b"a\xc3\xa4\x05z1\xc3\xa9".decode("UTF-8")
         out = io.BytesIO()
         pr.write(out)
-        expected = (
-            textwrap.dedent(
-                """\
-                ProblemType: Crash
-                Date: now!
-                Simple: bar
-                SimpleUTF8: 1äö2Φ3
-                SimpleUnicode: 1äö2Φ3
-                TwoLineUTF8:
-                 pi-π
-                 nu-η
-                TwoLineUnicode:
-                 pi-π
-                 nu-η
-                UnprintableUnicode: aä\x05z1é
-                WhiteSpace:
-                """
-            )
-            + "  foo   bar\n baz\n   blip  \n \n afteremptyline\n"
-        ).encode("UTF-8")
+        expected = (textwrap.dedent("""\
+            ProblemType: Crash
+            Date: now!
+            Simple: bar
+            SimpleUTF8: 1äö2Φ3
+            SimpleUnicode: 1äö2Φ3
+            TwoLineUTF8:
+             pi-π
+             nu-η
+            TwoLineUnicode:
+             pi-π
+             nu-η
+            UnprintableUnicode: aä\x05z1é
+            WhiteSpace:
+            """) + "  foo   bar\n baz\n   blip  \n \n afteremptyline\n").encode("UTF-8")
         self.assertEqual(out.getvalue(), expected)
 
     def test_load(self) -> None:
         """load() with various formatting."""
-        report = textwrap.dedent(
-            f"""\
+        report = textwrap.dedent(f"""\
             ProblemType: Crash
             Date: now!
             Simple: bar
@@ -165,8 +159,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
               foo   bar
              baz
                blip{'  '}
-            """
-        )
+            """)
         pr = problem_report.ProblemReport()
         pr.load(io.BytesIO(report.encode()))
         self.assertEqual(pr["ProblemType"], "Crash")
@@ -183,19 +176,13 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["WhiteSpace"], " foo   bar\nbaz\n  blip  \n")
 
         # last field might not be \n terminated
-        pr.load(
-            io.BytesIO(
-                textwrap.dedent(
-                    """\
-                    ProblemType: Crash
-                    Date: now!
-                    Simple: bar
-                    WhiteSpace:
-                     foo
-                     bar"""
-                ).encode()
-            )
-        )
+        pr.load(io.BytesIO(textwrap.dedent("""\
+            ProblemType: Crash
+            Date: now!
+            Simple: bar
+            WhiteSpace:
+             foo
+             bar""").encode()))
         self.assertEqual(pr["ProblemType"], "Crash")
         self.assertEqual(pr["Date"], "now!")
         self.assertEqual(pr["Simple"], "bar")
@@ -222,16 +209,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["Last"], "foo\n")
 
         # empty lines in values must have a leading space in coding
-        invalid_spacing = io.BytesIO(
-            textwrap.dedent(
-                """\
-                WhiteSpace:
-                 first
+        invalid_spacing = io.BytesIO(textwrap.dedent("""\
+            WhiteSpace:
+             first
 
-                 second
-                """
-            ).encode()
-        )
+             second
+            """).encode())
         pr = problem_report.ProblemReport()
         self.assertRaises(ValueError, pr.load, invalid_spacing)
 
@@ -421,29 +404,25 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         report.write(out)
         self.assertEqual(
             out.getvalue().decode(),
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 ProblemType: Crash
                 Date: now!
                 BinValue: base64
                  H4sIAAAAAAAC/wvJSFVIzCsuTy1SKMlXyMlMS9VRKAGKleZllqUWFQN5iXkpCqlA
                  dmVJRmZeOgCmv3KVMAAAAA==
-                """
-            ),
+                """),
         )
 
     def test_read_file(self) -> None:
         """Read a report with binary data."""
-        bin_report = textwrap.dedent(
-            """\
+        bin_report = textwrap.dedent("""\
             ProblemType: Crash
             Date: now!
             File: base64
              H4sICAAAAAAC/0ZpbGUA
              c3RyhEIGBoYoRiYAM5XUCxAAAAA=
             Foo: Bar
-            """
-        ).encode()
+            """).encode()
 
         # test with reading everything
         pr = problem_report.ProblemReport()
@@ -468,16 +447,14 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_read_file_legacy(self) -> None:
         """Read a report with binary data in legacy format without gzip
         header."""
-        bin_report = textwrap.dedent(
-            """\
+        bin_report = textwrap.dedent("""\
             ProblemType: Crash
             Date: now!
             File: base64
              eJw=
              c3RyxIAMcBAFAG55BXk=
             Foo: Bar
-            """
-        ).encode()
+            """).encode()
 
         # test with reading everything
         pr = problem_report.ProblemReport()
@@ -516,8 +493,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_modify(self) -> None:
         """reading, modifying fields, and writing back."""
-        report = textwrap.dedent(
-            """\
+        report = textwrap.dedent("""\
             ProblemType: Crash
             Date: now!
             Long:
@@ -528,8 +504,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             File: base64
              H4sICAAAAAAC/0ZpbGUA
              c3RyxIAMcBAFAK/2p9MfAAAA
-            """
-        ).encode()
+            """).encode()
 
         pr = problem_report.ProblemReport()
         pr.load(io.BytesIO(report), binary="compressed")
@@ -545,8 +520,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.write(out)
         self.assertEqual(
             out.getvalue().decode(),
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 ProblemType: Crash
                 Date: now!
                 Long:
@@ -556,8 +530,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 Short: Bar
                 File: base64
                  H4sICAAAAAAC/0ZpbGUAc3RyxIAMcBAFAK/2p9MfAAAA
-                """
-            ),
+                """),
         )
 
         pr["Short"] = "aaa\nbbb"
@@ -566,8 +539,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.write(out)
         self.assertEqual(
             out.getvalue().decode(),
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 ProblemType: Crash
                 Date: now!
                 Long: 123
@@ -576,14 +548,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                  bbb
                 File: base64
                  H4sICAAAAAAC/0ZpbGUAc3RyxIAMcBAFAK/2p9MfAAAA
-                """
-            ),
+                """),
         )
 
     def test_sorted_items(self) -> None:
         """Test ProblemReport.sorted_items()."""
-        bin_report = textwrap.dedent(
-            """\
+        bin_report = textwrap.dedent("""\
             ProblemType: Crash
             Date: now!
             File: base64
@@ -593,8 +563,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             Architecture: amd64
             ExecutablePath: /usr/bin/python3
             Package: python3.12-minimal
-            """
-        ).encode()
+            """).encode()
 
         report = problem_report.ProblemReport()
         report.load(io.BytesIO(bin_report), binary=False)
@@ -646,8 +615,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(parts[1].get_content_type(), "text/plain")
         self.assertEqual(parts[1].get_content_charset(), "utf-8")
         self.assertIsNone(parts[1].get_filename())
-        expected = textwrap.dedent(
-            f"""\
+        expected = textwrap.dedent(f"""\
             ProblemType: Crash
             Date: now!
             InlineMargin:
@@ -673,8 +641,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             TwoLineUnicode:
              pi-π
              nu-η
-            """
-        ).encode("UTF-8")
+            """).encode("UTF-8")
         self.assertEqual(parts[1].get_payload(decode=True), expected)
 
         # third part should be the HugeMultiline: field as attachment
@@ -698,16 +665,14 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(parts[4].get_content_type(), "text/plain")
         self.assertEqual(parts[4].get_content_charset(), "utf-8")
         self.assertEqual(parts[4].get_filename(), "Multiline.txt")
-        expected = textwrap.dedent(
-            f"""\
+        expected = textwrap.dedent(f"""\
              foo   bar
             baz
               blip{'  '}
             line4
             line♥5!!
             łıµ€ ⅝
-            """
-        ).encode("UTF-8")
+            """).encode("UTF-8")
         self.assertEqual(parts[4].get_payload(decode=True), expected)
 
     def test_write_mime_extra_headers(self) -> None:
@@ -769,34 +734,26 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIsNone(parts[1].get_filename())
         self.assertEqual(
             parts[1].get_payload(decode=True),
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 FirstText: Who
                 SecondText: What
                 ThirdText: I Don't Know
                 FourthText: Today
                 ProblemType: Crash
                 Date: now!
-                """
-            ).encode(),
+                """).encode(),
         )
 
     def test_updating(self) -> None:
         """new_keys() and write() with only_new=True."""
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(["ProblemType", "Date"]))
-        pr.load(
-            io.BytesIO(
-                textwrap.dedent(
-                    """\
-                    ProblemType: Crash
-                    Date: now!
-                    Foo: bar
-                    Baz: blob
-                    """
-                ).encode()
-            )
-        )
+        pr.load(io.BytesIO(textwrap.dedent("""\
+            ProblemType: Crash
+            Date: now!
+            Foo: bar
+            Baz: blob
+            """).encode()))
 
         self.assertEqual(pr.new_keys(), set())
 
@@ -830,8 +787,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_load_key_filter(self) -> None:
         """Load a report with filtering keys."""
-        report = textwrap.dedent(
-            """\
+        report = textwrap.dedent("""\
             ProblemType: Crash
             DataNo: nonono
             GoodFile: base64
@@ -841,8 +797,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             BadFile: base64
              H4sICAAAAAAC/0ZpbGUA
              S8vPZ0hKLAIACq50HgcAAAA=
-            """
-        ).encode()
+            """).encode()
         pr = problem_report.ProblemReport()
         pr.load(io.BytesIO(report), key_filter=["DataYes", "GoodFile"])
         self.assertEqual(pr["DataYes"], "yesyes")
@@ -864,15 +819,11 @@ class TestEntryParser(unittest.TestCase):
 
     def test_parse(self) -> None:
         """Test parsing a report file with _EntryParser."""
-        report_file = io.BytesIO(
-            textwrap.dedent(
-                """\
-                First: single line
-                Second: multi
-                 line
-                """
-            ).encode()
-        )
+        report_file = io.BytesIO(textwrap.dedent("""\
+            First: single line
+            Second: multi
+             line
+            """).encode())
         entries = []
         for entry in problem_report._EntryParser(report_file):
             entries.append(list(entry))
@@ -882,45 +833,33 @@ class TestEntryParser(unittest.TestCase):
 
     def test_skip_entries(self) -> None:
         """Test skipping reading one entry."""
-        report_file = io.BytesIO(
-            textwrap.dedent(
-                """\
-                First: this entry
-                 will be skipped
-                Second: single line
-                """
-            ).encode()
-        )
+        report_file = io.BytesIO(textwrap.dedent("""\
+            First: this entry
+             will be skipped
+            Second: single line
+            """).encode())
         iterator = problem_report._EntryParser(report_file)
         next(iterator)
         self.assertEqual(list(next(iterator)), [b"Second: single line\n"])
 
     def test_skip_partial_entries(self) -> None:
         """Test skipping reading one entry."""
-        report_file = io.BytesIO(
-            textwrap.dedent(
-                """\
-                First: this line is read,
-                 but these lines
-                 will be skipped
-                Second: single line
-                """
-            ).encode()
-        )
+        report_file = io.BytesIO(textwrap.dedent("""\
+            First: this line is read,
+             but these lines
+             will be skipped
+            Second: single line
+            """).encode())
         iterator = problem_report._EntryParser(report_file)
         self.assertEqual(next(next(iterator)), b"First: this line is read,\n")
         self.assertEqual(list(next(iterator)), [b"Second: single line\n"])
 
     def test_skip_last_entry(self) -> None:
         """Test skipping reading the last entry."""
-        report_file = io.BytesIO(
-            textwrap.dedent(
-                """\
-                First: this line is read
-                Second: this line is skipped
-                """
-            ).encode()
-        )
+        report_file = io.BytesIO(textwrap.dedent("""\
+            First: this line is read
+            Second: this line is skipped
+            """).encode())
         iterator = problem_report._EntryParser(report_file)
         self.assertEqual(list(next(iterator)), [b"First: this line is read\n"])
         next(iterator)

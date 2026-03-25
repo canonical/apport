@@ -175,14 +175,12 @@ class T(unittest.TestCase):
                 os.path.join(mapdir, f"Contents-{impl.get_system_architecture()}.gz"),
                 "w",
             ) as f:
-                f.write(
-                    b"""\
+                f.write(b"""\
 usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 usr/share/doc/frob-dev/copyright                        foo/frob-dev
 bin/true                                                admin/superutils
-"""
-                )
+""")
 
             # test Contents.gz for -updates pocket
             mapdir = os.path.join(
@@ -271,31 +269,25 @@ bin/true                                                admin/superutils
             mapdir = os.path.join(basedir, "dists", impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, "Contents-even.gz"), "w") as f:
-                f.write(
-                    b"""\
+                f.write(b"""\
 usr/lib/even/libfrob.so.1                               foo/libfrob1
 usr/bin/frob                                            foo/frob-utils
-"""
-                )
+""")
             with gzip.open(os.path.join(mapdir, "Contents-odd.gz"), "w") as f:
-                f.write(
-                    b"""\
+                f.write(b"""\
 usr/lib/odd/libfrob.so.1                                foo/libfrob1
 usr/bin/frob                                            foo/frob-utils
-"""
-                )
+""")
 
             # and another one for fantasy release
             os.mkdir(os.path.join(basedir, "dists", "mocky"))
             with gzip.open(
                 os.path.join(basedir, "dists", "mocky", "Contents-even.gz"), "w"
             ) as f:
-                f.write(
-                    b"""\
+                f.write(b"""\
 usr/lib/even/libfrob.so.0                               foo/libfrob0
 usr/bin/frob                                            foo/frob
-"""
-                )
+""")
 
             # use this as a mirror
             impl.set_mirror(f"file://{basedir}")
@@ -455,22 +447,18 @@ usr/bin/frob                                            foo/frob
         info = platform.freedesktop_os_release()
         primary_sources = sources_list_d / f"{info['ID']}.sources"
         ppa_sources = sources_list_d / "0ppa.sources"
-        primary_sources.write_text(
-            """\
+        primary_sources.write_text("""\
 Types: deb
 URIs: http://primary-mirror.example.com/distro/
 Suites: tuxy
 Components: main
-"""
-        )
-        ppa_sources.write_text(
-            """\
+""")
+        ppa_sources.write_text("""\
 Types: deb
 URIs: https://ppa.example.net/user/ppa-name/distro/
 Suites: lazy
 Components: main
-"""
-        )
+""")
 
         self.assertEqual(
             impl._get_primary_mirror_from_apt_sources(self.workdir),
@@ -482,13 +470,12 @@ Components: main
 
         # valid file, should grab the first mirror
         with open(s, "w", encoding="utf-8") as f:
-            f.write(
-                """# some comment
+            f.write("""\
+# some comment
 deb-src http://source.mirror/foo tuxy main
 deb http://binary.mirror/tuxy tuxy main
 deb http://secondary.mirror tuxy extra
-"""
-            )
+""")
             f.flush()
             self.assertEqual(
                 impl._get_primary_mirror_from_apt_sources(self.workdir),
@@ -497,13 +484,12 @@ deb http://secondary.mirror tuxy extra
 
         # valid file with options
         with open(s, "w", encoding="utf-8") as f:
-            f.write(
-                """# some comment
+            f.write("""\
+# some comment
 deb-src http://source.mirror/foo tuxy main
 deb [arch=flowerpc,leghf] http://binary.mirror/tuxy tuxy main
 deb http://secondary.mirror tuxy extra
-"""
-            )
+""")
             f.flush()
             self.assertEqual(
                 impl._get_primary_mirror_from_apt_sources(self.workdir),

@@ -59,7 +59,7 @@ class T(unittest.TestCase):
             script = scriptname
             fd = os.open(scriptname, os.O_CREAT | os.O_WRONLY)
         else:
-            (fd, script) = tempfile.mkstemp(dir="/var/tmp")
+            fd, script = tempfile.mkstemp(dir="/var/tmp")
             self.addCleanup(os.unlink, script)
 
         os.write(
@@ -331,14 +331,12 @@ func(42)
 
         self.assertEqual(
             stderr,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 Traceback (most recent call last):
                   File "../script.py", line 3, in <module>
                     raise ValueError()
                 ValueError
-                """
-            ),
+                """),
         )
         self.assertEqual(process.stdout.decode(), "")
         self.assertEqual(process.returncode, 1)
@@ -373,7 +371,7 @@ func(42)
         """The Python crash hook respects the ignore list."""
         # put the script into /var/tmp, since that isn't ignored in the
         # hook
-        (fd, script) = tempfile.mkstemp(dir="/var/tmp")
+        fd, script = tempfile.mkstemp(dir="/var/tmp")
         try:
             with (
                 tempfile.NamedTemporaryFile() as i_file,
@@ -381,8 +379,7 @@ func(42)
             ):
                 os.write(
                     fd,
-                    textwrap.dedent(
-                        f"""\
+                    textwrap.dedent(f"""\
                         #!/usr/bin/env {os.getenv('PYTHON', 'python3')}
                         import apport_python_hook
                         apport_python_hook.install()
@@ -395,8 +392,7 @@ func(42)
                             raise Exception('This should happen.')
 
                         func(42)
-                        """
-                    ).encode("ascii"),
+                        """).encode("ascii"),
                 )
                 os.close(fd)
                 os.chmod(script, 0o755)
@@ -452,16 +448,12 @@ func(42)
 
     def test_generic_os_error(self) -> None:
         """Raise OSError with errno and no known subclass."""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                def g():
-                    raise OSError(99, 'something bad')
+        self._test_crash(extracode=textwrap.dedent("""\
+            def g():
+                raise OSError(99, 'something bad')
 
-                g()
-                """
-            )
-        )
+            g()
+            """))
         pr = self._load_report()
         # we expect it to append errno
         exe = pr["ExecutablePath"]
@@ -469,16 +461,12 @@ func(42)
 
     def test_generic_os_error_no_errno(self) -> None:
         """Raise OSError without errno and no known subclass."""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                def g():
-                    raise OSError('something bad')
+        self._test_crash(extracode=textwrap.dedent("""\
+            def g():
+                raise OSError('something bad')
 
-                g()
-                """
-            )
-        )
+            g()
+            """))
         pr = self._load_report()
         # we expect it to not stumble over the missing errno
         exe = pr["ExecutablePath"]
@@ -489,8 +477,7 @@ func(42)
         for relpath in (True, False):
             with self.subTest(relpath=relpath):
                 self._test_crash(
-                    extracode=textwrap.dedent(
-                        """\
+                    extracode=textwrap.dedent("""\
                         import os
                         import tempfile
 
@@ -498,8 +485,7 @@ func(42)
                         os.chdir(tempdir)
                         os.rmdir(tempdir)
                         os.getcwd()
-                        """
-                    ),
+                        """),
                     relpath=relpath,
                 )
                 pr = self._load_report()
@@ -511,16 +497,12 @@ func(42)
 
     def test_subclassed_os_error(self) -> None:
         """Raise OSError with known subclass."""
-        self._test_crash(
-            extracode=textwrap.dedent(
-                """\
-                def g():
-                    raise OSError(2, 'no such file /notexisting')
+        self._test_crash(extracode=textwrap.dedent("""\
+            def g():
+                raise OSError(2, 'no such file /notexisting')
 
-                g()
-                """
-            )
-        )
+            g()
+            """))
         pr = self._load_report()
         # we expect it to not append errno, as it's already encoded
         # in the subclass

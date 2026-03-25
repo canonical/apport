@@ -142,9 +142,7 @@ class T(unittest.TestCase):
         """
         r = Report("Crash")
         r["ExecutablePath"] = "/bin/foo"
-        r[
-            "Traceback"
-        ] = """Traceback (most recent call last):
+        r["Traceback"] = """Traceback (most recent call last):
   File "/bin/foo", line 67, in fuzz
     print(weird)
 NameError: global name 'weird' is not defined"""
@@ -846,9 +844,7 @@ and more
         # create Python crash report
         r = Report("Crash")
         r["ExecutablePath"] = "/bin/foo"
-        r[
-            "Traceback"
-        ] = """Traceback (most recent call last):
+        r["Traceback"] = """Traceback (most recent call last):
   File "/bin/foo", line 67, in fuzz
     print(weird)
 NameError: global name 'weird' is not defined"""
@@ -996,15 +992,13 @@ NameError: global name 'weird' is not defined"""
 
             # create a test executable
             with open("crash.c", "w", encoding="utf-8") as fd:
-                fd.write(
-                    """
+                fd.write("""
 int f(int x) {
     int* p = 0; *p = x;
     return x+1;
 }
 int main() { return f(42); }
-"""
-                )
+""")
             assert subprocess.call(["gcc", "-g", "crash.c", "-o", "crash"]) == 0
             assert os.path.exists("crash")
 

@@ -21,9 +21,7 @@ class TestUI(unittest.TestCase):
         # pylint: disable-next=consider-using-with
         crashdb_conf_file = tempfile.NamedTemporaryFile("w+")
         cls.addClassCleanup(crashdb_conf_file.close)
-        crashdb_conf_file.write(
-            textwrap.dedent(
-                """\
+        crashdb_conf_file.write(textwrap.dedent("""\
             default = 'testsuite'
             databases = {
                 'testsuite': {
@@ -35,9 +33,7 @@ class TestUI(unittest.TestCase):
                     'distro': 'debug',
                 },
             }
-            """
-            )
-        )
+            """))
         crashdb_conf_file.flush()
         cls.crashdb_conf = crashdb_conf_file.name
 

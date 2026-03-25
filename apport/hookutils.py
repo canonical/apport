@@ -444,7 +444,7 @@ def _spawn_pkttyagent():
         return
 
     try:
-        (r, w) = os.pipe2(0)
+        r, w = os.pipe2(0)
     except OSError:
         return
 
@@ -755,7 +755,7 @@ def attach_gsettings_schema(report, schema):
         assert gsettings.stdout is not None
         for line in gsettings.stdout:
             try:
-                (schema_name, key, value) = line.split(None, 2)
+                schema_name, key, value = line.split(None, 2)
                 value = value.rstrip()
             except ValueError:
                 continue  # invalid line
@@ -767,7 +767,7 @@ def attach_gsettings_schema(report, schema):
         assert gsettings.stdout is not None
         for line in gsettings.stdout:
             try:
-                (schema_name, key, value) = line.split(None, 2)
+                schema_name, key, value = line.split(None, 2)
                 value = value.rstrip()
             except ValueError:
                 continue  # invalid line

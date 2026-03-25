@@ -97,18 +97,14 @@ def setup_ubuntu_sandbox_config(
 
     sources_dir.mkdir(parents=True)
     codename_file.write_text(release)
-    sources_file.write_text(
-        textwrap.dedent(
-            f"""\
-            Types: deb deb-src
-            URIs: {uri}
-            Suites: {release}
-            Architertures: {arch}
-            Components: main
-            Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-            """
-        )
-    )
+    sources_file.write_text(textwrap.dedent(f"""\
+        Types: deb deb-src
+        URIs: {uri}
+        Suites: {release}
+        Architertures: {arch}
+        Components: main
+        Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+        """))
 
 
 @pytest.fixture(name="sandbox_config")

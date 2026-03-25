@@ -152,7 +152,7 @@ def test_install_packages_versioned(
     cache_versions = {}
     for p in cache:
         try:
-            (name, ver) = p.split("_")[:2]
+            name, ver = p.split("_")[:2]
             cache_versions[name] = ver
         except ValueError:
             pass  # not a .deb, ignore
@@ -625,7 +625,7 @@ def test_install_packages_from_launchpad(
     cache_versions = []
     for p in cache:
         try:
-            (name, ver) = p.split("_")[:2]
+            name, ver = p.split("_")[:2]
             cache_versions.append((name, ver))
         except ValueError:
             pass  # not a .deb, ignore
@@ -897,42 +897,30 @@ def _write_deb822_file(
 ) -> None:
     with open(sources_filename, "w", encoding="utf-8") as sources_file:
         updates_suite = f"{release}-updates" if updates else ""
-        sources_file.write(
-            textwrap.dedent(
-                f"""\
-                    Types: deb deb-src
-                    URIs: {uri}
-                    Suites:
-                     {release} {updates_suite}
-                    Components: main
-                    """
-            )
-        )
+        sources_file.write(textwrap.dedent(f"""\
+            Types: deb deb-src
+            URIs: {uri}
+            Suites:
+             {release} {updates_suite}
+            Components: main
+            """))
 
         sources_file.write("\n")
 
         if ppa:
-            sources_file.write(
-                textwrap.dedent(
-                    f"""\
-                        Types: deb
-                        URIs: {uri}
-                        Suites: {release}
-                        Components: main/debug"""
-                )
-            )
+            sources_file.write(textwrap.dedent(f"""\
+                Types: deb
+                URIs: {uri}
+                Suites: {release}
+                Components: main/debug"""))
         else:
-            sources_file.write(
-                textwrap.dedent(
-                    f"""\
-                        Types: deb
-                        URIs: http://ddebs.ubuntu.com/
-                        Suites:
-                         {release} {updates_suite}
-                        Components: main
-                        """
-                )
-            )
+            sources_file.write(textwrap.dedent(f"""\
+                Types: deb
+                URIs: http://ddebs.ubuntu.com/
+                Suites:
+                 {release} {updates_suite}
+                Components: main
+                """))
 
 
 def _setup_foonux_config(

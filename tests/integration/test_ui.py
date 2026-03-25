@@ -60,23 +60,19 @@ class UserInterfaceMock(apport.ui.UserInterface):
         # use our memory crashdb which is designed for testing
         # closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
-        self.crashdb_conf.write(
-            textwrap.dedent(
-                """\
-                default = 'testsuite'
-                databases = {
-                    'testsuite': {
-                        'impl': 'memory',
-                        'bug_pattern_url': None,
-                    },
-                    'debug': {
-                        'impl': 'memory',
-                        'distro': 'debug',
-                    },
-                }
-                """
-            ).encode()
-        )
+        self.crashdb_conf.write(textwrap.dedent("""\
+            default = 'testsuite'
+            databases = {
+                'testsuite': {
+                    'impl': 'memory',
+                    'bug_pattern_url': None,
+                },
+                'debug': {
+                    'impl': 'memory',
+                    'distro': 'debug',
+                },
+            }
+            """).encode())
         self.crashdb_conf.flush()
 
         os.environ["APPORT_CRASHDB_CONF"] = self.crashdb_conf.name
@@ -358,16 +354,12 @@ class T(unittest.TestCase):
         # invalid base64 encoding
         self.report_file.seek(0)
         self.report_file.truncate()
-        self.report_file.write(
-            textwrap.dedent(
-                """\
-                Type: test
-                Package: foo 1-1
-                CoreDump: base64
-                bOgUs=
-                """
-            ).encode()
-        )
+        self.report_file.write(textwrap.dedent("""\
+            Type: test
+            Package: foo 1-1
+            CoreDump: base64
+            bOgUs=
+            """).encode())
         self.report_file.flush()
 
         ui.load_report(self.report_file.name)
@@ -578,14 +570,10 @@ class T(unittest.TestCase):
         with open(
             os.path.join(self.hookdir, "source_bash.py"), "w", encoding="utf-8"
         ) as f:
-            f.write(
-                textwrap.dedent(
-                    f'''\
-                    def add_info(report, ui):
-                        report['CrashDB'] = """{crashdb}"""
-                    '''
-                )
-            )
+            f.write(textwrap.dedent(f'''\
+                def add_info(report, ui):
+                    report['CrashDB'] = """{crashdb}"""
+                '''))
             if bash_hook:
                 f.write(f"    report['BashHook'] = '{bash_hook}'\n")
 
@@ -859,7 +847,7 @@ class T(unittest.TestCase):
     def test_run_report_bug_unpackaged_pid(self) -> None:
         """run_report_bug() for a pid of an unpackaged program"""
         # create unpackaged test program
-        (fd, exename) = tempfile.mkstemp()
+        fd, exename = tempfile.mkstemp()
         with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
         os.close(fd)
@@ -1474,14 +1462,10 @@ class T(unittest.TestCase):
         with open(
             os.path.join(self.hookdir, f"source_{src_pkg}.py"), "w", encoding="utf-8"
         ) as hook:
-            hook.write(
-                textwrap.dedent(
-                    """\
-                    def add_info(report, ui):
-                        report['KernelDebug'] = 'LotsMoreInfo'
-                    """
-                )
-            )
+            hook.write(textwrap.dedent("""\
+                def add_info(report, ui):
+                    report['KernelDebug'] = 'LotsMoreInfo'
+                """))
 
         # generate crash report
         r = apport.report.Report("KernelCrash")
@@ -1594,13 +1578,11 @@ class T(unittest.TestCase):
         )
 
         def fake_add_gdb_info(self: apport.report.Report) -> None:
-            self["Stacktrace"] = textwrap.dedent(
-                """\
+            self["Stacktrace"] = textwrap.dedent("""\
                 #0  0xDEADBEEF in h (p=0x0) at crash.c:25
                 #1  0x10000042 in g (x=1, y=42) at crash.c:26
                 #1  0x10000001 in main () at crash.c:40
-                """
-            )
+                """)
             self["ProcMaps"] = (
                 "10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash\n"
             )
@@ -1891,13 +1873,11 @@ class T(unittest.TestCase):
         ui.present_details_response = apport.ui.Action()
         self._run_hook(
             ui,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 report['begin'] = '1'
                 ui.information('InfoText')
                 report['end'] = '1'
-                """
-            ),
+                """),
         )
         assert ui.report
         self.assertEqual(ui.report["begin"], "1")
@@ -1911,13 +1891,11 @@ class T(unittest.TestCase):
         ui.question_yesno_response = True
         self._run_hook(
             ui,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 report['begin'] = '1'
                 report['answer'] = str(ui.yesno('YesNo?'))
                 report['end'] = '1'
-                """
-            ),
+                """),
         )
         assert ui.report
         self.assertEqual(ui.report["begin"], "1")
@@ -1942,13 +1920,11 @@ class T(unittest.TestCase):
         ui.question_file_response = "/etc/fstab"
         self._run_hook(
             ui,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 report['begin'] = '1'
                 report['answer'] = str(ui.file('YourFile?'))
                 report['end'] = '1'
-                """
-            ),
+                """),
         )
         assert ui.report
         self.assertEqual(ui.report["begin"], "1")
@@ -1968,14 +1944,12 @@ class T(unittest.TestCase):
         ui.question_choice_response = [1]
         self._run_hook(
             ui,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 report['begin'] = '1'
                 answer = ui.choice('YourChoice?', ['foo', 'bar'])
                 report['answer'] = str(answer)
                 report['end'] = '1'
-                """
-            ),
+                """),
         )
         assert ui.report
         self.assertEqual(ui.report["begin"], "1")
@@ -1996,14 +1970,12 @@ class T(unittest.TestCase):
             ui.question_choice_response = [1]
             self._run_hook(
                 ui,
-                textwrap.dedent(
-                    """\
+                textwrap.dedent("""\
                     report['begin'] = '1'
                     answer = ui.choice('YourChoice?', ['foo', 'bar'])
                     report['answer'] = str(answer)
                     report['end'] = '1'
-                    """
-                ),
+                    """),
             )
         assert ui.report
         self.assertEqual(ui.report["answer"], "None")
@@ -2016,13 +1988,11 @@ class T(unittest.TestCase):
             SystemExit,
             self._run_hook,
             ui,
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 report['begin'] = '1'
                 raise StopIteration
                 report['end'] = '1'
-                """
-            ),
+                """),
         )
 
     @unittest.mock.patch("apport.hookutils.attach_conffiles", MagicMock())
@@ -2102,14 +2072,12 @@ class T(unittest.TestCase):
         # working interactive script
         self._write_symptom_script(
             "itching.py",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 def run(report, ui):
                     report['itch'] = 'slap'
                     report['q'] = str(ui.yesno('do you?'))
                     return 'bash'
-                """
-            ),
+                """),
         )
         ui = UserInterfaceMock(["ui-test", "-s", "itching"])
         ui.present_details_response = apport.ui.Action(report=True)
@@ -2131,13 +2099,11 @@ class T(unittest.TestCase):
         symptoms"""
         self._write_symptom_script(
             "foo.py",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
-                """
-            ),
+                """),
         )
         self._write_symptom_script(
             "bar.py", 'def run(report, ui):\n  return "coreutils"\n'
@@ -2233,13 +2199,11 @@ class T(unittest.TestCase):
         # symptom is preferred over package
         self._write_symptom_script(
             "coreutils.py",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
-                """
-            ),
+                """),
         )
         _chk(
             "apport-cli",
@@ -2397,13 +2361,11 @@ class T(unittest.TestCase):
         # symptom (preferred over package)
         self._write_symptom_script(
             "coreutils.py",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 description = 'foo does not work'
                 def run(report, ui):
                     return 'bash'
-                """
-            ),
+                """),
         )
         _chk(
             ["coreutils"],
@@ -2608,18 +2570,14 @@ class T(unittest.TestCase):
         """Parsee .desktop files."""
         ui = UserInterfaceMock()
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
-            desktop_file.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Name=gtranslate
-                    GenericName=Translator
-                    GenericName[de]=Übersetzer
-                    Exec=gedit %U
-                    Categories=GNOME;GTK;Utility;TextEditor;
-                    """
-                )
-            )
+            desktop_file.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Name=gtranslate
+                GenericName=Translator
+                GenericName[de]=Übersetzer
+                Exec=gedit %U
+                Categories=GNOME;GTK;Utility;TextEditor;
+                """))
             desktop_file.flush()
 
             self.report["DesktopFile"] = desktop_file.name
@@ -2642,20 +2600,16 @@ class T(unittest.TestCase):
         ui = UserInterfaceMock()
         # duplicate key
         with tempfile.NamedTemporaryFile(mode="w+") as desktop_file:
-            desktop_file.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Name=gtranslate
-                    GenericName=Translator
-                    GenericName[de]=Übersetzer
-                    Exec=gedit %U
-                    Keywords=foo;bar;
-                    Categories=GNOME;GTK;Utility;TextEditor;
-                    Keywords=baz
-                    """
-                )
-            )
+            desktop_file.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Name=gtranslate
+                GenericName=Translator
+                GenericName[de]=Übersetzer
+                Exec=gedit %U
+                Keywords=foo;bar;
+                Categories=GNOME;GTK;Utility;TextEditor;
+                Keywords=baz
+                """))
             desktop_file.flush()
 
             self.report["DesktopFile"] = desktop_file.name
@@ -2675,31 +2629,23 @@ class T(unittest.TestCase):
 
             # no header
             desktop_file.seek(0)
-            desktop_file.write(
-                textwrap.dedent(
-                    """\
-                    Name=gtranslate
-                    GenericName=Translator
-                    Exec=gedit %U
-                    """
-                )
-            )
+            desktop_file.write(textwrap.dedent("""\
+                Name=gtranslate
+                GenericName=Translator
+                Exec=gedit %U
+                """))
             desktop_file.flush()
 
             self.assertIsNone(ui.get_desktop_entry())
 
             # syntax error
             desktop_file.seek(0)
-            desktop_file.write(
-                textwrap.dedent(
-                    """\
-                    [Desktop Entry]
-                    Name gtranslate
-                    GenericName=Translator
-                    Exec=gedit %U
-                    """
-                )
-            )
+            desktop_file.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Name gtranslate
+                GenericName=Translator
+                Exec=gedit %U
+                """))
             desktop_file.flush()
 
             self.assertIsNone(ui.get_desktop_entry())

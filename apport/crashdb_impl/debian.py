@@ -70,7 +70,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # Frame the report in the format the BTS understands
         try:
-            (buggy_package, buggy_version) = report["Package"].split(" ")
+            buggy_package, buggy_version = report["Package"].split(" ")
         except (KeyError, ValueError):
             return False
 

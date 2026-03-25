@@ -384,7 +384,7 @@ class T(unittest.TestCase):
 
     def test_gcc_ide_hook_file(self) -> None:
         """gcc_ice_hook with a temporary file."""
-        (gcc_version, gcc_path) = self._gcc_version_path()
+        gcc_version, gcc_path = self._gcc_version_path()
 
         with tempfile.NamedTemporaryFile() as test_source:
             test_source.write(b"int f(int x);")
@@ -444,7 +444,7 @@ class T(unittest.TestCase):
 
     def test_gcc_ide_hook_pipe(self) -> None:
         """gcc_ice_hook with piping."""
-        (gcc_version, gcc_path) = self._gcc_version_path()
+        gcc_version, gcc_path = self._gcc_version_path()
 
         test_source = "int f(int x);"
 

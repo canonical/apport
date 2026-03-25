@@ -37,7 +37,7 @@ def needed_packages(report):
         if not line.strip():
             continue
         try:
-            (pkg, version) = line.split()[:2]
+            pkg, version = line.split()[:2]
         except ValueError:
             apport.logging.warning("invalid Package/Dependencies line: %s", line)
             # invalid line, ignore
@@ -56,7 +56,7 @@ def report_package_versions(report):
         if not line.strip():
             continue
         try:
-            (pkg, version) = line.split()[:2]
+            pkg, version = line.split()[:2]
         except ValueError:
             apport.logging.warning("invalid Package/Dependencies line: %s", line)
             # invalid line, ignore

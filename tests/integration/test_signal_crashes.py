@@ -477,7 +477,7 @@ class T(unittest.TestCase):
 
         # create a non-readable executable in a path we can modify which apport
         # regards as likely packaged
-        (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
+        fd, myexe = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, myexe)
         with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
@@ -545,16 +545,12 @@ class T(unittest.TestCase):
         inject_report = f"{self.test_report}.inject"
         with open(inject_report, "w", encoding="utf-8") as f:
             # \x01pwned
-            f.write(
-                textwrap.dedent(
-                    """\
-                    ProblemType: Crash
-                    CoreDump: base64
-                     H4sICAAAAAAC/0NvcmVEdW1wAA==
-                     Yywoz0tNAQBl1rhlBgAAAA==
-                    """
-                )
-            )
+            f.write(textwrap.dedent("""\
+                ProblemType: Crash
+                CoreDump: base64
+                    H4sICAAAAAAC/0NvcmVEdW1wAA==
+                    Yywoz0tNAQBl1rhlBgAAAA==
+                """))
         os.chmod(inject_report, 0o640)
 
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
@@ -605,7 +601,7 @@ class T(unittest.TestCase):
         """Ignore executables which got modified after process started."""
         # create executable in a path we can modify which apport regards as
         # likely packaged
-        (fd, myexe) = tempfile.mkstemp(dir="/var/tmp")
+        fd, myexe = tempfile.mkstemp(dir="/var/tmp")
         self.addCleanup(os.unlink, myexe)
         with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())

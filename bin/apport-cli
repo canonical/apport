@@ -200,7 +200,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         prefix = "apport."
         if "Package" in self.report:
             prefix += self.report["Package"].split()[0] + "."
-        (fd, report_file) = tempfile.mkstemp(prefix=prefix, suffix=".apport")
+        fd, report_file = tempfile.mkstemp(prefix=prefix, suffix=".apport")
         with os.fdopen(fd, "wb") as f:
             self.report.write(f)
         return report_file

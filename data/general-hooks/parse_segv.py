@@ -29,7 +29,7 @@ class ParseSegv:
             if reg in self.regs:
                 self.sp = self.regs[reg]
 
-        (self.line, self.pc, self.insn, self.src, self.dest) = self.parse_disassembly(
+        self.line, self.pc, self.insn, self.src, self.dest = self.parse_disassembly(
             disassembly
         )
 
