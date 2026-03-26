@@ -396,7 +396,7 @@ def _run_hook(report, ui, hook):
         return True
     except Exception:  # pylint: disable=broad-except
         hookname = os.path.splitext(os.path.basename(hook))[0].replace("-", "_")
-        report["HookError_" + hookname] = traceback.format_exc()
+        report["HookError_" + hookname] = traceback.format_exc().strip()
         apport.logging.error("hook %s crashed:", hook)
         traceback.print_exc()
 
