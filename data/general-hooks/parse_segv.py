@@ -364,7 +364,7 @@ class ParseSegv:
         return understood, "\n".join(reason), "\n".join(details)
 
 
-def add_info(report):
+def add_info(report, unused_ui):
     # Only interested in segmentation faults...
     if report.get("Signal", "0") != "11":
         return

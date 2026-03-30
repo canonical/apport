@@ -193,7 +193,7 @@ class TestHookParseSegv(unittest.TestCase):
         report["ProcMaps"] = MAPS
         report["Registers"] = REGS64
 
-        parse_segv.add_info(report)
+        parse_segv.add_info(report, None)
 
         self.assertEqual(
             report.get("SegvAnalysis"),

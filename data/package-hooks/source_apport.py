@@ -13,7 +13,7 @@ import apport.hookutils
 APPORT_LOG = "/var/log/apport.log"
 
 
-def add_info(report):
+def add_info(report, unused_ui):
     """Add Apport logs to the problem report."""
     apport.hookutils.attach_file_if_exists(report, APPORT_LOG, "ApportLog")
     reports = glob.glob("/var/crash/*")

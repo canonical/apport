@@ -139,7 +139,7 @@ Crash database implementations
    subscribers. For example, your package hook might do this:
 
    ```python
-   def add_info(report):
+   def add_info(report, ui):
        report["LaunchpadPrivate"] = "1"
        report["LaunchpadSubscribe"] = "joe-hacker foobar-dev"
    ```
