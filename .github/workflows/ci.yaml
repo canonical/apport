@@ -24,7 +24,7 @@ jobs:
     container:
       image: ubuntu:resolute
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install dependencies
         run: >
           apt-get update
@@ -41,7 +41,7 @@ jobs:
   ruff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: astral-sh/ruff-action@v3
 
   unit-and-integration:
@@ -74,7 +74,7 @@ jobs:
           python3-launchpadlib python3-psutil pyqt6-dev-tools python3-pyqt6
           python3-pytest python3-pytest-cov python3-setuptools python3-systemd
           python3-zstandard valgrind xterm
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Enable German locale
         run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
       - name: Build (Java and PolicyKit XML)
@@ -111,7 +111,7 @@ jobs:
           python3-launchpadlib python3-psutil pyqt6-dev-tools python3-pyqt6
           python3-pytest python3-pytest-cov python3-setuptools python3-systemd
           python3-zstandard valgrind xterm
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Enable German locale
         run: sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && sudo locale-gen
       - name: Install
@@ -157,7 +157,7 @@ jobs:
           && apt-get install --no-install-recommends --yes
           bash ca-certificates git python3 python3-apt python3-psutil
           python3-pytest python3-pytest-cov
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Run all tests (to check if they are skipped or succeed)
         run: >
           SKIP_ONLINE_TESTS=1 python3 -m pytest -v -ra --cov=$(pwd)
@@ -202,7 +202,7 @@ jobs:
           python3-pytest python3-pytest-cov ubuntu-dbgsym-keyring
           ubuntu-keyring valgrind
           xterm xvfb
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Start D-Bus daemon
         run: mkdir -p /run/dbus && dbus-daemon --system --fork
       - name: Run system tests
@@ -242,7 +242,7 @@ jobs:
           python3-distutils-extra python3-gi python3-launchpadlib python3-psutil
           pyqt6-dev-tools python3-pyqt6 python3-pytest python3-pytest-cov
           python3-setuptools ubuntu-dbgsym-keyring ubuntu-keyring valgrind xvfb
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install
         run: >
           sudo python3 -m coverage run
@@ -274,7 +274,7 @@ jobs:
     name: woke
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: woke
         uses: get-woke/woke-action@v0
@@ -292,7 +292,7 @@ jobs:
       - system-installed
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download artifacts
         uses: actions/download-artifact@v4
       - name: Upload coverage to Codecov
