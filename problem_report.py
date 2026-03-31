@@ -33,6 +33,9 @@ CHUNK_SIZE = 131_072  # 128 kB chunks
 GZIP_HEADER_START = b"\037\213\010"
 ZSTANDARD_MAGIC_NUMBER = b"\x28\xb5\x2f\xfd"
 
+# 2**29 is 512 MiB
+COREDUMP_MAX_SIZE = 2**29
+
 
 class MalformedProblemReport(ValueError):
     """Raised when a problem report violates the crash report format.
@@ -277,7 +280,9 @@ class CompressedValue:
         assert self.compressed_value is not None
 
         if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
-            return _get_zstandard_decompressor().decompress(self.compressed_value)
+            return _get_zstandard_decompressor().decompress(
+                self.compressed_value, max_output_size=COREDUMP_MAX_SIZE
+            )
         if self.compressed_value.startswith(GZIP_HEADER_START):
             return gzip.decompress(self.compressed_value)
         # legacy zlib format
