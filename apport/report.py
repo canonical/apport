@@ -793,8 +793,6 @@ class Report(problem_report.ProblemReport):
         proc_pid_fd: int | None = None,
         extraenv: Iterable[str] | None = None,
     ) -> None:
-        # TODO: Split into smaller functions/methods
-        # pylint: disable=too-complex
         """Add /proc/pid information.
 
         If neither pid nor self.pid are given, it defaults to the process'
@@ -859,17 +857,7 @@ class Report(problem_report.ProblemReport):
             .replace("\0", " ")
         )
 
-        # grab AppArmor or SELinux context
-        # If no LSM is loaded, reading will return -EINVAL
-        try:
-            # On Linux 2.6.28+, 'current' is world readable, but read() gives
-            # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
-            if os.getuid() == 0:
-                val = _read_proc_file("attr/current", proc_pid_fd)
-                if val != "unconfined":
-                    self["ProcAttrCurrent"] = val
-        except OSError:
-            pass
+        self._add_lsm_context(proc_pid_fd)
 
     def _add_executable_path(self, proc_pid_fd: int) -> None:
         if "ExecutablePath" not in self:
@@ -894,6 +882,19 @@ class Report(problem_report.ProblemReport):
             self["ExecutableTimestamp"] = f"Error: Executable '{exe_path}' not found"
             return
         self["ExecutableTimestamp"] = str(int(exe_stat.st_mtime))
+
+    def _add_lsm_context(self, proc_pid_fd: int) -> None:
+        # grab AppArmor or SELinux context
+        # If no LSM is loaded, reading will return -EINVAL
+        try:
+            # On Linux 2.6.28+, 'current' is world readable, but read() gives
+            # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
+            if os.getuid() == 0:
+                val = _read_proc_file("attr/current", proc_pid_fd)
+                if val != "unconfined":
+                    self["ProcAttrCurrent"] = val
+        except OSError:
+            pass
 
     def add_proc_environ(
         self,
