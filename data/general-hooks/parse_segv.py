@@ -19,6 +19,7 @@ understood situations for x86/x86_64."""
 import logging
 import re
 import sys
+import traceback
 
 
 class ParseSegv:
@@ -387,6 +388,7 @@ def add_info(report, unused_ui):
         report["SegvAnalysis"] = details
     except Exception as error:  # pylint: disable=broad-except
         report["SegvAnalysis"] = f"Failure: {str(error)}"
+        report["SegvAnalysisError"] = traceback.format_exc().strip()
 
 
 # pylint: disable-next=missing-function-docstring

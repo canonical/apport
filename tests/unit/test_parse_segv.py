@@ -205,6 +205,23 @@ class TestHookParseSegv(unittest.TestCase):
         )
         self.assertNotIn("SegvReason", report)
 
+    def test_add_info_failure(self) -> None:
+        """Test add_info() that fail wth invalid registers."""
+        report = ProblemReport()
+        report["Signal"] = "11"
+        report["Architecture"] = "amd64"
+        report["Disassembly"] = DISASM
+        report["ProcMaps"] = MAPS
+        report["Registers"] = "a 0x10\nb !!!\n"
+
+        parse_segv.add_info(report, None)
+
+        self.assertIn("Failure: invalid literal for int()", report["SegvAnalysis"])
+        self.assertIn(
+            "ValueError: invalid literal for int()", report["SegvAnalysisError"]
+        )
+        self.assertNotIn("SegvReason", report)
+
     def test_invalid_00_registers(self) -> None:
         """Require valid registers."""
         regs = "a 0x10\nb !!!\n"
