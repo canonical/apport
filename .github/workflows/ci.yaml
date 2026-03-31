@@ -53,7 +53,6 @@ jobs:
           - debian:stable-slim
           - debian:testing-slim
           - ubuntu:noble
-          - ubuntu:plucky
           - ubuntu:questing
     container:
       image: ${{ matrix.container }}
@@ -142,7 +141,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:plucky
           - ubuntu:questing
     container:
       image: ${{ matrix.container }}
@@ -175,7 +173,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:plucky
           - ubuntu:questing
     container:
       image: ${{ matrix.container }}
