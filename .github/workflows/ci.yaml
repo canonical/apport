@@ -86,7 +86,7 @@ jobs:
           python3 -m pytest -v -ra --cov=$(pwd) --cov-report=xml
           --durations=0 tests/unit/ tests/integration/
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ env.JOB }}
           path: ./coverage*.xml
@@ -130,7 +130,7 @@ jobs:
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ github.job }}
           path: ./coverage*.xml
@@ -163,7 +163,7 @@ jobs:
           SKIP_ONLINE_TESTS=1 python3 -m pytest -v -ra --cov=$(pwd)
           --cov-report=xml --durations=0 tests/
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ env.JOB }}
           path: ./coverage.xml
@@ -214,7 +214,7 @@ jobs:
       - name: Stop D-Bus daemon
         run: kill $(cat /run/dbus/pid)
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ env.JOB }}
           path: ./coverage.xml
@@ -265,7 +265,7 @@ jobs:
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ github.job }}
           path: ./coverage*.xml
