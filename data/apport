@@ -510,15 +510,29 @@ def is_systemd_watchdog_restart(signum: int, proc_pid: ProcPid) -> bool:
 
 def is_same_ns(proc_pid: ProcPid, ns: str) -> bool:
     if not os.path.exists(f"/proc/self/ns/{ns}") or not proc_pid.exists(f"ns/{ns}"):
+        print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): does not exist (True 1)")
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
     try:
+        path = proc_pid.readlink(f"ns/{ns}")
+        print(
+            f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): "
+            f"proc_pid.readlink('ns/{ns}') = {path}"
+        )
+        path = os.readlink(f"/proc/self/ns/{ns}")
+        print(
+            f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): "
+            f"os.readlink('/proc/self/ns/{ns}') = {path}"
+        )
         if proc_pid.readlink(f"ns/{ns}") == os.readlink(f"/proc/self/ns/{ns}"):
             # Check that the inode for both namespaces is the same
+            print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): same ns (True 2)")
             return True
     except OSError as error:
+        print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): OSError: {error}")
         if error.errno == errno.ENOENT:
+            print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): ENOENT (True 2)")
             return True
         raise
 
@@ -526,10 +540,16 @@ def is_same_ns(proc_pid: ProcPid, ns: str) -> bool:
     with contextlib.suppress(FileNotFoundError):
         with proc_pid.open("cgroup") as cgroup:
             for line in cgroup:
+                print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): cgroup line: {line}")
                 fields = line.split(":")
                 if fields[-1].startswith("/system.slice"):
+                    print(
+                        f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}):"
+                        f" system.slice (True 4)"
+                    )
                     return True
 
+    print(f"DEBUG: is_same_ns({proc_pid.pid}, {ns!r}): False")
     return False
 
 
