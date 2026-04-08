@@ -1,18 +1,17 @@
-# Azerbaijani translation for apport
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# Georgian translation for apport
+# Copyright (c) 2026 Rosetta Contributors and Canonical Ltd 2026
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-# Elmin Alirzayev <elmin.alirzayev@gmail.com>, 2026.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-08 16:30+0200\n"
-"PO-Revision-Date: 2026-03-29 17:06+0000\n"
-"Last-Translator: Elmin Alirzayev <Unknown>\n"
-"Language-Team: Azerbaijani <az@li.org>\n"
-"Language: az\n"
+"PO-Revision-Date: 2026-01-13 08:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Georgian <ka@li.org>\n"
+"Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,27 +20,25 @@ msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr "Sistem məlumatını topla"
+msgstr "სისტემის ინფორმაციის მოგროვება"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
-"Bu problem hesabatı üçün sistem məlumatını toplamaq üçün tanıtma tələb olunur"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr "Sistem problemi hesabatları"
+msgstr "სისტემის პრობლემის ანგარიშები"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
-"Sistem proqramlarının problem hesabatlarına giriş üçün şifrənizi daxil edin"
 
 #: ../apport/ui.py:263
 msgid "This package does not seem to be installed correctly"
-msgstr "Görünür, bu paket düzgün quraşdırılmayıb"
+msgstr ""
 
 #: ../apport/ui.py:273
 #, python-format
@@ -50,9 +47,6 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"Görünür, bu rəsmi %s paketi deyil. Mövcud paketlərin indekslərini "
-"yenilədikdən sonra yenidən sınayın, əgər bu işləməsə, əlaqədar üçüncü tərəf "
-"paketlərini silin və yenidən cəhd edin."
 
 #: ../apport/ui.py:303
 #, python-format
@@ -62,112 +56,102 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Sizdə bəzi köhnəlmiş paket versiyaları quraşdırılıb. Aşağıdakı paketləri "
-"yüksəldin və problemin hələ də davam edib-etmədiyini yoxlayın:\n"
-"\n"
-"%s"
 
 #: ../apport/ui.py:454
 msgid "unknown program"
-msgstr "naməlum proqram"
+msgstr "უცნობი პროგრამა"
 
 #: ../apport/ui.py:456
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Bağışlayın, \"%s\" proqramı gözlənilmədən bağlandı"
+msgstr "უკაცრავად, მაგრამ პროგრამა \"%s\" მოულოდნელად დაიხურა"
 
 #: ../apport/ui.py:458
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"Problemi avtomatik təhlil etmək və inkişafçılara hesabat göndərmək üçün "
-"kompüterinizdə kifayət qədər boş yaddaş yoxdur."
 
 #: ../apport/ui.py:463 ../apport/ui.py:1872
 #, python-format
 msgid "Problem in %s"
-msgstr "%s daxilində problem"
+msgstr "პრობლემა %s-ში"
 
 #: ../apport/ui.py:519 ../apport/ui.py:536 ../apport/ui.py:695
 #: ../apport/ui.py:701 ../apport/ui.py:931 ../apport/ui.py:1695
 #: ../apport/ui.py:1839 ../apport/ui.py:1845
 msgid "Invalid problem report"
-msgstr "Yanlış problem hesabatı"
+msgstr "არასწორი პრობლემის ანგარიში"
 
 #: ../apport/ui.py:520
 msgid "You are not allowed to access this problem report."
-msgstr "Bu problem hesabatına daxil olmağa icazəniz yoxdur."
+msgstr "ამ პრობლემის ანგარიშთან წვდომა არ გაქვთ."
 
 #: ../apport/ui.py:528
 msgid "Error"
-msgstr "Xəta"
+msgstr "შეცდომა"
 
 #: ../apport/ui.py:530
 msgid "There is not enough disk space available to process this report."
-msgstr "Bu hesabatı işləmək üçün diskdə kifayət qədər boş yer yoxdur."
+msgstr "ამ ანგარიშის დასამუშავებლად დისკზე საკმარისი ადგილი არაა."
 
 #: ../apport/ui.py:569 ../apport/ui.py:674
 msgid "Invalid PID"
-msgstr "Yanlış PID"
+msgstr "არასწორი PID"
 
 #: ../apport/ui.py:569
 msgid "The specified process ID does not exist."
-msgstr "Göstərilən işləm ID-si mövcud deyil."
+msgstr "მითითებული პროცესის ID არ არსებობს."
 
 #: ../apport/ui.py:574
 msgid "Not your PID"
-msgstr "Sizin PID deyil"
+msgstr "თქვენი PID არაა"
 
 #: ../apport/ui.py:575
 msgid "The specified process ID does not belong to you."
-msgstr "Göstərilən işləm ID-si sizə məxsus deyil."
+msgstr "მითითებული პროცესის ID თქვენ არ გეკუთვნით."
 
 #: ../apport/ui.py:632
 msgid "No package specified"
-msgstr "Paket göstərilməyib"
+msgstr "პაკეტი მითითებული არაა"
 
 #: ../apport/ui.py:634
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"Siz paket və ya PID göstərməlisiniz. Daha çox məlumat üçün --help bölməsinə "
-"baxın."
 
 #: ../apport/ui.py:661
 msgid "Permission denied"
-msgstr "İcazə rədd edildi"
+msgstr "წვდომა აკრძალულია"
 
 #: ../apport/ui.py:663
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"Göstərilən işləm sizə məxsus deyil. Bu proqramı işləm sahibi və ya root "
-"olaraq işə salın."
 
 #: ../apport/ui.py:675
 msgid "The specified process ID does not belong to a program."
-msgstr "Göstərilən işləm ID-si bir proqrama məxsus deyil."
+msgstr ""
 
 #: ../apport/ui.py:696
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr "%s simptom skripti təsirlənmiş paketi müəyyən etmədi"
+msgstr ""
 
 #: ../apport/ui.py:702
 #, python-format
 msgid "Package %s does not exist"
-msgstr "%s paketi mövcud deyil"
+msgstr "პაკეტი %s არ არსებობს"
 
 #: ../apport/ui.py:731 ../apport/ui.py:936 ../apport/ui.py:969
 #: ../apport/ui.py:976
 msgid "Cannot create report"
-msgstr "Hesabat yaradıla bilmir"
+msgstr "ანგარიშის შექმნა შეუძლებელია"
 
 #: ../apport/ui.py:748 ../apport/ui.py:802 ../apport/ui.py:819
 msgid "Updating problem report"
-msgstr "Problem hesabatı yenilənir"
+msgstr "პრობლემის ანგარიშის განახლება"
 
 #: ../apport/ui.py:750
 msgid ""
@@ -176,10 +160,6 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"Siz bu problem hesabatının məruzəçisi və ya abunəçisi deyilsiniz və ya "
-"hesabat surətlənib və ya artıq bağlanıb.\n"
-"\n"
-"\"apport-bug\" istifadə edərək yeni hesabat yaradın."
 
 #: ../apport/ui.py:762
 msgid ""
@@ -192,39 +172,31 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"Siz bu problem hesabatının məruzəçisi deyilsiniz. Bir xətanı digərinin "
-"surəti olaraq işarələmək rəylərinizi və qoşmalarınızı yeni xətaya "
-"köçürməkdən daha asandır.\n"
-"\n"
-"Buna görə də, \"apport-bug\" istifadə edərək yeni xəta hesabatı yaratmağı və "
-"yaratdığınız hesabat haqqında bu xətaya rəy bildirməyi tövsiyə edirik.\n"
-"\n"
-"Həqiqətən davam etmək istəyirsiniz?"
 
 #: ../apport/ui.py:802 ../apport/ui.py:819
 msgid "No additional information collected."
-msgstr "Əlavə məlumat toplanmadı."
+msgstr "დამატებითი ინფორმაცია არ მოგროვებულა."
 
 #: ../apport/ui.py:875
 msgid "What kind of problem do you want to report?"
-msgstr "Hansı növ problemi bildirmək istəyirsiniz?"
+msgstr "რა ტიპის პრობლემის შესახებ გსურთ მიწერა?"
 
 #: ../apport/ui.py:894
 msgid "Unknown symptom"
-msgstr "Naməlum simptom"
+msgstr "უცნობი სიმპტომი"
 
 #: ../apport/ui.py:895
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr "\"%s\" simptomu naməlumdur."
+msgstr "სიმპტომი \"%s\" უცნობია."
 
 #: ../apport/ui.py:915
 msgid "No PID specified"
-msgstr "PID göstərilməyib"
+msgstr "PID მითითებული არაა"
 
 #: ../apport/ui.py:916
 msgid "You need to specify a PID. See --help for more information."
-msgstr "Bir PID göstərməlisiniz. Daha çox məlumat üçün --help bölməsinə baxın."
+msgstr ""
 
 #: ../apport/ui.py:938
 msgid ""
@@ -236,45 +208,35 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
-"Pəncərə seçimi Wayland üzərində istifadə edilə bilməz.\n"
-"\n"
-"Pəncərənin işləm ID-sini tapın və sonra 'ubuntu-bug <işləm ID>' işə salın.\n"
-"\n"
-"İşləm ID-sini Sistem Monitoru tətbiqini işə salaraq tapmaq olar. İşləmlər "
-"vərəqində doğru tətbiqi tapana qədər sürüşdürün. İşləm ID-si ID sütununda "
-"göstərilən nömrədir."
 
 #: ../apport/ui.py:954
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
-"Bu ismarıcı bağladıqdan sonra problemi bildirmək üçün tətbiq pəncərəsinə "
-"kilikləyin."
 
 #: ../apport/ui.py:970 ../apport/ui.py:977
 msgid "xprop failed to determine process ID of the window"
-msgstr "xprop pəncərənin işləm ID-sini müəyyən edə bilmədi"
+msgstr ""
 
 #: ../apport/ui.py:992
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr "%(prog)s <hesabat nömrəsi>"
+msgstr "%(prog)s <ანგარიშის ნომერი>"
 
 #: ../apport/ui.py:993
 msgid "Specify package name."
-msgstr "Paket adını göstərin."
+msgstr "მიუთითეთ პაკეტის სახელი."
 
 #: ../apport/ui.py:999 ../apport/ui.py:1127
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "Hesabata əlavə teq əlavə et. Bir neçə dəfə göstərilə bilər."
+msgstr ""
 
 #: ../apport/ui.py:1035
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%(prog)s [seçimlər] [simptom|pid|paket|proqram yolu|.apport/.crash faylı]"
 
 #: ../apport/ui.py:1046
 msgid ""
@@ -282,34 +244,26 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"Xəta bildirişi rejimində başla. --package və istəyə bağlı --pid və ya sadəcə "
-"--pid tələb edir. Əgər heç biri verilməyibsə, məlum simptomların siyahısını "
-"göstər. (Tək arqument verilərsə nəzərdə tutulur.)"
 
 #: ../apport/ui.py:1055
 msgid "Click a window as a target for filing a problem report."
-msgstr "Problem hesabatı yaratmaq üçün hədəf olaraq bir pəncərəyə kilikləyin."
+msgstr ""
 
 #: ../apport/ui.py:1063
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
-"Xəta yeniləmə rejimində başla. İstəyə bağlı olaraq --package ala bilər."
 
 #: ../apport/ui.py:1071
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"Simptom haqqında xəta hesabatı göndər. (Simptom adı tək arqument kimi "
-"verilərsə nəzərdə tutulur.)"
 
 #: ../apport/ui.py:1080
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"--file-bug rejimində paket adını göstərin. Bu, --pid göstərildiyi halda "
-"istəyə bağlıdır. (Paket adı tək arqument kimi verilərsə nəzərdə tutulur.)"
 
 #: ../apport/ui.py:1091
 msgid ""
@@ -317,13 +271,10 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"--file-bug rejimində işləyən proqramı göstərin. Bu göstərilərsə, xəta "
-"hesabatı daha çox məlumat ehtiva edəcək. (Pid tək arqument kimi verilərsə "
-"nəzərdə tutulur.)"
 
 #: ../apport/ui.py:1099
 msgid "The provided pid is a hanging application."
-msgstr "Təqdim edilmiş pid donmuş tətbiqdir."
+msgstr ""
 
 #: ../apport/ui.py:1107
 #, python-format
@@ -331,8 +282,6 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Qəzanı %s daxilində gözləyənlərin əvəzinə verilmiş .apport və ya .crash "
-"faylından bildir. (Fayl tək arqument kimi verilərsə nəzərdə tutulur.)"
 
 #: ../apport/ui.py:1117
 msgid ""
@@ -340,77 +289,70 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"Xəta bildirişi rejimində toplanmış məlumatı hesabat vermək əvəzinə faylda "
-"yadda saxla. Bu fayl daha sonra fərqli cihazdan bildirilə bilər."
 
 #: ../apport/ui.py:1133
 msgid "Print the Apport version number."
-msgstr "Apport versiya nömrəsini çap et."
+msgstr "Apport-ის ვერსიის ნომრის გამოტანა."
 
 #: ../apport/ui.py:1292
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
-"Bu, qəzanı yoxlamaq üçün terminal pəncərəsində apport-retrace başladacaq."
 
 #: ../apport/ui.py:1296
 msgid "Run gdb session"
-msgstr "gdb seansını işə sal"
+msgstr "gdb-ის სესიის გაშვება"
 
 #: ../apport/ui.py:1297
 msgid "Run gdb session without downloading debug symbols"
-msgstr "debug simvollarını endirmədən gdb seansını işə sal"
+msgstr "gdb-ის სესიის გაშვება გამართვის სიმბოლოების გადმოწერის გარეშე"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:1299
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr "%s tam simvolik yığın izi ilə yenilə"
+msgstr ""
 
 #: ../apport/ui.py:1353
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
-"Qəza hesabatı vəziyyətini yadda saxlamaq mümkün olmadı. Avtomatik və ya heç "
-"vaxt hesabat vermə rejimini təyin etmək olmur."
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr "Hesabat göndərmə vəziyyəti tənzimləmələrini xatırlamaq olmur"
+msgstr ""
 
 #: ../apport/ui.py:1439 ../apport/ui.py:1452
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Bu problem hesabatı artıq quraşdırılmayan proqrama aiddir."
+msgstr ""
 
 #: ../apport/ui.py:1472
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Problem qəza baş verdikdən sonra dəyişilmiş %s proqramı ilə baş verdi."
+msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
 #: ../apport/ui.py:1531 ../apport/ui.py:1643 ../apport/ui.py:1843
 msgid "This problem report is damaged and cannot be processed."
-msgstr "Bu problem hesabatı zədələnmişdir və işlənə bilməz."
+msgstr ""
 
 #: ../apport/ui.py:1537
 msgid "This report is about a package that is not installed."
-msgstr "Bu hesabat quraşdırılmamış paket haqqındadır."
+msgstr "ანგარიში ეხება პაკეტს, რომელიც დაყენებული არაა."
 
 #: ../apport/ui.py:1544
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Bu problem hesabatını işləməyə cəhd edərkən xəta baş verdi:"
+msgstr ""
 
 #: ../apport/ui.py:1561
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
-"Bu tətbiqin iki versiyası quraşdırılıb, hansı biri üçün xəta hesabatı vermək "
-"istəyirsiniz?"
 
 #: ../apport/ui.py:1566
 #, python-format
@@ -420,14 +362,12 @@ msgstr "%s snap"
 #: ../apport/ui.py:1567
 #, python-format
 msgid "%s deb package"
-msgstr "%s deb paketi"
+msgstr "%s deb პაკეტი"
 
 #: ../apport/ui.py:1605
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
-"%s, %s tərəfindən yayımlanan snap tərəfindən təqdim edilmişdir. Kömək üçün "
-"%s vasitəsilə onlarla əlaqə saxlayın."
 
 #: ../apport/ui.py:1610
 #, python-format
@@ -435,40 +375,37 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"%s, %s tərəfindən yayımlanan snap tərəfindən təqdim edilmişdir. Heç bir "
-"əlaqə ünvanı təqdim edilməyib; kömək üçün https://forum.snapcraft.io/ "
-"ünvanındakı foruma daxil olun."
 
 #: ../apport/ui.py:1696
 msgid "Could not determine the package or source package name."
-msgstr "Paketi və ya mənbə paketi adını müəyyən etmək mümkün olmadı."
+msgstr "პაკეტის, ან წყარო პაკეტის სახელის დადგენა შეუძლებელია."
 
 #: ../apport/ui.py:1727
 msgid "Unable to start web browser"
-msgstr "Veb brauzeri başlatmaq mümkün olmadı"
+msgstr "ბრაუზერის გაშვების შეცდომა"
 
 #: ../apport/ui.py:1728
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "%s açmaq üçün veb brauzeri başlatmaq mümkün olmadı."
+msgstr "%s-ის გასახსნელად ბრაუზერის გაშვება შეუძლებელია."
 
 #: ../apport/ui.py:1801
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
-msgstr "Qəza bazasına bağlanmaq olmur, internet bağlantınızı yoxlayın."
+msgstr ""
+"ავარიების ბაზასთან წვდომა შეუძლებელია. შეამოწმეთ თქვენი ინტერნეტკავშირი."
 
 #: ../apport/ui.py:1804
 msgid "Network problem"
-msgstr "Şəbəkə problemi"
+msgstr "ქსელის პრობლემა"
 
 #: ../apport/ui.py:1830
 msgid "Memory exhaustion"
-msgstr "Yaddaş tükənməsi"
+msgstr "მეხსიერება გადატვირთულია"
 
 #: ../apport/ui.py:1832
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
-"Sisteminizdə bu qəza hesabatını işləmək üçün kifayət qədər yaddaş yoxdur."
 
 #: ../apport/ui.py:1877
 #, python-format
@@ -477,13 +414,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Problem bildirilə bilmir:\n"
+"პრობლემის გაგზავნა შეუძლებელია:\n"
 "\n"
 "%s"
 
 #: ../apport/ui.py:1931 ../apport/ui.py:1943
 msgid "Problem already known"
-msgstr "Problem artıq məlumdur"
+msgstr "პრობლემა უკვე ცნობილია"
 
 #: ../apport/ui.py:1933
 msgid ""
@@ -491,208 +428,192 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"Bu problem veb brauzerdə göstərilən xəta hesabatında artıq bildirilib. "
-"İnkişafçılar üçün faydalı ola biləcək əlavə məlumat əlavə edə biləcəyinizi "
-"yoxlayın."
 
 #: ../apport/ui.py:1944
 msgid "This problem was already reported to developers. Thank you!"
-msgstr "Bu problem artıq inkişafçılara bildirilib. Təşəkkür edirik!"
+msgstr ""
 
 #: ../bin/apport-cli.py:90
 msgid "Press any key to continue..."
-msgstr "Davam etmək üçün istənilən düyməni sıxın..."
+msgstr "გასაგრძელებლად დააჭირეთ ნებისმიერ ღილაკს..."
 
 #: ../bin/apport-cli.py:97
 msgid "What would you like to do? Your options are:"
-msgstr "Nə etmək istərdiniz? Seçimləriniz bunlardır:"
+msgstr "რა გნებავთ, გააკეთოთ? თქვენი არჩევნებია:"
 
 #: ../bin/apport-cli.py:110
 #, python-format
 msgid "Please choose (%s):"
-msgstr "Seçin (%s):"
+msgstr "აირჩიეთ (%s):"
 
 #: ../bin/apport-cli.py:170
 #, python-format
 msgid "(%i bytes)"
-msgstr "(%i bayt)"
+msgstr "(%i ბაიტი)"
 
 #: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
-msgstr "(ikili məlumat)"
+msgstr "(ბინარული მონაცემები)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
-msgstr "Problem hesabatı inkişafçılara göndərilsin?"
+msgstr "გავაგზავნო პრობლემა პროგრამისტთან?"
 
 #: ../bin/apport-cli.py:214
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"Problem hesabatı göndərildikdən sonra, xahiş edirik,\n"
-"avtomatik açılan veb brauzerdə formanı doldurun."
 
 #: ../bin/apport-cli.py:221
 #, python-format
 msgid "&Send report (%s)"
-msgstr "Hesabatı &göndər (%s)"
+msgstr "ანგარიში&ს გაგზავნა (%s)"
 
 #: ../bin/apport-cli.py:225
 msgid "&Examine locally"
-msgstr "Yerli olaraq &yoxla"
+msgstr "ლ&ოკალურად გამოცდა"
 
 #: ../bin/apport-cli.py:229
 msgid "&View report"
-msgstr "Hesabata &bax"
+msgstr "ანგარიშის ნახ&ვა"
 
 #: ../bin/apport-cli.py:231
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
-"Hesabat faylını daha sonra göndərmək və ya başqa yerə kopyalamaq üçün &saxla"
 
 #: ../bin/apport-cli.py:234
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Ləğv et və bu proqram versiyasının gələcək qəzalarını &görməzdən gəl"
+msgstr ""
 
 #: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
 #: ../bin/apport-cli.py:374
 msgid "&Cancel"
-msgstr "&Ləğv et"
+msgstr "&გაუქმება"
 
 #: ../bin/apport-cli.py:258
 msgid "Problem report file:"
-msgstr "Problem hesabatı faylı:"
+msgstr "პრობლემის ანგარიშის ფაილი:"
 
 #: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
 msgid "&Confirm"
-msgstr "&Təsdiqlə"
+msgstr "დადას&ტურება"
 
 #: ../bin/apport-cli.py:268
 #, python-format
 msgid "Error: %s"
-msgstr "Xəta: %s"
+msgstr "შეცდომა: %s"
 
 #: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
-msgstr "Problem məlumatı toplanır"
+msgstr "პრობლემის ინფორმაციის მოგროვება"
 
 #: ../bin/apport-cli.py:276
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"Toplanmış məlumat tətbiqi təkmilləşdirmək üçün inkişafçılara\n"
-"göndərilə bilər. Bu, bir neçə dəqiqə çəkə bilər."
 
 #: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
-msgstr "Problem məlumatı yüklənir"
+msgstr "პრობლემის ინფორმაციის ატვირთვა"
 
 #: ../bin/apport-cli.py:294
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"Toplanmış məlumat xəta izləmə sisteminə göndərilir.\n"
-"Bu, bir neçə dəqiqə çəkə bilər."
 
 #: ../bin/apport-cli.py:315
 msgid "&Yes"
-msgstr "&Bəli"
+msgstr ""
 
 #: ../bin/apport-cli.py:316
 msgid "&No"
-msgstr "&Xeyr"
+msgstr ""
 
 #: ../bin/apport-cli.py:352
 msgid "&Done"
-msgstr "&Bitdi"
+msgstr "&მზადაა"
 
 #: ../bin/apport-cli.py:358
 msgid "none"
-msgstr "heç biri"
+msgstr "არცერთი"
 
 #: ../bin/apport-cli.py:359
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "Seçildi: %s. Çoxlu seçimlər:"
+msgstr "არჩეულია: %s. ბევრის არჩევა:"
 
 #: ../bin/apport-cli.py:375
 msgid "Choices:"
-msgstr "Seçimlər:"
+msgstr "არჩევანი:"
 
 #: ../bin/apport-cli.py:389
 msgid "Path to file (Enter to cancel):"
-msgstr "Fayla gedən yol (Ləğv etmək üçün Enter sıxın):"
+msgstr "ბილიკი ფაილამდე (Enter გასაუქმებლად):"
 
 #: ../bin/apport-cli.py:395
 msgid "File does not exist."
-msgstr "Fayl mövcud deyil."
+msgstr "ფაილი არ არსებობს."
 
 #: ../bin/apport-cli.py:397
 msgid "This is a directory."
-msgstr "Bu qovluqdur."
+msgstr "ეს საქაღალდეა."
 
 #: ../bin/apport-cli.py:402
 msgid "To continue, you must visit the following URL:"
-msgstr "Davam etmək üçün bu URL-ə daxil olmalısınız:"
+msgstr "გასაგრძელებლად ეწვიეთ შემდეგ URL-ს:"
 
 #: ../bin/apport-cli.py:404
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"İndi brauzeri başlada və ya bu URL-i başqa kompüterdəki brauzerə kopyalaya "
-"bilərsiniz."
 
 #: ../bin/apport-cli.py:409
 msgid "Launch a browser now"
-msgstr "Brauzeri indi başlat"
+msgstr "ბრაუზერის ახლა გაშვება"
 
 #: ../bin/apport-cli.py:424
 msgid "No pending crash reports. Try --help for more information."
-msgstr "Gözləyən qəza hesabatı yoxdur. Daha çox məlumat üçün --help sınayın."
+msgstr ""
 
 #: ../bin/apport-retrace.py:48
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Yeni izləri hesabata qoyma, ancaq stdout-a yaz."
+msgstr ""
 
 #: ../bin/apport-retrace.py:55
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
-"Hesabatın core dump ilə interaktiv gdb seansını başlat (-o görməzdən "
-"gəlinir; hesabatı yenidən yazmır)"
 
 #: ../bin/apport-retrace.py:64
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
-"Orijinal hesabatı dəyişdirmək əvəzinə dəyişdirilmiş hesabatı verilmiş fayla "
-"yaz"
 
 #: ../bin/apport-retrace.py:73
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr "Yığın izinin bərpasından sonra core dump-ı hesabatdan sil"
+msgstr ""
 
 #: ../bin/apport-retrace.py:76
 msgid "Override report's CoreFile"
-msgstr "Hesabatın CoreFile-nı əvəzlə"
+msgstr "ანგარიშის CoreFile-ის გადაფარვა"
 
 #: ../bin/apport-retrace.py:79
 msgid "Override report's ExecutablePath"
-msgstr "Hesabatın ExecutablePath-nı əvəzlə"
+msgstr "ანგარიშის ExecutablePath-ის გადაფარვა"
 
 #: ../bin/apport-retrace.py:82
 msgid "Override report's ProcMaps"
-msgstr "Hesabatın ProcMaps-nı əvəzlə"
+msgstr "ანგარიშის ProcMaps-ის გადაფარვა"
 
 #: ../bin/apport-retrace.py:88
 msgid "Rebuild report's Package information"
-msgstr "Hesabatın Paket məlumatını yenidən qur"
+msgstr "ანგარიშის პაკეტის ინფორმაციის თავიდან აგება"
 
 #: ../bin/apport-retrace.py:95
 msgid ""
@@ -703,12 +624,6 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"Müvəqqəti sandbox qur və zəruri paketləri və debug simvollarını oraya endir/"
-"quraşdır; bu seçim olmadan zəruri paketlərin və debug simvollarının artıq "
-"sistemdə quraşdırıldığını fərz edir. Arqument paketləmə sistemi "
-"konfiqurasiya baza qovluğunu göstərir; əgər \"sistem\" göstərsəniz, sistem "
-"konfiqurasiya fayllarından istifadə edəcək, lakin yalnız hazırda işləyən "
-"buraxılışda baş verən qəzaları izləyə biləcək."
 
 #: ../bin/apport-retrace.py:109
 msgid ""
@@ -716,41 +631,34 @@ msgid ""
 "using the same release as the report rather than whatever version of gdb you "
 "have installed."
 msgstr ""
-"Quraşdırdığınız gdb versiyası əvəzinə hesabatla eyni buraxılışı istifadə "
-"edərək gdb və ondan asılı olanları quraşdırmaq üçün başqa müvəqqəti sandbox "
-"qur."
 
 #: ../bin/apport-retrace.py:119
 msgid "Report download/install progress when installing packages into sandbox"
-msgstr "Paketləri sandbox-a quraşdırarkən endirmə/quraşdırma gedişatını bildir"
+msgstr ""
 
 #: ../bin/apport-retrace.py:125
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "Toplu işləm üçün log ismarıclarının əvvəlinə vaxt nişanlarını əlavə et"
+msgstr ""
 
 #: ../bin/apport-retrace.py:131
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
-"Hesabatlarda göstərilən mənbələrdən üçüncü tərəf repozitoriyaları yarat və "
-"istifadə et"
 
 #: ../bin/apport-retrace.py:139
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "Sandbox-a endirilmiş paketlər üçün keş qovluğu"
+msgstr ""
 
 #: ../bin/apport-retrace.py:145
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
-"Açılmış paketlər üçün qovluq. Gələcək işə salmalar hər hansı artıq "
-"endirilmiş paketin bu sandbox-a çıxarıldığını fərz edəcək."
 
 #: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "Sandbox-a əlavə paket quraşdır (bir neçə dəfə göstərilə bilər)"
+msgstr ""
 
 #: ../bin/apport-retrace.py:163
 msgid ""
@@ -758,210 +666,189 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
-"Qəza bazası tanıtma məlumatı olan fayla gedən yol. Bu, izlənmiş yığın "
-"izlərini yükləmək üçün qəza ID-sini göstərərkən istifadə olunur (yalnız -g, "
-"-o və ya -s göstərilmədikdə)"
 
 #: ../bin/apport-retrace.py:173
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
-"İzlənmiş yığın izlərini göstər və onları qəza bazasına göndərməzdən əvvəl "
-"təsdiq istə."
 
 #: ../bin/apport-retrace.py:181
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr "Surət sqlite bazasına gedən yol (varsayılan: surət yoxlanışı yoxdur)"
+msgstr ""
 
 #: ../bin/apport-retrace.py:188
 msgid "Do not add StacktraceSource to the report."
-msgstr "Hesabata StacktraceSource əlavə etmə."
+msgstr ""
 
 #: ../bin/apport-retrace.py:201
 msgid "You cannot use -C without -S. Stopping."
-msgstr "-S olmadan -C istifadə edə bilməzsiniz. Dayandırılır."
+msgstr ""
 
 #. translators: don't translate y/n,
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:231
 msgid "OK to send these as attachments? [y/n]"
-msgstr "Bunları qoşma kimi göndərmək olar? [y/n]"
+msgstr ""
 
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr "%(prog)s <hesabat> <hədəf qovluq>"
+msgstr ""
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr "Açılacaq hesabat faylı"
+msgstr "გასაშლელი ანგარიშის ფაილი"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr "hesabatın açılacağı qovluq"
+msgstr "საქაღალდე, სადაც ანგარიშის ფაილის გაშლა მოხდება"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
-msgstr "Hədəf qovluq mövcuddur və boş deyil."
+msgstr "სამიზნე საქაღალდე არსებობს და ის ცარიელი არაა."
 
 #: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
-msgstr "Təfsilatlar üçün man səhifəsinə baxın."
+msgstr ""
 
 #: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
-msgstr "valgrind tərəfindən yaradılan log faylı adını göstərin"
+msgstr ""
 
 #: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
-"əvvəllər yaradılmış sandbox qovluğunu (SDIR) yenidən istifadə et və ya "
-"mövcud deyilsə yarat"
 
 #: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
-"əlavə debug simvolları üçün sandbox qovluğu yaratma və ya yenidən istifadə "
-"etmə, ancaq quraşdırılmış debug simvollarına etibar et."
 
 #: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
-"əvvəllər yaradılmış keş qovluğunu (CDIR) yenidən istifadə et və ya mövcud "
-"deyilsə yarat"
 
 #: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
-msgstr "paketləri sandbox-a quraşdırarkən endirmə/quraşdırma gedişatını bildir"
+msgstr ""
 
 #: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
-"yaddaş sızmasını aşkar etmək üçün valgrind-in memcheck aləti altında "
-"işlədilən icra edilə bilən fayl"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr "Xəta: %s icra edilə bilən fayl deyil. Dayandırılır."
+msgstr ""
 
 #: ../data/apportcheckresume.py:75
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
-"Bu əvvəlki dayandırma zamanı baş verdi və sistemin düzgün şəkildə davam "
-"etməsinə mane oldu."
 
 #: ../data/apportcheckresume.py:80
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
-"Bu əvvəlki qış yuxusu zamanı baş verdi və sistemin düzgün şəkildə davam "
-"etməsinə mane oldu."
 
 #: ../data/apportcheckresume.py:88
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
-"Davam etmə işləmi sonuna çox yaxın dondu və normal şəkildə tamamlanmış kimi "
-"görünəcək."
 
 #: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
-"Sisteminiz indi qeyri-sabit ola bilər və yenidən başladılması tələb oluna "
-"bilər."
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr "Problemi bildir..."
+msgstr "პრობლემის შესახებ შეტყობინება..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr "Nasazlığı inkişafçılara bildir"
+msgstr "პროგრამისტებისთვის შეცდომის პატაკის გაგზავნა"
 
 #: ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr "Bağışlayın, %s tətbiqi gözlənilmədən dayandı."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:156
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Bağışlayın, %s gözlənilmədən bağlandı."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr "Bağışlayın, %s daxili xəta ilə üzləşdi."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
-msgstr "Göndər"
+msgstr "გაგზავნა"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:335
 msgid "Show Details"
-msgstr "Təfsilatları göstər"
+msgstr "დეტალების ჩვენება"
 
 #: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
-msgstr "Davam"
+msgstr "გაგრძელება"
 
 #: ../gtk/apport-gtk.py:243
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr "%s tətbiqi cavab verməyi dayandırdı."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:247
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr "\"%s\" proqramı cavab verməyi dayandırdı."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
-msgstr "Paket: %s"
+msgstr "პაკეტი: %s"
 
 #: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
-msgstr "Bağışlayın, proqram təminatı quraşdırılarkən problem yarandı."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr "%s tətbiqi daxili xəta ilə üzləşdi."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "%s tətbiqi gözlənilmədən bağlandı."
+msgstr "აპლიკაცია %s მოულოდნელად დაიხურა."
 
 #: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Daha çox problem görsəniz, kompüteri yenidən başlatmağa cəhd edin."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
-msgstr "Bu tip gələcək problemləri görməzdən gəl"
+msgstr "ამ ტიპის პრობლემების იგნორი მოავალში"
 
 #: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
-msgstr "Təfsilatları gizlət"
+msgstr "დეტალების დამალვა"
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
@@ -969,96 +856,90 @@ msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr "Ləğv et"
+msgstr "გაუქმება"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr "Oldu"
+msgstr "დიახ"
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
-msgstr "Qəza hesabatı"
+msgstr "ანგარიში ავარიის შესახებ"
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr "<big><b>Bağışlayın, daxili xəta baş verdi.</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr "Bunu gələcəkdə xatırla"
+msgstr "ამის დამახსოვრება"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr "Bu proqram versiyasının gələcək problemlərini görməzdən gəl"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr "Bu tətbiqi yenidən başlat"
+msgstr "ამ აპლიკაციის თავიდან გაშვება"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
-msgstr "Yerli olaraq _yoxla"
+msgstr "ლოკალ_ურად გამოცდა"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr "Göndərmə"
+msgstr "არ გააგზავნო"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Problem məlumatı toplanır</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
-"İnkişafçıların bildirdiyiniz problemi həll etməsinə kömək edə biləcək "
-"məlumatlar toplanır."
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>Problem məlumatı yüklənir</b></big>"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"Toplanmış məlumat xəta izləmə sisteminə göndərilir. Bu, bir neçə dəqiqə çəkə "
-"bilər."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr "Apport qəza faylı"
+msgstr "Apport-ის ავარიის ფაილი"
 
 #: ../kde/apport-kde.py:269
 msgid "Leave Closed"
-msgstr "Bağlı saxla"
+msgstr "დახურულად დატოვება"
 
 #: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
-msgstr "Yenidən başlat"
+msgstr "_თავიდან გაშვება"
 
 #: ../kde/apport-kde.py:363
 msgid "Username:"
-msgstr "İstifadəçi adı:"
+msgstr "მომხმარებელი:"
 
 #: ../kde/apport-kde.py:366
 msgid "Password:"
-msgstr "Şifrə:"
+msgstr "პაროლი:"
 
 #: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
-msgstr "Problem məlumatı toplanır"
+msgstr "პრობლემის ინფორმაციის მოგროვება"
 
 #: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Toplanmış məlumat tətbiqi təkmilləşdirmək üçün inkişafçılara göndərilə "
-"bilər. Bu, bir neçə dəqiqə çəkə bilər."
 
 #: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
-msgstr "Problem məlumatı yüklənir"
+msgstr "პრობლემის ინფორმაციის ატვირთვა"
