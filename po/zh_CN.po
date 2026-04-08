@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-08 16:30+0200\n"
-"PO-Revision-Date: 2024-04-28 17:19+0000\n"
-"Last-Translator: Mingye Wang <arthur2e5@aosc.xyz>\n"
+"PO-Revision-Date: 2026-03-10 15:40+0000\n"
+"Last-Translator: Aron Xu <Unknown>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2024-06-13 14:36+0000\n"
-"X-Generator: Launchpad (build bbfa2351d9d6a9ddfe262109428f7bf5516e65d1)\n"
+"X-Launchpad-Export-Date: 2026-04-08 15:01+0000\n"
+"X-Generator: Launchpad (build 63170d9f894f213bed2e467c153d97add655c51e)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -26,7 +26,7 @@ msgstr "收集系统信息"
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
-msgstr "为此问题报告收集系统信息需要授权"
+msgstr "需要进行身份验证，才能为此问题报告收集系统信息"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
@@ -34,7 +34,7 @@ msgstr "系统问题报告"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid "Please enter your password to access problem reports of system programs"
-msgstr "请输入您的密码以查看系统程序问题报告。"
+msgstr "请输入您的密码以访问系统程序的问题报告"
 
 #: ../apport/ui.py:263
 msgid "This package does not seem to be installed correctly"
@@ -47,8 +47,8 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
-"%s 软件包似乎不是官方版本。请在更新可用包索引后重试，如果仍然不能工作，请移除"
-"这些第三方软件包后再试。"
+"该 %s 软件包似乎不是官方版本。请更新可用软件包列表后重试，如果问题依旧，请移"
+"除相关的第三方软件包后再试。"
 
 #: ../apport/ui.py:303
 #, python-format
@@ -75,7 +75,7 @@ msgstr "对不起，%s 程序异常退出"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr "您的计算机剩余空间不足，程序无法自动诊断问题并向开发者发送问题报告。"
+msgstr "您的计算机没有足够的可用内存来自动分析问题并向开发者发送报告。"
 
 #: ../apport/ui.py:463 ../apport/ui.py:1872
 #, python-format
@@ -133,7 +133,7 @@ msgstr "拒绝访问"
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr "指定的进程只能以进程的所有者或 root 身份运行。"
+msgstr "指定的进程不属于您。请以该进程所有者或 root 用户的身份运行此程序。"
 
 #: ../apport/ui.py:675
 msgid "The specified process ID does not belong to a program."
@@ -142,7 +142,7 @@ msgstr "指定的进程 ID 不属于一个程序。"
 #: ../apport/ui.py:696
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr "症状脚本 %s 没有划定受影响的包"
+msgstr "症状脚本 %s 未能确定受影响的软件包"
 
 #: ../apport/ui.py:702
 #, python-format
@@ -220,12 +220,12 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
-"不能在Wayland通过窗口选择进程。\n"
+"无法在 Wayland 上通过窗口选择进程。\n"
 "\n"
-"请找到该窗口的进程ID，然后运行’ubuntu-bug <进程ID>‘。\n"
+"请找到该窗口的进程 ID，然后运行“ubuntu-bug <进程 ID>”。\n"
 "\n"
-"可以通过运行“系统监视器”程序找到进程ID。在“进程”选项卡中，滚动直到找到正确的"
-"应用程序。进程ID是ID列中列出的编号。"
+"可以通过运行“系统监视器”找到进程 ID。在“进程”选项卡中，滚动直到找到正确的应用"
+"程序。进程 ID 是“ID”一列中显示的数字。"
 
 #: ../apport/ui.py:954
 msgid ""
@@ -298,7 +298,7 @@ msgstr ""
 
 #: ../apport/ui.py:1099
 msgid "The provided pid is a hanging application."
-msgstr "此进程号的程序是挂起的。"
+msgstr "该 PID 对应的应用程序当前无响应。"
 
 #: ../apport/ui.py:1107
 #, python-format
@@ -306,8 +306,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文"
-"件只给定了参数时实现。)"
+"从指定的 .apport 或 .crash 文件报告崩溃，而不是使用 %s 中挂起的报告。（当仅提"
+"供该文件作为参数时隐含此行为。）"
 
 #: ../apport/ui.py:1117
 msgid ""
@@ -315,8 +315,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"在提交报告过程中，将收集到的信息保存到要报告的文件中。该文件可用于稍后在另一"
-"台机器上提交。"
+"在“提交缺陷”模式下，将收集到的信息保存到文件中而不是直接报告。该文件可用于稍"
+"后在另一台计算机上报告。"
 
 #: ../apport/ui.py:1133
 msgid "Print the Apport version number."
@@ -339,16 +339,16 @@ msgstr "不下载调试符号的情况下运行 gdb 会话"
 #: ../apport/ui.py:1299
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr "利用全符号的堆栈跟踪更新 %s"
+msgstr "用完整符号化的堆栈回溯更新 %s"
 
 #: ../apport/ui.py:1353
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
-msgstr "保存崩溃报告状态失败， 无法设置自动或永不报告模式。"
+msgstr "保存崩溃报告状态失败，无法设置“自动”或“从不”报告模式。"
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr "无法记取发送报告的状态设置"
+msgstr "无法记住报告发送状态的设置"
 
 #: ../apport/ui.py:1439 ../apport/ui.py:1452
 msgid ""
@@ -360,7 +360,7 @@ msgstr "这一问题报告适用于不再安装的程序。"
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "这个问题出现在程序 %s 中。程序在崩溃发生后受到了更改。"
+msgstr "问题发生在程序 %s 上，但该程序在崩溃后已被更改。"
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
@@ -395,7 +395,7 @@ msgstr "%s deb 软件包"
 #: ../apport/ui.py:1605
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
-msgstr "%s是由snap提供%s发布的软件。通过%s联系他们以获得帮助。"
+msgstr "%s 由 %s 发布的 Snap 包提供。请通过 %s 联系其开发者获取帮助。"
 
 #: ../apport/ui.py:1610
 #, python-format
@@ -403,12 +403,12 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
-"%s 是 %s 提供的一个 Snap，但没有提供联系地址。请访问 https://"
+"%s 由 %s 发布的 Snap 包提供，但未提供联系地址。请访问 https://"
 "forum.snapcraft.io 以寻求帮助。"
 
 #: ../apport/ui.py:1696
 msgid "Could not determine the package or source package name."
-msgstr "无法检测包或者源码包的名称。"
+msgstr "无法确定软件包或源码包的名称。"
 
 #: ../apport/ui.py:1727
 msgid "Unable to start web browser"
@@ -417,7 +417,7 @@ msgstr "无法打开浏览器"
 #: ../apport/ui.py:1728
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "无法使用浏览器打开网页 %s"
+msgstr "无法使用浏览器打开网页 %s。"
 
 #: ../apport/ui.py:1801
 msgid ""
@@ -430,7 +430,7 @@ msgstr "网络问题"
 
 #: ../apport/ui.py:1830
 msgid "Memory exhaustion"
-msgstr "内存耗尽"
+msgstr "内存不足"
 
 #: ../apport/ui.py:1832
 msgid "Your system does not have enough memory to process this crash report."
@@ -456,7 +456,9 @@ msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
-msgstr "关于这个问题，之前已经有如网页所示的报告。您是否有所补充？"
+msgstr ""
+"该问题已在浏览器中显示的缺陷报告中报告。请检查您是否还能提供对开发者有帮助的"
+"其他补充信息。"
 
 #: ../apport/ui.py:1944
 msgid "This problem was already reported to developers. Thank you!"
@@ -512,11 +514,11 @@ msgstr "查看报告(&V)"
 
 #: ../bin/apport-cli.py:231
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "保存报告文件以便稍后发送或者复制到其他地方(&K)"
+msgstr "保留报告文件以便稍后发送或复制到其他位置(&K)"
 
 #: ../bin/apport-cli.py:234
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "终止并忽略这个版本软件以后出现的崩溃(&I)"
+msgstr "取消并忽略此程序版本今后的崩溃(&I)"
 
 #: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
 #: ../bin/apport-cli.py:374
@@ -546,7 +548,7 @@ msgid ""
 "application. This might take a few minutes."
 msgstr ""
 "收集到的信息将会传送到开发人员处以改进软件。\n"
-"这可能会花费几分钟时间，"
+"这可能会花费几分钟时间。"
 
 #: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
@@ -562,11 +564,11 @@ msgstr ""
 
 #: ../bin/apport-cli.py:315
 msgid "&Yes"
-msgstr ""
+msgstr "是(&Y)"
 
 #: ../bin/apport-cli.py:316
 msgid "&No"
-msgstr ""
+msgstr "否(&N)"
 
 #: ../bin/apport-cli.py:352
 msgid "&Done"
@@ -579,7 +581,7 @@ msgstr "无"
 #: ../bin/apport-cli.py:359
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr "已选择：%s。 多重选择："
+msgstr "已选择：%s。可多选："
 
 #: ../bin/apport-cli.py:375
 msgid "Choices:"
@@ -632,7 +634,7 @@ msgstr "将更改过的报告写入指定文件而非改变原始报告"
 
 #: ../bin/apport-retrace.py:73
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr "生成栈回溯后将内核转储从报告中删除"
+msgstr "生成堆栈回溯后，将核心转储从报告中删除"
 
 #: ../bin/apport-retrace.py:76
 msgid "Override report's CoreFile"
@@ -732,7 +734,7 @@ msgstr "您不能在未指定 -S 选项的情况下使用 -C 选项，停止。"
 #. apport currently only checks for "y"
 #: ../bin/apport-retrace.py:231
 msgid "OK to send these as attachments? [y/n]"
-msgstr "确定以附件形式发送这些？[y/n]"
+msgstr "确认以附件形式发送这些文件？[y/n]"
 
 #: ../bin/apport-unpack.py:35
 #, python-format
@@ -779,36 +781,36 @@ msgstr "重复使用以前创建的缓存目录(CDIR)，或者，如果它不存
 
 #: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
-msgstr "安装包进入沙盒时报告下载/安装进度"
+msgstr "在将软件包安装到沙盒时显示下载/安装进度"
 
 #: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
-msgstr "在valgrind的memcheck工具（用于检测内存泄漏）下运行的可执行文件"
+msgstr "在 Valgrind 的 memcheck 工具（用于内存泄露检测）下运行的可执行文件"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr "错误：%s 不是可执行文件，停止。"
+msgstr "错误：%s 不是可执行文件。已停止。"
 
 #: ../data/apportcheckresume.py:75
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
-msgstr "发生于之前的挂起时，并且使系统午饭正常恢复。"
+msgstr "此问题发生在上一次挂起期间，导致系统无法正常恢复。"
 
 #: ../data/apportcheckresume.py:80
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
-msgstr "发生于之前的休眠时，并且使系统午饭正常恢复。"
+msgstr "此问题发生在之前的休眠过程中，导致系统无法正常恢复。"
 
 #: ../data/apportcheckresume.py:88
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr "这个恢复过程已经非常接近尾声，将正常结束。"
+msgstr "恢复过程在接近尾声时挂起，表面上看似已经正常完成。"
 
 #: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
@@ -887,7 +889,7 @@ msgstr "如果您注意到更多问题，请尝试重新启动计算机。"
 
 #: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
-msgstr "以后忽略此类错误"
+msgstr "忽略今后此类问题"
 
 #: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
@@ -911,7 +913,7 @@ msgstr "崩溃报告"
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr "<big><b>对不起，发生内部错误。</b></big>"
+msgstr "<big><b>抱歉，发生了一个内部错误。</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
@@ -919,7 +921,7 @@ msgstr "记住这个选择"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
-msgstr "以后忽略此版本程序的问题"
+msgstr "忽略今后此程序版本的问题"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"

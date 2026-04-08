@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-08 16:30+0200\n"
-"PO-Revision-Date: 2015-04-27 21:46+0000\n"
+"PO-Revision-Date: 2025-07-12 05:05+0000\n"
 "Last-Translator: Vilson Gjeci <vilsongjeci@gmail.com>\n"
 "Language-Team: Albanian <sq@li.org>\n"
 "Language: sq\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2022-12-07 14:36+0000\n"
-"X-Generator: Launchpad (build 41e7553f8097ce3a683f90e835708cbe7bf0006c)\n"
+"X-Launchpad-Export-Date: 2026-04-08 15:00+0000\n"
+"X-Generator: Launchpad (build 63170d9f894f213bed2e467c153d97add655c51e)\n"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
@@ -51,6 +51,10 @@ msgid ""
 "the indexes of available packages, if that does not work then remove related "
 "third party packages and try again."
 msgstr ""
+"Kjo nuk duket të jetë një paketë zyrtare %s. Ju lutemi provoni përsëri pasi "
+"të keni përditësuar indekset e paketave të disponueshme, nëse kjo nuk "
+"funksionon, atëherë hiqni paketat përkatëse të palëve të treta dhe provoni "
+"përsëri."
 
 #: ../apport/ui.py:303
 #, python-format
@@ -113,15 +117,15 @@ msgstr "PID i Pavlefshëm"
 
 #: ../apport/ui.py:569
 msgid "The specified process ID does not exist."
-msgstr ""
+msgstr "ID-ja e procesit të specifikuar nuk ekziston."
 
 #: ../apport/ui.py:574
 msgid "Not your PID"
-msgstr ""
+msgstr "Jo PID-i juaj"
 
 #: ../apport/ui.py:575
 msgid "The specified process ID does not belong to you."
-msgstr ""
+msgstr "ID-ja e procesit të specifikuar nuk ju përket juve."
 
 #: ../apport/ui.py:632
 msgid "No package specified"
@@ -220,11 +224,11 @@ msgstr "Simptoma \"%s\" nuk njihet."
 
 #: ../apport/ui.py:915
 msgid "No PID specified"
-msgstr ""
+msgstr "Nuk është specifikuar PID"
 
 #: ../apport/ui.py:916
 msgid "You need to specify a PID. See --help for more information."
-msgstr ""
+msgstr "Duhet të specifikoni një PID. Shihni --help për më shumë informacion."
 
 #: ../apport/ui.py:938
 msgid ""
@@ -236,6 +240,14 @@ msgid ""
 "the Processes tab, scroll until you find the correct application. The "
 "process ID is the number listed in the ID column."
 msgstr ""
+"Opsioni i dritares nuk mund të përdoret në Wayland. \n"
+"\n"
+"Ju lutemi gjeni ID-në e procesit të dritares dhe më pas ekzekutoni 'ubuntu-"
+"bug <ID e procesit>'. \n"
+"\n"
+"ID-ja e procesit mund të gjendet duke ekzekutuar aplikacionin Monitor i "
+"Sistemit. Në skedën Procese, lëvizni derisa të gjeni aplikacionin e duhur. "
+"ID-ja e procesit është numri i listuar në kolonën ID."
 
 #: ../apport/ui.py:954
 msgid ""
@@ -252,7 +264,7 @@ msgstr "xprop dështoi në përcaktimin e ID të proçesit të dritares"
 #: ../apport/ui.py:992
 #, python-format
 msgid "%(prog)s <report number>"
-msgstr ""
+msgstr "%(prog)s <numri i raportit>"
 
 #: ../apport/ui.py:993
 msgid "Specify package name."
@@ -268,6 +280,7 @@ msgstr ""
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%(prog)s [opsione] [simptomë|pid|paketë|shteg programi|skedar .apport/.crash]"
 
 #: ../apport/ui.py:1046
 msgid ""
@@ -369,10 +382,12 @@ msgstr "Përditëso %s pa gjurmë të plota simbolike"
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
+"Ruajtja e gjendjes së raportimit të aksidenteve dështoi. Nuk mund të "
+"caktohet modaliteti automatik ose modaliteti \"nuk raportohet kurrë\"."
 
 #: ../apport/ui.py:1357
 msgid "Can't remember send report status settings"
-msgstr ""
+msgstr "Nuk mbaj mend cilësimet e statusit të dërgimit të raportit"
 
 #: ../apport/ui.py:1439 ../apport/ui.py:1452
 msgid ""
@@ -394,7 +409,7 @@ msgstr "Ky raportim i problemit është i dëmtuar dhe nuk mund të shqyrtohet."
 
 #: ../apport/ui.py:1537
 msgid "This report is about a package that is not installed."
-msgstr ""
+msgstr "Ky raport ka të bëjë me një paketë që nuk është instaluar."
 
 #: ../apport/ui.py:1544
 msgid "An error occurred while attempting to process this problem report:"
@@ -406,21 +421,25 @@ msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
+"Ke instaluar dy versione të këtij aplikacioni, për cilin dëshiron të "
+"raportosh një gabim?"
 
 #: ../apport/ui.py:1566
 #, python-format
 msgid "%s snap"
-msgstr ""
+msgstr "%s snap"
 
 #: ../apport/ui.py:1567
 #, python-format
 msgid "%s deb package"
-msgstr ""
+msgstr "Paketa deb %s"
 
 #: ../apport/ui.py:1605
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
+"%s ofrohet nga një fotografi e publikuar nga %s. Kontaktoni ata nëpërmjet %s "
+"për ndihmë."
 
 #: ../apport/ui.py:1610
 #, python-format
@@ -428,6 +447,8 @@ msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
+"%s ofrohet nga një snap i publikuar nga %s. Nuk është dhënë asnjë adresë "
+"kontakti; vizitoni forumin në https://forum.snapcraft.io/ për ndihmë."
 
 #: ../apport/ui.py:1696
 msgid "Could not determine the package or source package name."
@@ -593,11 +614,11 @@ msgstr ""
 
 #: ../bin/apport-cli.py:315
 msgid "&Yes"
-msgstr ""
+msgstr "&Po"
 
 #: ../bin/apport-cli.py:316
 msgid "&No"
-msgstr ""
+msgstr "&Jo"
 
 #: ../bin/apport-cli.py:352
 msgid "&Done"
@@ -777,7 +798,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:188
 msgid "Do not add StacktraceSource to the report."
-msgstr ""
+msgstr "Mos e shtoni StacktraceSource në raport."
 
 #: ../bin/apport-retrace.py:201
 msgid "You cannot use -C without -S. Stopping."
@@ -792,15 +813,15 @@ msgstr "OK për t'i dërguar këtosi bashkangjitje? [y/n]"
 #: ../bin/apport-unpack.py:35
 #, python-format
 msgid "%(prog)s <report> <target directory>"
-msgstr ""
+msgstr "%(prog)s <raport> <drejtoria e synuar>"
 
 #: ../bin/apport-unpack.py:36
 msgid "Report file to unpack"
-msgstr ""
+msgstr "Raporto skedarin për t'u çpaketuar"
 
 #: ../bin/apport-unpack.py:37
 msgid "directory to unpack report to"
-msgstr ""
+msgstr "direktoria për të çpaketuar raportin"
 
 #: ../bin/apport-unpack.py:86
 msgid "Destination directory exists and is not empty."
@@ -848,6 +869,8 @@ msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
+"skedari ekzekutues që ekzekutohet nën mjetin memcheck të valgrind për "
+"zbulimin e rrjedhjes së kujtesës"
 
 #: ../bin/apport-valgrind.py:130
 #, python-format
@@ -985,7 +1008,7 @@ msgstr "<big><b>Na vjen keq, ndodhi një gabim i brendshëm.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Remember this in future"
-msgstr ""
+msgstr "Mbajeni mend këtë në të ardhmen"
 
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Ignore future problems of this program version"
@@ -993,7 +1016,7 @@ msgstr "Shpërfilli problemet e mëtejshme të këtij versioni të programit"
 
 #: ../gtk/apport-gtk.ui.h:10
 msgid "Relaunch this application"
-msgstr ""
+msgstr "Rihapni këtë aplikacion"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid "_Examine locally"
@@ -1001,7 +1024,7 @@ msgstr "_Shqyrtoje lokalisht"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Don't send"
-msgstr ""
+msgstr "Mos dërgo"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "<big><b>Collecting problem information</b></big>"
