@@ -1,5 +1,6 @@
 """System tests for apport-retrace."""
 
+import io
 import os
 import pathlib
 import re
@@ -8,16 +9,43 @@ import signal
 import subprocess
 import tempfile
 import textwrap
-from collections.abc import Iterator
+import unittest.mock
+from collections.abc import Callable, Iterator
 
 import pytest
 
 from apport.packaging_impl.apt_dpkg import impl
 from apport.report import Report
-from tests.helper import has_internet
-from tests.paths import get_test_data_directory, local_test_environment
+from tests.helper import has_internet, import_module_from_file
+from tests.paths import (
+    get_bin_directory,
+    get_test_data_directory,
+    local_test_environment,
+)
 
 CODENAME_DISTRO_RELEASE_MAP = {"jammy": "Ubuntu 22.04"}
+
+
+@pytest.fixture(name="apport_retrace_main", scope="module")
+def fixture_apport_retrace_main() -> Iterator[Callable[[list[str]], int]]:
+    """Apply the needed environment variables and import main() from apport-retrace."""
+    orig_environ = os.environ.copy()
+    os.environ |= local_test_environment()
+    apport_retrace = import_module_from_file(get_bin_directory() / "apport-retrace")
+    yield apport_retrace.main
+    os.environ.clear()
+    os.environ.update(orig_environ)
+
+
+@pytest.fixture(autouse=True)
+def reset_impl() -> Iterator[None]:
+    """Reset APT cache between test cases."""
+    # pylint: disable=protected-access
+    orig_conf = impl.configuration
+    impl._apt_cache = None
+    impl._sandbox_apt_cache = None
+    yield
+    impl.configuration = orig_conf
 
 
 @pytest.fixture(name="module_workdir", scope="module")
@@ -201,13 +229,14 @@ def _assert_cache_has_content(
     reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
 )
 def test_retrace_system_sandbox(
-    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+    apport_retrace_main: Callable[[list[str]], int],
+    workdir: pathlib.Path,
+    module_cachedir: pathlib.Path,
+    divide_by_zero_crash: str,
 ) -> None:
     """Retrace a divide-by-zero crash in a system sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -217,7 +246,7 @@ def test_retrace_system_sandbox(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace_main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -230,13 +259,14 @@ def test_retrace_system_sandbox(
     reason="GDB sandbox is only available on amd64",
 )
 def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
-    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+    apport_retrace_main: Callable[[list[str]], int],
+    workdir: pathlib.Path,
+    module_cachedir: pathlib.Path,
+    divide_by_zero_crash: str,
 ) -> None:
     """Refuse to retrace a crash in a non-amd64 system sandbox with a GDB sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -247,9 +277,10 @@ def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    ret = subprocess.run(cmd, check=False, env=env, capture_output=True, text=True)
-    assert ret.returncode == 3
-    assert "gdb sandboxes are only implemented for amd64 hosts" in ret.stderr
+
+    with unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
+        assert apport_retrace_main(cmd) == 3
+    assert "gdb sandboxes are only implemented for amd64 hosts" in stderr.getvalue()
 
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
@@ -258,13 +289,14 @@ def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
     reason="Testing the GDB sandbox erroring out on non-AMD64",
 )
 def test_retrace_system_sandbox_gdb_sandbox(
-    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+    apport_retrace_main: Callable[[list[str]], int],
+    workdir: pathlib.Path,
+    module_cachedir: pathlib.Path,
+    divide_by_zero_crash: str,
 ) -> None:
     """Retrace a divide-by-zero crash in a system sandbox with a GDB sandbox."""
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -275,7 +307,7 @@ def test_retrace_system_sandbox_gdb_sandbox(
         str(module_cachedir),
         divide_by_zero_crash,
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace_main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -288,14 +320,15 @@ def test_retrace_system_sandbox_gdb_sandbox(
     reason="gdb-multiarch is needed for proper retracing on foreign architectures",
 )
 def test_retrace_jammy_sandbox(
-    workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
+    apport_retrace_main: Callable[[list[str]], int],
+    workdir: pathlib.Path,
+    module_cachedir: pathlib.Path,
+    sandbox_config: pathlib.Path,
 ) -> None:
     """Retrace a sleep crash from jammy in a sandbox."""
     crash = get_test_data_directory() / "jammy_usr_bin_sleep.1000.crash"
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -307,7 +340,7 @@ def test_retrace_jammy_sandbox(
         str(workdir / "apport_sandbox"),
         str(crash),
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace_main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
@@ -321,14 +354,15 @@ def test_retrace_jammy_sandbox(
     reason="GDB sandbox only available on amd64",
 )
 def test_retrace_jammy_sandbox_gdb_sandbox(
-    workdir: pathlib.Path, module_cachedir: pathlib.Path, sandbox_config: pathlib.Path
+    apport_retrace_main: Callable[[list[str]], int],
+    workdir: pathlib.Path,
+    module_cachedir: pathlib.Path,
+    sandbox_config: pathlib.Path,
 ) -> None:
     """Retrace a sleep crash from jammy in a sandbox with a GDB sandbox."""
     crash = get_test_data_directory() / "jammy_usr_bin_sleep.1000.crash"
     retraced_report_filename = workdir / "retraced.crash"
-    env = os.environ | local_test_environment()
     cmd = [
-        "apport-retrace",
         "-v",
         "-o",
         str(retraced_report_filename),
@@ -341,7 +375,7 @@ def test_retrace_jammy_sandbox_gdb_sandbox(
         str(workdir / "apport_sandbox"),
         str(crash),
     ]
-    subprocess.run(cmd, check=True, env=env)
+    assert apport_retrace_main(cmd) == 0
 
     report = _read_and_print_retraced_report(retraced_report_filename)
     _assert_is_retraced(report)
