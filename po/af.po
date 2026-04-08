@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2020-05-24 20:31+0000\n"
 "Last-Translator: Bernard Stafford <Unknown>\n"
 "Language-Team: Afrikaans <af@li.org>\n"
@@ -531,12 +531,12 @@ msgstr "Kies asseblief (%s):"
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(binêre data)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Stuur die probleemverslag aan die ontwikkelaars?"
 
@@ -590,7 +590,7 @@ msgstr "&Bevestig"
 msgid "Error: %s"
 msgstr "Fout: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Versamel probleeminformasie"
 
@@ -603,7 +603,7 @@ msgstr ""
 "verbeter die\n"
 "toepassing. Dit mag 'n paar minute neem."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Oplaai tans probleem informasie"
 
@@ -768,7 +768,7 @@ msgstr ""
 "Gids vir uitgepak pakkette. Toekomstige lopies sal aanvaar dat enige reeds "
 "afgelaai pakket is ook onttrek om hierdie sandbox."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -830,15 +830,15 @@ msgstr "gids om die verslag na uit te pak"
 msgid "Destination directory exists and is not empty."
 msgstr "Bestemming gids bestaan ​​en is nie leeg nie."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Sien die man bladsy vir besonderhede."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "Spesifiseer die log lêernaam wat deur valgrind"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -846,7 +846,7 @@ msgstr ""
 "hergebruik 'n voorheen geskep sandbox systemapps (SDIR) of, indien dit nie "
 "bestaan nie, skep dit"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -854,7 +854,7 @@ msgstr ""
 "moenie skep of hergebruik 'n sandbox gids vir addisionele ontfout simbole "
 "maar net staatmaak op geïnstalleerde ontfout simbole."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -862,13 +862,13 @@ msgstr ""
 "hergebruik 'n voorheen geskep kas systemapps (CDIR) of, indien dit nie "
 "bestaan nie, skep dit"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "verslag aflaai/installeer vordering wanneer die installering van pakkette in "
 "sandbox"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
@@ -876,7 +876,7 @@ msgstr ""
 "die uitvoerbare wat is hardloop onder valgrind's memcheck instrument vir "
 "opsporing van geheuelek"
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Fout: %s is nie 'n uitvoerbare. Stop tans."
@@ -905,7 +905,7 @@ msgstr ""
 "Die hervat verwerking gehang baie naby die einde en sal het verskyn "
 "normaalweg voltooi het."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Jou stelsel mag dalk nou onstabiel raak en dit kan nodig wees om herbegin."
@@ -930,21 +930,21 @@ msgstr "Jammer, die toepassing %s het onverwags gestop het."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Jammer, %s het onverwags gesluit het."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Jammer, %s het ervaar 'n inwendige fout."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Stuur"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Wys Besonderhede"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Voortgaan"
 
@@ -958,38 +958,38 @@ msgstr "Die toepassing %s het opgehou reageer het."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Die program \"%s\" het ophou reageer."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Pakket: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Jammer, 'n probleem voorgekom terwyl sagteware installeer."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Die toepassing %s het ervare 'n interne fout."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Die toepassing %s gesluit het onverwags."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr "As jy verdere probleme opmerk, probeer om die rekenaar te herbegin."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Ignoreer toekomstige probleme van hierdie tipe"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Versteek Details"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -1045,7 +1045,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Oplaai tans probleem informasie</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1057,27 +1057,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Apport ineenstortingslêer"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Verlaat Toegemaak"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Relaunch"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Gebruikernaam:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Wagwoord:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "Insameling Probleem Inligting"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1085,6 +1085,6 @@ msgstr ""
 "Die Versamelde inligting kan aan die ontwikkelaars gestuur word om die "
 "toepassing te verbeter. Dit kan 'n paar minute duur."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "Uplaai tans Probleem Inligting"

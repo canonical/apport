@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2015-04-27 21:46+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Khmer <km@li.org>\n"
@@ -481,12 +481,12 @@ msgstr "សូម​ជ្រើសរើស (%s) ៖"
 msgid "(%i bytes)"
 msgstr "(%i បៃ)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(ទិន្នន័យ​គោល​ពីរ)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "ផ្ញើ​​របាយការណ៍​អំពី​បញ្ហា​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ?"
 
@@ -537,7 +537,7 @@ msgstr "អះអាង"
 msgid "Error: %s"
 msgstr "កំហុស ៖ %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "ប្រមូល​ព័ត៌មាន​អំពី​បញ្ហា"
 
@@ -549,7 +549,7 @@ msgstr ""
 "ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅ​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង\n"
 " ។ វា​អាច​ចំណាយ​ពេលវេលា​ពីរបី​នាទី ។"
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"
 
@@ -700,7 +700,7 @@ msgstr ""
 "ថត​សម្រាប់​កញ្ចប់​ដែល​មិន​បាន​វេច​ខ្ចប់។ ពេល​អនាគត​ដំណើរការ​នឹង​សម្មត​ថា​កញ្ចប់​ដែល​បាន​ទាញ​យក​រួច​ហើយ​ត្រូវ​បាន​"
 "ស្រង់​ចេញ​ទៅ​ sandbox នេះ។"
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "ដំឡើង​កញ្ចប់​ខាងក្រៅ​ទៅ​ក្នុង sandbox (អាច​ត្រូវ​បាន​​បញ្ជាក់​​ពេលវេលា​ច្រើន)"
@@ -757,21 +757,21 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr "មាន​ថត​ទិសដៅ ។"
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "មើល​ទំព័រ​សម្រាប់​ព័ត៌មាន​លម្អិត។"
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "បញ្ជាក់​ឈ្មោះ​ឯកសារ​កំណត់​ហេតុ​ដែល​បាន​ផលិត​ដោយ valgrind"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr "ប្រើ sandbox dir (SDIR) ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ, ប្រសិនបើ​វា​មិន​មាន, បង្កើត​វា​ថ្មី"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -779,23 +779,23 @@ msgstr ""
 "កុំ​បង្កើត ឬ​ប្រើ​ថត sandbox ឡើង​វិញ​សម្រាប់​​និមិត្ត​សញ្ញា​​បំបាត់​កំហុស​បន្ថែម ប៉ុន្តែ​អាស្រ័យ​លើ​និមិត្ត​សញ្ញា​បំបាត់​"
 "កំហុស។"
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr "ប្រើ​ថត​ឃ្លាំង​ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ (CDIR) , ប្រសិនបើ​វា​មិន​ទាន់​មាន, បង្កើត​វា"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr "រាយការណ៍​វឌ្ឍនភាព ទាញ​យក/​ដំឡើង នៅ​ពេល​កំពុង​ទាញ​យក​កញ្ចប់​ទៅ​កាន់ sandbox"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "កំហុស៖ %s មិន​អាន​ប្រតិបត្តិ​បាន បាន​បញ្ឈប់។"
@@ -820,7 +820,7 @@ msgid ""
 "completed normally."
 msgstr "បន្ត​ដំណើរការ hung រៀងរាល់​ជិត​បញ្ចប់ ហើយ​នឹង​លេចឡើង​នៅ​ពេល​​ដែល​បញ្ចប់​​ ។"
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr "ប្រព័ន្ធ​របស់​អ្នក​អាច​​គ្មាន​ស្ថេរ​ភាព​​ឥឡូវ​នេះ ត្រូវ​​ការ​​​ចាប់ផ្ដើម​ឡើងវិញ ។"
 
@@ -844,21 +844,21 @@ msgstr "សូមទោស, កម្មវិធី %s បាន​បញ្ឈ
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "សូម​ទោស %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក ។"
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "សូម​ទោស %s បាន​ជួប​ប្រទះ​បញ្ហា​ខាង​ក្នុង ។"
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "ផ្ញើ"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "បង្ហាញ​សេចក្ដី​លម្អិត"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "បន្ត"
 
@@ -872,38 +872,38 @@ msgstr "កម្មវិធី %s បាន​បញ្ឈប់​ការ�
 msgid "The program \"%s\" has stopped responding."
 msgstr "កម្មវិធី \"%s\" បាន​បញ្ឈប់​ការ​ឆ្លើយតប។"
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "កញ្ចប់ ៖ %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "សូម​ទោស បញ្ហា​មួយ​បានកើត​ឡើង​ខណៈ​ពេល​ដំឡើង​កម្មវិធី ។"
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "កម្មវិធី %s មាន​បទពិសោធន៍​កំហុស​ខាងក្រៅ។"
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "កម្មវិធី %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក ។"
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr "ប្រសិនបើ​អ្នក​កត់​សម្គាល់​បញ្ហា​បន្ថែម ព្យាយាម​ចាប់ផ្ដើម​កុំព្យូទ័រ​ឡើង​វិញ ។"
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "មិន​អើពើ​នឹង​បញ្ហា​នា​ពេល​អនាគត​នៃ​ប្រភេទ​នេះ"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "លាក់​សេចក្ដី​លម្អិត"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -957,7 +957,7 @@ msgstr "ព័ត៌មាន​កំពុង​ត្រូវ​បាន​
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -968,27 +968,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "ឯកសារ​គាំង​របស់ Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "ទុក​ឲ្យ​បិទ"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "ចាប់ផ្ដើម​ឡើង​វិញ"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "ឈ្មោះ​អ្នក​ប្រើ ៖"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "ពាក្យ​សម្ងាត់ ៖"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "ប្រមូល​ព័ត៌មាន​អំពី​បញ្ហា"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -996,6 +996,6 @@ msgstr ""
 "ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង ។ វា​អាច​ចំណាយ​"
 "ពេលវេលា​ពីរបី​នាទី ។"
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"

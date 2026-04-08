@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2024-12-16 23:54+0000\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
@@ -523,12 +523,12 @@ msgstr "Изаберите (%s):"
 msgid "(%i bytes)"
 msgstr "(%i бајта)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(бинарни подаци)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Да ли желите да пошаљете извештај програмерима?"
 
@@ -581,7 +581,7 @@ msgstr "&Потврди"
 msgid "Error: %s"
 msgstr "Грешка: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Прикупљам информације о проблему"
 
@@ -593,7 +593,7 @@ msgstr ""
 "Прикупљене информације могу бити послате програмерима ради\n"
 "побољшања програма. То може потрајати неколико минута."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Шаљем информације о проблему"
 
@@ -760,7 +760,7 @@ msgstr ""
 "Директоријум за нераспаковане пакете. Наредна покретања ће подразумевати да "
 "је било који већ преузети пакет такође извучен у овом издвојеном окружењу."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -821,15 +821,15 @@ msgstr "фасцикла за распакивање извештаја"
 msgid "Destination directory exists and is not empty."
 msgstr "Одредишни директоријум постоји и није празан."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Погледајте страницу упутства за појединости."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "наводи назив датотеке дневника коју произведе валгринд"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -837,7 +837,7 @@ msgstr ""
 "поново користи претходно направљени директоријум пробног система (СДИР) или, "
 "ако не постоји, прави га"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -846,7 +846,7 @@ msgstr ""
 "исправљања грешака већ се ослања само на инсталиране симболе исправљања "
 "грешака."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -854,13 +854,13 @@ msgstr ""
 "поново користи претходно направљени директоријум оставе (СДИР) или, ако не "
 "постоји, прави га"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "извештава о напредовању преузетог/инсталираног приликом инсталације пакета у "
 "пробном систему"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
@@ -868,7 +868,7 @@ msgstr ""
 "извршна која ради под valgrind-овим алатом за проверу меморије за откривање "
 "цурења меморије"
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Грешка: „%s“ није извршни. Стајем."
@@ -897,7 +897,7 @@ msgstr ""
 "Процес настављања се „заледио“ при самом крају и све је изгледало као да је "
 "успешно завршен."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Ваш систем сада може постати нестабилан и може бити потребно да га поново "
@@ -923,21 +923,21 @@ msgstr "Извините, програм „%s“ се неочекивано з
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Извините, „%s“ се неочекивано затворио."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Извините, „%s“ је наишао на унутрашњу грешку."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Пошаљи"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Прикажи појединости"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Настави"
 
@@ -951,38 +951,38 @@ msgstr "Програм „%s“ је престао да одговара."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Програм „%s“ је престао да одговара."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Пакет: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Извините, дошло је до проблема приликом инсталирања софтвера."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Програм „%s“ је наишао на унутрашњу грешку."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Програм „%s“ се неочекивано затворио."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Ако приметите будуће проблеме, покушајте поново да покренете рачунар."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Занемари будуће проблеме ове врсте"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Сакриј детаље"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Апорт"
 
@@ -1038,7 +1038,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Шаљем информације о проблему</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1050,27 +1050,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Датотека урушавања Апорта"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Остави затворено"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Поново покрени"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Корисник:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Лозинка:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "Прикупљам информације о проблему"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1078,6 +1078,6 @@ msgstr ""
 "Прикупљене информације могу бити послате програмерима ради побољшања "
 "програма. То може потрајати неколико минута."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "Шаљем информације о проблему"

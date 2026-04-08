@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2025-03-19 10:35+0000\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <id@li.org>\n"
@@ -525,12 +525,12 @@ msgstr "Silakan pilih (%s):"
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(data biner)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Kirim laporan masalah ke para pengembang?"
 
@@ -582,7 +582,7 @@ msgstr "&Konfirmasi"
 msgid "Error: %s"
 msgstr "Galat: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Mengumpukan informasi masalah"
 
@@ -594,7 +594,7 @@ msgstr ""
 "Informasi yang dikumpulkan dapat dikirim ke para pengembang untuk\n"
 "memperbaiki aplikasi. Ini mungkin makan waktu beberapa menit."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Mengunggah informasi masalah"
 
@@ -760,7 +760,7 @@ msgstr ""
 "akan menganggap bahwa paket yang telah diunduh juga diekstrak ke kotak pasir "
 "ini."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -820,15 +820,15 @@ msgstr "direktori tempat mengekstrak laporan"
 msgid "Destination directory exists and is not empty."
 msgstr "Direktori tujuan ada dan tak kosong."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Lihat rincian di laman man"
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "nyatakan nama berkas log yang dihasilkan oleh valgrind"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -836,7 +836,7 @@ msgstr ""
 "pakai ulang dir kotak pasir yang sebelumnya dibuat (SDIR), atau bila belum "
 "ada, buatlah"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -844,7 +844,7 @@ msgstr ""
 "jangan buat atau pakai ulang direktori kotak pasir untuk simbol awakutu "
 "tambahan tapi hanya bergantung kepada simbol awakutu yang telah dipasang"
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -852,12 +852,12 @@ msgstr ""
 "pakai ulang dir singgahan yang sebelumnya dibuat (CDIR), atau bila belum "
 "ada, buatlah"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "laporkan kemajuan unduh/pasang ketika memasang paket ke dalam kotak pasir"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
@@ -865,7 +865,7 @@ msgstr ""
 "program yang dapat dijalankan di bawah alat pemeriksa kebocoran memori "
 "valgrind untuk mendeteksi kebocoran memori."
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Galat: %s bukan executable. Menghentikan."
@@ -894,7 +894,7 @@ msgstr ""
 "Pemrosesan pelanjutan menggantung sangat dekat dengan ujung dan akan nampak "
 "seperti komplit secara normal."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Sistem Anda mungkin menjadi tak stabil sekarang dan mungkin perlu distart "
@@ -920,21 +920,21 @@ msgstr "Maaf, aplikasi %s telah berhenti secara tak terduga."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Maaf, %s telah tertutup secara tak terduga."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Maaf, %s telah mengalami galat internal."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Kirim"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Tunjukkan Rincian"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Lanjutkan"
 
@@ -948,39 +948,39 @@ msgstr "Aplikasi %s telah berhenti merespon."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Program \"%s\" telah berhenti merespon."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Paket: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Maaf, terjadi masalah ketika memasang perangkat lunak."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Aplikasi %s telah mengalami galat internal."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Aplikasi %s telah tertutup tanpa diharapkan."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Bila Anda menemui masalah lebih lanjut, cobalah memulai ulang komputer."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Abaikan masalah tipe ini di masa mendatang"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Sembunyikan Rincian"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -1036,7 +1036,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Unggah informasi masalah</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1048,27 +1048,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Berkas crash Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Biarkan Tertutup"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Luncurkan Ulang"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Nama pengguna:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Sandi:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "Mengumpulkan Informasi Masalah"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1076,6 +1076,6 @@ msgstr ""
 "Informasi yang dikumpulkan dapat dikirim ke para pengembang untuk "
 "meningkatkan aplikasi. Ini mungkin perlu waktu beberapa menit."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "Mengunggah Informasi Masalah"

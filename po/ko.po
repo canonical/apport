@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2025-03-22 07:38+0000\n"
 "Last-Translator: Jung Hoehyeong <hothead.jung@ubuntu-kr.org>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -502,12 +502,12 @@ msgstr "선택해 주십시오 (%s):"
 msgid "(%i bytes)"
 msgstr "(%i 바이트)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(바이너리 데이터)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "문제를 개발자에게 보고하시겠습니까?"
 
@@ -558,7 +558,7 @@ msgstr "확인(&C)"
 msgid "Error: %s"
 msgstr "오류: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "문제 정보를 모으는 중"
 
@@ -570,7 +570,7 @@ msgstr ""
 "수집한 정보를 개발자에게 보내 프로그램 개선할 수 있습니다.\n"
 "이 작업은 수 분이 필요할 수 있습니다."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "문제 정보를 업로드하는 중"
 
@@ -725,7 +725,7 @@ msgstr ""
 "압축을 푼 패키지를 보관할 디렉터리입니다. 다음 실행 시점부터는 이미 다운로드"
 "한 패키지를 이 샌드박스에 압축을 해제한 것으로 추정합니다."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "추가 패키지를 샌드박스에 설치(여러 항목을 지정할 수 있음)"
@@ -781,15 +781,15 @@ msgstr "제보 파일을 압축 해제할 디렉토리"
 msgid "Destination directory exists and is not empty."
 msgstr "디렉터리는 존재하지만, 파일이 없습니다."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "자세한 내용은 맨 페이지를 확인하십시오."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "밸그린드가 만든 로그 파일의 이름을 지정"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -797,7 +797,7 @@ msgstr ""
 "이전에 만든 샌드박스 디렉터리(SDIR)를 다시 사용하거나 - 존재하지 않는 경우 - "
 "만듭니다."
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -805,7 +805,7 @@ msgstr ""
 "추가 디버그 심볼이 사용할 샌드박스 디렉터리를 다시 사용하거나 만들지 않고 설"
 "치한 디버그 심볼에만 의존합니다."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -813,17 +813,17 @@ msgstr ""
 "이전에 만든 캐시 디렉터리(SDIR)를 다시 사용하거나 - 존재하지 않는 경우 - 만듭"
 "니다."
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr "패키지를 샌드박스에 설치할 때 다운로드/설치 진행 상태를 보고합니다."
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "오류: %s은(는) 실행할 수 없습니다. 멈춥니다."
@@ -852,7 +852,7 @@ msgstr ""
 "재개 과정의 처리가 거의 완료된 후 중단되어, 정상적으로 완료된 것처럼 보였을 "
 "것입니다."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr "현재 시스템이 불안정하여 컴퓨터를 다시 시작해야 합니다."
 
@@ -876,21 +876,21 @@ msgstr "프로그램 %s이(가) 예상치 않게 끝났습니다."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "프로그램 %s이(가) 예상치 않게 끝났습니다."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "죄송합니다. %s에 내부 오류가 발생했습니다."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "보내기"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "자세한 내용 보이기"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "계속"
 
@@ -904,38 +904,38 @@ msgstr "프로그램 %s이(가) 응답을 하지 않습니다."
 msgid "The program \"%s\" has stopped responding."
 msgstr "프로그램 \"%s\"이(가) 응답을 하지 않습니다."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "패키지: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "죄송합니다. 소프트웨어 설치 중 오류가 발생했습니다."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "프로그램 %s에 내부 오류가 발생했습니다."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "프로그램 %s이(가) 예상치 않게 끝났습니다."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr "더욱 심각한 문제가 발생한다면 컴퓨터를 다시 시작하십시오."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "앞으로 이런 형식의 문제를 무시합니다."
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "자세한 내용 숨기기"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -991,7 +991,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>문제 정보를 업로드하는 중</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1003,27 +1003,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "충돌 파일 보고"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "닫은 채로 두기"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "다시 시작"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "사용자 이름:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "암호:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "문제 정보를 모으는 중"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1031,6 +1031,6 @@ msgstr ""
 "수집한 정보는 프로그램을 개선하기 위해 개발자에게 보낼 수 있습니다. 이 작업"
 "은 수 분이 필요할 수 있습니다."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "문제 정보를 업데이트 하는 중"

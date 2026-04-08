@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
@@ -510,12 +510,12 @@ msgstr "Xêra xwe bibijêre (%s):"
 msgid "(%i bytes)"
 msgstr "(%i bayt)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(daneya cot)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Bila raporeke pirsgirêkê ji pêşdebiran re bê şandin?"
 
@@ -566,7 +566,7 @@ msgstr "&Erê bike"
 msgid "Error: %s"
 msgstr "Çewtî: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Agahiyên pirsgirêkê tên civandin"
 
@@ -578,7 +578,7 @@ msgstr ""
 "Agahiyên civandî kare bê şandin ji pisporan re ji pêşxistina sepanê.\n"
 "Ev dibe ku çend xulekan bigire."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Agahiyên pirsgirêkê tên vebarkirin"
 
@@ -744,7 +744,7 @@ msgstr ""
 "Pêrista ji bo pakêtên nevekirî. Ferz dike ku pakêtên ku jixwe daxistî ne û "
 "wê paşê werin xebitandin jî wê li vê sandbox'ê werin derxistin."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -805,15 +805,15 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr "Pêrista ku tê hedefkirin jixwe heye û ne vala ye."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Ji bo dêtayan binêre rûpela man."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "navê peldanka rojaneyê ya ji alî valgrid ve çêkirî diyar bike"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -821,7 +821,7 @@ msgstr ""
 "sandbox dir'a (SDIR) ku berê hatiye çêkirin dîsa bi kar bîne an jî eger tine "
 "be, çêbike"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -829,7 +829,7 @@ msgstr ""
 "ji bo zêdetir sembolên neqandina xetayan pêrista sandbox'ê cardin bi kar "
 "neyîne an çêneke, tenê sembolên neqandina xetayan ên sazkirî bi kar bîne."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -837,18 +837,18 @@ msgstr ""
 "pêrista pêşbîrê (CDIR) yê ku di berê de hatiye çêkirin cardin bi kar bîne an "
 "jî eger tine be, çêke"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "gava ku pakêt li sandboxê bar bibin pêşdeçûna daxistin/sazkirinê rapor bike"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Çewtî: %s ne bikarbar e. Tê sekinandin."
@@ -877,7 +877,7 @@ msgstr ""
 "Miameleya dawîn li ciyekî nêzî xelasbûnê eliqî ma û wê wekî ku bi awayekî "
 "normal temam bûbe were xuyan."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Sîstema te vêga dibe ku bikeve halekî bêqerar û dibe ku ji nû ve destpêkirin "
@@ -903,21 +903,21 @@ msgstr "Me bibexşîne, sepana %s bi awayekî nehêvîkirî sekinî."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Bibore, %s bi awaekî nehêvîkirî hate girtin."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Bibore, xetayeke navxweyî bi serê %s de hat."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Bişîne"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Kîtekîtan Nîşan bide"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Berdewam"
 
@@ -931,40 +931,40 @@ msgstr "Sepana %s cewabdanê sekinand."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Bernameya \"%s\" cewabdanê sekinandiye."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Pakêt: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Bibore, gava ku nivîsbarî bar dibû pirsgirêkek derket holê."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Sepana %s pêrgî xetayeke navxweyî bû."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Sepana %s bi awayekî nehêvîkirî hate girtin."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Eger zêdetir pirsgirêk derkevin, hewl bide ku kombersa xwe cardin bidî "
 "destpêkirin."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Di pêşerojê de guh nede pirsgirêkên bi vî awayî."
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Dêtayan Veşêre"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -1020,7 +1020,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Agahiyên pirsgirêkê tên barkirin</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1032,27 +1032,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Peldanka hilweşînê a Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Girtî Bihêle"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Ji nû ve bide destpêkirin"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Navê bikarhêner:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Şîfre:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "Civandina Agahiyên Pirsgirêkê"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1060,6 +1060,6 @@ msgstr ""
 "Agahiyên civandî, ji bo pêşvebirina sepanê ji pêşdebiran re dikare were "
 "şandin. Ev dibe ku çend deqeyan bigire."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "Agahiyên Pirsgirêkê Têne Şandin"

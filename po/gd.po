@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2016-01-29 01:13+0000\n"
 "Last-Translator: Akerbeltz <fios@akerbeltz.org>\n"
 "Language-Team: Gaelic; Scottish <gd@li.org>\n"
@@ -522,12 +522,12 @@ msgstr "Dèan taghadh (%s):"
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(dàta bìnearaidh)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr ""
 "A bheil thu airson aithris mun duilgheadas a chur gun luchd-leasachaidh?"
@@ -583,7 +583,7 @@ msgstr "&Dearbhaich"
 msgid "Error: %s"
 msgstr "Mearachd: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "A' cruinneachadh fiosrachadh mun duilgheadas"
 
@@ -597,7 +597,7 @@ msgstr ""
 "an urrainn dhaibh an aplacaid a leasachadh. Faodaidh gun doir seo beagan "
 "mhionaidean."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "A' luchdadh suas fiosrachadh mun duilgheadas"
 
@@ -771,7 +771,7 @@ msgstr ""
 "sam bith o seo a-mach gun dèid pacaid sam bith a chaidh a luchdadh a-nuas "
 "fhosgladh 's a chur dhan bhogsa-ghainmhich seo mu thràth."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -834,15 +834,15 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr "Tha am pasgan sin sa cheann-uidhe mu thràth 's chan eil e falamh."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Faic duilleag na treòire airson mion-fhiosrachadh."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr "sònraich ainm faidhle an loga a rinn valgrind"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -850,7 +850,7 @@ msgstr ""
 "Cleachd Sandbox Dir (SDIR) a-rithist a chaidh a chruthachadh roimhe no, mur "
 "eil e ann, cruthaich e"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -858,7 +858,7 @@ msgstr ""
 "na cruthaich 's na cleachd Sandbox Directory a-rithist airson samhlaidhean "
 "dì-bhugachaidh a bharrachd is cleachd dìreach an fheadhainn a tha stàlaichte."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -866,19 +866,19 @@ msgstr ""
 "Cleachd Cache Dir (CDIR) a-rithist a chaidh a chruthachadh roimhe no, mur "
 "eil e ann, cruthaich e"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "seall adhartas an luchdaidh a-nuas/an stàlaidh nuair a stàlaichear pacaidean "
 "sa bhogsa-ghainmhich"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Mearachd: Chan eil %s 'na rud so-ghnìomhaichte. A' sgur dheth."
@@ -907,7 +907,7 @@ msgstr ""
 "Lean sinn air ach thuislich e aig an fhìor-dheireadh agus bidh coltas gun "
 "deach a choileanadh mar bu chòir."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Dh'fhaoidte gum fàs an siostam agad neo-sheasmhach a-nis is gum b' fheairrde "
@@ -933,21 +933,21 @@ msgstr "Tha sinn duilich ach stad an aplacaid %s gu h-obann."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Tha sinn duilich ach dhùin %s  gu h-obann."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Tha sinn duilich, thachair mearachd inntearnail ann an %s."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Cuir"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Seall am mion-fhiosrachadh"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Lean air adhart"
 
@@ -961,42 +961,42 @@ msgstr "Chan eil an aplacaid \"%s\" a' freagairt tuilleadh."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Chan eil am prògram \"%s\" a' freagairt tuilleadh."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Pacaid: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Tha sinn duilich, dh'èirich duilgheadas nuair a bha sinn a' stàladh a' "
 "bhathair-bhog."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Thachair an aplacaid %s ri mearachd inntearnail."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Dhùin an aplacaid %s gu h-obann."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Ma mhothaicheas tu do dhuilgheadasan eile, feuch is ath-thòisich an "
 "coimpiutair."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Leig seachad duilgheadasan dhen t-seòrsa seo san àm ri teachd"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Falaich am mion-fhiosrachadh"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -1053,7 +1053,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>A' luchdadh suas fiosrachadh mun duilgheadas</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1065,27 +1065,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Faidhle tuislidh  Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Fàg dùinte e"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Cuir air bhog a-rithist"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Ainm-cleachdaiche:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Facal-faire:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "A' cruinneachadh fiosrachadh mun duilgheadas"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1094,6 +1094,6 @@ msgstr ""
 "leasachaidh airson 's gun urrainn dhaibh an aplacaid a leasachadh. "
 "Dh'fhaoidte gum feum seo beagan mhionaidean."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "A' luchdadh suas fiosrachadh mun duilgheadas"

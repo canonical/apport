@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:55+0200\n"
+"POT-Creation-Date: 2026-04-08 16:30+0200\n"
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Martin Pitt <martin@piware.de>\n"
 "Language-Team: Tajik <tg@li.org>\n"
@@ -510,12 +510,12 @@ msgstr "Лутфан интихоб кунед (%s):"
 msgid "(%i bytes)"
 msgstr "(%i байт)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:417
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(иттилооти дуӣ)"
 
 #: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
-#: ../kde/apport-kde.py:208
+#: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Гузориши мушкилиро ба таҳиягарон мефиристед?"
 
@@ -568,7 +568,7 @@ msgstr "&Тасдиқ кардан"
 msgid "Error: %s"
 msgstr "Хатогӣ: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:465
+#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Ҷамъкунии маълумоти мушкилӣ"
 
@@ -580,7 +580,7 @@ msgstr ""
 "Маълумоти ҷамъшуда метавонад барои беҳтар кардани барнома ба таҳиягарон \n"
 "фиристода шавад. Ин метавонад якчанд дақиқаро гирад."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:516
+#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Боркунии иттилооти мушкилӣ"
 
@@ -741,7 +741,7 @@ msgstr ""
 "Директория барои бастаҳои баровардашуда. Иҷрокуниҳои оянда ҳисоб мекунанд, "
 "ки бастаи аллакай боргиришуда ба ин регдон низ бароварда шудааст."
 
-#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:102
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -803,16 +803,16 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr "Директорияи таъинотӣ вуҷуд дорад ва холӣ намебошад."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:40
 msgid "See man page for details."
 msgstr "Барои тафсилот ба саҳифаи man нигаред."
 
-#: ../bin/apport-valgrind.py:52
+#: ../bin/apport-valgrind.py:49
 msgid "specify the log file name produced by valgrind"
 msgstr ""
 "муайян кардани номи файли сабти рӯйдодҳо, ки бо valgrind эҷод карда шудааст"
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:55
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -820,7 +820,7 @@ msgstr ""
 "истифодаи дубораи директорияи қаблан эҷодшудаи регдон (SDIR), ё дар ҳолати "
 "мавҷуд набудан, эҷод кардани он"
 
-#: ../bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:63
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -829,7 +829,7 @@ msgstr ""
 "ё  аз нав истифода набаред, танҳо ба аломатҳои насбшудаи ислоҳи хатоҳо асос "
 "ёбед."
 
-#: ../bin/apport-valgrind.py:75
+#: ../bin/apport-valgrind.py:72
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -837,18 +837,18 @@ msgstr ""
 "истифодаи дубораи директорияи қаблан эҷодшудаи зерҳофиза (CDIR), ё дар "
 "ҳолати мавҷуд набудан, эҷод кардани он"
 
-#: ../bin/apport-valgrind.py:84
+#: ../bin/apport-valgrind.py:81
 msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "гузориш додани раванди боргирӣ/насбкунӣ ҳангоми насбкунии бастаҳо ба регдон"
 
-#: ../bin/apport-valgrind.py:91
+#: ../bin/apport-valgrind.py:88
 msgid ""
 "the executable that is run under valgrind's memcheck tool for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:133
+#: ../bin/apport-valgrind.py:130
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Хатогӣ: %s иҷро намешавад. Амал қатъ карда шуд."
@@ -873,7 +873,7 @@ msgstr ""
 "Коркарди оғози дубора дар назди анҷом боздошта шуд, ва ҳамчун бомуваффақият "
 "ба анҷомрасида намоён мегардад."
 
-#: ../data/kernel_oops.py:34
+#: ../data/kernel_oops.py:31
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Ҳозир системаи шумо метавонад ноустувор гардад ва бояд бозоғозӣ карда шавад."
@@ -898,21 +898,21 @@ msgstr "Мутаассифода, барномаи %s ногаҳонан пӯш�
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Мутаассифона, %s ногаҳонан пӯшида шуд."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:223 ../kde/apport-kde.py:272
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Мутаассифона, %s бо хатогии дохилӣ дучор шуд."
 
-#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:216
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
 msgid "Send"
 msgstr "Фиристодан"
 
 #: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Намоиш додани тафсилот"
 
-#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:264 ../kde/apport-kde.py:279
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
 msgid "Continue"
 msgstr "Давом додан"
 
@@ -926,40 +926,40 @@ msgstr "Барномаи %s ҷавоб намедиҳад."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Барномаи \"%s\" ҷавоб намедиҳад."
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:231
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
 #, python-format
 msgid "Package: %s"
 msgstr "Баста: %s"
 
-#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:238
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Мутаассифона, ҳангоми насбкунии нармафзор мушкилие ба вуҷуд омад."
 
-#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:246
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Барномаи %s дорои хатогии дарунӣ мебошад."
 
-#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:251
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Барномаи %s ногаҳон қатъ шудааст."
 
-#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:276
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Агар шумо мушкилиҳои дигарро бинед, кӯшиш кунед, ки компютерро бозоғозӣ "
 "намоед."
 
-#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:281
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
 msgid "Ignore future problems of this type"
 msgstr "Нодида гирифтани мушкилиҳои ояндаи ин намуд"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:330
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Пинҳон кардани тафсилот"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:384 ../kde/apport-kde.py:558
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
 msgid "Apport"
 msgstr "Apport"
 
@@ -1015,7 +1015,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Маълумоти мушкилӣ бор шуда истодааст</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:518
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1027,27 +1027,27 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Файли нокомии Apport"
 
-#: ../kde/apport-kde.py:267
+#: ../kde/apport-kde.py:269
 msgid "Leave Closed"
 msgstr "Пӯшида нигоҳ доред"
 
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
 msgid "Relaunch"
 msgstr "Аз нав иҷро кардан"
 
-#: ../kde/apport-kde.py:361
+#: ../kde/apport-kde.py:363
 msgid "Username:"
 msgstr "Номи корбар:"
 
-#: ../kde/apport-kde.py:364
+#: ../kde/apport-kde.py:366
 msgid "Password:"
 msgstr "Парол:"
 
-#: ../kde/apport-kde.py:464
+#: ../kde/apport-kde.py:469
 msgid "Collecting Problem Information"
 msgstr "Ҷамъкунии маълумоти мушкилӣ"
 
-#: ../kde/apport-kde.py:467
+#: ../kde/apport-kde.py:472
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -1055,6 +1055,6 @@ msgstr ""
 "Маълумоти ҷамъшуда метавонад барои беҳтар кардани барнома ба таҳиягарон "
 "фиристода шавад. Ин метавонад якчанд дақиқаро гирад."
 
-#: ../kde/apport-kde.py:515
+#: ../kde/apport-kde.py:520
 msgid "Uploading Problem Information"
 msgstr "Боркунии иттилооти мушкилӣ"
