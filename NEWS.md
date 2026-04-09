@@ -1,6 +1,30 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.34.0 (2026-04-09)
+-------------------
+
+### Added
+
+* report: Collect open file descriptors in crash reports
+  ([LP: #2143109](https://launchpad.net/bugs/2143109))
+* disable Launchpad crash reports for stable Ubuntu release
+
+### Changed
+
+* Update apport-kde to qt6 ([LP: #2145946](https://launchpad.net/bugs/2145946))
+* parse_segv.py: log traceback in case of a failure
+
+### Fixed
+
+* parse_segv.py: ignore registers with unavailable values (like pl3_ssp)
+* Fix failing `test_omit_all_processes_except_one` test due Python 3.14
+  ([LP: #2143758](https://launchpad.net/bugs/2143758))
+* apport: fix broken `DEVLINKS` property after anonymizing udevdb
+  ([LP: #2145810](https://launchpad.net/bugs/2145810))
+* pylint: Fix linter issues related to pylint >= 4.0.0
+* report: remove trailing newlines from traceback
+
 2.33.1 (2025-07-04)
 -------------------
 
