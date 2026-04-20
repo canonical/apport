@@ -858,7 +858,7 @@ class ProblemReport(collections.UserDict):
 
             # if we have an attachment value, create an attachment
             if attach_value:
-                att = email.mime.base.MIMEBase("application", "x-gzip")
+                att = email.mime.base.MIMEBase("application", "gzip")
                 if k.endswith(".gz"):
                     att.add_header("Content-Disposition", "attachment", filename=k)
                 else:

@@ -443,34 +443,34 @@ class T(unittest.TestCase):
 
         # third part should be the File1: file contents as gzip'ed attachment
         self.assertTrue(not parts[2].is_multipart())
-        self.assertEqual(parts[2].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[2].get_content_type(), "application/gzip")
         self.assertEqual(parts[2].get_filename(), "File1.gz")
         self.assertEqual(self.decode_gzipped_message(parts[2]), BIN_DATA)
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         self.assertTrue(not parts[3].is_multipart())
-        self.assertEqual(parts[3].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[3].get_content_type(), "application/gzip")
         self.assertEqual(parts[3].get_filename(), "File1.gz")
         self.assertEqual(self.decode_gzipped_message(parts[3]), BIN_DATA)
 
         # fifth part should be the Value1: value as gzip'ed attachment
         self.assertTrue(not parts[4].is_multipart())
-        self.assertEqual(parts[4].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[4].get_content_type(), "application/gzip")
         self.assertEqual(parts[4].get_filename(), "Value1.gz")
         self.assertEqual(self.decode_gzipped_message(parts[4]), BIN_DATA)
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[5].is_multipart())
-        self.assertEqual(parts[5].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[5].get_content_type(), "application/gzip")
         self.assertEqual(parts[5].get_filename(), "Value1.gz")
         self.assertEqual(self.decode_gzipped_message(parts[5]), BIN_DATA)
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         self.assertTrue(not parts[6].is_multipart())
-        self.assertEqual(parts[6].get_content_type(), "application/x-gzip")
+        self.assertEqual(parts[6].get_content_type(), "application/gzip")
         self.assertEqual(parts[6].get_filename(), "ZValue.gz")
         self.assertEqual(self.decode_gzipped_message(parts[6]), BIN_DATA)
 
