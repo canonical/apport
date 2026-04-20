@@ -932,10 +932,6 @@ class _AptDpkgPackageInfo(PackageInfo):
                     return None
                 sf_urls = self.get_lp_source_package(srcpackage, version)
                 if sf_urls:
-                    proxy = ""
-                    if apt_pkg.config.find("Acquire::http::Proxy") != "":
-                        proxy = apt_pkg.config.find("Acquire::http::Proxy")
-                        apt_pkg.config.set("Acquire::http::Proxy", "")
                     fetch_progress = apt.progress.base.AcquireProgress()
                     fetcher = apt_pkg.Acquire(fetch_progress)
                     af_queue = []
@@ -949,8 +945,6 @@ class _AptDpkgPackageInfo(PackageInfo):
                     result = fetcher.run()
                     if result != fetcher.RESULT_CONTINUE:
                         return None
-                    if proxy:
-                        apt_pkg.config.set("Acquire::http::Proxy", proxy)
                     for dsc in glob.glob(os.path.join(output_dir, "*.dsc")):
                         subprocess.call(
                             ["dpkg-source", "-sn", "-x", dsc],
