@@ -22,6 +22,7 @@
 # pylint: disable=missing-function-docstring
 
 import errno
+import math
 import os
 import re
 import subprocess
@@ -140,7 +141,7 @@ class CLIProgressDialog(CLIDialog):
             return
 
         if progress is not None:
-            sys.stdout.write(f"\r{progress * 100}%")
+            sys.stdout.write(f"\r{math.floor(progress * 100)}%")
         else:
             sys.stdout.write(".")
         sys.stdout.flush()
