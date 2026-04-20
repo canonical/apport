@@ -1183,9 +1183,6 @@ class _AptDpkgPackageInfo(PackageInfo):
         apt_pkg.config.clear("APT::Architectures")
         apt_pkg.config.set("APT::Architectures::", architecture)
         apt_pkg.config.set("Acquire::Languages", "none")
-        # directly connect to Launchpad when downloading deb files
-        apt_pkg.config.set("Acquire::http::Proxy::api.launchpad.net", "DIRECT")
-        apt_pkg.config.set("Acquire::http::Proxy::launchpad.net", "DIRECT")
 
         if not verbose:
             fetch_progress = apt.progress.base.AcquireProgress()
