@@ -1231,30 +1231,25 @@ class UserInterface:
             return locale.format_string("%.1f MB", size / 1000000.0)
         return locale.format_string("%.1f GB", size / float(1000000000))
 
-    def get_complete_size(self) -> int:
-        """Return the size of the complete report."""
+    def _get_size(self, skip_keys: set[str]) -> int:
         assert self.report
-        # report wasn't loaded, so count manually
         size = 0
         for k in self.report:
+            if k in skip_keys:
+                continue
             try:
                 size += self.report[k].get_on_disk_size()
             except AttributeError:
                 size += len(self.report[k])
         return size
 
+    def get_complete_size(self) -> int:
+        """Return the size of the complete report."""
+        return self._get_size(set())
+
     def get_reduced_size(self) -> int:
         """Return the size of the reduced report."""
-        assert self.report
-        size = 0
-        for k in self.report:
-            if k != "CoreDump":
-                try:
-                    size += self.report[k].get_on_disk_size()
-                except AttributeError:
-                    size += len(self.report[k])
-
-        return size
+        return self._get_size({"CoreDump"})
 
     def can_examine_locally(self) -> bool:
         """Check whether to offer the "Examine locally" button.
