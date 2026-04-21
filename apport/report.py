@@ -1895,15 +1895,8 @@ class Report(problem_report.ProblemReport):
 
         return f"{self['ExecutablePath']}:{self['Signal']}:{':'.join(stack)}"
 
-    # TODO: Split into smaller functions/methods
-    # pylint: disable-next=too-complex
-    def anonymize(self) -> None:
-        """Remove user identifying strings from the report.
-
-        This particularly removes the user name, host name, and IPs
-        from attributes which contain data read from the environment, and
-        removes the ProcCwd attribute completely.
-        """
+    @staticmethod
+    def _get_replacements() -> list[tuple[re.Pattern[str], str]]:
         replacements = []
         # Do not replace "root"
         if os.getuid() > 0:
@@ -1925,6 +1918,17 @@ class Report(problem_report.ProblemReport):
         hostname = os.uname()[1]
         if len(hostname) >= 2:
             replacements.append((re.compile(rf"\b{re.escape(hostname)}\b"), "hostname"))
+
+        return replacements
+
+    def anonymize(self) -> None:
+        """Remove user identifying strings from the report.
+
+        This particularly removes the user name, host name, and IPs
+        from attributes which contain data read from the environment, and
+        removes the ProcCwd attribute completely.
+        """
+        replacements = self._get_replacements()
 
         try:
             del self["ProcCwd"]
