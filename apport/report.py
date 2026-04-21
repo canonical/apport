@@ -1862,11 +1862,11 @@ class Report(problem_report.ProblemReport):
         failed = 0
         for line in self["Stacktrace"].splitlines():
             if line.startswith("#"):
-                addr = line.split()[1]
-                if not addr.startswith("0x"):
+                addr_str = line.split()[1]
+                if not addr_str.startswith("0x"):
                     continue
                 # we do want to know about ValueErrors here, so don't catch
-                addr = int(addr, 16)
+                addr = int(addr_str, 16)
                 # ignore impossibly low addresses; these are usually artifacts
                 # from gdb when not having debug symbols
                 if addr < 0x1000:
