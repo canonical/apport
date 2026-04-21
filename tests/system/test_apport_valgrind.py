@@ -15,14 +15,11 @@ import subprocess
 import tempfile
 import unittest
 
+from apport.procutils import parse_meminfo
 from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
 from tests.paths import local_test_environment
 
-with open("/proc/meminfo", encoding="utf-8") as f:
-    for line in f.readlines():
-        if line.startswith("MemTotal"):
-            MEM_TOTAL_MiB = int(line.split()[1]) // 1024
-            break
+MEM_TOTAL_MiB = parse_meminfo({"MemTotal"})["MemTotal"]
 
 
 @skip_if_command_is_missing("valgrind")
