@@ -1324,7 +1324,7 @@ int main() { return f(42); }
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
             self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
-            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 foo")
+            self.assertEqual(r["Order"], " foo1 foo2 foo3 foo")
 
             r = apport.report.Report()
             r["Package"] = "foo 4.5-6"
@@ -1350,7 +1350,7 @@ int main() { return f(42); }
             self.assertEqual(r["Field2"], "Field 2\nBla")
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
-            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 foo")
+            self.assertEqual(r["Order"], " foo1 foo2 foo3 foo")
 
             # test hook abort
             r["Spethial"] = "1"
@@ -1400,7 +1400,7 @@ int main() { return f(42); }
             self.assertEqual(r["CommonField1"], "CommonField 1")
             self.assertEqual(r["CommonField2"], "CommonField 2")
             self.assertEqual(r["CommonField3"], "NoninteractiveHookUI()")
-            self.assertEqual(r["Order"].strip(), "foo1 foo2 foo3 source_foo")
+            self.assertEqual(r["Order"], " foo1 foo2 foo3 source_foo")
 
             # test hook abort
             r["Package"] = "spethial"
