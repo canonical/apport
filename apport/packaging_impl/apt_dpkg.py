@@ -1731,6 +1731,13 @@ class _AptDpkgPackageInfo(PackageInfo):
             # map because the ordering in which is created is important
             if self._contents_update:
                 self._update_given_file2pkg_mapping(file2pkg, contents_filename, dist)
+
+        # the file only needs to be saved after an update
+        if self._contents_update:
+            self._save_contents_mapping(map_cachedir, release, arch)
+            # the update of the mapping only needs to be done once
+            self._contents_update = False
+
         return file2pkg
 
     def _search_contents(
@@ -1750,11 +1757,6 @@ class _AptDpkgPackageInfo(PackageInfo):
             release = self._distro_release_to_codename(release)
 
         contents_mapping = self._get_file2pkg_mapping(map_cachedir, release, arch)
-        # the file only needs to be saved after an update
-        if self._contents_update:
-            self._save_contents_mapping(map_cachedir, release, arch)
-            # the update of the mapping only needs to be done once
-            self._contents_update = False
 
         if file[0] != "/":
             file = f"/{file}"

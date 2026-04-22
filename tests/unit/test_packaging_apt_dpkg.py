@@ -175,7 +175,6 @@ Components: main
         )
 
     @unittest.mock.patch.object(impl, "_get_file2pkg_mapping")
-    @unittest.mock.patch.object(impl, "_save_contents_mapping", MagicMock())
     def test_get_file_package_uninstalled_usrmerge(
         self, _get_file2pkg_mapping_mock: MagicMock
     ) -> None:
