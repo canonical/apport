@@ -1714,6 +1714,10 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _get_file2pkg_mapping(
         self, map_cachedir: str, release: str, arch: str
     ) -> dict[bytes, bytes]:
+        file2pkg = self._contents_mapping(map_cachedir, release, arch)
+        # if the mapping is empty build it
+        if not file2pkg or len(file2pkg) == 2:
+            self._contents_update = True
         # this is ordered by likelihood of installation with the most common
         # last
         # XXX - maybe we shouldn't check -security and -updates if it is the
@@ -1723,10 +1727,6 @@ class _AptDpkgPackageInfo(PackageInfo):
             contents_filename = self._get_contents_file(map_cachedir, dist, arch)
             if contents_filename is None:
                 continue
-            file2pkg = self._contents_mapping(map_cachedir, release, arch)
-            # if the mapping is empty build it
-            if not file2pkg or len(file2pkg) == 2:
-                self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
