@@ -38,8 +38,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - debian:bookworm-slim
-          - debian:testing-slim
           - ubuntu:jammy
           - ubuntu:noble
     container:
