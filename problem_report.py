@@ -111,6 +111,13 @@ def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MI
     return attachment
 
 
+def _create_text_attachment(name: str, value: str) -> email.mime.base.MIMEBase:
+    filename = f"{name}.txt"
+    attachment = email.mime.text.MIMEText(value, _charset="UTF-8")
+    attachment.add_header("Content-Disposition", "attachment", filename=filename)
+    return attachment
+
+
 def _derive_compression(name: str, value: bytes) -> tuple[str, str]:
     if value.startswith(GZIP_HEADER_START):
         return ("gzip", ".gz")
@@ -903,11 +910,7 @@ class ProblemReport(collections.UserDict):
                     text += v.strip().replace("\n", "\n ") + "\n"
                 else:
                     # too large, separate attachment
-                    att = email.mime.text.MIMEText(v, _charset="UTF-8")
-                    att.add_header(
-                        "Content-Disposition", "attachment", filename=k + ".txt"
-                    )
-                    attachments.append(att)
+                    attachments.append(_create_text_attachment(k, v))
 
         # create initial text attachment
         att = email.mime.text.MIMEText(text, _charset="UTF-8")
