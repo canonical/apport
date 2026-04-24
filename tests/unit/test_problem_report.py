@@ -21,6 +21,13 @@ except ImportError:
 import problem_report
 
 BIN_DATA = b"ABABABABAB\0\0\0Z\x01\x02"
+GZIP_BIN_DATA = (
+    b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03str\x84B\x06"
+    b"\x06\x86(F&\x003\x95\xd4\x0b\x10\x00\x00\x00"
+)
+ZSTD_BIN_DATA = (
+    b"(\xb5/\xfd$\x10\x81\x00\x00ABABABABAB\x00\x00\x00Z\x01\x02\xbc\xdf\xdd\xfd"
+)
 
 
 class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
@@ -577,6 +584,78 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 ("Date", "now!"),
             ],
         )
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_write_mime_binary_values(self) -> None:
+        """write_mine() for binary values (gzip and zstd compressed)."""
+        report = problem_report.ProblemReport(date="now!")
+        report["Data.gz"] = GZIP_BIN_DATA
+        report["GzipData"] = problem_report.CompressedValue(
+            compressed_value=GZIP_BIN_DATA
+        )
+        report["ZstdData"] = problem_report.CompressedValue(
+            compressed_value=ZSTD_BIN_DATA
+        )
+
+        output = io.BytesIO()
+        report.write_mime(output)
+        output.seek(0)
+
+        message = email.message_from_binary_file(output)
+        remaining_parts = message.walk()
+
+        # first part is the multipart container
+        part = next(remaining_parts)
+        self.assertTrue(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = next(remaining_parts)
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "text/plain")
+        self.assertEqual(part.get_content_charset(), "utf-8")
+        self.assertIsNone(part.get_filename())
+        self.assertEqual(
+            part.get_payload(decode=True), b"ProblemType: Crash\nDate: now!\n"
+        )
+
+        # third part should be the Data.gz as attachment
+        part = next(remaining_parts)
+        self.assertEqual(part.get_filename(), "Data.gz")
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "application/gzip")
+        self.assertIsNone(part.get_content_charset())
+        self.assertEqual(part.get_payload(decode=True), GZIP_BIN_DATA)
+
+        # fourth part should be the GzipData as attachment
+        part = next(remaining_parts)
+        self.assertEqual(part.get_filename(), "GzipData.gz")
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "application/gzip")
+        self.assertIsNone(part.get_content_charset())
+        self.assertEqual(part.get_payload(decode=True), GZIP_BIN_DATA)
+
+        # fifth part should be the ZstdData as attachment
+        part = next(remaining_parts)
+        self.assertEqual(part.get_filename(), "ZstdData.zst")
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "application/zstd")
+        self.assertIsNone(part.get_content_charset())
+        self.assertEqual(part.get_payload(decode=True), ZSTD_BIN_DATA)
+
+        with self.assertRaises(StopIteration):
+            next(remaining_parts)
+
+    def test_write_mime_invalid_compressed_binary(self) -> None:
+        """write_mine() for invalid compressed binary values."""
+        report = problem_report.ProblemReport()
+        report["InvalidData.gz"] = b"\0X"
+
+        output = io.BytesIO()
+        with self.assertRaisesRegex(
+            ValueError, "^Unknown compression for InvalidData.gz$"
+        ):
+            report.write_mime(output)
 
     def test_write_mime_text(self) -> None:
         """write_mime() for text values."""

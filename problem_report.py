@@ -102,12 +102,21 @@ def _base64_decoder(entry: Iterable[bytes]) -> Iterator[bytes]:
 
 
 def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MIMEBase:
-    filename = _add_extension_if_missing(name, ".gz")
-    attachment = email.mime.base.MIMEBase("application", "gzip")
+    mime_subtype, extension = _derive_compression(name, value)
+    filename = _add_extension_if_missing(name, extension)
+    attachment = email.mime.base.MIMEBase("application", mime_subtype)
     attachment.add_header("Content-Disposition", "attachment", filename=filename)
     attachment.set_payload(value)
     email.encoders.encode_base64(attachment)
     return attachment
+
+
+def _derive_compression(name: str, value: bytes) -> tuple[str, str]:
+    if value.startswith(GZIP_HEADER_START):
+        return ("gzip", ".gz")
+    if value.startswith(ZSTANDARD_MAGIC_NUMBER):
+        return ("zstd", ".zst")
+    raise ValueError(f"Unknown compression for {name}")
 
 
 def _strip_gzip_header(line: bytes) -> bytes:
