@@ -1,6 +1,82 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.28.2 (2026-04-24)
+-------------------
+
+### Changed
+
+* apport: do not modify permission of existing `/var/crash` or
+  create `/var/crash` with setgid permission (mode 3777)
+  ([LP: #2066995](https://launchpad.net/bugs/2066995))
+* whoopsie-upload-all: exit with 0 if whoopsie is disabled
+  ([LP: #2069360](https://launchpad.net/bugs/2069360))
+* setup.py: remove the shebang mangling code
+
+### Fixed
+
+* apport-retrace:
+  - fix writing report to given `--output`
+  - install `base-files` first for setting up usrmerge symlinks
+    ([LP: #2067120](https://launchpad.net/bugs/2067120))
+* apt_dpkg: fix finding source for `/lib/x86_64-linux-gnu/libc.so.6`
+* report:
+  - fix determining bug report URL for Thunderbird
+    ([LP: #2056758](https://launchpad.net/bugs/2056758))
+  - Fix retracing crashes on Ubuntu 24.04 (noble)
+    ([LP: #2067120](https://launchpad.net/bugs/2067120))
+* setup: determine udev directory dynamically
+* apt_dpkg: Map mirror to correct URL for the architecture
+* recent-syslog: read stdout after process completion
+  ([LP: #2073935](https://launchpad.net/bugs/2073935))
+* test:
+  - determine divide-by-zero signal dynamically
+  - Fix apport-retrace system tests on non-amd64
+    ([LP: #2069815](https://launchpad.net/bugs/2069815)):
+    - add different test for retrace with GDB if non-amd64
+    - apport_retrace: be more flexible on stack trace format
+    - apport_retrace: skip Jammy retracing if no gdb-multiarch on !amd64
+    - fix `_assert_cache_has_content` checks on non-amd64
+    - put apport-retrace temp files into `/var/tmp`
+  - retrace: skip the test using divide-by-zero on s390x until
+    [LP #2075204](https://launchpad.net/bugs/2075204) is fixed
+  - fix race condition in `wait_for_gdb_sleeping_child_process`
+    ([LP: #2073933](https://launchpad.net/bugs/2073933))
+  - fix flaky `test_crash_system_slice`
+    ([LP: #2076186](https://launchpad.net/bugs/2076186))
+* package_hook: Handle failures of removed packages
+  ([LP: #2078695](https://launchpad.net/bugs/2078695))
+* Fix hang when cancelling/closing Apport
+  ([LP: #1537310](https://launchpad.net/bugs/1537310))
+* problem_report: use iterator in `CompressedValue.__len__` to keep the memory
+  footprint small ([LP: #2081708](https://launchpad.net/bugs/2081708))
+* apport-gtk: check for available display on startup
+  ([LP: #2006981](https://launchpad.net/bugs/2006981))
+* test: skip anonymization test on environments that are too generic
+  ([LP: #2097264](https://launchpad.net/bugs/2097264))
+* test: fix `test_find_package_desktopfile_multiple` to not use gnome-terminal
+* SECURITY UPDATE: Report file insecure permissions
+  ([LP: #2106338](https://launchpad.net/bugs/2106338))
+  - Do not change report group to report owner's primary group.
+  - CVE-2025-5467
+* SECURITY UPDATE: Race condition when forwarding core files to containers
+  ([LP: #2107472](https://launchpad.net/bugs/2107472))
+  - apport: move `consistency_checks` call further up
+  - apport: do not override `options.pid`
+  - apport: open `/proc/<pid>` as early as possible
+  - fileutils: respect `proc_pid_fd` in `get_core_path`
+  - apport: use opened `/proc/<pid>` everywhere
+  - apport: do consistency check before forwarding crashes
+  - apport: require `--dump-mode` to be specified
+  - apport: determine report owner by `dump_mode`
+  - apport: do not forward crash for `dump_mode == 2`
+  - apport: support pidfd (%F) parameter from kernel
+  - CVE-2025-5054
+* test: do not check for exact encoded gzip data
+  ([LP: #2076269](https://launchpad.net/bugs/2076269))
+* apport: Do not hide `FileNotFoundError` during crash handling
+* parse_segv.py: ignore registers with unavailable values (like pl3_ssp)
+
 2.28.1 (2024-04-18)
 -------------------
 
