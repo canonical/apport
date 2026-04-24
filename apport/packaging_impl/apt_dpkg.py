@@ -1622,7 +1622,7 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _fetch_contents_file(
         self, contents_filename: str, mtime: float | None, dist: str, arch: str
     ) -> bool:
-        update = False
+        """Returns True on success (including when no update is needed)."""
         url = f"{self._get_mirror(arch)}/dists/{dist}/Contents-{arch}.gz"
         if mtime:
             # HTTPConnection requires server name e.g.
@@ -1636,34 +1636,31 @@ class _AptDpkgPackageInfo(PackageInfo):
                 modified = datetime.datetime.strptime(
                     modified_str, "%a, %d %b %Y %H:%M:%S %Z"
                 )
-                update = modified > datetime.datetime.fromtimestamp(mtime)
-            else:
-                update = True
+                if modified <= datetime.datetime.fromtimestamp(mtime):
+                    return True
             # don't update the file if it is empty
             if res.getheader("content-length", None) == "40":
-                update = False
-        else:
-            update = True
-        if update:
-            self._contents_update = True
-            try:
-                # hard to change, pylint: disable=consider-using-with
-                src = urllib.request.urlopen(url)
-            except OSError:
-                # we ignore non-existing pockets, but we do crash
-                # if the release pocket doesn't exist
-                if "-" not in dist:
-                    raise
-                return False
+                return True
 
-            with open(contents_filename, "wb") as f:
-                while True:
-                    data = src.read(1000000)
-                    if not data:
-                        break
-                    f.write(data)
-            src.close()
-            assert os.path.exists(contents_filename)
+        self._contents_update = True
+        try:
+            # hard to change, pylint: disable=consider-using-with
+            src = urllib.request.urlopen(url)
+        except OSError:
+            # we ignore non-existing pockets, but we do crash
+            # if the release pocket doesn't exist
+            if "-" not in dist:
+                raise
+            return False
+
+        with open(contents_filename, "wb") as f:
+            while True:
+                data = src.read(1000000)
+                if not data:
+                    break
+                f.write(data)
+        src.close()
+        assert os.path.exists(contents_filename)
         return True
 
     def _get_contents_file(self, map_cachedir: str, dist: str, arch: str) -> str | None:
