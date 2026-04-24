@@ -244,7 +244,12 @@ bin/archdetect						    utils/archdetect-deb
             impl._update_given_file2pkg_mapping(file2pkg, "/fake_Contents", "xenial")
 
         self.assertEqual(
-            file2pkg, {b"bin/afio": b"afio", b"bin/archdetect": b"archdetect-deb"}
+            file2pkg,
+            {
+                b":sexsend:sexget:": b"fex",
+                b"bin/afio": b"afio",
+                b"bin/archdetect": b"archdetect-deb",
+            },
         )
         open_mock.assert_called_once_with("/fake_Contents", "rb")
 
@@ -256,6 +261,8 @@ bin/archdetect						    utils/archdetect-deb
 bin/ip							    net/iproute2
 boot/ipxe.efi						    admin/grub-ipxe
 etc/dput.cf						    devel/dput
+lib/modules/6.8.0-31-generic/kernel/crypto/lz4.ko.zst	\
+    kernel/linux-modules-6.8.0-31-generic
 lib/nut/clone						    admin/nut-server
 sbin/hdparm						    admin/hdparm
 usr/Brother/inf/braddprinter				    multiverse/text/brother-lpr-drivers-laser
@@ -270,12 +277,15 @@ usr/lib/debug/.build-id/31/1c9c9b30d6991fb903ab459173c66eb8e7e895.debug debug/li
 usr/libexec/coreutils/libstdbuf.so			    utils/coreutils
 usr/libx32/ld.so					    libs/libc6-x32
 usr/sbin/zic						    libs/libc-bin
+usr/share/cargo/registry/libc-0.2.152/src/lib.rs	    universe/rust/librust-libc-dev
 usr/share/dicom3tools/gen.so				    universe/graphics/dicom3tools
 usr/share/doc/0install					    universe/admin/0install
+usr/share/gimp/2.0/help/de/glossary.html		    universe/doc/gimp-help-de
 usr/share/gocode/src/launchpad.net/mgo			    universe/devel/golang-gopkg-mgo.v2-dev
 usr/share/help/C/eog/default.page			    gnome/eog
 usr/share/icons/gnome-colors-common/32x32/apps/konsole.png\
   universe/gnome/gnome-colors-common
+usr/share/libreoffice/help/en-US/noscript.html		    doc/libreoffice-help-en-us
 usr/share/locale/de/LC_MESSAGES/apt.mo			    admin/apt
 usr/share/man/de/man1/man.1.gz				    doc/man-db
 usr/share/texlive/index.html				    universe/tex/texlive-base
@@ -293,6 +303,7 @@ var/lib/ieee-data/iab.txt				    net/ieee-data
             {k.decode(): v.decode() for k, v in file2pkg.items()},
             {
                 "bin/ip": "iproute2",
+                "boot/ipxe.efi": "grub-ipxe",
                 "etc/dput.cf": "dput",
                 "lib/nut/clone": "nut-server",
                 "sbin/hdparm": "hdparm",
@@ -307,6 +318,7 @@ var/lib/ieee-data/iab.txt				    net/ieee-data
                 "usr/libx32/ld.so": "libc6-x32",
                 "usr/sbin/zic": "libc-bin",
                 "usr/share/dicom3tools/gen.so": "dicom3tools",
+                "var/lib/ieee-data/iab.txt": "ieee-data",
             },
         )
         open_mock.assert_called_once_with("Contents-amd64", "rb")
