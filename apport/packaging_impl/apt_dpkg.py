@@ -57,6 +57,35 @@ from aptsources.sourceslist import Deb822SourceEntry, SourceEntry
 import apport.logging
 from apport.package_info import PackageInfo
 
+# The Contents-*.gz files are huge. Loading all data into memory would result in a
+# dictionary with millions of entries consuming several gigabytes of memory.
+# Therefore exclude unneeded paths with 100k entries or more.
+# Data from 2026-04-23 on amd64:
+#
+# | Path                       |      jammy |      noble |   questing |   resolute |
+# |----------------------------|------------|------------|------------|------------|
+# | lib/modules                | 10,206,350 |  5,492,830 |    475,055 |      9,120 |
+# | usr/include                |    278,938 |    271,587 |    295,470 |    298,389 |
+# | usr/src                    | 39,533,381 | 21,538,896 |  2,201,315 |    420,916 |
+# | usr/[^/]+/include          |    107,568 |    170,800 |    103,340 |    127,294 |
+# | usr/lib/modules            |          0 |          0 |          0 |     73,589 |
+# | usr/share/cargo/registry   |     28,202 |     74,721 |    102,428 |    127,537 |
+# | usr/share/doc              |  3,025,577 |  2,938,577 |  2,636,718 |  2,766,784 |
+# | usr/share/gimp/.../help    |     38,220 |     73,845 |     78,120 |     85,216 |
+# | usr/share/gocode           |    112,802 |    168,941 |    199,405 |    227,626 |
+# | usr/share/help             |    121,470 |    124,824 |    118,948 |    119,346 |
+# | usr/share/icons            |    605,862 |    659,375 |    715,984 |    753,986 |
+# | usr/share/libreoffice/help |     93,359 |     98,690 |    100,540 |    100,580 |
+# | usr/share/locale           |     95,312 |    110,122 |    123,230 |    123,842 |
+# | usr/share/man              |    149,353 |    165,310 |    175,262 |    177,041 |
+# | usr/share/texlive          |    145,420 |    168,740 |    170,265 |    171,546 |
+# | **remaining paths**        |  3,365,393 |  3,839,911 |  3,725,751 |  3,909,851 |
+_EXCLUDED_PATHS = (
+    "^(lib/modules|usr/(include|src|[^/]+/include|lib/modules|share/"
+    "(cargo/registry|doc|gimp/.../help|gocode|help"
+    "|icons|libreoffice/help|locale|man|texlive)))/"
+)
+
 
 # pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def _extract_downloaded_debs(
@@ -1671,10 +1700,7 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _update_given_file2pkg_mapping(
         file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
     ) -> None:
-        path_exclude_pattern = re.compile(
-            rb"^:|(boot|var|usr/(include|src|[^/]+/include"
-            rb"|share/(doc|gocode|help|icons|locale|man|texlive)))/"
-        )
+        path_exclude_pattern = re.compile(_EXCLUDED_PATHS.encode())
         with gzip.open(contents_filename, "rb") as contents:
             if dist in {"trusty", "xenial"}:
                 # the first 32 lines are descriptive only for these
