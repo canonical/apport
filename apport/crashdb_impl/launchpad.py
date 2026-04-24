@@ -41,6 +41,7 @@ except ImportError:
 import apport.crashdb
 import apport.logging
 import apport.report
+import problem_report
 from apport.packaging_impl import impl as packaging
 
 DEFAULT_LAUNCHPAD_INSTANCE = "production"
@@ -55,7 +56,7 @@ def filter_filename(attachments):
             apport.logging.error("Broken attachment on bug, ignoring")
             continue
         name = f.filename
-        if name.endswith(".txt") or name.endswith(".gz"):
+        if name.endswith(".txt") or name.endswith(".gz") or name.endswith(".zst"):
             yield f
 
 
@@ -374,6 +375,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         raise
                     attachment.seek(0)
                     report[key] = attachment.read()
+            elif ext == ".zst":
+                report[key] = problem_report.CompressedValue(
+                    name=key, compressed_value=attachment.read()
+                )
             else:
                 raise NotImplementedError(
                     f"Unknown attachment type: {attachment.filename}"
@@ -494,7 +499,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
             for a in bug.attachments:
-                if a.title == "CoreDump.gz":
+                if a.title in {"CoreDump.gz", "CoreDump.zst"}:
                     try:
                         a.removeFromBug()
                     except HTTPError:
@@ -773,6 +778,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             for a in bug.attachments:
                 if a.title in {
                     "CoreDump.gz",
+                    "CoreDump.zst",
                     "Stacktrace.txt",
                     "ThreadStacktrace.txt",
                     "ProcMaps.txt",
@@ -949,7 +955,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             )
 
             for a in bug.attachments:
-                if a.title == "CoreDump.gz":
+                if a.title in {"CoreDump.gz", "CoreDump.zst"}:
                     try:
                         a.removeFromBug()
                     except HTTPError:
