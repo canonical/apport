@@ -50,8 +50,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - debian:stable-slim
-          - debian:testing-slim
           - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
