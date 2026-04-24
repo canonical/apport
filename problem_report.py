@@ -112,7 +112,7 @@ def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MI
 
 
 def _create_text_attachment(name: str, value: str) -> email.mime.base.MIMEBase:
-    filename = f"{name}.txt"
+    filename = _add_extension_if_missing(name, ".txt")
     attachment = email.mime.text.MIMEText(value, _charset="UTF-8")
     attachment.add_header("Content-Disposition", "attachment", filename=filename)
     return attachment
