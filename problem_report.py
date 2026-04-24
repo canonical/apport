@@ -87,12 +87,27 @@ class _EntryParser(Iterator):
         return self.entry_iterator()
 
 
+def _add_extension_if_missing(filename: str, extension: str) -> str:
+    if filename.endswith(extension):
+        return filename
+    return f"{filename}{extension}"
+
+
 def _base64_decoder(entry: Iterable[bytes]) -> Iterator[bytes]:
     for line in entry:
         try:
             yield base64.b64decode(line)
         except binascii.Error as error:
             raise MalformedProblemReport(str(error)) from None
+
+
+def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MIMEBase:
+    filename = _add_extension_if_missing(name, ".gz")
+    attachment = email.mime.base.MIMEBase("application", "gzip")
+    attachment.add_header("Content-Disposition", "attachment", filename=filename)
+    attachment.set_payload(value)
+    email.encoders.encode_base64(attachment)
+    return attachment
 
 
 def _strip_gzip_header(line: bytes) -> bytes:
@@ -829,7 +844,6 @@ class ProblemReport(collections.UserDict):
             # if it's a tuple, we have a file reference; read the contents
             # and gzip it
             elif not isinstance(v, bytes | str):
-                attach_value = ""
                 if hasattr(v[0], "read"):
                     f = v[0]  # file-like object
                 else:
@@ -850,7 +864,7 @@ class ProblemReport(collections.UserDict):
                 f.close()
 
             # binary value
-            elif self.is_binary(v):
+            elif isinstance(v, bytes) and self.is_binary(v):
                 if k.endswith(".gz"):
                     attach_value = v
                 else:
@@ -858,16 +872,7 @@ class ProblemReport(collections.UserDict):
 
             # if we have an attachment value, create an attachment
             if attach_value:
-                att = email.mime.base.MIMEBase("application", "gzip")
-                if k.endswith(".gz"):
-                    att.add_header("Content-Disposition", "attachment", filename=k)
-                else:
-                    att.add_header(
-                        "Content-Disposition", "attachment", filename=k + ".gz"
-                    )
-                att.set_payload(attach_value)
-                email.encoders.encode_base64(att)
-                attachments.append(att)
+                attachments.append(_create_compressed_attachment(k, attach_value))
             else:
                 # plain text value
                 size = len(v)
