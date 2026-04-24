@@ -229,6 +229,20 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr.load(io.BytesIO(b"ProblemType: Crash"))
         self.assertEqual(list(pr.keys()), ["ProblemType"])
 
+    def test_load_string_with_null(self) -> None:
+        """Test load() with a NULL character in a string key.
+
+        Test case for https://launchpad.net/bugs/2146806
+        """
+        proc_maps = "7f8e5d61f000-7f8e5d620000 r--p 00005000 fc:00 190815U\0\0"
+        content = f"ProblemType: Crash\n" f"Date: now!\n" f"ProcMaps: {proc_maps}\n"
+        report = problem_report.ProblemReport()
+        report.load(io.BytesIO(content.encode()))
+
+        self.assertEqual(report["ProblemType"], "Crash")
+        self.assertEqual(report["Date"], "now!")
+        self.assertEqual(report["ProcMaps"], proc_maps)
+
     def test_load_binary_blob(self) -> None:
         """Throw exception when binary file (e.g. core) is loaded."""
         report = problem_report.ProblemReport()
