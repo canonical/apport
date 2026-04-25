@@ -9,6 +9,7 @@
 
 """Unit tests for apport.packaging_impl.apt_dpkg."""
 
+import pathlib
 import tempfile
 import unittest
 import unittest.mock
@@ -38,11 +39,15 @@ class TestPackagingAptDpkg(unittest.TestCase):
         # Clear APT cache to allow mocking it
         # pylint: disable-next=protected-access
         impl._apt_cache = None
+        # pylint: disable-next=protected-access
+        impl._contents_mapping_obj = None
 
     def tearDown(self) -> None:
         # Clear APT cache to clear cached mocks
         # pylint: disable-next=protected-access
         impl._apt_cache = None
+        # pylint: disable-next=protected-access
+        impl._contents_mapping_obj = None
 
     @unittest.mock.patch("apt.Cache", spec=apt.Cache)
     def test_is_distro_package_no_candidate(self, apt_cache_mock: MagicMock) -> None:
@@ -195,6 +200,59 @@ Components: main
         _get_file2pkg_mapping_mock.assert_called_with(
             "/map_cachedir", impl.get_distro_codename(), "amd64"
         )
+
+    def test_contents_mapping(self) -> None:
+        """Test _contents_mapping() loading and saving."""
+        # pylint: disable=protected-access
+        with tempfile.TemporaryDirectory() as workdir:
+            # Test non-existing cache file
+            file2pkg = impl._contents_mapping(workdir, "resolute", "amd64")
+            self.assertEqual(file2pkg, {b"release": b"resolute", b"arch": b"amd64"})
+
+            # Modify and save cache
+            file2pkg[b"path/to/file"] = b"package1"
+            impl._save_contents_mapping(workdir, "resolute", "amd64")
+
+            # Test opening different release/arch
+            file2pkg = impl._contents_mapping(workdir, "noble", "amd64")
+            self.assertEqual(file2pkg, {b"release": b"noble", b"arch": b"amd64"})
+
+            # Test loading contents mapping from cache file
+            file2pkg = impl._contents_mapping(workdir, "resolute", "amd64")
+            self.assertEqual(
+                file2pkg,
+                {
+                    b"release": b"resolute",
+                    b"arch": b"amd64",
+                    b"path/to/file": b"package1",
+                },
+            )
+
+    def test_contents_mapping_truncated_file(self) -> None:
+        """Test _contents_mapping() reading truncated files."""
+        # pylint: disable=protected-access
+        with tempfile.TemporaryDirectory() as workdir:
+            file2pkg = impl._contents_mapping(workdir, "resolute", "amd64")
+            file2pkg[b"path/to/file"] = b"package1"
+            impl._save_contents_mapping(workdir, "resolute", "amd64")
+            mapping_path = (
+                pathlib.Path(workdir) / "contents_mapping-resolute-amd64.pickle"
+            )
+            saved_mapping = mapping_path.read_bytes()
+            self.assertGreater(len(saved_mapping), 32)
+            for truncate_length in (2, 32):
+                with self.subTest(truncate_length=truncate_length):
+                    # Clear cache
+                    impl._contents_mapping(workdir, "noble", "amd64")
+
+                    mapping_path.write_bytes(saved_mapping[0:truncate_length])
+                    self.assertEqual(mapping_path.stat().st_size, truncate_length)
+
+                    # Test ignoring truncated file
+                    file2pkg = impl._contents_mapping(workdir, "resolute", "amd64")
+                    self.assertEqual(
+                        file2pkg, {b"release": b"resolute", b"arch": b"amd64"}
+                    )
 
     def test_contents_skip_xenial_header(self) -> None:
         """Test _update_given_file2pkg_mapping skipping xenial Contents header."""
