@@ -156,9 +156,9 @@ class T(unittest.TestCase):
         with open(reps[0], "rb") as f:
             r.load(f)
 
-        filekey = None
-        log1key = None
-        log2key = None
+        filekey = ""
+        log1key = ""
+        log2key = ""
         for k in r.keys():
             if k.endswith("Testhookspy"):
                 filekey = k
