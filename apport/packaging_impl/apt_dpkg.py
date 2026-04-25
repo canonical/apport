@@ -332,9 +332,9 @@ class _AptDpkgPackageInfo(PackageInfo):
         if self._virtual_mapping_obj is not None:
             return self._virtual_mapping_obj
 
-        mapping_file = os.path.join(configdir, "virtual_mapping.pickle")
+        mapping_file = pathlib.Path(configdir) / "virtual_mapping.pickle"
         try:
-            with open(mapping_file, "rb") as fp:
+            with mapping_file.open("rb") as fp:
                 self._virtual_mapping_obj = pickle.load(fp)
             assert isinstance(self._virtual_mapping_obj, dict)
         except (AssertionError, FileNotFoundError):
@@ -343,9 +343,9 @@ class _AptDpkgPackageInfo(PackageInfo):
         return self._virtual_mapping_obj
 
     def _save_virtual_mapping(self, configdir: str) -> None:
-        mapping_file = os.path.join(configdir, "virtual_mapping.pickle")
+        mapping_file = pathlib.Path(configdir) / "virtual_mapping.pickle"
         if self._virtual_mapping_obj is not None:
-            with open(mapping_file, "wb") as fp:
+            with mapping_file.open("wb") as fp:
                 pickle.dump(self._virtual_mapping_obj, fp)
 
     def _contents_mapping(
@@ -358,13 +358,13 @@ class _AptDpkgPackageInfo(PackageInfo):
         ):
             return self._contents_mapping_obj
 
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
+        mapping_file = (
+            pathlib.Path(configdir) / f"contents_mapping-{release}-{arch}.pickle"
         )
-        if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
-            os.remove(mapping_file)
+        if mapping_file.exists() and mapping_file.stat().st_size == 0:
+            mapping_file.unlink()
         try:
-            with open(mapping_file, "rb") as fp:
+            with mapping_file.open("rb") as fp:
                 self._contents_mapping_obj = pickle.load(fp)
             assert isinstance(self._contents_mapping_obj, dict)
         except (AssertionError, FileNotFoundError):
@@ -376,12 +376,12 @@ class _AptDpkgPackageInfo(PackageInfo):
         return self._contents_mapping_obj
 
     def _save_contents_mapping(self, configdir: str, release: str, arch: str) -> None:
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
+        mapping_file = (
+            pathlib.Path(configdir) / f"contents_mapping-{release}-{arch}.pickle"
         )
         if self._contents_mapping_obj is not None:
             try:
-                with open(mapping_file, "wb") as fp:
+                with mapping_file.open("wb") as fp:
                     pickle.dump(self._contents_mapping_obj, fp)
             # rather than crashing on systems with little memory just don't
             # write the crash file
@@ -1724,6 +1724,10 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _get_file2pkg_mapping(
         self, map_cachedir: str, release: str, arch: str
     ) -> dict[bytes, bytes]:
+        file2pkg = self._contents_mapping(map_cachedir, release, arch)
+        # if the mapping is empty build it
+        if not file2pkg or len(file2pkg) == 2:
+            self._contents_update = True
         # this is ordered by likelihood of installation with the most common
         # last
         # XXX - maybe we shouldn't check -security and -updates if it is the
@@ -1733,14 +1737,17 @@ class _AptDpkgPackageInfo(PackageInfo):
             contents_filename = self._get_contents_file(map_cachedir, dist, arch)
             if contents_filename is None:
                 continue
-            file2pkg = self._contents_mapping(map_cachedir, release, arch)
-            # if the mapping is empty build it
-            if not file2pkg or len(file2pkg) == 2:
-                self._contents_update = True
             # if any of the Contents files were updated we need to update the
             # map because the ordering in which is created is important
             if self._contents_update:
                 self._update_given_file2pkg_mapping(file2pkg, contents_filename, dist)
+
+        # the file only needs to be saved after an update
+        if self._contents_update:
+            self._save_contents_mapping(map_cachedir, release, arch)
+            # the update of the mapping only needs to be done once
+            self._contents_update = False
+
         return file2pkg
 
     def _search_contents(
@@ -1760,11 +1767,6 @@ class _AptDpkgPackageInfo(PackageInfo):
             release = self._distro_release_to_codename(release)
 
         contents_mapping = self._get_file2pkg_mapping(map_cachedir, release, arch)
-        # the file only needs to be saved after an update
-        if self._contents_update:
-            self._save_contents_mapping(map_cachedir, release, arch)
-            # the update of the mapping only needs to be done once
-            self._contents_update = False
 
         if file[0] != "/":
             file = f"/{file}"
