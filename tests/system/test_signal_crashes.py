@@ -17,6 +17,7 @@ import psutil
 
 import apport.fileutils
 import apport.report
+from apport.procutils import parse_meminfo
 from tests.helper import (
     get_gnu_coreutils_cmd,
     get_init_system,
@@ -159,12 +160,8 @@ class T(unittest.TestCase):
         assert self.apport_path is not None
         # determine how much data we have to pump into apport in order to make
         # sure that it will refuse the core dump
-        r = apport.report.Report()
-        with open("/proc/meminfo", "rb") as f:
-            r.load(f)
-        totalmb = int(r["MemFree"].split()[0]) + int(r["Cached"].split()[0])
-        totalmb = int(totalmb / 1024)
-        del r
+        meminfo = parse_meminfo({"Cached", "MemFree"})
+        totalmb = (meminfo["MemFree"] + meminfo["Cached"]) // 1024
 
         test_proc = self.create_test_process()
         try:

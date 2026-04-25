@@ -43,6 +43,7 @@ from collections.abc import Callable
 
 import apport.fileutils
 import apport.report
+from apport.procutils import parse_meminfo
 from apport.user_group import UserGroupID
 from problem_report import CompressedFile
 
@@ -338,20 +339,11 @@ def write_user_coredump(
     os.close(core_file)
 
 
-def usable_ram():
+def usable_ram() -> int:
     """Return how many bytes of RAM is currently available that can be
     allocated without causing major thrashing."""
-
-    # abuse our excellent RFC822 parser to parse /proc/meminfo
-    r = apport.report.Report()
-    with open("/proc/meminfo", "rb") as f:
-        r.load(f)
-
-    memfree = int(r["MemFree"].split()[0])
-    cached = int(r["Cached"].split()[0])
-    writeback = int(r["Writeback"].split()[0])
-
-    return (memfree + cached - writeback) * 1024
+    meminfo = parse_meminfo({"Cached", "MemFree", "Writeback"})
+    return (meminfo["MemFree"] + meminfo["Cached"] - meminfo["Writeback"]) * 1024
 
 
 def _run_with_output_limit_and_timeout(
