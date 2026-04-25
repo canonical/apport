@@ -447,19 +447,18 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # test with reading everything
         pr = problem_report.ProblemReport()
-        pr.load(io.BytesIO(bin_report))
+        skipped_keys = pr.load(io.BytesIO(bin_report))
         self.assertEqual(pr["File"], BIN_DATA)
-        self.assertEqual(pr.has_removed_fields(), False)
+        self.assertEqual(skipped_keys, [])
 
         # test with skipping binary data
-        pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertIsNone(pr["File"])
-        self.assertEqual(pr.has_removed_fields(), True)
+        skipped_keys = pr.load(io.BytesIO(bin_report), binary=False)
+        self.assertEqual(skipped_keys, ["File"])
 
         # test with keeping compressed binary data
-        pr.load(io.BytesIO(bin_report), binary="compressed")
+        skipped_keys = pr.load(io.BytesIO(bin_report), binary="compressed")
         self.assertEqual(pr["Foo"], "Bar")
-        self.assertEqual(pr.has_removed_fields(), False)
+        self.assertEqual(skipped_keys, [])
         self.assertTrue(isinstance(pr["File"], problem_report.CompressedValue))
         self.assertEqual(len(pr["File"]), len(BIN_DATA))
         self.assertEqual(pr["File"].get_value(), BIN_DATA)
@@ -479,18 +478,17 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         # test with reading everything
         pr = problem_report.ProblemReport()
-        pr.load(io.BytesIO(bin_report))
+        skipped_keys = pr.load(io.BytesIO(bin_report))
         self.assertEqual(pr["File"], b"AB" * 10 + b"\0" * 10 + b"Z")
-        self.assertEqual(pr.has_removed_fields(), False)
+        self.assertEqual(skipped_keys, [])
 
         # test with skipping binary data
-        pr.load(io.BytesIO(bin_report), binary=False)
-        self.assertIsNone(pr["File"])
-        self.assertEqual(pr.has_removed_fields(), True)
+        skipped_keys = pr.load(io.BytesIO(bin_report), binary=False)
+        self.assertEqual(skipped_keys, ["File"])
 
         # test with keeping CompressedValues
-        pr.load(io.BytesIO(bin_report), binary="compressed")
-        self.assertEqual(pr.has_removed_fields(), False)
+        skipped_keys = pr.load(io.BytesIO(bin_report), binary="compressed")
+        self.assertEqual(skipped_keys, [])
         self.assertEqual(len(pr["File"]), 31)
         self.assertEqual(pr["File"].get_value(), b"AB" * 10 + b"\0" * 10 + b"Z")
         self.assertEqual(pr["File"].name, "File")

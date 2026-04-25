@@ -442,11 +442,10 @@ class ProblemReport(collections.UserDict):
         file: gzip.GzipFile | typing.IO[bytes],
         binary: bool | typing.Literal["compressed"] = True,
         key_filter: Iterable[str] | None = None,
-    ) -> None:
+    ) -> list[str]:
         """Initialize problem report from a file-like object.
 
-        If binary is False, binary data is not loaded; the dictionary key is
-        created, but its value will be an empty string. If it is True, it is
+        If binary is False, binary data is not loaded. If it is True, it is
         transparently uncompressed and available as dictionary byte array
         values. If binary is 'compressed', the compressed value is retained,
         and the dictionary value will be a CompressedValue object. This is
@@ -455,9 +454,13 @@ class ProblemReport(collections.UserDict):
 
         file needs to be opened in binary mode.
 
-        If key_filter is given, only those keys will be loaded.
+        If key_filter is given, only those keys will be loaded. If all
+        specified keys were loaded, the remaining file will be skipped.
 
         Files are in RFC822 format, but with case sensitive keys.
+
+        Return a list of dictionary keys that were skipped. Note: This list
+        might not be exhaustive in case key_filter is given.
         """
         self._assert_bin_mode(file)
         self.data.clear()
@@ -466,14 +469,16 @@ class ProblemReport(collections.UserDict):
         else:
             remaining_keys = None
 
+        skipped_keys = []
         for entry in _EntryParser(file):
             key, iterator, base64_encoded = _parse_entry(entry)
             if remaining_keys is not None and key not in remaining_keys:
+                skipped_keys.append(key)
                 continue
 
             if base64_encoded:
                 if binary is False:
-                    self.data[key] = None
+                    skipped_keys.append(key)
                 elif binary == "compressed":
                     self.data[key] = CompressedValue(
                         name=key, compressed_value=b"".join(iterator)
@@ -491,6 +496,7 @@ class ProblemReport(collections.UserDict):
                     break
 
         self.old_keys = set(self.data.keys())
+        return skipped_keys
 
     def extract_keys(
         self,
@@ -558,13 +564,6 @@ class ProblemReport(collections.UserDict):
         except locale.Error:
             return None
 
-    def has_removed_fields(self) -> bool:
-        """Check if the report has any keys which were not loaded.
-
-        This could happen when using binary=False in load().
-        """
-        return None in self.values()
-
     @staticmethod
     def is_binary(string: bytes | str) -> bool:
         """Check if the given strings contains binary data."""
@@ -593,8 +592,7 @@ class ProblemReport(collections.UserDict):
 
         The most interesting fields will be returned first. The remaining
         items will be returned in alphabetical order. Keys starting with
-        an underscore are considered internal and are skipped. Also values
-        that are None will be skipped.
+        an underscore are considered internal and are skipped.
 
         If keys is provided, only those keys will be iterated over.
         """
@@ -619,8 +617,6 @@ class ProblemReport(collections.UserDict):
             if key.startswith("_"):
                 continue
             value = self[key]
-            if value is None:
-                continue
             yield key, value
 
     def write(self, file: typing.IO[bytes], only_new: bool = False) -> None:
