@@ -15,7 +15,7 @@ import subprocess
 import tempfile
 import unittest
 
-from tests.helper import skip_if_command_is_missing
+from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
 from tests.paths import local_test_environment
 
 
@@ -43,7 +43,12 @@ class TestApportValgrind(unittest.TestCase):
 
     def test_valgrind_min_installed(self) -> None:
         """Valgrind is installed and recent enough."""
-        cmd = ["valgrind", "-q", "--extra-debuginfo-path=./", "ls"]
+        cmd = [
+            "valgrind",
+            "-q",
+            "--extra-debuginfo-path=./",
+            get_gnu_coreutils_cmd("ls"),
+        ]
         ret, out, err = self._call(cmd)
         self.assertEqual(err, "")
         self.assertEqual(ret, 0)
@@ -70,7 +75,7 @@ class TestApportValgrind(unittest.TestCase):
 
     def test_invalid_args(self) -> None:
         """Return code is not 0 when invalid args are passed."""
-        cmd = ["apport-valgrind", "-k", "pwd"]
+        cmd = ["apport-valgrind", "-k", get_gnu_coreutils_cmd("pwd")]
         ret, out, err = self._call(cmd)
         self.assertEqual(out, "")
         self.assertNotEqual(ret, 0)
@@ -144,7 +149,7 @@ void makeleak(void){
     def test_unpackaged_exe(self) -> None:
         """apport-valgrind creates valgrind log on unpackaged executable."""
         exepath = os.path.join(self.workdir, "pwd")
-        shutil.copy("/bin/pwd", exepath)
+        shutil.copy(get_gnu_coreutils_cmd("pwd"), exepath)
         logpath = os.path.join(self.workdir, "unpackaged-exe.log")
 
         cmd = ["apport-valgrind", "--no-sandbox", "-l", logpath, exepath]
