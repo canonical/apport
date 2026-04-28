@@ -971,13 +971,14 @@ class Report(problem_report.ProblemReport):
 
         This needs a VmCore in the Report.
         """
-        if "VmCore" not in self:
+        vm_core = self.get("VmCore")
+        if vm_core is None:
             return False
         with tempfile.NamedTemporaryFile(prefix="apport_vmcore_") as core:
-            if hasattr(self["VmCore"], "write"):
-                self["VmCore"].write(core)
+            if hasattr(vm_core, "write"):
+                vm_core.write(core)
             else:
-                core.write(self["VmCore"])
+                core.write(vm_core)
             core.flush()
 
             kver = self["Uname"].split()[1]
