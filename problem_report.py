@@ -223,6 +223,10 @@ class CompressedFile:
         if hasattr(self, "_compressed_file"):
             self._compressed_file.close()
 
+    def get_on_disk_size(self) -> int:
+        """Return the size on disk."""
+        return os.fstat(self._compressed_file.fileno()).st_size
+
     def iter_compressed(self) -> Iterator[bytes]:
         """Iterate over the compressed content of the file in chunks."""
         while True:

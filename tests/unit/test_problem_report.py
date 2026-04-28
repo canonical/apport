@@ -7,6 +7,7 @@ import email
 import io
 import locale
 import sys
+import tempfile
 import textwrap
 import time
 import unittest
@@ -904,6 +905,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         assert compressed_value.compressed_value is not None
         base64_encoded = base64.b64encode(compressed_value.compressed_value)
         self.assertEqual(compressed_value.get_on_disk_size(), len(base64_encoded))
+
+    def test_compressed_file_get_on_disk_size(self) -> None:
+        """Test CompressedFile.get_on_disk_size()."""
+        with tempfile.NamedTemporaryFile() as gzip_file:
+            gzip_file.write(GZIP_BIN_DATA)
+            gzip_file.flush()
+            compressed_file = problem_report.CompressedFile(gzip_file.name)
+            self.assertTrue(compressed_file.is_readable())
+            self.assertEqual(compressed_file.get_on_disk_size(), len(GZIP_BIN_DATA))
 
 
 class TestEntryParser(unittest.TestCase):
