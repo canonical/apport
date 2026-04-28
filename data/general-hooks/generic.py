@@ -104,8 +104,10 @@ Do you want to continue the report process anyway?
             " which the crashed program expected to use."
         )
     # filter out package install failures due to a segfault
+    error_message = report.get("ErrorMessage")
     if (
-        "Segmentation fault" in report.get("ErrorMessage", "")
+        isinstance(error_message, str)
+        and "Segmentation fault" in error_message
         and report["ProblemType"] == "Package"
     ):
         report["UnreportableReason"] = (
