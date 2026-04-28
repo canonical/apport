@@ -687,9 +687,10 @@ class ProblemReport(collections.UserDict):
 
     def _write_ascii_item(self, file: typing.IO[bytes], key: str) -> None:
         v = self.data[key]
+        assert not isinstance(v, (CompressedFile, CompressedValue))
 
         # if it's a tuple, we have a file reference; read the contents
-        if not isinstance(v, bytes | str):
+        if isinstance(v, tuple):
             if len(v) >= 3 and v[2] is not None:
                 limit = v[2]
             else:
