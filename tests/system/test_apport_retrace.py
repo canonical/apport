@@ -38,7 +38,8 @@ def fixture_module_cachedir(module_workdir: pathlib.Path) -> pathlib.Path:
 def fixture_divide_by_zero_crash(module_workdir: pathlib.Path) -> str:
     """Generate a Report with a crash of divide-by-zero."""
     executable = "/usr/bin/divide-by-zero"
-    assert pathlib.Path(executable).exists()
+    if not pathlib.Path(executable).exists():
+        pytest.skip("divide-by-zero from chaos-marmosets not installed")
     core_path = module_workdir / "divide-by-zero.core"
     gdb = subprocess.run(
         [
