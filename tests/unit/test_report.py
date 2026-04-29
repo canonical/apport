@@ -1375,6 +1375,50 @@ No symbol table info available.
 
         self.assertEqual(denylist, {"/bin/program2"})
 
+    def test_read_open_fds(self) -> None:
+        """Test _read_open_fds()."""
+        with tempfile.TemporaryDirectory(prefix="apport-") as proc_pid_dir:
+            fd_dir = pathlib.Path(proc_pid_dir) / "fd"
+            fd_dir.mkdir()
+            fdinfo_dir = pathlib.Path(proc_pid_dir) / "fdinfo"
+            fdinfo_dir.mkdir()
+            stdin_fd = fd_dir / "0"
+            stdin_fd.symlink_to("/dev/pts/0")
+            stdin_fdinfo = fdinfo_dir / "0"
+            stdin_fdinfo.write_text("pos:\t0\nflags:\t02000002\nmnt_id:\t45\nino:\t3\n")
+
+            proc_pid_fd = os.open(
+                proc_pid_dir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            )
+            try:
+                open_fds = apport.report._read_open_fds(proc_pid_fd)
+            finally:
+                os.close(proc_pid_fd)
+
+        self.assertEqual(
+            open_fds, "0:/dev/pts/0\npos:\t0\nflags:\t02000002\nmnt_id:\t45\nino:\t3"
+        )
+
+    def test_read_open_fds_fdinfo_gone(self) -> None:
+        """Test _read_fd_entry() with fdinfo entry gone."""
+        with tempfile.TemporaryDirectory(prefix="apport-") as proc_pid_dir:
+            fd_dir = pathlib.Path(proc_pid_dir) / "fd"
+            fd_dir.mkdir()
+            fdinfo_dir = pathlib.Path(proc_pid_dir) / "fdinfo"
+            fdinfo_dir.mkdir()
+            stdin_fd = fd_dir / "0"
+            stdin_fd.symlink_to("/dev/pts/0")
+
+            proc_pid_fd = os.open(
+                proc_pid_dir, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
+            )
+            try:
+                open_fds = apport.report._read_open_fds(proc_pid_fd)
+            finally:
+                os.close(proc_pid_fd)
+
+        self.assertEqual(open_fds, "0:/dev/pts/0")
+
     def test_suspend_resume(self) -> None:
         pr = apport.report.Report()
         pr["ProblemType"] = "KernelOops"
