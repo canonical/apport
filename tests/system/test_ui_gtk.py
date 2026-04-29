@@ -1180,8 +1180,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_ui_run_terminal(self) -> None:
         """Test ui_run_terminal."""
-        if not self.app.ui_has_terminal():
-            self.skipTest("installed terminal application needed")
+        self.assertTrue(
+            self.app.ui_has_terminal(), "installed terminal application needed"
+        )
         self.app.ui_run_terminal("true")
 
     def test_ui_update_view_destroyed(self) -> None:

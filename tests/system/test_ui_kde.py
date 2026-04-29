@@ -753,8 +753,9 @@ class T(unittest.TestCase):
 
     def test_ui_run_terminal(self) -> None:
         """Test ui_run_terminal."""
-        if not self.ui.ui_has_terminal():
-            self.skipTest("installed terminal application needed")
+        self.assertTrue(
+            self.ui.ui_has_terminal(), "installed terminal application needed"
+        )
         self.ui.ui_run_terminal("true")
 
     def test_ui_set_upload_progress(self) -> None:
