@@ -105,6 +105,13 @@ class TestPackagingAptDpkg(unittest.TestCase):
     def test_map_mirror_to_arch_ports_to_primary(self) -> None:
         """Test _map_mirror_to_arch() to map ports to primary."""
         self.assertEqual(
+            _map_mirror_to_arch("http://ports.ubuntu.com/ubuntu-ports/", "amd64"),
+            "http://archive.ubuntu.com/ubuntu",
+        )
+
+    def test_map_mirror_to_arch_country_ports_to_primary(self) -> None:
+        """Test _map_mirror_to_arch() to map country ports to primary."""
+        self.assertEqual(
             _map_mirror_to_arch("http://de.ports.ubuntu.com/ubuntu-ports", "amd64"),
             "http://de.archive.ubuntu.com/ubuntu",
         )

@@ -195,12 +195,12 @@ def _map_mirror_to_arch(uri: str, target_arch: str) -> str:
     remaining architectures.
     """
     if target_arch in {"amd64", "i386"}:
-        ports_match = re.match("http://([a-z.]+)?ports.ubuntu.com/ubuntu-ports/?", uri)
+        ports_match = re.match("http://([a-z.]*)ports.ubuntu.com/ubuntu-ports/?", uri)
         if ports_match:
             return f"http://{ports_match.group(1)}archive.ubuntu.com/ubuntu"
         return uri
 
-    primary_match = re.match("http://([a-z.]+)?archive.ubuntu.com/ubuntu/?$", uri)
+    primary_match = re.match("http://([a-z.]*)archive.ubuntu.com/ubuntu/?$", uri)
     if primary_match:
         return f"http://{primary_match.group(1)}ports.ubuntu.com/ubuntu-ports"
     return uri
