@@ -8,8 +8,23 @@ on:  # yamllint disable-line rule:truthy
 env:
   DEBIAN_FRONTEND: noninteractive
 
-# Note: ca-certificates and git are needed for actions/checkout to use git
-# which is needed for codecov/codecov-action.
+  # Note: ca-certificates and git are needed for actions/checkout to use git
+  # which is needed for codecov/codecov-action.
+  checkout_deps: ca-certificates git
+  base_deps: >
+    python3 python3-apt python3-psutil python3-pytest python3-pytest-cov
+  build_deps: >
+    default-jdk-headless pkg-config python3-distutils-extra python3-setuptools
+  common_deps: python3-launchpadlib python3-requests
+  gtk_deps: gir1.2-gtk-3.0 gir1.2-wnck-3.0 gnome-icon-theme procps python3-gi
+  kde_deps: procps python3-pyqt5
+  unit_deps: locales python3-systemd python3-zstandard
+  integration_deps: >
+    binutils dpkg-dev gcc gdb iputils-ping kmod libc6-dev python3-systemd
+    valgrind xterm
+  system_deps: >
+    chaos-marmosets dbus dbus-x11 dpkg-dev gdb gvfs-daemons psmisc
+    python3-dbus ubuntu-dbgsym-keyring ubuntu-keyring valgrind xterm xvfb
 
 jobs:
   linter:
@@ -24,12 +39,10 @@ jobs:
         run: >
           apt-get update
           && apt-get install --no-install-recommends --yes
-          black gir1.2-gtk-3.0 gir1.2-wnck-3.0 isort mypy pycodestyle
-          pydocstyle pyflakes3 pylint python3 python3-apt python3-dbus
-          python3-distutils-extra python3-gi python3-launchpadlib
-          python3-psutil python3-pyqt5 python3-pytest python3-rpm
-          python3-typeshed python3-yaml python3-requests python3-systemd
-          python3-zstandard
+          black isort mypy pycodestyle pydocstyle pyflakes3 pylint
+          python3-typeshed python3-dbus python3-distutils-extra python3-rpm
+          python3-yaml python3-systemd python3-zstandard
+          $base_deps $common_deps $gtk_deps $kde_deps
       - name: Run linter tests
         run: tests/run-linters
 
@@ -52,12 +65,8 @@ jobs:
         run: >
           apt-get update
           && apt-get install --no-install-recommends --yes
-          bash binutils ca-certificates default-jdk-headless dpkg-dev gcc gdb
-          gir1.2-gtk-3.0 gir1.2-wnck-3.0 git iputils-ping kmod libc6-dev
-          locales procps python3 python3-apt python3-distutils-extra python3-gi
-          python3-launchpadlib python3-psutil python3-pytest python3-pytest-cov
-          python3-requests python3-setuptools python3-systemd python3-zstandard
-          valgrind xterm
+          $base_deps $build_deps $common_deps $gtk_deps $kde_deps
+          $unit_deps $integration_deps
       - uses: actions/checkout@v6
       - name: Enable German locale
         run: sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && locale-gen
@@ -88,12 +97,8 @@ jobs:
         run: >
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
-          bash binutils ca-certificates default-jdk-headless dpkg-dev gcc gdb
-          gir1.2-gtk-3.0 gir1.2-wnck-3.0 git iputils-ping kmod libc6-dev
-          locales pkg-config python3 python3-apt python3-distutils-extra
-          python3-gi python3-launchpadlib python3-psutil python3-pytest
-          python3-pytest-cov python3-setuptools python3-systemd
-          python3-zstandard valgrind xterm
+          $base_deps $build_deps $common_deps $gtk_deps $kde_deps $unit_deps
+          $unit_deps $integration_deps
       - uses: actions/checkout@v6
       - name: Enable German locale
         run: sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && sudo locale-gen
@@ -136,8 +141,7 @@ jobs:
         run: >
           apt-get update
           && apt-get install --no-install-recommends --yes
-          bash ca-certificates git python3 python3-apt python3-psutil
-          python3-pytest python3-pytest-cov
+          $checkout_deps $base_deps
       - uses: actions/checkout@v6
       - name: Run all tests (to check if they are skipped or succeed)
         run: >
@@ -174,12 +178,7 @@ jobs:
         run: >
           apt-get update
           && apt-get install --no-install-recommends --yes
-          ca-certificates chaos-marmosets dbus dbus-x11 dpkg-dev gcc gdb
-          gir1.2-gtk-3.0 gir1.2-wnck-3.0 git gnome-icon-theme gvfs-daemons
-          psmisc python3 python3-apt python3-dbus python3-gi
-          python3-launchpadlib python3-psutil python3-pyqt5 python3-pytest
-          python3-pytest-cov python3-requests ubuntu-dbgsym-keyring
-          ubuntu-keyring valgrind xterm xvfb
+          $base_deps $common_deps $gtk_deps $kde_deps $system_deps
       - uses: actions/checkout@v6
       - name: Start D-Bus daemon
         run: mkdir -p /run/dbus && dbus-daemon --system --fork
@@ -214,12 +213,7 @@ jobs:
         run: >
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
-          ca-certificates chaos-marmosets dbus dbus-x11 dpkg-dev gcc gdb
-          gir1.2-gtk-3.0 gir1.2-wnck-3.0 git gnome-icon-theme gvfs-daemons
-          pkg-config psmisc python3 python3-apt python3-dbus
-          python3-distutils-extra python3-gi python3-launchpadlib python3-psutil
-          python3-pyqt5 python3-pytest python3-pytest-cov python3-setuptools
-          ubuntu-dbgsym-keyring ubuntu-keyring valgrind xterm xvfb
+          $base_deps $build_deps $common_deps $gtk_deps $kde_deps $system_deps
       - uses: actions/checkout@v6
       - name: Install
         run: >
