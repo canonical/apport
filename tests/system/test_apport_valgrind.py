@@ -15,7 +15,7 @@ import subprocess
 import tempfile
 import unittest
 
-from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
+from tests.helper import get_gnu_coreutils_cmd, has_internet, skip_if_command_is_missing
 from tests.paths import local_test_environment
 
 with open("/proc/meminfo", encoding="utf-8") as f:
@@ -43,6 +43,7 @@ class TestApportValgrind(unittest.TestCase):
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
+    @unittest.skipIf(not has_internet(), reason="online test")
     @unittest.skipIf(MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory")
     def test_sandbox_cache_options(self) -> None:
         """apport-valgrind creates a user specified sandbox and cache"""

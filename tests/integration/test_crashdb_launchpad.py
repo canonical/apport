@@ -38,6 +38,7 @@ except ImportError as error:
 from apport.crashdb_impl.launchpad import CrashDatabase
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
+from tests.helper import has_internet
 
 _CACHE = {}
 
@@ -58,6 +59,7 @@ def cache(func: Callable) -> Callable:
     return try_to_get_from_cache
 
 
+@unittest.skipIf(not has_internet(), reason="online test")
 @unittest.skipIf(IMPORT_ERROR, f"Python module not available: {IMPORT_ERROR}")
 @unittest.skipUnless(
     "TEST_LAUNCHPAD" in os.environ,
