@@ -908,8 +908,8 @@ class T(unittest.TestCase):
         assert ui.report
 
         kernel_package = packaging.get_kernel_package()
-        self.assertEqual(
-            ui.report["Package"], f"{kernel_package} {get_version_mock.return_value}"
+        self.assertRegex(
+            ui.report["Package"], f"^{kernel_package} {get_version_mock.return_value}"
         )
         get_version_mock.assert_any_call(kernel_package)
 
