@@ -1887,7 +1887,7 @@ class UserInterface:
         """
         assert self.report
         if "DesktopFile" in self.report and os.path.exists(self.report["DesktopFile"]):
-            desktop_file = self.report["DesktopFile"]
+            desktop_file: str | None = self.report["DesktopFile"]
         else:
             try:
                 desktop_file = apport.fileutils.find_package_desktopfile(
