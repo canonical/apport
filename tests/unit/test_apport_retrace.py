@@ -1,6 +1,7 @@
 """Unit tests for apport-retrace."""
 
 import io
+import pathlib
 import tempfile
 import unittest
 import unittest.mock
@@ -50,3 +51,75 @@ def test_malformed_kernel_crash_report(get_crashdb_mock: MagicMock) -> None:
         stderr.getvalue() == "ERROR: report file does not contain the required fields\n"
     )
     get_crashdb_mock.assert_called_once_with(None)
+
+
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
+def test_gen_source_stacktrace_ignores_frame_info_noise(
+    get_source_tree_mock: MagicMock,
+) -> None:
+    """Test that gen_source_stacktrace() ignores warnings and "No locals."
+    lines in the stacktrace output from gdb."""
+    with tempfile.TemporaryDirectory() as srcdir:
+        posix_file = pathlib.Path(srcdir) / "gthread-posix.c"
+        thread_file = pathlib.Path(srcdir) / "gthread.c"
+
+        posix_file.write_text(
+            "".join(
+                (
+                    f"line {line}\n"
+                    if line != 822
+                    else "pthread_setname_np (pthread_self (), name_); "
+                    + "/* on Linux and Solaris */\n"
+                )
+                for line in range(1, 831)
+            ),
+            encoding="utf-8",
+        )
+        thread_file.write_text(
+            "".join(
+                (
+                    f"line {line}\n"
+                    if line != 889
+                    else "g_system_thread_set_name (thread->name);\n"
+                )
+                for line in range(1, 896)
+            ),
+            encoding="utf-8",
+        )
+        get_source_tree_mock.return_value = srcdir
+
+        report = apport_retrace.Report()
+        report["SourcePackage"] = "glib2.0"
+        report["Package"] = "glib2.0 2.78.0"
+        report["Stacktrace"] = (
+            "#2  0x00007ffff7eebd45 in g_system_thread_set_name ("
+            'name=0x5555556e2d80 "unref-target2") at '
+            "../../glib/glib/gthread-posix.c:822\n"
+            "822\tpthread_setname_np (pthread_self (), name_); /* on Linux "
+            "and Solaris */\n"
+            '        name_ = "unref-target2\\000\\233", <incomplete '
+            "sequence \\\315>\n"
+            "#3  g_thread_proxy (data=0x5555556e2d60) at "
+            "../../glib/glib/gthread.c:889\n"
+            "889\tg_system_thread_set_name (thread->name);\n"
+            "warning: 889\t../../glib/glib/gthread.c: No such file or "
+            "directory\n"
+            "No locals.\n"
+        )
+
+        apport_retrace.gen_source_stacktrace(report, sandbox=None)
+
+        stacktrace_source = report["StacktraceSource"]
+        assert (
+            "#2  0x00007ffff7eebd45 in g_system_thread_set_name "
+            + '(name=0x5555556e2d80 "unref-target2")'
+            " at ../../glib/glib/gthread-posix.c:822\n"
+        ) in stacktrace_source
+        assert (
+            "#3  g_thread_proxy (data=0x5555556e2d60) at "
+            + "../../glib/glib/gthread.c:889\n"
+        ) in stacktrace_source
+        assert "822: pthread_setname_np (pthread_self (), name_);" in stacktrace_source
+        assert "889: g_system_thread_set_name (thread->name);" in stacktrace_source
+        assert "warning:" not in stacktrace_source
+        assert "No locals." not in stacktrace_source
