@@ -1009,8 +1009,10 @@ class Report(problem_report.ProblemReport):
         ExecutablePath. This adds the following fields:
         - Registers: Output of gdb's 'info registers' command
         - Disassembly: Output of gdb's 'x/16i $pc' command
-        - Stacktrace: Output of gdb's 'bt full' command
-        - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
+        - Stacktrace: Output of gdb's 'bt -full -frame-info source-and-location'
+          command
+        - ThreadStacktrace: Output of gdb's
+          'thread apply all bt -full -frame-info source-and-location' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
           inclusion into bug reports and easier processing
         - AssertionMessage: Value of __abort_msg or __glib_assert_msg
@@ -1031,8 +1033,9 @@ class Report(problem_report.ProblemReport):
         gdb_reports = {
             "Registers": "info registers",
             "Disassembly": "x/16i $pc",
-            "Stacktrace": "bt full",
-            "ThreadStacktrace": "thread apply all bt full",
+            "Stacktrace": "bt -full -frame-info source-and-location",
+            "ThreadStacktrace": "thread apply all bt -full "
+            + "-frame-info source-and-location",
             "AssertionMessage": "print __abort_msg->msg",
             "GLibAssertionMessage": "print (char*) __glib_assert_msg",
         }
