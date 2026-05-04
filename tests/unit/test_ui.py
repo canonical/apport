@@ -8,6 +8,7 @@ import unittest.mock
 from gettext import gettext as _
 from unittest.mock import MagicMock
 
+import apport.report
 import apport.ui
 
 
@@ -49,6 +50,34 @@ class TestUI(unittest.TestCase):
     def tearDown(self) -> None:
         os.environ.clear()
         os.environ.update(self.orig_environ)
+
+    def test_can_restart_without_report(self) -> None:
+        """Do not allow restarting without a loaded report."""
+        self.ui.offer_restart = True
+
+        self.assertFalse(self.ui.can_restart())
+
+    def test_can_restart_requires_restart_offer(self) -> None:
+        """Do not allow restarting if the UI was not asked to offer it."""
+        self.ui.report = apport.report.Report()
+        self.ui.report["ProcCmdline"] = "example"
+
+        self.assertFalse(self.ui.can_restart())
+
+    def test_can_restart_requires_proc_cmdline(self) -> None:
+        """Do not allow restarting when ProcCmdline is missing."""
+        self.ui.offer_restart = True
+        self.ui.report = apport.report.Report()
+
+        self.assertFalse(self.ui.can_restart())
+
+    def test_can_restart_with_proc_cmdline_and_restart_offer(self) -> None:
+        """Allow restarting when the UI offers it and ProcCmdline is present."""
+        self.ui.offer_restart = True
+        self.ui.report = apport.report.Report()
+        self.ui.report["ProcCmdline"] = "example"
+
+        self.assertTrue(self.ui.can_restart())
 
     @unittest.mock.patch("subprocess.run")
     @unittest.mock.patch("webbrowser.open")
