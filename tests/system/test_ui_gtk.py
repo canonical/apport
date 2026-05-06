@@ -403,6 +403,46 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(self.app.w("subtitle_label").get_property("visible"))
         self.assertFalse(self.app.w("ignore_future_problems").get_property("visible"))
 
+    def test_hang_layout_without_proc_cmdline(self) -> None:
+        """Hide the relaunch checkbox for hangs when ProcCmdline is missing.
+
+        Without a known command line we cannot restart the application, so the
+        UI must not offer "Relaunch this application" and must not request a
+        restart from ``UserInterface.restart()`` (which would fail its
+        ``"ProcCmdline" in self.report`` assertion). See LP: #956173 for the
+        equivalent fix on the regular crash branch.
+
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has stopped responding.       |
+        |            Send problem report to the developers?               |
+        |            You can wait to see if it wakes up, or close or      |
+        |            relaunch it.                                         |
+        |                                                                 |
+        |            [ ] Remember this in future                          |
+        |                                                                 |
+        | [ Show Details ]                      [ Don't send ]   [ Send ] |
+        +-----------------------------------------------------------------+
+        """
+        # pretend we got called through run_crashes() which sets offer_restart
+        self.app.offer_restart = True
+        self.app.report["ProblemType"] = "Hang"
+        # deliberately no ProcCmdline (e.g. stripped by a package hook)
+        self.app.report["Package"] = "apport 1.2.3~0ubuntu1"
+        with tempfile.NamedTemporaryFile(mode="w+") as fp:
+            fp.write(textwrap.dedent("""\
+                [Desktop Entry]
+                Version=1.0
+                Name=Apport
+                Type=Application
+                """))
+            fp.flush()
+            self.app.report["DesktopFile"] = fp.name
+            GLib.idle_add(Gtk.main_quit)
+            response = self.app.ui_present_report_details(True)
+        self.assertFalse(self.app.w("relaunch_app").get_property("visible"))
+        self.assertFalse(self.app.w("relaunch_app").get_active())
+        self.assertFalse(response.restart)
+
     def test_system_crash_layout(self) -> None:
         """Display crash dialog for a system application crash.
 

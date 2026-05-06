@@ -257,11 +257,7 @@ class ReportDialog(Dialog):  # pylint: disable=too-many-instance-attributes
 
                 pid = apport.ui.get_pid(report)
                 still_running = pid and apport.ui.still_running(pid)
-                if (
-                    "ProcCmdline" not in report
-                    or still_running
-                    or not self.ui.offer_restart
-                ):
+                if not self.ui.can_restart() or still_running:
                     self.closed_button.hide()
                     self.continue_button.setText(_("Continue"))
                 else:
@@ -437,7 +433,7 @@ class MainUserInterface(apport.ui.UserInterface):
             return return_value
 
         text = self.dialog.continue_button.text().replace("&", "")
-        if response == 1 and text == _("Relaunch") and self.offer_restart:
+        if response == 1 and text == _("Relaunch") and self.can_restart():
             return_value.restart = True
         if self.dialog.send_error_report.isChecked():
             return_value.report = True

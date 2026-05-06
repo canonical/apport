@@ -229,8 +229,9 @@ class GTKUserInterface(apport.ui.UserInterface):
         if report_type == "Hang" and self.offer_restart:
             self.w("ignore_future_problems").set_active(False)
             self.w("ignore_future_problems").hide()
-            self.w("relaunch_app").set_active(True)
-            self.w("relaunch_app").show()
+            if self.can_restart():
+                self.w("relaunch_app").set_active(True)
+                self.w("relaunch_app").show()
             self.w("subtitle_label").show()
             self.w("subtitle_label").set_label(
                 "You can wait to see if it wakes up, or close or relaunch it."
@@ -285,11 +286,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
                 pid = apport.ui.get_pid(self.report)
                 still_running = pid and apport.ui.still_running(pid)
-                if (
-                    "ProcCmdline" in self.report
-                    and not still_running
-                    and self.offer_restart
-                ):
+                if self.can_restart() and not still_running:
                     self.w("relaunch_app").set_active(True)
                     self.w("relaunch_app").show()
             else:
@@ -388,7 +385,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if (
                 self.w("relaunch_app").get_active()
                 and self.desktop_info
-                and self.offer_restart
+                and self.can_restart()
             ):
                 return_value.restart = True
 

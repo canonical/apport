@@ -1270,6 +1270,10 @@ class UserInterface:
 
         return self.ui_has_terminal()
 
+    def can_restart(self) -> bool:
+        """Return whether the crashed application can be restarted."""
+        return bool(self.offer_restart and self.report and "ProcCmdline" in self.report)
+
     def restart(self) -> None:
         """Reopen the crashed application."""
         assert self.report and "ProcCmdline" in self.report
