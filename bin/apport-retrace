@@ -16,10 +16,10 @@
 helpful to get a trace with debug symbols."""
 
 import argparse
+import contextlib
 import gettext
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -27,6 +27,7 @@ import termios
 import tty
 import zlib
 from argparse import Namespace
+from collections.abc import Iterator
 from gettext import gettext as _
 
 import apport.logging
@@ -274,7 +275,31 @@ def get_code(srcdir, filename, line, context=5):
     return result
 
 
-def gen_source_stacktrace(report, sandbox):
+@contextlib.contextmanager
+def _source_directory(
+    report: dict[str, str], sandbox: str | None
+) -> Iterator[str | None]:
+    """Provide the source tree of the report and clean it up afterwards.
+
+    ``None`` is provided if the sources cannot be fetched.
+    """
+    if "SourcePackage" not in report:
+        yield None
+        return
+
+    with tempfile.TemporaryDirectory() as workdir:
+        try:
+            version = report["Package"].split()[1]
+        except (IndexError, KeyError):
+            version = None
+        yield packaging.get_source_tree(
+            report["SourcePackage"], workdir, version, sandbox=sandbox
+        )
+
+
+def gen_source_stacktrace(
+    report: dict[str, str], sandbox: str | None, srcdir: str | None = None
+) -> None:
     """Generate StacktraceSource.
 
     This is a version of Stacktrace with the surrounding code lines (where
@@ -283,16 +308,13 @@ def gen_source_stacktrace(report, sandbox):
     if "Stacktrace" not in report or "SourcePackage" not in report:
         return
 
-    workdir = tempfile.mkdtemp()
-    try:
-        try:
-            version = report["Package"].split()[1]
-        except (IndexError, KeyError):
-            version = None
-        srcdir = packaging.get_source_tree(
-            report["SourcePackage"], workdir, version, sandbox=sandbox
-        )
-        if not srcdir:
+    source_context = (
+        contextlib.nullcontext(srcdir)
+        if srcdir
+        else _source_directory(report, sandbox)
+    )
+    with source_context as source_dir:
+        if not source_dir:
             return
 
         src_frame = re.compile(r"^#\d+\s.* at (.*):(\d+)$")
@@ -301,7 +323,9 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report["Stacktrace"].splitlines():
             m = src_frame.match(frame)
             if m:
-                code = get_code(srcdir, os.path.basename(m.group(1)), int(m.group(2)))
+                code = get_code(
+                    source_dir, os.path.basename(m.group(1)), int(m.group(2))
+                )
                 result += f"{frame}\n{code}"
             else:
                 m = other_frame.search(frame)
@@ -309,8 +333,6 @@ def gen_source_stacktrace(report, sandbox):
                     result += f"{frame}\n"
 
         report["StacktraceSource"] = result
-    finally:
-        shutil.rmtree(workdir)
 
 
 def print_traces(report):
