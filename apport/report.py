@@ -1521,6 +1521,24 @@ class Report(problem_report.ProblemReport):
 
         return unknown_fn.count(True) <= len(unknown_fn) / 2.0
 
+    def related_package_versions(self) -> dict[str, str | None]:
+        """Return binary a map of packages with their version from
+        RelatedPackageVersions.
+        """
+        related = self.get("RelatedPackageVersions", "")
+        packages: dict[str, str | None] = {}
+        for line in related.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            tokens = line.split(" ", 1)
+            if len(tokens) == 1:
+                packages[tokens[0]] = None
+                continue
+            version = tokens[1].lstrip()
+            packages[tokens[0]] = None if not version or version == "N/A" else version
+        return packages
+
     def stacktrace_top_function(self) -> str | None:
         """Return topmost function in StacktraceTop."""
         for line in self.get("StacktraceTop", "").splitlines():

@@ -390,6 +390,36 @@ class T(unittest.TestCase):
         )
         self.assertFalse(r.has_useful_stacktrace())
 
+    def test_related_package_versions(self) -> None:
+        """related_package_versions()."""
+        report = apport.report.Report()
+        self.assertEqual(report.related_package_versions(), {})
+
+        report["RelatedPackageVersions"] = "mutter 46.2-1ubuntu1"
+        self.assertEqual(report.related_package_versions(), {"mutter": "46.2-1ubuntu1"})
+
+        report["RelatedPackageVersions"] = "mutter N/A"
+        self.assertEqual(report.related_package_versions(), {"mutter": None})
+
+        report["RelatedPackageVersions"] = "mutter"
+        self.assertEqual(report.related_package_versions(), {"mutter": None})
+
+        report["RelatedPackageVersions"] = textwrap.dedent("""\
+            mutter                   1:46.2-1ubuntu1
+            mutter-common            1:46.2-1ubuntu1
+            mutter-common-bin        1:46.2-1ubuntu1
+            libglib2.0-0t64          N/A
+            """)
+        self.assertEqual(
+            report.related_package_versions(),
+            {
+                "mutter": "1:46.2-1ubuntu1",
+                "mutter-common": "1:46.2-1ubuntu1",
+                "mutter-common-bin": "1:46.2-1ubuntu1",
+                "libglib2.0-0t64": None,
+            },
+        )
+
     def test_standard_title(self) -> None:
         # TODO: Split into separate test cases
         # pylint: disable=too-many-statements
