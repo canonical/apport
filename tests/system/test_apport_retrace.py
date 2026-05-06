@@ -273,6 +273,39 @@ def test_retrace_system_sandbox_with_related_libc6(
 
 @pytest.mark.skipif(not has_internet(), reason="online test")
 @pytest.mark.skipif(
+    impl.get_system_architecture() == "s390x",
+    reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
+)
+def test_retrace_system_sandbox_with_extra_libc6(
+    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+) -> None:
+    """Retrace divide-by-zero with libc6 as extra package."""
+    retraced_report_filename = workdir / "retraced-extra-libc6.crash"
+    env = os.environ | local_test_environment()
+    cmd = [
+        "apport-retrace",
+        "-v",
+        "-o",
+        str(retraced_report_filename),
+        "--sandbox",
+        "system",
+        "--extra-package",
+        "libc6",
+        "--extra-package",
+        "chaos-marmosets",
+        "--cache",
+        str(module_cachedir),
+        divide_by_zero_crash,
+    ]
+    subprocess.run(cmd, check=True, env=env)
+
+    retraced_report = _read_and_print_retraced_report(retraced_report_filename)
+    _assert_is_retraced(retraced_report)
+    _assert_divide_by_zero_retrace(retraced_report)
+
+
+@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
     impl.get_system_architecture() == "amd64",
     reason="GDB sandbox is only available on amd64",
 )

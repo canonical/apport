@@ -244,6 +244,26 @@ def test_report_relevant_sources_falls_back_to_package_source(
     assert source_versions == {"gnomes-shell": "50.1-1ubuntu1~26.04.1"}
 
 
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source")
+def test_report_relevant_sources_include_extra_packages(
+    get_source_mock: MagicMock,
+) -> None:
+    """Test extra packages are considered as source candidates."""
+    report = apport_retrace.Report()
+    report["Package"] = "coreutils 9.4-1"
+
+    get_source_mock.side_effect = lambda binary: {
+        "coreutils": "coreutils",
+        "libc6-dbgsym": "glibc",
+    }[binary]
+
+    source_versions = apport_retrace.get_report_relevant_source_packages(
+        report, ["libc6-dbgsym"]
+    )
+
+    assert source_versions == {"coreutils": "9.4-1", "glibc": None}
+
+
 @unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
 @unittest.mock.patch.object(apport_retrace.packaging, "get_source")
 def test_get_source_dirs_uses_related_package_versions(
@@ -303,6 +323,40 @@ def test_get_source_dirs_uses_related_package_versions(
             workdir.cleanup()
 
 
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source")
+def test_get_source_dirs_with_extra_packages(
+    get_source_mock: MagicMock, get_source_tree_mock: MagicMock
+) -> None:
+    """Test fetching source trees includes extra package sources."""
+    report = apport_retrace.Report()
+    report["Package"] = "coreutils 9.4-1"
+    get_source_mock.side_effect = lambda binary: {
+        "coreutils": "coreutils",
+        "libc6-dbgsym": "glibc",
+    }[binary]
+    get_source_tree_mock.side_effect = (
+        lambda srcpackage, output_dir, _version, sandbox=None: str(
+            pathlib.Path(output_dir) / srcpackage
+        )
+    )
+
+    source_dirs, workdir = apport_retrace.get_source_dirs(
+        report, sandbox=None, extra_packages=["libc6-dbgsym"]
+    )
+    try:
+        assert len(source_dirs) == 2
+        get_source_tree_mock.assert_any_call(
+            "coreutils", unittest.mock.ANY, "9.4-1", sandbox=None
+        )
+        get_source_tree_mock.assert_any_call(
+            "glibc", unittest.mock.ANY, None, sandbox=None
+        )
+    finally:
+        if workdir:
+            workdir.cleanup()
+
+
 @unittest.mock.patch.object(apport_retrace, "parse_args")
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
 @unittest.mock.patch.object(apport_retrace, "load_report")
@@ -328,7 +382,7 @@ def test_main_fetches_sources_before_gdb(
         gdb_sandbox=False,
         sandbox=None,
         sandbox_dir=None,
-        extra_package=[],
+        extra_package=["libc6-dbgsym"],
         cache=None,
         verbose=False,
         timestamps=False,
@@ -360,7 +414,7 @@ def test_main_fetches_sources_before_gdb(
 
     assert apport_retrace.main([]) == 0
 
-    get_source_dirs_mock.assert_called_once_with(report, None)
+    get_source_dirs_mock.assert_called_once_with(report, None, ["libc6-dbgsym"])
     report.add_gdb_info.assert_called_once_with(None, None, ["/tmp/src-tree"])
     gen_source_stacktrace_mock.assert_called_once_with(report, None, ["/tmp/src-tree"])
     report.add_kernel_crash_info.assert_called_once_with()
@@ -424,7 +478,7 @@ def test_main_with_unavailable_source_tree(
 
     assert apport_retrace.main([]) == 0
 
-    get_source_dirs_mock.assert_called_once_with(report, None)
+    get_source_dirs_mock.assert_called_once_with(report, None, [])
     report.add_gdb_info.assert_called_once_with(None, None, [])
     gen_source_stacktrace_mock.assert_called_once_with(report, None, [])
     report.add_kernel_crash_info.assert_called_once_with()
