@@ -1,5 +1,6 @@
 """Unit tests for apport-retrace."""
 
+import argparse
 import io
 import os
 import pathlib
@@ -16,7 +17,10 @@ apport_retrace = import_module_from_file(get_bin_directory() / "apport-retrace")
 
 
 def add_mocked_gdb_info(
-    self: Report, rootdir: str | None = None, gdb_sandbox: str | None = None
+    self: Report,
+    rootdir: str | None = None,
+    gdb_sandbox: str | None = None,
+    gdb_source_dirs: list[str] | None = None,
 ) -> None:
     # keep API unchanged, pylint: disable=unused-argument
     """Mock Report.add_gdb_info() for tests."""
@@ -25,13 +29,16 @@ def add_mocked_gdb_info(
     self["ThreadStacktrace"] = "mocked thread stacktrace"
 
 
-def mocked_gen_source_stacktrace(report: Report, sandbox: str | None) -> None:
+def mocked_gen_source_stacktrace(
+    report: Report, sandbox: str | None, srcdir: str | None = None
+) -> None:
     # keep API unchanged, pylint: disable=unused-argument
     """Mock Report.add_gdb_info() for tests."""
     assert "SourcePackage" in report
     report["StacktraceSource"] = "mocked stacktrace source"
 
 
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
 @unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
 @unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
@@ -39,6 +46,7 @@ def test_main(
     get_crashdb_mock: MagicMock,
     gen_source_stacktrace_mock: MagicMock,
     add_gdb_info_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
 ) -> None:
     """Test main() from apport-retrace on a crash file."""
     add_gdb_info_mock.side_effect = add_mocked_gdb_info
@@ -68,10 +76,12 @@ def test_main(
         " c29tZSBiaW5hcnkgZGF0YQ==\n"
     )
     with (
+        tempfile.TemporaryDirectory() as srcdir,
         tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
         unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as stdout,
         unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
     ):
+        get_source_tree_mock.return_value = srcdir
         crash_file.write(report)
         crash_file.flush()
         return_code = apport_retrace.main([crash_file.name])
@@ -83,11 +93,13 @@ def test_main(
     assert return_code == 0
     assert stdout.getvalue() == ""
     assert report_afterwards == expected_report
-    assert add_gdb_info_mock.call_count == 1
     get_crashdb_mock.assert_called_once_with(None)
-    gen_source_stacktrace_mock.assert_called_once()
+    get_source_tree_mock.assert_called_once()
+    add_gdb_info_mock.assert_called_once_with(unittest.mock.ANY, None, None, [srcdir])
+    gen_source_stacktrace_mock.assert_called_once_with(unittest.mock.ANY, None, srcdir)
 
 
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
 @unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
 @unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
@@ -95,6 +107,7 @@ def test_main_stdout(
     get_crashdb_mock: MagicMock,
     gen_source_stacktrace_mock: MagicMock,
     add_gdb_info_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
 ) -> None:
     """Test main() from apport-retrace to report on stdout."""
     add_gdb_info_mock.side_effect = add_mocked_gdb_info
@@ -110,10 +123,12 @@ def test_main_stdout(
         " c29tZSBiaW5hcnkgZGF0YQ==\n"
     )
     with (
+        tempfile.TemporaryDirectory() as srcdir,
         tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
         unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as stdout,
         unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
     ):
+        get_source_tree_mock.return_value = srcdir
         crash_file.write(report)
         crash_file.flush()
         return_code = apport_retrace.main(["--stdout", crash_file.name])
@@ -132,12 +147,14 @@ def test_main_stdout(
         "mocked stacktrace source\n"
     )
     assert stdout.getvalue() == expected_output
-    assert add_gdb_info_mock.call_count == 1
-    assert report_afterwards == report
     get_crashdb_mock.assert_called_once_with(None)
-    gen_source_stacktrace_mock.assert_called_once()
+    get_source_tree_mock.assert_called_once()
+    add_gdb_info_mock.assert_called_once_with(unittest.mock.ANY, None, None, [srcdir])
+    gen_source_stacktrace_mock.assert_called_once_with(unittest.mock.ANY, None, srcdir)
+    assert report_afterwards == report
 
 
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
 @unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
 @unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
@@ -145,6 +162,7 @@ def test_main_ouput_to_stdout(
     get_crashdb_mock: MagicMock,
     gen_source_stacktrace_mock: MagicMock,
     add_gdb_info_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
 ) -> None:
     """Test main() from apport-retrace to write retraced report on stdout."""
     add_gdb_info_mock.side_effect = add_mocked_gdb_info
@@ -176,10 +194,12 @@ def test_main_ouput_to_stdout(
     stdout_bytes = io.BytesIO()
     stdout_wrapper = io.TextIOWrapper(stdout_bytes, encoding="utf-8")
     with (
+        tempfile.TemporaryDirectory() as srcdir,
         tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
         unittest.mock.patch("sys.stdout", new=stdout_wrapper),
         unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
     ):
+        get_source_tree_mock.return_value = srcdir
         crash_file.write(report)
         crash_file.flush()
         return_code = apport_retrace.main(["--output", "-", crash_file.name])
@@ -191,9 +211,10 @@ def test_main_ouput_to_stdout(
     assert return_code == 0
     assert stdout_bytes.getvalue().decode("utf-8") == expected_report
     assert report_afterwards == report
-    assert add_gdb_info_mock.call_count == 1
     get_crashdb_mock.assert_called_once_with(None)
-    gen_source_stacktrace_mock.assert_called_once()
+    get_source_tree_mock.assert_called_once()
+    add_gdb_info_mock.assert_called_once_with(unittest.mock.ANY, None, None, [srcdir])
+    gen_source_stacktrace_mock.assert_called_once_with(unittest.mock.ANY, None, srcdir)
 
 
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
@@ -431,3 +452,38 @@ def test_gen_source_stacktrace_without_available_source_tree(
 
     assert "StacktraceSource" not in report
     get_source_tree_mock.assert_called_once()
+
+
+@unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
+def test_retrace_report_without_stacktrace_source(
+    get_source_tree_mock: MagicMock, add_gdb_info_mock: MagicMock
+) -> None:
+    """Test retrace_report() without fetching sources."""
+    report = Report()
+    report["ProblemType"] = "Crash"
+    report["ExecutablePath"] = "/bin/true"
+    report["Package"] = "coreutils 1.0"
+    report["DistroRelease"] = "Ubuntu 26.04"
+    report["Architecture"] = "amd64"
+    report["CoreDump"] = b"core"
+    options = argparse.Namespace(
+        gdb_sandbox=False,
+        sandbox=None,
+        sandbox_dir=None,
+        cache=None,
+        extra_package=[],
+        verbose=False,
+        timestamps=False,
+        dynamic_origins=False,
+        gdb=False,
+        stacktrace_source=False,
+        auth=None,
+        confirm=False,
+    )
+
+    result = apport_retrace.retrace_report(report, options, None, MagicMock())
+    assert result == (0, None)
+
+    get_source_tree_mock.assert_not_called()
+    add_gdb_info_mock.assert_called_once_with(report, None, None, None)
