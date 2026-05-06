@@ -940,6 +940,32 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         with self.assertRaises(FileNotFoundError):
             r.add_gdb_info()
 
+    @unittest.mock.patch(
+        "apport.report._get_gdb_path", MagicMock(return_value="/usr/bin/gdb")
+    )
+    def test_gdb_command_with_source_dir(self) -> None:
+        report = apport.report.Report()
+        report["ExecutablePath"] = "/bin/true"
+
+        command, _ = report.gdb_command(None, None, ["/tmp/source-tree"])
+        self.assertIn("--directory /tmp/source-tree", " ".join(command))
+
+        command, _ = report.gdb_command(
+            None, None, ["/tmp/source-tree", "/tmp/another-source-tree"]
+        )
+        self.assertIn("--directory /tmp/source-tree", " ".join(command))
+        self.assertIn("--directory /tmp/another-source-tree", " ".join(command))
+
+    @unittest.mock.patch(
+        "apport.report._get_gdb_path", MagicMock(return_value="/usr/bin/gdb")
+    )
+    def test_gdb_command_without_source_dir(self) -> None:
+        report = apport.report.Report()
+        report["ExecutablePath"] = "/bin/true"
+
+        command, _ = report.gdb_command(None, None, None)
+        self.assertNotIn("--directory", command)
+
     def test_crash_signature(self) -> None:
         """crash_signature()."""
         r = apport.report.Report()
