@@ -999,7 +999,10 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def add_gdb_info(
-        self, rootdir: str | None = None, gdb_sandbox: str | None = None
+        self,
+        rootdir: str | None = None,
+        gdb_sandbox: str | None = None,
+        gdb_source_dirs: list[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-complex,too-many-branches,too-many-locals
@@ -1023,6 +1026,9 @@ class Report(problem_report.ProblemReport):
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
 
+        The optional gdb_source_dirs can specify source tree roots
+        that gdb should use for source lookups.
+
         Raises a OSError if the core dump is invalid/truncated, or OSError if
         calling gdb fails, or FileNotFoundError if gdb or the crashing
         executable cannot be found.
@@ -1039,7 +1045,7 @@ class Report(problem_report.ProblemReport):
             "AssertionMessage": "print __abort_msg->msg",
             "GLibAssertionMessage": "print (char*) __glib_assert_msg",
         }
-        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
+        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox, gdb_source_dirs)
         environ["HOME"] = "/nonexistent"
         gdb_cmd += [
             "--batch",
@@ -1984,7 +1990,10 @@ class Report(problem_report.ProblemReport):
             return None
 
     def gdb_command(
-        self, sandbox: str | None, gdb_sandbox: str | None = None
+        self,
+        sandbox: str | None,
+        gdb_sandbox: str | None = None,
+        source_dirs: list[str] | None = None,
     ) -> tuple[list[str], dict[str, str]]:
         """Build gdb command for this report.
 
@@ -2050,6 +2059,8 @@ class Report(problem_report.ProblemReport):
             executable = sandbox + executable
 
         command += ["--ex", f'file "{executable}"']
+        for source in source_dirs or []:
+            command += ["--directory", source]
 
         if "CoreDump" in self:
             core = self._provide_uncompressed_coredump_file()
