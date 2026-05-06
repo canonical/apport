@@ -123,3 +123,46 @@ def test_gen_source_stacktrace_ignores_frame_info_noise(
         assert "889: g_system_thread_set_name (thread->name);" in stacktrace_source
         assert "warning:" not in stacktrace_source
         assert "No locals." not in stacktrace_source
+
+
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
+def test_gen_source_stacktrace_with_preloaded_source_tree(
+    get_source_tree_mock: MagicMock,
+) -> None:
+    """Test reusing a provided source tree without re-fetching sources."""
+    with tempfile.TemporaryDirectory() as srcdir:
+        pathlib.Path(srcdir, "example.c").write_text(
+            "".join(
+                "crash_happens_here();\n" if line == 10 else f"line {line}\n"
+                for line in range(1, 20)
+            ),
+            encoding="utf-8",
+        )
+        report = apport_retrace.Report()
+        report["SourcePackage"] = "example"
+        report["Package"] = "example 1.0"
+        report["Stacktrace"] = "#0  0x1 in fn () at /build/example.c:10\n"
+
+        apport_retrace.gen_source_stacktrace(report, sandbox=None, srcdir=srcdir)
+
+        assert report["StacktraceSource"].startswith(
+            "#0  0x1 in fn () at /build/example.c:10\n"
+        )
+        assert "10: crash_happens_here();" in report["StacktraceSource"]
+        get_source_tree_mock.assert_not_called()
+
+
+@unittest.mock.patch.object(apport_retrace.packaging, "get_source_tree")
+def test_gen_source_stacktrace_without_available_source_tree(
+    get_source_tree_mock: MagicMock,
+) -> None:
+    """Test skipping StacktraceSource when source fetching returns no tree."""
+    get_source_tree_mock.return_value = None
+    report = apport_retrace.Report()
+    report["SourcePackage"] = "example"
+    report["Package"] = "example 1.0"
+    report["Stacktrace"] = "#0  0x1 in fn () at /build/example.c:10\n"
+
+    apport_retrace.gen_source_stacktrace(report, sandbox=None)
+
+    assert "StacktraceSource" not in report
