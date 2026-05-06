@@ -1,5 +1,6 @@
 """Unit tests for apport-retrace."""
 
+import argparse
 import io
 import pathlib
 import tempfile
@@ -166,3 +167,192 @@ def test_gen_source_stacktrace_without_available_source_tree(
     apport_retrace.gen_source_stacktrace(report, sandbox=None)
 
     assert "StacktraceSource" not in report
+
+
+@unittest.mock.patch.object(apport_retrace, "parse_args")
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+@unittest.mock.patch.object(apport_retrace, "load_report")
+@unittest.mock.patch.object(apport_retrace, "_get_source_directory")
+@unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
+@unittest.mock.patch.object(apport_retrace, "print_traces")
+def test_main_fetches_sources_before_gdb(
+    print_traces_mock: MagicMock,
+    gen_source_stacktrace_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
+    load_report_mock: MagicMock,
+    get_crashdb_mock: MagicMock,
+    parse_args_mock: MagicMock,
+) -> None:
+    """Test prefetching sources before gdb and reusing them for source output."""
+    parse_args_mock.return_value = argparse.Namespace(
+        report="some_binary.crash",
+        auth=None,
+        core_file=None,
+        executable=None,
+        procmaps=None,
+        rebuild_package_info=False,
+        gdb_sandbox=False,
+        sandbox=None,
+        sandbox_dir=None,
+        extra_package=[],
+        cache=None,
+        verbose=False,
+        timestamps=False,
+        dynamic_origins=False,
+        gdb=False,
+        # source stacktrace, so source tree should be pre-fetched.
+        stacktrace_source=True,
+        confirm=False,
+        stdout=True,
+        remove_core=False,
+        output=None,
+        duplicate_db=None,
+    )
+    get_crashdb_mock.return_value = MagicMock()
+
+    report = apport_retrace.Report()
+    report["ProblemType"] = "Crash"
+    report["CoreDump"] = ("/tmp/core",)
+    report["ExecutablePath"] = "/bin/true"
+    report["Package"] = "coreutils 1.0"
+    report["DistroRelease"] = "Ubuntu 26.04"
+    report["Architecture"] = "amd64"
+    report.add_gdb_info = MagicMock()
+    report.add_kernel_crash_info = MagicMock()
+    load_report_mock.return_value = (report, None)
+
+    source_workdir = MagicMock()
+    get_source_tree_mock.return_value = ("/tmp/src-tree", source_workdir)
+
+    assert apport_retrace.main([]) == 0
+
+    get_source_tree_mock.assert_called_once_with(report, None)
+    report.add_gdb_info.assert_called_once_with(None, None, ["/tmp/src-tree"])
+    gen_source_stacktrace_mock.assert_called_once_with(report, None, "/tmp/src-tree")
+    report.add_kernel_crash_info.assert_called_once_with()
+    source_workdir.cleanup.assert_called_once_with()
+    print_traces_mock.assert_called_once_with(report)
+
+
+@unittest.mock.patch.object(apport_retrace, "parse_args")
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+@unittest.mock.patch.object(apport_retrace, "load_report")
+@unittest.mock.patch.object(apport_retrace, "_get_source_directory")
+@unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
+@unittest.mock.patch.object(apport_retrace, "print_traces")
+def test_main_with_unavailable_source_tree(
+    print_traces_mock: MagicMock,
+    gen_source_stacktrace_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
+    load_report_mock: MagicMock,
+    get_crashdb_mock: MagicMock,
+    parse_args_mock: MagicMock,
+) -> None:
+    """Test retracing when source prefetch is enabled but unavailable."""
+    parse_args_mock.return_value = argparse.Namespace(
+        report="some_binary.crash",
+        auth=None,
+        core_file=None,
+        executable=None,
+        procmaps=None,
+        rebuild_package_info=False,
+        gdb_sandbox=False,
+        sandbox=None,
+        sandbox_dir=None,
+        extra_package=[],
+        cache=None,
+        verbose=False,
+        timestamps=False,
+        dynamic_origins=False,
+        gdb=False,
+        stacktrace_source=True,
+        confirm=False,
+        stdout=True,
+        remove_core=False,
+        output=None,
+        duplicate_db=None,
+    )
+    get_crashdb_mock.return_value = MagicMock()
+
+    report = apport_retrace.Report()
+    report["ProblemType"] = "Crash"
+    report["CoreDump"] = ("/tmp/core",)
+    report["ExecutablePath"] = "/bin/true"
+    report["Package"] = "coreutils 1.0"
+    report["DistroRelease"] = "Ubuntu 24.04"
+    report["Architecture"] = "amd64"
+    report.add_gdb_info = MagicMock()
+    report.add_kernel_crash_info = MagicMock()
+    load_report_mock.return_value = (report, None)
+
+    # source retrieval enabled but unavailable
+    get_source_tree_mock.return_value = (None, None)
+
+    assert apport_retrace.main([]) == 0
+
+    get_source_tree_mock.assert_called_once_with(report, None)
+    report.add_gdb_info.assert_called_once_with(None, None, None)
+    gen_source_stacktrace_mock.assert_called_once_with(report, None, None)
+    report.add_kernel_crash_info.assert_called_once_with()
+    print_traces_mock.assert_called_once_with(report)
+
+
+@unittest.mock.patch.object(apport_retrace, "parse_args")
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+@unittest.mock.patch.object(apport_retrace, "load_report")
+@unittest.mock.patch.object(apport_retrace, "_get_source_directory")
+@unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
+@unittest.mock.patch.object(apport_retrace, "print_traces")
+def test_main_without_stacktrace_source_does_not_prefetch_source(
+    print_traces_mock: MagicMock,
+    gen_source_stacktrace_mock: MagicMock,
+    get_source_tree_mock: MagicMock,
+    load_report_mock: MagicMock,
+    get_crashdb_mock: MagicMock,
+    parse_args_mock: MagicMock,
+) -> None:
+    """Test that disabling stacktrace source skips source prefetch entirely."""
+    parse_args_mock.return_value = argparse.Namespace(
+        report="some_binary.crash",
+        auth=None,
+        core_file=None,
+        executable=None,
+        procmaps=None,
+        rebuild_package_info=False,
+        gdb_sandbox=False,
+        sandbox=None,
+        sandbox_dir=None,
+        extra_package=[],
+        cache=None,
+        verbose=False,
+        timestamps=False,
+        dynamic_origins=False,
+        gdb=False,
+        # No source stacktrace, so source tree should not be pre-fetched.
+        stacktrace_source=False,
+        confirm=False,
+        stdout=True,
+        remove_core=False,
+        output=None,
+        duplicate_db=None,
+    )
+    get_crashdb_mock.return_value = MagicMock()
+
+    report = apport_retrace.Report()
+    report["ProblemType"] = "Crash"
+    report["CoreDump"] = ("/tmp/core",)
+    report["ExecutablePath"] = "/bin/true"
+    report["Package"] = "coreutils 1.0"
+    report["DistroRelease"] = "Ubuntu 24.04"
+    report["Architecture"] = "amd64"
+    report.add_gdb_info = MagicMock()
+    report.add_kernel_crash_info = MagicMock()
+    load_report_mock.return_value = (report, None)
+
+    assert apport_retrace.main([]) == 0
+
+    get_source_tree_mock.assert_not_called()
+    report.add_gdb_info.assert_called_once_with(None, None, None)
+    gen_source_stacktrace_mock.assert_not_called()
+    report.add_kernel_crash_info.assert_called_once_with()
+    print_traces_mock.assert_called_once_with(report)
