@@ -361,6 +361,81 @@ def test_get_source_dirs_with_extra_packages(
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
 @unittest.mock.patch.object(apport_retrace, "load_report")
 @unittest.mock.patch.object(apport_retrace, "get_source_dirs")
+@unittest.mock.patch("apport.report._get_gdb_path", return_value="/usr/bin/gdb")
+@unittest.mock.patch.object(apport_retrace.subprocess, "call")
+def test_main_gdb_mode_fetches_sources(
+    subprocess_call_mock: MagicMock,
+    _get_gdb_path_mock: MagicMock,
+    get_source_dirs_mock: MagicMock,
+    load_report_mock: MagicMock,
+    get_crashdb_mock: MagicMock,
+    parse_args_mock: MagicMock,
+) -> None:
+    """Test interactive gdb mode fetches source dirs and cleans up workdir."""
+    parse_args_mock.return_value = argparse.Namespace(
+        report="some_binary.crash",
+        auth=None,
+        core_file=None,
+        executable=None,
+        procmaps=None,
+        rebuild_package_info=False,
+        gdb_sandbox=False,
+        sandbox=None,
+        sandbox_dir=None,
+        extra_package=["libc6-dbgsym"],
+        cache=None,
+        verbose=False,
+        timestamps=False,
+        dynamic_origins=False,
+        gdb=True,
+        stacktrace_source=True,
+        confirm=False,
+        stdout=False,
+        remove_core=False,
+        output=None,
+        duplicate_db=None,
+    )
+    get_crashdb_mock.return_value = MagicMock()
+
+    report = apport_retrace.Report()
+    report["ProblemType"] = "Crash"
+    report["CoreDump"] = ("/tmp/core",)
+    report["ExecutablePath"] = "/bin/true"
+    report["Package"] = "coreutils 1.0"
+    report["DistroRelease"] = "Ubuntu 26.04"
+    report["Architecture"] = "amd64"
+    load_report_mock.return_value = (report, None)
+
+    source_workdir = MagicMock()
+    get_source_dirs_mock.return_value = (
+        ["/tmp/src-tree1", "/tmp/src-tree2"],
+        source_workdir,
+    )
+
+    assert apport_retrace.main([]) == 0
+
+    get_source_dirs_mock.assert_called_once_with(report, None, ["libc6-dbgsym"])
+    subprocess_call_mock.assert_called_once_with(
+        [
+            "/usr/bin/gdb",
+            "--ex",
+            'file "/bin/true"',
+            "--directory",
+            "/tmp/src-tree1",
+            "--directory",
+            "/tmp/src-tree2",
+            "--ex",
+            "core-file /tmp/core",
+        ],
+        env=unittest.mock.ANY,
+    )
+    source_workdir.cleanup.assert_called_once_with()
+
+
+@unittest.mock.patch.object(apport_retrace, "parse_args")
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+@unittest.mock.patch.object(apport_retrace, "load_report")
+@unittest.mock.patch.object(apport_retrace, "get_source_dirs")
 @unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
 @unittest.mock.patch.object(apport_retrace, "print_traces")
 def test_main_fetches_sources_before_gdb(

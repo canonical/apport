@@ -726,9 +726,23 @@ def main(argv):
                     )
                     return 3
 
+    apt_root = None
+    source_dirs = None
+    source_workdir = None
+
+    if options.sandbox == "system":
+        apt_root = os.path.join(cache, "system", "apt")
+    elif options.sandbox:
+        apt_root = os.path.join(cache, report["DistroRelease"], "apt")
+
+    if options.stacktrace_source:
+        source_dirs, source_workdir = get_source_dirs(
+            report, apt_root, options.extra_package
+        )
+
     # interactive gdb session
     if options.gdb:
-        gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
+        gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox, source_dirs)
         if options.verbose:
             # build a shell-style command
             cmd = ""
@@ -741,21 +755,12 @@ def main(argv):
                     cmd += w
             apport.logging.log(f"Calling gdb command: {cmd}", options.timestamps)
         apport.logging.memdbg("before calling gdb")
-        subprocess.call(gdb_cmd, env=os.environ | environ)
+        try:
+            subprocess.call(gdb_cmd, env=os.environ | environ)
+        finally:
+            if source_workdir:
+                source_workdir.cleanup()
     else:
-        if options.sandbox == "system":
-            apt_root = os.path.join(cache, "system", "apt")
-        elif options.sandbox:
-            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
-        else:
-            apt_root = None
-        source_dirs = None
-        source_workdir = None
-        if options.stacktrace_source:
-            source_dirs, source_workdir = get_source_dirs(
-                report, apt_root, options.extra_package
-            )
-
         # regenerate gdb info
         apport.logging.memdbg("before collecting gdb info")
         try:
