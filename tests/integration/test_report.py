@@ -638,9 +638,8 @@ class T(unittest.TestCase):
         self.assertIn("UnreportableReason", pr)
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/twistd")
 
-    def _generate_sigsegv_report(
+    def _build_sigsegv_report(
         self,
-        file: IO[bytes] | None = None,
         signal: str = "11",
         code: str = """
 int f(int x) {
@@ -654,7 +653,7 @@ int main() { return f(42); }
     ) -> apport.report.Report:
         """Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
-        (ExecutablePath and CoreDump) and call add_gdb_info().
+        (ExecutablePath and CoreDump).
 
         If file is given, the report is written into it. Return
         the apport.report.Report.
@@ -703,14 +702,37 @@ int main() { return f(42); }
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
             pr["CoreDump"] = (os.path.join(workdir, "core"),)
             pr["Signal"] = signal
-
-            pr.add_gdb_info()
-            if file:
-                pr.write(file)
-                file.flush()
         finally:
             os.chdir(orig_cwd)
 
+        return pr
+
+    def _generate_sigsegv_report(
+        self,
+        file: IO[bytes] | None = None,
+        signal: str = "11",
+        code: str = """
+int f(int x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+""",
+        args: list[str] | None = None,
+        extra_gcc_args: list[str] | None = None,
+    ) -> apport.report.Report:
+        """Create a test executable which will die with a SIGSEGV, generate a
+        core dump for it, create a problem report with those two arguments
+        (ExecutablePath and CoreDump) and call add_gdb_info().
+
+        If file is given, the report is written into it. Return
+        the apport.report.Report.
+        """
+        pr = self._build_sigsegv_report(signal, code, args, extra_gcc_args)
+        pr.add_gdb_info()
+        if file:
+            pr.write(file)
+            file.flush()
         return pr
 
     @staticmethod
