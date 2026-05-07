@@ -300,7 +300,8 @@ def write_user_coredump(
     if from_report:
         r = apport.report.Report()
         r.load(from_report)
-        core_size = len(r["CoreDump"])
+        coredump = r["CoreDump"]
+        core_size = len(coredump)
         if 0 < limit < core_size:
             logger.error(
                 "aborting core dump writing, size %i exceeds current limit", core_size
@@ -309,7 +310,7 @@ def write_user_coredump(
             os.unlink(core_path, dir_fd=cwd)
             return
         logger.info("writing core dump %s of size %i", core_path, core_size)
-        os.write(core_file, r["CoreDump"])
+        os.write(core_file, coredump)
     else:
         assert coredump_fd is not None
         block = os.read(coredump_fd, 1048576)
