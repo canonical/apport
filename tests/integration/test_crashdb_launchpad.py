@@ -25,6 +25,8 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
+import pytest
+
 try:
     from launchpadlib.errors import HTTPError
 
@@ -58,6 +60,7 @@ def cache(func: Callable) -> Callable:
     return try_to_get_from_cache
 
 
+@pytest.mark.requires_internet
 @unittest.skipIf(IMPORT_ERROR, f"Python module not available: {IMPORT_ERROR}")
 @unittest.skipUnless(
     "TEST_LAUNCHPAD" in os.environ,
