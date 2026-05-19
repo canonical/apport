@@ -20,7 +20,7 @@ env:
   kde_deps: procps python3-pyqt5
   unit_deps: locales python3-systemd python3-zstandard
   integration_deps: >
-    binutils dpkg-dev gcc gdb iputils-ping kmod libc6-dev python3-systemd
+    bash binutils dpkg-dev gcc gdb iputils-ping kmod libc6-dev python3-systemd
     valgrind xterm
   system_deps: >
     chaos-marmosets dbus dbus-x11 dpkg-dev gdb gvfs-daemons psmisc
