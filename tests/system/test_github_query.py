@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import Mock
 
+import pytest
+
 import apport.crashdb_impl.github
 
 SOME_ID = "a654870577ad2a2ab5b1"
@@ -18,6 +20,7 @@ class TestGitHubQuery(unittest.TestCase):
             self.crashdb.app_id, self.message_cb
         )
 
+    @pytest.mark.requires_internet
     def test_api_authentication(self) -> None:
         """Test if we can contact Github authentication service."""
         with self.github as github:
