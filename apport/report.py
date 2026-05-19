@@ -1855,7 +1855,10 @@ class Report(problem_report.ProblemReport):
         """
         if "ProcMaps" not in self or "Stacktrace" not in self or "Signal" not in self:
             return None
-        if self["ProcMaps"].startswith("Error: "):
+        proc_maps = self["ProcMaps"]
+        if isinstance(proc_maps, bytes):
+            proc_maps = proc_maps.decode("UTF-8", errors="replace")
+        if proc_maps.startswith("Error: "):
             return None
 
         stack = []
@@ -2083,6 +2086,9 @@ class Report(problem_report.ProblemReport):
             return self._proc_maps_cache
 
         assert "ProcMaps" in self
+        proc_maps = self["ProcMaps"]
+        if isinstance(proc_maps, bytes):
+            proc_maps = proc_maps.decode("UTF-8", errors="replace")
         self._proc_maps_cache = []
         # library paths might have spaces, so we need to make some assumptions
         # about the intermediate fields. But we know that in between the
@@ -2092,7 +2098,7 @@ class Report(problem_report.ProblemReport):
         fmt = re.compile(r"^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{2,}(\S.*$)")
         fmt_unknown = re.compile(r"^([0-9a-fA-F]+)-([0-9a-fA-F]+)\s")
 
-        for line in self["ProcMaps"].splitlines():
+        for line in proc_maps.splitlines():
             if not line.strip():
                 continue
             m = fmt.match(line)

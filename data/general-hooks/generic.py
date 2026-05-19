@@ -67,7 +67,10 @@ def add_info(report: ProblemReport, ui: apport.hook_ui.HookUI) -> None:
     # using local libraries?
     if "ProcMaps" in report:
         local_libs = set()
-        for lib in re.finditer(r"\s(/[^ ]+\.so[.0-9]*)$", report["ProcMaps"], re.M):
+        proc_maps = report["ProcMaps"]
+        if isinstance(proc_maps, bytes):
+            proc_maps = proc_maps.decode("UTF-8", errors="replace")
+        for lib in re.finditer(r"\s(/[^ ]+\.so[.0-9]*)$", proc_maps, re.M):
             if not apport.fileutils.likely_packaged(lib.group(1)):
                 local_libs.add(lib.group(1))
         if ui and local_libs:

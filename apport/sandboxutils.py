@@ -85,7 +85,10 @@ def needed_runtime_packages(report, pkgmap_cache_dir, pkg_versions, verbose=Fals
     pkgs = set()
     libs = set()
     if "ProcMaps" in report:
-        for line in report["ProcMaps"].splitlines():
+        proc_maps = report["ProcMaps"]
+        if isinstance(proc_maps, bytes):
+            proc_maps = proc_maps.decode("UTF-8", errors="replace")
+        for line in proc_maps.splitlines():
             if not line.strip():
                 continue
             cols = line.split()
