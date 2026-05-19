@@ -15,6 +15,8 @@ import subprocess
 import tempfile
 import unittest
 
+import pytest
+
 from tests.helper import skip_if_command_is_missing
 from tests.paths import local_test_environment
 
@@ -41,6 +43,7 @@ class TestApportValgrind(unittest.TestCase):
         shutil.rmtree(self.workdir)
         os.chdir(self.pwd)
 
+    @pytest.mark.requires_internet
     @unittest.skipIf(MEM_TOTAL_MiB < 2000, f"{MEM_TOTAL_MiB} MiB is not enough memory")
     def test_sandbox_cache_options(self):
         """apport-valgrind creates a user specified sandbox and cache"""

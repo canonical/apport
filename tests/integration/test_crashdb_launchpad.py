@@ -25,6 +25,8 @@ import unittest
 import unittest.mock
 from unittest.mock import MagicMock
 
+import pytest
+
 try:
     from launchpadlib.errors import HTTPError
 
@@ -55,6 +57,7 @@ def cache(func):
     return try_to_get_from_cache
 
 
+@pytest.mark.requires_internet
 @unittest.skipIf(IMPORT_ERROR, f"Python module not available: {IMPORT_ERROR}")
 @unittest.skipUnless(
     "TEST_LAUNCHPAD" in os.environ,
