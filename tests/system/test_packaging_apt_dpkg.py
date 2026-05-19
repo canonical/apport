@@ -22,7 +22,6 @@ from apport.packaging_impl.apt_dpkg import (
     _parse_deb822_sources,
     impl,
 )
-from tests.helper import has_internet
 from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
@@ -89,7 +88,7 @@ def reset_impl():
     impl.configuration = orig_conf
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-locals,too-many-statements
@@ -229,7 +228,7 @@ def test_install_packages_versioned(configdir, cachedir, rootdir, apt_style):
     assert os.path.exists(os.path.join(rootdir, "usr/bin/dpkg"))
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
     """install_packages() without versions and no cache"""
     release = _setup_foonux_config(configdir, apt_style)
@@ -277,7 +276,7 @@ def test_install_packages_unversioned(configdir, cachedir, rootdir, apt_style):
     assert len(pkglist), str(pkglist) == 3
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_dependencies(configdir, rootdir, apt_style):
     """Test install packages's dependencies."""
     release = _setup_foonux_config(configdir, apt_style)
@@ -302,7 +301,7 @@ def test_install_packages_dependencies(configdir, rootdir, apt_style):
     assert "libc6" not in result
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
     # pylint: disable=unused-argument
     """install_packages() with system configuration"""
@@ -353,7 +352,7 @@ def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
         assert os.path.exists(os.path.join(rootdir, "usr/bin/stat"))
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
     """install_packages() with errors"""
     # sources.list with invalid format
@@ -385,7 +384,7 @@ def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
     )
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_style):
     """install_packages() with a permanent sandbox"""
     release = _setup_foonux_config(configdir, apt_style)
@@ -492,7 +491,7 @@ def test_install_packages_permanent_sandbox(configdir, cachedir, rootdir, apt_st
     apt_pkg.config.set("Acquire::http::Proxy", orig_apt_proxy)
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_permanent_sandbox_repack(
     configdir, cachedir, rootdir, apt_style
 ):
@@ -534,7 +533,7 @@ def test_install_packages_permanent_sandbox_repack(
     assert os.readlink(curl_library) == "libcurl-gnutls.so"
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() == "armhf", reason="native armhf architecture"
 )
@@ -570,7 +569,7 @@ def test_install_packages_armhf(configdir, cachedir, rootdir, apt_style):
     assert f"libc6_{got_version}_armhf.deb" in cache
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style):
     """install_packages() using packages only available on Launchpad"""
     release = _setup_foonux_config(configdir, apt_style, release="focal")
@@ -632,7 +631,7 @@ def test_install_packages_from_launchpad(configdir, cachedir, rootdir, apt_style
     assert ("qemu-utils-dbgsym", _strip_epoch(wanted["qemu-utils"])) in cache_versions
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
     """Sandbox will install older package versions from launchpad."""
     release = _setup_foonux_config(configdir, apt_style)
@@ -674,7 +673,7 @@ def test_install_old_packages(configdir, cachedir, rootdir, apt_style):
     assert f"{wanted_package} {wanted_version}" in pkglist
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
     release = _setup_foonux_config(configdir, apt_style)
     out_dir = os.path.join(workdir, "out")
@@ -690,7 +689,7 @@ def test_get_source_tree_sandbox(configdir, workdir, rootdir, apt_style):
     assert res.endswith("/base-files-12ubuntu4")
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
     release = _setup_foonux_config(configdir, apt_style)
     wanted_package = "curl"
@@ -711,7 +710,7 @@ def test_get_source_tree_lp_sandbox(configdir, workdir, rootdir, apt_style):
     assert res.endswith(f"/{wanted_package}-{upstream_version}")
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
     """Add sources.list entries for a named PPA."""
     ppa = "LP-PPA-daisy-pluckers-daisy-seeds"
@@ -767,7 +766,7 @@ def test_create_sources_for_a_named_ppa(configdir, rootdir, apt_style):
     assert expected_key == actual_key
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_create_sources_for_an_unnamed_ppa(configdir, rootdir, apt_style):
     """Add sources.list entries for an unnamed PPA."""
     ppa = "LP-PPA-apport-hackers-apport-autopkgtests"
@@ -864,7 +863,7 @@ def test_use_sources_for_a_ppa(configdir, rootdir, apt_style):
         ]
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_package_from_a_ppa(configdir, cachedir, rootdir, apt_style):
     """Install a package from a PPA."""
     # Needs apport package in https://launchpad.net

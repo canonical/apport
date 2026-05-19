@@ -14,7 +14,6 @@ import pytest
 
 from apport.packaging_impl.apt_dpkg import impl
 from apport.report import Report
-from tests.helper import has_internet
 from tests.paths import get_test_data_directory, local_test_environment
 
 CODENAME_DISTRO_RELEASE_MAP = {"jammy": "Ubuntu 22.04"}
@@ -199,7 +198,7 @@ def _assert_cache_has_content(
     assert list((aptroot / "var/cache/apt/archives").iterdir())
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() == "s390x",
     reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
@@ -228,7 +227,7 @@ def test_retrace_system_sandbox(
     _assert_divide_by_zero_retrace(report)
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() == "amd64",
     reason="GDB sandbox is only available on amd64",
@@ -256,7 +255,7 @@ def test_retrace_system_sandbox_gdb_sandbox_nonamd64(
     assert "gdb sandboxes are only implemented for amd64 hosts" in ret.stderr
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() != "amd64",
     reason="Testing the GDB sandbox erroring out on non-AMD64",
@@ -286,7 +285,7 @@ def test_retrace_system_sandbox_gdb_sandbox(
     _assert_divide_by_zero_retrace(report)
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() != "amd64" and shutil.which("gdb-multiarch") is None,
     reason="gdb-multiarch is needed for proper retracing on foreign architectures",
@@ -319,7 +318,7 @@ def test_retrace_jammy_sandbox(
     _assert_cache_has_content(module_cachedir, "amd64", "jammy")
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() != "amd64",
     reason="GDB sandbox only available on amd64",
