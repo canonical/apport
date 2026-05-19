@@ -124,7 +124,7 @@ jobs:
       - name: Run unit and integration tests
         run: >
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
-          && cp -r tests "$WORKDIR"
+          && cp -r tests pyproject.toml "$WORKDIR"
           && cd "$WORKDIR"
           && python3 -m pytest -v -ra --cov=$(pwd) --cov-report=xml
           --durations=0 tests/unit/ tests/integration/
@@ -248,7 +248,7 @@ jobs:
           GDK_BACKEND: x11
         run: >
           WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
-          && cp -r tests "$WORKDIR"
+          && cp -r tests pyproject.toml "$WORKDIR"
           && cd "$WORKDIR"
           && sudo xvfb-run python3 -m pytest -v -ra --cov=$(pwd)
           --cov-report=xml --durations=0 tests/system/
