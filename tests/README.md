@@ -51,8 +51,8 @@ The [system directory](./system) contains system tests. It also contains
 integration tests that need special environment setup or have a long execution
 time. The GTK and KDE UI integration tests need a window system, which can be
 provided by `xvfb-run`. Some integration tests query https://launchpad.net/.
-These tests can be skipped by setting the environment variable
-`SKIP_ONLINE_TESTS` to something non empty. The test in
+These tests can be filtered out with the pytest marker expression
+`-m "not requires_internet"`. The test in
 [test_python_crashes.py](./system/test_python_crashes.py) need a running D-Bus
 daemon. Whit a D-Bus daemon running, the system tests can be run from the top
 directory by calling:

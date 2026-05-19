@@ -17,7 +17,6 @@ import apt_pkg
 import pytest
 
 from apport.packaging_impl.apt_dpkg import _parse_deb822_sources, impl
-from tests.helper import has_internet
 from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
@@ -75,7 +74,7 @@ def reset_impl() -> Iterator[None]:
     impl.configuration = orig_conf
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_versioned(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -217,7 +216,7 @@ def test_install_packages_versioned(
     assert os.path.exists(os.path.join(rootdir, "usr/bin/dpkg"))
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_unversioned(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -267,7 +266,7 @@ def test_install_packages_unversioned(
     assert len(pkglist), str(pkglist) == 3
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_dependencies(
     configdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -294,7 +293,7 @@ def test_install_packages_dependencies(
     assert "libc6" not in result
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_system(
     cachedir: str, workdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -347,7 +346,7 @@ def test_install_packages_system(
         assert os.path.exists(os.path.join(rootdir, "usr/bin/gzip"))
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_error(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -381,7 +380,7 @@ def test_install_packages_error(
     )
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_permanent_sandbox(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -490,7 +489,7 @@ def test_install_packages_permanent_sandbox(
     apt_pkg.config.set("Acquire::http::Proxy", orig_apt_proxy)
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_permanent_sandbox_repack(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -532,7 +531,7 @@ def test_install_packages_permanent_sandbox_repack(
     assert os.readlink(curl_library) == "libcurl-gnutls.so"
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 @pytest.mark.skipif(
     impl.get_system_architecture() == "armhf", reason="native armhf architecture"
 )
@@ -570,7 +569,7 @@ def test_install_packages_armhf(
     assert f"libc6_{got_version}_armhf.deb" in cache
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_packages_from_launchpad(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -634,7 +633,7 @@ def test_install_packages_from_launchpad(
     assert ("qemu-utils-dbgsym", _strip_epoch(wanted["qemu-utils"])) in cache_versions
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_old_packages(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -678,7 +677,7 @@ def test_install_old_packages(
     assert f"{wanted_package} {wanted_version}" in pkglist
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_get_source_tree_sandbox(
     configdir: str, workdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -697,7 +696,7 @@ def test_get_source_tree_sandbox(
     assert res.endswith("/base-files-12ubuntu4")
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_get_source_tree_lp_sandbox(
     configdir: str, workdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -721,7 +720,7 @@ def test_get_source_tree_lp_sandbox(
     assert res.endswith(f"/{wanted_package}-{upstream_version}")
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_create_sources_for_a_named_ppa(
     configdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -760,7 +759,7 @@ def test_create_sources_for_a_named_ppa(
     assert expected_key == actual_key
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_create_sources_for_an_unnamed_ppa(
     configdir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
@@ -844,7 +843,7 @@ def test_use_sources_for_a_ppa(
         ]
 
 
-@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.requires_internet
 def test_install_package_from_a_ppa(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
