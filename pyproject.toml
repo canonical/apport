@@ -111,6 +111,9 @@ score = false
 
 [tool.pytest.ini_options]
 addopts = "--cov-branch"
+markers = [
+    "requires_internet: marks tests that require internet connection (deselect with '-m \"not requires_internet\"')",
+]
 
 [tool.ruff]
 include = [

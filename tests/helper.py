@@ -1,7 +1,6 @@
 """Helper functions for the test cases."""
 
 import contextlib
-import functools
 import importlib.machinery
 import importlib.util
 import os
@@ -10,8 +9,6 @@ import shutil
 import subprocess
 import time
 import unittest.mock
-import urllib.error
-import urllib.request
 from collections.abc import Callable, Generator, Iterator, Sequence, Set
 from typing import Any
 from unittest.mock import MagicMock
@@ -31,24 +28,6 @@ def get_init_system() -> str:
     """Return the name of the running init system (PID 1)."""
     with open("/proc/1/comm", encoding="utf-8") as comm:
         return comm.read().rstrip()
-
-
-@functools.lru_cache(maxsize=1)
-def has_internet() -> bool:
-    """Return if there is sufficient network connection for the tests.
-
-    This checks if https://api.launchpad.net/devel/ubuntu/ can be downloaded
-    from, to check if we can run the online tests.
-    """
-    if os.environ.get("SKIP_ONLINE_TESTS"):
-        return False
-    try:
-        with urllib.request.urlopen(
-            "https://api.launchpad.net/devel/ubuntu/", timeout=30
-        ) as url:
-            return b"web_link" in url.readline()
-    except urllib.error.URLError:
-        return False
 
 
 def import_module_from_file(path: pathlib.Path) -> Any:
