@@ -28,8 +28,10 @@ env:
     bash binutils dpkg-dev gcc gdb kmod libc6-dev libglib2.0-dev libxml2-utils
     polkitd python3-systemd valgrind xterm
   system_deps: >
-    chaos-marmosets dbus dbus-x11 dirmngr dpkg-dev gcc gdb gvfs-daemons psmisc
-    python3-dbus ubuntu-dbgsym-keyring ubuntu-keyring valgrind xterm xvfb
+    dbus dbus-x11 gdb gvfs-daemons psmisc python3-dbus
+    ubuntu-dbgsym-keyring ubuntu-keyring xterm xvfb
+  system_internet_deps: >
+    chaos-marmosets dpkg-dev gdb ubuntu-dbgsym-keyring ubuntu-keyring valgrind
 
 jobs:
   linter:
@@ -182,18 +184,11 @@ jobs:
           # - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
-      options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
     steps:
       - name: Sanitize container name (for artifact name)
         run: |
           container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
           echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
-      - name: Enable 'deb-src' URIs in /etc/apt/sources.list
-        run: >
-          sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
-          && ! test -e /etc/apt/sources.list.d/ubuntu.sources
-          || sed -i 's/^Types:.*/Types: deb deb-src/g'
-          /etc/apt/sources.list.d/ubuntu.sources
       - name: Install dependencies
         run: >
           apt-get update
@@ -202,12 +197,13 @@ jobs:
       - uses: actions/checkout@v6
       - name: Start D-Bus daemon
         run: mkdir -p /run/dbus && dbus-daemon --system --fork
-      - name: Run system tests
+      - name: Run system tests that do not require Internet access
         env:
           GDK_BACKEND: x11
         run: >
           xvfb-run python3 -m pytest -v -ra --cov=$(pwd)
-          --cov-report=xml --durations=0 tests/system/
+          --cov-report=xml --durations=0
+          -m "not requires_internet" tests/system/
       - name: Stop D-Bus daemon
         run: kill $(cat /run/dbus/pid)
       - name: Upload coverage
@@ -225,10 +221,6 @@ jobs:
         run: >
           sudo apt-get remove --purge --yes
           apport python3-apport python3-problem-report
-      - name: Enable 'deb-src' URIs in /etc/apt/sources.list.d/ubuntu.sources
-        run: >
-          sudo sed -i 's/^Types: deb$/Types: deb deb-src/'
-          /etc/apt/sources.list.d/ubuntu.sources
       - name: Install dependencies
         run: >
           sudo apt-get update
@@ -245,7 +237,7 @@ jobs:
         run: sudo rm -f /var/crash/*.crash
       - name: Enable Apport
         run: sudo /usr/share/apport/apport --start
-      - name: Run system tests
+      - name: Run system tests that do not require Internet access
         env:
           GDK_BACKEND: x11
         run: >
@@ -253,7 +245,92 @@ jobs:
           && cp -r tests pyproject.toml "$WORKDIR"
           && cd "$WORKDIR"
           && sudo xvfb-run python3 -m pytest -v -ra --cov=$(pwd)
-          --cov-report=xml --durations=0 tests/system/
+          --cov-report=xml --durations=0
+          -m "not requires_internet" tests/system/
+          && cd -
+          && cp "$WORKDIR/coverage.xml" .
+      - name: Upload coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-${{ github.job }}
+          path: ./coverage*.xml
+
+  system-internet:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        container:
+          - ubuntu:noble
+          - ubuntu:questing
+          - ubuntu:resolute
+    container:
+      image: ${{ matrix.container }}
+    steps:
+      - name: Sanitize container name (for artifact name)
+        run: |
+          container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
+          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
+      - name: Enable 'deb-src' URIs in /etc/apt/sources.list
+        run: >
+          sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
+          && ! test -e /etc/apt/sources.list.d/ubuntu.sources
+          || sed -i 's/^Types:.*/Types: deb deb-src/g'
+          /etc/apt/sources.list.d/ubuntu.sources
+      - name: Install dependencies
+        run: >
+          apt-get update
+          && apt-get install --no-install-recommends --yes
+          $base_deps $common_deps $system_internet_deps
+      - uses: actions/checkout@v6
+      - name: Run system tests that require Internet access
+        run: >
+          python3 -m pytest -v -ra --cov=$(pwd)
+          --cov-report=xml --durations=0 -m "requires_internet" tests/system/
+      - name: Upload coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-${{ env.JOB }}
+          path: ./coverage.xml
+
+  system-internet-installed:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Remove system installed Apport
+        run: >
+          sudo apt-get remove --purge --yes
+          apport python3-apport python3-problem-report
+      - name: Enable 'deb-src' URIs in /etc/apt/sources.list.d/ubuntu.sources
+        run: >
+          sudo sed -i 's/^Types: deb$/Types: deb deb-src/'
+          /etc/apt/sources.list.d/ubuntu.sources
+      - name: Install dependencies
+        run: >
+          sudo apt-get update
+          && sudo apt-get install --no-install-recommends --yes
+          $base_deps $build_deps $common_deps $gtk_deps $system_internet_deps
+      - uses: actions/checkout@v6
+      - name: Install
+        run: >
+          sudo python3 -m coverage run
+          ./setup.py install --install-layout=deb --prefix=/usr --root=/
+          && sudo chown "$SUDO_UID:$SUDO_GID" .coverage
+          && python3 -m coverage xml -o coverage-setup.xml
+      - name: Cleanup /var/crash/
+        run: sudo rm -f /var/crash/*.crash
+      - name: Enable Apport
+        run: sudo /usr/share/apport/apport --start
+      - name: Run system tests that require Internet access
+        env:
+          GDK_BACKEND: x11
+        run: >
+          WORKDIR=$(mktemp -d -t apport.XXXXXXXXXX)
+          && cp -r tests pyproject.toml "$WORKDIR"
+          && cd "$WORKDIR"
+          && sudo xvfb-run python3 -m pytest -v -ra --cov=$(pwd)
+          --cov-report=xml --durations=0 -m "requires_internet" tests/system/
           && cd -
           && cp "$WORKDIR/coverage.xml" .
       - name: Upload coverage
@@ -282,6 +359,8 @@ jobs:
       - skip
       - system
       - system-installed
+      - system-internet
+      - system-internet-installed
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
