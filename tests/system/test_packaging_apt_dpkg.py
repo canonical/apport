@@ -4,6 +4,7 @@
 
 import glob
 import gzip
+import locale
 import os
 import pathlib
 import shutil
@@ -17,6 +18,7 @@ import apt_pkg
 import pytest
 
 from apport.packaging_impl.apt_dpkg import _parse_deb822_sources, impl
+from tests.helper import set_locale
 from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
@@ -347,6 +349,7 @@ def test_install_packages_system(
 
 
 @pytest.mark.requires_internet
+@set_locale(locale.LC_MESSAGES, "C.UTF-8")
 def test_install_packages_error(
     configdir: str, cachedir: str, rootdir: str, apt_style: AptStyle
 ) -> None:
