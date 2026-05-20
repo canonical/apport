@@ -105,33 +105,48 @@ class TestPackagingAptDpkg(unittest.TestCase):
     def test_map_mirror_to_arch_ports_to_primary(self) -> None:
         """Test _map_mirror_to_arch() to map ports to primary."""
         self.assertEqual(
-            _map_mirror_to_arch("http://ports.ubuntu.com/ubuntu-ports/", "amd64"),
+            _map_mirror_to_arch(
+                "http://ports.ubuntu.com/ubuntu-ports/", "amd64", "resolute"
+            ),
             "http://archive.ubuntu.com/ubuntu",
         )
 
     def test_map_mirror_to_arch_country_ports_to_primary(self) -> None:
         """Test _map_mirror_to_arch() to map country ports to primary."""
         self.assertEqual(
-            _map_mirror_to_arch("http://de.ports.ubuntu.com/ubuntu-ports", "amd64"),
+            _map_mirror_to_arch(
+                "http://de.ports.ubuntu.com/ubuntu-ports", "amd64", "resolute"
+            ),
             "http://de.archive.ubuntu.com/ubuntu",
         )
 
     def test_map_mirror_to_arch_ports_unchanged(self) -> None:
         """Test _map_mirror_to_arch() to keep ports unchanged."""
         uri = "http://de.ports.ubuntu.com/ubuntu-ports"
-        self.assertEqual(_map_mirror_to_arch(uri, "ppc64el"), uri)
+        self.assertEqual(_map_mirror_to_arch(uri, "arm64", "noble"), uri)
 
     def test_map_mirror_to_arch_primary_to_ports(self) -> None:
         """Test _map_mirror_to_arch() to map primary to ports."""
         self.assertEqual(
-            _map_mirror_to_arch("http://de.archive.ubuntu.com/ubuntu/", "s390x"),
+            _map_mirror_to_arch(
+                "http://de.archive.ubuntu.com/ubuntu/", "s390x", "resolute"
+            ),
             "http://de.ports.ubuntu.com/ubuntu-ports",
         )
 
     def test_map_mirror_to_arch_primary_unchanged(self) -> None:
         """Test _map_mirror_to_arch() to keep ports unchanged."""
         uri = "http://de.archive.ubuntu.com/ubuntu"
-        self.assertEqual(_map_mirror_to_arch(uri, "amd64"), uri)
+        self.assertEqual(_map_mirror_to_arch(uri, "amd64", "resolute"), uri)
+
+    def test_map_mirror_to_arch_arm64_on_primary(self) -> None:
+        """Test _map_mirror_to_arch() for arm64 on archive.ubuntu.com since questing."""
+        self.assertEqual(
+            _map_mirror_to_arch(
+                "http://ports.ubuntu.com/ubuntu-ports/", "arm64", "resolute"
+            ),
+            "http://archive.ubuntu.com/ubuntu",
+        )
 
     @unittest.mock.patch(
         "builtins.open",
