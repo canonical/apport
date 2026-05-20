@@ -18,6 +18,7 @@ from unittest.mock import MagicMock, patch
 import psutil
 
 import apport.fileutils
+from apport.procutils import parse_meminfo
 from tests.helper import (
     WAITING_TIMEOUT,
     get_init_system,
@@ -151,12 +152,8 @@ class T(unittest.TestCase):
         """Core dumps are capped on available memory size."""
         # determine how much data we have to pump into apport in order to make
         # sure that it will refuse the core dump
-        r = apport.Report()
-        with open("/proc/meminfo", "rb") as f:
-            r.load(f)
-        totalmb = int(r["MemFree"].split()[0]) + int(r["Cached"].split()[0])
-        totalmb = int(totalmb / 1024)
-        r = None
+        meminfo = parse_meminfo()
+        totalmb = (meminfo.mem_free + meminfo.cached) // 1024
 
         test_proc = self.create_test_process()
         try:
