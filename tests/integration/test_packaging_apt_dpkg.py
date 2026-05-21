@@ -525,7 +525,6 @@ deb http://secondary.mirror tuxy extra
         self.assertNotEqual(arch, "")
         self.assertNotIn("\n", arch)
 
-    @skip_if_command_is_missing("dpkg-architecture")
     def test_get_library_paths(self) -> None:
         """get_library_paths()."""
         paths = impl.get_library_paths()

@@ -157,14 +157,16 @@ class PackageInfo:
             "this method must be implemented by a concrete subclass if applicable"
         )
 
-    def get_library_paths(self) -> str:
-        """Return a list of default library search paths.
+    def get_library_paths(self, architecture: str | None = None) -> str:
+        """Return a list of default library search paths for the architecture.
+
+        If architecture is not specified, the system archictecture is used.
 
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        # simple default implementation, pylint: disable=no-self-use
+        # simple default implementation, pylint: disable=no-self-use,unused-argument
         return "/lib:/usr/lib"
 
     def set_mirror(self, url: str) -> None:
