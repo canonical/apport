@@ -878,18 +878,6 @@ class _AptDpkgPackageInfo(PackageInfo):
         assert arch
         return arch
 
-    @staticmethod
-    @functools.cache
-    def get_native_multiarch_triplet() -> str:
-        """Return the multiarch triplet for the system architecture"""
-        dpkg = subprocess.run(
-            ["dpkg-architecture", "-qDEB_HOST_MULTIARCH"],
-            check=True,
-            text=True,
-            stdout=subprocess.PIPE,
-        )
-        return dpkg.stdout.strip()
-
     def get_library_paths(self, architecture: str | None = None) -> str:
         """Return a list of default library search paths for the architecture.
 
