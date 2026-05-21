@@ -57,6 +57,15 @@ from aptsources.sourceslist import Deb822SourceEntry, SourceEntry
 import apport.logging
 from apport.package_info import PackageInfo
 
+_ARCH_MULTIARCH_TRIPLET_MAPPING = {
+    "amd64": "x86_64-linux-gnu",
+    "arm64": "aarch64-linux-gnu",
+    "armhf": "arm-linux-gnueabihf",
+    "i386": "i386-linux-gnu",
+    "ppc64el": "powerpc64le-linux-gnu",
+    "riscv64": "riscv64-linux-gnu",
+    "s390x": "s390x-linux-gnu",
+}
 # The Contents-*.gz files are huge. Loading all data into memory would result in a
 # dictionary with millions of entries consuming several gigabytes of memory.
 # Therefore exclude unneeded paths with 100k entries or more.
@@ -881,14 +890,24 @@ class _AptDpkgPackageInfo(PackageInfo):
         )
         return dpkg.stdout.strip()
 
-    def get_library_paths(self) -> str:
-        """Return a list of default library search paths.
+    def get_library_paths(self, architecture: str | None = None) -> str:
+        """Return a list of default library search paths for the architecture.
+
+        If architecture is not specified, the system archictecture is used.
 
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
         """
-        return f"/lib/{self.get_native_multiarch_triplet()}:/lib"
+        if architecture is None:
+            architecture = self.get_system_architecture()
+        multiarch_triplet = _ARCH_MULTIARCH_TRIPLET_MAPPING.get(architecture)
+        if multiarch_triplet is None:
+            raise NotImplementedError(
+                f"Missing multi-arch triplet information"
+                f" for architecture {architecture}"
+            )
+        return f"/lib/{multiarch_triplet}:/usr/lib/{multiarch_triplet}:/lib:/usr/lib"
 
     def set_mirror(self, url: str) -> None:
         """Explicitly set a distribution mirror URL for operations that need to

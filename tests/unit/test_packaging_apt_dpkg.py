@@ -102,6 +102,11 @@ class TestPackagingAptDpkg(unittest.TestCase):
         getitem_mock.assert_called_once_with("apport")
         exists_mock.assert_called_once_with("/etc/system-image/channel.ini")
 
+    def test_get_library_paths_unknown_arch(self) -> None:
+        """get_library_paths() for unknown architecture."""
+        with self.assertRaisesRegex(NotImplementedError, "architecture osprey64"):
+            impl.get_library_paths("osprey64")
+
     def test_map_mirror_to_arch_ports_to_primary(self) -> None:
         """Test _map_mirror_to_arch() to map ports to primary."""
         self.assertEqual(

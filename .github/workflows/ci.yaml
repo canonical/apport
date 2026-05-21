@@ -25,7 +25,7 @@ env:
   kde_deps: procps pyqt6-dev-tools python3-pyqt6
   unit_deps: locales python3-systemd python3-zstandard
   integration_deps: >
-    bash binutils dpkg-dev gcc gdb kmod libc6-dev libglib2.0-dev libxml2-utils
+    bash binutils gcc gdb kmod libc6-dev libglib2.0-dev libxml2-utils
     polkitd python3-systemd valgrind xterm
   system_deps: >
     dbus dbus-x11 gdb gvfs-daemons psmisc python3-dbus

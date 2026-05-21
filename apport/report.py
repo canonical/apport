@@ -341,21 +341,6 @@ def _get_gdb_path(gdb_sandbox: str | None, same_arch: bool) -> str:
     return gdb_path
 
 
-def _get_ld_search_paths(ld_so: str = "ld.so") -> list[str]:
-    """Query the given ld.so binary for the shared library search paths."""
-    diagnostics = subprocess.run(
-        [ld_so, "--list-diagnostics"], check=True, stdout=subprocess.PIPE, text=True
-    )
-    # Example matching line: path.system_dirs[0x0]="/lib/x86_64-linux-gnu/"
-    matches = re.findall(
-        r'^path\.system_dirs\[(0x[0-9a-f]+)\]="([^"]+)"$',
-        diagnostics.stdout,
-        flags=re.MULTILINE,
-    )
-    ld_search_paths = {int(index, 0): path for (index, path) in matches}
-    return [path for (index, path) in sorted(ld_search_paths.items())]
-
-
 def _run_hook(report, ui, hook):
     if not os.path.exists(hook):
         return False
@@ -2009,10 +1994,13 @@ class Report(problem_report.ProblemReport):
         environ: dict[str, str] = {}
 
         if sandbox:
-            host_library_paths = _get_ld_search_paths(
-                "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
-            )
-            sandbox_library_paths = [f"{sandbox}{path}" for path in host_library_paths]
+            arch = self.get("PackageArchitecture")
+            if not arch or arch == "all":
+                arch = self.get("Architecture")
+            sandbox_library_paths = [
+                f"{sandbox}{path}"
+                for path in packaging.get_library_paths(arch).split(":")
+            ]
             # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += [
                 "--ex",
@@ -2027,7 +2015,8 @@ class Report(problem_report.ProblemReport):
             ]
             if gdb_sandbox:
                 gdb_sandbox_library_paths = [
-                    f"{gdb_sandbox}{path}" for path in host_library_paths
+                    f"{gdb_sandbox}{path}"
+                    for path in packaging.get_library_paths().split(":")
                 ]
                 ld_lib_path = ":".join(gdb_sandbox_library_paths)
                 pyhome = f"{gdb_sandbox}/usr"
