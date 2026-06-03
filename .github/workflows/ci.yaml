@@ -28,10 +28,11 @@ env:
     bash binutils gcc gdb kmod libc6-dev libglib2.0-dev libxml2-utils
     polkitd python3-systemd valgrind xterm
   system_deps: >
-    dbus dbus-x11 gdb gvfs-daemons psmisc python3-dbus
+    dbus dbus-x11 gdb-multiarch gvfs-daemons psmisc python3-dbus
     ubuntu-dbgsym-keyring ubuntu-keyring xterm xvfb
   system_internet_deps: >
-    chaos-marmosets dpkg-dev gdb ubuntu-dbgsym-keyring ubuntu-keyring valgrind
+    chaos-marmosets dpkg-dev gdb-multiarch ubuntu-dbgsym-keyring ubuntu-keyring
+    valgrind
 
 jobs:
   linter:
@@ -60,7 +61,7 @@ jobs:
       - uses: astral-sh/ruff-action@v4.0.0
 
   unit-and-integration:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.architecture }}
     strategy:
       fail-fast: false
       matrix:
@@ -70,6 +71,9 @@ jobs:
           - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
+        architecture:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -77,7 +81,8 @@ jobs:
       - name: Sanitize container name (for artifact name)
         run: |
           container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
-          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
+          host="${{ matrix.architecture }}"
+          echo "JOB=${GITHUB_JOB}-${container}-on-${host}" >> "$GITHUB_ENV"
       - name: Install dependencies
         run: >
           apt-get update
@@ -173,7 +178,7 @@ jobs:
           path: ./coverage.xml
 
   system:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.architecture }}
     strategy:
       fail-fast: false
       matrix:
@@ -182,13 +187,17 @@ jobs:
           - ubuntu:questing
           # resolute skipped due to https://launchpad.net/bugs/2147544
           # - ubuntu:resolute
+        architecture:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
       - name: Sanitize container name (for artifact name)
         run: |
           container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
-          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
+          host="${{ matrix.architecture }}"
+          echo "JOB=${GITHUB_JOB}-${container}-on-${host}" >> "$GITHUB_ENV"
       - name: Install dependencies
         run: >
           apt-get update
@@ -256,7 +265,7 @@ jobs:
           path: ./coverage*.xml
 
   system-internet:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.architecture }}
     strategy:
       fail-fast: false
       matrix:
@@ -264,13 +273,17 @@ jobs:
           - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
+        architecture:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
       - name: Sanitize container name (for artifact name)
         run: |
           container=$(echo "${{ matrix.container }}" | sed 's/:/-/')
-          echo "JOB=${GITHUB_JOB}-${container}" >> "$GITHUB_ENV"
+          host="${{ matrix.architecture }}"
+          echo "JOB=${GITHUB_JOB}-${container}-on-${host}" >> "$GITHUB_ENV"
       - name: Enable 'deb-src' URIs in /etc/apt/sources.list
         run: >
           sed -i '/^#\sdeb-src /s/^#\s//' /etc/apt/sources.list
