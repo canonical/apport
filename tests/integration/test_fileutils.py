@@ -220,7 +220,7 @@ class T(unittest.TestCase):
         """get_all_system_reports() and get_new_system_reports()"""
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         self.assertEqual(apport.fileutils.get_all_system_reports(), [])
-        if os.getuid() == 0:
+        if os.getuid() <= apport.fileutils.get_sys_uid_max():
             tr = self._create_reports(True)
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set(tr))
             self.assertEqual(set(apport.fileutils.get_new_system_reports()), set(tr))

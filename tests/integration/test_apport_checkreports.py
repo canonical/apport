@@ -16,7 +16,12 @@ import tempfile
 import unittest
 
 import apport.report
+from apport.fileutils import get_sys_uid_max
 from tests.paths import get_data_directory, local_test_environment
+
+
+def _is_system_user_but_not_root() -> bool:
+    return os.geteuid() != 0 and os.geteuid() <= get_sys_uid_max()
 
 
 class TestApportCheckreports(unittest.TestCase):
@@ -63,6 +68,7 @@ class TestApportCheckreports(unittest.TestCase):
         if user and os.geteuid() == 0:
             os.chown(path, 1000, -1)
 
+    @unittest.skipIf(_is_system_user_but_not_root(), "needs to run as root or user")
     def test_has_no_system_report(self) -> None:
         self._write_report("_bin_sleep.1000.crash")
         self._call(args=["--system"], expected_returncode=1)
