@@ -3,13 +3,14 @@
 import contextlib
 import importlib.machinery
 import importlib.util
+import locale
 import os
 import pathlib
 import shutil
 import subprocess
 import time
 import unittest.mock
-from collections.abc import Callable, Generator, Iterator, Sequence, Set
+from collections.abc import Callable, Generator, Iterable, Iterator, Sequence, Set
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -107,6 +108,17 @@ def run_test_executable(
 
 def _id(obj: Any) -> Any:
     return obj
+
+
+@contextlib.contextmanager
+def set_locale(
+    category: int, new_locale: Iterable[str | None] | None
+) -> Generator[None]:
+    """Set locale and restore it after leaving this context manager."""
+    orig_locale = locale.getlocale(category)
+    locale.setlocale(category, new_locale)
+    yield
+    locale.setlocale(category, orig_locale)
 
 
 def skip_if_command_is_missing(cmd: str) -> Callable:
