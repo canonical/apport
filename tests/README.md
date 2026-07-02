@@ -54,7 +54,7 @@ provided by `xvfb-run`. Some integration tests query https://launchpad.net/.
 These tests can be filtered out with the pytest marker expression
 `-m "not requires_internet"`. The test in
 [test_python_crashes.py](./system/test_python_crashes.py) need a running D-Bus
-daemon. Whit a D-Bus daemon running, the system tests can be run from the top
+daemon. With a D-Bus daemon running, the system tests can be run from the top
 directory by calling:
 
 ```
