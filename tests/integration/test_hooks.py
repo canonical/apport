@@ -14,12 +14,14 @@ import os
 import pathlib
 import shutil
 import subprocess
-import sys
 import tempfile
 import unittest
 
 import apport.fileutils
+import apport.hook_ui
 import apport.report
+from problem_report import ProblemReport
+from tests.helper import import_module_from_file
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -47,15 +49,12 @@ class T(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_general_hook_generic(self) -> None:
-        """Test running general-hooks/generic.py."""
-        process = subprocess.run(
-            [sys.executable, str(self.data_dir / "general-hooks" / "generic.py")],
-            check=True,
-            env=self.env,
-            encoding="utf-8",
-            stdout=subprocess.PIPE,
+        """Test running add_info() from general-hooks/generic.py."""
+        generic_hook = import_module_from_file(
+            self.data_dir / "general-hooks" / "generic.py"
         )
-        self.assertIn("ProblemType: Crash", process.stdout)
+        report = ProblemReport()
+        generic_hook.add_info(report, apport.hook_ui.NoninteractiveHookUI())
 
     def test_package_hook_nologs(self) -> None:
         """package_hook without any log files."""

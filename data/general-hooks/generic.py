@@ -117,10 +117,3 @@ Do you want to continue the report process anyway?
     # log errors
     if report["ProblemType"] == "Crash":
         apport.hookutils.attach_journal_errors(report)
-
-
-if __name__ == "__main__":
-    r = ProblemReport()
-    add_info(r, apport.hook_ui.NoninteractiveHookUI())
-    for key, value in r.items():
-        print(f"{key}: {value}")
