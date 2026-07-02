@@ -1,6 +1,50 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.34.1 (2026-07-02)
+-------------------
+
+### Changed
+
+* problem_report: use `application/gzip` MIME type instead of
+  `application/x-gzip`
+* test:
+  - replace `SKIP_ONLINE_TESTS` by `requires_internet` marker
+  - mark Internet requiring tests as such
+
+### Fixed
+
+* apt_dpkg:
+  - use `urllib.request` instead of `http.client` to get contents
+    ([LP: #2116119](https://launchpad.net/bugs/2116119))
+  - don't disable proxy use to download deb files
+    ([LP: #2116119](https://launchpad.net/bugs/2116119))
+  - don't clear the proxy when fetching sources
+    ([LP: #2116119](https://launchpad.net/bugs/2116119))
+  - exclude `{usr/,}lib/modules` and more from `Contents-*.gz` cache
+    to reduce required memory for apport-retrace
+    ([LP: #2073787](https://launchpad.net/bugs/2073787))
+  - fix mapping primary ports.ubuntu.com to archive.ubuntu.com
+    ([LP: #2150427](https://launchpad.net/bugs/2150427))
+  - fix GDB command for amd64 sandbox on non-amd64
+    ([LP: #2150427](https://launchpad.net/bugs/2150427))
+* crashdb/launchpad: support `CoreDump.zst`
+  ([LP: #2148656](https://launchpad.net/bugs/2148656))
+* problem_report:
+  - fix file extension for zstd compressed values
+    ([LP: #2148656](https://launchpad.net/bugs/2148656))
+  - enforce some keys to always have `str` values in `load()`
+    ([LP: #2146806](https://launchpad.net/bugs/2146806))
+  - avoid double `.txt` file extension
+    ([LP: #2149892](https://launchpad.net/bugs/2149892))
+* test:
+  - use `pwd`, `ls`, and `true` from GNU coreutils in apport-valgrind tests
+    ([LP: #2158973](https://launchpad.net/bugs/2158973))
+  - relax check for `Package` field
+    ([LP: #2149909](https://launchpad.net/bugs/2149909))
+  - fix running tests as non-root system user
+    ([LP: #2153134](https://launchpad.net/bugs/2153134))
+
 2.34.0 (2026-04-09)
 -------------------
 
