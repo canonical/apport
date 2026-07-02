@@ -326,7 +326,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self._contents_dir: str | None = None
         self._mirror: str | None = None
         self._virtual_mapping_obj: dict[str, set[str]] | None = None
-        self._contents_mapping_obj: dict[bytes, bytes] | None = None
+        self._contents_mapping_obj: dict[str, str] | None = None
         self._launchpad_base = "https://api.launchpad.net/devel"
         self._contents_update = False
 
@@ -359,11 +359,11 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def _contents_mapping(
         self, configdir: str, release: str, arch: str
-    ) -> dict[bytes, bytes]:
+    ) -> dict[str, str]:
         if (
             self._contents_mapping_obj
-            and self._contents_mapping_obj[b"release"] == release.encode()
-            and self._contents_mapping_obj[b"arch"] == arch.encode()
+            and self._contents_mapping_obj["release"] == release
+            and self._contents_mapping_obj["arch"] == arch
         ):
             return self._contents_mapping_obj
 
@@ -376,11 +376,10 @@ class _AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, "rb") as fp:
                 self._contents_mapping_obj = pickle.load(fp)
             assert isinstance(self._contents_mapping_obj, dict)
+            # Discard files from Apport < 2.35.0
+            assert isinstance(next(iter(self._contents_mapping_obj)), str)
         except (AssertionError, FileNotFoundError):
-            self._contents_mapping_obj = {
-                b"release": release.encode(),
-                b"arch": arch.encode(),
-            }
+            self._contents_mapping_obj = {"release": release, "arch": arch}
 
         return self._contents_mapping_obj
 
@@ -1705,10 +1704,10 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def _update_given_file2pkg_mapping(
-        file2pkg: dict[bytes, bytes], contents_filename: str, dist: str
+        file2pkg: dict[str, str], contents_filename: str, dist: str
     ) -> None:
-        path_exclude_pattern = re.compile(_EXCLUDED_PATHS.encode())
-        with gzip.open(contents_filename, "rb") as contents:
+        path_exclude_pattern = re.compile(_EXCLUDED_PATHS)
+        with gzip.open(contents_filename, "rt") as contents:
             if dist in {"trusty", "xenial"}:
                 # the first 32 lines are descriptive only for these
                 # releases
@@ -1719,7 +1718,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                 if path_exclude_pattern.match(line):
                     continue
                 path, column2 = line.rsplit(maxsplit=1)
-                package = column2.split(b",")[0].split(b"/")[-1]
+                package = column2.split(",")[0].split("/")[-1]
                 if path in file2pkg:
                     if package == file2pkg[path]:
                         continue
@@ -1730,7 +1729,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     def _get_file2pkg_mapping(
         self, map_cachedir: str, release: str, arch: str
-    ) -> dict[bytes, bytes]:
+    ) -> dict[str, str]:
         # this is ordered by likelihood of installation with the most common
         # last
         # XXX - maybe we shouldn't check -security and -updates if it is the
@@ -1775,13 +1774,13 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         if file[0] != "/":
             file = f"/{file}"
-        files = [file[1:].encode()]
+        files = [file[1:]]
         usrmerge_file = _usr_merge_alternative(file)
         if usrmerge_file:
-            files.append(usrmerge_file[1:].encode())
+            files.append(usrmerge_file[1:])
         for filename in files:
             try:
-                pkg = contents_mapping[filename].decode()
+                pkg = contents_mapping[filename]
                 return pkg
             except KeyError:
                 pass
