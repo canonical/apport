@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2026-03-10 15:40+0000\n"
 "Last-Translator: Aron Xu <Unknown>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
@@ -464,34 +464,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "已将此问题报告给开发人员。谢谢！"
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "按任意键继续…"
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "您想做什么？您的选择是："
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "请选择(%s)："
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i 字节)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(二进制数据)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "要向开发者发送问题报告吗？"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -499,50 +499,50 @@ msgstr ""
 "当问题报告被发出之后，请填写\n"
 "自动弹出窗口的表格。"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "发送报告(&S)(%s)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "本地检查(&E)"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "查看报告(&V)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "保留报告文件以便稍后发送或复制到其他位置(&K)"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "取消并忽略此程序版本今后的崩溃(&I)"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "取消(&C)"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "问题报告文件："
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "确认(&C)"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "错误：%s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "正在收集问题信息"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -550,11 +550,11 @@ msgstr ""
 "收集到的信息将会传送到开发人员处以改进软件。\n"
 "这可能会花费几分钟时间。"
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "上传问题信息"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -562,58 +562,58 @@ msgstr ""
 "收集到的信息正在被发送到错误跟踪系统。\n"
 "这可能要花费几分钟时间。"
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr "是(&Y)"
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr "否(&N)"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "完成(&D)"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "无"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "已选择：%s。可多选："
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "选择："
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "文件的路径(回车取消)："
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "文件不存在。"
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "这是一个目录。"
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "要继续，您必须访问下面这个网址："
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr "您现在可以启动一个浏览器，或者复制这个网址到另外一个电脑的浏览器。"
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "现在启动一个浏览器"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr "没有已知的崩溃报告，尝试 --help 以获得更多信息。"
 

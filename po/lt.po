@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2019-04-13 17:56+0000\n"
 "Last-Translator: Moo <hazap@hotmail.com>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
@@ -481,34 +481,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Apie šią problemą jau buvo pranešta kūrėjams. Ačiū!"
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "Norėdami tęsti, paspauskite bet kurį klavišą..."
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "Ką norite atlikti? Jūsų parinktys yra:"
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Prašome pasirinkti (%s):"
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i baitų)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(dvejetainiai duomenys)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Siųsti pranešimą apie problemą kūrėjams?"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -516,51 +516,51 @@ msgstr ""
 "Po to, kai ataskaita apie problemą bus nusiųsta, prašome automatiškai \n"
 "atvertoje žiniatinklio naršyklėje užpildyti formą."
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Siųsti ataskaitą (%s)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "&Ištirti vietoje"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "&Peržiūrėti ataskaitą"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "Lai&kyti ataskaitos failą vėlesniam siuntimui ar kopijavimui kur nors kitur"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Atsisakyti ir &ignoruoti šios programos strigtis ateityje"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "&Atsisakyti"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "Ataskaitos apie problemą failas:"
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "Pa&tvirtinti"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "Klaida: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -568,11 +568,11 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams, kad jie patobulintų\n"
 "programą. Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Išsiunčiama informacija apie problemą"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -580,48 +580,48 @@ msgstr ""
 "Surinkta informacija yra siunčiama į klaidų sekimo sistemą.\n"
 "Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr ""
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr ""
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "&Baigta"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "nėra"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Pasirinkta: %s. Daugybinis pasirinkimas:"
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "Pasirinkimai:"
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "Kelias iki failo (Enter - atsisakyti):"
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "Failas neegzistuoja."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "Tai katalogas."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "Norėdami tęsti privalote aplankyti šį URL:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -629,11 +629,11 @@ msgstr ""
 "Galite paleisti naršyklę dabar arba nukopijuoti šį URL į naršyklę kitame "
 "kompiuteryje."
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "Paleisti naršyklę dabar"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nėra laukiančiųjų strigčių ataskaitų. Mėginkite --help daugiau informacijos "
