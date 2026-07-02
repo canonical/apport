@@ -68,7 +68,6 @@ jobs:
         container:
           - debian:stable-slim
           - debian:testing-slim
-          - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
         architecture:
@@ -151,7 +150,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
     container:
@@ -183,7 +181,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:questing
           # resolute skipped due to https://launchpad.net/bugs/2147544
           # - ubuntu:resolute
@@ -270,7 +267,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:questing
           - ubuntu:resolute
         architecture:
