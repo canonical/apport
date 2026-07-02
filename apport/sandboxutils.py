@@ -275,32 +275,32 @@ def make_sandbox(
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
-    for path in ("InterpreterPath", "ExecutablePath"):
-        if path in report:
-            pkg = packaging.get_file_package(
-                report[path],
-                True,
-                pkgmap_cache_dir,
-                release=report["DistroRelease"],
-                arch=report.get("Architecture"),
+    for key in ("InterpreterPath", "ExecutablePath"):
+        path = report.get(key)
+        if path is None:
+            continue
+        pkg = packaging.get_file_package(
+            path,
+            True,
+            pkgmap_cache_dir,
+            release=report["DistroRelease"],
+            arch=report.get("Architecture"),
+        )
+        # Because of UsrMerge the two systemctl's may share the same
+        # location, however since systemd and systemctl conflict we can
+        # assume that if the SourcePackage was set to systemd it is
+        # correct. For an example see LP: #1872211.
+        if pkg == "systemctl":
+            if report["SourcePackage"] == "systemd":
+                report["ExecutablePath"] = "/bin/systemctl"
+                pkg = "systemd"
+        if pkg:
+            apport.logging.log(
+                f"Installing extra package {pkg} to get {key}", log_timestamps
             )
-            # Because of UsrMerge the two systemctl's may share the same
-            # location, however since systemd and systemctl conflict we can
-            # assume that if the SourcePackage was set to systemd it is
-            # correct. For an example see LP: #1872211.
-            if pkg == "systemctl":
-                if report["SourcePackage"] == "systemd":
-                    report["ExecutablePath"] = "/bin/systemctl"
-                    pkg = "systemd"
-            if pkg:
-                apport.logging.log(
-                    f"Installing extra package {pkg} to get {path}", log_timestamps
-                )
-                pkgs.append((pkg, pkg_versions.get(pkg)))
-            else:
-                apport.logging.fatal(
-                    "Cannot find package which ships %s %s", path, report[path]
-                )
+            pkgs.append((pkg, pkg_versions.get(pkg)))
+        else:
+            apport.logging.fatal("Cannot find package which ships %s %s", key, path)
 
     # unpack packages for executable using cache and sandbox
     if pkgs:
@@ -324,25 +324,21 @@ def make_sandbox(
     # potential local library dependencies (like those in build trees) into the
     # sandbox, and we call gdb/valgrind on the binary outside the sandbox.
     if "Package" in report:
-        for path in ("InterpreterPath", "ExecutablePath"):
-            if path in report and not os.path.exists(sandbox_dir + report[path]):
-                if report[path].startswith("/usr"):
-                    if os.path.exists(sandbox_dir + report[path][4:]):
-                        report[path] = report[path][4:]
-                    else:
-                        apport.logging.fatal(
-                            "%s %s does not exist (report specified package %s)",
-                            path,
-                            sandbox_dir + report[path],
-                            report["Package"],
-                        )
-                else:
-                    apport.logging.fatal(
-                        "%s %s does not exist (report specified package %s)",
-                        path,
-                        sandbox_dir + report[path],
-                        report["Package"],
-                    )
+        for key2 in ("InterpreterPath", "ExecutablePath"):
+            path = report.get(key2)
+            if path is None:
+                continue
+            if os.path.exists(sandbox_dir + path):
+                continue
+            if path.startswith("/usr") and os.path.exists(sandbox_dir + path[4:]):
+                report[key2] = path[4:]
+                continue
+            apport.logging.fatal(
+                "%s %s does not exist (report specified package %s)",
+                key2,
+                sandbox_dir + path,
+                report["Package"],
+            )
 
     if outdated_msg:
         report["RetraceOutdatedPackages"] = outdated_msg
