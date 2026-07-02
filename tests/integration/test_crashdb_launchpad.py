@@ -41,7 +41,7 @@ from apport.crashdb_impl.launchpad import CrashDatabase
 from apport.packaging_impl import impl as packaging
 from apport.report import Report
 
-_CACHE = {}
+_CACHE: dict[str, Callable] = {}
 
 
 def cache(func: Callable) -> Callable:
