@@ -673,7 +673,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr["SimpleLineEnd"] = "bar\n"
         pr["TwoLine"] = "first\nsecond\n"
         pr["InlineMargin"] = "first\nsecond\nthird\nfourth\nfifth\n"
-        pr["Multiline"] = " foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n"
+        pr["Multiline.txt"] = " foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n"
 
         # still small enough for inline text
         pr["Largeline"] = "A" * 999
