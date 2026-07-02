@@ -264,6 +264,11 @@ class CompressedFile:
         """Check if the compressed file is readable by the effective user."""
         return os.access(self.filename, os.R_OK, effective_ids=True)
 
+    def write(self, file: typing.IO[bytes]) -> None:
+        """Write uncompressed value into given file-like object."""
+        for block in _decode_compressed_stream(self.iter_compressed()):
+            file.write(block)
+
 
 class CompressedValue:
     """Represent a ProblemReport value which is gzip or zstandard compressed.

@@ -7,6 +7,7 @@ import email
 import io
 import locale
 import sys
+import tempfile
 import textwrap
 import time
 import unittest
@@ -322,6 +323,26 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             b"fake core dump data for testing purposes"
             b" which is long enough to be compressed\n",
         )
+
+    @unittest.skipUnless(zstandard, "zstandard Python module not available")
+    def test_writing_zstd_compressed_file(self) -> None:
+        """Test writing zstd-compressed CompressedFile."""
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(
+                base64.b64decode(
+                    b"KLUv/SRCvQEAIsQMEMC3AbLcS0WaZ8rvf69jyw3ghpXr6pBr5i7HiCKroc60"
+                    b"3+tB4rC/4TV1osHyJUXme6IIAD6PTiM="
+                )
+            )
+            temp.flush()
+            compressed_file = problem_report.CompressedFile(temp.name)
+
+            output = io.BytesIO()
+            compressed_file.write(output)
+            self.assertEqual(
+                output.getvalue(),
+                b"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam\n",
+            )
 
     @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_writing_zstd_compressed_value(self) -> None:
