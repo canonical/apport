@@ -198,7 +198,7 @@ def _read_proc_file(path: str, dir_fd: int) -> str:
         return "Error: " + str(error)
 
 
-def _read_maps(proc_pid_fd):
+def _read_maps(proc_pid_fd: int) -> str:
     """Read /proc/pid/maps.
 
     Since /proc/$pid/maps may become unreadable unless we are ptracing the
