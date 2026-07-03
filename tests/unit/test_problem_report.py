@@ -1,10 +1,13 @@
 """Unit tests for the problem_report module."""
 
+# pylint: disable=too-many-lines
+
 import base64
 import contextlib
 import datetime
 import email
 import io
+import json
 import locale
 import sys
 import textwrap
@@ -670,6 +673,63 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ValueError, "^Unknown compression for InvalidData.gz$"
         ):
             report.write_mime(output)
+
+    def test_write_mime_json(self) -> None:
+        """write_mine() for JSON values."""
+        package_data = json.dumps({"elfType": "coredump", "key": "A" * 1000}, indent=2)
+        pro_status = json.dumps(
+            {
+                "_schema_version": "0.1",
+                "version": "37.2ubuntu",
+                "execution_status": "inactive",
+                "execution_details": "No Ubuntu Pro operations are running",
+            },
+            indent=2,
+        )
+        report = problem_report.ProblemReport(date="now!")
+        report["CoredumpPackageJson"] = package_data
+        report["pro-status.json"] = pro_status
+
+        output = io.BytesIO()
+        report.write_mime(output)
+        output.seek(0)
+
+        message = email.message_from_binary_file(output)
+        remaining_parts = message.walk()
+
+        # first part is the multipart container
+        part = next(remaining_parts)
+        self.assertTrue(part.is_multipart())
+
+        # next part should be an inline text/plain attachments with all short
+        # fields
+        part = next(remaining_parts)
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "text/plain")
+        self.assertEqual(part.get_content_charset(), "utf-8")
+        self.assertIsNone(part.get_filename())
+        self.assertEqual(
+            part.get_payload(decode=True), b"ProblemType: Crash\nDate: now!\n"
+        )
+
+        # next part should be the CoredumpPackageJson as attachment
+        part = next(remaining_parts)
+        self.assertEqual(part.get_filename(), "CoredumpPackage.json")
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "application/json")
+        self.assertIsNone(part.get_content_charset())
+        self.assertEqual(part.get_payload(decode=True), package_data.encode())
+
+        # next part should be the pro-status.json as attachment
+        part = next(remaining_parts)
+        self.assertEqual(part.get_filename(), "pro-status.json")
+        self.assertFalse(part.is_multipart())
+        self.assertEqual(part.get_content_type(), "application/json")
+        self.assertIsNone(part.get_content_charset())
+        self.assertEqual(part.get_payload(decode=True), pro_status.encode())
+
+        with self.assertRaises(StopIteration):
+            next(remaining_parts)
 
     def test_write_mime_text(self) -> None:
         """write_mime() for text values."""

@@ -114,8 +114,13 @@ def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MI
 
 
 def _create_text_attachment(name: str, value: str) -> email.mime.base.MIMEBase:
-    filename = _add_extension_if_missing(name, ".txt")
-    attachment = email.mime.text.MIMEText(value, _charset="UTF-8")
+    if name.endswith("Json") or name.endswith(".json"):
+        filename = _add_extension_if_missing(name.removesuffix("Json"), ".json")
+        attachment = email.mime.base.MIMEBase("application", "json")
+        attachment.set_payload(value)
+    else:
+        filename = _add_extension_if_missing(name, ".txt")
+        attachment = email.mime.text.MIMEText(value, _charset="UTF-8")
     attachment.add_header("Content-Disposition", "attachment", filename=filename)
     return attachment
 
