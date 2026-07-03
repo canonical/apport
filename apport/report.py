@@ -1605,8 +1605,9 @@ class Report(problem_report.ProblemReport):
         # package problem
         if self.get("ProblemType") == "Package" and "Package" in self:
             title = f"package {self['Package']} failed to install/upgrade"
-            if self.get("ErrorMessage"):
-                title += ": " + self["ErrorMessage"].splitlines()[-1]
+            error_message = self.get("ErrorMessage")
+            if error_message and isinstance(error_message, str):
+                title += ": " + error_message.splitlines()[-1]
 
             return title
 
