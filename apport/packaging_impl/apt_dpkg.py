@@ -196,14 +196,22 @@ def _load_all_sources(apt_dir: str) -> list[Deb822SourceEntry | SourceEntry]:
     return sources
 
 
-def _map_mirror_to_arch(uri: str, target_arch: str) -> str:
+def _availabe_on_archive_ubuntu_com(arch: str, dist: str) -> bool:
+    """Check if arch plus dist is available on http://archive.ubuntu.com."""
+    if arch == "arm64":
+        # arm64 is available on http://archive.ubuntu.com starting from questing on
+        return dist not in {"trusty", "xenial", "bionic", "focal", "jammy", "noble"}
+    return arch in {"amd64", "i386"}
+
+
+def _map_mirror_to_arch(uri: str, target_arch: str, dist: str) -> str:
     """Map the givin archive mirror URI to a valid one for the givin architecture.
 
     The Ubuntu archive is split. The primary mirrors only has packages
     for the amd64 and i386 architectures. The ports mirrors host all
     remaining architectures.
     """
-    if target_arch in {"amd64", "i386"}:
+    if _availabe_on_archive_ubuntu_com(target_arch, dist):
         ports_match = re.match("http://([a-z.]*)ports.ubuntu.com/ubuntu-ports/?", uri)
         if ports_match:
             return f"http://{ports_match.group(1)}archive.ubuntu.com/ubuntu"
@@ -1619,7 +1627,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             f" couldn't find configured source contains the `deb` type in {apt_dir}"
         )
 
-    def _get_mirror(self, arch: str) -> str:
+    def _get_mirror(self, arch: str, dist: str) -> str:
         """Return the distribution mirror URL.
 
         If it has not been set yet, it will be read from the system
@@ -1627,7 +1635,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         """
         if not self._mirror:
             self._mirror = self._get_primary_mirror_from_apt_sources("/etc/apt")
-        return _map_mirror_to_arch(self._mirror, arch)
+        return _map_mirror_to_arch(self._mirror, arch, dist)
 
     def _ppa_archive_url(self, user: str, distro: str, ppa_name: str) -> str:
         return f"{self._launchpad_base}/~{user}/+archive/{distro}/{ppa_name}"
@@ -1648,7 +1656,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         self, contents_filename: str, mtime: float | None, dist: str, arch: str
     ) -> bool:
         """Returns True on success (including when no update is needed)."""
-        url = f"{self._get_mirror(arch)}/dists/{dist}/Contents-{arch}.gz"
+        url = f"{self._get_mirror(arch, dist)}/dists/{dist}/Contents-{arch}.gz"
         if mtime:
             req = urllib.request.Request(url, method="HEAD")
             with contextlib.suppress(OSError):
