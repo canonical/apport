@@ -22,7 +22,11 @@ from unittest.mock import MagicMock
 import apport.packaging
 import apport.report
 import problem_report
-from tests.helper import get_gnu_coreutils_cmd, skip_if_command_is_missing
+from tests.helper import (
+    WAITING_TIMEOUT,
+    get_gnu_coreutils_cmd,
+    skip_if_command_is_missing,
+)
 from tests.paths import patch_data_dir, restore_data_dir
 
 
@@ -41,7 +45,9 @@ class T(unittest.TestCase):
     def tearDownClass(cls) -> None:
         restore_data_dir(apport.report, cls.orig_data_dir)
 
-    def wait_for_proc_cmdline(self, pid: int, timeout_sec: float = 10.0) -> None:
+    def wait_for_proc_cmdline(
+        self, pid: int, timeout_sec: float = WAITING_TIMEOUT
+    ) -> None:
         assert pid
         elapsed_time = 0.0
         while elapsed_time < timeout_sec:

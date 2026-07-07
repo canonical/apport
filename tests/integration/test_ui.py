@@ -970,9 +970,7 @@ class T(unittest.TestCase):
 
                 try:
                     pid = wait_for_process_to_appear(
-                        self.TEST_EXECUTABLE,
-                        self.running_test_executables,
-                        timeout=10.0,
+                        self.TEST_EXECUTABLE, self.running_test_executables
                     )
                     # generate crash report
                     r = apport.report.Report()
