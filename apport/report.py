@@ -984,7 +984,10 @@ class Report(problem_report.ProblemReport):
         return ret
 
     def add_gdb_info(
-        self, rootdir: str | None = None, gdb_sandbox: str | None = None
+        self,
+        rootdir: str | None = None,
+        gdb_sandbox: str | None = None,
+        gdb_source_dirs: list[str] | None = None,
     ) -> None:
         # TODO: Split into smaller functions/methods
         # pylint: disable=too-complex,too-many-branches,too-many-locals
@@ -994,8 +997,10 @@ class Report(problem_report.ProblemReport):
         ExecutablePath. This adds the following fields:
         - Registers: Output of gdb's 'info registers' command
         - Disassembly: Output of gdb's 'x/16i $pc' command
-        - Stacktrace: Output of gdb's 'bt full' command
-        - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
+        - Stacktrace: Output of gdb's 'bt -full -frame-info source-and-location'
+          command
+        - ThreadStacktrace: Output of gdb's
+          'thread apply all bt -full -frame-info source-and-location' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
           inclusion into bug reports and easier processing
         - AssertionMessage: Value of __abort_msg or __glib_assert_msg
@@ -1005,6 +1010,9 @@ class Report(problem_report.ProblemReport):
         executable, libraries, and debug symbols. This does not require
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
+
+        The optional gdb_source_dirs can specify source tree roots
+        that gdb should use for source lookups.
 
         Raises a OSError if the core dump is invalid/truncated, or OSError if
         calling gdb fails, or FileNotFoundError if gdb or the crashing
@@ -1016,12 +1024,13 @@ class Report(problem_report.ProblemReport):
         gdb_reports = {
             "Registers": "info registers",
             "Disassembly": "x/16i $pc",
-            "Stacktrace": "bt full",
-            "ThreadStacktrace": "thread apply all bt full",
+            "Stacktrace": "bt -full -frame-info source-and-location",
+            "ThreadStacktrace": "thread apply all bt -full "
+            + "-frame-info source-and-location",
             "AssertionMessage": "print __abort_msg->msg",
             "GLibAssertionMessage": "print (char*) __glib_assert_msg",
         }
-        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
+        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox, gdb_source_dirs)
         environ["HOME"] = "/nonexistent"
         gdb_cmd += [
             "--batch",
@@ -1966,7 +1975,10 @@ class Report(problem_report.ProblemReport):
             return None
 
     def gdb_command(
-        self, sandbox: str | None, gdb_sandbox: str | None = None
+        self,
+        sandbox: str | None,
+        gdb_sandbox: str | None = None,
+        source_dirs: list[str] | None = None,
     ) -> tuple[list[str], dict[str, str]]:
         """Build gdb command for this report.
 
@@ -2036,6 +2048,8 @@ class Report(problem_report.ProblemReport):
             executable = sandbox + executable
 
         command += ["--ex", f'file "{executable}"']
+        for source in source_dirs or []:
+            command += ["--directory", source]
 
         if "CoreDump" in self:
             core = self._provide_uncompressed_coredump_file()

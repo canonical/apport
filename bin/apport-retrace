@@ -19,7 +19,6 @@ import argparse
 import gettext
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -185,7 +184,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--no-stacktrace-source",
         action="store_false",
         dest="stacktrace_source",
-        help=_("Do not add StacktraceSource to the report."),
+        help=_("Do not fetch sources or add StacktraceSource to the report."),
     )
     argparser.add_argument(
         "report",
@@ -273,7 +272,38 @@ def get_code(srcdir, filename, line, context=5):
     return result
 
 
-def gen_source_stacktrace(report, sandbox):
+def _get_source_directory(
+    report: dict[str, str], sandbox: str | None
+) -> tuple[str | None, tempfile.TemporaryDirectory | None]:
+    """Return source tree path and temporary work dir if any or ``(None, None)``.
+
+    The returned temporary directory object must be cleaned up by the caller.
+    """
+    if "SourcePackage" not in report:
+        return None, None
+
+    # pylint: disable=R1732 # We do not want automatic cleanup for this.
+    workdir = tempfile.TemporaryDirectory()
+    try:
+        try:
+            version = report["Package"].split()[1]
+        except (IndexError, KeyError):
+            version = None
+        srcdir = packaging.get_source_tree(
+            report["SourcePackage"], workdir.name, version, sandbox=sandbox
+        )
+        if not srcdir:
+            workdir.cleanup()
+            return None, None
+        return srcdir, workdir
+    except Exception:
+        workdir.cleanup()
+        raise
+
+
+def gen_source_stacktrace(
+    report: dict[str, str], sandbox: str | None, srcdir: str | None = None
+) -> None:
     """Generate StacktraceSource.
 
     This is a version of Stacktrace with the surrounding code lines (where
@@ -282,15 +312,10 @@ def gen_source_stacktrace(report, sandbox):
     if "Stacktrace" not in report or "SourcePackage" not in report:
         return
 
-    workdir = tempfile.mkdtemp()
+    workdir = None
     try:
-        try:
-            version = report["Package"].split()[1]
-        except (IndexError, KeyError):
-            version = None
-        srcdir = packaging.get_source_tree(
-            report["SourcePackage"], workdir, version, sandbox=sandbox
-        )
+        if not srcdir:
+            srcdir, workdir = _get_source_directory(report, sandbox)
         if not srcdir:
             return
 
@@ -309,7 +334,8 @@ def gen_source_stacktrace(report, sandbox):
 
         report["StacktraceSource"] = result
     finally:
-        shutil.rmtree(workdir)
+        if workdir:
+            workdir.cleanup()
 
 
 def print_traces(report):
@@ -642,15 +668,29 @@ def main(argv):
         apport.logging.memdbg("before calling gdb")
         subprocess.call(gdb_cmd, env=os.environ | environ)
     else:
+        if options.sandbox == "system":
+            apt_root = os.path.join(cache, "system", "apt")
+        elif options.sandbox:
+            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
+        else:
+            apt_root = None
+        source_dir = None
+        source_workdir = None
+        if options.stacktrace_source:
+            source_dir, source_workdir = _get_source_directory(report, apt_root)
+
         # regenerate gdb info
         apport.logging.memdbg("before collecting gdb info")
         try:
-            report.add_gdb_info(sandbox, gdb_sandbox)
-        except OSError as error:
-            if not options.auth:
-                apport.logging.fatal("%s", str(error))
-            if not options.confirm or confirm_traces(report):
-                invalid_msg = """Thank you for your report!
+            try:
+                report.add_gdb_info(
+                    sandbox, gdb_sandbox, [source_dir] if source_dir else None
+                )
+            except OSError as error:
+                if not options.auth:
+                    apport.logging.fatal("%s", str(error))
+                if not options.confirm or confirm_traces(report):
+                    invalid_msg = """Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed as the report has a core dump which is invalid. The
@@ -659,17 +699,14 @@ transit.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                crashdb.mark_retrace_failed(crashid, invalid_msg)
-            apport.logging.fatal("%s", str(error))
-        if options.sandbox == "system":
-            apt_root = os.path.join(cache, "system", "apt")
-        elif options.sandbox:
-            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
-        else:
-            apt_root = None
-        if options.stacktrace_source:
-            gen_source_stacktrace(report, apt_root)
-        report.add_kernel_crash_info()
+                    crashdb.mark_retrace_failed(crashid, invalid_msg)
+                apport.logging.fatal("%s", str(error))
+            if options.stacktrace_source:
+                gen_source_stacktrace(report, apt_root, source_dir)
+            report.add_kernel_crash_info()
+        finally:
+            if source_workdir:
+                source_workdir.cleanup()
 
     # Cleanup the .dwz machine symlink for LP: #1818918
     if gdb_sandbox and sandbox and target:

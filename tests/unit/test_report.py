@@ -881,6 +881,54 @@ dispatch_queue () at canberra-gtk-module.c:815""",
                 d (x=1) at crash.c:29"""),
         )
 
+    def test_gen_stacktrace_top_with_frame_info_source_lines(self) -> None:
+        """_gen_stacktrace_top() ignores frame-info source/location noise."""
+        r = apport.report.Report()
+        r["Stacktrace"] = textwrap.dedent(
+            "#2  0x00007ffff7eebd45 in g_system_thread_set_name ("
+            'name=0x5555556e2d80 "unref-target2") at '
+            "../../glib/glib/gthread-posix.c:822\n"
+            "822   pthread_setname_np (pthread_self (), name_); /* on Linux "
+            "and Solaris */\n"
+            '        name_ = "unref-target2\\000\\233", <incomplete '
+            "sequence \\\315>\n"
+            "#3  g_thread_proxy (data=0x5555556e2d60) at "
+            "../../glib/glib/gthread.c:889\n"
+            "889     g_system_thread_set_name (thread->name);\n"
+            "        thread = 0x5555556e2d60\n"
+            '        __func__ = "g_thread_proxy"\n'
+            "#4  0x00007ffff7aa3be5 in create_thread (pd=pd@entry=0x7ff90da746c0, "
+            "attr=attr@entry=0x7ffffffdea40, stopped_start=stopped_start@entry="
+            "0x7ffffffde946, stackaddr=stackaddr@entry=0x7ff90d274000, "
+            "stacksize=<optimized out>, thread_ran=thread_ran@entry="
+            "0x7ffffffde947) at ./nptl/pthread_create.c:298\n"
+            "⚠️ warning: 298\t./nptl/pthread_create.c: No such file or directory\n"
+            "need_setaffinity = false\n"
+            "clone_flags = 4001536\n"
+            "tp = 0x7ff90da746c0\n"
+            "args = {flags = 4001536, pidfd = 140707652651408, child_tid = "
+            "140707652652264, parent_tid = 140707652651408, exit_signal = 0, "
+            "stack = 140707644260352, stack_size = 8388480, tls = "
+            "140707652650688, set_tid = 0, set_tid_size = 0, cgroup = 0}\n"
+            "ret = <optimized out>\n"
+            '__PRETTY_FUNCTION__ = "create_thread"\n'
+        )
+        r._gen_stacktrace_top()
+        self.assertEqual(
+            r["StacktraceTop"],
+            textwrap.dedent(
+                'g_system_thread_set_name (name=0x5555556e2d80 "unref-target2") '
+                "at ../../glib/glib/gthread-posix.c:822\n"
+                "g_thread_proxy (data=0x5555556e2d60) at "
+                "../../glib/glib/gthread.c:889\n"
+                "create_thread (pd=pd@entry=0x7ff90da746c0, "
+                "attr=attr@entry=0x7ffffffdea40, stopped_start=stopped_start@entry="
+                "0x7ffffffde946, stackaddr=stackaddr@entry=0x7ff90d274000, "
+                "stacksize=<optimized out>, thread_ran=thread_ran@entry="
+                "0x7ffffffde947) at ./nptl/pthread_create.c:298"
+            ),
+        )
+
     @unittest.mock.patch("shutil.which", MagicMock(return_value=None))
     def test_gdb_add_info_no_gdb(self) -> None:
         r = apport.report.Report()
@@ -891,6 +939,32 @@ dispatch_queue () at canberra-gtk-module.c:815""",
         r["AssertionMessage"] = "foo.c:42 main: i > 0"
         with self.assertRaises(FileNotFoundError):
             r.add_gdb_info()
+
+    @unittest.mock.patch(
+        "apport.report._get_gdb_path", MagicMock(return_value="/usr/bin/gdb")
+    )
+    def test_gdb_command_with_source_dir(self) -> None:
+        report = apport.report.Report()
+        report["ExecutablePath"] = "/bin/true"
+
+        command, _ = report.gdb_command(None, None, ["/tmp/source-tree"])
+        self.assertIn("--directory /tmp/source-tree", " ".join(command))
+
+        command, _ = report.gdb_command(
+            None, None, ["/tmp/source-tree", "/tmp/another-source-tree"]
+        )
+        self.assertIn("--directory /tmp/source-tree", " ".join(command))
+        self.assertIn("--directory /tmp/another-source-tree", " ".join(command))
+
+    @unittest.mock.patch(
+        "apport.report._get_gdb_path", MagicMock(return_value="/usr/bin/gdb")
+    )
+    def test_gdb_command_without_source_dir(self) -> None:
+        report = apport.report.Report()
+        report["ExecutablePath"] = "/bin/true"
+
+        command, _ = report.gdb_command(None, None, None)
+        self.assertNotIn("--directory", command)
 
     def test_crash_signature(self) -> None:
         """crash_signature()."""
@@ -1238,9 +1312,11 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0        [vsyscall]
         # good stack trace
         pr["Stacktrace"] = """
 #0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
+82      return INLINE_SYSCALL_CALL (kill, pid, sig);
 No locals.
 #1  0x000000000043fd51 in kill_pid ()
 #2  g_main_context_iterate (context=0x1731680) at gmain.c:3068
+⚠️ warning: 3068\tgmain.c: No such file or directory
 #3  0x000000000042eb76 in ?? ()
 #4  0x00000000004324d8 in ??
 No symbol table info available.
