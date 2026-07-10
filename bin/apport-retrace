@@ -19,7 +19,6 @@ import argparse
 import gettext
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -153,7 +152,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="append",
         default=[],
         help=_(
-            "Install an extra package into the sandbox"
+            "Install an extra package source or debug symbols into the sandbox"
             " (can be specified multiple times)"
         ),
     )
@@ -185,7 +184,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--no-stacktrace-source",
         action="store_false",
         dest="stacktrace_source",
-        help=_("Do not add StacktraceSource to the report."),
+        help=_("Do not fetch sources or add StacktraceSource to the report."),
     )
     argparser.add_argument(
         "report",
@@ -250,13 +249,20 @@ def find_file_dir(name, directory, limit=None):
     return result
 
 
-def get_code(srcdir, filename, line, context=5):
+def get_code(srcdirs, filename, line, context=5):
     """Find the given filename in the srcdir directory and return the code
     lines around the given line number."""
 
-    files = find_file_dir(filename, srcdir, 1)
+    if isinstance(srcdirs, str):
+        srcdirs = [srcdirs]
+
+    files = []
+    for srcdir in srcdirs:
+        files = find_file_dir(filename, srcdir, 1)
+        if files:
+            break
     if not files:
-        return f"  [Error: {filename} was not found in source tree]\n"
+        return f"  [Error: {filename} was not found in source trees]\n"
 
     result = ""
     lineno = 0
@@ -273,7 +279,106 @@ def get_code(srcdir, filename, line, context=5):
     return result
 
 
-def gen_source_stacktrace(report, sandbox):
+def _get_report_package(report: Report) -> tuple[str | None, str | None]:
+    """Extract package name and version from report's Package field if possible."""
+    package_field = report.get("Package")
+    if not package_field:
+        return None, None
+
+    package_tokens = package_field.split(maxsplit=1)
+    package_name = package_tokens[0]
+    package_version = package_tokens[1] if len(package_tokens) > 1 else None
+    return package_name, package_version
+
+
+def get_report_relevant_source_packages(
+    report: Report, extra_packages: list[str] | None = None
+) -> dict[str, str | None]:
+    """Collect source package/version mapping from report metadata."""
+    source_versions: dict[str, str | None] = {}
+    package_name, package_version = _get_report_package(report)
+
+    related_packages: dict[str, str | None] = {p: None for p in extra_packages or []}
+    related_packages.update(report.related_package_versions())
+
+    if package_name:
+        # Treat report Package as another related binary package with precedence.
+        related_packages[package_name] = (
+            package_version
+            if package_version is not None
+            else related_packages.get(package_name)
+        )
+
+    for package, version in sorted(related_packages.items()):
+        try:
+            source_name = packaging.get_source(package)
+        except ValueError:
+            continue
+        if not source_name:
+            continue
+        if source_name not in source_versions:
+            source_versions[source_name] = version
+        elif source_versions[source_name] is None and version is not None:
+            source_versions[source_name] = version
+
+    source_package = report.get("SourcePackage")
+    if source_package:
+        # Report SourcePackage has priority over related package-derived entries.
+        source_versions[source_package] = (
+            package_version
+            if package_version is not None
+            else source_versions.get(source_package)
+        )
+
+    return source_versions
+
+
+def _fetch_packages_sources(
+    source_versions: dict[str, str | None],
+    sandbox: str | None,
+    workdir: tempfile.TemporaryDirectory,
+) -> list[str]:
+    """Fetch source trees for the given source/version mapping."""
+    source_dirs = []
+    for index, (source_name, version) in enumerate(source_versions.items(), start=1):
+        output_dir = os.path.join(workdir.name, f"{source_name}.{index}")
+        os.mkdir(output_dir)
+        srcdir = packaging.get_source_tree(
+            source_name, output_dir, version, sandbox=sandbox
+        )
+        if srcdir:
+            source_dirs.append(srcdir)
+    return source_dirs
+
+
+def get_source_dirs(
+    report: Report, sandbox: str | None, extra_packages: list[str] | None = None
+) -> tuple[list[str], tempfile.TemporaryDirectory | None]:
+    """Return source tree paths and temporary work dir if any.
+
+    The returned temporary directory object must be cleaned up by the caller.
+    """
+    source_versions = get_report_relevant_source_packages(report, extra_packages)
+    if not source_versions:
+        return [], None
+
+    # pylint: disable=R1732 # We do not want automatic cleanup for this.
+    workdir = tempfile.TemporaryDirectory()
+    try:
+        source_dirs = _fetch_packages_sources(source_versions, sandbox, workdir)
+
+        if not source_dirs:
+            workdir.cleanup()
+            return [], None
+        return source_dirs, workdir
+    except Exception:
+        workdir.cleanup()
+        raise
+
+
+def gen_source_stacktrace(
+    report: Report, sandbox: str | None, srcdirs: list[str] | None = None
+) -> None:
     """Generate StacktraceSource.
 
     This is a version of Stacktrace with the surrounding code lines (where
@@ -282,16 +387,11 @@ def gen_source_stacktrace(report, sandbox):
     if "Stacktrace" not in report or "SourcePackage" not in report:
         return
 
-    workdir = tempfile.mkdtemp()
+    workdir = None
     try:
-        try:
-            version = report["Package"].split()[1]
-        except (IndexError, KeyError):
-            version = None
-        srcdir = packaging.get_source_tree(
-            report["SourcePackage"], workdir, version, sandbox=sandbox
-        )
-        if not srcdir:
+        if not srcdirs:
+            srcdirs, workdir = get_source_dirs(report, sandbox)
+        if not srcdirs:
             return
 
         src_frame = re.compile(r"^#\d+\s.* at (.*):(\d+)$")
@@ -300,7 +400,7 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report["Stacktrace"].splitlines():
             m = src_frame.match(frame)
             if m:
-                code = get_code(srcdir, os.path.basename(m.group(1)), int(m.group(2)))
+                code = get_code(srcdirs, os.path.basename(m.group(1)), int(m.group(2)))
                 result += f"{frame}\n{code}"
             else:
                 m = other_frame.search(frame)
@@ -309,7 +409,8 @@ def gen_source_stacktrace(report, sandbox):
 
         report["StacktraceSource"] = result
     finally:
-        shutil.rmtree(workdir)
+        if workdir:
+            workdir.cleanup()
 
 
 def print_traces(report):
@@ -625,9 +726,23 @@ def main(argv):
                     )
                     return 3
 
+    apt_root = None
+    source_dirs = None
+    source_workdir = None
+
+    if options.sandbox == "system":
+        apt_root = os.path.join(cache, "system", "apt")
+    elif options.sandbox:
+        apt_root = os.path.join(cache, report["DistroRelease"], "apt")
+
+    if options.stacktrace_source:
+        source_dirs, source_workdir = get_source_dirs(
+            report, apt_root, options.extra_package
+        )
+
     # interactive gdb session
     if options.gdb:
-        gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
+        gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox, source_dirs)
         if options.verbose:
             # build a shell-style command
             cmd = ""
@@ -640,17 +755,22 @@ def main(argv):
                     cmd += w
             apport.logging.log(f"Calling gdb command: {cmd}", options.timestamps)
         apport.logging.memdbg("before calling gdb")
-        subprocess.call(gdb_cmd, env=os.environ | environ)
+        try:
+            subprocess.call(gdb_cmd, env=os.environ | environ)
+        finally:
+            if source_workdir:
+                source_workdir.cleanup()
     else:
         # regenerate gdb info
         apport.logging.memdbg("before collecting gdb info")
         try:
-            report.add_gdb_info(sandbox, gdb_sandbox)
-        except OSError as error:
-            if not options.auth:
-                apport.logging.fatal("%s", str(error))
-            if not options.confirm or confirm_traces(report):
-                invalid_msg = """Thank you for your report!
+            try:
+                report.add_gdb_info(sandbox, gdb_sandbox, source_dirs)
+            except OSError as error:
+                if not options.auth:
+                    apport.logging.fatal("%s", str(error))
+                if not options.confirm or confirm_traces(report):
+                    invalid_msg = """Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed as the report has a core dump which is invalid. The
@@ -659,17 +779,14 @@ transit.
 
 Thank you for your understanding, and sorry for the inconvenience!
 """
-                crashdb.mark_retrace_failed(crashid, invalid_msg)
-            apport.logging.fatal("%s", str(error))
-        if options.sandbox == "system":
-            apt_root = os.path.join(cache, "system", "apt")
-        elif options.sandbox:
-            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
-        else:
-            apt_root = None
-        if options.stacktrace_source:
-            gen_source_stacktrace(report, apt_root)
-        report.add_kernel_crash_info()
+                    crashdb.mark_retrace_failed(crashid, invalid_msg)
+                apport.logging.fatal("%s", str(error))
+            if options.stacktrace_source:
+                gen_source_stacktrace(report, apt_root, source_dirs)
+            report.add_kernel_crash_info()
+        finally:
+            if source_workdir:
+                source_workdir.cleanup()
 
     # Cleanup the .dwz machine symlink for LP: #1818918
     if gdb_sandbox and sandbox and target:

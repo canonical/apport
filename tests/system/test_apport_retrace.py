@@ -160,14 +160,22 @@ def _assert_divide_by_zero_retrace(report: Report) -> None:
         r" at (/usr/src/chaos-marmosets-[^/]+/|\./)?divide-by-zero.c:[0-9]+$",
         flags=re.M,
     )
+    return_line = "    return 42 / zero;\n"
+    source_line_regex = re.compile(rf"\n[0-9]+\t{re.escape(return_line)}")
+    printf_line = '    printf("42 / 0 = %i\\n", divide_by_zero());\n'
+    printf_line_regex = re.compile(rf"\n[0-9]+\t{re.escape(printf_line)}")
     assert "divide_by_zero" in report["Disassembly"]
     # Expect RIP point to divide_by_zero
     assert "divide_by_zero" in report["Registers"]
     assert frame_regex.match(report["Stacktrace"])
     assert frame_regex.match(report["StacktraceSource"])
     assert "42 / zero" in report["StacktraceSource"]
+    assert source_line_regex.search(report["Stacktrace"])
+    assert printf_line_regex.search(report["Stacktrace"])
     assert stack_regex.match(report["StacktraceTop"])
     assert frame_regex.search(report["ThreadStacktrace"])
+    assert source_line_regex.search(report["ThreadStacktrace"])
+    assert printf_line_regex.search(report["ThreadStacktrace"])
 
 
 def _assert_sleep_retrace(report: Report) -> None:
@@ -177,11 +185,13 @@ def _assert_sleep_retrace(report: Report) -> None:
     assert "__GI___clock_nanosleep" in report["Registers"]
     assert stack_top in report["Stacktrace"]
     assert "seconds = 86400" in report["Stacktrace"]
+    assert "return nanosleep" in report["Stacktrace"]
     assert stack_top in report["StacktraceSource"]
     assert "return nanosleep" in report["StacktraceSource"]
     assert "__GI___clock_nanosleep (clock_id=" in report["StacktraceTop"]
     assert stack_top in report["ThreadStacktrace"]
     assert "seconds = 86400" in report["ThreadStacktrace"]
+    assert "return nanosleep" in report["ThreadStacktrace"]
 
 
 def _assert_cache_has_content(
@@ -224,6 +234,76 @@ def test_retrace_system_sandbox(
 
 
 @pytest.mark.requires_internet
+@pytest.mark.skipif(
+    impl.get_system_architecture() == "s390x",
+    reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
+)
+def test_retrace_system_sandbox_with_related_libc6(
+    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+) -> None:
+    """Retrace divide-by-zero with libc6 as related package."""
+    crash_with_related = workdir / "divide-by-zero-related-libc6.crash"
+    report = Report()
+    with open(divide_by_zero_crash, "rb") as report_file:
+        report.load(report_file)
+    report["RelatedPackageVersions"] = f"libc6 {impl.get_version('libc6')}\n"
+    with open(crash_with_related, "wb") as report_file:
+        report.write(report_file)
+
+    retraced_report_filename = workdir / "retraced-related-libc6.crash"
+    env = os.environ | local_test_environment()
+    cmd = [
+        "apport-retrace",
+        "-v",
+        "-o",
+        str(retraced_report_filename),
+        "--sandbox",
+        "system",
+        "--cache",
+        str(module_cachedir),
+        str(crash_with_related),
+    ]
+    subprocess.run(cmd, check=True, env=env)
+
+    retraced_report = _read_and_print_retraced_report(retraced_report_filename)
+    _assert_is_retraced(retraced_report)
+    _assert_divide_by_zero_retrace(retraced_report)
+
+
+@pytest.mark.skipif(not has_internet(), reason="online test")
+@pytest.mark.skipif(
+    impl.get_system_architecture() == "s390x",
+    reason="GDB has issues with divide-by-zero on s390x (LP: #2075204)",
+)
+def test_retrace_system_sandbox_with_extra_libc6(
+    workdir: pathlib.Path, module_cachedir: pathlib.Path, divide_by_zero_crash: str
+) -> None:
+    """Retrace divide-by-zero with libc6 as extra package."""
+    retraced_report_filename = workdir / "retraced-extra-libc6.crash"
+    env = os.environ | local_test_environment()
+    cmd = [
+        "apport-retrace",
+        "-v",
+        "-o",
+        str(retraced_report_filename),
+        "--sandbox",
+        "system",
+        "--extra-package",
+        "libc6",
+        "--extra-package",
+        "chaos-marmosets",
+        "--cache",
+        str(module_cachedir),
+        divide_by_zero_crash,
+    ]
+    subprocess.run(cmd, check=True, env=env)
+
+    retraced_report = _read_and_print_retraced_report(retraced_report_filename)
+    _assert_is_retraced(retraced_report)
+    _assert_divide_by_zero_retrace(retraced_report)
+
+
+@pytest.mark.skipif(not has_internet(), reason="online test")
 @pytest.mark.skipif(
     impl.get_system_architecture() == "amd64",
     reason="GDB sandbox is only available on amd64",

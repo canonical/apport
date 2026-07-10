@@ -638,9 +638,8 @@ class T(unittest.TestCase):
         self.assertIn("UnreportableReason", pr)
         self.assertEqual(pr["InterpreterPath"], "/usr/bin/twistd")
 
-    def _generate_sigsegv_report(
+    def _build_sigsegv_report(
         self,
-        file: IO[bytes] | None = None,
         signal: str = "11",
         code: str = """
 int f(int x) {
@@ -654,7 +653,7 @@ int main() { return f(42); }
     ) -> apport.report.Report:
         """Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
-        (ExecutablePath and CoreDump) and call add_gdb_info().
+        (ExecutablePath and CoreDump).
 
         If file is given, the report is written into it. Return
         the apport.report.Report.
@@ -703,14 +702,37 @@ int main() { return f(42); }
             pr["ExecutablePath"] = os.path.join(workdir, "crash")
             pr["CoreDump"] = (os.path.join(workdir, "core"),)
             pr["Signal"] = signal
-
-            pr.add_gdb_info()
-            if file:
-                pr.write(file)
-                file.flush()
         finally:
             os.chdir(orig_cwd)
 
+        return pr
+
+    def _generate_sigsegv_report(
+        self,
+        file: IO[bytes] | None = None,
+        signal: str = "11",
+        code: str = """
+int f(int x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+""",
+        args: list[str] | None = None,
+        extra_gcc_args: list[str] | None = None,
+    ) -> apport.report.Report:
+        """Create a test executable which will die with a SIGSEGV, generate a
+        core dump for it, create a problem report with those two arguments
+        (ExecutablePath and CoreDump) and call add_gdb_info().
+
+        If file is given, the report is written into it. Return
+        the apport.report.Report.
+        """
+        pr = self._build_sigsegv_report(signal, code, args, extra_gcc_args)
+        pr.add_gdb_info()
+        if file:
+            pr.write(file)
+            file.flush()
         return pr
 
     @staticmethod
@@ -741,6 +763,20 @@ int main() { return f(42); }
         self.assertIn("Thread 1 (", pr["ThreadStacktrace"])
         self.assertLessEqual(len(pr["StacktraceTop"].splitlines()), 5)
 
+    def _prepare_report_with_external_source(
+        self,
+    ) -> tuple[apport.report.Report, str, str]:
+        source_dir = tempfile.mkdtemp(prefix="apport-source-tree-")
+        self.addCleanup(shutil.rmtree, source_dir)
+
+        report = self._build_sigsegv_report()
+        source_path = pathlib.Path(report["ExecutablePath"]).with_name("crash.c")
+        copied_source = pathlib.Path(source_dir) / "crash.c"
+        shutil.copy2(source_path, copied_source)
+        source_path.unlink()
+        source_line = "3\t    int* p = 0; *p = x;"
+        return report, source_dir, source_line
+
     def test_add_gdb_info(self) -> None:
         """add_gdb_info() with core dump file reference."""
         pr = apport.report.Report()
@@ -768,6 +804,20 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
         self.assertNotEqual(pr["Disassembly"], "")
         self.assertNotIn("AssertionMessage", pr)
+
+    def test_add_gdb_info_without_source_dir(self) -> None:
+        """add_gdb_info() has no source lines without gdb_source_dirs."""
+        pr, _, source_line = self._prepare_report_with_external_source()
+        pr.add_gdb_info()
+        self.assertNotIn(source_line, pr["Stacktrace"])
+        self.assertNotIn(source_line, pr["ThreadStacktrace"])
+
+    def test_add_gdb_info_with_source_dir(self) -> None:
+        """add_gdb_info() can use a pre-fetched source tree."""
+        pr, source_dir, source_line = self._prepare_report_with_external_source()
+        pr.add_gdb_info(gdb_source_dirs=[source_dir])
+        self.assertIn(source_line, pr["Stacktrace"])
+        self.assertIn(source_line, pr["ThreadStacktrace"])
 
     def test_add_gdb_info_load(self) -> None:
         """add_gdb_info() with inline core dump."""
