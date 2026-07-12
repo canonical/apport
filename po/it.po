@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2024-12-19 18:55+0000\n"
 "Last-Translator: Salvatore Cocuzza <info@salvatorecocuzza.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -522,34 +522,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Il problema è già stato segnalato agli sviluppatori. Grazie."
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "Premere un tasto per continuare..."
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "Cosa fare? Le opzioni sono:"
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Scegliere (%s):"
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i byte)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(dati binari)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Inviare la segnalazione del problema agli sviluppatori?"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -558,52 +558,52 @@ msgstr ""
 "finestra\n"
 "del browser web che si aprirà automaticamente."
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Invia segnalazione (%s)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "&Esamina localmente"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "&Visualizza segnalazione"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Tenere il file di segnalazione per un successivo invio o per copiarlo in "
 "un'altra posizione"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "&Annulla e ignora i futuri crash di questa versione del programma"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "A&nnulla"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "File segnalazione problema:"
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "&Conferma"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "Errore: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Raccolta informazioni sul problema"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -612,11 +612,11 @@ msgstr ""
 "migliorare\n"
 "l'applicazione. Potrebbe impiegare alcuni minuti."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Invio informazioni sul problema"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -625,48 +625,48 @@ msgstr ""
 "tracciamento dei bug.\n"
 "Potrebbe impiegare alcuni minuti."
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr "&Si"
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr "&No"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "&Fatto"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "nessuno"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Selezionato: %s. Scelte multiple:"
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "Scelte:"
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "Percorso del file (Invio per annullare):"
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "Il file non esiste."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "Questa è una directory."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "Per continuare, è necessario visitare il seguente URL:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -674,11 +674,11 @@ msgstr ""
 "È possibile avviare il browser ora o copiare questo URL in un browser su un "
 "altro computer."
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "Lanciare un browser ora"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nessuna segnalazione di crash pendente. Provare --help per maggiori "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2025-03-22 07:38+0000\n"
 "Last-Translator: Jung Hoehyeong <hothead.jung@ubuntu-kr.org>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -484,34 +484,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "이미 문제를 개발자에게 보고했습니다. 감사합니다!"
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "아무 키나 누르면 계속합니다..."
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "다음 옵션 가운데 어떤 것을 실행하시겠습니까?:"
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "선택해 주십시오 (%s):"
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i 바이트)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(바이너리 데이터)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "문제를 개발자에게 보고하시겠습니까?"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -519,50 +519,50 @@ msgstr ""
 "문제 보고서가 전송된 후에, 자동으로 열리는 웹 브라우저 내의 문항을\n"
 "작성해 주시기 바랍니다."
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "보고서 보내기(&S) - (%s)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "로컬에서 검사(&E)"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "보고서 보기(&V)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "나중에 보내거나 다른 곳에 복사해 두기 위해 보고서 파일 저장(&K)"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "이 버전의 프로그램에서 다시 문제가 발생해도 무시하기(&I)"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "취소(&C)"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "문제 보고서 파일:"
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "확인(&C)"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "오류: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "문제 정보를 모으는 중"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -570,11 +570,11 @@ msgstr ""
 "수집한 정보를 개발자에게 보내 프로그램 개선할 수 있습니다.\n"
 "이 작업은 수 분이 필요할 수 있습니다."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "문제 정보를 업로드하는 중"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -582,59 +582,59 @@ msgstr ""
 "수집한 정보가 버그 추적 시스템으로 전송되고 있습니다.\n"
 "이 과정은 몇 분 정도 걸릴 수 있습니다."
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr "예(&Y)"
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr "아니오(&N)"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "마침(&D)"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "없음"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "%s. 다중 선택:"
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "선택:"
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "파일 경로(취소하려면 엔터 키를 누르세요):"
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "파일이 존재하지 않습니다."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "이것은 디렉터리입니다."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "계속하려면, 다음 주소를 방문해주십시오:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 "지금 브라우저를 실행하거나 다른 컴퓨터의 브라우저에 이 주소를 복사해주십시오."
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "지금 브라우저 실행하기"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "대기 중인 문제 보고서가 없습니다. --help 옵션을 이용해 더 많은 정보를 확인할 "

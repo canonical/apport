@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2025-07-12 05:05+0000\n"
 "Last-Translator: Vilson Gjeci <vilsongjeci@gmail.com>\n"
 "Language-Team: Albanian <sq@li.org>\n"
@@ -512,34 +512,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Ky problem ju është raportuar tashmë zhvilluesve. Faleminderit!"
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "Shtypni çdo buton për të vazhduar..."
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "Çfarë do të donit të bënit? Opsionet tuaja janë:"
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Ju lutemi zgjidhni (%s):"
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(të dhëna binare)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "Tò dërgojë një raport rreth problemit krijuesve?"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -547,52 +547,52 @@ msgstr ""
 "Pasi raporti i problemit të jetë dërguar, ju lutemi mbushni formularin tek\n"
 "Shfletuesi i Internetit që hapet automatikisht."
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Dërgoni raportin (%s)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "&Shqyrtoje lokalisht"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "&Shfaqeni raportin"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Mbajeni skedarin e raportit për ta dërguar më vonë ose për ta kopjuar diku "
 "tjetër"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Anullo dhe &injoro prishjet e mëvonshme të këtij versioni të programit"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "&Anulo"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "Skedari i raportimit të problemit:"
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "&Konfirmo"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "Gabimi: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "Duke mbledhur informacion për problemin"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -600,11 +600,11 @@ msgstr ""
 "Informacioni i mbledhur mund t'iu dërgohet zhvilluesve për të përmirësuar\n"
 "programin. kjo mund të zgjasë disa minuta."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "Duke ngarkuar informacionin e problemit"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -612,48 +612,48 @@ msgstr ""
 "Informacioni i mbledhur po i dërgohet sistemit të gjurmimit të gabimeve.\n"
 "Kjo mund të zgjasë disa minuta."
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr "&Po"
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr "&Jo"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "&U Bë"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "asnjë"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "U zgjodh: %s. Zgjidhje të shumëfishta:"
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "Zgjedhjet:"
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "Shtegu për tek skedari (Enter për ta anulluar):"
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "Skedari nuk ekziston."
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "Kjo është një direktori."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "Për të vazhduar, ju duhet të vizitoni URL-në që vijon:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -661,11 +661,11 @@ msgstr ""
 "Ju mund të nisni një shfletues tani, ose të kopjoni URL-në në një shfletues "
 "në një kompjuter tjetër."
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "Nise shfletuesin tani"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nuk ka raporte dëmtimi të ngelura pezull. Provoni --help për më tepër "

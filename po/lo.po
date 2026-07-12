@@ -1,0 +1,992 @@
+# Lao translation for apport
+# Copyright (c) 2008 Rosetta Contributors and Canonical Ltd 2008
+# This file is distributed under the same license as the apport package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
+"PO-Revision-Date: 2026-04-18 10:27+0000\n"
+"Last-Translator: boneni <Unknown>\n"
+"Language-Team: Lao <lo@li.org>\n"
+"Language: lo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2026-07-02 13:24+0000\n"
+"X-Generator: Launchpad (build c38ea58da9d7185c4996adfc854ab433551cdcdd)\n"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:1
+msgid "Collect system information"
+msgstr "ເກັບກຳຂໍ້ມູນລະບົບ"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:2
+msgid ""
+"Authentication is required to collect system information for this problem "
+"report"
+msgstr "ຕ້ອງມີການຢືນຢັນຕົວຕົນເພື່ອເກັບກຳຂໍ້ມູນລະບົບສຳລັບການລາຍງານບັນຫານີ້"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:3
+msgid "System problem reports"
+msgstr "ລາຍງານບັນຫາຂອງລະບົບ"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:4
+msgid "Please enter your password to access problem reports of system programs"
+msgstr "ກະລຸນາປ້ອນລະຫັດຜ່ານຂອງທ່ານເພື່ອເຂົ້າເຖິງການລາຍງານບັນຫາຂອງໂປຣແກຣມລະບົບ"
+
+#: ../apport/ui.py:263
+msgid "This package does not seem to be installed correctly"
+msgstr "ເບິ່ງຄືວ່າແພັກເກດນີ້ຕິດຕັ້ງບໍ່ຖືກຕ້ອງ"
+
+#: ../apport/ui.py:273
+#, python-format
+msgid ""
+"This does not seem to be an official %s package. Please retry after updating "
+"the indexes of available packages, if that does not work then remove related "
+"third party packages and try again."
+msgstr ""
+"ນີ້ເບິ່ງຄືວ່າບໍ່ແມ່ນແພັກເກດ %s ຢ່າງເປັນທາງການ. ກະລຸນາລອງໃໝ່ຫຼັງຈາກອັບເດດລາຍຊື່ແພັກເກດທີ່ມີຢູ່, "
+"ຖ້າຫາກຍັງໃຊ້ບໍ່ໄດ້ ໃຫ້ຖອນແພັກເກດຈາກພາກສ່ວນທີສາມທີ່ກ່ຽວຂ້ອງອອກແລ້ວລອງໃໝ່ອີກຄັ້ງ."
+
+#: ../apport/ui.py:303
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"ທ່ານມີແພັກເກດບາງເວີຊັນທີ່ເກົ່າເກີນໄປຕິດຕັ້ງຢູ່. ກະລຸນາອັບເກຣດແພັກເກດຕໍ່ໄປນີ້ ແລະ "
+"ກວດສອບວ່າບັນຫາຍັງເກີດຂຶ້ນຢູ່ຫຼືບໍ່:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:454
+msgid "unknown program"
+msgstr "ບໍ່ຮູ້ຈັກໂປຣແກຣມ"
+
+#: ../apport/ui.py:456
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly"
+msgstr "ຂໍອະໄພ, ໂປຣແກຣມ \"%s\" ໄດ້ປິດລົງແບບບໍ່ຄາດຄິດ"
+
+#: ../apport/ui.py:458
+msgid ""
+"Your computer does not have enough free memory to automatically analyze the "
+"problem and send a report to the developers."
+msgstr ""
+"ຄອມພິວເຕີຂອງທ່ານມີໜ່ວຍຄວາມຈຳວ່າງບໍ່ພຽງພໍທີ່ຈະວິເຄາະບັນຫາໂດຍອັດຕະໂນມັດ ແລະ "
+"ສົ່ງລາຍງານໃຫ້ກັບຜູ້ພັດທະນາ."
+
+#: ../apport/ui.py:463 ../apport/ui.py:1872
+#, python-format
+msgid "Problem in %s"
+msgstr "ມີບັນຫາໃນ %s"
+
+#: ../apport/ui.py:519 ../apport/ui.py:536 ../apport/ui.py:695
+#: ../apport/ui.py:701 ../apport/ui.py:931 ../apport/ui.py:1695
+#: ../apport/ui.py:1839 ../apport/ui.py:1845
+msgid "Invalid problem report"
+msgstr "ລາຍງານບັນຫາບໍ່ຖືກຕ້ອງ"
+
+#: ../apport/ui.py:520
+msgid "You are not allowed to access this problem report."
+msgstr "ທ່ານບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ເຂົ້າເຖິງລາຍງານບັນຫານີ້."
+
+#: ../apport/ui.py:528
+msgid "Error"
+msgstr "ຂໍ້ຜິດພາດ"
+
+#: ../apport/ui.py:530
+msgid "There is not enough disk space available to process this report."
+msgstr "ພື້ນທີ່ວ່າງໃນດິດບໍ່ພຽງພໍທີ່ຈະປະມວນຜົນລາຍງານນີ້."
+
+#: ../apport/ui.py:569 ../apport/ui.py:674
+msgid "Invalid PID"
+msgstr "PID ບໍ່ຖືກຕ້ອງ"
+
+#: ../apport/ui.py:569
+msgid "The specified process ID does not exist."
+msgstr "ລະຫັດຂະບວນການ (PID) ທີ່ລະບຸບໍ່ມີຢູ່."
+
+#: ../apport/ui.py:574
+msgid "Not your PID"
+msgstr "ບໍ່ແມ່ນ PID ຂອງທ່ານ"
+
+#: ../apport/ui.py:575
+msgid "The specified process ID does not belong to you."
+msgstr "ລະຫັດຂະບວນການ (PID) ທີ່ລະບຸບໍ່ແມ່ນຂອງທ່ານ."
+
+#: ../apport/ui.py:632
+msgid "No package specified"
+msgstr "ບໍ່ໄດ້ລະບຸແພັກເກດ"
+
+#: ../apport/ui.py:634
+msgid ""
+"You need to specify a package or a PID. See --help for more information."
+msgstr "ທ່ານຕ້ອງລະບຸແພັກເກດ ຫຼື PID. ເບິ່ງ --help ສຳລັບຂໍ້ມູນເພີ່ມເຕີມ."
+
+#: ../apport/ui.py:661
+msgid "Permission denied"
+msgstr "ການອະນຸຍາດຖືກປະຕິເສດ"
+
+#: ../apport/ui.py:663
+msgid ""
+"The specified process does not belong to you. Please run this program as the "
+"process owner or as root."
+msgstr ""
+"ຂະບວນການທີ່ລະບຸບໍ່ແມ່ນຂອງທ່ານ. ກະລຸນາເປີດໂປຣແກຣມນີ້ໃນນາມເຈົ້າຂອງຂະບວນການ ຫຼື ໃນນາມ root."
+
+#: ../apport/ui.py:675
+msgid "The specified process ID does not belong to a program."
+msgstr "ລະຫັດຂະບວນການ (PID) ທີ່ລະບຸບໍ່ໄດ້ເປັນຂອງໂປຣແກຣມໃດໆ."
+
+#: ../apport/ui.py:696
+#, python-format
+msgid "Symptom script %s did not determine an affected package"
+msgstr "ສະຄຣິບອາການ %s ບໍ່ສາມາດລະບຸແພັກເກດທີ່ໄດ້ຮັບຜົນກະທົບໄດ້"
+
+#: ../apport/ui.py:702
+#, python-format
+msgid "Package %s does not exist"
+msgstr "ບໍ່ມີແພັກເກດ %s ຢູ່"
+
+#: ../apport/ui.py:731 ../apport/ui.py:936 ../apport/ui.py:969
+#: ../apport/ui.py:976
+msgid "Cannot create report"
+msgstr "ບໍ່ສາມາດສ້າງລາຍງານໄດ້"
+
+#: ../apport/ui.py:748 ../apport/ui.py:802 ../apport/ui.py:819
+msgid "Updating problem report"
+msgstr "ກຳລັງອັບເດດລາຍງານບັນຫາ"
+
+#: ../apport/ui.py:750
+msgid ""
+"You are not the reporter or subscriber of this problem report, or the report "
+"is a duplicate or already closed.\n"
+"\n"
+"Please create a new report using \"apport-bug\"."
+msgstr ""
+"ທ່ານບໍ່ແມ່ນຜູ້ລາຍງານ ຫຼື ຜູ້ຕິດຕາມລາຍງານບັນຫານີ້, ຫຼື ລາຍງານນີ້ແມ່ນຊ້ຳຊ້ອນ ຫຼື ຖືກປິດໄປແລ້ວ.\n"
+"\n"
+"ກະລຸນາສ້າງລາຍງານໃໝ່ໂດຍໃຊ້ \"apport-bug\"."
+
+#: ../apport/ui.py:762
+msgid ""
+"You are not the reporter of this problem report. It is much easier to mark a "
+"bug as a duplicate of another than to move your comments and attachments to "
+"a new bug.\n"
+"\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
+"\n"
+"Do you really want to proceed?"
+msgstr ""
+"ທ່ານບໍ່ແມ່ນຜູ້ລາຍງານບັນຫານີ້. ການໝາຍວ່າບັກນີ້ຊ້ຳກັບບັກອື່ນແມ່ນງ່າຍກວ່າການຍ້າຍຄຳເຫັນ ແລະ "
+"ໄຟລ໌ແນບຂອງທ່ານໄປຫາບັກໃໝ່.\n"
+"\n"
+"ດັ່ງນັ້ນ, ພວກເຮົາແນະນຳໃຫ້ທ່ານສົ່ງລາຍງານບັກໃໝ່ໂດຍໃຊ້ \"apport-bug\" ແລະ "
+"ຂຽນຄຳເຫັນໄວ້ໃນບັກນີ້ກ່ຽວກັບບັກທີ່ທ່ານໄດ້ສົ່ງໄປ.\n"
+"\n"
+"ທ່ານຕ້ອງການສືບຕໍ່ແທ້ຫຼືບໍ່?"
+
+#: ../apport/ui.py:802 ../apport/ui.py:819
+msgid "No additional information collected."
+msgstr "ບໍ່ມີການເກັບກຳຂໍ້ມູນເພີ່ມເຕີມ."
+
+#: ../apport/ui.py:875
+msgid "What kind of problem do you want to report?"
+msgstr "ທ່ານຕ້ອງການລາຍງານບັນຫາປະເພດໃດ?"
+
+#: ../apport/ui.py:894
+msgid "Unknown symptom"
+msgstr "ບໍ່ຮູ້ຈັກອາການຂອງບັນຫາ"
+
+#: ../apport/ui.py:895
+#, python-format
+msgid "The symptom \"%s\" is not known."
+msgstr "ບໍ່ຮູ້ຈັກອາການ \"%s\"."
+
+#: ../apport/ui.py:915
+msgid "No PID specified"
+msgstr "ບໍ່ໄດ້ລະບຸ PID"
+
+#: ../apport/ui.py:916
+msgid "You need to specify a PID. See --help for more information."
+msgstr "ທ່ານຕ້ອງລະບຸ PID. ເບິ່ງ --help ສຳລັບຂໍ້ມູນເພີ່ມເຕີມ."
+
+#: ../apport/ui.py:938
+msgid ""
+"The window option cannot be used on Wayland.\n"
+"\n"
+"Please find the window's process ID and then run 'ubuntu-bug <process ID>'.\n"
+"\n"
+"The process ID can be found by running the System Monitor application. In "
+"the Processes tab, scroll until you find the correct application. The "
+"process ID is the number listed in the ID column."
+msgstr ""
+"ຕົວເລືອກປ່ອງຢ້ຽມ (window) ບໍ່ສາມາດໃຊ້ໃນ Wayland ໄດ້.\n"
+"\n"
+"ກະລຸນາຊອກຫາ PID ຂອງປ່ອງຢ້ຽມ ແລ້ວເປີດຄຳສັ່ງ 'ubuntu-bug <process ID>'.\n"
+"\n"
+"ທ່ານສາມາດຊອກຫາ PID ໄດ້ໂດຍການເປີດແອັບພລິເຄຊັນ System Monitor. ໃນແຖບ Processes, "
+"ເລື່ອນຫາແອັບພລິເຄຊັນທີ່ຕ້ອງການ. PID ແມ່ນຕົວເລກທີ່ຢູ່ໃນຖັນ ID."
+
+#: ../apport/ui.py:954
+msgid ""
+"After closing this message please click on an application window to report a "
+"problem about it."
+msgstr "ຫຼັງຈາກປິດຂໍ້ຄວາມນີ້, ກະລຸນາກົດໃສ່ປ່ອງຢ້ຽມຂອງແອັບພລິເຄຊັນເພື່ອລາຍງານບັນຫາກ່ຽວກັບມັນ."
+
+#: ../apport/ui.py:970 ../apport/ui.py:977
+msgid "xprop failed to determine process ID of the window"
+msgstr "xprop ບໍ່ສາມາດລະບຸ PID ຂອງປ່ອງຢ້ຽມໄດ້"
+
+#: ../apport/ui.py:992
+#, python-format
+msgid "%(prog)s <report number>"
+msgstr "%(prog)s <ໝາຍເລກລາຍງານ>"
+
+#: ../apport/ui.py:993
+msgid "Specify package name."
+msgstr "ລະບຸຊື່ແພັກເກດ."
+
+#: ../apport/ui.py:999 ../apport/ui.py:1127
+msgid "Add an extra tag to the report. Can be specified multiple times."
+msgstr "ເພີ່ມແທັກ (tag) ເພີ່ມເຕີມໃນລາຍງານ. ສາມາດລະບຸໄດ້ຫຼາຍຄັ້ງ."
+
+#: ../apport/ui.py:1035
+#, python-format
+msgid ""
+"%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%(prog)s [ຕົວເລືອກ] [symptom|pid|package|ເສັ້ນທາງໂປຣແກຣມ|.apport/.crash file]"
+
+#: ../apport/ui.py:1046
+msgid ""
+"Start in bug filing mode. Requires --package and an optional --pid, or just "
+"a --pid. If neither is given, display a list of known symptoms. (Implied if "
+"a single argument is given.)"
+msgstr ""
+"ເລີ່ມໃນໂໝດການສົ່ງລາຍງານບັກ. ຕ້ອງການ --package ແລະ --pid (ຖ້າຫາກມີ), ຫຼື ພຽງແຕ່ --pid. "
+"ຖ້າບໍ່ມີການລະບຸທັງສອງ, ຈະສະແດງລາຍຊື່ອາການທີ່ຮູ້ຈັກ."
+
+#: ../apport/ui.py:1055
+msgid "Click a window as a target for filing a problem report."
+msgstr "ຄລິກທີ່ປ່ອງຢ້ຽມເພື່ອໃຊ້ເປັນເປົ້າໝາຍໃນການສົ່ງລາຍງານບັນຫາ."
+
+#: ../apport/ui.py:1063
+msgid "Start in bug updating mode. Can take an optional --package."
+msgstr "ເລີ່ມໃນໂໝດອັບເດດບັກ. ສາມາດລະບຸ --package ໄດ້."
+
+#: ../apport/ui.py:1071
+msgid ""
+"File a bug report about a symptom. (Implied if symptom name is given as only "
+"argument.)"
+msgstr "ສົ່ງລາຍງານບັກກ່ຽວກັບອາການ. (ຈະຖືກໃຊ້ຖ້າລະບຸຊື່ອາການເປັນພາຣາມິເຕີດຽວ.)"
+
+#: ../apport/ui.py:1080
+msgid ""
+"Specify package name in --file-bug mode. This is optional if a --pid is "
+"specified. (Implied if package name is given as only argument.)"
+msgstr "ລະບຸຊື່ແພັກເກດໃນໂໝດ --file-bug. ຕົວເລືອກນີ້ບໍ່ຈຳເປັນຖ້າມີການລະບຸ --pid."
+
+#: ../apport/ui.py:1091
+msgid ""
+"Specify a running program in --file-bug mode. If this is specified, the bug "
+"report will contain more information.  (Implied if pid is given as only "
+"argument.)"
+msgstr "ລະບຸໂປຣແກຣມທີ່ກຳລັງເຮັດວຽກໃນໂໝດ --file-bug. ຖ້າລະບຸສິ່ງນີ້, ລາຍງານບັກຈະມີຂໍ້ມູນຫຼາຍຂຶ້ນ."
+
+#: ../apport/ui.py:1099
+msgid "The provided pid is a hanging application."
+msgstr "PID ທີ່ລະບຸແມ່ນແອັບພລິເຄຊັນທີ່ຄ້າງຢູ່."
+
+#: ../apport/ui.py:1107
+#, python-format
+msgid ""
+"Report the crash from given .apport or .crash file instead of the pending "
+"ones in %s. (Implied if file is given as only argument.)"
+msgstr "ລາຍງານການເຮັດວຽກຜິດພາດຈາກໄຟລ໌ .apport ຫຼື .crash ທີ່ລະບຸ ແທນທີ່ໄຟລ໌ທີ່ຄ້າງຢູ່ໃນ %s."
+
+#: ../apport/ui.py:1117
+msgid ""
+"In bug filing mode, save the collected information into a file instead of "
+"reporting it. This file can then be reported later on from a different "
+"machine."
+msgstr ""
+"ໃນໂໝດການສົ່ງລາຍງານບັກ, ໃຫ້ບັນທຶກຂໍ້ມູນທີ່ເກັບກຳໄດ້ລົງໃນໄຟລ໌ແທນການລາຍງານ. "
+"ໄຟລ໌ນີ້ສາມາດນຳໄປລາຍງານພາຍຫຼັງຈາກເຄື່ອງອື່ນໄດ້."
+
+#: ../apport/ui.py:1133
+msgid "Print the Apport version number."
+msgstr "ສະແດງເລກເວີຊັນຂອງ Apport."
+
+#: ../apport/ui.py:1292
+msgid ""
+"This will launch apport-retrace in a terminal window to examine the crash."
+msgstr "ສິ່ງນີ້ຈະເປີດ apport-retrace ໃນເທີມີນໍເພື່ອຕວດສອບການເຮັດວຽກຜິດພາດ."
+
+#: ../apport/ui.py:1296
+msgid "Run gdb session"
+msgstr "ເລີ່ມເຮັດວຽກ gdb"
+
+#: ../apport/ui.py:1297
+msgid "Run gdb session without downloading debug symbols"
+msgstr "ເລີ່ມເຮັດວຽກ gdb ໂດຍບໍ່ດາວໂຫຼດ debug symbols"
+
+#. TRANSLATORS: %s contains the crash report file name
+#: ../apport/ui.py:1299
+#, python-format
+msgid "Update %s with fully symbolic stack trace"
+msgstr "ອັບເດດ %s ດ້ວຍຂໍ້ມູນ stack trace ແບບເຕັມ"
+
+#: ../apport/ui.py:1353
+msgid ""
+"Saving crash reporting state failed. Can't set auto or never reporting mode."
+msgstr ""
+"ບັນທຶກສະຖານະການລາຍງານຂໍ້ຜິດພາດບໍ່ສຳເລັດ. ບໍ່ສາມາດຕັ້ງໂໝດລາຍງານແບບອັດຕະໂນມັດ ຫຼື ບໍ່ຕ້ອງລາຍງານໄດ້."
+
+#: ../apport/ui.py:1357
+msgid "Can't remember send report status settings"
+msgstr "ບໍ່ສາມາດຈື່ການຕັ້ງຄ່າສະຖານະການສົ່ງລາຍງານໄດ້"
+
+#: ../apport/ui.py:1439 ../apport/ui.py:1452
+msgid ""
+"This problem report applies to a program which is not installed any more."
+msgstr "ລາຍງານບັນຫານີ້ໃຊ້ກັບໂປຣແກຣມທີ່ບໍ່ໄດ້ຕິດຕັ້ງແລ້ວ."
+
+#: ../apport/ui.py:1472
+#, python-format
+msgid ""
+"The problem happened with the program %s which changed since the crash "
+"occurred."
+msgstr "ບັນຫາເກີດຂຶ້ນກັບໂປຣແກຣມ %s ເຊິ່ງໄດ້ມີການປ່ຽນແປງຕັ້ງແຕ່ຕອນທີ່ມັນເຮັດວຽກຜິດພາດ."
+
+#. can happen with broken core dumps
+#. can happen with broken gz values
+#: ../apport/ui.py:1531 ../apport/ui.py:1643 ../apport/ui.py:1843
+msgid "This problem report is damaged and cannot be processed."
+msgstr "ລາຍງານບັນຫານີ້ເສຍຫາຍ ແລະ ບໍ່ສາມາດປະມວນຜົນໄດ້."
+
+#: ../apport/ui.py:1537
+msgid "This report is about a package that is not installed."
+msgstr "ລາຍງານນີ້ກ່ຽວກັບແພັກເກດທີ່ບໍ່ໄດ້ຕິດຕັ້ງ."
+
+#: ../apport/ui.py:1544
+msgid "An error occurred while attempting to process this problem report:"
+msgstr "ເກີດຂໍ້ຜິດພາດຂຶ້ນໃນຂະນະທີ່ພະຍາຍາມປະມວນຜົນລາຍງານບັນຫານີ້:"
+
+#: ../apport/ui.py:1561
+msgid ""
+"You have two versions of this application installed, which one do you want "
+"to report a bug against?"
+msgstr "ທ່ານມີແອັບພລິເຄຊັນນີ້ສອງເວີຊັນຕິດຕັ້ງຢູ່, ທ່ານຕ້ອງການລາຍງານບັກສຳລັບເວີຊັນໃດ?"
+
+#: ../apport/ui.py:1566
+#, python-format
+msgid "%s snap"
+msgstr "%s snap"
+
+#: ../apport/ui.py:1567
+#, python-format
+msgid "%s deb package"
+msgstr "%s deb package"
+
+#: ../apport/ui.py:1605
+#, python-format
+msgid "%s is provided by a snap published by %s. Contact them via %s for help."
+msgstr "%s ຖືກສະໜອງໃຫ້ໂດຍ snap ທີ່ເຜີຍແຜ່ໂດຍ %s. ຕິດຕໍ່ພວກເຂົາຜ່ານ %s ເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ."
+
+#: ../apport/ui.py:1610
+#, python-format
+msgid ""
+"%s is provided by a snap published by %s. No contact address has been "
+"provided; visit the forum at https://forum.snapcraft.io/ for help."
+msgstr ""
+"%s ຖືກສະໜອງໃຫ້ໂດຍ snap ທີ່ເຜີຍແຜ່ໂດຍ %s. ບໍ່ມີຂໍ້ມູນການຕິດຕໍ່; ກະລຸນາເຂົ້າໄປທີ່ https://"
+"forum.snapcraft.io/ ເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ."
+
+#: ../apport/ui.py:1696
+msgid "Could not determine the package or source package name."
+msgstr "ບໍ່ສາມາດລະບຸຊື່ແພັກເກດ ຫຼື ຊື່ແພັກເກດຕົ້ນສະບັບໄດ້."
+
+#: ../apport/ui.py:1727
+msgid "Unable to start web browser"
+msgstr "ບໍ່ສາມາດເລີ່ມບຣາວເຊີໄດ້"
+
+#: ../apport/ui.py:1728
+#, python-format
+msgid "Unable to start web browser to open %s."
+msgstr "ບໍ່ສາມາດເລີ່ມບຣາວເຊີເພື່ອເປີດ %s ໄດ້."
+
+#: ../apport/ui.py:1801
+msgid ""
+"Cannot connect to crash database, please check your Internet connection."
+msgstr "ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບຖານຂໍ້ມູນຂໍ້ຜິດພາດໄດ້, ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດຂອງທ່ານ."
+
+#: ../apport/ui.py:1804
+msgid "Network problem"
+msgstr "ບັນຫາເຄືອຂ່າຍ"
+
+#: ../apport/ui.py:1830
+msgid "Memory exhaustion"
+msgstr "ໜ່ວຍຄວາມຈຳເຕັມ"
+
+#: ../apport/ui.py:1832
+msgid "Your system does not have enough memory to process this crash report."
+msgstr "ລະບົບຂອງທ່ານມີໜ່ວຍຄວາມຈຳບໍ່ພຽງພໍທີ່ຈະປະມວນຜົນລາຍງານຂໍ້ຜິດພາດນີ້."
+
+#: ../apport/ui.py:1877
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"ບໍ່ສາມາດລາຍງານບັນຫາໄດ້:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:1931 ../apport/ui.py:1943
+msgid "Problem already known"
+msgstr "ບັນຫານີ້ເປັນທີ່ຮູ້ຈັກຢູ່ແລ້ວ"
+
+#: ../apport/ui.py:1933
+msgid ""
+"This problem was already reported in the bug report displayed in the web "
+"browser. Please check if you can add any further information that might be "
+"helpful for the developers."
+msgstr ""
+"ບັນຫານີ້ໄດ້ຖືກລາຍງານໄປແລ້ວໃນລາຍງານບັກທີ່ສະແດງຢູ່ໃນບຣາວເຊີ. "
+"ກະລຸນາກວດສອບວ່າທ່ານສາມາດເພີ່ມຂໍ້ມູນອື່ນໆທີ່ອາດຈະເປັນປະໂຫຍດໃຫ້ກັບຜູ້ພັດທະນາໄດ້ຫຼືບໍ່."
+
+#: ../apport/ui.py:1944
+msgid "This problem was already reported to developers. Thank you!"
+msgstr "ບັນຫານີ້ໄດ້ຖືກລາຍງານໃຫ້ຜູ້ພັດທະນາຊາບແລ້ວ. ຂອບໃຈ!"
+
+#: ../bin/apport-cli.py:91
+msgid "Press any key to continue..."
+msgstr "ກົດປຸ່ມໃດໜຶ່ງເພື່ອສືບຕໍ່..."
+
+#: ../bin/apport-cli.py:98
+msgid "What would you like to do? Your options are:"
+msgstr "ທ່ານຕ້ອງການເຮັດຫຍັງ? ຕົວເລືອກຂອງທ່ານຄື:"
+
+#: ../bin/apport-cli.py:111
+#, python-format
+msgid "Please choose (%s):"
+msgstr "ກະລຸນາເລືອກ (%s):"
+
+#: ../bin/apport-cli.py:171
+#, python-format
+msgid "(%i bytes)"
+msgstr "(%i ໄບຕ໌)"
+
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+msgid "(binary data)"
+msgstr "(ຂໍ້ມູນໄບນາຣີ)"
+
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../kde/apport-kde.py:210
+msgid "Send problem report to the developers?"
+msgstr "ສົ່ງລາຍງານບັນຫາໃຫ້ກັບຜູ້ພັດທະນາບໍ່?"
+
+#: ../bin/apport-cli.py:215
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"ຫຼັງຈາກສົ່ງລາຍງານບັນຫາແລ້ວ, ກະລຸນາຕື່ມຂໍ້ມູນໃສ່ແບບຟອມໃນ\n"
+"ບຣາວເຊີທີ່ຈະເປີດຂຶ້ນໂດຍອັດຕະໂນມັດ."
+
+#: ../bin/apport-cli.py:222
+#, python-format
+msgid "&Send report (%s)"
+msgstr "&ສົ່ງລາຍງານ (%s)"
+
+#: ../bin/apport-cli.py:226
+msgid "&Examine locally"
+msgstr "&ກວດສອບພາຍໃນເຄື່ອງ"
+
+#: ../bin/apport-cli.py:230
+msgid "&View report"
+msgstr "&ເບິ່ງລາຍງານ"
+
+#: ../bin/apport-cli.py:232
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr "&ເກັບໄຟລ໌ລາຍງານໄວ້ເພື່ອສົ່ງພາຍຫຼັງ ຫຼື ກ່າຍໄປບ່ອນອື່ນ"
+
+#: ../bin/apport-cli.py:235
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr "ຍົກເລີກ ແລະ &ບໍ່ສົນໃຈການເຮັດວຽກຜິດພາດໃນອະນາຄົດຂອງໂປຣແກຣມເວີຊັນນີ້"
+
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
+msgid "&Cancel"
+msgstr "&ຍົກເລີກ"
+
+#: ../bin/apport-cli.py:259
+msgid "Problem report file:"
+msgstr "ໄຟລ໌ລາຍງານບັນຫາ:"
+
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
+msgid "&Confirm"
+msgstr "&ຢືນຢັນ"
+
+#: ../bin/apport-cli.py:269
+#, python-format
+msgid "Error: %s"
+msgstr "ຂໍ້ຜິດພາດ: %s"
+
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
+msgid "Collecting problem information"
+msgstr "ກຳລັງເກັບກຳຂໍ້ມູນບັນຫາ"
+
+#: ../bin/apport-cli.py:277
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"ຂໍ້ມູນທີ່ເກັບກຳໄດ້ສາມາດສົ່ງໃຫ້ຜູ້ພັດທະນາເພື່ອປັບປຸງ\n"
+"ແອັບພລິເຄຊັນ. ອາດຈະໃຊ້ເວລາຄາວໜຶ່ງ."
+
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+msgid "Uploading problem information"
+msgstr "ກຳລັງອັບໂຫຼດຂໍ້ມູນບັນຫາ"
+
+#: ../bin/apport-cli.py:295
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"ຂໍ້ມູນທີ່ເກັບກຳໄດ້ກຳລັງຖືກສົ່ງໄປຫາລະບົບຕິດຕາມບັກ.\n"
+"ອາດຈະໃຊ້ເວລາຄາວໜຶ່ງ."
+
+#: ../bin/apport-cli.py:316
+msgid "&Yes"
+msgstr ""
+
+#: ../bin/apport-cli.py:317
+msgid "&No"
+msgstr ""
+
+#: ../bin/apport-cli.py:353
+msgid "&Done"
+msgstr "&ສຳເລັດ"
+
+#: ../bin/apport-cli.py:359
+msgid "none"
+msgstr "ບໍ່ມີ"
+
+#: ../bin/apport-cli.py:360
+#, python-format
+msgid "Selected: %s. Multiple choices:"
+msgstr "ເລືອກແລ້ວ: %s. ຕົວເລືອກຫຼາຍອັນ:"
+
+#: ../bin/apport-cli.py:376
+msgid "Choices:"
+msgstr "ຕົວເລືອກ:"
+
+#: ../bin/apport-cli.py:390
+msgid "Path to file (Enter to cancel):"
+msgstr "ເສັ້ນທາງໄປຫາໄຟລ໌ (ກົດ Enter ເພື່ອຍົກເລີກ):"
+
+#: ../bin/apport-cli.py:396
+msgid "File does not exist."
+msgstr "ໄຟລ໌ບໍ່ມີຢູ່."
+
+#: ../bin/apport-cli.py:398
+msgid "This is a directory."
+msgstr "ນີ້ແມ່ນໄດເຣັກທໍຣີ (ໂຟນເດີ)."
+
+#: ../bin/apport-cli.py:403
+msgid "To continue, you must visit the following URL:"
+msgstr "ເພື່ອສືບຕໍ່, ທ່ານຕ້ອງເຂົ້າໄປທີ່ URL ຕໍ່ໄປນີ້:"
+
+#: ../bin/apport-cli.py:405
+msgid ""
+"You can launch a browser now, or copy this URL into a browser on another "
+"computer."
+msgstr "ທ່ານສາມາດເປີດບຣາວເຊີດຽວນີ້, ຫຼື ກ່າຍ URL ນີ້ໄປເປີດໃນບຣາວເຊີຢູ່ເຄື່ອງອື່ນ."
+
+#: ../bin/apport-cli.py:410
+msgid "Launch a browser now"
+msgstr "ເປີດບຣາວເຊີດຽວນີ້"
+
+#: ../bin/apport-cli.py:425
+msgid "No pending crash reports. Try --help for more information."
+msgstr "ບໍ່ມີລາຍງານຂໍ້ຜິດພາດທີ່ຄ້າງຢູ່. ລອງໃຊ້ --help ສຳລັບຂໍ້ມູນເພີ່ມເຕີມ."
+
+#: ../bin/apport-retrace.py:48
+msgid "Do not put the new traces into the report, but write them to stdout."
+msgstr "ບໍ່ຕ້ອງໃສ່ traces ໃໝ່ລົງໃນລາຍງານ, ແຕ່ໃຫ້ຂຽນລົງໃນ stdout ແທນ."
+
+#: ../bin/apport-retrace.py:55
+msgid ""
+"Start an interactive gdb session with the report's core dump (-o ignored; "
+"does not rewrite report)"
+msgstr "ເລີ່ມ gdb ແບບໂຕ້ຕອບດ້ວຍ core dump ຂອງລາຍງານ (-o ຈະຖືກຂ້າມ; ບໍ່ມີການຂຽນລາຍງານທັບ)"
+
+#: ../bin/apport-retrace.py:64
+msgid ""
+"Write modified report to given file instead of changing the original report"
+msgstr "ຂຽນລາຍງານທີ່ຖືກແກ້ໄຂລົງໃນໄຟລ໌ທີ່ລະບຸ ແທນທີ່ຈະປ່ຽນແປງລາຍງານຕົ້ນສະບັບ"
+
+#: ../bin/apport-retrace.py:73
+msgid "Remove the core dump from the report after stack trace regeneration"
+msgstr "ລຶບ core dump ອອກຈາກລາຍງານຫຼັງຈາກສ້າງ stack trace ໃໝ່ແລ້ວ"
+
+#: ../bin/apport-retrace.py:76
+msgid "Override report's CoreFile"
+msgstr "ຂຽນທັບ CoreFile ຂອງລາຍງານ"
+
+#: ../bin/apport-retrace.py:79
+msgid "Override report's ExecutablePath"
+msgstr "ຂຽນທັບ ExecutablePath ຂອງລາຍງານ"
+
+#: ../bin/apport-retrace.py:82
+msgid "Override report's ProcMaps"
+msgstr "ຂຽນທັບ ProcMaps ຂອງລາຍງານ"
+
+#: ../bin/apport-retrace.py:88
+msgid "Rebuild report's Package information"
+msgstr "ສ້າງຂໍ້ມູນແພັກເກດຂອງລາຍງານໃໝ່"
+
+#: ../bin/apport-retrace.py:95
+msgid ""
+"Build a temporary sandbox and download/install the necessary packages and "
+"debug symbols in there; without this option it assumes that the necessary "
+"packages and debug symbols are already installed in the system. The argument "
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
+msgstr ""
+"ສ້າງ sandbox ຊົ່ວຄາວ ແລະ ດາວໂຫຼດ/ຕິດຕັ້ງແພັກເກດທີ່ຈຳເປັນ ແລະ debug symbols ໄວ້ໃນນັ້ນ."
+
+#: ../bin/apport-retrace.py:109
+msgid ""
+"Build another temporary sandbox for installing gdb and its dependencies "
+"using the same release as the report rather than whatever version of gdb you "
+"have installed."
+msgstr ""
+"ສ້າງ sandbox ຊົ່ວຄາວອີກອັນໜຶ່ງເພື່ອຕິດຕັ້ງ gdb ແລະ ໄຟລ໌ທີ່ກ່ຽວຂ້ອງ ໂດຍໃຊ້ເວີຊັນດຽວກັນກັບລາຍງານ."
+
+#: ../bin/apport-retrace.py:119
+msgid "Report download/install progress when installing packages into sandbox"
+msgstr "ລາຍງານຄວາມຄືບໜ້າການດາວໂຫຼດ/ຕິດຕັ້ງ ເມື່ອຕິດຕັ້ງແພັກເກດລົງໃນ sandbox"
+
+#: ../bin/apport-retrace.py:125
+msgid "Prepend timestamps to log messages, for batch operation"
+msgstr "ເພີ່ມການລະບຸເວລາ (timestamps) ໄວ້ທາງໜ້າຂໍ້ຄວາມບັນທຶກ"
+
+#: ../bin/apport-retrace.py:131
+msgid ""
+"Create and use third-party repositories from origins specified in reports"
+msgstr "ສ້າງ ແລະ ໃຊ້ບ່ອນເກັບແພັກເກດ (repositories) ຈາກພາກສ່ວນທີສາມຕາມທີ່ລະບຸໃນລາຍງານ"
+
+#: ../bin/apport-retrace.py:139
+msgid "Cache directory for packages downloaded in the sandbox"
+msgstr "ໄດເຣັກທໍຣີແຄຊ (Cache) ສຳລັບແພັກເກດທີ່ດາວໂຫຼດໃນ sandbox"
+
+#: ../bin/apport-retrace.py:145
+msgid ""
+"Directory for unpacked packages. Future runs will assume that any already "
+"downloaded package is also extracted to this sandbox."
+msgstr "ໄດເຣັກທໍຣີສຳລັບແພັກເກດທີ່ແຕກໄຟລ໌ອອກແລ້ວ."
+
+#: ../bin/apport-retrace.py:156 ../bin/apport-valgrind.py:99
+msgid ""
+"Install an extra package into the sandbox (can be specified multiple times)"
+msgstr "ຕິດຕັ້ງແພັກເກດເສີມລົງໃນ sandbox (ສາມາດລະບຸໄດ້ຫຼາຍຄັ້ງ)"
+
+#: ../bin/apport-retrace.py:163
+msgid ""
+"Path to a file with the crash database authentication information. This is "
+"used when specifying a crash ID to upload the retraced stack traces (only if "
+"neither -g, -o, nor -s are specified)"
+msgstr "ເສັ້ນທາງໄປຫາໄຟລ໌ທີ່ມີຂໍ້ມູນການຢືນຢັນຕົວຕົນຂອງຖານຂໍ້ມູນຂໍ້ຜິດພາດ."
+
+#: ../bin/apport-retrace.py:173
+msgid ""
+"Display retraced stack traces and ask for confirmation before sending them "
+"to the crash database."
+msgstr "ສະແດງ stack traces ທີ່ກູ້ຄືນແລ້ວ ແລະ ຖາມເພື່ອຢືນຢັນກ່ອນສົ່ງໄປຫາຖານຂໍ້ມູນຂໍ້ຜິດພາດ."
+
+#: ../bin/apport-retrace.py:181
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr "ເສັ້ນທາງໄປຫາຖານຂໍ້ມູນ sqlite ທີ່ຊ້ຳກັນ (ຄ່າເລີ່ມຕົ້ນ: ບໍ່ມີການກວດສອບການຊ້ຳ)"
+
+#: ../bin/apport-retrace.py:188
+msgid "Do not add StacktraceSource to the report."
+msgstr "ບໍ່ຕ້ອງເພີ່ມ StacktraceSource ລົງໃນລາຍງານ."
+
+#: ../bin/apport-retrace.py:201
+msgid "You cannot use -C without -S. Stopping."
+msgstr "ທ່ານບໍ່ສາມາດໃຊ້ -C ໂດຍບໍ່ມີ -S ໄດ້. ກຳລັງຢຸດ."
+
+#. translators: don't translate y/n,
+#. apport currently only checks for "y"
+#: ../bin/apport-retrace.py:231
+msgid "OK to send these as attachments? [y/n]"
+msgstr "ຕົກລົງທີ່ຈະສົ່ງສິ່ງເຫຼົ່ານີ້ເປັນໄຟລ໌ແນບບໍ? [y/n]"
+
+#: ../bin/apport-unpack.py:35
+#, python-format
+msgid "%(prog)s <report> <target directory>"
+msgstr "%(prog)s <ລາຍງານ> <ໄດເຣັກທໍຣີເປົ້າໝາຍ>"
+
+#: ../bin/apport-unpack.py:36
+msgid "Report file to unpack"
+msgstr "ໄຟລ໌ລາຍງານທີ່ຈະແຕກອອກ"
+
+#: ../bin/apport-unpack.py:37
+msgid "directory to unpack report to"
+msgstr "ໄດເຣັກທໍຣີທີ່ຈະແຕກລາຍງານລົງໄປ"
+
+#: ../bin/apport-unpack.py:86
+msgid "Destination directory exists and is not empty."
+msgstr "ໄດເຣັກທໍຣີປາຍທາງມີຢູ່ແລ້ວ ແລະ ບໍ່ແມ່ນໂຟນເດີວ່າງ."
+
+#: ../bin/apport-valgrind.py:40
+msgid "See man page for details."
+msgstr "ເບິ່ງລາຍລະອຽດໃນໜ້າ man page."
+
+#: ../bin/apport-valgrind.py:49
+msgid "specify the log file name produced by valgrind"
+msgstr "ລະບຸຊື່ໄຟລ໌ບັນທຶກ (log) ທີ່ສ້າງໂດຍ valgrind"
+
+#: ../bin/apport-valgrind.py:55
+msgid ""
+"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
+"create it"
+msgstr "ໃຊ້ໄດເຣັກທໍຣີ sandbox (SDIR) ເກົ່າຄືນໃໝ່ ຫຼື ສ້າງໃໝ່ຖ້າຍັງບໍ່ມີ"
+
+#: ../bin/apport-valgrind.py:63
+msgid ""
+"do  not  create  or reuse a sandbox directory for additional debug symbols "
+"but rely only on installed debug symbols."
+msgstr "ບໍ່ຕ້ອງສ້າງ ຫຼື ໃຊ້ sandbox ຄືນໃໝ່ ແຕ່ໃຫ້ໃຊ້ debug symbols ທີ່ຕິດຕັ້ງໄວ້ແລ້ວເທົ່ານັ້ນ."
+
+#: ../bin/apport-valgrind.py:72
+msgid ""
+"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
+"it"
+msgstr "ໃຊ້ໄດເຣັກທໍຣີແຄຊ (CDIR) ເກົ່າຄືນໃໝ່ ຫຼື ສ້າງໃໝ່ຖ້າຍັງບໍ່ມີ"
+
+#: ../bin/apport-valgrind.py:81
+msgid "report download/install progress when installing packages into sandbox"
+msgstr "ລາຍງານຄວາມຄືບໜ້າການດາວໂຫຼດ/ຕິດຕັ້ງ ເມື່ອຕິດຕັ້ງແພັກເກດລົງໃນ sandbox"
+
+#: ../bin/apport-valgrind.py:88
+msgid ""
+"the executable that is run under valgrind's memcheck tool for memory leak "
+"detection"
+msgstr ""
+"ໄຟລ໌ທີ່ສາມາດປະມວນຜົນໄດ້ (executable) ທີ່ຈະເຮັດວຽກພາຍໃຕ້ເຄື່ອງມື memcheck ຂອງ valgrind"
+
+#: ../bin/apport-valgrind.py:130
+#, python-format
+msgid "Error: %s is not an executable. Stopping."
+msgstr "ຂໍ້ຜິດພາດ: %s ບໍ່ແມ່ນໄຟລ໌ທີ່ສາມາດປະມວນຜົນໄດ້. ກຳລັງຢຸດ."
+
+#: ../data/apportcheckresume.py:75
+msgid ""
+"This occurred during a previous suspend, and prevented the system from "
+"resuming properly."
+msgstr ""
+"ບັນຫານີ້ເກີດຂຶ້ນໃນລະຫວ່າງການພັກເຄື່ອງ (suspend) ຄັ້ງກ່ອນ ແລະ "
+"ເຮັດໃຫ້ລະບົບບໍ່ສາມາດກັບມາເຮັດວຽກໄດ້ຕາມປົກກະຕິ."
+
+#: ../data/apportcheckresume.py:80
+msgid ""
+"This occurred during a previous hibernation, and prevented the system from "
+"resuming properly."
+msgstr ""
+"ບັນຫານີ້ເກີດຂຶ້ນໃນລະຫວ່າງການຈຳສິນເຄື່ອງ (hibernation) ຄັ້ງກ່ອນ ແລະ "
+"ເຮັດໃຫ້ລະບົບບໍ່ສາມາດກັບມາເຮັດວຽກໄດ້ຕາມປົກກະຕິ."
+
+#: ../data/apportcheckresume.py:88
+msgid ""
+"The resume processing hung very near the end and will have appeared to have "
+"completed normally."
+msgstr "ຂະບວນການກັບມາເຮັດວຽກ (resume) ຄ້າງໃນຕອນທ້າຍໆ ແຕ່ເບິ່ງຄືວ່າຈະສຳເລັດເປັນປົກກະຕິ."
+
+#: ../data/kernel_oops.py:31
+msgid "Your system might become unstable now and might need to be restarted."
+msgstr "ລະບົບຂອງທ່ານອາດຈະບໍ່ສະຖຽນໃນຕອນນີ້ ແລະ ອາດຈະຕ້ອງໄດ້ເລີ່ມລະບົບໃໝ່ (restart)."
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1
+msgid "Report a problem..."
+msgstr "ລາຍງານບັນຫາ..."
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2
+msgid "Report a malfunction to the developers"
+msgstr "ລາຍງານການເຮັດວຽກທີ່ຜິດພາດໃຫ້ກັບຜູ້ພັດທະນາ"
+
+#: ../gtk/apport-gtk.py:153
+#, python-format
+msgid "Sorry, the application %s has stopped unexpectedly."
+msgstr "ຂໍອະໄພ, ແອັບພລິເຄຊັນ %s ໄດ້ຢຸດເຮັດວຽກແບບບໍ່ຄາດຄິດ."
+
+#: ../gtk/apport-gtk.py:156
+#, python-format
+msgid "Sorry, %s has closed unexpectedly."
+msgstr "ຂໍອະໄພ, %s ໄດ້ປິດລົງແບບບໍ່ຄາດຄິດ."
+
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:225 ../kde/apport-kde.py:274
+#, python-format
+msgid "Sorry, %s has experienced an internal error."
+msgstr "ຂໍອະໄພ, %s ເກີດຂໍ້ຜິດພາດພາຍໃນ."
+
+#: ../gtk/apport-gtk.py:184 ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:218
+msgid "Send"
+msgstr "ສົ່ງ"
+
+#: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
+#: ../kde/apport-kde.py:335
+msgid "Show Details"
+msgstr "ສະແດງລາຍລະອຽດ"
+
+#: ../gtk/apport-gtk.py:219 ../kde/apport-kde.py:266 ../kde/apport-kde.py:281
+msgid "Continue"
+msgstr "ສືບຕໍ່"
+
+#: ../gtk/apport-gtk.py:243
+#, python-format
+msgid "The application %s has stopped responding."
+msgstr "ແອັບພລິເຄຊັນ %s ບໍ່ຕອບສະໜອງ."
+
+#: ../gtk/apport-gtk.py:247
+#, python-format
+msgid "The program \"%s\" has stopped responding."
+msgstr "ໂປຣແກຣມ \"%s\" ບໍ່ຕອບສະໜອງ."
+
+#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:233
+#, python-format
+msgid "Package: %s"
+msgstr "ແພັກເກດ: %s"
+
+#: ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:240
+msgid "Sorry, a problem occurred while installing software."
+msgstr "ຂໍອະໄພ, ເກີດບັນຫາໃນຂະນະທີ່ຕິດຕັ້ງຊອບແວ."
+
+#: ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299 ../kde/apport-kde.py:248
+#, python-format
+msgid "The application %s has experienced an internal error."
+msgstr "ແອັບພລິເຄຊັນ %s ເກີດຂໍ້ຜິດພາດພາຍໃນ."
+
+#: ../gtk/apport-gtk.py:282 ../kde/apport-kde.py:253
+#, python-format
+msgid "The application %s has closed unexpectedly."
+msgstr "ແອັບພລິເຄຊັນ %s ໄດ້ປິດລົງແບບບໍ່ຄາດຄິດ."
+
+#: ../gtk/apport-gtk.py:307 ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:278
+msgid "If you notice further problems, try restarting the computer."
+msgstr "ຖ້າທ່ານພົບບັນຫາອື່ນອີກ, ໃຫ້ລອງເລີ່ມຄອມພິວເຕີໃໝ່."
+
+#: ../gtk/apport-gtk.py:310 ../kde/apport-kde.py:283
+msgid "Ignore future problems of this type"
+msgstr "ບໍ່ສົນໃຈບັນຫາປະເພດນີ້ໃນອະນາຄົດ"
+
+#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
+msgid "Hide Details"
+msgstr "ເຊື່ອງລາຍລະອຽດ"
+
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:389 ../kde/apport-kde.py:568
+msgid "Apport"
+msgstr "Apport"
+
+#: ../gtk/apport-gtk.ui.h:2
+msgid "Cancel"
+msgstr "ຍົກເລີກ"
+
+#: ../gtk/apport-gtk.ui.h:3
+msgid "OK"
+msgstr "ຕົກລົງ"
+
+#: ../gtk/apport-gtk.ui.h:4
+msgid "Crash report"
+msgstr "ລາຍງານຂໍ້ຜິດພາດ"
+
+#: ../gtk/apport-gtk.ui.h:5
+msgid "<big><b>Sorry, an internal error happened.</b></big>"
+msgstr "<big><b>ຂໍອະໄພ, ເກີດຂໍ້ຜິດພາດພາຍໃນຂຶ້ນ.</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:8
+msgid "Remember this in future"
+msgstr "ຈື່ສິ່ງນີ້ໄວ້ໃນອະນາຄົດ"
+
+#: ../gtk/apport-gtk.ui.h:9
+msgid "Ignore future problems of this program version"
+msgstr "ບໍ່ສົນໃຈບັນຫາໃນອະນາຄົດຂອງໂປຣແກຣມເວີຊັນນີ້"
+
+#: ../gtk/apport-gtk.ui.h:10
+msgid "Relaunch this application"
+msgstr "ເລີ່ມແອັບພລິເຄຊັນນີ້ໃໝ່"
+
+#: ../gtk/apport-gtk.ui.h:12
+msgid "_Examine locally"
+msgstr "_ກວດສອບພາຍໃນເຄື່ອງ"
+
+#: ../gtk/apport-gtk.ui.h:13
+msgid "Don't send"
+msgstr "ບໍ່ຕ້ອງສົ່ງ"
+
+#: ../gtk/apport-gtk.ui.h:15
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>ກຳລັງເກັບກຳຂໍ້ມູນບັນຫາ</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:16
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr "ກຳລັງເກັບກຳຂໍ້ມູນທີ່ອາດຈະຊ່ວຍໃຫ້ຜູ້ພັດທະນາແກ້ໄຂບັນຫາທີ່ທ່ານລາຍງານ."
+
+#: ../gtk/apport-gtk.ui.h:18
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>ກຳລັງອັບໂຫຼດຂໍ້ມູນບັນຫາ</b></big>"
+
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:523
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr "ຂໍ້ມູນທີ່ເກັບກຳໄດ້ກຳລັງຖືກສົ່ງໄປຫາລະບົບຕິດຕາມບັກ. ອາດຈະໃຊ້ເວລາຄາວໜຶ່ງ."
+
+#: ../kde/apport-kde-mimelnk.desktop.in.h:1
+msgid "Apport crash file"
+msgstr "ໄຟລ໌ການເຮັດວຽກຜິດພາດຂອງ Apport"
+
+#: ../kde/apport-kde.py:269
+msgid "Leave Closed"
+msgstr "ປ່ອຍໃຫ້ປິດໄວ້"
+
+#: ../kde/apport-kde.py:270 ../kde/apport-kde.py:440
+msgid "Relaunch"
+msgstr "ເລີ່ມໃໝ່"
+
+#: ../kde/apport-kde.py:363
+msgid "Username:"
+msgstr "ຊື່ຜູ້ໃຊ້:"
+
+#: ../kde/apport-kde.py:366
+msgid "Password:"
+msgstr "ລະຫັດຜ່ານ:"
+
+#: ../kde/apport-kde.py:469
+msgid "Collecting Problem Information"
+msgstr "ກຳລັງເກັບກຳຂໍ້ມູນບັນຫາ"
+
+#: ../kde/apport-kde.py:472
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr "ຂໍ້ມູນທີ່ເກັບກຳໄດ້ສາມາດສົ່ງໃຫ້ຜູ້ພັດທະນາເພື່ອປັບປຸງແອັບພລິເຄຊັນ. ອາດຈະໃຊ້ເວລາຄາວໜຶ່ງ."
+
+#: ../kde/apport-kde.py:520
+msgid "Uploading Problem Information"
+msgstr "ກຳລັງອັບໂຫຼດຂໍ້ມູນບັນຫາ"

@@ -83,7 +83,7 @@ class TestApportValgrind(unittest.TestCase):
 
     def test_vlog_created(self) -> None:
         """apport-valgrind creates valgrind.log with expected content."""
-        cmd = ["apport-valgrind", "--no-sandbox", "true"]
+        cmd = ["apport-valgrind", "--no-sandbox", get_gnu_coreutils_cmd("true")]
         os.chdir(self.workdir)
         self.assertEqual(self._call(cmd), (0, "", ""))
         self.assertTrue(

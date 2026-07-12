@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 16:30+0200\n"
+"POT-Creation-Date: 2026-07-02 15:19+0200\n"
 "PO-Revision-Date: 2022-07-03 18:34+0000\n"
 "Last-Translator: Tushar <Unknown>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -478,34 +478,34 @@ msgstr ""
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "এই সমস্যাটি ইতোমধ্যে ডেভেলপারকে প্রতিবেদন করা হয়েছে। আপনাকে ধন্যবাদ!"
 
-#: ../bin/apport-cli.py:90
+#: ../bin/apport-cli.py:91
 msgid "Press any key to continue..."
 msgstr "এগিয়ে যাওয়ার জন্য যে কোন একটি কী চাপুন..."
 
-#: ../bin/apport-cli.py:97
+#: ../bin/apport-cli.py:98
 msgid "What would you like to do? Your options are:"
 msgstr "আপনি কি করতে পছন্দ করেন? আপনার বাছাইযোগ্য তালিকা:"
 
-#: ../bin/apport-cli.py:110
+#: ../bin/apport-cli.py:111
 #, python-format
 msgid "Please choose (%s):"
 msgstr "অনুগ্রহ করে নির্বাচন করুন (%s):"
 
-#: ../bin/apport-cli.py:170
+#: ../bin/apport-cli.py:171
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i বাইট)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:422
 msgid "(binary data)"
 msgstr "(বাইনারি ডাটা)"
 
-#: ../bin/apport-cli.py:212 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:176 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:210
 msgid "Send problem report to the developers?"
 msgstr "ডেভেলপারকে সমস্যার প্রতিবেদন পাঠানো হবে কি?"
 
-#: ../bin/apport-cli.py:214
+#: ../bin/apport-cli.py:215
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -513,50 +513,50 @@ msgstr ""
 "সমস্যার প্রতিবেদন পাঠানোর পরে, অনুগ্রহ করে \n"
 "স্বয়ংক্রিয়ভাবে উন্মুক্ত ওয়েব ব্রাউজারে ফর্মটি পূরণ করুন।"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:222
 #, python-format
 msgid "&Send report (%s)"
 msgstr "প্রতিবেদন পাঠানো হয়েছে (%s) (&S)"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:226
 msgid "&Examine locally"
 msgstr "স্থানীয়ভাবে পরীক্ষা করুন (&E)"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:230
 msgid "&View report"
 msgstr "প্রদর্শিত রিপোর্ট (&V)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:232
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "রিপোর্ট ফাইল পরে পাঠানোর জন্য রাখুন অথবা অন্য কোথাও অনুলিপি করুন (&K)"
 
-#: ../bin/apport-cli.py:234
+#: ../bin/apport-cli.py:235
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "এই প্রোগ্রাম সংস্করণের ভবিষ্যৎ ক্র্যাশ বাতিল এবং উপেক্ষা করুন ( &I)"
 
-#: ../bin/apport-cli.py:237 ../bin/apport-cli.py:317 ../bin/apport-cli.py:353
-#: ../bin/apport-cli.py:374
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:375
 msgid "&Cancel"
 msgstr "বাতিল (&C)"
 
-#: ../bin/apport-cli.py:258
+#: ../bin/apport-cli.py:259
 msgid "Problem report file:"
 msgstr "রিপোর্ট ফাইলে সমস্যা:"
 
-#: ../bin/apport-cli.py:264 ../bin/apport-cli.py:269
+#: ../bin/apport-cli.py:265 ../bin/apport-cli.py:270
 msgid "&Confirm"
 msgstr "নিশ্চিত (&C)"
 
-#: ../bin/apport-cli.py:268
+#: ../bin/apport-cli.py:269
 #, python-format
 msgid "Error: %s"
 msgstr "ত্রুটি: %s"
 
-#: ../bin/apport-cli.py:274 ../kde/apport-kde.py:470
+#: ../bin/apport-cli.py:275 ../kde/apport-kde.py:470
 msgid "Collecting problem information"
 msgstr "সমস্যার তথ্য সংগ্রহ করা হচ্ছে"
 
-#: ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:277
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -564,11 +564,11 @@ msgstr ""
 "সংগৃহীত তথ্য ডেভেলপারকে পাঠানো হতে পারে উন্নত করতে\n"
 "অ্যাপ্লিকেশন। এটি কয়েক মিনিট সময় নিতে পারে।"
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
+#: ../bin/apport-cli.py:293 ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:521
 msgid "Uploading problem information"
 msgstr "সমস্যার তথ্য হালনাগাদ করা হচ্ছে"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -576,48 +576,48 @@ msgstr ""
 "সংগৃহীত তথ্য বাগ ট্র্যাকিং সিস্টেমে পাঠানো হচ্ছে।\n"
 "এটি কয়েক মিনিট সময় নিতে পারে।"
 
-#: ../bin/apport-cli.py:315
+#: ../bin/apport-cli.py:316
 msgid "&Yes"
 msgstr ""
 
-#: ../bin/apport-cli.py:316
+#: ../bin/apport-cli.py:317
 msgid "&No"
 msgstr ""
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:353
 msgid "&Done"
 msgstr "সম্পন্ন (&D)"
 
-#: ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:359
 msgid "none"
 msgstr "কোনটি না"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:360
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "নির্বাচিত: %s। একাধিক পছন্দ:"
 
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:376
 msgid "Choices:"
 msgstr "পছন্দ:"
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:390
 msgid "Path to file (Enter to cancel):"
 msgstr "ফাইলের পাথ (বাতিল করতে এন্টার দিন):"
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "ফাইল বিদ্যমান নয়।"
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "এটি একটি ডিরেক্টরি।"
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:403
 msgid "To continue, you must visit the following URL:"
 msgstr "চালিয়ে যেতে, আপনি অবশ্যই উল্লেখিত URL পরিদর্শন করুন:"
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:405
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -625,11 +625,11 @@ msgstr ""
 "আপনি এখন ব্রাউজার চালু করতে পারেন, অথবা অন্য কম্পিউটারের ব্রাউজারে এই URL অনুলিপি "
 "করতে পারেন।"
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "এখন ব্রাউজার চালু করুন"
 
-#: ../bin/apport-cli.py:424
+#: ../bin/apport-cli.py:425
 msgid "No pending crash reports. Try --help for more information."
 msgstr "কোনো অমীমাংসিত ক্র্যাশ প্রতিবেদন নেই। চেষ্টা করুন --আরও তথ্যের জন্য সহায়তা।"
 
