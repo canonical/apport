@@ -10,6 +10,7 @@
 # the full text of the license.
 
 import time
+from collections.abc import Callable, Iterable
 from typing import Any
 
 import apport.crashdb
@@ -28,7 +29,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This class does not support bug patterns and authentication.
         """
-        apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
+        super().__init__(auth_file, options)
 
         # reports is a list of dictionaries with keys:
         # report, fixed_version, dup_of, comment
@@ -36,13 +37,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.unretraced: set[int] = set()
         self.dup_unchecked: set[int] = set()
 
-        self.upload_delay = 0.0
+        self.upload_delay: float = 0.0
         self.upload_msg: tuple[str, str] | None = None
 
         if "sample_data" in options:
             self.add_sample_data()
 
-    def upload(self, report, progress_callback=None, user_message_callback=None):
+    def upload(
+        self,
+        report: apport.report.Report,
+        progress_callback: Callable[[int, int], None] | None = None,
+        user_message_callback: Callable[[str, str], None] | None = None,
+    ) -> int:
         """Store the report and return a handle number (starting from 0).
 
         This does not support (nor need) progress callbacks.
@@ -71,7 +77,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return crash_id
 
-    def get_comment_url(self, report, handle):
+    def get_comment_url(self, report: apport.report.Report, handle: int | str) -> str:
         """Return http://<sourcepackage>.bugs.example.com/<handle> for package
         bugs or http://bugs.example.com/<handle> for reports without a
         SourcePackage.
@@ -80,7 +86,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return f"http://{report['SourcePackage']}.bugs.example.com/{handle}"
         return f"http://bugs.example.com/{handle}"
 
-    def get_id_url(self, report, crash_id):
+    def get_id_url(self, report: apport.report.Report, crash_id: int) -> str | None:
         """Return URL for a given report ID.
 
         The report is passed in case building the URL needs additional
@@ -90,7 +96,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         return self.get_comment_url(report, crash_id)
 
-    def download(self, crash_id):
+    def download(self, crash_id: int) -> apport.report.Report:
         """Download the problem report from given ID and return a Report."""
         return self.reports[crash_id]["report"]
 
@@ -115,13 +121,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def update(
         self,
-        crash_id,
-        report,
-        comment,
-        change_description=False,
-        attachment_comment=None,
-        key_filter=None,
-    ):
+        crash_id: int,
+        report: apport.report.Report,
+        comment: str,
+        change_description: bool = False,
+        attachment_comment: str | None = None,
+        key_filter: Iterable[str] | None = None,
+    ) -> None:
         """Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -194,7 +200,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         """
         return self.reports[crash_id]["dup_of"]
 
-    def close_duplicate(self, report, crash_id, master_id):
+    def close_duplicate(
+        self, report: Any, crash_id: int, master_id: int | None
+    ) -> None:
         """Mark a crash id as duplicate of given master ID.
 
         If master is None, id gets un-duplicated.
@@ -208,7 +216,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert self.reports[master]["fixed_version"] is not None
         self.reports[crash_id]["comment"] = f"regression, already fixed in #{master}"
 
-    def _mark_dup_checked(self, crash_id, report):
+    def _mark_dup_checked(self, crash_id: int, report: apport.report.Report) -> None:
         """Mark crash id as checked for being a duplicate."""
         try:
             self.dup_unchecked.remove(crash_id)
