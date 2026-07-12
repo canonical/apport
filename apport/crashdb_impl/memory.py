@@ -201,7 +201,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return self.reports[crash_id]["dup_of"]
 
     def close_duplicate(
-        self, report: apport.report.Report, crash_id: int, master_id: int | None
+        self, report: Any, crash_id: int, master_id: int | None
     ) -> None:
         """Mark a crash id as duplicate of given master ID.
 
