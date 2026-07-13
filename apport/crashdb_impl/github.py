@@ -37,37 +37,71 @@ class Github:
         self.__expiry = 0.0
         self.message_callback = message_callback
 
-    def _post(self, url: str, data: str) -> Any:
-        """Posts the given data to the given URL.
-        Uses auth token if available"""
-        headers = {"Accept": "application/vnd.github.v3+json"}
+    def _post(
+        self,
+        url: str,
+        data: str,
+        content_type: str,
+        accept: str = "application/vnd.github.v3+json",
+    ) -> Any:
+        """Post data to the given URL.
+
+        Uses the authentication token if available.
+        """
+        headers = {
+            "Accept": accept,
+            "Content-Type": content_type,
+        }
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
+
         request = urllib.request.Request(
-            url, data=data.encode("utf-8"), headers=headers, method="POST"
+            url,
+            data=data.encode("utf-8"),
+            headers=headers,
+            method="POST",
         )
+
         try:
             with urllib.request.urlopen(request, timeout=5.0) as response:
-                return json.loads(response.read())
-        except urllib.error.URLError as err:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.URLError:
             if self.message_callback:
                 self.message_callback(
                     "Failed connection",
                     f"Failed connection to {url}.\n"
                     f"Please check your internet connection and try again.",
                 )
-            raise err
+            raise
         finally:
             self.__last_request = time.time()
 
-    def api_authentication(self, url: str, data: dict) -> Any:
-        """Authenticate against the GitHub API."""
-        return self._post(url, urllib.parse.urlencode(data))
+    def api_authentication(
+        self,
+        url: str,
+        data: Mapping[str, Any],
+    ) -> Any:
+        """Authentication against the GitHub API."""
+        return self._post(
+            url,
+            urllib.parse.urlencode(data),
+            "application/x-www-form-urlencoded",
+            "application/json",
+        )
 
-    def api_open_issue(self, owner: str, repo: str, data: dict) -> Any:
+    def api_open_issue(
+        self,
+        owner: str,
+        repo: str,
+        data: Mapping[str, Any],
+    ) -> Any:
         """Open a new issue on the GitHub project."""
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
-        return self._post(url, json.dumps(data))
+        return self._post(
+            url,
+            json.dumps(data),
+            "application/json",
+        )
 
     def __enter__(self) -> Self:
         """Enters login process. At exit, login process ends."""
@@ -93,10 +127,10 @@ class Github:
 
         self.__authentication_data = {
             "client_id": self.__client_id,
-            "device_code": f'{response["device_code"]}',
+            "device_code": f"{response['device_code']}",
             "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
         }
-        self.__cooldown = response["interval"]
+        self.__cooldown = float(response.get("interval", 5))
         self.__expiry = int(response["expires_in"]) + time.time()
 
         return self
@@ -133,7 +167,8 @@ class Github:
             if response["error"] == "authorization_pending":
                 return False
             if response["error"] == "slow_down":
-                self.__cooldown = int(response["interval"])
+                # Fall back safely if interval is omitted.
+                self.__cooldown = float(response.get("interval", self.__cooldown + 5))
                 return False
             raise RuntimeError(f"Unknown error from Github: {response}")
         if "access_token" in response:
@@ -158,7 +193,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.repository_owner = options["repository_owner"]
         self.repository_name = options["repository_name"]
         self.app_id = options["github_app_id"]
-        self.labels = set(options["labels"])
+        self.labels = set(options.get("labels", []))
         self.issue_url = None
         self.github: Github | None = None
 
@@ -197,7 +232,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             raise RuntimeError("Failed to login to Github")
 
         data = self._format_report(report)
-        if not (self.repository_name is None and self.repository_owner is None):
+        if self.repository_owner is not None and self.repository_name is not None:
             response = self.github.api_open_issue(
                 self.repository_owner, self.repository_name, data
             )
