@@ -48,10 +48,7 @@ class Github:
 
         Uses the authentication token if available.
         """
-        headers = {
-            "Accept": accept,
-            "Content-Type": content_type,
-        }
+        headers = {"Accept": accept, "Content-Type": content_type}
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
 
