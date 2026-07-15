@@ -53,10 +53,7 @@ class Github:
             headers["Authorization"] = f"token {self.__access_token}"
 
         request = urllib.request.Request(
-            url,
-            data=data.encode("utf-8"),
-            headers=headers,
-            method="POST",
+            url, data=data.encode("utf-8"), headers=headers, method="POST"
         )
 
         try:
@@ -73,11 +70,7 @@ class Github:
         finally:
             self.__last_request = time.time()
 
-    def api_authentication(
-        self,
-        url: str,
-        data: Mapping[str, Any],
-    ) -> Any:
+    def api_authentication(self, url: str, data: Mapping[str, Any]) -> Any:
         """Authentication against the GitHub API."""
         return self._post(
             url,
@@ -86,19 +79,10 @@ class Github:
             "application/json",
         )
 
-    def api_open_issue(
-        self,
-        owner: str,
-        repo: str,
-        data: Mapping[str, Any],
-    ) -> Any:
+    def api_open_issue(self, owner: str, repo: str, data: Mapping[str, Any]) -> Any:
         """Open a new issue on the GitHub project."""
         url = f"https://api.github.com/repos/{owner}/{repo}/issues"
-        return self._post(
-            url,
-            json.dumps(data),
-            "application/json",
-        )
+        return self._post(url, json.dumps(data), "application/json")
 
     def __enter__(self) -> Self:
         """Enters login process. At exit, login process ends."""
