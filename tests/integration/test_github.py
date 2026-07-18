@@ -48,10 +48,56 @@ class TestGitHub(unittest.TestCase):
         self.assertEqual(self.crashdb.labels, set(result["labels"]))
 
     @patch("apport.crashdb_impl.github.Github.api_authentication")
+    def test_enter_without_interval(self, mock_api: MagicMock) -> None:
+        """Default cooldown is used when interval is omitted."""
+        response = self.api_auth_return_value.copy()
+        response.pop("interval")
+        mock_api.return_value = response
+
+        with self.github:
+            self.assertEqual(self.github._Github__cooldown, 5.0)
+
+    @patch("apport.crashdb_impl.github.Github.api_open_issue")
+    def test_authentication_complete_slow_down_without_interval(
+        self, mock_api: MagicMock
+    ) -> None:
+        """Fallback cooldown is used if slow_down omits interval."""
+        mock_api.side_effect = [
+            self.api_auth_return_value,
+            {"error": "slow_down"},
+        ]
+
+        with self.github as github:
+            self.assertEqual(github.authentication_complete())
+            self.assertEqual(github._Github__cooldown, 6.0)
+
+    @patch("apport.crashdb_impl.github.Github.authentication_complete")
+    def test_post_adds_authorization_header(self, mock_urlopen: MagicMock) -> None:
+        """Authenticated requests include Authorization header."""
+        response = MagicMock()
+        response.read.return_value = b"{}"
+        mock_urlopen.return_value.__enter__.return_value = response
+
+        self.github._Github__access_token = "token"
+
+        self.github._post(
+            "https://example.com",
+            "{}",
+            "application/json",
+            "application/json",
+        )
+
+        request = mock_urlopen.call_args.args[0]
+        self.assertEqual(request.headers["Authorization"], "token token")
+
+    @patch("apport.crashdb_impl.github.Github.api_authentication")
     @patch("apport.crashdb_impl.github.Github.api_open_issue")
     @patch("apport.crashdb_impl.github.Github.authentication_complete")
     def test_upload(
-        self, mock_auth: MagicMock, mock_api: MagicMock, mock_api_auth: MagicMock
+        self,
+        mock_auth: MagicMock,
+        mock_api: MagicMock,
+        mock_api_auth: MagicMock,
     ) -> None:
         mock_api.return_value = {"html_url": "doesntmatterhere"}
         mock_auth.return_value = True
