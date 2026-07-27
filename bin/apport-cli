@@ -58,6 +58,7 @@ class CLIDialog:
 
         file = sys.stdin.fileno()
         import os
+
         if not os.isatty(file):
             if multi_char:
                 response = str(sys.stdin.readline()).strip()
