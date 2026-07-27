@@ -57,7 +57,6 @@ class CLIDialog:
         sys.stdout.flush()
 
         file = sys.stdin.fileno()
-        import os
 
         if not os.isatty(file):
             if multi_char:

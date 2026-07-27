@@ -98,3 +98,29 @@ class TestApportCli(unittest.TestCase):
             run_mock.return_value = 4
             self.app.ui_present_report_details()
         self.assertIn(_("Problem report file:"), stdout_mock.getvalue())
+
+    @unittest.mock.patch("os.isatty")
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_raw_input_char_non_tty(self, mock_stdout, mock_isatty):
+        mock_isatty.return_value = False
+        mock_stdin = unittest.mock.MagicMock()
+        mock_stdin.fileno.return_value = 0
+        mock_stdin.read.return_value = "y"
+        with unittest.mock.patch("sys.stdin", mock_stdin):
+            response = apport_cli.CLIDialog.raw_input_char("Prompt?")
+            self.assertEqual(response, "y")
+            self.assertEqual(mock_stdout.getvalue(), "Prompt? \n")
+            mock_stdin.read.assert_called_with(1)
+
+    @unittest.mock.patch("os.isatty")
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_raw_input_char_non_tty_multi(self, mock_stdout, mock_isatty):
+        mock_isatty.return_value = False
+        mock_stdin = unittest.mock.MagicMock()
+        mock_stdin.fileno.return_value = 0
+        mock_stdin.readline.return_value = "yes\n"
+        with unittest.mock.patch("sys.stdin", mock_stdin):
+            response = apport_cli.CLIDialog.raw_input_char("Prompt?", multi_char=True)
+            self.assertEqual(response, "yes")
+            self.assertEqual(mock_stdout.getvalue(), "Prompt? \n")
+            mock_stdin.readline.assert_called_with()
