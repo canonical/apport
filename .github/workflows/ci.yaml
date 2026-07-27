@@ -120,7 +120,7 @@ jobs:
           sudo apt-get update
           && sudo apt-get install --no-install-recommends --yes
           $base_deps $build_deps $common_deps $gtk_deps $kde_deps $unit_deps
-          $unit_deps $integration_deps
+          $integration_deps
       - uses: actions/checkout@v6
       - name: Enable German locale
         run: sudo sed -i 's/^# de_DE/de_DE/g' /etc/locale.gen && sudo locale-gen
