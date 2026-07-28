@@ -61,7 +61,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:questing
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
@@ -144,7 +143,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:questing
           - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
@@ -176,7 +174,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:questing
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
@@ -262,7 +259,6 @@ jobs:
       matrix:
         container:
           - ubuntu:noble
-          - ubuntu:questing
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
