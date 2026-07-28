@@ -185,8 +185,7 @@ jobs:
         container:
           - ubuntu:noble
           - ubuntu:questing
-          # resolute skipped due to https://launchpad.net/bugs/2147544
-          # - ubuntu:resolute
+          - ubuntu:resolute
         architecture:
           - ubuntu-latest
           - ubuntu-24.04-arm
