@@ -242,7 +242,7 @@ class ParseSegv:
             else:
                 if not offset.startswith("0x"):
                     raise ValueError(f"Unknown offset literal: {parts[0]}")
-                add = int(offset[2:], 16) * sign
+                add = int(offset, 0) * sign
         else:
             add = 0
 
