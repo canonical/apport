@@ -1854,10 +1854,8 @@ class T(unittest.TestCase):
         with open(
             os.path.join(self.hookdir, "coreutils.py"), "w", encoding="utf-8"
         ) as hook:
-            hook.write(
-                "def add_info(report, ui):\n%s\n"
-                % "\n".join([f"    {line}" for line in code.splitlines()])
-            )
+            indented_code = "\n".join([f"    {line}" for line in code.splitlines()])
+            hook.write(f"def add_info(report, ui):\n{indented_code}\n")
         ui.args.package = "coreutils"
         ui.run_report_bug()
 

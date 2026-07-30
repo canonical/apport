@@ -76,12 +76,12 @@ def add_info(report: ProblemReport, ui: apport.hook_ui.HookUI) -> None:
             if not ui.yesno("""\
 The crashed program seems to use third-party or local libraries:
 
-%s
+{}
 
 It is highly recommended to check if the problem persists without those first.
 
 Do you want to continue the report process anyway?
-""" % "\n".join(local_libs)):
+""".format("\n".join(local_libs))):
                 raise StopIteration
             report["LocalLibraries"] = " ".join(local_libs)
             report.add_tags(["local-libs"])

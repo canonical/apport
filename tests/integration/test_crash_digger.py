@@ -32,6 +32,7 @@ class T(unittest.TestCase):
 
         crashdb_conf = os.path.join(self.workdir, "crashdb.conf")
         with open(crashdb_conf, "w", encoding="utf-8") as f:
+            # ruff: ignore[UP031] because the string contains brackets
             f.write(textwrap.dedent("""\
                 default = "memory"
                 databases = {

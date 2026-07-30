@@ -97,7 +97,7 @@ class T(unittest.TestCase):
         if self.all_reports:
             self.skipTest(
                 "Please remove all crash reports from /var/crash/ for this"
-                " test suite:\n  %s\n" % "\n  ".join(self.all_reports)
+                " test suite:\n  {}\n".format("\n  ".join(self.all_reports))
             )
 
         # use local report dir
