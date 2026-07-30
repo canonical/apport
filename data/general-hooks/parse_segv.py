@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-#
 # Copyright 2009-2010  Canonical, Ltd.
 # Author: Kees Cook <kees@ubuntu.com>
 #
