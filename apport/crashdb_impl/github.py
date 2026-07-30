@@ -49,14 +49,14 @@ class Github:
         try:
             with urllib.request.urlopen(request, timeout=5.0) as response:
                 return json.loads(response.read())
-        except urllib.error.URLError as err:
+        except urllib.error.URLError:
             if self.message_callback:
                 self.message_callback(
                     "Failed connection",
                     f"Failed connection to {url}.\n"
                     f"Please check your internet connection and try again.",
                 )
-            raise err
+            raise
         finally:
             self.__last_request = time.time()
 
