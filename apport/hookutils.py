@@ -1131,7 +1131,7 @@ def attach_default_grub(report, key=None):
                     if not line.startswith("password")
                     else "### PASSWORD LINE REMOVED ###"
                 )
-                for line in f.readlines()
+                for line in f
             ]
             report[key] = "".join(filtered)
 
