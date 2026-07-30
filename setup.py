@@ -30,7 +30,7 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
         DistUtilsExtra.auto.clean_build_tree.run(self)
         for root, _, files in os.walk("java"):
             for f in files:
-                if f.endswith(".jar") or f.endswith(".class"):
+                if f.endswith((".jar", ".class")):
                     os.unlink(os.path.join(root, f))
 
 

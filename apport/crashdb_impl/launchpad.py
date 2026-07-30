@@ -56,7 +56,7 @@ def filter_filename(attachments):
             apport.logging.error("Broken attachment on bug, ignoring")
             continue
         name = f.filename
-        if name.endswith(".txt") or name.endswith(".gz") or name.endswith(".zst"):
+        if name.endswith((".txt", ".gz", ".zst")):
             yield f
 
 

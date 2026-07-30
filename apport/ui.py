@@ -1022,7 +1022,7 @@ class UserInterface:
                     os.path.basename(os.environ["APPORT_INVOKED_AS"]),
                 )
             cmd = argv[0]
-            if cmd.endswith("-update-bug") or cmd.endswith("-collect"):
+            if cmd.endswith(("-update-bug", "-collect")):
                 return self.parse_argv_update(argv)
             if cmd.endswith("-bug"):
                 suppress = argparse.SUPPRESS
@@ -1169,7 +1169,7 @@ class UserInterface:
             args.symptom = issue
 
         # .crash/.apport file?
-        elif issue.endswith(".crash") or issue.endswith(".apport"):
+        elif issue.endswith((".crash", ".apport")):
             args.crash_file = issue
 
         # PID?
