@@ -83,7 +83,7 @@ class ProcPid(contextlib.ContextDecorator):
         Returns False for broken symbolic links."""
         try:
             self.stat(path)
-        except (OSError, ValueError):
+        except OSError, ValueError:
             return False
         return True
 
@@ -579,7 +579,7 @@ def forward_crash_to_container(
             "root/run/apport.socket", os.O_RDONLY | os.O_PATH, dir_fd=proc_pid.fd
         )
         socket_uid = os.fstat(sock_fd).st_uid
-    except (FileNotFoundError, ProcessLookupError):
+    except FileNotFoundError, ProcessLookupError:
         logger.error(
             "host pid %s crashed in a container without apport support",
             options.global_pid,
@@ -821,7 +821,7 @@ def main(args: list[str]) -> int:
 
     try:
         return process_crash_from_kernel(options)
-    except (SystemExit, KeyboardInterrupt):
+    except SystemExit, KeyboardInterrupt:
         pass
     except Exception:  # ruff: ignore[BLE001], pylint: disable=broad-except
         logger = logging.getLogger()
@@ -1191,7 +1191,7 @@ def process_crash(
         try:
             gid = pwd.getpwnam("whoopsie").pw_gid
             os.fchown(fd, report_owner.uid, gid)
-        except (OSError, KeyError):
+        except OSError, KeyError:
             os.fchown(fd, report_owner.uid, -1)
     except OSError as error:
         logger.error("Could not create report file: %s", str(error))

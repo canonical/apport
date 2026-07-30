@@ -85,7 +85,7 @@ def has_java(unused_command: Command) -> bool:
     """Check if the Java compiler is available."""
     try:
         subprocess.run(["javac", "-version"], capture_output=True, check=True)
-    except (OSError, subprocess.CalledProcessError):
+    except OSError, subprocess.CalledProcessError:
         logging.getLogger(__name__).warning(
             "Java support: Java not available, not building Java crash handler"
         )

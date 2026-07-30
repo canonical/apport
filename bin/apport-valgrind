@@ -130,7 +130,7 @@ try:
         sys.stderr.write(_("Error: %s is not an executable. Stopping.") % options.exe)
         sys.stderr.write("\n")
         sys.exit(1)
-except (KeyboardInterrupt, SystemExit):
+except KeyboardInterrupt, SystemExit:
     sys.stderr.write("\nInterrupted during initialization\n")
     _exit_on_interrupt()
 
@@ -144,7 +144,7 @@ try:
         report.add_package_info()
 
         apport.logging.memdbg("\nCreated report")
-except (KeyboardInterrupt, SystemExit):
+except KeyboardInterrupt, SystemExit:
     sys.stderr.write("\nInterrupted during report creation\n")
     _exit_on_interrupt()
 
@@ -165,7 +165,7 @@ try:
             options.verbose,
         )
 
-except (KeyboardInterrupt, SystemExit):
+except KeyboardInterrupt, SystemExit:
     sys.stderr.write("\nInterrupted while creating sandbox\n")
     _exit_on_interrupt()
 
@@ -199,7 +199,7 @@ try:
     argv += [exepath]
 
     apport.logging.memdbg("before calling valgrind")
-except (KeyboardInterrupt, SystemExit):
+except KeyboardInterrupt, SystemExit:
     sys.stderr.write("\nInterrupted while preparing to create sandbox\n")
     _exit_on_interrupt()
 
@@ -207,7 +207,7 @@ valgrind_env = {k: v for k, v in os.environ.items() if k != "DEBUGINFOD_URLS"}
 
 try:
     subprocess.call(argv, env=valgrind_env)
-except (KeyboardInterrupt, SystemExit):
+except KeyboardInterrupt, SystemExit:
     sys.stderr.write("\nInterrupted while running valgrind\n")
     _exit_on_interrupt()
 

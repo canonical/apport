@@ -190,7 +190,7 @@ def find_snap(snap):
             response = c.getresponse()
             if response.status == 200:
                 return json.loads(response.read())["result"]
-    except (http.client.HTTPException, json.JSONDecodeError, OSError):
+    except http.client.HTTPException, json.JSONDecodeError, OSError:
         return None
     return None
 
@@ -285,7 +285,7 @@ def get_sys_gid_max() -> int:
     """Return maximum system group ID (SYS_GID_MAX from /etc/login.defs)."""
     try:
         return int(get_login_defs()["SYS_GID_MAX"])
-    except (KeyError, ValueError):
+    except KeyError, ValueError:
         return 999
 
 
@@ -293,7 +293,7 @@ def get_sys_uid_max() -> int:
     """Return maximum system user ID (SYS_UID_MAX from /etc/login.defs)."""
     try:
         return int(get_login_defs()["SYS_UID_MAX"])
-    except (KeyError, ValueError):
+    except KeyError, ValueError:
         return 999
 
 
@@ -400,7 +400,7 @@ def get_recent_crashes(report: IO[bytes]) -> int:
         if cur_time - report_time > 24 * 3600:
             return 0
         return count
-    except (ValueError, KeyError):
+    except ValueError, KeyError:
         return 0
 
 
@@ -515,7 +515,7 @@ def get_config(section, setting, default=None, path=None, boolean=False):
         if boolean:
             return config.getboolean(section, setting)
         return config.get(section, setting)
-    except (configparser.NoOptionError, configparser.NoSectionError):
+    except configparser.NoOptionError, configparser.NoSectionError:
         return default
 
 
@@ -653,7 +653,7 @@ def find_core_files_by_uid(uid: int) -> list[tuple[str, float]]:
             if f.split(".")[2] == str(uid):
                 core_file_time = os.path.getmtime(os.path.join(core_dir, f))
                 uid_files.append((f, core_file_time))
-        except (IndexError, FileNotFoundError):
+        except IndexError, FileNotFoundError:
             continue
     return uid_files
 
@@ -717,7 +717,7 @@ def should_skip_crash(report: ProblemReport, filename: str) -> str | None:
     """
     try:
         crash_counter = int(report["CrashCounter"])
-    except (KeyError, ValueError):
+    except KeyError, ValueError:
         crash_counter = 0
     if crash_counter > 1:
         return f"this executable already crashed {crash_counter} times, ignoring"

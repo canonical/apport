@@ -88,7 +88,7 @@ def do_report(pid: int, omit_pids: Iterable[str]) -> None:
     report = apport.report.Report("Bug")
     try:
         report.add_proc_info(pid)
-    except (ValueError, AssertionError):
+    except ValueError, AssertionError:
         # happens if ExecutablePath doesn't exist (any more?), ignore
         return
 

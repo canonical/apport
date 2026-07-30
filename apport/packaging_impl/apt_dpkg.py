@@ -346,7 +346,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, "rb") as fp:
                 self._virtual_mapping_obj = pickle.load(fp)
             assert isinstance(self._virtual_mapping_obj, dict)
-        except (AssertionError, FileNotFoundError):
+        except AssertionError, FileNotFoundError:
             self._virtual_mapping_obj = {}
 
         return self._virtual_mapping_obj
@@ -378,7 +378,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             assert isinstance(self._contents_mapping_obj, dict)
             # Discard files from Apport < 2.35.0
             assert isinstance(next(iter(self._contents_mapping_obj)), str)
-        except (AssertionError, FileNotFoundError):
+        except AssertionError, FileNotFoundError:
             self._contents_mapping_obj = {"release": release, "arch": arch}
 
         return self._contents_mapping_obj
@@ -1992,7 +1992,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             try:
                 info = platform.freedesktop_os_release()
                 self._distro_codename = info["VERSION_CODENAME"]
-            except (KeyError, OSError):
+            except KeyError, OSError:
                 # Fall back to query lsb_release
                 lsb_release = subprocess.run(
                     ["lsb_release", "-sc"],

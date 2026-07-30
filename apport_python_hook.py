@@ -75,7 +75,7 @@ def apport_excepthook(
                 likely_packaged,
                 should_skip_crash,
             )
-        except (ImportError, OSError):
+        except ImportError, OSError:
             return
 
         # for interactive Python sessions, sys.argv[0] == ""
@@ -189,7 +189,7 @@ def dbus_service_unknown_analysis(
     try:
         assert exc_tb is not None
         dbus_name = extract_bus_name_from_traceback(exc_tb)
-    except (AssertionError, ValueError):
+    except AssertionError, ValueError:
         if sys.stderr:
             sys.stderr.write(
                 "Error: cannot parse D-BUS name from exception: "
@@ -209,7 +209,7 @@ def dbus_service_unknown_analysis(
                     subprocess.call(["pidof", "-sx", exe], stdout=subprocess.PIPE) == 0
                 )
                 services.append((service_file, exe, running))
-        except (NoSectionError, NoOptionError):
+        except NoSectionError, NoOptionError:
             if sys.stderr:
                 sys.stderr.write(
                     f"Invalid D-BUS .service file {service_file}:"

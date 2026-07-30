@@ -64,7 +64,7 @@ def get_pid(report):
     try:
         pid = re.search("Pid:\t(.*)\n", report.get("ProcStatus", "")).group(1)
         return int(pid)
-    except (IndexError, AttributeError):
+    except IndexError, AttributeError:
         return None
 
 
@@ -76,7 +76,7 @@ def _get_env_int(key: str, default: int | None = None) -> int | None:
     """
     try:
         return int(os.environ[key])
-    except (KeyError, ValueError):
+    except KeyError, ValueError:
         return default
 
 
@@ -1372,7 +1372,7 @@ class UserInterface:
                 return False
             try:
                 self.crashdb = apport.crashdb.load_crashdb(None, spec)
-            except (ImportError, KeyError):
+            except ImportError, KeyError:
                 self.report["UnreportableReason"] = (
                     f"A package hook wants to send this report to the crash"
                     f' database "{self.report["CrashDB"]}"'
@@ -1383,7 +1383,7 @@ class UserInterface:
             # DB name
             try:
                 self.crashdb = apport.crashdb.get_crashdb(None, self.report["CrashDB"])
-            except (ImportError, KeyError):
+            except ImportError, KeyError:
                 self.report["UnreportableReason"] = (
                     f"A package hook wants to send this report to the crash"
                     f' database "{self.report["CrashDB"]}"'

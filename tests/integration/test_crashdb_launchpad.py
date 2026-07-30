@@ -722,7 +722,7 @@ and more
         )
 
     @staticmethod
-    def _get_bug_target(db: CrashDatabase, report: Report) -> "Entry | None":
+    def _get_bug_target(db: CrashDatabase, report: Report) -> Entry | None:
         """Return the bug_target for this report."""
         project = db.options.get("project")
         if "SourcePackage" in report:

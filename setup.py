@@ -85,7 +85,7 @@ try:
     SYSTEMD_TMPFILES_DIR = subprocess.check_output(
         ["pkg-config", "--variable=tmpfilesdir", "systemd"], universal_newlines=True
     ).strip()
-except (FileNotFoundError, subprocess.CalledProcessError):
+except FileNotFoundError, subprocess.CalledProcessError:
     # hardcoded fallback path
     SYSTEMD_UNIT_DIR = "/lib/systemd/system"
     SYSTEMD_TMPFILES_DIR = "/usr/lib/tmpfiles.d"
@@ -94,7 +94,7 @@ try:
     UDEV_DIR = subprocess.check_output(
         ["pkg-config", "--variable=udevdir", "udev"], text=True
     ).strip()
-except (FileNotFoundError, subprocess.CalledProcessError):
+except FileNotFoundError, subprocess.CalledProcessError:
     UDEV_DIR = "/lib/udev"
 
 cmdclass = register_java_sub_commands(build_extra, install_fix_completion_symlinks)

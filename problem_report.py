@@ -28,7 +28,6 @@ import time
 import typing
 import zlib
 from collections.abc import Generator, Iterable, Iterator
-from typing import TypeAlias
 
 CHUNK_SIZE = 131_072  # 128 kB chunks
 # magic number (0x1F 0x8B) and compression method (0x08 for DEFLATE)
@@ -337,7 +336,7 @@ class CompressedValue:
         return self.get_value().splitlines()
 
 
-ProblemReportValue: TypeAlias = bytes | CompressedFile | CompressedValue | str | tuple
+type ProblemReportValue = bytes | CompressedFile | CompressedValue | str | tuple
 _STRING_KEYS = {
     "Annotation",
     "Architecture",
