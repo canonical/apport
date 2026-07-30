@@ -514,9 +514,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         pr = problem_report.ProblemReport()
         pr["foo"] = "bar"
 
-        keys = []
-        for k in pr:
-            keys.append(k)
+        keys = list(pr.keys())
         keys.sort()
         self.assertEqual(" ".join(keys), "Date ProblemType foo")
 

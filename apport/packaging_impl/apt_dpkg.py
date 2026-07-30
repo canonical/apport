@@ -632,7 +632,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         return json.loads(content)
 
     @staticmethod
-    def get_lp_source_package(package, version):
+    def get_lp_source_package(package: str, version: str) -> list[str] | None:
         """Get files from Launchpad for the given source package version."""
         # pylint: disable=import-outside-toplevel
         from launchpadlib.launchpad import Launchpad
@@ -647,19 +647,12 @@ class _AptDpkgPackageInfo(PackageInfo):
         )
         if not pss:
             return None
-        sfus = ""
         for ps in pss:
             if ps.status == "Deleted":
                 continue
-            sfus = ps.sourceFileUrls()
             # use the first entry as they are sorted chronologically
-            break
-        if not sfus:
-            return None
-        source_files = []
-        for sfu in sfus:
-            source_files.append(sfu)
-        return source_files
+            return ps.sourceFileUrls()
+        return None
 
     def get_architecture(self, package: str) -> str:
         """Return the architecture of a package.
