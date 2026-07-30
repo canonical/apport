@@ -191,8 +191,7 @@ class ParseSegv:
         reg_orig = reg
 
         mask = 0
-        if reg.startswith("%"):
-            reg = reg[1:]
+        reg = reg.removeprefix("%")
         if reg in self.regs:
             return self.regs[reg]
 
@@ -217,7 +216,7 @@ class ParseSegv:
 
     def calculate_arg(self, arg):
         # TODO: Split into smaller functions/methods
-        # pylint: disable=too-complex,too-many-branches
+        # pylint: disable=too-complex
 
         # Check for and pre-remove segment offset
         segment = 0
@@ -235,8 +234,7 @@ class ParseSegv:
             sign = -1
             offset = offset[1:]
         # Skip call target dereferences
-        if offset.startswith("*"):
-            offset = offset[1:]
+        offset = offset.removeprefix("*")
         if len(offset) > 0:
             if offset.startswith("%"):
                 # Handle the *%REG case

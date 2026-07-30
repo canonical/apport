@@ -225,8 +225,7 @@ def install():
         except FileNotFoundError:
             try:
                 binary = os.readlink("/proc/self/cwd")
-                if binary.endswith(" (deleted)"):
-                    binary = binary[:-10]
+                binary = binary.removesuffix(" (deleted)")
             except OSError:
                 return
 
