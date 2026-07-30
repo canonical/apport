@@ -769,7 +769,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                     if calculated_md5sum != default_md5sum:
                         modified[path] = contents
                 except OSError as error:
-                    modified[path] = f"[inaccessible: {str(error)}]"
+                    modified[path] = f"[inaccessible: {error!s}]"
             else:
                 modified[path] = "[deleted]"
 

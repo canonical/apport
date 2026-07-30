@@ -387,7 +387,7 @@ def add_info(report, unused_ui):
             report["SegvReason"] = reason
         report["SegvAnalysis"] = details
     except Exception as error:  # pylint: disable=broad-except
-        report["SegvAnalysis"] = f"Failure: {str(error)}"
+        report["SegvAnalysis"] = f"Failure: {error!s}"
         report["SegvAnalysisError"] = traceback.format_exc().strip()
 
 

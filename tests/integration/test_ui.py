@@ -1491,9 +1491,7 @@ class T(unittest.TestCase):
         ui = UserInterfaceMock()
         ui.present_details_response = apport.ui.Action(report=True)
         ui.run_crash(report_file)
-        self.assertEqual(
-            ui.msg_severity, None, f"{str(ui.msg_title)} {str(ui.msg_text)}"
-        )
+        self.assertEqual(ui.msg_severity, None, f"{ui.msg_title!s} {ui.msg_text!s}")
         self.assertIsNone(ui.msg_title)
         self.assertEqual(
             ui.opened_url, f"http://{src_pkg}.bugs.example.com/{ui.crashdb.latest_id()}"

@@ -1286,8 +1286,7 @@ class T(unittest.TestCase):
                 os.unlink(core_path)
             except OSError as error:
                 sys.stderr.write(
-                    f"WARNING: cannot clean up core file {core_path}:"
-                    f" {str(error)}\n"
+                    f"WARNING: cannot clean up core file {core_path}: {error!s}\n"
                 )
 
             self.fail("leaves unexpected core file behind")

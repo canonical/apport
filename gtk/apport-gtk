@@ -33,7 +33,7 @@ try:
     from gi.repository import Gdk, GdkX11, GLib, Gtk, Wnck
 except (AssertionError, ImportError, RuntimeError) as error:
     # probably distribution upgrade or session just closing down?
-    sys.stderr.write(f"Cannot start: {str(error)}\n")
+    sys.stderr.write(f"Cannot start: {error!s}\n")
     sys.exit(1)
 
 

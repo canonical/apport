@@ -82,7 +82,7 @@ class T(unittest.TestCase):
         core_name, core_path = apport.fileutils.get_core_path(
             pid=123, exe="/usr/bin/test", uid=None, timestamp=222222
         )
-        expected = f"core._usr_bin_test.{str(os.getuid())}.boot-id.123.222222"
+        expected = f"core._usr_bin_test.{os.getuid()!s}.boot-id.123.222222"
         expected_path = os.path.join(apport.fileutils.core_dir, expected)
         self.assertEqual(core_name, expected)
         self.assertEqual(core_path, expected_path)

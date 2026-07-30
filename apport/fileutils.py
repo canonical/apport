@@ -219,7 +219,7 @@ def mark_hanging_process(report: ProblemReport, pid: int) -> None:
         raise ValueError("report does not have the ExecutablePath attribute")
 
     uid = os.geteuid()
-    base = f"{subject}.{str(uid)}.{pid}.hanging"
+    base = f"{subject}.{uid!s}.{pid}.hanging"
     path = os.path.join(report_dir, base)
     with open(path, "a", encoding="utf-8"):
         pass
@@ -434,7 +434,7 @@ def make_report_file(report: ProblemReport, uid: int | str | None = None) -> IO[
     if uid is None:
         uid = os.geteuid()
 
-    path = os.path.join(report_dir, f"{subject}.{str(uid)}.crash")
+    path = os.path.join(report_dir, f"{subject}.{uid!s}.crash")
     return open(path, "xb")
 
 

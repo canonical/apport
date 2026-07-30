@@ -83,7 +83,7 @@ def process_report(report):
             r.load(f, binary="compressed")
             report_stat = os.stat(report)
     except (MalformedProblemReport, OSError, zlib.error) as error:
-        sys.stderr.write(f"ERROR: cannot load {report}: {str(error)}\n")
+        sys.stderr.write(f"ERROR: cannot load {report}: {error!s}\n")
         return None
     if r.get("ProblemType", "") != "Crash" and "ExecutablePath" not in r:
         logging.info("  skipping, not a crash")
@@ -96,16 +96,14 @@ def process_report(report):
         try:
             r.add_package_info()
         except (SystemError, ValueError) as error:
-            sys.stderr.write(
-                f"ERROR: cannot add package info on {report}: {str(error)}\n"
-            )
+            sys.stderr.write(f"ERROR: cannot add package info on {report}: {error!s}\n")
             return None
         # add information from package specific hooks
         try:
             r.add_hooks_info()
         except Exception as error:  # pylint: disable=broad-except
             sys.stderr.write(
-                f"WARNING: hook failed for processing {report}: {str(error)}\n"
+                f"WARNING: hook failed for processing {report}: {error!s}\n"
             )
 
         try:
@@ -117,7 +115,7 @@ def process_report(report):
             # is missing or gdb is not available, but apport-retrace could
             # still process it.
             if getattr(error, "errno", None) != errno.ENOENT:
-                sys.stderr.write(f"ERROR: processing {report}: {str(error)}\n")
+                sys.stderr.write(f"ERROR: processing {report}: {error!s}\n")
                 if os.path.exists(report):
                     os.unlink(report)
                 return None

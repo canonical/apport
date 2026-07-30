@@ -71,7 +71,7 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
-            apport.logging.log(f"Available releases: {str(self.releases)}", True)
+            apport.logging.log(f"Available releases: {self.releases!s}", True)
         else:
             self.releases = None
 
@@ -86,12 +86,12 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
             apport.logging.log(
-                f"fill_pool: dup check pool now: {str(self.dupcheck_pool)}", True
+                f"fill_pool: dup check pool now: {self.dupcheck_pool!s}", True
             )
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
             apport.logging.log(
-                f"fill_pool: retrace pool now: {str(self.retrace_pool)}", True
+                f"fill_pool: retrace pool now: {self.retrace_pool!s}", True
             )
 
     def retrace_next(self):
@@ -175,12 +175,12 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             zlib.error,
         ) as error:
             if str(error) == "bug description must contain standard apport format data":
-                apport.logging.log(f"Cannot download report: {str(error)}", True)
+                apport.logging.log(f"Cannot download report: {error!s}", True)
                 apport.logging.error(
                     "Cannot download report %s: %s", crash_id, str(error)
                 )
                 return
-            apport.logging.log(f"Cannot download report: {str(error)}", True)
+            apport.logging.log(f"Cannot download report: {error!s}", True)
             apport.logging.error("Cannot download report %i: %s", crash_id, str(error))
             return
 

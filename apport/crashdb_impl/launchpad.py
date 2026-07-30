@@ -340,9 +340,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             elif "apport-package" in b.tags:
                 report["ProblemType"] = "Package"
             else:
-                raise ValueError(
-                    f"cannot determine ProblemType from tags: {str(b.tags)}"
-                )
+                raise ValueError(f"cannot determine ProblemType from tags: {b.tags!s}")
 
         report.add_tags(b.tags)
 
@@ -758,7 +756,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if master_id:
             assert (
                 crash_id != master_id
-            ), f"cannot mark bug {str(crash_id)} as a duplicate of itself"
+            ), f"cannot mark bug {crash_id!s} as a duplicate of itself"
 
             # check whether the master itself is a dup
             master = self.launchpad.bugs[master_id]

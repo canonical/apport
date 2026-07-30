@@ -33,7 +33,7 @@ def command_dump(crashdb, _):
             sys.stdout.write(f"[fixed in: {version}] ")
         else:
             sys.stdout.write("[open] ")
-        print(f"last change: {str(lastchange)}")
+        print(f"last change: {lastchange!s}")
 
 
 def command_changeid(crashdb, args):

@@ -245,7 +245,7 @@ def _command_output(
         else:
             output = " with no stdout"
         raise OSError(
-            f"Error: command {str(error.cmd)} timed out"
+            f"Error: command {error.cmd!s} timed out"
             f" after {error.timeout} seconds{output}"
         ) from error
     if sp.returncode == 0:
@@ -1356,7 +1356,7 @@ class Report(problem_report.ProblemReport):
                 dom = xml.dom.minidom.parseString(contents)
             except xml.parsers.expat.ExpatError as error:
                 raise ValueError(
-                    f"{_ignore_file} has invalid format: {str(error)}"
+                    f"{_ignore_file} has invalid format: {error!s}"
                 ) from error
 
         # remove whitespace so that writing back the XML does not accumulate

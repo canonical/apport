@@ -119,7 +119,7 @@ options = parse_options()
 try:
     apport.logging.memdbg("start")
     apport.logging.memdbg(f"Executable: {options.exe}")
-    apport.logging.memdbg(f"Command arguments: {str(options)}")
+    apport.logging.memdbg(f"Command arguments: {options!s}")
 
     gettext.textdomain("apport")
 

@@ -1354,8 +1354,7 @@ class UserInterface:
                 " Can't set auto or never reporting mode."
             )
             self.ui_error_message(
-                _("Can't remember send report status settings"),
-                f"{msg}\n\n{str(error)}",
+                _("Can't remember send report status settings"), f"{msg}\n\n{error!s}"
             )
 
     def check_report_crashdb(self) -> bool:
@@ -1529,7 +1528,7 @@ class UserInterface:
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken core dumps
                     msg = _("This problem report is damaged and cannot be processed.")
-                    self.report["UnreportableReason"] = f"{msg}\n\n{repr(error)}"
+                    self.report["UnreportableReason"] = f"{msg}\n\n{error!r}"
                     self.report["_MarkForUpload"] = "False"
                 except ValueError:  # package does not exist
                     if "UnreportableReason" not in self.report:
@@ -1641,7 +1640,7 @@ class UserInterface:
                 except (OSError, EOFError, zlib.error) as error:
                     # can happen with broken gz values
                     msg = _("This problem report is damaged and cannot be processed.")
-                    self.report["UnreportableReason"] = f"{msg}\n\n{repr(error)}"
+                    self.report["UnreportableReason"] = f"{msg}\n\n{error!r}"
                 if bpthread.return_value():
                     self.report["_KnownReport"] = bpthread.return_value()
 
@@ -1801,7 +1800,7 @@ class UserInterface:
                 "Cannot connect to crash database,"
                 " please check your Internet connection."
             )
-            self.ui_error_message(_("Network problem"), f"{msg}\n\n{str(error)}")
+            self.ui_error_message(_("Network problem"), f"{msg}\n\n{error!s}")
             return
 
         ticket = upthread.return_value()
@@ -1841,9 +1840,7 @@ class UserInterface:
         except (TypeError, ValueError, AssertionError, zlib.error) as error:
             self.report = None
             msg = _("This problem report is damaged and cannot be processed.")
-            self.ui_error_message(
-                _("Invalid problem report"), f"{msg}\n\n{repr(error)}"
-            )
+            self.ui_error_message(_("Invalid problem report"), f"{msg}\n\n{error!r}")
             return False
 
         if "Package" in self.report:
@@ -1903,7 +1900,7 @@ class UserInterface:
         try:
             cp.read(desktop_file, encoding="UTF-8")
         except configparser.Error as error:
-            sys.stderr.write(f"Warning! {desktop_file} is broken: {str(error)}\n")
+            sys.stderr.write(f"Warning! {desktop_file} is broken: {error!s}\n")
             return None
         if not cp.has_section("Desktop Entry"):
             return None

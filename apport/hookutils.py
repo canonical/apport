@@ -98,7 +98,7 @@ def read_file(path, force_unicode=False):
         with os.fdopen(fd, "rb") as f:
             contents = f.read().strip()
     except OSError as error:
-        return f"Error: {str(error)}"
+        return f"Error: {error!s}"
 
     if force_unicode:
         return contents.decode("UTF-8", errors="replace")
@@ -412,7 +412,7 @@ def command_output(
             env=env,
         )
     except OSError as error:
-        return f"Error: {str(error)}"
+        return f"Error: {error!s}"
 
     if sp.returncode == 0:
         res = sp.stdout.strip()
