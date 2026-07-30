@@ -553,12 +553,10 @@ class GTKUserInterface(apport.ui.UserInterface):
         if result != Gtk.ResponseType.OK:
             return None
 
-        index = 0
         result = []
-        for c in self.w("vbox_choices").get_children():
+        for index, c in enumerate(self.w("vbox_choices").get_children()):
             if c.get_active():
                 result.append(index)
-            index += 1
         return result
 
     def ui_question_file(self, text: str) -> str | None:

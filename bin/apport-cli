@@ -342,14 +342,12 @@ class CLIUserInterface(apport.ui.UserInterface):
         if multiple:
             while True:
                 dialog = CLIDialog(text, None)
-                index = 0
                 choice_index_map = {}
-                for option in options:
+                for index, option in enumerate(options):
                     if index not in result:
                         choice_index_map[dialog.addbutton(option, str(index + 1))] = (
                             index
                         )
-                    index += 1
                 done = dialog.addbutton(_("&Done"))
                 cancel = dialog.addbutton(_("&Cancel"))
 
@@ -367,10 +365,8 @@ class CLIUserInterface(apport.ui.UserInterface):
         else:
             # single choice (radio button)
             dialog = CLIDialog(text, None)
-            index = 1
-            for option in options:
+            for index, option in enumerate(options, 1):
                 dialog.addbutton(option, str(index))
-                index += 1
 
             cancel = dialog.addbutton(_("&Cancel"))
             response = dialog.run(_("Choices:"))
