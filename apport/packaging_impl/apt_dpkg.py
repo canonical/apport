@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import collections
 import contextlib
-import datetime
+import email.utils
 import fnmatch
 import functools
 import glob
@@ -1638,10 +1638,8 @@ class _AptDpkgPackageInfo(PackageInfo):
                 with urllib.request.urlopen(req) as res:
                     modified_str = res.getheader("last-modified", None)
                     if modified_str:
-                        modified = datetime.datetime.strptime(
-                            modified_str, "%a, %d %b %Y %H:%M:%S %Z"
-                        )
-                        if modified <= datetime.datetime.fromtimestamp(mtime):
+                        modified = email.utils.parsedate_to_datetime(modified_str)
+                        if modified.timestamp() <= mtime:
                             return True
                 # don't update the file if it is empty
                 if res.getheader("content-length", None) == "40":
