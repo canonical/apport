@@ -581,7 +581,7 @@ class TestApport(unittest.TestCase):
             "COREDUMP_SIGNAL": 11,
             "COREDUMP_SIGNAL_NAME": "SIGSEGV",
             "COREDUMP_TIMESTAMP": datetime.datetime(
-                2024, 2, 19, 12, 10, 42, tzinfo=datetime.timezone.utc
+                2024, 2, 19, 12, 10, 42, tzinfo=datetime.UTC
             ),
             "COREDUMP_UID": 0,
         }
@@ -630,7 +630,7 @@ class TestApport(unittest.TestCase):
             "COREDUMP_SIGNAL": 4,
             "COREDUMP_SIGNAL_NAME": "SIGILL",
             "COREDUMP_TIMESTAMP": datetime.datetime(
-                2024, 4, 25, 10, 52, 42, tzinfo=datetime.timezone.utc
+                2024, 4, 25, 10, 52, 42, tzinfo=datetime.UTC
             ),
             "COREDUMP_UID": 297664512,
         }

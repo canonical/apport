@@ -878,7 +878,7 @@ class T(unittest.TestCase):
             coredump_file = Path(tmpdir) / "core.zst"
             coredump_file.write_text("mocked core")
 
-            now = datetime.datetime.now(tz=datetime.timezone.utc)
+            now = datetime.datetime.now(tz=datetime.UTC)
             expected_report = apport.report.Report(
                 date=now.strftime("%a %b %e %H:%M:%S %Y")
             )
