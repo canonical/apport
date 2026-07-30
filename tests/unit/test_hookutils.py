@@ -157,7 +157,7 @@ class TestHookutils(unittest.TestCase):
         # TODO: create fake audit logs and version_signature files
         path_exists_mock.return_value = False
         multiple_root_commands_mock.return_value = {
-            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+            "dmesg": f"{apparmor_status_line}\n{apparmor_denied_line}\n{bogus_line}"
         }
 
         report = ProblemReport()
@@ -211,7 +211,7 @@ E: DEVLINKS=/dev/disk/by-path/pci-0000:00:04.0-part/by-partuuid/2722bff2-40ac-47
         # TODO: create fake audit logs and version_signature files
         path_exists_mock.return_value = False
         multiple_root_commands_mock.return_value = {
-            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+            "dmesg": f"{apparmor_status_line}\n{apparmor_denied_line}\n{bogus_line}"
         }
 
         report = ProblemReport()
@@ -239,7 +239,7 @@ E: DEVLINKS=/dev/disk/by-path/pci-0000:00:04.0-part/by-partuuid/2722bff2-40ac-47
         # TODO: create fake audit logs and version_signature files
         path_exists_mock.return_value = False
         multiple_root_commands_mock.return_value = {
-            "dmesg": "\n".join((apparmor_status_line, apparmor_denied_line, bogus_line))
+            "dmesg": f"{apparmor_status_line}\n{apparmor_denied_line}\n{bogus_line}"
         }
 
         report = ProblemReport()
