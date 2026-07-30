@@ -122,4 +122,4 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         user comments); in that case this function should do whichever
         interactive steps it wants to perform.
         """
-        return None
+        return
