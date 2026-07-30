@@ -159,7 +159,7 @@ class T(unittest.TestCase):
         filekey = None
         log1key = None
         log2key = None
-        for k in r.keys():
+        for k in r:
             if k.endswith("Testhookspy"):
                 filekey = k
             elif k.endswith("Log1log"):

@@ -666,7 +666,7 @@ class ProblemReport(collections.UserDict):
         """
         asckeys = []
         binkeys = []
-        for k in self.data.keys():
+        for k in self.data:
             if only_new and k in self.old_keys:
                 continue
             v = self.data[k]
