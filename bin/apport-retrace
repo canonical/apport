@@ -497,11 +497,15 @@ def main(argv):
     apport.logging.memdbg("processed extra options from command line")
 
     # consistency checks
-    required_fields = set(
-        ["CoreDump", "ExecutablePath", "Package", "DistroRelease", "Architecture"]
-    )
+    required_fields = {
+        "CoreDump",
+        "ExecutablePath",
+        "Package",
+        "DistroRelease",
+        "Architecture",
+    }
     if report["ProblemType"] == "KernelCrash":
-        if not set(["Package", "VmCore"]).issubset(set(report.keys())):
+        if not {"Package", "VmCore"}.issubset(set(report.keys())):
             apport.logging.error("report file does not contain the required fields")
             return 2
         apport.logging.error("KernelCrash processing not implemented yet")

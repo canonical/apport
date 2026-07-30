@@ -11,7 +11,7 @@ def determine_packaging_implementation() -> str:
     """Determine the packaging implementation for the host."""
     info = platform.freedesktop_os_release()
     assert info is not None
-    ids = set([info["ID"]]) | set(info.get("ID_LIKE", "").split(" "))
+    ids = {info["ID"]} | set(info.get("ID_LIKE", "").split(" "))
     if "debian" in ids:
         return "apt_dpkg"
     if os.path.exists("/usr/bin/rpm"):

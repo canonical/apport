@@ -840,7 +840,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_updating(self) -> None:
         """new_keys() and write() with only_new=True."""
         pr = problem_report.ProblemReport()
-        self.assertEqual(pr.new_keys(), set(["ProblemType", "Date"]))
+        self.assertEqual(pr.new_keys(), {"ProblemType", "Date"})
         pr.load(io.BytesIO(textwrap.dedent("""\
             ProblemType: Crash
             Date: now!
@@ -852,7 +852,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         pr["Foo"] = "changed"
         pr["NewKey"] = "new new"
-        self.assertEqual(pr.new_keys(), set(["NewKey"]))
+        self.assertEqual(pr.new_keys(), {"NewKey"})
 
         out = io.BytesIO()
         pr.write(out, only_new=True)

@@ -1112,18 +1112,16 @@ class Report(problem_report.ProblemReport):
         Signal handler invocations and related functions are skipped since they
         are generally not useful for triaging and duplicate detection.
         """
-        unwind_functions = set(
-            [
-                "g_logv",
-                "g_log",
-                "IA__g_log",
-                "IA__g_logv",
-                "g_assert_warning",
-                "IA__g_assert_warning",
-                "__GI_abort",
-                "_XError",
-            ]
-        )
+        unwind_functions = {
+            "g_logv",
+            "g_log",
+            "IA__g_log",
+            "IA__g_logv",
+            "g_assert_warning",
+            "IA__g_assert_warning",
+            "__GI_abort",
+            "_XError",
+        }
         toptrace = [""] * 5
         depth = 0
         unwound = False

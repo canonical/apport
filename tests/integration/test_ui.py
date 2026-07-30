@@ -408,7 +408,7 @@ class T(unittest.TestCase):
         ui.collect_info()
         assert ui.report
         self.assertTrue(
-            set(["Date", "Uname", "DistroRelease", "ProblemType"]).issubset(
+            {"Date", "Uname", "DistroRelease", "ProblemType"}.issubset(
                 set(ui.report.keys())
             )
         )
@@ -433,18 +433,16 @@ class T(unittest.TestCase):
         ui.report["CompressedValue"] = problem_report.CompressedValue(b"Test")
         ui.collect_info()
         self.assertTrue(
-            set(
-                [
-                    "SourcePackage",
-                    "Package",
-                    "ProblemType",
-                    "Uname",
-                    "Dependencies",
-                    "DistroRelease",
-                    "Date",
-                    "ExecutablePath",
-                ]
-            ).issubset(set(ui.report.keys()))
+            {
+                "SourcePackage",
+                "Package",
+                "ProblemType",
+                "Uname",
+                "Dependencies",
+                "DistroRelease",
+                "Date",
+                "ExecutablePath",
+            }.issubset(set(ui.report.keys()))
         )
         self.assertTrue(
             ui.ic_progress_pulses > 0, "progress dialog for package bug info collection"
@@ -478,17 +476,15 @@ class T(unittest.TestCase):
         search_bug_patterns_mock.assert_called_once()
         assert ui.report
         self.assertTrue(
-            set(
-                [
-                    "SourcePackage",
-                    "Package",
-                    "ProblemType",
-                    "Uname",
-                    "Dependencies",
-                    "DistroRelease",
-                    "Date",
-                ]
-            ).issubset(set(ui.report.keys()))
+            {
+                "SourcePackage",
+                "Package",
+                "ProblemType",
+                "Uname",
+                "Dependencies",
+                "DistroRelease",
+                "Date",
+            }.issubset(set(ui.report.keys()))
         )
         self.assertTrue(
             ui.ic_progress_pulses > 0, "progress dialog for package bug info collection"
@@ -2119,7 +2115,7 @@ class T(unittest.TestCase):
         self.assertIn("kind of problem", ui.msg_text)
         assert ui.msg_choices is not None
         self.assertEqual(
-            set(ui.msg_choices), set(["bar", "foo does not work", "Other problem"])
+            set(ui.msg_choices), {"bar", "foo does not work", "Other problem"}
         )
 
         # cancelled

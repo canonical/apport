@@ -230,11 +230,11 @@ class T(unittest.TestCase):
                 apport.fileutils.mark_report_seen(r)
 
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set(tr))
-            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
+            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set())
         else:
             tr = [r for r in self._create_reports(True) if "inaccessible" not in r]
-            self.assertEqual(set(apport.fileutils.get_all_system_reports()), set([]))
-            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
+            self.assertEqual(set(apport.fileutils.get_all_system_reports()), set())
+            self.assertEqual(set(apport.fileutils.get_new_system_reports()), set())
 
     @unittest.mock.patch.object(os, "stat")
     @unittest.mock.patch.object(pwd, "getpwuid")
@@ -260,8 +260,8 @@ class T(unittest.TestCase):
         os.chmod(r, 0o444)
 
         if os.getuid() == 0:
-            self.assertEqual(set(apport.fileutils.get_new_reports()), set([r]))
-            self.assertEqual(set(apport.fileutils.get_all_reports()), set([r]))
+            self.assertEqual(set(apport.fileutils.get_new_reports()), {r})
+            self.assertEqual(set(apport.fileutils.get_all_reports()), {r})
         else:
             self.assertEqual(set(apport.fileutils.get_new_reports()), set())
             self.assertEqual(set(apport.fileutils.get_all_reports()), set())

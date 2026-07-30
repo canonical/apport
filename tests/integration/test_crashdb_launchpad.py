@@ -211,13 +211,11 @@ and more
         self.assertEqual(r.get("UserGroups"), self.ref_report.get("UserGroups"))
         self.assertEqual(
             r.get_tags(),
-            set(
-                [
-                    self.crashdb.arch_tag,
-                    "apport-crash",
-                    packaging.get_system_architecture(),
-                ]
-            ),
+            {
+                self.crashdb.arch_tag,
+                "apport-crash",
+                packaging.get_system_architecture(),
+            },
         )
 
         self.assertEqual(r["Signal"], "11")
@@ -236,15 +234,13 @@ and more
         r = self.crashdb.download(self.get_python_report())
         self.assertEqual(
             r.get_tags(),
-            set(
-                [
-                    "apport-crash",
-                    "boogus",
-                    "pybogus",
-                    "need-duplicate-check",
-                    packaging.get_system_architecture(),
-                ]
-            ),
+            {
+                "apport-crash",
+                "boogus",
+                "pybogus",
+                "need-duplicate-check",
+                packaging.get_system_architecture(),
+            },
         )
 
     def test_2_update_traces(self) -> None:
@@ -561,7 +557,7 @@ and more
         unretraced_after = self.crashdb.get_unretraced()
         self.assertNotIn(self.get_segv_report(), unretraced_after)
         self.assertEqual(
-            unretraced_before, unretraced_after.union(set([self.get_segv_report()]))
+            unretraced_before, unretraced_after.union({self.get_segv_report()})
         )
         self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
@@ -572,7 +568,7 @@ and more
         unretraced_after = self.crashdb.get_unretraced()
         self.assertNotIn(self.get_segv_report(), unretraced_after)
         self.assertEqual(
-            unretraced_before, unretraced_after.union(set([self.get_segv_report()]))
+            unretraced_before, unretraced_after.union({self.get_segv_report()})
         )
         self.assertIsNone(self.crashdb.get_fixed_version(self.get_segv_report()))
 
@@ -583,7 +579,7 @@ and more
         unretraced_after = self.crashdb.get_unretraced()
         self.assertNotIn(self.get_segv_report(), unretraced_after)
         self.assertEqual(
-            unretraced_before, unretraced_after.union(set([self.get_segv_report()]))
+            unretraced_before, unretraced_after.union({self.get_segv_report()})
         )
         self.assertEqual(
             self.crashdb.get_fixed_version(self.get_segv_report()), "invalid"
@@ -620,9 +616,7 @@ and more
         project_db.mark_retraced(project_bug.id)
         unretraced_after = project_db.get_unretraced()
         self.assertNotIn(project_bug.id, unretraced_after)
-        self.assertEqual(
-            unretraced_before, unretraced_after.union(set([project_bug.id]))
-        )
+        self.assertEqual(unretraced_before, unretraced_after.union({project_bug.id}))
         self.assertIsNone(self.crashdb.get_fixed_version(project_bug.id))
 
     def test_marking_foreign_arch(self) -> None:
@@ -655,7 +649,7 @@ and more
 
         self.assertEqual(systemarch_unretraced_before, systemarch_unretraced_after)
         self.assertEqual(
-            fakearch_unretraced_after, fakearch_unretraced_before.union(set([bug.id]))
+            fakearch_unretraced_after, fakearch_unretraced_before.union({bug.id})
         )
 
     def test_marking_python(self) -> None:
@@ -667,7 +661,7 @@ and more
         unchecked_after = self.crashdb.get_dup_unchecked()
         self.assertNotIn(self.get_python_report(), unchecked_after)
         self.assertEqual(
-            unchecked_before, unchecked_after.union(set([self.get_python_report()]))
+            unchecked_before, unchecked_after.union({self.get_python_report()})
         )
         self.assertIsNone(self.crashdb.get_fixed_version(self.get_python_report()))
 
@@ -961,7 +955,7 @@ NameError: global name 'weird' is not defined"""
         unchecked_after = self.crashdb.get_dup_unchecked()
         self.assertNotIn(self.get_python_report(), unchecked_after)
         self.assertEqual(
-            unchecked_before, unchecked_after.union(set([self.get_python_report()]))
+            unchecked_before, unchecked_after.union({self.get_python_report()})
         )
 
         # upstream task should be unmodified

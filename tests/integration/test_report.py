@@ -162,9 +162,7 @@ class T(unittest.TestCase):
         pr.add_proc_info()
         self.assertEqual(pr.pid, os.getpid())
         self.assertTrue(
-            set(["ProcEnviron", "ProcMaps", "ProcCmdline", "ProcMaps"]).issubset(
-                set(pr.keys())
-            ),
+            {"ProcEnviron", "ProcCmdline", "ProcMaps"}.issubset(set(pr.keys())),
             "report has required fields",
         )
         if "LANG" in os.environ:
@@ -1265,17 +1263,15 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
-                set(
-                    [
-                        "ProblemType",
-                        "Date",
-                        "Package",
-                        "CommonField1",
-                        "CommonField2",
-                        "CommonField3",
-                        "Order",
-                    ]
-                ),
+                {
+                    "ProblemType",
+                    "Date",
+                    "Package",
+                    "CommonField1",
+                    "CommonField2",
+                    "CommonField3",
+                    "Order",
+                },
                 "report has required fields",
             )
 
@@ -1285,17 +1281,15 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
-                set(
-                    [
-                        "ProblemType",
-                        "Date",
-                        "Package",
-                        "CommonField1",
-                        "CommonField2",
-                        "CommonField3",
-                        "Order",
-                    ]
-                ),
+                {
+                    "ProblemType",
+                    "Date",
+                    "Package",
+                    "CommonField1",
+                    "CommonField2",
+                    "CommonField3",
+                    "Order",
+                },
                 "report has required fields",
             )
 
@@ -1304,19 +1298,17 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
-                set(
-                    [
-                        "ProblemType",
-                        "Date",
-                        "Package",
-                        "Field1",
-                        "Field2",
-                        "CommonField1",
-                        "CommonField2",
-                        "CommonField3",
-                        "Order",
-                    ]
-                ),
+                {
+                    "ProblemType",
+                    "Date",
+                    "Package",
+                    "Field1",
+                    "Field2",
+                    "CommonField1",
+                    "CommonField2",
+                    "CommonField3",
+                    "Order",
+                },
                 "report has required fields",
             )
             self.assertEqual(r["Field1"], "Field 1")
@@ -1331,19 +1323,17 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
-                set(
-                    [
-                        "ProblemType",
-                        "Date",
-                        "Package",
-                        "Field1",
-                        "Field2",
-                        "CommonField1",
-                        "CommonField2",
-                        "CommonField3",
-                        "Order",
-                    ]
-                ),
+                {
+                    "ProblemType",
+                    "Date",
+                    "Package",
+                    "Field1",
+                    "Field2",
+                    "CommonField1",
+                    "CommonField2",
+                    "CommonField3",
+                    "Order",
+                },
                 "report has required fields",
             )
             self.assertEqual(r["Field1"], "Field 1")
@@ -1379,20 +1369,18 @@ int main() { return f(42); }
             self.assertEqual(r.add_hooks_info(), False)
             self.assertEqual(
                 set(r.keys()),
-                set(
-                    [
-                        "ProblemType",
-                        "Date",
-                        "Package",
-                        "SourcePackage",
-                        "Field1",
-                        "Field2",
-                        "CommonField1",
-                        "CommonField2",
-                        "CommonField3",
-                        "Order",
-                    ]
-                ),
+                {
+                    "ProblemType",
+                    "Date",
+                    "Package",
+                    "SourcePackage",
+                    "Field1",
+                    "Field2",
+                    "CommonField1",
+                    "CommonField2",
+                    "CommonField3",
+                    "Order",
+                },
                 "report has required fields",
             )
             self.assertEqual(r["Field1"], "Field 1")

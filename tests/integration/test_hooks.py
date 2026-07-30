@@ -224,18 +224,16 @@ class T(unittest.TestCase):
 
         self.assertEqual(
             set(r.keys()),
-            set(
-                [
-                    "Date",
-                    "Package",
-                    "ProblemType",
-                    "VmCore",
-                    "VmCoreLog",
-                    "Uname",
-                    "Architecture",
-                    "DistroRelease",
-                ]
-            ),
+            {
+                "Date",
+                "Package",
+                "ProblemType",
+                "VmCore",
+                "VmCoreLog",
+                "Uname",
+                "Architecture",
+                "DistroRelease",
+            },
         )
         self.assertEqual(r["ProblemType"], "KernelCrash")
         self.assertEqual(r["VmCoreLog"], "vmcore successfully dumped")
@@ -272,17 +270,15 @@ class T(unittest.TestCase):
 
         self.assertEqual(
             set(r.keys()),
-            set(
-                [
-                    "Date",
-                    "Package",
-                    "ProblemType",
-                    "VmCoreDmesg",
-                    "Uname",
-                    "Architecture",
-                    "DistroRelease",
-                ]
-            ),
+            {
+                "Date",
+                "Package",
+                "ProblemType",
+                "VmCoreDmesg",
+                "Uname",
+                "Architecture",
+                "DistroRelease",
+            },
         )
         self.assertEqual(r["ProblemType"], "KernelCrash")
         self.assertEqual(r["VmCoreDmesg"], "1" * 100)

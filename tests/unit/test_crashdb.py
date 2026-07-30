@@ -50,8 +50,8 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_retrace_markers(self) -> None:
         """Bookkeeping in retraced and dupchecked bugs."""
-        self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
-        self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
+        self.assertEqual(self.crashes.get_unretraced(), {0, 1, 2})
+        self.assertEqual(self.crashes.get_dup_unchecked(), {3, 4})
 
     def test_dynamic_crashdb_conf(self) -> None:
         """Dynamic code in crashdb.conf."""
@@ -186,7 +186,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_status(self) -> None:
         """get_unfixed(), get_fixed_version(), duplicate_of(),
         close_duplicate()"""
-        self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 3, 4]))
+        self.assertEqual(self.crashes.get_unfixed(), {0, 1, 2, 3, 4})
         self.assertIsNone(self.crashes.get_fixed_version(0))
         self.assertIsNone(self.crashes.get_fixed_version(1))
         self.assertIsNone(self.crashes.get_fixed_version(3))
@@ -197,7 +197,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIsNone(self.crashes.duplicate_of(0))
         self.assertEqual(self.crashes.duplicate_of(1), 0)
 
-        self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 3, 4]))
+        self.assertEqual(self.crashes.get_unfixed(), {0, 2, 3, 4})
         self.assertEqual(self.crashes.get_fixed_version(1), "invalid")
 
         self.assertEqual(self.crashes.get_fixed_version(99), "invalid")
