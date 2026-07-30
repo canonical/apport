@@ -26,7 +26,7 @@ def enabled():
 
         with open(CONFIG, encoding="utf-8") as config_file:
             conf = config_file.read()
-        return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.M) is None
+        return re.search(r"^\s*enabled\s*=\s*0\s*$", conf, re.MULTILINE) is None
     except OSError:
         # if the file does not exist, assume it's enabled
         return True

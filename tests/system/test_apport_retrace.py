@@ -153,12 +153,12 @@ def _assert_divide_by_zero_retrace(report: Report) -> None:
     frame_regex = re.compile(
         r"^#0  (0x[0-9a-f]+ in )?divide_by_zero \(\)"
         r" at (/usr/src/chaos-marmosets-[^/]+/|\./)?divide-by-zero.c:[0-9]+$",
-        flags=re.M,
+        flags=re.MULTILINE,
     )
     stack_regex = re.compile(
         r"^divide_by_zero \(\)"
         r" at (/usr/src/chaos-marmosets-[^/]+/|\./)?divide-by-zero.c:[0-9]+$",
-        flags=re.M,
+        flags=re.MULTILINE,
     )
     assert "divide_by_zero" in report["Disassembly"]
     # Expect RIP point to divide_by_zero

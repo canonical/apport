@@ -290,9 +290,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         b = self.launchpad.bugs[crash_id]
 
         # parse out fields from summary
-        m = re.search(r"(ProblemType:.*)$", b.description, re.S)
+        m = re.search(r"(ProblemType:.*)$", b.description, re.DOTALL)
         if not m:
-            m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description, re.M | re.S)
+            m = re.search(
+                r"^--- \r?$[\r\n]*(.*)", b.description, re.MULTILINE | re.DOTALL
+            )
         assert m, "bug description must contain standard apport format data"
 
         description = (
