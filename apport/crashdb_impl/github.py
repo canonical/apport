@@ -101,7 +101,7 @@ class Github:
 
         return self
 
-    def __exit__(self, *_: Any) -> None:
+    def __exit__(self, *_: object) -> None:
         self.__authentication_data = None
         self.__cooldown = 0.0
         self.__expiry = 0.0
