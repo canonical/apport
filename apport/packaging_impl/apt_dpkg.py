@@ -1861,8 +1861,8 @@ class _AptDpkgPackageInfo(PackageInfo):
                 os.path.join(src_list_d, f"{origin}.source"),
                 os.path.join(src_list_d, f"{origin}.list"),
             ]
-            if "LP-PPA" in origin:
-                stripped = origin.strip("LP-PPA-")
+            stripped = origin.removeprefix("LP-PPA-")
+            if stripped != origin:
                 candidates += [
                     os.path.join(f"{stripped}.source"),
                     os.path.join(f"{stripped}.list"),
