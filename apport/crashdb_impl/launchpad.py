@@ -62,7 +62,7 @@ def filter_filename(attachments):
 
 def id_set(tasks):
     # same as set(int(i.bug.id) for i in tasks) but faster
-    return set(int(i.self_link.split("/").pop()) for i in tasks)
+    return {int(i.self_link.split("/").pop()) for i in tasks}
 
 
 class CrashDatabase(apport.crashdb.CrashDatabase):

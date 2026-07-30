@@ -66,7 +66,7 @@ def pids_of(program: str) -> set[int]:
         if error.returncode == 1:
             return set()
         raise  # pragma: no cover
-    return set(int(pid) for pid in stdout.decode().split())
+    return {int(pid) for pid in stdout.decode().split()}
 
 
 def read_shebang(command: str) -> str | None:
