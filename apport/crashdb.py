@@ -50,7 +50,7 @@ class CrashDatabase:
         if typing.TYPE_CHECKING:  # pragma: no cover
             # pylint: disable-next=import-outside-toplevel,unused-import
             import sqlite3
-        self.duplicate_db: "sqlite3.Connection | None" = None
+        self.duplicate_db: sqlite3.Connection | None = None
         self.format_version: int | None = None
 
     def get_bugpattern_baseurl(self) -> str | None:
