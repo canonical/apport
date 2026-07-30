@@ -9,14 +9,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# pylint: disable=invalid-name
-# pylint: enable=invalid-name
-
 import sys
 import threading
 
 
-class REThread(threading.Thread):
+class ReturnThread(threading.Thread):
     """Thread with return values and exception propagation.
 
     The thread is marked as daemon thread. The entire Python program exits

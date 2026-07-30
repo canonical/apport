@@ -1,11 +1,11 @@
-"""Unit tests for the apport.REThread module."""
+"""Unit tests for the apport.thread module."""
 
 import sys
 import time
 import traceback
 import unittest
 
-import apport.REThread
+import apport.thread
 
 
 def idle(seconds: float) -> None:
@@ -19,11 +19,11 @@ def div(x: int, y: int) -> float:
 
 
 class T(unittest.TestCase):
-    """Unit tests for the apport.REThread module."""
+    """Unit tests for the apport.thread module."""
 
     def test_return_value(self) -> None:
         """Return value works properly."""
-        t = apport.REThread.REThread(target=div, args=(42, 2))
+        t = apport.thread.ReturnThread(target=div, args=(42, 2))
         t.start()
         t.join()
         # exc_raise() should be a no-op on successful functions
@@ -32,8 +32,8 @@ class T(unittest.TestCase):
         self.assertIsNone(t.exc_info())
 
     def test_no_return_value(self) -> None:
-        """apport.REThread.REThread works if run() does not return anything."""
-        t = apport.REThread.REThread(target=idle, args=(0.5,))
+        """apport.thread.ReturnThread works if run() does not return anything."""
+        t = apport.thread.ReturnThread(target=idle, args=(0.5,))
         t.start()
         # thread must be joined first
         self.assertRaises(AssertionError, t.return_value)
@@ -43,7 +43,7 @@ class T(unittest.TestCase):
 
     def test_exception(self) -> None:
         """Exception in thread is caught and passed."""
-        t = apport.REThread.REThread(target=div, args=(1, 0))
+        t = apport.thread.ReturnThread(target=div, args=(1, 0))
         t.start()
         t.join()
         # thread did not terminate normally, no return value
@@ -59,7 +59,7 @@ class T(unittest.TestCase):
 
     def test_exc_raise(self) -> None:
         """exc_raise() raises caught thread exception."""
-        t = apport.REThread.REThread(target=div, args=(1, 0))
+        t = apport.thread.ReturnThread(target=div, args=(1, 0))
         t.start()
         t.join()
         # thread did not terminate normally, no return value
@@ -81,7 +81,7 @@ class T(unittest.TestCase):
         recreate it by just passing an instance to the class, as the Python 3
         reraise expression did, will fail. See lp:1024836 for details.
         """
-        t = apport.REThread.REThread(target=str.encode, args=("\xff", "ascii"))
+        t = apport.thread.ReturnThread(target=str.encode, args=("\xff", "ascii"))
         t.start()
         t.join()
         self.assertRaises(UnicodeError, t.exc_raise)

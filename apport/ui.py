@@ -47,7 +47,7 @@ import apport.crashdb
 import apport.fileutils
 import apport.logging
 import apport.report
-import apport.REThread
+import apport.thread
 from apport.hook_ui import HookUI, NoninteractiveHookUI
 from apport.packaging_impl import impl as packaging
 from apport.user_group import get_process_user_and_group
@@ -1493,7 +1493,7 @@ class UserInterface:
             if "Stacktrace" not in self.report:
                 # save original environment, in case hooks change it
                 orig_env = os.environ.copy()
-                icthread = apport.REThread.REThread(
+                icthread = apport.thread.ReturnThread(
                     target=thread_collect_info,
                     name="thread_collect_info",
                     args=(
@@ -1620,7 +1620,7 @@ class UserInterface:
                 or self.report.get("ProblemType") == "KernelOops"
                 or "Package" in self.report
             ):
-                bpthread = apport.REThread.REThread(
+                bpthread = apport.thread.ReturnThread(
                     target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),),
                 )
@@ -1642,7 +1642,7 @@ class UserInterface:
 
             # check crash database if problem is known
             if self.report.get("ProblemType") != "Bug":
-                known_thread = apport.REThread.REThread(
+                known_thread = apport.thread.ReturnThread(
                     target=self.crashdb.known, args=(self.report,)
                 )
                 known_thread.start()
@@ -1662,7 +1662,7 @@ class UserInterface:
 
             # anonymize; needs to happen after duplicate checking, otherwise we
             # might damage the stack trace
-            anonymize_thread = apport.REThread.REThread(target=self.report.anonymize)
+            anonymize_thread = apport.thread.ReturnThread(target=self.report.anonymize)
             anonymize_thread.start()
             while anonymize_thread.is_alive():
                 self.ui_pulse_info_collection_progress()
@@ -1770,7 +1770,7 @@ class UserInterface:
                 del self.report[k]
 
         self.ui_start_upload_progress()
-        upthread = apport.REThread.REThread(
+        upthread = apport.thread.ReturnThread(
             target=self.crashdb.upload,
             args=(self.report, progress_callback, message_callback),
         )
