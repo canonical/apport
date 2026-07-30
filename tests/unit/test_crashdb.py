@@ -3,6 +3,7 @@
 import copy
 import os.path
 import shutil
+import sqlite3
 import tempfile
 import textwrap
 import unittest
@@ -833,7 +834,7 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 db_file.truncate(int(os.path.getsize(db) * 2 / 3))
 
             self.crashes = CrashDatabase(None, {})
-            self.assertRaises(Exception, self.crashes.init_duplicate_db, db)
+            self.assertRaises(sqlite3.DatabaseError, self.crashes.init_duplicate_db, db)
 
         finally:
             os.unlink(db)
