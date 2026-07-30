@@ -273,6 +273,14 @@ jobs:
           && ! test -e /etc/apt/sources.list.d/ubuntu.sources
           || sed -i 's/^Types:.*/Types: deb deb-src/g'
           /etc/apt/sources.list.d/ubuntu.sources
+      - name: Show APT sources
+        run: |
+          for source in /etc/apt/sources.list.d/*; do
+            len=$(printf '%s' "$source" | wc -c)
+            divider=$(printf '%*s' "$len" '' | tr ' ' '=')
+            printf '\n%s\n%s\n' "$source" "$divider"
+            cat "$source"
+          done
       - name: Install dependencies
         run: >
           apt-get update
@@ -302,6 +310,14 @@ jobs:
         run: >
           sudo sed -i 's/^Types: deb$/Types: deb deb-src/'
           /etc/apt/sources.list.d/ubuntu.sources
+      - name: Show APT sources
+        run: |
+          for source in /etc/apt/sources.list.d/*; do
+            len=$(printf '%s' "$source" | wc -c)
+            divider=$(printf '%*s' "$len" '' | tr ' ' '=')
+            printf '\n%s\n%s\n' "$source" "$divider"
+            cat "$source"
+          done
       - name: Install dependencies
         run: >
           sudo apt-get update
