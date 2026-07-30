@@ -583,7 +583,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         return [
             c
-            for c in range(0, vbox_choices.count())
+            for c in range(vbox_choices.count())
             if (item := vbox_choices.itemAt(c)) is not None
             and (widget := item.widget()) is not None
             and widget.isChecked()  # type: ignore[attr-defined]
