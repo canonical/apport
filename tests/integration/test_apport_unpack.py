@@ -75,8 +75,7 @@ class TestApportUnpack(unittest.TestCase):
                 check=False,
                 env=self.env,
                 stdin=report_file,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
             )
 
         self.assertEqual(process.stderr, b"", process.stderr.decode())
@@ -151,8 +150,7 @@ class TestApportUnpack(unittest.TestCase):
             check=False,
             encoding="UTF-8",
             env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
 
     def _get_unpack(self, fname: str) -> bytes:

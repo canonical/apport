@@ -1011,10 +1011,7 @@ def _get_module_license(module):
     """Return the license for a given kernel module."""
     try:
         modinfo = subprocess.run(
-            ["/sbin/modinfo", module],
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            ["/sbin/modinfo", module], check=False, capture_output=True
         )
         if modinfo.returncode != 0:
             return "invalid"

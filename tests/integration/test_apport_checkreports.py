@@ -48,12 +48,7 @@ class TestApportCheckreports(unittest.TestCase):
         if args:
             cmd += args
         process = subprocess.run(
-            cmd,
-            check=False,
-            env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
+            cmd, check=False, env=self.env, capture_output=True, text=True
         )
         self.assertEqual(process.returncode, expected_returncode)
         self.assertEqual(process.stdout, expected_stdout)

@@ -449,8 +449,7 @@ def check_files_md5(sumfile: str) -> list[str]:
     md5sum = subprocess.run(
         ["/usr/bin/md5sum", "-c", sumfile],
         check=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         cwd="/",
         env={},
     )

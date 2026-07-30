@@ -788,8 +788,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                 ["fgrep", "-lxm", "1", "--", pattern] + file_list[i : (i + slice_size)],
                 check=False,
                 stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
             )
             if fgrep.returncode == 0:
                 match = fgrep.stdout.decode("UTF-8")
@@ -837,10 +836,7 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         # check if the file is a diversion
         dpkg = subprocess.run(
-            ["dpkg-divert", "--list", file],
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            ["dpkg-divert", "--list", file], check=False, capture_output=True
         )
         out = dpkg.stdout.decode("UTF-8")
         if dpkg.returncode == 0 and out:
@@ -1553,9 +1549,7 @@ class _AptDpkgPackageInfo(PackageInfo):
     def _call_dpkg(args: list[str]) -> str:
         """Call dpkg with given arguments and return output, or return None on
         error."""
-        dpkg = subprocess.run(
-            ["dpkg"] + args, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        dpkg = subprocess.run(["dpkg"] + args, check=False, capture_output=True)
         if dpkg.returncode == 0:
             return dpkg.stdout.decode("UTF-8")
         raise ValueError("package does not exist")
@@ -1572,8 +1566,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             ["/usr/bin/md5sum", "-c"],
             check=False,
             input=sumfile,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             cwd="/",
             env=env,
         )

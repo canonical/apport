@@ -313,8 +313,7 @@ func(42)
                     ["python3", "../script.py"],
                     check=False,
                     env=env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    capture_output=True,
                 )
         finally:
             os.chdir(orig_cwd)
@@ -357,8 +356,7 @@ func(42)
                     input=b"import apport_python_hook\n"
                     b"apport_python_hook.install()\n"
                     b"raise ValueError",
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    capture_output=True,
                 )
                 self.assertNotEqual(python.returncode, 0)
                 self.assertEqual(python.stdout.decode(), "")
@@ -407,8 +405,7 @@ func(42)
                     [script, "testarg1", "testarg2"],
                     check=False,
                     env=self.env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    capture_output=True,
                 )
                 err = process.stderr.decode()
                 self.assertEqual(

@@ -80,8 +80,7 @@ class T(unittest.TestCase):
             check=False,
             encoding="UTF-8",
             env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
         return (crash_digger.stdout, crash_digger.stderr)
 

@@ -956,10 +956,7 @@ class UserInterface:
                 ),
             )
             xprop = subprocess.run(
-                ["xprop", "_NET_WM_PID"],
-                check=False,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                ["xprop", "_NET_WM_PID"], check=False, capture_output=True
             )
             if xprop.returncode == 0:
                 try:

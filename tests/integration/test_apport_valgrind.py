@@ -56,12 +56,7 @@ class TestApportValgrind(unittest.TestCase):
 
     def _call(self, argv: list[str]) -> tuple[int, str, str]:
         process = subprocess.run(
-            argv,
-            check=False,
-            env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
+            argv, check=False, env=self.env, capture_output=True, text=True
         )
         return (process.returncode, process.stdout, process.stderr)
 

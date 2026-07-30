@@ -55,12 +55,7 @@ class TestUnkillableShutdown(unittest.TestCase):
         if omit:
             cmd += [arg for pid in omit for arg in ("-o", str(pid))]
         process = subprocess.run(
-            cmd,
-            check=False,
-            env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
+            cmd, check=False, env=self.env, capture_output=True, text=True
         )
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(process.stdout, "")

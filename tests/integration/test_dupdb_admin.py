@@ -45,12 +45,7 @@ class TestDupdbAdmin(unittest.TestCase):
     ) -> tuple[str, str]:
         cmd = ["dupdb-admin", "-f", self.db_file] + args
         process = subprocess.run(
-            cmd,
-            check=False,
-            env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
+            cmd, check=False, env=self.env, capture_output=True, text=True
         )
         self.assertEqual(process.returncode, expected_returncode, process.stderr)
         if process.returncode == 0:

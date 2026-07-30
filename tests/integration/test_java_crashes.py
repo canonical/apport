@@ -57,8 +57,7 @@ class TestJavaCrashes(unittest.TestCase):
             ],
             check=False,
             env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
         self.assertNotEqual(java.returncode, 0, "crash must exit with nonzero code")
         self.assertIn("Can't catch this", java.stderr.decode())
@@ -77,8 +76,7 @@ class TestJavaCrashes(unittest.TestCase):
             ],
             check=False,
             env=self.env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
         self.assertNotEqual(java.returncode, 0, "crash must exit with nonzero code")
         self.assertIn("Can't catch this", java.stderr.decode())

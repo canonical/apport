@@ -654,8 +654,7 @@ class T(unittest.TestCase):
                 check=False,
                 env=env,
                 input="hel\x01lo",
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
                 text=True,
             )
         finally:
@@ -709,8 +708,7 @@ class T(unittest.TestCase):
                 encoding="UTF-8",
                 env=env,
                 input="hel\x01lo",
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
                 text=True,
             )
         finally:
@@ -1067,8 +1065,7 @@ class T(unittest.TestCase):
                 core_path,
             ],
             check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
         )
         self.assertNotEqual(gdb.stdout.strip(), "")
