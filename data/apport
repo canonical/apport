@@ -62,7 +62,7 @@ class ProcPid(contextlib.ContextDecorator):
         self.pid = pid
         self.fd: int | None = None
 
-    def __enter__(self) -> "ProcPid":
+    def __enter__(self) -> typing.Self:
         try:
             self.fd = os.open(self.path, os.O_RDONLY | os.O_PATH | os.O_DIRECTORY)
         except FileNotFoundError as error:
