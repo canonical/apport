@@ -162,7 +162,7 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
         else:
             report[key] = "[modified]"
 
-        mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+        mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime).astimezone()
         report[f"mtime.conffile.{path_to_key(path)}"] = mtime.isoformat()
 
 
