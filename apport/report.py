@@ -19,7 +19,6 @@ import fnmatch
 import glob
 import grp
 import importlib.util
-import io
 import json
 import logging
 import os
@@ -192,7 +191,7 @@ def _read_proc_file(path: str, dir_fd: int) -> str:
     try:
         proc_file = os.open(path, os.O_RDONLY | os.O_CLOEXEC, dir_fd=dir_fd)
 
-        with io.open(proc_file, "rb") as fd:
+        with open(proc_file, "rb") as fd:
             return fd.read().strip().decode("UTF-8", errors="replace")
     except OSError as error:
         return "Error: " + str(error)

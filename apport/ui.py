@@ -23,7 +23,6 @@ import errno
 import gettext
 import glob
 import gzip
-import io
 import locale
 import os.path
 import pwd
@@ -646,7 +645,7 @@ class UserInterface:
                     f"/proc/{self.args.pid}", os.O_RDONLY | os.O_PATH | os.O_DIRECTORY
                 )
                 stat_file = os.open("stat", os.O_RDONLY, dir_fd=proc_pid_fd)
-                with io.open(stat_file, encoding="utf-8") as f:
+                with open(stat_file, encoding="utf-8") as f:
                     stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
