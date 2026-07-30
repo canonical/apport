@@ -285,6 +285,19 @@ jobs:
           && ! test -e /etc/apt/sources.list.d/ubuntu.sources
           || sed -i 's/^Types:.*/Types: deb deb-src/g'
           /etc/apt/sources.list.d/ubuntu.sources
+      - name: Add Ubuntu ddeb sources
+        run: >
+          apt-get update
+          && apt-get install --yes ubuntu-dbgsym-keyring
+          && VERSION_CODENAME=$(. /etc/os-release && echo $VERSION_CODENAME)
+          && uris="http://ddebs.ubuntu.com/"
+          && suites="${VERSION_CODENAME} ${VERSION_CODENAME}-updates jammy"
+          && components="main universe"
+          && key="/usr/share/keyrings/ubuntu-dbgsym-keyring.gpg"
+          && printf
+          "Types: deb\nURIs: %s\nSuites: %s\nComponents: %s\nSigned-By: %s\n"
+          "$uris" "$suites" "$components" "$key"
+          > /etc/apt/sources.list.d/ubuntu-ddebs.sources
       - name: Show APT sources
         run: |
           for source in /etc/apt/sources.list.d/*; do
@@ -322,6 +335,18 @@ jobs:
         run: >
           sudo sed -i 's/^Types: deb$/Types: deb deb-src/'
           /etc/apt/sources.list.d/ubuntu.sources
+      - name: Add Ubuntu ddeb sources
+        run: >
+          sudo apt-get install --yes ubuntu-dbgsym-keyring
+          && VERSION_CODENAME=$(. /etc/os-release && echo $VERSION_CODENAME)
+          && uris="http://ddebs.ubuntu.com/"
+          && suites="${VERSION_CODENAME} ${VERSION_CODENAME}-updates jammy"
+          && components="main universe"
+          && key="/usr/share/keyrings/ubuntu-dbgsym-keyring.gpg"
+          && printf
+          "Types: deb\nURIs: %s\nSuites: %s\nComponents: %s\nSigned-By: %s\n"
+          "$uris" "$suites" "$components" "$key"
+          | sudo tee /etc/apt/sources.list.d/ubuntu-ddebs.sources > /dev/null
       - name: Show APT sources
         run: |
           for source in /etc/apt/sources.list.d/*; do
