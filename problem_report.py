@@ -530,8 +530,7 @@ class ProblemReport(collections.UserDict):
             key_path = os.path.join(directory, key)
             try:
                 with open(key_path, "wb") as out:
-                    for block in CompressedValue.decode_compressed_stream(iterator):
-                        out.write(block)
+                    out.writelines(CompressedValue.decode_compressed_stream(iterator))
             except OSError as error:
                 raise OSError(f"unable to open {key_path}") from error
 
