@@ -550,19 +550,19 @@ deb http://secondary.mirror tuxy extra
 
         with tempfile.NamedTemporaryFile() as f:
             impl.configuration = f.name
-            f.write("# configuration file\nenabled = 1".encode())
+            f.write(b"# configuration file\nenabled = 1")
             f.flush()
             self.assertEqual(impl.enabled(), True)
 
         with tempfile.NamedTemporaryFile() as f:
             impl.configuration = f.name
-            f.write("# configuration file\n  enabled =0  ".encode())
+            f.write(b"# configuration file\n  enabled =0  ")
             f.flush()
             self.assertEqual(impl.enabled(), False)
 
         with tempfile.NamedTemporaryFile() as f:
             impl.configuration = f.name
-            f.write("# configuration file\nnothing here".encode())
+            f.write(b"# configuration file\nnothing here")
             f.flush()
             self.assertEqual(impl.enabled(), True)
 

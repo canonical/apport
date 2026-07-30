@@ -721,7 +721,7 @@ class _AptDpkgPackageInfo(PackageInfo):
                             "%s contains empty line, ignoring line", sumfile
                         )
                         continue
-                    s = os.stat(f"/{words[-1].decode('UTF-8')}".encode("UTF-8"))
+                    s = os.stat(f"/{words[-1].decode('UTF-8')}".encode())
                     if max(s.st_mtime, s.st_ctime) <= max_time:
                         continue
                 except OSError:

@@ -130,10 +130,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """write() and proper formatting."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
-        pr["SimpleUTF8"] = "1äö2Φ3".encode("UTF-8")
+        pr["SimpleUTF8"] = "1äö2Φ3".encode()
         pr["SimpleUnicode"] = "1äö2Φ3"
         pr["TwoLineUnicode"] = "pi-π\nnu-η"
-        pr["TwoLineUTF8"] = "pi-π\nnu-η".encode("UTF-8")
+        pr["TwoLineUTF8"] = "pi-π\nnu-η".encode()
         pr["WhiteSpace"] = " foo   bar\nbaz\n  blip  \n\nafteremptyline"
         # Unicode with a non-space low ASCII character \x05 in it
         pr["UnprintableUnicode"] = b"a\xc3\xa4\x05z1\xc3\xa9".decode("UTF-8")
@@ -685,10 +685,10 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         """write_mime() for text values."""
         pr = problem_report.ProblemReport(date="now!")
         pr["Simple"] = "bar"
-        pr["SimpleUTF8"] = "1äö2Φ3".encode("UTF-8")
+        pr["SimpleUTF8"] = "1äö2Φ3".encode()
         pr["SimpleUnicode"] = "1äö2Φ3"
         pr["TwoLineUnicode"] = "pi-π\nnu-η\n"
-        pr["TwoLineUTF8"] = "pi-π\nnu-η\n".encode("UTF-8")
+        pr["TwoLineUTF8"] = "pi-π\nnu-η\n".encode()
         pr["SimpleLineEnd"] = "bar\n"
         pr["TwoLine"] = "first\nsecond\n"
         pr["InlineMargin"] = "first\nsecond\nthird\nfourth\nfifth\n"

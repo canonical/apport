@@ -75,9 +75,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return False
 
         with tempfile.NamedTemporaryFile() as temp:
-            temp.file.write(f"Package: {buggy_package}\n".encode("UTF-8"))
-            temp.file.write(f"Version: {buggy_version}\n\n\n".encode("UTF-8"))
-            temp.file.write(("=============================\n\n").encode("UTF-8"))
+            temp.file.write(f"Package: {buggy_package}\n".encode())
+            temp.file.write(f"Version: {buggy_version}\n\n\n".encode())
+            temp.file.write(b"=============================\n\n")
 
             # Let's remove the CoreDump first
 
