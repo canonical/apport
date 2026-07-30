@@ -529,10 +529,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             return True
 
         # on Ubuntu system-image we might not have any /var/lib/apt/lists
-        if origins == {""} and os.path.exists("/etc/system-image/channel.ini"):
-            return True
-
-        return False
+        return bool(origins == {""} and os.path.exists("/etc/system-image/channel.ini"))
 
     def is_native_origin_package(self, package: str) -> bool:
         """Check if a package originated from a native location.
