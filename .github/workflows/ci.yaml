@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
     container:
-      image: ubuntu:resolute
+      image: ubuntu:stonking
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies
@@ -69,6 +69,7 @@ jobs:
           - debian:stable-slim
           - debian:testing-slim
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
           - ubuntu-26.04-arm
@@ -150,6 +151,7 @@ jobs:
       matrix:
         container:
           - ubuntu:resolute
+          - ubuntu:stonking
     container:
       image: ${{ matrix.container }}
     steps:
@@ -180,6 +182,7 @@ jobs:
       matrix:
         container:
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
           - ubuntu-26.04-arm
@@ -264,6 +267,7 @@ jobs:
       matrix:
         container:
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
           - ubuntu-26.04-arm
