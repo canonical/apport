@@ -76,9 +76,11 @@ class T(unittest.TestCase):
     def test_wait_for_proc_cmdline_failure(self, sleep_mock: MagicMock) -> None:
         """Test wait_for_proc_cmdline() helper runs into timeout."""
         open_mock = unittest.mock.mock_open(read_data="")
-        with unittest.mock.patch("builtins.open", open_mock):
-            with self.assertRaises(AssertionError):
-                self.wait_for_proc_cmdline(12345, 0.3)
+        with (
+            unittest.mock.patch("builtins.open", open_mock),
+            self.assertRaises(AssertionError),
+        ):
+            self.wait_for_proc_cmdline(12345, 0.3)
         open_mock.assert_called_with("/proc/12345/cmdline", encoding="utf-8")
         sleep_mock.assert_called_with(0.1)
         self.assertEqual(sleep_mock.call_count, 3)

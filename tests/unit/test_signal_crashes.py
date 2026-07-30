@@ -410,12 +410,14 @@ class TestApport(unittest.TestCase):
         """Test /proc/<pid> is already gone."""
         fake_pid = 2147483647
         assert not os.path.exists(f"/proc/{fake_pid}")
-        with self.assertLogs(level="ERROR") as error_logs:
-            with tempfile.NamedTemporaryFile() as stdin:
-                stdin_mock = io.FileIO(stdin.name)
-                with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
-                    exit_code = apport_binary.main(["-p", str(fake_pid), "-d", "1"])
-                    self.assertEqual(exit_code, 1)
+        with (
+            self.assertLogs(level="ERROR") as error_logs,
+            tempfile.NamedTemporaryFile() as stdin,
+        ):
+            stdin_mock = io.FileIO(stdin.name)
+            with unittest.mock.patch("sys.stdin", return_value=stdin_mock):
+                exit_code = apport_binary.main(["-p", str(fake_pid), "-d", "1"])
+                self.assertEqual(exit_code, 1)
         self.assertIn("/proc/2147483647 not found", error_logs.output[0])
 
     @unittest.mock.patch.object(apport_binary, "check_lock", MagicMock())
@@ -444,11 +446,13 @@ class TestApport(unittest.TestCase):
             "-c",
             "-1",
         ]
-        with self.assertLogs(level="ERROR") as error_logs:
-            with tempfile.NamedTemporaryFile() as stdin:
-                stdin_mock = io.TextIOWrapper(io.FileIO(stdin.name))
-                with unittest.mock.patch("sys.stdin", stdin_mock):
-                    exit_code = apport_binary.main(args)
+        with (
+            self.assertLogs(level="ERROR") as error_logs,
+            tempfile.NamedTemporaryFile() as stdin,
+        ):
+            stdin_mock = io.TextIOWrapper(io.FileIO(stdin.name))
+            with unittest.mock.patch("sys.stdin", stdin_mock):
+                exit_code = apport_binary.main(args)
 
         self.assertEqual(exit_code, 0)
         is_systemd_watchdog_restart_mock.assert_called_once()

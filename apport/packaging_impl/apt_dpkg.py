@@ -1924,13 +1924,15 @@ class _AptDpkgPackageInfo(PackageInfo):
             os.makedirs(dst_list_d)
         old_sources = os.path.join(apt_dir, "sources.list")
         if os.path.exists(old_sources):
-            with open(old_sources, encoding="utf-8") as src:
-                with open(
+            with (
+                open(old_sources, encoding="utf-8") as src,
+                open(
                     os.path.join(apt_root, "etc", "apt", "sources.list"),
                     "w",
                     encoding="utf-8",
-                ) as dest:
-                    dest.write(src.read())
+                ) as dest,
+            ):
+                dest.write(src.read())
 
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system

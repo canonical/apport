@@ -44,7 +44,6 @@ def test_parse_meminfo_missing_key() -> None:
             "Cached:         20099444 kB\n"
         )
     )
-    with patch("builtins.open", open_mock):
-        with pytest.raises(KeyError) as exc_info:
-            parse_meminfo()
+    with patch("builtins.open", open_mock), pytest.raises(KeyError) as exc_info:
+        parse_meminfo()
     exc_info.match("Writeback not found in /proc/meminfo")

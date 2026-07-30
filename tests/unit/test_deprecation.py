@@ -24,6 +24,8 @@ class TestDeprecation(unittest.TestCase):
 
     def test_deprecated_logging_function(self) -> None:
         """apport.fatal() throws a deprecation warning."""
-        with self.assertRaisesRegex(SystemExit, "^1$"):
-            with self.assertWarns(DeprecationWarning):
-                fatal("fatal error")
+        with (
+            self.assertRaisesRegex(SystemExit, "^1$"),
+            self.assertWarns(DeprecationWarning),
+        ):
+            fatal("fatal error")

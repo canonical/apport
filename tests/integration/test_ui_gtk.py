@@ -24,9 +24,11 @@ def test_unusable_display() -> None:
             apport_gtk = import_module_from_file(apport_gtk_path)
         except SystemExit:
             pytest.skip(stderr.getvalue().strip())
-    with unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
-        with pytest.raises(SystemExit) as error:
-            apport_gtk.main([str(apport_gtk_path)])
+    with (
+        unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+        pytest.raises(SystemExit) as error,
+    ):
+        apport_gtk.main([str(apport_gtk_path)])
 
     assert (
         stderr.getvalue() == "ERROR: This program needs a running display server"

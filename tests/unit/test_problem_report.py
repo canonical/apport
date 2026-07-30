@@ -246,32 +246,38 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_load_binary_blob(self) -> None:
         """Throw exception when binary file (e.g. core) is loaded."""
         report = problem_report.ProblemReport()
-        with io.BytesIO(b"AB\xfc:CD") as report_file:
-            with self.assertRaisesRegex(
+        with (
+            io.BytesIO(b"AB\xfc:CD") as report_file,
+            self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
                 "codec can't decode byte 0xfc in position 2",
-            ):
-                report.load(report_file)
+            ),
+        ):
+            report.load(report_file)
 
     def test_load_missing_colon(self) -> None:
         """Throw exception when key-value line misses a colon as separator."""
         report = problem_report.ProblemReport()
-        with io.BytesIO(b"\n") as report_file:
-            with self.assertRaisesRegex(
+        with (
+            io.BytesIO(b"\n") as report_file,
+            self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
                 r"Line '\\n' does not contain a colon",
-            ):
-                report.load(report_file)
+            ),
+        ):
+            report.load(report_file)
 
     def test_load_invalid_utf8(self) -> None:
         """Throw exception when binary file is invalid UTF-8."""
         report = problem_report.ProblemReport()
-        with io.BytesIO(b"\x7fELF\x02\x01\xb0j") as report_file:
-            with self.assertRaisesRegex(
+        with (
+            io.BytesIO(b"\x7fELF\x02\x01\xb0j") as report_file,
+            self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
                 r"Line '\\x7fELF\\x02\\x01\\\\xb0j' does not contain a colon",
-            ):
-                report.load(report_file)
+            ),
+        ):
+            report.load(report_file)
 
     def test_load_incorrect_padding(self) -> None:
         """Throw exception when base64 encoded data has incorrect padding."""
@@ -281,13 +287,15 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             b" H4sICAAAAAAC/0NvcmVEdW1wAA==\n"
             b" 7Z0LYFPV/cdP0rQ\n"
         )
-        with io.BytesIO(content) as report_file:
-            with self.assertRaisesRegex(
+        with (
+            io.BytesIO(content) as report_file,
+            self.assertRaisesRegex(
                 problem_report.MalformedProblemReport,
                 "^Malformed problem report: Incorrect padding."
                 " Is this a proper .crash text file\\?$",
-            ):
-                report.load(report_file)
+            ),
+        ):
+            report.load(report_file)
 
     @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_load_zstd_compressed_data(self) -> None:
@@ -375,9 +383,11 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             "Failed to import zstandard library: mocked import error."
             " Please install python3-zstandard."
         )
-        with self.assertRaisesRegex(RuntimeError, expected_message):
-            with io.BytesIO(content) as report_file:
-                report.load(report_file)
+        with (
+            self.assertRaisesRegex(RuntimeError, expected_message),
+            io.BytesIO(content) as report_file,
+        ):
+            report.load(report_file)
 
     def test_write_fileobj(self) -> None:
         """Write a report with a pointer to a file-like object."""

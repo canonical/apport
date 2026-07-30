@@ -402,26 +402,28 @@ class T(unittest.TestCase):
 
     def test_write_mime_binary(self) -> None:
         """write_mime() for binary values and file references."""
-        with tempfile.NamedTemporaryFile() as temp:
-            with tempfile.NamedTemporaryFile() as tempgz:
-                temp.write(BIN_DATA)
-                temp.flush()
+        with (
+            tempfile.NamedTemporaryFile() as temp,
+            tempfile.NamedTemporaryFile() as tempgz,
+        ):
+            temp.write(BIN_DATA)
+            temp.flush()
 
-                with gzip.GzipFile("File1", "w", fileobj=tempgz) as gz:
-                    gz.write(BIN_DATA)
-                tempgz.flush()
+            with gzip.GzipFile("File1", "w", fileobj=tempgz) as gz:
+                gz.write(BIN_DATA)
+            tempgz.flush()
 
-                pr = problem_report.ProblemReport(date="now!")
-                pr["Context"] = "Test suite"
-                pr["File1"] = (temp.name,)
-                pr["File1.gz"] = (tempgz.name,)
-                pr["Value1"] = BIN_DATA
-                with open(tempgz.name, "rb") as f:
-                    pr["Value1.gz"] = f.read()
-                pr["ZValue"] = problem_report.CompressedValue(BIN_DATA)
-                out = io.BytesIO()
-                pr.write_mime(out)
-                out.seek(0)
+            pr = problem_report.ProblemReport(date="now!")
+            pr["Context"] = "Test suite"
+            pr["File1"] = (temp.name,)
+            pr["File1.gz"] = (tempgz.name,)
+            pr["Value1"] = BIN_DATA
+            with open(tempgz.name, "rb") as f:
+                pr["Value1.gz"] = f.read()
+            pr["ZValue"] = problem_report.CompressedValue(BIN_DATA)
+            out = io.BytesIO()
+            pr.write_mime(out)
+            out.seek(0)
 
         msg = email.message_from_binary_file(out)
         parts = list(msg.walk())

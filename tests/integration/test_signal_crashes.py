@@ -377,9 +377,8 @@ class T(unittest.TestCase):
     def test_unpackaged_binary(self) -> None:
         """Unpackaged binaries do not create a report."""
         local_exe = os.path.join(self.workdir, "mybin")
-        with open(local_exe, "wb") as dest:
-            with open(self.TEST_EXECUTABLE, "rb") as src:
-                dest.write(src.read())
+        with open(local_exe, "wb") as dest, open(self.TEST_EXECUTABLE, "rb") as src:
+            dest.write(src.read())
         os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe, expect_report=False)
 
@@ -520,9 +519,8 @@ class T(unittest.TestCase):
     def test_core_dump_unpackaged(self) -> None:
         """Unpackaged executables create core dumps on proper ulimits."""
         local_exe = os.path.join(self.workdir, "mybin")
-        with open(local_exe, "wb") as dest:
-            with open(self.TEST_EXECUTABLE, "rb") as src:
-                dest.write(src.read())
+        with open(local_exe, "wb") as dest, open(self.TEST_EXECUTABLE, "rb") as src:
+            dest.write(src.read())
         os.chmod(local_exe, 0o755)
 
         for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGQUIT):
@@ -617,11 +615,13 @@ class T(unittest.TestCase):
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            with self.assertLogs(level="ERROR") as info_logs:
-                with open(myexe, "rb") as fake_coredump_fd:
-                    self._call_apport_directly(
-                        psutil.Process(test_proc.pid), 42, 1, fake_coredump_fd
-                    )
+            with (
+                self.assertLogs(level="ERROR") as info_logs,
+                open(myexe, "rb") as fake_coredump_fd,
+            ):
+                self._call_apport_directly(
+                    psutil.Process(test_proc.pid), 42, 1, fake_coredump_fd
+                )
 
         finally:
             test_proc.kill()

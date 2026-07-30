@@ -516,12 +516,11 @@ def is_same_ns(proc_pid: ProcPid, ns: str) -> bool:
         raise
 
     # check to see if the process is part of the system.slice (LP: #1870060)
-    with contextlib.suppress(FileNotFoundError):
-        with proc_pid.open("cgroup") as cgroup:
-            for line in cgroup:
-                fields = line.split(":")
-                if fields[-1].startswith("/system.slice"):
-                    return True
+    with contextlib.suppress(FileNotFoundError), proc_pid.open("cgroup") as cgroup:
+        for line in cgroup:
+            fields = line.split(":")
+            if fields[-1].startswith("/system.slice"):
+                return True
 
     return False
 

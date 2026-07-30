@@ -2666,11 +2666,13 @@ class T(unittest.TestCase):
                 "XDG_DATA_DIRS": "mocked XDG data dir",
                 "DBUS_SESSION_BUS_ADDRESS": "/fake/dbus/path",
             }
-            with run_test_executable([gvfsd_mock] + self.TEST_ARGS, env=gvfsd_env):
-                with unittest.mock.patch(
+            with (
+                run_test_executable([gvfsd_mock] + self.TEST_ARGS, env=gvfsd_env),
+                unittest.mock.patch(
                     "subprocess.run", side_effect=mock_run_calls_except_pgrep
-                ) as run_mock:
-                    run_as_real_user(["/bin/true"], get_user_env=True)
+                ) as run_mock,
+            ):
+                run_as_real_user(["/bin/true"], get_user_env=True)
 
         run_mock.assert_called_with(
             ["/bin/true"],
