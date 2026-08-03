@@ -23,9 +23,9 @@ import apport.packaging
 import apport.report
 import problem_report
 from tests.helper import (
-    WAITING_TIMEOUT,
     get_gnu_coreutils_cmd,
     skip_if_command_is_missing,
+    wait_for_proc_exec,
 )
 from tests.paths import patch_data_dir, restore_data_dir
 
@@ -45,23 +45,6 @@ class T(unittest.TestCase):
     def tearDownClass(cls) -> None:
         restore_data_dir(apport.report, cls.orig_data_dir)
 
-    def wait_for_proc_cmdline(
-        self, pid: int, timeout_sec: float = WAITING_TIMEOUT
-    ) -> None:
-        assert pid
-        elapsed_time = 0.0
-        while elapsed_time < timeout_sec:
-            with open(f"/proc/{pid}/cmdline", encoding="utf-8") as fd:
-                if fd.read():
-                    return
-
-            time.sleep(0.1)
-            elapsed_time += 0.1
-
-        self.fail(
-            f"/proc/{pid}/cmdline not readable within {int(elapsed_time)} seconds."
-        )
-
     def _assert_open_fds_valid(self, open_fds: str) -> None:
         """Assert that OpenFds contains well-formed FD entries."""
         entries = open_fds.split("\n\n")
@@ -77,17 +60,6 @@ class T(unittest.TestCase):
                 fdinfo_keys.add(fdinfo_line.split(":\t", 1)[0])
             self.assertIn("pos", fdinfo_keys)
             self.assertIn("flags", fdinfo_keys)
-
-    @unittest.mock.patch("time.sleep")
-    def test_wait_for_proc_cmdline_failure(self, sleep_mock: MagicMock) -> None:
-        """Test wait_for_proc_cmdline() helper runs into timeout."""
-        open_mock = unittest.mock.mock_open(read_data="")
-        with unittest.mock.patch("builtins.open", open_mock):
-            with self.assertRaises(AssertionError):
-                self.wait_for_proc_cmdline(12345, 0.3)
-        open_mock.assert_called_with("/proc/12345/cmdline", encoding="utf-8")
-        sleep_mock.assert_called_with(0.1)
-        self.assertEqual(sleep_mock.call_count, 3)
 
     def test_add_package_info(self) -> None:
         """add_package_info()."""
@@ -217,7 +189,7 @@ class T(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as cat:
-            self.wait_for_proc_cmdline(cat.pid)
+            wait_for_proc_exec(cat.pid)
             pr = apport.report.Report()
             pr.add_proc_info(pid=cat.pid)
             self.assertEqual(pr.pid, cat.pid)
@@ -231,7 +203,7 @@ class T(unittest.TestCase):
         # check correct handling of executable symlinks
         assert os.path.islink("/bin/sh"), "/bin/sh needs to be a symlink for this test"
         with subprocess.Popen(["sh"], stdin=subprocess.PIPE) as shell:
-            self.wait_for_proc_cmdline(shell.pid)
+            wait_for_proc_exec(shell.pid)
             pr = apport.report.Report()
             pr.pid = shell.pid
             pr.add_proc_info()
@@ -245,7 +217,7 @@ class T(unittest.TestCase):
 
         # check correct handling of interpreted executables: shell
         with subprocess.Popen(["zgrep", "foo"], stdin=subprocess.PIPE) as zgrep:
-            self.wait_for_proc_cmdline(zgrep.pid)
+            wait_for_proc_exec(zgrep.pid)
             pr = apport.report.Report()
             pr.add_proc_info(pid=zgrep.pid)
             zgrep.communicate(b"\n")
@@ -274,7 +246,7 @@ class T(unittest.TestCase):
             with subprocess.Popen(
                 [str(testscript)], stdin=subprocess.PIPE, stderr=subprocess.PIPE
             ) as process:
-                self.wait_for_proc_cmdline(process.pid)
+                wait_for_proc_exec(process.pid)
                 pr = apport.report.Report()
                 pr.add_proc_info(pid=process.pid)
                 process.communicate(b"\n")
