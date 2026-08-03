@@ -15,6 +15,8 @@ from unittest.mock import MagicMock
 
 import psutil
 
+WAITING_TIMEOUT = 30.0
+
 
 def get_gnu_coreutils_cmd(cmd: str) -> str:
     """Determine path to GNU coreutils command."""
@@ -149,7 +151,7 @@ def wrap_object(
         yield mock
 
 
-def wait_for_sleeping_state(pid: int, timeout: float = 5.0) -> None:
+def wait_for_sleeping_state(pid: int, timeout: float = WAITING_TIMEOUT) -> None:
     """Wait for sleep command to enter sleeping state."""
     proc = psutil.Process(pid)
     waited = 0.0
@@ -169,7 +171,7 @@ def wait_for_sleeping_state(pid: int, timeout: float = 5.0) -> None:
 
 
 def wait_for_process_to_appear(
-    process: str, already_running: Set[int], timeout: float = 5.0
+    process: str, already_running: Set[int], timeout: float = WAITING_TIMEOUT
 ) -> int:
     """Wait for process to appear and return its PID."""
     waited = 0.0

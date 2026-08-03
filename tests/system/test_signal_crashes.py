@@ -19,6 +19,7 @@ import apport.fileutils
 import apport.report
 from apport.procutils import parse_meminfo
 from tests.helper import (
+    WAITING_TIMEOUT,
     get_gnu_coreutils_cmd,
     get_init_system,
     pids_of,
@@ -334,12 +335,12 @@ class T(unittest.TestCase):
 
         wait_sleep_mock.assert_not_called()
 
-    def wait_for_apport_to_finish(self, timeout_sec: float = 10.0) -> None:
+    def wait_for_apport_to_finish(self, timeout_sec: float = WAITING_TIMEOUT) -> None:
         assert self.apport_path is not None
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
     def wait_for_no_instance_running(
-        self, program: pathlib.Path | str, timeout_sec: float = 10.0
+        self, program: pathlib.Path | str, timeout_sec: float = WAITING_TIMEOUT
     ) -> None:
         while timeout_sec > 0:
             if not pids_of(str(program)) - self.running_test_executables:
