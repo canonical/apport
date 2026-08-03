@@ -9,11 +9,10 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-# pylint: disable=too-many-lines
-
 import base64
 import binascii
 import collections
+import compression.zstd
 import dataclasses
 import email.encoders
 import email.mime.base
@@ -134,9 +133,11 @@ def _decode_compressed_stream(entry: Iterator[bytes]) -> Iterator[bytes]:
     if block is None:
         return
     if block.startswith(ZSTANDARD_MAGIC_NUMBER):
-        yield from _zstandard_decoder(entry, block)
-        return
-    if block.startswith(GZIP_HEADER_START):
+        decompressor: compression.zstd.ZstdDecompressor | zlib._Decompress = (
+            compression.zstd.ZstdDecompressor()
+        )
+    # skip gzip header, if present
+    elif block.startswith(GZIP_HEADER_START):
         # Enable native gzip header & trailer processing
         decompressor = zlib.decompressobj(16 + zlib.MAX_WBITS)
     else:
@@ -146,7 +147,8 @@ def _decode_compressed_stream(entry: Iterator[bytes]) -> Iterator[bytes]:
     yield decompressor.decompress(block)
     for block in entry:
         yield decompressor.decompress(block)
-    yield decompressor.flush()
+    if not isinstance(decompressor, compression.zstd.ZstdDecompressor):
+        yield decompressor.flush()
 
     if not decompressor.eof:
         raise EOFError(
@@ -175,25 +177,6 @@ def _text_decoder(entry: Iterator[bytes], first_line: bytes) -> Iterator[bytes]:
         else:
             yield line[1:]
             length += len(line) - 1
-
-
-def _get_zstandard_decompressor():
-    try:
-        # pylint: disable-next=import-outside-toplevel
-        import zstandard
-    except ImportError as error:
-        raise RuntimeError(
-            f"Failed to import zstandard library: {error}."
-            f" Please install python3-zstandard."
-        ) from None
-    return zstandard.ZstdDecompressor()
-
-
-def _zstandard_decoder(entry: Iterator[bytes], first_block: bytes) -> Iterator[bytes]:
-    decompressor = _get_zstandard_decompressor().decompressobj()
-    yield decompressor.decompress(first_block)
-    for block in entry:
-        yield decompressor.decompress(block)
 
 
 def _parse_entry(entry: Iterator[bytes]) -> tuple[str, Iterator[bytes], bool]:
@@ -302,7 +285,7 @@ class CompressedValue:
         assert self.compressed_value is not None
 
         if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
-            return _get_zstandard_decompressor().decompress(self.compressed_value)
+            return compression.zstd.decompress(self.compressed_value)
         if self.compressed_value.startswith(GZIP_HEADER_START):
             return gzip.decompress(self.compressed_value)
         # legacy zlib format
