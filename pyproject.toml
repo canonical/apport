@@ -140,3 +140,15 @@ include = [
     "gtk/apport-gtk",
     "kde/apport-kde",
 ]
+
+[tool.ruff.lint]
+ignore = [
+    "DTZ005",  # call-datetime-now-without-tzinfo
+    "LOG015",  # root-logger-call
+    "PYI025",  # unaliased-collections-abc-set-import
+    "RUF012",  # mutable-class-default
+    "RUF100",  # unused-noqa false positives, buggy to ignore individually
+    "SIM102",  # collapsible-if
+    "SIM114",  # if-with-same-arms
+    "TRY004",  # type-check-without-type-error
+]
