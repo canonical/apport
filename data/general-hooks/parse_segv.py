@@ -162,8 +162,10 @@ class ParseSegv:
                 alarmist = "NULL"
             return (
                 False,
-                f"{name} (0x{addr:08x}) not located in a known VMA region"
-                f" (needed {perm_name[perm][0]} region)!",
+                (
+                    f"{name} (0x{addr:08x}) not located in a known VMA region"
+                    f" (needed {perm_name[perm][0]} region)!"
+                ),
                 f"{perm_name[perm][1]} {alarmist} VMA",
             )
         if perm not in vma["perms"]:
@@ -177,9 +179,11 @@ class ParseSegv:
 
             return (
                 False,
-                f"{name} (0x{addr:08x}) in non-{perm_name[perm][0]} VMA"
-                f" region: 0x{vma['start']:08x}-0x{vma['end']:08x}"
-                f" {vma['perms']} {vma['name']}",
+                (
+                    f"{name} (0x{addr:08x}) in non-{perm_name[perm][0]} VMA"
+                    f" region: 0x{vma['start']:08x}-0x{vma['end']:08x}"
+                    f" {vma['perms']} {vma['name']}"
+                ),
                 short,
             )
 

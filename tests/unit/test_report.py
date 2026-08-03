@@ -214,10 +214,10 @@ ProcStatus:
 Signal: 4
 SignalName: SIGILL
 """
+# pylint: disable=line-too-long
 _DIVIDE_BY_ZERO_ENVIRONMENT = [
     "SHELL=/bin/bash",
-    "SESSION_MANAGER=local/hostname:@/tmp/.ICE-unix/6144"
-    ",unix/hostname:/tmp/.ICE-unix/6144",
+    "SESSION_MANAGER=local/hostname:@/tmp/.ICE-unix/6144,unix/hostname:/tmp/.ICE-unix/6144",  # noqa
     "QT_ACCESSIBILITY=1",
     "COLORTERM=truecolor",
     "XDG_CONFIG_DIRS=/etc/xdg/xdg-unity:/etc/xdg",
@@ -253,8 +253,7 @@ _DIVIDE_BY_ZERO_ENVIRONMENT = [
     "LANG=de_DE.UTF-8",
     "XDG_CURRENT_DESKTOP=Unity:Unity7:ubuntu",
     "VTE_VERSION=7400",
-    "GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen"
-    "/28a9c759_0c8e_4dbb_ac97_ab266bc17659",
+    "GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/28a9c759_0c8e_4dbb_ac97_ab266bc17659",  # noqa
     "QTWEBENGINE_DICTIONARIES_PATH=/usr/share/hunspell-bdic/",
     "GTK_CSD=0",
     "CLUTTER_IM_MODULE=ibus",
@@ -277,10 +276,8 @@ _DIVIDE_BY_ZERO_ENVIRONMENT = [
     "DEBUGINFOD_URLS=https://debuginfod.ubuntu.com",
     "LC_TIME=de_DE.UTF-8",
     "GTK3_MODULES=xapp-gtk3-module",
-    "XDG_DATA_DIRS=/usr/share/unity:/usr/share/gnome:/usr/local/share/"
-    ":/usr/share/:/var/lib/snapd/desktop",
-    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    ":/usr/games:/usr/local/games:/snap/bin",
+    "XDG_DATA_DIRS=/usr/share/unity:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop",  # noqa
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",  # noqa
     "GDMSESSION=unity",
     "HISTFILESIZE=1000000",
     "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus",
@@ -289,6 +286,7 @@ _DIVIDE_BY_ZERO_ENVIRONMENT = [
     "OLDPWD=/home/user/previous_path",
     "_=/usr/bin/divide-by-zero",
 ]
+# pylint: enable=line-too-long
 _CET = datetime.timezone(datetime.timedelta(seconds=3600), "CET")
 DIVIDE_BY_ZERO_SYSTEMD_COREDUMP = {
     "COREDUMP_CGROUP": "/user.slice/user-1000.slice/user"
