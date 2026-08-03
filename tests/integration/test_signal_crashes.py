@@ -42,6 +42,7 @@ import pytest
 import apport.fileutils
 import apport.report
 from tests.helper import (
+    WAITING_TIMEOUT,
     get_gnu_coreutils_cmd,
     import_module_from_file,
     pidfd_open,
@@ -1359,7 +1360,7 @@ class T(unittest.TestCase):
         case of an failure or timeout, let the test case fail.
         """
         timeout = 0.0
-        while timeout < 5:
+        while timeout < WAITING_TIMEOUT:
             if os.path.exists(core_file):
                 break
             time.sleep(0.1)
@@ -1396,7 +1397,7 @@ class T(unittest.TestCase):
         with self.assertRaises(AssertionError):
             self.wait_for_core_file(123456789, "core")
         sleep_mock.assert_called_with(0.1)
-        self.assertEqual(sleep_mock.call_count, 51)
+        self.assertEqual(sleep_mock.call_count, 300)
 
     @unittest.mock.patch("os.path.exists")
     @unittest.mock.patch("psutil.Process", spec=psutil.Process)
@@ -1420,7 +1421,7 @@ class T(unittest.TestCase):
         """Wait until GDB execv()ed the child process."""
         gdb_process = psutil.Process(gdb_pid)
         timeout = 0.0
-        while timeout < 5:
+        while timeout < WAITING_TIMEOUT:
             gdb_children = gdb_process.children(recursive=True)
             for process in gdb_children:
                 try:
@@ -1476,4 +1477,4 @@ class T(unittest.TestCase):
             self.wait_for_gdb_child_process(123456789, self.TEST_EXECUTABLE)
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
-        self.assertEqual(sleep_mock.call_count, 51)
+        self.assertEqual(sleep_mock.call_count, 300)
