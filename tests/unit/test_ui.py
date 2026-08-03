@@ -18,7 +18,7 @@ class TestUI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        # pylint: disable-next=consider-using-with
+        # ruff: ignore[SIM115], pylint: disable-next=consider-using-with
         crashdb_conf_file = tempfile.NamedTemporaryFile("w+")
         cls.addClassCleanup(crashdb_conf_file.close)
         crashdb_conf_file.write(textwrap.dedent("""\

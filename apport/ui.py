@@ -204,7 +204,7 @@ def thread_collect_info(
         symb = {}
         try:
             with open(symptom_script, encoding="utf-8") as f:
-                # legacy, pylint: disable=exec-used
+                # ruff: ignore[S102], legacy, pylint: disable=exec-used
                 exec(compile(f.read(), symptom_script, "exec"), symb)
             package = symb["run"](report, ui)
             if not package:
@@ -216,7 +216,7 @@ def thread_collect_info(
             report["Symptom"] = os.path.splitext(os.path.basename(symptom_script))[0]
         except StopIteration:
             sys.exit(0)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # ruff: ignore[BLE001], pylint: disable=broad-except
             apport.logging.error("symptom script %s crashed:", symptom_script)
             traceback.print_exc()
             sys.exit(0)
@@ -850,9 +850,9 @@ class UserInterface:
             symb: dict[str, Any] = {}
             try:
                 with open(script, encoding="utf-8") as f:
-                    # legacy, pylint: disable=exec-used
+                    # ruff: ignore[S102], legacy, pylint: disable=exec-used
                     exec(compile(f.read(), script, "exec"), symb)
-            except Exception:  # pylint: disable=broad-except
+            except Exception:  # ruff: ignore[BLE001], pylint: disable=broad-except
                 apport.logging.error("symptom script %s is invalid", script)
                 traceback.print_exc()
                 continue
@@ -1532,7 +1532,8 @@ class UserInterface:
                             "This report is about a package that is not installed."
                         )
                         self.report["_MarkForUpload"] = "False"
-                except Exception as error:  # pylint: disable=broad-except
+                # ruff: ignore[BLE001], pylint: disable-next=broad-except
+                except Exception as error:
                     apport.logging.error("%s", repr(error))
                     self.report["UnreportableReason"] = (
                         _(
@@ -1716,7 +1717,7 @@ class UserInterface:
                 if webbrowser.open(url, new=1, autoraise=True):
                     return
                 error_details = ""
-        except Exception as error:  # pylint: disable=broad-except
+        except Exception as error:  # ruff: ignore[BLE001], pylint: disable=broad-except
             error_details = f"\n{error}"
 
         title = _("Unable to start web browser")

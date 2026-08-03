@@ -347,7 +347,7 @@ def _run_hook(report, ui, hook):
     symb = {}
     try:
         with open(hook, encoding="utf-8") as fd:
-            # legacy, pylint: disable=exec-used
+            # ruff: ignore[S102], legacy, pylint: disable=exec-used
             exec(compile(fd.read(), hook, "exec"), symb)
         try:
             symb["add_info"](report, ui)
@@ -360,7 +360,7 @@ def _run_hook(report, ui, hook):
                 raise
     except StopIteration:
         return True
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # ruff: ignore[BLE001], pylint: disable=broad-except
         hookname = os.path.splitext(os.path.basename(hook))[0].replace("-", "_")
         report["HookError_" + hookname] = traceback.format_exc().strip()
         apport.logging.error("hook %s crashed:", hook)

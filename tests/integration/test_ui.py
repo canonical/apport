@@ -58,7 +58,7 @@ class UserInterfaceMock(apport.ui.UserInterface):
 
     def __init__(self, argv: list[str] | None = None) -> None:
         # use our memory crashdb which is designed for testing
-        # closed in __del__, pylint: disable=consider-using-with
+        # ruff: ignore[SIM115], closed in __del__, pylint: disable=consider-using-with
         self.crashdb_conf = tempfile.NamedTemporaryFile()
         self.crashdb_conf.write(textwrap.dedent("""\
             default = 'testsuite'
@@ -232,7 +232,7 @@ class T(unittest.TestCase):
         self.report["CoreDump"] = problem_report.CompressedValue(b"\x01" * 100000)
 
         # write demo report into temporary file
-        # closed in tearDown, pylint: disable=consider-using-with
+        # ruff: ignore[SIM115], closed in tearDown, pylint: disable=consider-using-with
         self.report_file = tempfile.NamedTemporaryFile()
         self.update_report_file()
 

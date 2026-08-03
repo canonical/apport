@@ -246,7 +246,7 @@ def _log_signal_handler(sgn, _unused_frame):
         logger.error("Got signal %i, aborting; frame:", sgn)
         for s in inspect.stack():
             logger.error("%s", str(s))
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # ruff: ignore[BLE001, S110], pylint: disable=broad-except
         pass
     sys.exit(1)
 
@@ -803,7 +803,7 @@ def main(args: list[str]) -> int:
         return process_crash_from_kernel(options)
     except (SystemExit, KeyboardInterrupt):
         pass
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # ruff: ignore[BLE001], pylint: disable=broad-except
         logger = logging.getLogger()
         logger.error("Unhandled exception:")
         traceback.print_exc()

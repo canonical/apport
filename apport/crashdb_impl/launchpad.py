@@ -1131,7 +1131,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         ]
 
         # write MIME/Multipart version into temporary file
-        mime = tempfile.TemporaryFile()
+        mime = tempfile.TemporaryFile()  # ruff: ignore[SIM115]
         report.write_mime(
             mime,
             extra_headers=hdr,

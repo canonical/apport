@@ -390,7 +390,8 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                # hard to change, pylint: disable-next=consider-using-with
+                # hard to change
+                # ruff: ignore[SIM115], pylint: disable-next=consider-using-with
                 cur_file = open(os.path.join(basedir, cur_hash), "w", encoding="utf-8")
 
             assert cur_file is not None
@@ -907,7 +908,7 @@ def get_crashdb(
     assert conf
     settings: dict[str, Any] = {}
     with open(conf, encoding="utf-8") as f:
-        # legacy, pylint: disable=exec-used
+        # ruff: ignore[S102], legacy, pylint: disable=exec-used
         exec(compile(f.read(), conf, "exec"), settings)
 
     # Load third parties crashdb.conf
@@ -918,9 +919,10 @@ def get_crashdb(
             if os.path.isfile(cfpath) and cf.endswith(".conf"):
                 try:
                     with open(cfpath, encoding="utf-8") as f:
-                        # legacy, pylint: disable=exec-used
+                        # ruff: ignore[S102], legacy, pylint: disable=exec-used
                         exec(compile(f.read(), cfpath, "exec"), settings["databases"])
-                except Exception as error:  # pylint: disable=broad-except
+                # ruff: ignore[BLE001], pylint: disable-next=broad-except
+                except Exception as error:
                     # ignore broken files
                     sys.stderr.write(f"Invalid file {cfpath}: {error}\n")
 

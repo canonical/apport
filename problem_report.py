@@ -223,7 +223,7 @@ class CompressedFile:
 
     def __init__(self, filename: str) -> None:
         self.filename = filename
-        # pylint: disable-next=consider-using-with
+        # ruff: ignore[SIM115], pylint: disable-next=consider-using-with
         self._compressed_file = open(self.filename, "rb")
 
     def __del__(self):
@@ -789,7 +789,8 @@ class ProblemReport(collections.UserDict):
             if hasattr(value[0], "read"):
                 f = value[0]  # file-like object
             else:
-                # hard to change, pylint: disable=consider-using-with
+                # hard to change
+                # ruff: ignore[SIM115], pylint: disable=consider-using-with
                 f = open(value[0], "rb")  # file name
             while True:
                 block = f.read(CHUNK_SIZE)
@@ -923,7 +924,8 @@ class ProblemReport(collections.UserDict):
                 if hasattr(v[0], "read"):
                     f = v[0]  # file-like object
                 else:
-                    # hard to change, pylint: disable=consider-using-with
+                    # hard to change
+                    # ruff: ignore[SIM115], pylint: disable=consider-using-with
                     f = open(v[0], "rb")  # file name
                 if k.endswith(".gz"):
                     attach_value = f.read()

@@ -930,7 +930,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         # configure apt for sandbox
         env = os.environ.copy()
         if sandbox:
-            # hard to change, pylint: disable=consider-using-with
+            # ruff: ignore[SIM115], hard to change, pylint: disable=consider-using-with
             f = tempfile.NamedTemporaryFile("w+")
             f.write(
                 f'Dir "{sandbox}";\n'
