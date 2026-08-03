@@ -47,7 +47,7 @@ class Github:
             url, data=data.encode("utf-8"), headers=headers, method="POST"
         )
         try:
-            with urllib.request.urlopen(request, timeout=5.0) as response:
+            with urllib.request.urlopen(request, timeout=30.0) as response:
                 return json.loads(response.read())
         except urllib.error.URLError as err:
             if self.message_callback:
