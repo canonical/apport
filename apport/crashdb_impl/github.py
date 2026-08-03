@@ -49,7 +49,7 @@ class Github:
         if self.__access_token:
             headers["Authorization"] = f"token {self.__access_token}"
         try:
-            result = requests.post(url, headers=headers, data=data, timeout=5.0)
+            result = requests.post(url, headers=headers, data=data, timeout=30.0)
         except requests.RequestException as err:
             self.message_callback(
                 "Failed connection",
