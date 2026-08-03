@@ -92,6 +92,7 @@ def run_test_executable(
 ) -> Iterator[int]:
     """Run test executable and yield the process ID. Kill process afterwards."""
     with subprocess.Popen(args, env=env) as test_process:
+        wait_for_proc_exec(test_process.pid)
         try:
             yield test_process.pid
         finally:
@@ -162,18 +163,27 @@ def wait_for_sleeping_state(pid: int, timeout: float = WAITING_TIMEOUT) -> None:
 
 
 def wait_for_proc_exec(pid: int, timeout_sec: float = WAITING_TIMEOUT) -> None:
-    """Wait for a spawned child process to populate /proc/<pid>/cmdline."""
+    """Wait for a spawned child process to complete execve().
+
+    Immediately after fork(), /proc/{pid}/cmdline temporarily inherits the
+    parent test runner's command line. This method blocks until execve() has
+    replaced the process image and updated /proc/{pid}/cmdline to match the
+    child process's own command line.
+    """
+    parent_cmdline = pathlib.Path("/proc/self/cmdline").read_text(encoding="utf-8")
     elapsed_time = 0.0
     while elapsed_time < timeout_sec:
         with open(f"/proc/{pid}/cmdline", encoding="utf-8") as fd:
-            if fd.read():
+            content = fd.read()
+            if content and content != parent_cmdline:
                 return
 
         time.sleep(0.1)
         elapsed_time += 0.1
 
     raise TimeoutError(
-        f"/proc/{pid}/cmdline not readable within {int(elapsed_time)} seconds."
+        f"/proc/{pid}/cmdline was not updated from parent cmdline"
+        f" within at least {int(elapsed_time)} seconds."
     )
 
 
