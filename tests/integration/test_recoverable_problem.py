@@ -18,6 +18,7 @@ import unittest
 import unittest.mock
 
 import apport.report
+from tests.helper import WAITING_TIMEOUT
 from tests.paths import get_data_directory, local_test_environment
 
 
@@ -36,7 +37,7 @@ class TestRecoverableProblem(unittest.TestCase):
     # pylint: disable-next=inconsistent-return-statements
     def _wait_for_report(self):
         seconds = 0
-        while seconds < 10:
+        while seconds < WAITING_TIMEOUT:
             crashes = os.listdir(self.report_dir)
             if crashes:
                 assert len(crashes) == 1
@@ -58,7 +59,7 @@ class TestRecoverableProblem(unittest.TestCase):
             self._wait_for_report()
         fail_mock.assert_called_once()
         sleep_mock.assert_called_with(0.1)
-        self.assertEqual(sleep_mock.call_count, 101)
+        self.assertEqual(sleep_mock.call_count, 300)
 
     def _call_recoverable_problem(self, data):
         cmd = [self.datadir / "recoverable_problem"]

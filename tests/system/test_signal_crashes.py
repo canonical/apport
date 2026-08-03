@@ -19,6 +19,7 @@ import psutil
 
 import apport.fileutils
 from tests.helper import (
+    WAITING_TIMEOUT,
     get_init_system,
     pidof,
     skip_if_command_is_missing,
@@ -323,10 +324,10 @@ class T(unittest.TestCase):
 
         wait_sleep_mock.assert_not_called()
 
-    def wait_for_apport_to_finish(self, timeout_sec=10.0):
+    def wait_for_apport_to_finish(self, timeout_sec=WAITING_TIMEOUT):
         self.wait_for_no_instance_running(self.apport_path, timeout_sec)
 
-    def wait_for_no_instance_running(self, program, timeout_sec=10.0):
+    def wait_for_no_instance_running(self, program, timeout_sec=WAITING_TIMEOUT):
         while timeout_sec > 0:
             if not pidof(program) - self.running_test_executables:
                 break
