@@ -161,6 +161,22 @@ def wait_for_sleeping_state(pid: int, timeout: float = WAITING_TIMEOUT) -> None:
     )
 
 
+def wait_for_proc_exec(pid: int, timeout_sec: float = WAITING_TIMEOUT) -> None:
+    """Wait for a spawned child process to populate /proc/<pid>/cmdline."""
+    elapsed_time = 0.0
+    while elapsed_time < timeout_sec:
+        with open(f"/proc/{pid}/cmdline", encoding="utf-8") as fd:
+            if fd.read():
+                return
+
+        time.sleep(0.1)
+        elapsed_time += 0.1
+
+    raise TimeoutError(
+        f"/proc/{pid}/cmdline not readable within {int(elapsed_time)} seconds."
+    )
+
+
 def wait_for_process_to_appear(
     process: str, already_running: Set[int], timeout: float = WAITING_TIMEOUT
 ) -> int:

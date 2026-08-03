@@ -3,12 +3,13 @@
 # pylint: disable=missing-class-docstring,missing-function-docstring
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 import psutil
 
 from tests.helper import (
     get_init_system,
+    wait_for_proc_exec,
     wait_for_process_to_appear,
     wait_for_sleeping_state,
     wrap_object,
@@ -37,6 +38,16 @@ class TestTestHelper(unittest.TestCase):
             multiply = Multiply(7)
             self.assertEqual(multiply.multiply(6), 42)
         mock.assert_called_once_with(7)
+
+    @patch("time.sleep")
+    def test_wait_for_proc_exec_failure(self, sleep_mock: MagicMock) -> None:
+        """Test wait_for_proc_exec() helper runs into timeout."""
+        open_mock = mock_open(read_data="")
+        with patch("builtins.open", open_mock), self.assertRaises(TimeoutError):
+            wait_for_proc_exec(12345, 0.3)
+        open_mock.assert_called_with("/proc/12345/cmdline", encoding="utf-8")
+        sleep_mock.assert_called_with(0.1)
+        self.assertEqual(sleep_mock.call_count, 3)
 
     @patch("time.sleep")
     @patch("psutil.Process", spec=psutil.Process)
