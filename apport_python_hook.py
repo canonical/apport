@@ -99,7 +99,7 @@ def apport_excepthook(
                 # (LP #914220)
                 return
             if name == "org.freedesktop.DBus.Error.ServiceUnknown":
-                report.update(dbus_service_unknown_analysis(exc_obj))
+                report.update(dbus_service_unknown_analysis(exc_obj, exc_tb))
             else:
                 report["_PythonExceptionQualifier"] = name
 
@@ -160,28 +160,42 @@ def apport_excepthook(
             sys.__excepthook__(exc_type, exc_obj, exc_tb)
 
 
-def dbus_service_unknown_analysis(exc_obj: BaseException) -> dict[str, str]:
+def extract_bus_name_from_traceback(exc_tb: types.TracebackType) -> str:
+    """Extract the requested bus name from the frame locals within dbus-python."""
+    # pylint: disable=import-outside-toplevel; for Python startup time
+    import traceback
+
+    for frame, _ in traceback.walk_tb(exc_tb):
+        module_name = frame.f_globals.get("__name__", "")
+        if module_name.startswith("dbus.") or module_name == "dbus":
+            bus_name = frame.f_locals.get("bus_name")
+            if isinstance(bus_name, str):
+                return bus_name
+
+    raise ValueError("Could not extract D-Bus service name from traceback")
+
+
+def dbus_service_unknown_analysis(
+    exc_obj: BaseException, exc_tb: types.TracebackType | None
+) -> dict[str, str]:
     """Analyze D-Bus service error and add analysis to report."""
     # pylint: disable=import-outside-toplevel; for Python startup time
-    import re
     import subprocess
     from configparser import ConfigParser, NoOptionError, NoSectionError
     from glob import glob
 
     assert hasattr(exc_obj, "get_dbus_message")
     # determine D-BUS name
-    match = re.search(
-        r"name\s+(\S+)\s+was not provided by any .service", exc_obj.get_dbus_message()
-    )
-    if not match:
+    try:
+        assert exc_tb is not None
+        dbus_name = extract_bus_name_from_traceback(exc_tb)
+    except (AssertionError, ValueError):
         if sys.stderr:
             sys.stderr.write(
                 "Error: cannot parse D-BUS name from exception: "
                 + exc_obj.get_dbus_message()
             )
         return {}
-
-    dbus_name = match.group(1)
 
     # determine .service file and Exec name for the D-BUS name
     services = []  # tuples of (service file, exe name, running)
