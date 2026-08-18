@@ -99,7 +99,7 @@ def apport_excepthook(
                 # (LP #914220)
                 return
             if name == "org.freedesktop.DBus.Error.ServiceUnknown":
-                dbus_service_unknown_analysis(exc_obj, report)
+                report.update(dbus_service_unknown_analysis(exc_obj))
             else:
                 report["_PythonExceptionQualifier"] = name
 
@@ -160,7 +160,7 @@ def apport_excepthook(
             sys.__excepthook__(exc_type, exc_obj, exc_tb)
 
 
-def dbus_service_unknown_analysis(exc_obj, report):
+def dbus_service_unknown_analysis(exc_obj: BaseException) -> dict[str, str]:
     """Analyze D-Bus service error and add analysis to report."""
     # pylint: disable=import-outside-toplevel; for Python startup time
     import re
@@ -168,6 +168,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
     from configparser import ConfigParser, NoOptionError, NoSectionError
     from glob import glob
 
+    assert hasattr(exc_obj, "get_dbus_message")
     # determine D-BUS name
     match = re.search(
         r"name\s+(\S+)\s+was not provided by any .service", exc_obj.get_dbus_message()
@@ -178,7 +179,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
                 "Error: cannot parse D-BUS name from exception: "
                 + exc_obj.get_dbus_message()
             )
-        return
+        return {}
 
     dbus_name = match.group(1)
 
@@ -203,13 +204,12 @@ def dbus_service_unknown_analysis(exc_obj, report):
             continue
 
     if not services:
-        report["DbusErrorAnalysis"] = f"no service file providing {dbus_name}"
+        analysis = f"no service file providing {dbus_name}"
     else:
-        report["DbusErrorAnalysis"] = "provided by"
+        analysis = "provided by"
         for service_file, exe, running in services:
-            report[
-                "DbusErrorAnalysis"
-            ] += f" {service_file} ({exe} is {'' if running else 'not '}running)"
+            analysis += f" {service_file} ({exe} is {'' if running else 'not '}running)"
+    return {"DbusErrorAnalysis": analysis}
 
 
 def install():
