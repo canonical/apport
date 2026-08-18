@@ -178,7 +178,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
                 "Error: cannot parse D-BUS name from exception: "
                 + exc_obj.get_dbus_message()
             )
-            return
+        return
 
     dbus_name = match.group(1)
 
