@@ -1084,6 +1084,7 @@ def assert_elf_arch(path, expected):
         "armhf": "ARM",
         "i386": "80386",
         "ppc64el": "PowerPC64",
+        "riscv64": "RISC-V",
         "s390x": "IBM S/390",
     }
 
