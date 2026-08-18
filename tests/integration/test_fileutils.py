@@ -325,6 +325,7 @@ class T(unittest.TestCase):
             fd.write(f"""\
 2e41290da2fa3f68bd3313174467e3b5  {f1[1:]}
 f6423dfbc4faf022e58b4d3f5ff71a70  {f2}
+deadbeef000001111110000011110000  /non-existing/file
 """)
         self.assertEqual(
             apport.fileutils.check_files_md5(sumfile), [], "correct md5sums"

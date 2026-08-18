@@ -686,7 +686,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             return []
 
         # create a list of files with a newer timestamp for md5sum'ing
-        sums = b""
+        modified = []
         sumfile = (
             f"/var/lib/dpkg/info/{package}:{self.get_system_architecture()}.md5sums"
         )
@@ -696,32 +696,37 @@ class _AptDpkgPackageInfo(PackageInfo):
                 # some packages do not ship md5sums
                 return []
 
-        with open(sumfile, "rb") as fd:
+        with open(sumfile, "r", encoding="utf-8", errors="replace") as fd:
             for line in fd:
                 try:
                     # ignore lines with NUL bytes (happens, LP#96050)
-                    if b"\0" in line:
+                    if "\0" in line:
                         apport.logging.warning(
                             "%s contains NUL character, ignoring line", sumfile
                         )
                         continue
-                    words = line.split()
-                    if not words:
+                    # md5sum format: <32 hex hash><2 spaces><filepath>
+                    expected_hash = line[:32]
+                    filepath = line[34:]
+                    if not filepath:
                         apport.logging.warning(
-                            "%s contains empty line, ignoring line", sumfile
+                            "%s contains empty file path, ignoring line: %s",
+                            sumfile,
+                            line,
                         )
                         continue
-                    s = os.stat(f"/{words[-1].decode('UTF-8')}".encode())
+                    fullpath = pathlib.Path(f"/{filepath}")
+                    s = fullpath.stat()
                     if max(s.st_mtime, s.st_ctime) <= max_time:
                         continue
+                    with fullpath.open("rb") as target_file:
+                        md5sum = hashlib.file_digest(target_file, "md5").hexdigest()
+                    if md5sum.lower() != expected_hash.lower():
+                        modified.append(filepath)
                 except OSError:
                     pass
 
-                sums += line
-
-        if sums:
-            return self._check_files_md5(sums)
-        return []
+        return modified
 
     def get_modified_conffiles(self, package: str) -> dict[str, bytes | str]:
         """Return modified configuration files of a package.
@@ -1543,35 +1548,6 @@ class _AptDpkgPackageInfo(PackageInfo):
         if dpkg.returncode == 0:
             return dpkg.stdout.decode("UTF-8")
         raise ValueError("package does not exist")
-
-    @staticmethod
-    def _check_files_md5(sumfile: bytes) -> list[str]:
-        """Call md5sum.
-
-        This is separate from get_modified_files so that it is automatically
-        testable.
-        """
-        env: dict[str, str] = {}
-        md5sum = subprocess.run(
-            ["/usr/bin/md5sum", "-c"],
-            check=False,
-            input=sumfile,
-            capture_output=True,
-            cwd="/",
-            env=env,
-        )
-
-        # if md5sum succeeded, don't bother parsing the output
-        if md5sum.returncode == 0:
-            return []
-        out = md5sum.stdout.decode("UTF-8", errors="replace")
-
-        mismatches = []
-        for line in out.splitlines():
-            if line.endswith("FAILED"):
-                mismatches.append(line.rsplit(":", 1)[0])
-
-        return mismatches
 
     @staticmethod
     def _get_primary_mirror_from_apt_sources(apt_dir: str) -> str:

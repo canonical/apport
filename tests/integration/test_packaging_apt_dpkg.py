@@ -37,39 +37,6 @@ class T(unittest.TestCase):
         os.environ.update(self.orig_environ)
         shutil.rmtree(self.workdir)
 
-    def test_check_files_md5(self) -> None:
-        """_check_files_md5()."""
-        td = tempfile.mkdtemp()
-        try:
-            f1 = os.path.join(td, "test 1.txt")
-            f2 = os.path.join(td, "test:2.txt")
-            with open(f1, "w", encoding="utf-8") as fd:
-                fd.write("Some stuff")
-            with open(f2, "w", encoding="utf-8") as fd:
-                fd.write("More stuff")
-            # use one relative and one absolute path in checksums file
-            sumfile = (
-                b"2e41290da2fa3f68bd3313174467e3b5  " + f1[1:].encode() + b"\n"
-                b"f6423dfbc4faf022e58b4d3f5ff71a70  " + f2.encode() + b"\n"
-                b"deadbeef000001111110000011110000  /bin/\xc3\xa4"
-            )
-            self.assertEqual(impl._check_files_md5(sumfile), [], "correct md5sums")
-
-            with open(f1, "w", encoding="utf-8") as fd:
-                fd.write("Some stuff!")
-            self.assertEqual(impl._check_files_md5(sumfile), [f1[1:]], "file 1 wrong")
-            with open(f2, "w", encoding="utf-8") as fd:
-                fd.write("More stuff!")
-            self.assertEqual(
-                impl._check_files_md5(sumfile), [f1[1:], f2], "files 1 and 2 wrong"
-            )
-            with open(f1, "w", encoding="utf-8") as fd:
-                fd.write("Some stuff")
-            self.assertEqual(impl._check_files_md5(sumfile), [f2], "file 2 wrong")
-
-        finally:
-            shutil.rmtree(td)
-
     def test_get_version(self) -> None:
         """get_version()."""
         self.assertTrue(impl.get_version("libc6").startswith("2"))

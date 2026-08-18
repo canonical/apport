@@ -16,11 +16,13 @@ import configparser
 import contextlib
 import functools
 import glob
+import hashlib
 import http.client
 import io
 import json
 import operator
 import os
+import pathlib
 import pwd
 import re
 import socket
@@ -446,22 +448,21 @@ def check_files_md5(sumfile: str) -> list[str]:
     Return a list of files that don't match.
     """
     assert os.path.exists(sumfile)
-    md5sum = subprocess.run(
-        ["/usr/bin/md5sum", "-c", sumfile],
-        check=False,
-        capture_output=True,
-        cwd="/",
-        env={},
-    )
-
-    # if md5sum succeeded, don't bother parsing the output
-    if md5sum.returncode == 0:
-        return []
-
+    root = pathlib.Path("/")
+    sums = pathlib.Path(sumfile).read_text(encoding="utf-8")
     mismatches = []
-    for line in md5sum.stdout.decode().splitlines():
-        if line.endswith("FAILED"):
-            mismatches.append(line.rsplit(":", 1)[0])
+    for line in sums.splitlines():
+        # md5sum format: <32 hex hash><2 spaces><filepath>
+        expected_hash = line[:32]
+        filepath = line[34:]
+
+        try:
+            with (root / filepath).open("rb") as target_file:
+                md5sum = hashlib.file_digest(target_file, "md5").hexdigest()
+            if md5sum.lower() != expected_hash.lower():
+                mismatches.append(filepath)
+        except OSError:
+            pass
 
     return mismatches
 
