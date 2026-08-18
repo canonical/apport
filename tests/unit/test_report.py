@@ -1596,7 +1596,7 @@ No symbol table info available.
     def test_add_kernel_crash_info(self, run_mock: MagicMock) -> None:
         """add_kernel_crash_info() on a fake vmcore."""
         run_mock.return_value = subprocess.CompletedProcess(
-            args=MagicMock(), returncode=0, stdout=b"kernel stack trace", stderr=b""
+            args=MagicMock(), returncode=0, stdout="kernel stack trace", stderr=""
         )
         report = apport.report.Report("KernelCrash")
         report["VmCore"] = problem_report.CompressedValue(b"\x01" * 100, name="VmCore")
@@ -1607,7 +1607,7 @@ No symbol table info available.
 
         self.assertTrue(report.add_kernel_crash_info())
 
-        self.assertEqual(report.get("Stacktrace"), b"kernel stack trace")
+        self.assertEqual(report.get("Stacktrace"), "kernel stack trace")
         run_mock.assert_called_once()
         called_cmd = run_mock.call_args[0][0]
         self.assertEqual(
@@ -1623,8 +1623,8 @@ No symbol table info available.
         run_mock.return_value = subprocess.CompletedProcess(
             args=MagicMock(),
             returncode=1,
-            stdout=b"read_maps: unable to read header from $vmcore, errno = 0",
-            stderr=b"",
+            stdout="read_maps: unable to read header from $vmcore, errno = 0",
+            stderr="",
         )
         report = apport.report.Report("KernelCrash")
         report["VmCore"] = b"\x01" * 100

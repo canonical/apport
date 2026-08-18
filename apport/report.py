@@ -971,7 +971,8 @@ class Report(problem_report.ProblemReport):
                 crash = subprocess.run(
                     command,
                     check=False,
-                    input=b"bt -a -f\nps\nrunq\nquit\n",
+                    encoding="UTF-8",
+                    input="bt -a -f\nps\nrunq\nquit\n",
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                 )
