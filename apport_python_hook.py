@@ -206,10 +206,10 @@ def dbus_service_unknown_analysis(exc_obj, report):
         report["DbusErrorAnalysis"] = f"no service file providing {dbus_name}"
     else:
         report["DbusErrorAnalysis"] = "provided by"
-        for service, exe, running in services:
+        for service_file, exe, running in services:
             report[
                 "DbusErrorAnalysis"
-            ] += f" {service} ({exe} is {'' if running else 'not '}running)"
+            ] += f" {service_file} ({exe} is {'' if running else 'not '}running)"
 
 
 def install():
