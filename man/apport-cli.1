@@ -141,6 +141,14 @@ in their
 .B ~/.bashrc
 or temporarily when calling the apport frontend (\-cli, \-gtk, or \-kde).
 
+.TP
+.B APPORT_LAUNCHPAD_INSTANCE
+Use the given Launchpad instance instead of \fIproduction\fR.
+The supported instances are defined by python-launchpadlib.
+For example: \fIproduction\fR (for https://launchpad.net/),
+\fIqastaging\fR (for https://qastaging.launchpad.net/), or
+\fIstaging\fR (for https://staging.launchpad.net/).
+
 .SH FILES
 .TP
 .B /usr/share/apport/symptoms/*.py

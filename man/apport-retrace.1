@@ -161,6 +161,16 @@ specified,
 .B apport\-retrace
 will not check for duplicates.
 
+.SH ENVIRONMENT
+
+.TP
+.B APPORT_LAUNCHPAD_INSTANCE
+Use the given Launchpad instance instead of \fIproduction\fR.
+The supported instances are defined by python-launchpadlib.
+For example: \fIproduction\fR (for https://launchpad.net/),
+\fIqastaging\fR (for https://qastaging.launchpad.net/), or
+\fIstaging\fR (for https://staging.launchpad.net/).
+
 .SH EXAMPLES
 
 Reprocess recent local gedit crash report after the debug symbol packages have

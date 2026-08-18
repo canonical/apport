@@ -111,6 +111,14 @@ in their
 or temporarily on the command line when calling
 .B apport\-bug\fR.
 
+.TP
+.B APPORT_LAUNCHPAD_INSTANCE
+Use the given Launchpad instance instead of \fIproduction\fR.
+The supported instances are defined by python-launchpadlib.
+For example: \fIproduction\fR (for https://launchpad.net/),
+\fIqastaging\fR (for https://qastaging.launchpad.net/), or
+\fIstaging\fR (for https://staging.launchpad.net/).
+
 .SH FILES
 apport crash files are written in to 
 .B /var/crash
