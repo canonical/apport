@@ -6,6 +6,7 @@
 
 import glob
 import gzip
+import locale
 import os
 import pathlib
 import shutil
@@ -22,6 +23,7 @@ from apport.packaging_impl.apt_dpkg import (
     _parse_deb822_sources,
     impl,
 )
+from tests.helper import set_locale
 from tests.paths import get_test_data_directory
 
 if shutil.which("dpkg") is None:
@@ -353,6 +355,7 @@ def test_install_packages_system(cachedir, workdir, rootdir, apt_style):
 
 
 @pytest.mark.requires_internet
+@set_locale(locale.LC_MESSAGES, "C.UTF-8")
 def test_install_packages_error(configdir, cachedir, rootdir, apt_style):
     """install_packages() with errors"""
     # sources.list with invalid format
