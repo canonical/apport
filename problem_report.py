@@ -36,6 +36,10 @@ GZIP_HEADER_START = b"\037\213\010"
 ZSTANDARD_MAGIC_NUMBER = b"\x28\xb5\x2f\xfd"
 
 
+class InvalidProblemReportKeyError(ValueError):
+    """Raised when a problem report key contains invalid characters."""
+
+
 class MalformedProblemReport(ValueError):
     """Raised when a problem report violates the crash report format.
 
@@ -492,15 +496,15 @@ class ProblemReport(collections.UserDict):
                 if binary is False:
                     skipped_keys.append(key)
                 elif binary == "compressed":
-                    self.data[key] = CompressedValue(
+                    self[key] = CompressedValue(
                         name=key, compressed_value=b"".join(iterator)
                     )
                 else:
                     value = b"".join(CompressedValue.decode_compressed_stream(iterator))
-                    self.data[key] = self._try_unicode(key, value)
+                    self[key] = self._try_unicode(key, value)
 
             else:
-                self.data[key] = self._try_unicode(key, b"".join(iterator))
+                self[key] = self._try_unicode(key, b"".join(iterator))
 
             if remaining_keys is not None:
                 remaining_keys.remove(key)
@@ -993,7 +997,7 @@ class ProblemReport(collections.UserDict):
     def __setitem__(self, k: str, v: ProblemReportValue) -> None:
         assert hasattr(k, "isalnum")
         if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
-            raise ValueError(
+            raise InvalidProblemReportKeyError(
                 f"key '{k}' contains invalid characters"
                 f" (only numbers, letters, '.', '_', and '-' are allowed)"
             )
