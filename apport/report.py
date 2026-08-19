@@ -1943,8 +1943,8 @@ class Report(problem_report.ProblemReport):
         if isinstance(coredump, bytes):
             fd, core = tempfile.mkstemp(prefix="apport_core_")
             atexit.register(os.unlink, core)
-            os.write(fd, coredump)
-            os.close(fd)
+            with os.fdopen(fd, "wb") as f:
+                f.write(coredump)
         elif isinstance(coredump, problem_report.CompressedValue):
             fd, core = tempfile.mkstemp(prefix="apport_core_")
             atexit.register(os.unlink, core)

@@ -263,6 +263,18 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
+def write_all(fd: int, data: bytes) -> None:
+    """Write all bytes to a file descriptor, handling potential partial writes."""
+    view = memoryview(data)
+    while view:
+        written = os.write(fd, view)
+        if written == 0:
+            raise OSError(f"os.write({fd}) returned 0 bytes written")
+        view = view[written:]
+
+
+# TODO: Split into smaller functions
+# pylint: disable-next=too-complex,too-many-locals
 def write_user_coredump(
     core_path: str,
     limit: int,
@@ -311,7 +323,13 @@ def write_user_coredump(
             os.unlink(core_path, dir_fd=cwd)
             return
         logger.info("writing core dump %s of size %i", core_path, core_size)
-        os.write(core_file, coredump)
+        try:
+            write_all(core_file, coredump)
+        except OSError as error:
+            logger.error("aborting core dump writing, could not write (%s)", error)
+            os.close(core_file)
+            os.unlink(core_path, dir_fd=cwd)
+            return
     else:
         assert coredump_fd is not None
         block = os.read(coredump_fd, 1048576)
@@ -328,8 +346,10 @@ def write_user_coredump(
                 os.close(core_file)
                 os.unlink(core_path, dir_fd=cwd)
                 return
-            if os.write(core_file, block) != size:
-                logger.error("aborting core dump writing, could not write")
+            try:
+                write_all(core_file, block)
+            except OSError as error:
+                logger.error("aborting core dump writing, could not write (%s)", error)
                 os.close(core_file)
                 os.unlink(core_path, dir_fd=cwd)
                 return
