@@ -113,7 +113,9 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
     def test_consistency_checks(self) -> None:
         """Various error conditions."""
         pr = problem_report.ProblemReport()
-        self.assertRaises(ValueError, pr.__setitem__, "a b", "1")
+        self.assertRaises(
+            problem_report.InvalidProblemReportKeyError, pr.__setitem__, "a b", "1"
+        )
         self.assertRaises(TypeError, pr.__setitem__, "a", 1)
         self.assertRaises(TypeError, pr.__setitem__, "a", (1,))
         self.assertRaises(TypeError, pr.__setitem__, "a", ("/tmp/nonexistent", ""))
@@ -262,6 +264,17 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
                 r"Line '\\n' does not contain a colon",
             ):
                 report.load(report_file)
+
+    def test_load_invalid_key(self) -> None:
+        """Throw exception when the problem report key uses invalid characters."""
+        report = problem_report.ProblemReport()
+        with (
+            io.BytesIO(b"Invalid/key: value") as report_file,
+            self.assertRaisesRegex(
+                problem_report.InvalidProblemReportKeyError, "key 'Invalid/key'"
+            ),
+        ):
+            report.load(report_file)
 
     def test_load_invalid_utf8(self) -> None:
         """Throw exception when binary file is invalid UTF-8."""
