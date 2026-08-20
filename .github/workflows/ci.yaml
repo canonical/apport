@@ -68,7 +68,6 @@ jobs:
         container:
           - debian:stable-slim
           - debian:testing-slim
-          - ubuntu:noble
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
@@ -150,7 +149,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
     container:
       image: ${{ matrix.container }}
@@ -181,7 +179,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
@@ -266,7 +263,6 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
