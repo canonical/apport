@@ -312,23 +312,7 @@ class CompressedValue:
     def write(self, file: typing.IO[bytes]) -> None:
         """Write uncompressed value into given file-like object."""
         assert self.compressed_value
-
-        if self.compressed_value.startswith(ZSTANDARD_MAGIC_NUMBER):
-            decompressor = _get_zstandard_decompressor()
-            decompressor.copy_stream(io.BytesIO(self.compressed_value), file)
-            return
-
-        if self.compressed_value.startswith(GZIP_HEADER_START):
-            with gzip.GzipFile(fileobj=io.BytesIO(self.compressed_value)) as gz:
-                while True:
-                    block = gz.read(CHUNK_SIZE)
-                    if not block:
-                        break
-                    file.write(block)
-                return
-
-        # legacy zlib format
-        file.write(zlib.decompress(self.compressed_value))
+        file.writelines(_decode_compressed_stream(self.iter_compressed()))
 
     def iter_compressed(self, chunk_size: int = CHUNK_SIZE) -> Iterator[bytes]:
         """Iterate over the compressed content in chunks."""
