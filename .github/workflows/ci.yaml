@@ -72,7 +72,7 @@ jobs:
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -106,7 +106,7 @@ jobs:
           path: ./coverage*.xml
 
   unit-and-integration-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:
@@ -185,7 +185,7 @@ jobs:
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
@@ -218,7 +218,7 @@ jobs:
           path: ./coverage.xml
 
   system-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:
@@ -270,7 +270,7 @@ jobs:
           - ubuntu:resolute
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
@@ -323,7 +323,7 @@ jobs:
           path: ./coverage.xml
 
   system-internet-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:
