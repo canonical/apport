@@ -1,6 +1,46 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.36.0 (2026-08-20)
+-------------------
+
+### Changed
+
+* crashdb/github: increase timeout from 5 to 30 seconds
+  ([LP: #2159030](https://launchpad.net/bugs/2159030))
+* apport_python_hook: support dbus-broker
+  ([LP: #2163744](https://launchpad.net/bugs/2163744))
+* problem_report:
+  - submit JSON attachments as such
+  - let `load()` return skipped keys
+* test: increase waiting timeout from 5/10 to 30 seconds
+  ([LP: #2159030](https://launchpad.net/bugs/2159030))
+
+### Fixed
+
+* SECURITY UPDATE: path traversal during report extraction
+  ([LP: #2161697](https://launchpad.net/bugs/2161697))
+  - problem_report: validate key names in `ProblemReport.load`
+  - CVE-2026-77113
+* Fix ruff 0.16.0 complaints
+  - rename `apport.REThread.REThread` to `apport.thread.ReturnThread`
+* report: decode crash output to string in `add_kernel_crash_info`
+  ([LP: #2146806](https://launchpad.net/bugs/2146806))
+* rewrite `check_files_md5` in pure Python, because GNU coreutils 9.11
+  and rust-coreutils 0.9 changed quoting in `md5sum`
+  ([LP: #2161957](https://launchpad.net/bugs/2161957))
+* apport_python_hook: fix returning when parsing D-Bus name fails
+  ([LP: #2163744](https://launchpad.net/bugs/2163744))
+* Fix partial writes for coredumps larger than 2 GiB
+  ([LP: #2109979](https://launchpad.net/bugs/2109979))
+* problem_report: check if eof is reached in `decode_compressed_stream`
+* test:
+  - wait for child processes to complete `execve()`
+    ([LP: #2161888](https://launchpad.net/bugs/2161888))
+  - add riscv64 entry to archmap
+    ([LP: #2159030](https://launchpad.net/bugs/2159030))
+  - set locale for `test_install_packages_error`
+
 2.35.0 (2026-07-02)
 -------------------
 
