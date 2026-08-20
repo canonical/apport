@@ -137,15 +137,14 @@ def _decode_compressed_stream(entry: Iterator[bytes]) -> Iterator[bytes]:
     if block.startswith(ZSTANDARD_MAGIC_NUMBER):
         yield from _zstandard_decoder(entry, block)
         return
-    # skip gzip header, if present
     if block.startswith(GZIP_HEADER_START):
-        decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
-        yield decompressor.decompress(_strip_gzip_header(block))
+        # Enable native gzip header & trailer processing
+        decompressor = zlib.decompressobj(16 + zlib.MAX_WBITS)
     else:
         # legacy zlib-only format used default block size
         decompressor = zlib.decompressobj()
-        yield decompressor.decompress(block)
 
+    yield decompressor.decompress(block)
     for block in entry:
         yield decompressor.decompress(block)
     yield decompressor.flush()
@@ -162,26 +161,6 @@ def _derive_compression(name: str, value: bytes) -> tuple[str, str]:
     if value.startswith(ZSTANDARD_MAGIC_NUMBER):
         return ("zstd", ".zst")
     raise ValueError(f"Unknown compression for {name}")
-
-
-def _strip_gzip_header(line: bytes) -> bytes:
-    """Strip gzip header from line and return the rest."""
-    flags = line[3]
-    offset = 10
-    if flags & 4:  # FLG.FEXTRA
-        offset += line[offset] + 1
-    if flags & 8:  # FLG.FNAME
-        while line[offset] != 0:
-            offset += 1
-        offset += 1
-    if flags & 16:  # FLG.FCOMMENT
-        while line[offset] != 0:
-            offset += 1
-        offset += 1
-    if flags & 2:  # FLG.FHCRC
-        offset += 2
-
-    return line[offset:]
 
 
 def _text_decoder(entry: Iterator[bytes], first_line: bytes) -> Iterator[bytes]:
