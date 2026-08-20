@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 13:18+0200\n"
+"POT-Creation-Date: 2026-08-20 19:59+0200\n"
 "PO-Revision-Date: 2011-03-27 11:11+0000\n"
 "Last-Translator: Nguyễn Anh <Unknown>\n"
 "Language-Team: Vietnamese <vi@li.org>\n"
@@ -36,11 +36,11 @@ msgstr ""
 msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 
-#: ../apport/ui.py:264
+#: ../apport/ui.py:263
 msgid "This package does not seem to be installed correctly"
 msgstr ""
 
-#: ../apport/ui.py:274
+#: ../apport/ui.py:273
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -48,7 +48,7 @@ msgid ""
 "third party packages and try again."
 msgstr ""
 
-#: ../apport/ui.py:304
+#: ../apport/ui.py:303
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -61,16 +61,16 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:455
+#: ../apport/ui.py:454
 msgid "unknown program"
 msgstr "chương trình không xác định"
 
-#: ../apport/ui.py:457
+#: ../apport/ui.py:456
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Xin lỗi, chương trình \"%s\" đã kết thúc bất ngờ"
 
-#: ../apport/ui.py:459
+#: ../apport/ui.py:458
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -78,68 +78,68 @@ msgstr ""
 "Máy tính của bạn không đủ bộ nhớ trống để tự động phân tích vấn đề và gửi "
 "báo cáo tới các nhà phát triển."
 
-#: ../apport/ui.py:464 ../apport/ui.py:1869
+#: ../apport/ui.py:463 ../apport/ui.py:1868
 #, python-format
 msgid "Problem in %s"
 msgstr "Vấn đề trong %s"
 
-#: ../apport/ui.py:520 ../apport/ui.py:537 ../apport/ui.py:703
-#: ../apport/ui.py:709 ../apport/ui.py:932 ../apport/ui.py:1696
-#: ../apport/ui.py:1836 ../apport/ui.py:1842
+#: ../apport/ui.py:519 ../apport/ui.py:536 ../apport/ui.py:702
+#: ../apport/ui.py:708 ../apport/ui.py:931 ../apport/ui.py:1695
+#: ../apport/ui.py:1835 ../apport/ui.py:1841
 msgid "Invalid problem report"
 msgstr "Báo cáo vấn đề không hợp lệ"
 
-#: ../apport/ui.py:521
+#: ../apport/ui.py:520
 msgid "You are not allowed to access this problem report."
 msgstr "Bạn không được phép truy cập báo cáo vấn đề này."
 
-#: ../apport/ui.py:529
+#: ../apport/ui.py:528
 msgid "Error"
 msgstr "Lỗi"
 
-#: ../apport/ui.py:531
+#: ../apport/ui.py:530
 msgid "There is not enough disk space available to process this report."
 msgstr "Không đủ dung lượng đĩa để thực hiện báo cáo này."
 
-#: ../apport/ui.py:567
+#: ../apport/ui.py:566
 msgid "No PID specified"
 msgstr ""
 
-#: ../apport/ui.py:568
+#: ../apport/ui.py:567
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 
-#: ../apport/ui.py:577 ../apport/ui.py:682
+#: ../apport/ui.py:576 ../apport/ui.py:681
 msgid "Invalid PID"
 msgstr "PID không hợp lệ"
 
-#: ../apport/ui.py:577
+#: ../apport/ui.py:576
 msgid "The specified process ID does not exist."
 msgstr ""
 
-#: ../apport/ui.py:582
+#: ../apport/ui.py:581
 msgid "Not your PID"
 msgstr ""
 
-#: ../apport/ui.py:583
+#: ../apport/ui.py:582
 msgid "The specified process ID does not belong to you."
 msgstr ""
 
-#: ../apport/ui.py:640
+#: ../apport/ui.py:639
 msgid "No package specified"
 msgstr "Chưa gói nào được xác định"
 
-#: ../apport/ui.py:642
+#: ../apport/ui.py:641
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Bạn cần xác định một gói hoặc một PID. Xem --help để biết thêm thông tin."
 
-#: ../apport/ui.py:669
+#: ../apport/ui.py:668
 msgid "Permission denied"
 msgstr "Không đủ quyền truy cập"
 
-#: ../apport/ui.py:671
+#: ../apport/ui.py:670
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -147,31 +147,31 @@ msgstr ""
 "Tiến trình không phải của bạn. Vui lòng chạy chương trình với tài khoản của "
 "chủ tiến trình hoặc với tài khoản quản trị root"
 
-#: ../apport/ui.py:683
+#: ../apport/ui.py:682
 msgid "The specified process ID does not belong to a program."
 msgstr "ID của tiến trình không phải của một chương trình."
 
-#: ../apport/ui.py:704
+#: ../apport/ui.py:703
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 "Trình tìm triệu chứng %s không xác định được gói phần mềm đã bị ảnh hưởng"
 
-#: ../apport/ui.py:710
+#: ../apport/ui.py:709
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Gói %s không tồn tại"
 
-#: ../apport/ui.py:739 ../apport/ui.py:937 ../apport/ui.py:970
-#: ../apport/ui.py:977
+#: ../apport/ui.py:738 ../apport/ui.py:936 ../apport/ui.py:969
+#: ../apport/ui.py:976
 msgid "Cannot create report"
 msgstr "Không tạo được bản báo cáo"
 
-#: ../apport/ui.py:754 ../apport/ui.py:808 ../apport/ui.py:825
+#: ../apport/ui.py:753 ../apport/ui.py:807 ../apport/ui.py:824
 msgid "Updating problem report"
 msgstr "Cập nhật lại vấn đề đang báo cáo"
 
-#: ../apport/ui.py:756
+#: ../apport/ui.py:755
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -182,7 +182,7 @@ msgstr ""
 "này đã bị báo trùng hoặc đã bị đóng.\n"
 "Hãy tạo một tạo một báo lỗi mới sử dụng \"apport-bug\"."
 
-#: ../apport/ui.py:768
+#: ../apport/ui.py:767
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -200,24 +200,24 @@ msgstr ""
 "lỗi\" và tạo một chú giải về vấn đề mà bạn báo.\n"
 "Bạn có thật sự muốn thực hiện?"
 
-#: ../apport/ui.py:808 ../apport/ui.py:825
+#: ../apport/ui.py:807 ../apport/ui.py:824
 msgid "No additional information collected."
 msgstr "Không có thêm thông tin đã được thu tập"
 
-#: ../apport/ui.py:881
+#: ../apport/ui.py:880
 msgid "What kind of problem do you want to report?"
 msgstr "Bạn muốn báo cáo vấn đề loại nào?"
 
-#: ../apport/ui.py:900
+#: ../apport/ui.py:899
 msgid "Unknown symptom"
 msgstr "Dấu hiệu không xác định"
 
-#: ../apport/ui.py:901
+#: ../apport/ui.py:900
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Không biết dấu hiệu \"%s\""
 
-#: ../apport/ui.py:939
+#: ../apport/ui.py:938
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -228,7 +228,7 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:955
+#: ../apport/ui.py:954
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -236,30 +236,30 @@ msgstr ""
 "Sau khi đóng thông điệp này vui lòng nhấp vào một cửa sổ ứng dụng để báo cáo "
 "một vấn đề về nó."
 
-#: ../apport/ui.py:971 ../apport/ui.py:978
+#: ../apport/ui.py:970 ../apport/ui.py:977
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop không thể định số ID tiến trình của cửa sổ"
 
-#: ../apport/ui.py:993
+#: ../apport/ui.py:992
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr ""
 
-#: ../apport/ui.py:994
+#: ../apport/ui.py:993
 msgid "Specify package name."
 msgstr ""
 
-#: ../apport/ui.py:1000 ../apport/ui.py:1130
+#: ../apport/ui.py:999 ../apport/ui.py:1129
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Thêm một thẻ cho báo cáo. Có thể thực hiện nhiều lần."
 
-#: ../apport/ui.py:1038
+#: ../apport/ui.py:1037
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:1049
+#: ../apport/ui.py:1048
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -269,15 +269,15 @@ msgstr ""
 "chỉ là --pid. Nếu không cách nào trong hai cách trên được sử dụng, hiển thị "
 "danh sách những dấu hiệu đã biết. (Mặc định nếu một tham số được đưa ra.)"
 
-#: ../apport/ui.py:1058
+#: ../apport/ui.py:1057
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 
-#: ../apport/ui.py:1066
+#: ../apport/ui.py:1065
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr "Bắt đầu ở chế độ cập nhật lỗi. Có thể dùng tuỳ chọn --package."
 
-#: ../apport/ui.py:1074
+#: ../apport/ui.py:1073
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -285,7 +285,7 @@ msgstr ""
 "Đệ trình báo cáo lỗi về một triệu chứng. (Mặc định nếu tên triệu chứng là "
 "tham số duy nhất.)"
 
-#: ../apport/ui.py:1083
+#: ../apport/ui.py:1082
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -293,18 +293,18 @@ msgstr ""
 "Xác định tên gói trong chế độ --file-bug. Tùy chọn này nếu một --pid được "
 "xác định. (Mặc định nếu tên gói được đưa ra như là tham số duy nhất.)"
 
-#: ../apport/ui.py:1094
+#: ../apport/ui.py:1093
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:1102
+#: ../apport/ui.py:1101
 msgid "The provided pid is a hanging application."
 msgstr ""
 
-#: ../apport/ui.py:1110
+#: ../apport/ui.py:1109
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -313,51 +313,51 @@ msgstr ""
 "Báo cáo lỗi sử dụng các tệp .apport hoặc .crash thay vì sử dụng các tệp tạm "
 "trong %s. (Mặc định nếu tệp tin là tham số duy nhất.)"
 
-#: ../apport/ui.py:1120
+#: ../apport/ui.py:1119
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:1136
+#: ../apport/ui.py:1135
 msgid "Print the Apport version number."
 msgstr "In ra số phiên bản Trình báo lỗi"
 
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1296
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 
-#: ../apport/ui.py:1301
+#: ../apport/ui.py:1300
 msgid "Run gdb session"
 msgstr ""
 
-#: ../apport/ui.py:1302
+#: ../apport/ui.py:1301
 msgid "Run gdb session without downloading debug symbols"
 msgstr ""
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1304
+#: ../apport/ui.py:1303
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:1358
+#: ../apport/ui.py:1357
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 
-#: ../apport/ui.py:1362
+#: ../apport/ui.py:1361
 msgid "Can't remember send report status settings"
 msgstr ""
 
-#: ../apport/ui.py:1440 ../apport/ui.py:1453
+#: ../apport/ui.py:1439 ../apport/ui.py:1452
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Báo cáo vấn đề này gắn với chương trình đã bị gỡ."
 
-#: ../apport/ui.py:1473
+#: ../apport/ui.py:1472
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -366,78 +366,78 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1532 ../apport/ui.py:1644 ../apport/ui.py:1840
+#: ../apport/ui.py:1531 ../apport/ui.py:1643 ../apport/ui.py:1839
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Báo cáo vấn đề này bị hỏng và không thể được thực hiện"
 
-#: ../apport/ui.py:1538
+#: ../apport/ui.py:1537
 msgid "This report is about a package that is not installed."
 msgstr ""
 
-#: ../apport/ui.py:1545
+#: ../apport/ui.py:1544
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 
-#: ../apport/ui.py:1562
+#: ../apport/ui.py:1561
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1567
+#: ../apport/ui.py:1566
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1568
+#: ../apport/ui.py:1567
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1606
+#: ../apport/ui.py:1605
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1611
+#: ../apport/ui.py:1610
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1697
+#: ../apport/ui.py:1696
 msgid "Could not determine the package or source package name."
 msgstr "Không thể xác định tên của gói hoặc gói nguồn."
 
-#: ../apport/ui.py:1728
+#: ../apport/ui.py:1727
 msgid "Unable to start web browser"
 msgstr "Không thể bật trình duyệt web"
 
-#: ../apport/ui.py:1729
+#: ../apport/ui.py:1728
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Không thể bật trình duyệt web để mở %s."
 
-#: ../apport/ui.py:1798
+#: ../apport/ui.py:1797
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Không thể kết nối tới cơ sở lỗi, vui lòng kiểm tra kết nối Internet của bạn."
 
-#: ../apport/ui.py:1801
+#: ../apport/ui.py:1800
 msgid "Network problem"
 msgstr "Lỗi mạng"
 
-#: ../apport/ui.py:1827
+#: ../apport/ui.py:1826
 msgid "Memory exhaustion"
 msgstr "Hết bộ nhớ"
 
-#: ../apport/ui.py:1829
+#: ../apport/ui.py:1828
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "Hệ thống của bạn không đủ bộ nhớ để thực hiện báo cáo lỗi này."
 
-#: ../apport/ui.py:1874
+#: ../apport/ui.py:1873
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -448,11 +448,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1928 ../apport/ui.py:1940
+#: ../apport/ui.py:1927 ../apport/ui.py:1939
 msgid "Problem already known"
 msgstr "Vấn đề đã biết"
 
-#: ../apport/ui.py:1930
+#: ../apport/ui.py:1929
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -462,7 +462,7 @@ msgstr ""
 "lòng kiểm tra nếu bạn có thể thêm bất cứ thông tin gì có ích cho những người "
 "phát triển."
 
-#: ../apport/ui.py:1941
+#: ../apport/ui.py:1940
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 
@@ -747,7 +747,7 @@ msgstr ""
 msgid "directory to unpack report to"
 msgstr ""
 
-#: ../bin/apport-unpack.py:86
+#: ../bin/apport-unpack.py:81
 msgid "Destination directory exists and is not empty."
 msgstr "Thư mục đích tồn tại và không rỗng."
 
