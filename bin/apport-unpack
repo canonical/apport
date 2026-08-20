@@ -66,6 +66,7 @@ def unpack_report_to_directory(
             if isinstance(value, str):
                 key_file.write(value.encode("UTF-8"))
             else:
+                assert isinstance(value, bytes)
                 key_file.write(value)
 
 
