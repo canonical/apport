@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-02 15:19+0200\n"
+"POT-Creation-Date: 2026-08-20 14:38+0200\n"
 "PO-Revision-Date: 2016-01-29 01:13+0000\n"
 "Last-Translator: Akerbeltz <fios@akerbeltz.org>\n"
 "Language-Team: Gaelic; Scottish <gd@li.org>\n"
@@ -40,11 +40,11 @@ msgstr ""
 "Cuir a-steach am facal-faire agad gus cothrom fhaighinn air aithrisean mu "
 "dhèidhinn duilgheadas a bha aig prògraman a t-siostaim"
 
-#: ../apport/ui.py:263
+#: ../apport/ui.py:262
 msgid "This package does not seem to be installed correctly"
 msgstr "Tha coltas nach deach a' phacaid seo a stàladh mar bu chòir"
 
-#: ../apport/ui.py:273
+#: ../apport/ui.py:272
 #, python-format
 msgid ""
 "This does not seem to be an official %s package. Please retry after updating "
@@ -52,7 +52,7 @@ msgid ""
 "third party packages and try again."
 msgstr ""
 
-#: ../apport/ui.py:303
+#: ../apport/ui.py:302
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -65,16 +65,16 @@ msgstr ""
 "\n"
 " %s"
 
-#: ../apport/ui.py:454
+#: ../apport/ui.py:453
 msgid "unknown program"
 msgstr "prògram neo-aithnichte"
 
-#: ../apport/ui.py:456
+#: ../apport/ui.py:455
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Tha sinn duilich ach dhùin am prògram \"%s\" gu h-obann."
 
-#: ../apport/ui.py:458
+#: ../apport/ui.py:457
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -83,61 +83,61 @@ msgstr ""
 "dha an duilgheadas a sgrùdadh gu fèin-obrachail is aithris a chur dhan luchd-"
 "leasachaidh."
 
-#: ../apport/ui.py:463 ../apport/ui.py:1872
+#: ../apport/ui.py:462 ../apport/ui.py:1866
 #, python-format
 msgid "Problem in %s"
 msgstr "Duilgheadas ann an %s"
 
-#: ../apport/ui.py:519 ../apport/ui.py:536 ../apport/ui.py:695
-#: ../apport/ui.py:701 ../apport/ui.py:931 ../apport/ui.py:1695
-#: ../apport/ui.py:1839 ../apport/ui.py:1845
+#: ../apport/ui.py:518 ../apport/ui.py:535 ../apport/ui.py:694
+#: ../apport/ui.py:700 ../apport/ui.py:930 ../apport/ui.py:1691
+#: ../apport/ui.py:1835 ../apport/ui.py:1840
 msgid "Invalid problem report"
 msgstr "Aithris duilgheadais mhì-dhligheach"
 
-#: ../apport/ui.py:520
+#: ../apport/ui.py:519
 msgid "You are not allowed to access this problem report."
 msgstr "Chan eil cead-inntrigidh agad dhan aithris duilgheadais seo."
 
-#: ../apport/ui.py:528
+#: ../apport/ui.py:527
 msgid "Error"
 msgstr "Mearachd"
 
-#: ../apport/ui.py:530
+#: ../apport/ui.py:529
 msgid "There is not enough disk space available to process this report."
 msgstr "Chan eil àite gu leòr air an diosg gus an aithris seo a làimhseachadh."
 
-#: ../apport/ui.py:569 ../apport/ui.py:674
+#: ../apport/ui.py:568 ../apport/ui.py:673
 msgid "Invalid PID"
 msgstr "PID mì-dhligheach"
 
-#: ../apport/ui.py:569
+#: ../apport/ui.py:568
 msgid "The specified process ID does not exist."
 msgstr ""
 
-#: ../apport/ui.py:574
+#: ../apport/ui.py:573
 msgid "Not your PID"
 msgstr ""
 
-#: ../apport/ui.py:575
+#: ../apport/ui.py:574
 msgid "The specified process ID does not belong to you."
 msgstr ""
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:631
 msgid "No package specified"
 msgstr "Cha deach pacaid a shònrachadh"
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:633
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Feumaidh tu pacaid no PID a shònrachadh. Faic --help airson barrachd "
 "fiosrachaidh."
 
-#: ../apport/ui.py:661
+#: ../apport/ui.py:660
 msgid "Permission denied"
 msgstr "Chaidh cead a dhiùltadh"
 
-#: ../apport/ui.py:663
+#: ../apport/ui.py:662
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -145,30 +145,30 @@ msgstr ""
 "Chan eil am pròiseas a shònraich thu a' buntainn riut. Ruith am prògram seo "
 "mar shealbhadair a' phròiseis no mar root."
 
-#: ../apport/ui.py:675
+#: ../apport/ui.py:674
 msgid "The specified process ID does not belong to a program."
 msgstr "Chan eil ID a' phròiseis a shònraich thu a' buntainn do phrògram."
 
-#: ../apport/ui.py:696
+#: ../apport/ui.py:695
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Cha do lorg an sgriobt %s pacaid air a bheil buaidh"
 
-#: ../apport/ui.py:702
+#: ../apport/ui.py:701
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Chan eil a' phacaid %s ann"
 
-#: ../apport/ui.py:731 ../apport/ui.py:936 ../apport/ui.py:969
-#: ../apport/ui.py:976
+#: ../apport/ui.py:730 ../apport/ui.py:935 ../apport/ui.py:965
+#: ../apport/ui.py:972
 msgid "Cannot create report"
 msgstr "Cha ghabh an aithris a chruthachadh"
 
-#: ../apport/ui.py:748 ../apport/ui.py:802 ../apport/ui.py:819
+#: ../apport/ui.py:747 ../apport/ui.py:801 ../apport/ui.py:818
 msgid "Updating problem report"
 msgstr "Ag ùrachadh aithris an duilgheadais"
 
-#: ../apport/ui.py:750
+#: ../apport/ui.py:749
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -181,7 +181,7 @@ msgstr ""
 "\n"
 "Cruthaich aithris ùr le \"apport-bug\"."
 
-#: ../apport/ui.py:762
+#: ../apport/ui.py:761
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -201,32 +201,32 @@ msgstr ""
 "\n"
 "A bheil thu cinnteach gu bheil thu airson leantainn air adhart?"
 
-#: ../apport/ui.py:802 ../apport/ui.py:819
+#: ../apport/ui.py:801 ../apport/ui.py:818
 msgid "No additional information collected."
 msgstr "Cha deach fiosrachadh a bharrachd a chruinneachadh."
 
-#: ../apport/ui.py:875
+#: ../apport/ui.py:874
 msgid "What kind of problem do you want to report?"
 msgstr "Dè seòrsa duilgheadas tha thu airson aithris a dhèanamh air?"
 
-#: ../apport/ui.py:894
+#: ../apport/ui.py:893
 msgid "Unknown symptom"
 msgstr "Buaidh nach aithne dhuinn"
 
-#: ../apport/ui.py:895
+#: ../apport/ui.py:894
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Chan aithne dhuinn a' bhuaidh \"%s\"."
 
-#: ../apport/ui.py:915
+#: ../apport/ui.py:914
 msgid "No PID specified"
 msgstr ""
 
-#: ../apport/ui.py:916
+#: ../apport/ui.py:915
 msgid "You need to specify a PID. See --help for more information."
 msgstr ""
 
-#: ../apport/ui.py:938
+#: ../apport/ui.py:937
 msgid ""
 "The window option cannot be used on Wayland.\n"
 "\n"
@@ -237,7 +237,7 @@ msgid ""
 "process ID is the number listed in the ID column."
 msgstr ""
 
-#: ../apport/ui.py:954
+#: ../apport/ui.py:953
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -245,32 +245,32 @@ msgstr ""
 "An dèidh dhut an teachdaireachd seo a dhùnadh. briog air uinneag aplacaid "
 "gus aithris a dhèanamh air duilgheadas leis."
 
-#: ../apport/ui.py:970 ../apport/ui.py:977
+#: ../apport/ui.py:966 ../apport/ui.py:973
 msgid "xprop failed to determine process ID of the window"
 msgstr "Cha b' urrainn dha xprop ID pròiseas na h-uinneige a dhearbhadh"
 
-#: ../apport/ui.py:992
+#: ../apport/ui.py:988
 #, python-format
 msgid "%(prog)s <report number>"
 msgstr ""
 
-#: ../apport/ui.py:993
+#: ../apport/ui.py:989
 msgid "Specify package name."
 msgstr "Sònraich ainm na pacaid."
 
-#: ../apport/ui.py:999 ../apport/ui.py:1127
+#: ../apport/ui.py:995 ../apport/ui.py:1123
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Cuir taga a bharrachd ris an aithris. 'S urrainn dhut a shònrachadh iomadh "
 "turas."
 
-#: ../apport/ui.py:1035
+#: ../apport/ui.py:1031
 #, python-format
 msgid ""
 "%(prog)s [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:1046
+#: ../apport/ui.py:1042
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -281,17 +281,17 @@ msgstr ""
 "de bhuaidhean air a bheil eòlas. (Tuigear dheth seo ma tha argamaid "
 "shingilte air a chur ann)."
 
-#: ../apport/ui.py:1055
+#: ../apport/ui.py:1051
 msgid "Click a window as a target for filing a problem report."
 msgstr "Briog air uinneag mar thargaid gus aithris a dhèanamh air duilgheadas."
 
-#: ../apport/ui.py:1063
+#: ../apport/ui.py:1059
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Tòisich sa mhodh ùrachadh bhugaichean. Gabhaidh seo ri --package ma tha feum "
 "air."
 
-#: ../apport/ui.py:1071
+#: ../apport/ui.py:1067
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -299,7 +299,7 @@ msgstr ""
 "Clàraich buga mu dhèidhinn buaidh. (Tuigear dheth seo mas e ainm na buaidhe "
 "an aon argamaid.)"
 
-#: ../apport/ui.py:1080
+#: ../apport/ui.py:1076
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -307,7 +307,7 @@ msgstr ""
 "Sònraich ainm na pacaid sa mhodh --file-bug. Tha seo roghainneil ma chaidh --"
 "pid a shònrachadh. (Tuigear dheth seo mas e ainm na pacaid an aon argamaid.)"
 
-#: ../apport/ui.py:1091
+#: ../apport/ui.py:1087
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -317,11 +317,11 @@ msgstr ""
 "shònrachadh, bidh barrachd fiosrachaidh san aithris. (Tuigear dheth seo mas "
 "e pid an aon argamaid.)"
 
-#: ../apport/ui.py:1099
+#: ../apport/ui.py:1095
 msgid "The provided pid is a hanging application."
 msgstr "Tha am pid a shònraich thu 'na aplacaid chrochte."
 
-#: ../apport/ui.py:1107
+#: ../apport/ui.py:1103
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -331,7 +331,7 @@ msgstr ""
 "an fheadhainn a tha ri dhèiligeadh ann an %s. (Tuigear dheth seo mas e am "
 "faidhle an aon argamaid.)"
 
-#: ../apport/ui.py:1117
+#: ../apport/ui.py:1113
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -342,50 +342,50 @@ msgstr ""
 "urrainn dhut aithris a dhèanamh leis an fhaidhle às a dhèidh sin no o "
 "choimpiutair eile."
 
-#: ../apport/ui.py:1133
+#: ../apport/ui.py:1129
 msgid "Print the Apport version number."
 msgstr "Clò-bhuail àireamh an tionndaidh aig Apport."
 
-#: ../apport/ui.py:1292
+#: ../apport/ui.py:1288
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Cuireadh seo air bhog apport-retrace ann an uinneag tèirmineil gus sgrùdadh "
 "a dhèanamh air an tuisleadh."
 
-#: ../apport/ui.py:1296
+#: ../apport/ui.py:1292
 msgid "Run gdb session"
 msgstr "Ruith seisean gdb"
 
-#: ../apport/ui.py:1297
+#: ../apport/ui.py:1293
 msgid "Run gdb session without downloading debug symbols"
 msgstr ""
 "Ruith seisean gdb as aonais gun a bhith a' luchdadh a-nuas nan samhlaidhean "
 "dì-bhugachaidh"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:1299
+#: ../apport/ui.py:1295
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Ùraich %s le Stack Trace a tha gu tur samhlach"
 
-#: ../apport/ui.py:1353
+#: ../apport/ui.py:1349
 msgid ""
 "Saving crash reporting state failed. Can't set auto or never reporting mode."
 msgstr ""
 
-#: ../apport/ui.py:1357
+#: ../apport/ui.py:1353
 msgid "Can't remember send report status settings"
 msgstr ""
 
-#: ../apport/ui.py:1439 ../apport/ui.py:1452
+#: ../apport/ui.py:1434 ../apport/ui.py:1447
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Tha aithris an duilgheadais seo a' buntainn ri prògram nach eil stàlaichte "
 "tuilleadh."
 
-#: ../apport/ui.py:1472
+#: ../apport/ui.py:1467
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -396,84 +396,84 @@ msgstr ""
 
 #. can happen with broken core dumps
 #. can happen with broken gz values
-#: ../apport/ui.py:1531 ../apport/ui.py:1643 ../apport/ui.py:1843
+#: ../apport/ui.py:1526 ../apport/ui.py:1639 ../apport/ui.py:1839
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Chaidh an aithris seo a dhochann is cha ghabh a làimhseachadh."
 
-#: ../apport/ui.py:1537
+#: ../apport/ui.py:1532
 msgid "This report is about a package that is not installed."
 msgstr ""
 
-#: ../apport/ui.py:1544
+#: ../apport/ui.py:1540
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 "Thachair mearachd fhad 's a bha sinn a' feuchainn ri aithris na mearachd seo "
 "a làimhseachadh:"
 
-#: ../apport/ui.py:1561
+#: ../apport/ui.py:1557
 msgid ""
 "You have two versions of this application installed, which one do you want "
 "to report a bug against?"
 msgstr ""
 
-#: ../apport/ui.py:1566
+#: ../apport/ui.py:1562
 #, python-format
 msgid "%s snap"
 msgstr ""
 
-#: ../apport/ui.py:1567
+#: ../apport/ui.py:1563
 #, python-format
 msgid "%s deb package"
 msgstr ""
 
-#: ../apport/ui.py:1605
+#: ../apport/ui.py:1601
 #, python-format
 msgid "%s is provided by a snap published by %s. Contact them via %s for help."
 msgstr ""
 
-#: ../apport/ui.py:1610
+#: ../apport/ui.py:1606
 #, python-format
 msgid ""
 "%s is provided by a snap published by %s. No contact address has been "
 "provided; visit the forum at https://forum.snapcraft.io/ for help."
 msgstr ""
 
-#: ../apport/ui.py:1696
+#: ../apport/ui.py:1692
 msgid "Could not determine the package or source package name."
 msgstr ""
 "Cha b' urrainn dhuinn a' phacaid no ainm na pacaid thùsail a dhearbhadh."
 
-#: ../apport/ui.py:1727
+#: ../apport/ui.py:1723
 msgid "Unable to start web browser"
 msgstr "Chan urrainn dhuinn brabhsair-lìn a thòiseachadh"
 
-#: ../apport/ui.py:1728
+#: ../apport/ui.py:1724
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Chan urrainn dhuinn brabhsair-lìn a thòiseachadh gus %s fhosgladh."
 
-#: ../apport/ui.py:1801
+#: ../apport/ui.py:1797
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Chan urrainn dhuinn ceangal ri stòr-dàta nan tuisleadh, thoir sùil air a' "
 "cheangal agad ris an eadar-lìon."
 
-#: ../apport/ui.py:1804
+#: ../apport/ui.py:1800
 msgid "Network problem"
 msgstr "Duilgheadas leis an lìonra"
 
-#: ../apport/ui.py:1830
+#: ../apport/ui.py:1826
 msgid "Memory exhaustion"
 msgstr "Gainnead cuimhne"
 
-#: ../apport/ui.py:1832
+#: ../apport/ui.py:1828
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Chan eil cuimhne gu leòr air an t-siostam agad is chan urrainn dha aithris "
 "an tuislidh seo a làimhseachadh."
 
-#: ../apport/ui.py:1877
+#: ../apport/ui.py:1871
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -484,11 +484,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1931 ../apport/ui.py:1943
+#: ../apport/ui.py:1925 ../apport/ui.py:1937
 msgid "Problem already known"
 msgstr "Tha sinn eòlach air an duilgheadas seo mu thràth"
 
-#: ../apport/ui.py:1933
+#: ../apport/ui.py:1927
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -498,7 +498,7 @@ msgstr ""
 "aithris a' bhuga sa bhrabhsair-lìn agad. Thoir sùil ach a bheil fiosrachadh "
 "ùr sam bith agad a dh'fhaodadh a bhith feumail dhan luchd-leasachaidh."
 
-#: ../apport/ui.py:1944
+#: ../apport/ui.py:1938
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 "Fhuair an luchd-leasachaidh aithris air an duilgheadas seo mu thràth. Tapadh "
@@ -565,8 +565,8 @@ msgstr ""
 "Sguir dheth agus le&ig seachad tuislidhean de thionndadh seo a' phrògraim "
 "seo san àm ri teachd"
 
-#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:354
-#: ../bin/apport-cli.py:375
+#: ../bin/apport-cli.py:238 ../bin/apport-cli.py:318 ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:371
 msgid "&Cancel"
 msgstr "&Sguir dheth"
 
@@ -618,42 +618,42 @@ msgstr ""
 msgid "&No"
 msgstr ""
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:351
 msgid "&Done"
 msgstr "&Deiseil"
 
-#: ../bin/apport-cli.py:359
+#: ../bin/apport-cli.py:357
 msgid "none"
 msgstr "chan eil gin"
 
-#: ../bin/apport-cli.py:360
+#: ../bin/apport-cli.py:358
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Thagh thu: %s. Iomadh roghainn:"
 
-#: ../bin/apport-cli.py:376
+#: ../bin/apport-cli.py:372
 msgid "Choices:"
 msgstr "Roghainnean:"
 
-#: ../bin/apport-cli.py:390
+#: ../bin/apport-cli.py:386
 msgid "Path to file (Enter to cancel):"
 msgstr ""
 "An t-slighe a dh'ionnsaigh an fhaidhle (Brùth Enter airson sgur dheth):"
 
-#: ../bin/apport-cli.py:396
+#: ../bin/apport-cli.py:392
 msgid "File does not exist."
 msgstr "Chan eil am faidhle ann."
 
-#: ../bin/apport-cli.py:398
+#: ../bin/apport-cli.py:394
 msgid "This is a directory."
 msgstr "'S e pasgan a tha seo."
 
-#: ../bin/apport-cli.py:403
+#: ../bin/apport-cli.py:399
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 "Feumaidh tu tadhal air an URL a leanas mus urrainn dhut leantainn air adhart:"
 
-#: ../bin/apport-cli.py:405
+#: ../bin/apport-cli.py:401
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -661,11 +661,11 @@ msgstr ""
 "'S urrainn dhut brabhsair a chur gu dol an-dràsta no lethbhreac dhen URL seo "
 "a chur ann am brabhsair no coimpiutair eile."
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:406
 msgid "Launch a browser now"
 msgstr "Cuir brabhsair gu dol an-dràsta"
 
-#: ../bin/apport-cli.py:425
+#: ../bin/apport-cli.py:421
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Chan eil aithris sam bith air tuisleadh ri dhèiligeadh. Feuch --help airson "
@@ -830,7 +830,7 @@ msgstr ""
 msgid "directory to unpack report to"
 msgstr ""
 
-#: ../bin/apport-unpack.py:86
+#: ../bin/apport-unpack.py:81
 msgid "Destination directory exists and is not empty."
 msgstr "Tha am pasgan sin sa cheann-uidhe mu thràth 's chan eil e falamh."
 
@@ -942,7 +942,7 @@ msgstr "Tha sinn duilich, thachair mearachd inntearnail ann an %s."
 msgid "Send"
 msgstr "Cuir"
 
-#: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:620 ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.py:206 ../gtk/apport-gtk.py:618 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:335
 msgid "Show Details"
 msgstr "Seall am mion-fhiosrachadh"
@@ -992,7 +992,7 @@ msgstr ""
 msgid "Ignore future problems of this type"
 msgstr "Leig seachad duilgheadasan dhen t-seòrsa seo san àm ri teachd"
 
-#: ../gtk/apport-gtk.py:624 ../kde/apport-kde.py:332
+#: ../gtk/apport-gtk.py:622 ../kde/apport-kde.py:332
 msgid "Hide Details"
 msgstr "Falaich am mion-fhiosrachadh"
 
