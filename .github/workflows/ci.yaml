@@ -23,7 +23,7 @@ env:
   common_deps: python3-distro-info python3-launchpadlib
   gtk_deps: gir1.2-gtk-3.0 gir1.2-wnck-3.0 gnome-icon-theme procps python3-gi
   kde_deps: procps pyqt6-dev-tools python3-pyqt6
-  unit_deps: locales python3-systemd python3-zstandard
+  unit_deps: locales python3-systemd
   integration_deps: >
     bash binutils gcc gdb kmod libc6-dev libglib2.0-dev libxml2-utils
     polkitd python3-systemd valgrind xterm
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
     container:
-      image: ubuntu:resolute
+      image: ubuntu:stonking
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies
@@ -49,7 +49,7 @@ jobs:
           && apt-get install --no-install-recommends --yes
           black isort mypy pycodestyle pydocstyle pylint python3-typeshed
           python3-dbus python3-distutils-extra python3-rpm python3-yaml
-          python3-systemd python3-zstandard
+          python3-systemd
           $base_deps $common_deps $gtk_deps $kde_deps
       - name: Run linter tests
         run: tests/run-linters
@@ -66,13 +66,12 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - debian:stable-slim
           - debian:testing-slim
-          - ubuntu:noble
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
       options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
@@ -106,7 +105,7 @@ jobs:
           path: ./coverage*.xml
 
   unit-and-integration-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:
@@ -150,8 +149,8 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
+          - ubuntu:stonking
     container:
       image: ${{ matrix.container }}
     steps:
@@ -181,11 +180,11 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
@@ -218,7 +217,7 @@ jobs:
           path: ./coverage.xml
 
   system-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:
@@ -266,11 +265,11 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu:noble
           - ubuntu:resolute
+          - ubuntu:stonking
         architecture:
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     container:
       image: ${{ matrix.container }}
     steps:
@@ -323,7 +322,7 @@ jobs:
           path: ./coverage.xml
 
   system-internet-installed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:

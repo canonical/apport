@@ -960,7 +960,7 @@ def attach_mac_events(
                 profile = match[1:-1]
             else:
                 profile = bytes.fromhex(match).decode("UTF-8", errors="replace")
-        except (IndexError, ValueError):
+        except IndexError, ValueError:
             continue
 
         for search_profile in profiles:

@@ -3,23 +3,15 @@
 # pylint: disable=too-many-lines
 
 import base64
-import contextlib
 import datetime
 import email
 import io
 import json
 import locale
-import sys
 import textwrap
 import time
 import unittest
-import unittest.mock
-from unittest.mock import MagicMock, patch
-
-try:
-    import zstandard
-except ImportError:
-    zstandard = None  # type: ignore
+from unittest.mock import patch
 
 import problem_report
 
@@ -313,7 +305,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         ):
             report.load(report_file)
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_load_zstd_compressed_data(self) -> None:
         """Test reading zstd-compressed data."""
         report = problem_report.ProblemReport()
@@ -330,7 +321,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             " and is long enough for zstd to work.\n",
         )
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_reading_zstd_compressed_value(self) -> None:
         """Test reading zstd-compressed CompressedValue."""
         report = problem_report.ProblemReport()
@@ -347,7 +337,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             b" which is long enough to be compressed\n",
         )
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_writing_zstd_compressed_value(self) -> None:
         """Test writing zstd-compressed CompressedValue."""
         compressed_value = problem_report.CompressedValue(
@@ -363,7 +352,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             b"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam\n",
         )
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_zstd_compressed_value_length(self) -> None:
         """Test getting length of zstd-compressed CompressedValue."""
         compressed_value = problem_report.CompressedValue(
@@ -374,36 +362,12 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
         self.assertEqual(len(compressed_value), 65)
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_len_zstd_compressed_value_nosize(self) -> None:
         """Test len() on zstd-compressed CompressedValue without a size header."""
         compressed_value = problem_report.CompressedValue(
             compressed_value=base64.b64decode(b"KLUv/QBYEQAAe30=")
         )
         self.assertEqual(len(compressed_value), 2)
-
-    @unittest.mock.patch("builtins.__import__")
-    def test_zstandard_missing(self, import_mock: MagicMock) -> None:
-        """Test reading zstd-compressed data when zstandard is missing."""
-        with contextlib.suppress(KeyError):
-            sys.modules.pop("zstandard")
-        import_mock.side_effect = ImportError("mocked import error")
-
-        report = problem_report.ProblemReport()
-        content = (
-            b"CoreDump: base64\n"
-            b" KLUv/SROHQIAgoQOEqC7ASCSGCybZRrN7//Hsn7dVyActu7bbMcLaav0RC06\n"
-            b" m6fCZ/N7aeOeyqxspRVn88bSx8a8opWQAwEA/8OEAhOOwLA=\n"
-        )
-        expected_message = (
-            "Failed to import zstandard library: mocked import error."
-            " Please install python3-zstandard."
-        )
-        with (
-            self.assertRaisesRegex(RuntimeError, expected_message),
-            io.BytesIO(content) as report_file,
-        ):
-            report.load(report_file)
 
     def test_write_fileobj(self) -> None:
         """Write a report with a pointer to a file-like object."""
@@ -621,7 +585,6 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
             ],
         )
 
-    @unittest.skipUnless(zstandard, "zstandard Python module not available")
     def test_write_mime_binary_values(self) -> None:
         """write_mine() for binary values (gzip and zstd compressed)."""
         report = problem_report.ProblemReport(date="now!")

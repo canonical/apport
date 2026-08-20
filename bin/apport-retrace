@@ -286,7 +286,7 @@ def gen_source_stacktrace(report, sandbox):
     try:
         try:
             version = report["Package"].split()[1]
-        except (IndexError, KeyError):
+        except IndexError, KeyError:
             version = None
         srcdir = packaging.get_source_tree(
             report["SourcePackage"], workdir, version, sandbox=sandbox

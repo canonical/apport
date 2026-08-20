@@ -182,7 +182,7 @@ class CrashDatabase:
 
         try:
             report_package_version = report["Package"].split()[1]
-        except (KeyError, IndexError):
+        except KeyError, IndexError:
             report_package_version = None
 
         # check the existing IDs whether there is one that is unfixed or not

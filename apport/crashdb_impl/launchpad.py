@@ -52,7 +52,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         try:
             f = attachment.data.open()
-        except (HTTPError, FailedToDecompressContent):
+        except HTTPError, FailedToDecompressContent:
             apport.logging.error("Broken attachment on bug, ignoring")
             continue
         name = f.filename
@@ -356,7 +356,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # ignore attachments with invalid keys
             try:
                 report[key] = ""
-            except (AssertionError, TypeError, ValueError):
+            except AssertionError, TypeError, ValueError:
                 continue
             if ext == ".txt":
                 report[key] = attachment.read()

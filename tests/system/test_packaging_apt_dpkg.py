@@ -24,7 +24,7 @@ from tests.paths import get_test_data_directory
 if shutil.which("dpkg") is None:
     pytest.skip("dpkg not installed", allow_module_level=True)
 
-AptStyle: typing.TypeAlias = typing.Literal["deb822", "one-line"]
+type AptStyle = typing.Literal["deb822", "one-line"]
 
 pytestmark = pytest.mark.parametrize("apt_style", ["one-line", "deb822"])
 

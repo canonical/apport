@@ -285,7 +285,7 @@ def _check_bug_pattern(report, pattern):
                     regexp = regexp.encode("UTF-8")
                 try:
                     re_c = re.compile(regexp)
-                except (re.error, TypeError, ValueError):
+                except re.error, TypeError, ValueError:
                     continue
                 if not re_c.search(v):
                     return None
@@ -296,7 +296,7 @@ def _check_bug_pattern(report, pattern):
 def _check_bug_patterns(report, patterns):
     try:
         dom = xml.dom.minidom.parseString(patterns)
-    except (xml.parsers.expat.ExpatError, UnicodeEncodeError):
+    except xml.parsers.expat.ExpatError, UnicodeEncodeError:
         return None
 
     for pattern in dom.getElementsByTagName("pattern"):
@@ -1411,7 +1411,7 @@ class Report(problem_report.ProblemReport):
 
         try:
             dom = self._get_ignore_dom()
-        except (ValueError, KeyError):
+        except ValueError, KeyError:
             apport.logging.error("Could not get ignore file:")
             traceback.print_exc()
             return False
@@ -1428,7 +1428,7 @@ class Report(problem_report.ProblemReport):
                 if ignore.getAttribute("program") == self["ExecutablePath"]:
                     if float(ignore.getAttribute("mtime")) >= cur_mtime:
                         return True
-        except (ValueError, KeyError):
+        except ValueError, KeyError:
             pass
 
         return False
@@ -1960,7 +1960,7 @@ class Report(problem_report.ProblemReport):
         """Get ExecutableTimestamp if present and valid."""
         try:
             return int(self["ExecutableTimestamp"])
-        except (KeyError, ValueError):
+        except KeyError, ValueError:
             return None
 
     def gdb_command(
