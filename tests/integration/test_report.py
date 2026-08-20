@@ -796,8 +796,7 @@ int main() { return f(42); }
         self.assertNotIn("StacktraceTop", pr)
         self.assertTrue(pr["UnreportableReason"].startswith("Invalid core dump"))
 
-    @unittest.mock.patch("gzip.GzipFile.read")
-    def test_add_gdb_info_damaged_gz_core(self, mock_gzread: MagicMock) -> None:
+    def test_add_gdb_info_damaged_gz_core(self) -> None:
         """add_gdb_info() with damaged gzip file of core dump"""
         pr = self._generate_sigsegv_report()
         del pr["Stacktrace"]
@@ -807,12 +806,13 @@ int main() { return f(42); }
 
         core = pr["CoreDump"][0]
         with open(core, "rb") as f:
-            pr["CoreDump"] = problem_report.CompressedValue(f.read())
-        mock_gzread.side_effect = EOFError(
-            "Compressed file ended before the end-of-stream marker was reached"
-        )
+            # Reading just the first kilobyte is enough for this test case.
+            core_dump = problem_report.CompressedValue(f.read(1024))
+        # Truncate just the tail to corrupt the end-of-stream marker
+        assert core_dump.compressed_value is not None
+        core_dump.compressed_value = core_dump.compressed_value[:-10]
+        pr["CoreDump"] = core_dump
         self.assertRaises(EOFError, pr.add_gdb_info)
-        self.assertTrue(mock_gzread.called)
 
         self.assertNotIn("Stacktrace", pr)
         self.assertNotIn("StacktraceTop", pr)
