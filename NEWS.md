@@ -1,6 +1,32 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see the git history.
 
+2.28.4 (2026-08-20)
+-------------------
+
+### Changed
+
+* crashdb/github: increase timeout from 5 to 30 seconds
+  ([LP: #2159030](https://launchpad.net/bugs/2159030))
+* problem_report: let `load()` return skipped keys
+* procutils: introduce `parse_meminfo()` to avoid parsing
+  `/proc/meminfo` with `Report`. See security update below.
+* test: increase waiting timeout from 5/10 to 30 seconds
+  ([LP: #2159030](https://launchpad.net/bugs/2159030))
+
+### Fixed
+
+* SECURITY UPDATE: path traversal during report extraction
+  ([LP: #2161697](https://launchpad.net/bugs/2161697))
+  - problem_report: validate key names in `ProblemReport.load`
+  - CVE-2026-77113
+* test:
+  - wait for child processes to complete `execve()`
+    ([LP: #2161888](https://launchpad.net/bugs/2161888))
+  - add riscv64 entry to archmap
+    ([LP: #2159030](https://launchpad.net/bugs/2159030))
+  - set locale for `test_install_packages_error`
+
 2.28.3 (2026-07-29)
 -------------------
 
