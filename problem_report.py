@@ -150,6 +150,11 @@ def _decode_compressed_stream(entry: Iterator[bytes]) -> Iterator[bytes]:
         yield decompressor.decompress(block)
     yield decompressor.flush()
 
+    if not decompressor.eof:
+        raise EOFError(
+            "Compressed file ended before the end-of-stream marker was reached"
+        )
+
 
 def _derive_compression(name: str, value: bytes) -> tuple[str, str]:
     if value.startswith(GZIP_HEADER_START):
