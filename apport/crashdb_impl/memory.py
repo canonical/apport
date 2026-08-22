@@ -30,7 +30,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This class does not support bug patterns and authentication.
         """
-        apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
+        super().__init__(auth_file, options)
 
         # reports is a list of dictionaries with keys:
         # report, fixed_version, dup_of, comment
