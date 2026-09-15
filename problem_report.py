@@ -512,6 +512,7 @@ class ProblemReport(collections.UserDict):
             key, iterator, base64_encoded = _parse_entry(entry)
             if key not in missing_keys:
                 continue
+            _check_problem_report_key(key)
 
             b64_block[key] = base64_encoded
             missing_keys.remove(key)

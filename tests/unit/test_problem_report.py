@@ -10,6 +10,7 @@ import io
 import json
 import locale
 import sys
+import tempfile
 import textwrap
 import time
 import unittest
@@ -79,6 +80,17 @@ class T(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertEqual(pr["ProblemType"], "KernelCrash")
         pr = problem_report.ProblemReport(date="19801224 12:34")
         self.assertEqual(pr["Date"], "19801224 12:34")
+
+    def test_extract_keys_invalid_key(self) -> None:
+        """Throw exception in extract_keys() when the key uses invalid characters."""
+        report = problem_report.ProblemReport()
+        with io.BytesIO(b"Invalid/key: base64\n aW52YWxpZA==\n") as report_file:
+            bin_keys = report.load(report_file, binary=False)
+            report_file.seek(0)
+            with self.assertRaisesRegex(
+                problem_report.InvalidProblemReportKeyError, "key 'Invalid/key'"
+            ):
+                report.extract_keys(report_file, bin_keys, tempfile.gettempdir())
 
     def test_get_timestamp(self) -> None:
         """get_timestamp() returns timestamp."""
