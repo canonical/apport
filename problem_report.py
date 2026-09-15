@@ -107,6 +107,14 @@ def _base64_decoder(entry: Iterable[bytes]) -> Iterator[bytes]:
             raise MalformedProblemReport(str(error)) from None
 
 
+def _check_problem_report_key(key: str) -> None:
+    if not key.replace(".", "").replace("-", "").replace("_", "").isalnum():
+        raise InvalidProblemReportKeyError(
+            f"key '{key}' contains invalid characters"
+            f" (only numbers, letters, '.', '_', and '-' are allowed)"
+        )
+
+
 def _create_compressed_attachment(name: str, value: bytes) -> email.mime.base.MIMEBase:
     mime_subtype, extension = _derive_compression(name, value)
     filename = _add_extension_if_missing(name, extension)
@@ -964,11 +972,7 @@ class ProblemReport(collections.UserDict):
 
     def __setitem__(self, k: str, v: ProblemReportValue) -> None:
         assert hasattr(k, "isalnum")
-        if not k.replace(".", "").replace("-", "").replace("_", "").isalnum():
-            raise InvalidProblemReportKeyError(
-                f"key '{k}' contains invalid characters"
-                f" (only numbers, letters, '.', '_', and '-' are allowed)"
-            )
+        _check_problem_report_key(k)
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool, [, max_size [, fail_on_empty]]]))
         if not (
