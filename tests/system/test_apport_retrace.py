@@ -92,7 +92,7 @@ def setup_ubuntu_sandbox_config(
     sources_dir = config_release_dir / "sources.list.d"
     sources_file = sources_dir / "ubuntu.sources"
     # pylint: disable-next=protected-access
-    uri = impl._get_mirror(arch)
+    uri = impl._get_mirror(arch, release)
 
     sources_dir.mkdir(parents=True)
     codename_file.write_text(release)
