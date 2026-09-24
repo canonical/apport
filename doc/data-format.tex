@@ -241,10 +241,11 @@ programs written in scripting languages, in which case there is no core dump.
     'minidump' format or any other useful image of the stack.
 
     \item [Stacktrace:] (optional) Stack trace (e. g. produced by gdb's
-    \verb!bt full! command or minidump processor)
+    \verb!bt -full -frame-info source-and-location! command or minidump processor)
 
     \item [ThreadStacktrace:] (optional) Threaded stack trace (e. g. produced
-    by the gdb command \verb!thread apply all bt full! or minidump processor)
+    by the gdb command \verb!thread apply all bt -full
+    -frame-info source-and-location! or minidump processor)
 
     \item [StacktraceTop:] (optional) First five frames of \verb!Stacktrace!
     with the leading addresses and local variables removed; this is intended to
