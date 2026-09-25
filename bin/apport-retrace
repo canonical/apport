@@ -394,6 +394,34 @@ Thank you for your understanding, and sorry for the inconvenience!
         )
 
 
+def do_consistency_checks(report: Report) -> int:
+    """Do consistency checks on the problem report."""
+    required_fields = {
+        "CoreDump",
+        "ExecutablePath",
+        "Package",
+        "DistroRelease",
+        "Architecture",
+    }
+    if report["ProblemType"] == "KernelCrash":
+        if not {"Package", "VmCore"}.issubset(set(report.keys())):
+            apport.logging.error("report file does not contain the required fields")
+            return 2
+        apport.logging.error("KernelCrash processing not implemented yet")
+        return 3
+    if not required_fields.issubset(set(report.keys())):
+        missing_fields = []
+        for required_field in required_fields:
+            if required_field not in set(report.keys()):
+                missing_fields.append(required_field)
+        apport.logging.error(
+            "report file does not contain one of the required fields: %s",
+            " ".join(sorted(missing_fields)),
+        )
+        return 2
+    return 0
+
+
 def needs_update(
     report: Report, options: Namespace, crashid: int, crashdb: CrashDatabase
 ) -> bool:
@@ -468,7 +496,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 def main(argv):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
-    # pylint: disable=too-many-return-statements,too-many-statements,too-complex
+    # pylint: disable=too-many-statements,too-complex
     apport.logging.memdbg("start")
 
     gettext.textdomain("apport")
@@ -496,31 +524,9 @@ def main(argv):
 
     apport.logging.memdbg("processed extra options from command line")
 
-    # consistency checks
-    required_fields = {
-        "CoreDump",
-        "ExecutablePath",
-        "Package",
-        "DistroRelease",
-        "Architecture",
-    }
-    if report["ProblemType"] == "KernelCrash":
-        if not {"Package", "VmCore"}.issubset(set(report.keys())):
-            apport.logging.error("report file does not contain the required fields")
-            return 2
-        apport.logging.error("KernelCrash processing not implemented yet")
-        return 3
-    if not required_fields.issubset(set(report.keys())):
-        missing_fields = []
-        for required_field in required_fields:
-            if required_field not in set(report.keys()):
-                missing_fields.append(required_field)
-        apport.logging.error(
-            "report file does not contain one of the required fields: %s",
-            " ".join(sorted(missing_fields)),
-        )
-        return 2
-
+    result = do_consistency_checks(report)
+    if result != 0:
+        return result
     apport.logging.memdbg("consistency checks passed")
 
     if options.gdb_sandbox:
