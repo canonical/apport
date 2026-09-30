@@ -11,7 +11,10 @@
 # the full text of the license.
 
 import sys
-import types
+
+# pylint: disable=using-constant-test
+if False:
+    import types
 
 CONFIG = "/etc/default/apport"
 
@@ -36,7 +39,7 @@ def apport_excepthook(
     binary: str,
     exc_type: type[BaseException],
     exc_obj: BaseException,
-    exc_tb: types.TracebackType | None,
+    exc_tb: "types.TracebackType | None",
 ) -> None:
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-complex,too-many-branches,too-many-locals
@@ -160,7 +163,7 @@ def apport_excepthook(
             sys.__excepthook__(exc_type, exc_obj, exc_tb)
 
 
-def extract_bus_name_from_traceback(exc_tb: types.TracebackType) -> str:
+def extract_bus_name_from_traceback(exc_tb: "types.TracebackType") -> str:
     """Extract the requested bus name from the frame locals within dbus-python."""
     # pylint: disable=import-outside-toplevel; for Python startup time
     import traceback
@@ -176,7 +179,7 @@ def extract_bus_name_from_traceback(exc_tb: types.TracebackType) -> str:
 
 
 def dbus_service_unknown_analysis(
-    exc_obj: BaseException, exc_tb: types.TracebackType | None
+    exc_obj: BaseException, exc_tb: "types.TracebackType | None"
 ) -> dict[str, str]:
     """Analyze D-Bus service error and add analysis to report."""
     # pylint: disable=import-outside-toplevel; for Python startup time
@@ -246,7 +249,7 @@ def install():
     def partial_apport_excepthook(
         exc_type: type[BaseException],
         exc_obj: BaseException,
-        exc_tb: types.TracebackType | None,
+        exc_tb: "types.TracebackType | None",
     ) -> None:
         return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
 
