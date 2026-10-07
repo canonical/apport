@@ -89,6 +89,56 @@ def test_main(
 @unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
 @unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
+def test_main_stdout(
+    get_crashdb_mock: MagicMock,
+    gen_source_stacktrace_mock: MagicMock,
+    add_gdb_info_mock: MagicMock,
+) -> None:
+    """Test main() from apport-retrace to report on stdout."""
+    add_gdb_info_mock.side_effect = add_mocked_gdb_info
+    gen_source_stacktrace_mock.side_effect = mocked_gen_source_stacktrace
+    report = (
+        "ProblemType: Crash\n"
+        "Architecture: amd64\n"
+        "DistroRelease: Ubuntu 26.04\n"
+        "ExecutablePath: /usr/bin/divide-by-zero\n"
+        "Package: chaos-marmosets 0.2.0-1build1\n"
+        "SourcePackage: chaos-marmosets\n"
+        "CoreDump: base64\n"
+        " c29tZSBiaW5hcnkgZGF0YQ==\n"
+    )
+    with (
+        tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
+        unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as stdout,
+        unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+    ):
+        crash_file.write(report)
+        crash_file.flush()
+        return_code = apport_retrace.main(["--stdout", crash_file.name])
+
+        crash_file.seek(0)
+        report_afterwards = crash_file.read()
+
+    assert stderr.getvalue() == ""
+    assert return_code == 0
+    expected_output = (
+        "--- stack trace ---\n"
+        "mocked stacktrace\n"
+        "--- thread stack trace ---\n"
+        "mocked thread stacktrace\n"
+        "--- source code stack trace ---\n"
+        "mocked stacktrace source\n"
+    )
+    assert stdout.getvalue() == expected_output
+    assert add_gdb_info_mock.call_count == 1
+    assert report_afterwards == report
+    get_crashdb_mock.assert_called_once_with(None)
+    gen_source_stacktrace_mock.assert_called_once()
+
+
+@unittest.mock.patch.object(apport_retrace.Report, "add_gdb_info", autospec=True)
+@unittest.mock.patch.object(apport_retrace, "gen_source_stacktrace")
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
 def test_main_ouput_to_stdout(
     get_crashdb_mock: MagicMock,
     gen_source_stacktrace_mock: MagicMock,

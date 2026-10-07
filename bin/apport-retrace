@@ -317,7 +317,7 @@ def print_traces(report):
 
     print("--- stack trace ---")
     print(report["Stacktrace"])
-    if "ThreadedStacktrace" in report:
+    if "ThreadStacktrace" in report:
         print("--- thread stack trace ---")
         print(report["ThreadStacktrace"])
     if "StacktraceSource" in report:
