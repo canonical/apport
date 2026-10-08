@@ -232,3 +232,23 @@ def test_malformed_kernel_crash_report(get_crashdb_mock: MagicMock) -> None:
         stderr.getvalue() == "ERROR: report file does not contain the required fields\n"
     )
     get_crashdb_mock.assert_called_once_with(None)
+
+
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+def test_processing_kernel_crash_report(get_crashdb_mock: MagicMock) -> None:
+    """Test apport-retrace to fail on kernel crash report (not implemented)."""
+    with (
+        tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
+        unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+    ):
+        crash_file.write(
+            "ProblemType: KernelCrash\n"
+            "Package: linux-image-7.0.0-38-generic\n"
+            "VmCore: mocked\n"
+        )
+        crash_file.flush()
+        return_code = apport_retrace.main([crash_file.name])
+
+    assert stderr.getvalue() == "ERROR: KernelCrash processing not implemented yet\n"
+    assert return_code == 3
+    get_crashdb_mock.assert_called_once_with(None)
