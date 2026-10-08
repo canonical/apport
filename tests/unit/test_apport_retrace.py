@@ -195,8 +195,8 @@ def test_main_ouput_to_stdout(
 
 
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
-def test_malformed_crash_report(get_crashdb_mock: MagicMock) -> None:
-    """Test apport-retrace to fail on malformed crash report."""
+def test_missing_fields_crash_report(get_crashdb_mock: MagicMock) -> None:
+    """Test apport-retrace to fail on crash report with missing fields."""
     with (
         tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
         unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
@@ -217,8 +217,8 @@ def test_malformed_crash_report(get_crashdb_mock: MagicMock) -> None:
 
 
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
-def test_malformed_kernel_crash_report(get_crashdb_mock: MagicMock) -> None:
-    """Test apport-retrace to fail on malformed kernel crash report."""
+def test_missing_fields_kernel_crash_report(get_crashdb_mock: MagicMock) -> None:
+    """Test apport-retrace to fail on kernel crash report with missing fields."""
     with (
         tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
         unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
