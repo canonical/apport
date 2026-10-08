@@ -195,6 +195,46 @@ def test_main_ouput_to_stdout(
 
 
 @unittest.mock.patch.object(apport_retrace, "get_crashdb")
+def test_malformed_crash_report(get_crashdb_mock: MagicMock) -> None:
+    """Test apport-retrace on a crash file that is malformed."""
+    with (
+        tempfile.NamedTemporaryFile(mode="w+", suffix=".crash") as crash_file,
+        unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as stdout,
+        unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+    ):
+        crash_file.write("Problem/Type: Crash\n")
+        crash_file.flush()
+        return_code = apport_retrace.main([crash_file.name])
+
+    assert (
+        stderr.getvalue()
+        == "ERROR: Cannot open report file: key 'Problem/Type' contains invalid"
+        " characters (only numbers, letters, '.', '_', and '-' are allowed)\n"
+    )
+    assert return_code == 1
+    assert stdout.getvalue() == ""
+    get_crashdb_mock.assert_called_once_with(None)
+
+
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
+def test_main_missing_crash_file(get_crashdb_mock: MagicMock) -> None:
+    """Test main() from apport-retrace on a crash file that does not exist."""
+    with (
+        unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as stdout,
+        unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+    ):
+        return_code = apport_retrace.main(["/non-existent.crash"])
+
+    assert (
+        stderr.getvalue() == 'ERROR: "/non-existent.crash"'
+        " is neither an existing report file nor a crash ID\n"
+    )
+    assert return_code == 1
+    assert stdout.getvalue() == ""
+    get_crashdb_mock.assert_called_once_with(None)
+
+
+@unittest.mock.patch.object(apport_retrace, "get_crashdb")
 def test_missing_fields_crash_report(get_crashdb_mock: MagicMock) -> None:
     """Test apport-retrace to fail on crash report with missing fields."""
     with (

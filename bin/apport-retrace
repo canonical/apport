@@ -342,7 +342,8 @@ def load_report(
             apport.logging.memdbg("loaded report from file")
             return report, None
         except (MemoryError, TypeError, ValueError, OSError, zlib.error) as error:
-            apport.logging.fatal("Cannot open report file: %s", str(error))
+            apport.logging.error("Cannot open report file: %s", str(error))
+            raise _LoadReportException(1) from error
     elif options.report.isdigit():
         # crash ID
         try:
@@ -389,9 +390,10 @@ Thank you for your understanding, and sorry for the inconvenience!
                 raise _LoadReportException(0) from None
             raise
     else:
-        apport.logging.fatal(
+        apport.logging.error(
             '"%s" is neither an existing report file nor a crash ID', options.report
         )
+        raise _LoadReportException(1)
 
 
 def needs_update(
