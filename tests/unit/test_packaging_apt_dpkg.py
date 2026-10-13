@@ -210,6 +210,47 @@ Components: main
             "/map_cachedir", impl.get_distro_codename(), "amd64"
         )
 
+    @unittest.mock.patch.object(impl, "_AptDpkgPackageInfo__fgrep_list_for_path")
+    @unittest.mock.patch.object(impl, "get_system_architecture")
+    @unittest.mock.patch("apport.packaging_impl.apt_dpkg.glob.glob")
+    @unittest.mock.patch("apport.packaging_impl.apt_dpkg.subprocess.run")
+    def test_get_file_package_multiarch(
+        self,
+        subprocess_run_mock: MagicMock,
+        glob_mock: MagicMock,
+        get_system_architecture_mock: MagicMock,
+        fgrep_list_for_path_mock: MagicMock,
+    ) -> None:
+        """get_file_package() keeps :arch qualifier for foreign architectures."""
+        # dpkg-divert reports no diversion for the queried files
+        subprocess_run_mock.return_value = MagicMock(returncode=1, stdout=b"")
+        glob_mock.return_value = []
+        get_system_architecture_mock.return_value = "amd64"
+
+        # (dpkg .list file, queried file, expected package)
+        test_data = [
+            (
+                "/var/lib/dpkg/info/libnss-nis:i386.list",
+                "/lib/i386-linux-gnu/libnss-nis.so.2.0.0",
+                "libnss-nis:i386",
+            ),
+            (
+                "/var/lib/dpkg/info/libc6:amd64.list",
+                "/lib/x86_64-linux-gnu/libc.so.6",
+                "libc6",
+            ),
+            (
+                "/var/lib/dpkg/info/libc6.list",
+                "/lib/x86_64-linux-gnu/libc.so.6",
+                "libc6",
+            ),
+        ]
+
+        for list_file, queried_file, expected_package in test_data:
+            with self.subTest(list_file=list_file):
+                fgrep_list_for_path_mock.return_value = list_file
+                self.assertEqual(impl.get_file_package(queried_file), expected_package)
+
     def test_contents_mapping_load_legacy_resolute(self) -> None:
         """Test _contents_mapping() discarding cache file from Apport 2.34.0."""
         with tempfile.TemporaryDirectory() as workdir:

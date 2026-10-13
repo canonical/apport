@@ -852,7 +852,11 @@ class _AptDpkgPackageInfo(PackageInfo):
 
         match = self.__fgrep_list_for_path(file, likely_lists, all_lists)
         if match:
-            return os.path.splitext(os.path.basename(match))[0].split(":")[0]
+            pkg = os.path.splitext(os.path.basename(match))[0]
+            arch = pkg.partition(":")[2]
+            if arch and arch != self.get_system_architecture():
+                return pkg
+            return pkg.split(":")[0]
 
         return None
 
