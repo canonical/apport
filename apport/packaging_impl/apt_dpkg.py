@@ -346,7 +346,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, "rb") as fp:
                 self._virtual_mapping_obj = pickle.load(fp)
             assert isinstance(self._virtual_mapping_obj, dict)
-        except (AssertionError, FileNotFoundError):
+        except (AssertionError, EOFError, FileNotFoundError, pickle.UnpicklingError):
             self._virtual_mapping_obj = {}
 
         return self._virtual_mapping_obj
@@ -378,7 +378,7 @@ class _AptDpkgPackageInfo(PackageInfo):
             assert isinstance(self._contents_mapping_obj, dict)
             # Discard files from Apport < 2.35.0
             assert isinstance(next(iter(self._contents_mapping_obj)), str)
-        except (AssertionError, FileNotFoundError):
+        except (AssertionError, EOFError, FileNotFoundError, pickle.UnpicklingError):
             self._contents_mapping_obj = {"release": release, "arch": arch}
 
         return self._contents_mapping_obj
