@@ -357,6 +357,10 @@ class _AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, "wb") as fp:
                 pickle.dump(self._virtual_mapping_obj, fp)
 
+    @staticmethod
+    def _contents_mapping_path(configdir: str, release: str, arch: str) -> pathlib.Path:
+        return pathlib.Path(configdir) / f"contents_mapping-{release}-{arch}.pickle"
+
     def _contents_mapping(
         self, configdir: str, release: str, arch: str
     ) -> dict[str, str]:
@@ -367,9 +371,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         ):
             return self._contents_mapping_obj
 
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
-        )
+        mapping_file = self._contents_mapping_path(configdir, release, arch)
         if os.path.exists(mapping_file) and os.stat(mapping_file).st_size == 0:
             os.remove(mapping_file)
         try:
@@ -384,9 +386,7 @@ class _AptDpkgPackageInfo(PackageInfo):
         return self._contents_mapping_obj
 
     def _save_contents_mapping(self, configdir: str, release: str, arch: str) -> None:
-        mapping_file = os.path.join(
-            configdir, f"contents_mapping-{release}-{arch}.pickle"
-        )
+        mapping_file = self._contents_mapping_path(configdir, release, arch)
         if self._contents_mapping_obj is not None:
             try:
                 with open(mapping_file, "wb") as fp:
