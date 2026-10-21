@@ -24,6 +24,7 @@ import zlib
 
 import apport.logging
 from apport.crashdb import get_crashdb
+from apport.pathutils import format_dir_name
 
 
 # pylint: disable-next=missing-class-docstring
@@ -112,10 +113,10 @@ class CrashDigger:  # pylint: disable=too-many-instance-attributes
             )
             self.crashdb.mark_retraced(crash_id)
             return
-        if rel not in self.releases:
+        if format_dir_name(rel) not in self.releases:
             apport.logging.log(
-                f"crash is release {rel} which does not have a config"
-                f" available, skipping",
+                f"crash is release {rel} which does not have a"
+                f" '{format_dir_name(rel)}' config available, skipping",
                 True,
             )
             return

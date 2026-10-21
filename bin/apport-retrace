@@ -33,6 +33,7 @@ import apport.logging
 import apport.sandboxutils
 from apport.crashdb import CrashDatabase, get_crashdb
 from apport.packaging_impl import impl as packaging
+from apport.pathutils import format_dir_name
 from apport.report import Report
 
 
@@ -537,8 +538,8 @@ def main(argv):
     if options.sandbox:
         if options.sandbox_dir:
             sandbox_dir = (
-                f"{options.sandbox_dir}/{report['DistroRelease']}"
-                f"/{report['Architecture']}/report-sandbox/"
+                f"{options.sandbox_dir}/{format_dir_name(report['DistroRelease'])}"
+                f"/{format_dir_name(report['Architecture'])}/report-sandbox/"
             )
         else:
             sandbox_dir = None
@@ -576,7 +577,7 @@ def main(argv):
             fake_report["ProcMaps"] = "\n\n"
             if options.sandbox_dir:
                 gdb_sandbox_dir = (
-                    f"{options.sandbox_dir}/{report['DistroRelease']}"
+                    f"{options.sandbox_dir}/{format_dir_name(report['DistroRelease'])}"
                     f"/{system_arch}/gdb-sandbox/"
                 )
             else:
@@ -670,7 +671,9 @@ Thank you for your understanding, and sorry for the inconvenience!
         if options.sandbox == "system":
             apt_root = os.path.join(cache, "system", "apt")
         elif options.sandbox:
-            apt_root = os.path.join(cache, report["DistroRelease"], "apt")
+            apt_root = os.path.join(
+                cache, format_dir_name(report["DistroRelease"]), "apt"
+            )
         else:
             apt_root = None
         if options.stacktrace_source:

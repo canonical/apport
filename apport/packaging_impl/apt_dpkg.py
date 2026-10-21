@@ -56,6 +56,7 @@ from aptsources.sourceslist import Deb822SourceEntry, SourceEntry
 
 import apport.logging
 from apport.package_info import PackageInfo
+from apport.pathutils import format_dir_name
 
 _ARCH_MULTIARCH_TRIPLET_MAPPING = {
     "amd64": "x86_64-linux-gnu",
@@ -359,7 +360,11 @@ class _AptDpkgPackageInfo(PackageInfo):
 
     @staticmethod
     def _contents_mapping_path(configdir: str, release: str, arch: str) -> pathlib.Path:
-        return pathlib.Path(configdir) / f"contents_mapping-{release}-{arch}.pickle"
+        filename = (
+            f"contents_mapping-{format_dir_name(release, max_length=128)}"
+            f"-{format_dir_name(arch, max_length=64)}.pickle"
+        )
+        return pathlib.Path(configdir) / filename
 
     def _contents_mapping(
         self, configdir: str, release: str, arch: str
@@ -1021,10 +1026,10 @@ class _AptDpkgPackageInfo(PackageInfo):
         "system" in case the current system configuration should be used.
         """
         if architecture != self.get_system_architecture():
-            aptroot_arch = architecture
+            aptroot_arch = format_dir_name(architecture)
         else:
             aptroot_arch = ""
-        return os.path.join(cache_dir, release, aptroot_arch, "apt")
+        return os.path.join(cache_dir, format_dir_name(release), aptroot_arch, "apt")
 
     # pylint: disable-next=too-many-arguments,too-many-positional-arguments
     def _remove_conflicting_packages(
@@ -1162,9 +1167,9 @@ class _AptDpkgPackageInfo(PackageInfo):
             self._current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
-            apt_dir = os.path.join(configdir, release)
+            apt_dir = os.path.join(configdir, format_dir_name(release))
             if architecture != self.get_system_architecture():
-                arch_apt_dir = os.path.join(configdir, release, architecture)
+                arch_apt_dir = os.path.join(apt_dir, format_dir_name(architecture))
                 arch_old_sources = os.path.join(arch_apt_dir, "sources.list")
                 arch_sources_dir = os.path.join(arch_apt_dir, "sources.list.d")
                 if os.path.exists(arch_old_sources) or (
@@ -1180,7 +1185,8 @@ class _AptDpkgPackageInfo(PackageInfo):
 
             # set current release code name for _distro_release_to_codename
             with open(
-                os.path.join(configdir, release, "codename"), encoding="utf-8"
+                os.path.join(configdir, format_dir_name(release), "codename"),
+                encoding="utf-8",
             ) as f:
                 self._current_release_codename = f.read().strip()
 
@@ -1643,7 +1649,9 @@ class _AptDpkgPackageInfo(PackageInfo):
         return True
 
     def _get_contents_file(self, map_cachedir: str, dist: str, arch: str) -> str | None:
-        contents_filename = os.path.join(map_cachedir, f"{dist}-Contents-{arch}.gz")
+        name = f"{format_dir_name(dist)}-Contents-{format_dir_name(arch)}.gz"
+        assert len(name.encode()) < 256
+        contents_filename = os.path.join(map_cachedir, name)
         # check if map exists and is younger than a day; if not, we need
         # to refresh it
         try:
@@ -1933,7 +1941,11 @@ class _AptDpkgPackageInfo(PackageInfo):
                 if source_list_content:
                     with open(
                         os.path.join(
-                            apt_root, "etc", "apt", "sources.list.d", origin + extension
+                            apt_root,
+                            "etc",
+                            "apt",
+                            "sources.list.d",
+                            format_dir_name(origin + extension),
                         ),
                         "a",
                         encoding="utf-8",

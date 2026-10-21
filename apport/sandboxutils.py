@@ -20,6 +20,7 @@ import apport.fileutils
 import apport.logging
 import apport.report
 from apport.packaging_impl import impl as packaging
+from apport.pathutils import format_dir_name
 
 
 def needed_packages(report):
@@ -209,7 +210,7 @@ def make_sandbox(
         cache_dir = tempfile.mkdtemp(prefix="apport_cache_")
         atexit.register(shutil.rmtree, cache_dir)
 
-    pkgmap_cache_dir = os.path.join(cache_dir, report["DistroRelease"])
+    pkgmap_cache_dir = os.path.join(cache_dir, format_dir_name(report["DistroRelease"]))
 
     pkgs = []
 

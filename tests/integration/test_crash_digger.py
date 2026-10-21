@@ -105,7 +105,9 @@ class T(unittest.TestCase):
         self.assertIn("retracing #1", out)
         self.assertIn("retracing #2", out)
         self.assertIn(
-            "crash is release FooLinux Pi/2 which does not have a config available", out
+            "crash is release FooLinux Pi/2"
+            " which does not have a 'FooLinux Pi_2' config available",
+            out,
         )
         self.assertNotIn("failed with status", out)
         self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
@@ -155,7 +157,9 @@ class T(unittest.TestCase):
         self.assertIn("retracing #1", out)
         self.assertIn("retracing #2", out)
         self.assertIn(
-            "crash is release FooLinux Pi/2 which does not have a config available", out
+            "crash is release FooLinux Pi/2"
+            " which does not have a 'FooLinux Pi_2' config available",
+            out,
         )
         self.assertNotIn("#0 failed with status", out)
         self.assertIn("#1 failed with status: 1", out)
@@ -183,7 +187,9 @@ class T(unittest.TestCase):
         self.assertIn("retracing #1", out)
         self.assertIn("retracing #2", out)
         self.assertIn(
-            "crash is release FooLinux Pi/2 which does not have a config available", out
+            "crash is release FooLinux Pi/2"
+            " which does not have a 'FooLinux Pi_2' config available",
+            out,
         )
         self.assertNotIn("failed with status", out)
         self.assertNotIn("#3", out, "dupcheck crashes are not retraced")
