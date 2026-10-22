@@ -156,8 +156,8 @@ def make_sandbox(
 
     report is an apport.report.Report object to build a sandbox for. Presence
     of the Package field determines whether to determine dependencies through
-    packaging (via the optional report['Dependencies'] field), or through ldd
-    via needed_runtime_packages() -> shared_libraries().  Usually
+    packaging (via the optional report['Dependencies'] field), or through
+    readelf via needed_runtime_packages() -> shared_libraries(). Usually
     report['Architecture'] and report['Uname'] are present.
 
     config_dir points to a directory with by-release configuration files for

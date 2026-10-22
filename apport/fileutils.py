@@ -14,6 +14,7 @@
 
 import configparser
 import contextlib
+import dataclasses
 import functools
 import glob
 import hashlib
@@ -29,7 +30,7 @@ import socket
 import stat
 import subprocess
 import time
-from typing import IO
+from typing import IO, Self
 
 from apport.packaging_impl import impl as packaging
 from problem_report import ProblemReport
@@ -41,6 +42,17 @@ MAX_COREFILES_PER_UID = 5
 _CONFIG_FILE = "~/.config/apport/settings"
 
 SNAPD_SOCKET = "/run/snapd.socket"
+
+# Mapping readelf 'Machine:' field strings to multiarch triplets
+_READELF_MACHINE_TO_TRIPLET = {
+    "Advanced Micro Devices X86-64": "x86_64-linux-gnu",
+    "AArch64": "aarch64-linux-gnu",
+    "ARM": "arm-linux-gnueabihf",
+    "Intel 80386": "i386-linux-gnu",
+    "RISC-V": "riscv64-linux-gnu",
+    "PowerPC64": "powerpc64le-linux-gnu",
+    "IBM S/390": "s390x-linux-gnu",
+}
 
 
 #  UHTTPConnection is based on code from the UpdateManager package:
@@ -672,40 +684,96 @@ def clean_core_directory(uid: int) -> None:
             sorted_files.remove(sorted_files[0])
 
 
+def _get_triplet_from_path(path: str) -> str | None:
+    match = re.search("/lib/([a-z0-9_]+-linux-[a-z0-9_]+)/", path)
+    if not match:
+        return None
+    return match.group(1)
+
+
+@dataclasses.dataclass
+class _ElfDynamicSection:
+    arch_triplet: str
+    needed: list[str]
+    rpath: list[str]
+    runpath: list[str]
+
+    def get_library_search_paths(self) -> list[str]:
+        """Return a list of default library search paths for the architecture."""
+        return [
+            f"/lib/{self.arch_triplet}",
+            f"/usr/lib/{self.arch_triplet}",
+            "/lib",
+            "/usr/lib",
+        ]
+
+    @classmethod
+    def parse(cls, path: str) -> Self:
+        """Parse an ELF file with readelf."""
+        needed = []
+        rpath = []
+        runpath = []
+
+        proc = subprocess.run(
+            ["readelf", "-hd", path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            env=dict(os.environ, LC_ALL="C"),
+            text=True,
+            check=True,
+        )
+
+        arch_triplet = _get_triplet_from_path(path)
+        if arch_triplet is None:
+            match = re.search(r"Machine:\s+(.+)", proc.stdout)
+            assert match is not None, f"Missing Machine entry in '{proc.stdout}'"
+            machine_str = match.group(1).strip()
+            arch_triplet = _READELF_MACHINE_TO_TRIPLET[machine_str]
+
+        matches = re.findall(
+            r"\((NEEDED|RPATH|RUNPATH)\)[^[]*\[([^\]]+)\]", proc.stdout
+        )
+        origin_dir = os.path.dirname(os.path.abspath(path))
+
+        for match in matches:
+            type_, value = match
+            if type_ in {"RPATH", "RUNPATH"}:
+                # Expand $ORIGIN and filter empty components
+                paths = [
+                    re.sub(r"\$\{?ORIGIN\}?", origin_dir, p)
+                    for p in value.split(":")
+                    if p
+                ]
+                if type_ == "RPATH":
+                    rpath.extend(paths)
+                else:
+                    runpath.extend(paths)
+            else:
+                assert type_ == "NEEDED"
+                needed.append(value)
+
+        return cls(arch_triplet, needed, rpath, runpath)
+
+
 def shared_libraries(path: str) -> dict[str, str]:
     """Get libraries with which the specified binary is linked.
 
     Return a library name -> path mapping, for example 'libc.so.6' ->
     '/lib/x86_64-linux-gnu/libc.so.6'.
     """
-    libs = {}
-
-    with subprocess.Popen(
-        ["ldd", path],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-    ) as ldd:
-        assert ldd.stdout is not None
-        for line in ldd.stdout:
-            try:
-                name, rest = line.split("=>", 1)
-            except ValueError:
-                continue
-
-            name = name.strip()
-            # exclude linux-vdso since that is a virtual so
-            if "linux-vdso" in name:
-                continue
-            # this is usually "path (address)"
-            rest = rest.split()[0].strip()
-            if rest.startswith("("):
-                continue
-            libs[name] = rest
-        ldd.stdout.close()
-
-    if ldd.returncode != 0:
+    try:
+        elf = _ElfDynamicSection.parse(path)
+    except subprocess.CalledProcessError:
         return {}
+
+    libs: dict[str, str] = {}
+    search_dirs = elf.rpath + elf.runpath + elf.get_library_search_paths()
+    for lib in elf.needed:
+        for directory in search_dirs:
+            candidate = os.path.join(directory, lib)
+            if os.path.exists(candidate):
+                libs[lib] = os.path.realpath(candidate)
+
     return libs
 
 

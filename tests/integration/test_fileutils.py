@@ -16,6 +16,7 @@ from unittest.mock import MagicMock
 import apport.fileutils
 import apport.packaging
 import problem_report
+from tests.helper import skip_if_command_is_missing
 
 
 class T(unittest.TestCase):
@@ -407,6 +408,7 @@ deadbeef000001111110000011110000  /non-existing/file
             self.assertEqual(apport.fileutils.get_config("inter", "test"), "%(two)s")
             apport.fileutils._get_config_parser.cache_clear()
 
+    @skip_if_command_is_missing("readelf")
     def test_shared_libraries(self) -> None:
         """shared_libraries()"""
         libs = apport.fileutils.shared_libraries(sys.executable)
@@ -422,6 +424,7 @@ deadbeef000001111110000011110000  /non-existing/file
         self.assertEqual(apport.fileutils.shared_libraries("/etc"), {})
         self.assertEqual(apport.fileutils.shared_libraries("/etc/passwd"), {})
 
+    @skip_if_command_is_missing("readelf")
     def test_links_with_shared_library(self) -> None:
         """links_with_shared_library()"""
         self.assertTrue(

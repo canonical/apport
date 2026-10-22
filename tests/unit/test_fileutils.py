@@ -6,6 +6,7 @@
 import io
 import os
 import pathlib
+import subprocess
 import tempfile
 import time
 import unittest
@@ -14,6 +15,73 @@ from unittest.mock import MagicMock
 
 import apport.fileutils
 import apport.packaging
+from tests.paths import get_test_data_directory
+
+
+class TestElfDynamicSection(unittest.TestCase):
+    # pylint: disable=protected-access
+    @unittest.mock.patch("subprocess.run")
+    def test_parse_libmutter_mtk_readelf(self, mock_run: MagicMock) -> None:
+        lib_file = "/usr/lib/x86_64-linux-gnu/mutter-18/libmutter-mtk-18.so.0.0.0"
+        recorded_output = get_test_data_directory() / "readelf_libmutter-mtk.txt"
+        mock_run.return_value = subprocess.CompletedProcess(
+            args=["readelf", "-hd", lib_file],
+            returncode=0,
+            stdout=recorded_output.read_text(),
+            stderr="",
+        )
+
+        elf = apport.fileutils._ElfDynamicSection.parse(lib_file)
+
+        self.assertEqual(
+            elf.needed,
+            [
+                "libglib-2.0.so.0",
+                "libgobject-2.0.so.0",
+                "libgio-2.0.so.0",
+                "libgraphene-1.0.so.0",
+                "libpixman-1.so.0",
+                "libX11.so.6",
+                "libm.so.6",
+                "libc.so.6",
+            ],
+        )
+        self.assertEqual(elf.rpath, ["/usr/lib/x86_64-linux-gnu/mutter-18"])
+        self.assertEqual(elf.runpath, [])
+        mock_run.assert_called_once()
+        args, kwargs = mock_run.call_args
+        self.assertEqual(args[0], ["readelf", "-hd", lib_file])
+        self.assertEqual(kwargs["env"].get("LC_ALL"), "C")
+
+    @unittest.mock.patch("subprocess.run")
+    def test_parse_man_readelf(self, mock_run: MagicMock) -> None:
+        recorded_output = get_test_data_directory() / "readelf_man.txt"
+        mock_run.return_value = subprocess.CompletedProcess(
+            args=["readelf", "-hd", "/usr/bin/zstd"],
+            returncode=0,
+            stdout=recorded_output.read_text(),
+            stderr="",
+        )
+
+        elf = apport.fileutils._ElfDynamicSection.parse("/usr/bin/man")
+
+        self.assertEqual(
+            elf.needed,
+            [
+                "libmandb-2.13.1.so",
+                "libman-2.13.1.so",
+                "libz.so.1",
+                "libpipeline.so.1",
+                "libc.so.6",
+                "ld-linux-aarch64.so.1",
+            ],
+        )
+        self.assertEqual(elf.rpath, [])
+        self.assertEqual(elf.runpath, ["/usr/lib/man-db"])
+        mock_run.assert_called_once()
+        args, kwargs = mock_run.call_args
+        self.assertEqual(args[0], ["readelf", "-hd", "/usr/bin/man"])
+        self.assertEqual(kwargs["env"].get("LC_ALL"), "C")
 
 
 class T(unittest.TestCase):

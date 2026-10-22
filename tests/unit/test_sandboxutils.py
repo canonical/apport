@@ -30,6 +30,7 @@ class TestSandboxutils(unittest.TestCase):
         report["DistroRelease"] = "Ubuntu 22.04"
         report["ExecutablePath"] = "/bin/bash"
         report["Signal"] = "11"
+        report["ProcMaps"] = "mocked ProcMaps"
         return report
 
     @unittest.mock.patch("apport.sandboxutils.packaging", spec=PackageInfo)
