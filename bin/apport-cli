@@ -57,6 +57,15 @@ class CLIDialog:
         sys.stdout.flush()
 
         file = sys.stdin.fileno()
+
+        if not os.isatty(file):
+            if multi_char:
+                response = str(sys.stdin.readline()).strip()
+            else:
+                response = str(sys.stdin.read(1))
+            sys.stdout.write("\n")
+            return response
+
         saved_attributes = termios.tcgetattr(file)
         attributes = termios.tcgetattr(file)
         attributes[3] = attributes[3] & ~(termios.ICANON)
