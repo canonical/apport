@@ -16,10 +16,10 @@
 helpful to get a trace with debug symbols."""
 
 import argparse
+import contextlib
 import gettext
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -27,6 +27,7 @@ import termios
 import tty
 import zlib
 from argparse import Namespace
+from collections.abc import Iterator
 from gettext import gettext as _
 
 import apport.logging
@@ -186,7 +187,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--no-stacktrace-source",
         action="store_false",
         dest="stacktrace_source",
-        help=_("Do not add StacktraceSource to the report."),
+        help=_("Do not fetch sources or add StacktraceSource to the report."),
     )
     argparser.add_argument(
         "report",
@@ -274,7 +275,31 @@ def get_code(srcdir, filename, line, context=5):
     return result
 
 
-def gen_source_stacktrace(report, sandbox):
+@contextlib.contextmanager
+def _source_directory(
+    report: dict[str, str], sandbox: str | None
+) -> Iterator[str | None]:
+    """Provide the source tree of the report and clean it up afterwards.
+
+    ``None`` is provided if the sources cannot be fetched.
+    """
+    if "SourcePackage" not in report:
+        yield None
+        return
+
+    with tempfile.TemporaryDirectory() as workdir:
+        try:
+            version = report["Package"].split()[1]
+        except (IndexError, KeyError):
+            version = None
+        yield packaging.get_source_tree(
+            report["SourcePackage"], workdir, version, sandbox=sandbox
+        )
+
+
+def gen_source_stacktrace(
+    report: dict[str, str], sandbox: str | None, srcdir: str | None = None
+) -> None:
     """Generate StacktraceSource.
 
     This is a version of Stacktrace with the surrounding code lines (where
@@ -283,16 +308,11 @@ def gen_source_stacktrace(report, sandbox):
     if "Stacktrace" not in report or "SourcePackage" not in report:
         return
 
-    workdir = tempfile.mkdtemp()
-    try:
-        try:
-            version = report["Package"].split()[1]
-        except (IndexError, KeyError):
-            version = None
-        srcdir = packaging.get_source_tree(
-            report["SourcePackage"], workdir, version, sandbox=sandbox
-        )
-        if not srcdir:
+    source_context = (
+        contextlib.nullcontext(srcdir) if srcdir else _source_directory(report, sandbox)
+    )
+    with source_context as source_dir:
+        if not source_dir:
             return
 
         src_frame = re.compile(r"^#\d+\s.* at (.*):(\d+)$")
@@ -301,7 +321,9 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report["Stacktrace"].splitlines():
             m = src_frame.match(frame)
             if m:
-                code = get_code(srcdir, os.path.basename(m.group(1)), int(m.group(2)))
+                code = get_code(
+                    source_dir, os.path.basename(m.group(1)), int(m.group(2))
+                )
                 result += f"{frame}\n{code}"
             else:
                 m = other_frame.search(frame)
@@ -309,8 +331,6 @@ def gen_source_stacktrace(report, sandbox):
                     result += f"{frame}\n"
 
         report["StacktraceSource"] = result
-    finally:
-        shutil.rmtree(workdir)
 
 
 def print_traces(report):
@@ -397,6 +417,34 @@ Thank you for your understanding, and sorry for the inconvenience!
         raise _LoadReportException(1)
 
 
+def do_consistency_checks(report: Report) -> int:
+    """Do consistency checks on the problem report."""
+    required_fields = {
+        "CoreDump",
+        "ExecutablePath",
+        "Package",
+        "DistroRelease",
+        "Architecture",
+    }
+    if report["ProblemType"] == "KernelCrash":
+        if not {"Package", "VmCore"}.issubset(set(report.keys())):
+            apport.logging.error("report file does not contain the required fields")
+            return 2
+        apport.logging.error("KernelCrash processing not implemented yet")
+        return 3
+    if not required_fields.issubset(set(report.keys())):
+        missing_fields = []
+        for required_field in required_fields:
+            if required_field not in set(report.keys()):
+                missing_fields.append(required_field)
+        apport.logging.error(
+            "report file does not contain one of the required fields: %s",
+            " ".join(sorted(missing_fields)),
+        )
+        return 2
+    return 0
+
+
 def needs_update(
     report: Report, options: Namespace, crashid: int, crashdb: CrashDatabase
 ) -> bool:
@@ -467,70 +515,16 @@ Thank you for your understanding, and sorry for the inconvenience!
             crashdb.mark_retrace_failed(crashid)
 
 
-# pylint: disable-next=missing-function-docstring
-def main(argv):
+def retrace_report(report, options, crashid, crashdb):
     # TODO: Split into smaller functions/methods
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
-    # pylint: disable=too-many-return-statements,too-many-statements,too-complex
-    apport.logging.memdbg("start")
-
-    gettext.textdomain("apport")
-
-    options = parse_args(argv)
-
-    crashdb = get_crashdb(options.auth)
-    apport.logging.memdbg("got crash DB")
-
-    # load the report
-    try:
-        report, crashid = load_report(options, crashdb)
-    except _LoadReportException as error:
-        return error.code
-
-    if options.core_file:
-        report["CoreDump"] = (os.path.abspath(options.core_file),)
-    if options.executable:
-        report["ExecutablePath"] = options.executable
-    if options.procmaps:
-        with open(options.procmaps, "r", encoding="utf-8") as f:
-            report["ProcMaps"] = f.read()
-    if options.rebuild_package_info and "ExecutablePath" in report:
-        report.add_package_info()
-
-    apport.logging.memdbg("processed extra options from command line")
-
-    # consistency checks
-    required_fields = {
-        "CoreDump",
-        "ExecutablePath",
-        "Package",
-        "DistroRelease",
-        "Architecture",
-    }
-    if report["ProblemType"] == "KernelCrash":
-        if not {"Package", "VmCore"}.issubset(set(report.keys())):
-            apport.logging.error("report file does not contain the required fields")
-            return 2
-        apport.logging.error("KernelCrash processing not implemented yet")
-        return 3
-    if not required_fields.issubset(set(report.keys())):
-        missing_fields = []
-        for required_field in required_fields:
-            if required_field not in set(report.keys()):
-                missing_fields.append(required_field)
-        apport.logging.error(
-            "report file does not contain one of the required fields: %s",
-            " ".join(sorted(missing_fields)),
-        )
-        return 2
-
-    apport.logging.memdbg("consistency checks passed")
-
+    # pylint: disable=too-many-statements,too-complex
+    """Retrace problem report. Return exit code and outdated_msg."""
     if options.gdb_sandbox:
         system_arch = packaging.get_system_architecture()
         if system_arch != "amd64":
             apport.logging.error("gdb sandboxes are only implemented for amd64 hosts")
-            return 3
+            return 3, None
         # Create a .dwz directory if it doesn't exist
         if not os.path.exists("/usr/lib/debug/.dwz"):
             os.mkdir("/usr/lib/debug/.dwz")
@@ -616,7 +610,7 @@ def main(argv):
                                 " directory to the gdb sandbox's."
                                 " See LP: #1818918 for details."
                             )
-                            return 3
+                            return 3, outdated_msg
                         except FileExistsError:
                             if (
                                 os.readlink(f"/usr/lib/debug/.dwz/{target}")
@@ -630,7 +624,7 @@ def main(argv):
                         " system's /usr/lib/debug/.dwz directory to the"
                         " gdb sandbox's. See LP: #1818918 for details."
                     )
-                    return 3
+                    return 3, outdated_msg
 
     # interactive gdb session
     if options.gdb:
@@ -649,25 +643,6 @@ def main(argv):
         apport.logging.memdbg("before calling gdb")
         subprocess.call(gdb_cmd, env=os.environ | environ)
     else:
-        # regenerate gdb info
-        apport.logging.memdbg("before collecting gdb info")
-        try:
-            report.add_gdb_info(sandbox, gdb_sandbox)
-        except OSError as error:
-            if not options.auth:
-                apport.logging.fatal("%s", str(error))
-            if not options.confirm or confirm_traces(report):
-                invalid_msg = """Thank you for your report!
-
-However, processing it in order to get sufficient information for the
-developers failed as the report has a core dump which is invalid. The
-corruption may have happened on the system which the crash occurred or during
-transit.
-
-Thank you for your understanding, and sorry for the inconvenience!
-"""
-                crashdb.mark_retrace_failed(crashid, invalid_msg)
-            apport.logging.fatal("%s", str(error))
         if options.sandbox == "system":
             apt_root = os.path.join(cache, "system", "apt")
         elif options.sandbox:
@@ -676,9 +651,35 @@ Thank you for your understanding, and sorry for the inconvenience!
             )
         else:
             apt_root = None
-        if options.stacktrace_source:
-            gen_source_stacktrace(report, apt_root)
-        report.add_kernel_crash_info()
+        # regenerate gdb info
+        apport.logging.memdbg("before collecting gdb info")
+        with (
+            _source_directory(report, apt_root)
+            if options.stacktrace_source
+            else contextlib.nullcontext(None)
+        ) as source_dir:
+            try:
+                report.add_gdb_info(
+                    sandbox, gdb_sandbox, [source_dir] if source_dir else None
+                )
+            except OSError as error:
+                if not options.auth:
+                    apport.logging.fatal("%s", str(error))
+                if not options.confirm or confirm_traces(report):
+                    invalid_msg = """Thank you for your report!
+
+However, processing it in order to get sufficient information for the
+developers failed as the report has a core dump which is invalid. The
+corruption may have happened on the system which the crash occurred or during
+transit.
+
+Thank you for your understanding, and sorry for the inconvenience!
+"""
+                    crashdb.mark_retrace_failed(crashid, invalid_msg)
+                apport.logging.fatal("%s", str(error))
+            if options.stacktrace_source:
+                gen_source_stacktrace(report, apt_root, source_dir)
+            report.add_kernel_crash_info()
 
     # Cleanup the .dwz machine symlink for LP: #1818918
     if gdb_sandbox and sandbox and target:
@@ -686,10 +687,51 @@ Thank you for your understanding, and sorry for the inconvenience!
             f"/usr/lib/debug/.dwz/{target}"
         ):
             os.unlink(f"/usr/lib/debug/.dwz/{target}")
+    return 0, outdated_msg
+
+
+# pylint: disable-next=missing-function-docstring
+def main(argv):
+    # TODO: Split into smaller functions/methods
+    # pylint: disable=too-many-branches,too-complex
+    apport.logging.memdbg("start")
+
+    gettext.textdomain("apport")
+
+    options = parse_args(argv)
+
+    crashdb = get_crashdb(options.auth)
+    apport.logging.memdbg("got crash DB")
+
+    # load the report
+    try:
+        report, crashid = load_report(options, crashdb)
+    except _LoadReportException as error:
+        return error.code
+
+    if options.core_file:
+        report["CoreDump"] = (os.path.abspath(options.core_file),)
+    if options.executable:
+        report["ExecutablePath"] = options.executable
+    if options.procmaps:
+        with open(options.procmaps, "r", encoding="utf-8") as f:
+            report["ProcMaps"] = f.read()
+    if options.rebuild_package_info and "ExecutablePath" in report:
+        report.add_package_info()
+
+    apport.logging.memdbg("processed extra options from command line")
+
+    result = do_consistency_checks(report)
+    if result != 0:
+        return result
+    apport.logging.memdbg("consistency checks passed")
+
+    result, outdated_msg = retrace_report(report, options, crashid, crashdb)
+    if result != 0:
+        return result
+    apport.logging.memdbg("information collection done")
 
     modified = False
-
-    apport.logging.memdbg("information collection done")
 
     if options.remove_core:
         del report["CoreDump"]
