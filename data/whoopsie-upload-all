@@ -172,7 +172,7 @@ def wait_uploaded(stamps, timeout):
     """
     logging.info("Waiting for whoopsie to upload reports (timeout: %d s)", timeout)
 
-    while timeout >= 0:
+    while True:
         # determine missing stamps
         missing = ""
         for stamp in stamps:
@@ -183,10 +183,11 @@ def wait_uploaded(stamps, timeout):
             return True
 
         logging.info("  missing (remaining: %d s): %s", timeout, missing)
-        time.sleep(10)
-        timeout -= 10
-
-    return False
+        if timeout <= 0:
+            return False
+        delay = min(10, timeout)
+        time.sleep(delay)
+        timeout -= delay
 
 
 # pylint: disable-next=missing-function-docstring

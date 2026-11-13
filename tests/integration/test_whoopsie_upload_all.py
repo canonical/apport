@@ -48,3 +48,15 @@ class TestWhoopsieUploadAll(unittest.TestCase):
             " in position 2: ordinal not in range(128).",
             stderr_mock.getvalue(),
         )
+
+    @unittest.mock.patch("time.sleep")
+    def test_wait_uploaded_timeout(self, sleep_mock: MagicMock) -> None:
+        """Test wait_uploaded() gives up once the timeout has passed."""
+        stamp = os.path.join(self.report_dir, "testcase.upload")
+        with open(stamp, "w", encoding="utf-8"):
+            pass
+        self.assertFalse(whoopsie_upload_all.wait_uploaded({stamp}, 25))
+        self.assertEqual(
+            sleep_mock.call_args_list,
+            [unittest.mock.call(10), unittest.mock.call(10), unittest.mock.call(5)],
+        )
