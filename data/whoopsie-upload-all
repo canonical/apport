@@ -21,6 +21,7 @@ import errno
 import fcntl
 import logging
 import os
+import socket
 import stat
 import subprocess
 import sys
@@ -190,6 +191,23 @@ def wait_uploaded(stamps, timeout):
         timeout -= delay
 
 
+def notify_ready() -> None:
+    """Tell systemd that the service has started (for Type=notify).
+
+    This speaks the sd_notify(3) protocol directly, so it works without
+    python3-systemd. Without NOTIFY_SOCKET (not running as a Type=notify
+    service) it does nothing.
+    """
+    address = os.environ.get("NOTIFY_SOCKET")
+    if not address:
+        return
+    if address.startswith("@"):
+        address = f"\0{address[1:]}"
+    with socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM) as sock:
+        sock.connect(address)
+        sock.sendall(b"READY=1")
+
+
 # pylint: disable-next=missing-function-docstring
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -221,6 +239,7 @@ def main() -> None:
         != 0
     ):
         logging.info("whoopsie.path is not enabled, doing nothing")
+        notify_ready()
         return
 
     stamps = collect_info()
@@ -232,12 +251,19 @@ def main() -> None:
         # the same currently.
         os.utime(apport.fileutils.report_dir)
 
-        if opts.timeout > 0:
-            if not wait_uploaded(stamps, opts.timeout):
-                sys.exit(2)
-            logging.info("All reports uploaded successfully")
-        else:
-            logging.info("All reports processed")
+    # The reports are marked for upload. Tell systemd that the service has
+    # started, so that waiting for whoopsie to upload them does not hold up
+    # the boot.
+    notify_ready()
+    if not stamps:
+        return
+
+    if opts.timeout > 0:
+        if not wait_uploaded(stamps, opts.timeout):
+            sys.exit(2)
+        logging.info("All reports uploaded successfully")
+    else:
+        logging.info("All reports processed")
 
 
 if __name__ == "__main__":
