@@ -44,6 +44,7 @@ import apport.report
 from tests.helper import (
     WAITING_TIMEOUT,
     get_gnu_coreutils_cmd,
+    get_test_executables_dir,
     import_module_from_file,
     pidfd_open,
     read_shebang,
@@ -93,11 +94,11 @@ int main() {
 
 
 @contextlib.contextmanager
-def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator[str]:
+def compile_c_code(name: str, c_code: str, tmpdir: str | None = None) -> Iterator[str]:
     """Compiles the given C code."""
     if not os.path.exists("/usr/bin/gcc"):
         pytest.skip("This test needs GCC available")
-    with tempfile.TemporaryDirectory(dir=tmpdir) as d:
+    with tempfile.TemporaryDirectory(dir=tmpdir or get_test_executables_dir()) as d:
         tempdir = Path(d)
         source = tempdir / "{name}.c"
         source.write_text(c_code)
@@ -111,10 +112,12 @@ def compile_c_code(name: str, c_code: str, tmpdir: str = "/var/tmp") -> Iterator
 
 
 @contextlib.contextmanager
-def create_suid(tmpdir: str = "/var/tmp") -> Iterator[str]:
+def create_suid(tmpdir: str | None = None) -> Iterator[str]:
     """Creates a `sleep` suid binary in a subdirectory of `tmpdir`."""
     src_bin = get_gnu_coreutils_cmd("sleep")
-    with tempfile.TemporaryDirectory(dir=tmpdir) as tempdir:
+    with tempfile.TemporaryDirectory(
+        dir=tmpdir or get_test_executables_dir()
+    ) as tempdir:
         binary = f"{tempdir}/sleep"
         shutil.copy(src_bin, binary)
         # Grant everyone read permission on the directory!
@@ -477,7 +480,7 @@ class T(unittest.TestCase):
 
         # create a non-readable executable in a path we can modify which apport
         # regards as likely packaged
-        fd, myexe = tempfile.mkstemp(dir="/var/tmp")
+        fd, myexe = tempfile.mkstemp(dir=get_test_executables_dir())
         self.addCleanup(os.unlink, myexe)
         with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())
@@ -600,7 +603,7 @@ class T(unittest.TestCase):
         """Ignore executables which got modified after process started."""
         # create executable in a path we can modify which apport regards as
         # likely packaged
-        fd, myexe = tempfile.mkstemp(dir="/var/tmp")
+        fd, myexe = tempfile.mkstemp(dir=get_test_executables_dir())
         self.addCleanup(os.unlink, myexe)
         with open(self.TEST_EXECUTABLE, "rb") as f:
             os.write(fd, f.read())

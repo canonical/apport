@@ -23,6 +23,7 @@ import unittest.mock
 
 import apport.fileutils
 import apport.report
+from tests.helper import get_test_executables_dir
 from tests.paths import local_test_environment
 
 
@@ -53,13 +54,14 @@ class T(unittest.TestCase):
         self, extracode: str = "", scriptname: str | None = None, relpath: bool = False
     ) -> str:
         """Create a test crash."""
-        # put the script into /var/tmp, since that isn't ignored in the
-        # hook
+        # put the script into /var/tmp/apport-tests, since that is not
+        # ignored by the hook
+        scratch_dir = get_test_executables_dir()
         if scriptname:
             script = scriptname
             fd = os.open(scriptname, os.O_CREAT | os.O_WRONLY)
         else:
-            fd, script = tempfile.mkstemp(dir="/var/tmp")
+            fd, script = tempfile.mkstemp(dir=scratch_dir)
             self.addCleanup(os.unlink, script)
 
         os.write(
@@ -292,7 +294,7 @@ func(42)
         """Relative Python script from deleted working directory."""
         orig_cwd = os.getcwd()
         try:
-            with tempfile.TemporaryDirectory(dir="/var/tmp") as tmpdir:
+            with tempfile.TemporaryDirectory(dir=get_test_executables_dir()) as tmpdir:
                 deleted_dir = os.path.join(tmpdir, "gone")
                 os.mkdir(deleted_dir)
                 os.chdir(deleted_dir)
@@ -367,9 +369,9 @@ func(42)
 
     def test_ignoring(self) -> None:
         """The Python crash hook respects the ignore list."""
-        # put the script into /var/tmp, since that isn't ignored in the
-        # hook
-        fd, script = tempfile.mkstemp(dir="/var/tmp")
+        # put the script into /var/tmp/apport-tests, since that is not
+        # ignored by the hook
+        fd, script = tempfile.mkstemp(dir=get_test_executables_dir())
         try:
             with (
                 tempfile.NamedTemporaryFile() as i_file,
@@ -428,7 +430,7 @@ func(42)
         limit = 5
         try:
             while count < limit:
-                self._test_crash(scriptname="/var/tmp/pytestcrash")
+                self._test_crash(scriptname="/var/tmp/apport-tests/pytestcrash")
                 reports = apport.fileutils.get_new_reports()
                 if not reports:
                     break
@@ -438,7 +440,7 @@ func(42)
                 apport.fileutils.mark_report_seen(reports[0])
                 count += 1
         finally:
-            os.unlink("/var/tmp/pytestcrash")
+            os.unlink("/var/tmp/apport-tests/pytestcrash")
 
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
