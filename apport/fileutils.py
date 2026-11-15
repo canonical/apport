@@ -166,10 +166,16 @@ def likely_packaged(file: str) -> bool:
         if file.startswith(i):
             allowlist_match = True
             break
+    # apport's test suite creates test executables in a dedicated directory
+    # under /var/tmp; keep it packaged despite /var/tmp being development
+    # scratch space (see tests/helper.py, LP#2174521)
+    if file.startswith("/var/tmp/apport-tests/"):
+        return True
     return (
         allowlist_match
         and not file.startswith("/usr/local/")
         and not file.startswith("/var/lib/")
+        and not file.startswith("/var/tmp/")
     )
 
 

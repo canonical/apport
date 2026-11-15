@@ -103,6 +103,12 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.likely_packaged("/tmp/foo"), False)
         # ignore crashes in /var/lib (LP#122859, LP#414368)
         self.assertEqual(apport.fileutils.likely_packaged("/var/lib/foo"), False)
+        # ignore crashes in /var/tmp (LP#2174521): development scratch space
+        self.assertEqual(apport.fileutils.likely_packaged("/var/tmp/foo"), False)
+        # except apport's own test executables directory (tests/helper.py)
+        self.assertEqual(
+            apport.fileutils.likely_packaged("/var/tmp/apport-tests/foo"), True
+        )
 
     @unittest.mock.patch("apport.fileutils.get_boot_id")
     def test_get_core_path(self, get_boot_id_mock: MagicMock) -> None:

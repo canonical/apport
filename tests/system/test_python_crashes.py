@@ -27,6 +27,7 @@ except ImportError:
 
 import apport.fileutils
 import apport.report
+from tests.helper import get_test_executables_dir
 from tests.paths import local_test_environment
 
 
@@ -55,9 +56,9 @@ class T(unittest.TestCase):
 
     def _test_crash(self, extracode: str) -> str:
         """Create a test crash."""
-        # put the script into /var/tmp, since that isn't ignored in the
-        # hook
-        fd, script = tempfile.mkstemp(dir="/var/tmp")
+        # put the script into /var/tmp/apport-tests, since that is not
+        # ignored by the hook
+        fd, script = tempfile.mkstemp(dir=get_test_executables_dir())
         self.addCleanup(os.unlink, script)
 
         os.write(

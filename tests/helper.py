@@ -27,6 +27,22 @@ def get_gnu_coreutils_cmd(cmd: str) -> str:
     return os.path.realpath(f"/bin/{cmd}")
 
 
+def get_test_executables_dir() -> str:
+    """Return the directory for test executables whose crashes get reported.
+
+    Crash tests need executables in a path that likely_packaged() accepts,
+    that is writable by the test user, and that is on real disk rather than
+    tmpfs. likely_packaged() explicitly keeps /var/tmp/apport-tests packaged
+    for this purpose (LP#2174521).
+    """
+    path = "/var/tmp/apport-tests"
+    os.makedirs(path, exist_ok=True)
+    if os.geteuid() == 0:
+        # world-writable, so that non-root users can run the test suite, too
+        os.chmod(path, 0o1777)
+    return path
+
+
 def get_init_system() -> str:
     """Return the name of the running init system (PID 1)."""
     with open("/proc/1/comm", encoding="utf-8") as comm:
